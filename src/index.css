@@ -1,0 +1,222 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+/***   general  **/
+
+.largePaddedDiv {
+  padding: 15px 0;
+}
+
+.bottomBorder {
+  margin-top: 5px !important;
+  margin-bottom: 20px !important;
+}
+
+.buttonDiv {
+  float: left;
+  padding: 0 3px;
+}
+
+#page_title {
+  -ms-word-break: break-all;
+  word-break: break-all;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto;
+}
+
+/*** Bootstrap override*/
+
+.label, a {
+  cursor: pointer;
+}
+
+.label {
+  font-size: 100% !important;
+}
+
+/*** ruleTable Div */
+
+.ruleDiv {
+  background-color: #f8f8f8;
+  border-radius: 7px;
+  padding: 10px;
+}
+
+.ruleDiv textarea {
+  background-color: transparent;
+  border: none;
+}
+
+.ruleDiv textarea:hover, .ruleDiv textarea:focus {
+  background-color: #fefefe !important;
+}
+
+.ruleDiv textarea:focus {
+  border: 1px solid #fff !important;
+  border-radius: 4px !important;
+}
+
+/* for tabs in ruleTable*/
+
+.general_ {
+  color: darkblue !important;
+}
+
+.satisfied_ {
+  color: forestgreen !important;
+}
+
+.violated_ {
+  color: darkred !important;
+}
+
+/*** Rule Result */
+
+.changed {
+  border-left: 2px solid #8b1e1b !important;
+  box-shadow: -1px 0 5px #8b1e1b;
+  background-color: #fcf2f1 !important;
+}
+
+.changedText {
+  text-shadow: 1px 1px 5px;
+}
+
+.blue-bg {
+  background-color: #d9edf7 !important;
+}
+
+.green-bg {
+  background-color: #dff0d8 !important;
+}
+
+.red-bg {
+  background-color: #f2dede !important;
+}
+
+/*** SRCML xml styling */
+
+.link {
+  cursor: pointer;
+}
+
+.partResultDiv * {
+  color: black;
+}
+
+.partResultDiv pre {
+  /*background-color: #3e3e3e !important;*/
+  margin: 5px 0 0 !important;
+  padding: 3px !important;
+}
+
+class, specifier {
+  color: rgb(183, 100, 24) !important;
+}
+
+name {
+  color: rgb(218, 166, 69) !important;
+}
+
+block {
+  color: black;
+}
+
+annotation, annotation * {
+  color: rgb(173, 171, 0) !important;
+}
+
+/*** rule Generation */
+
+/*.rule-forms {*/
+/*padding: 10px;*/
+/*}*/
+
+/*.ruleDescription {*/
+/*font-weight: bold !important;*/
+/*font-family: inherit;*/
+/*}*/
+
+/*.ruleDetail {*/
+/*font-family: inherit;*/
+/*}*/
+
+/*.rule-forms input[type=text] {*/
+/*border-radius: 0;*/
+/*margin: 0 0 15px 0;*/
+/*border: 1px solid #9e9e9e;*/
+/*height: 2rem;*/
+/*width: 25rem;*/
+/*}*/
+
+/*!*  Tag information div  *!*/
+/*#tagInfo textarea {*/
+/*width: 100% !important;*/
+/*box-sizing: border-box;*/
+/*display: block;*/
+/*max-width: 100%;*/
+/*line-height: 1.5;*/
+/*border: none;*/
+/*font: 15px Tahoma, cursive;*/
+/*background: transparent;*/
+/*}*/
+
+/*** table of content */
+
+#alphabet_index li {
+  min-width: 2em;
+  cursor: pointer;
+}
+
+#tableOfContent a:hover, #tableOfContent li:hover {
+  font-style: italic;
+}
+
+#alphabet_index .selected {
+  color: darkred;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+#tags_list li {
+  min-width: 15em;
+  cursor: pointer;
+}
+
+/*** Individual Rule */
+
+#individualRule label {
+  font-weight: bold;
+  padding: 10px 0;
+  display: block;
+  text-transform: uppercase;
+  color: #5d5c5c;
+}
+
+#individualRule .paddedDiv {
+  padding: 20px;
+  border-top: 1px solid #ddd;
+}
+
+.tableRow {
+  width: 100%;
+  float: left;
+  padding: 20px 0;
+  border-bottom: 2px solid #ddd;
+}
+
+.tableCell {
+  float: left;
+}
+
+.labelCell {
+  width: 20%;
+}
+
+.infoCell {
+  width: 80%;
+}
