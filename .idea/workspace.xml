@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a45deb3d-4627-4770-b515-a28ce9b69c87" name="Default" comment="" />
+    <list default="true" id="a45deb3d-4627-4770-b515-a28ce9b69c87" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/App.js" afterPath="$PROJECT_DIR$/src/App.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/core/ruleExecutor.js" afterPath="$PROJECT_DIR$/src/core/ruleExecutor.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/core/utilities.js" afterPath="$PROJECT_DIR$/src/core/utilities.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/index.css" afterPath="$PROJECT_DIR$/src/index.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ui/headerBar.js" afterPath="$PROJECT_DIR$/src/ui/headerBar.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ui/individualRule.js" afterPath="$PROJECT_DIR$/src/ui/individualRule.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ui/individualRuleList.js" afterPath="$PROJECT_DIR$/src/ui/individualRuleList.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ui/rulePanel.js" afterPath="$PROJECT_DIR$/src/ui/rulePanel.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ui/ruleTable.js" afterPath="$PROJECT_DIR$/src/ui/ruleTable.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ui/tableOfContent.js" afterPath="$PROJECT_DIR$/src/ui/tableOfContent.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/webSocketManager.js" afterPath="$PROJECT_DIR$/src/webSocketManager.js" />
+    </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -14,71 +27,101 @@
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.60483176">
+    <splitter split-orientation="horizontal" split-proportion="0.899841">
       <split-first>
-        <splitter split-orientation="horizontal" split-proportion="0.58675426">
+        <splitter split-orientation="horizontal" split-proportion="0.6000876">
           <split-first>
+            <splitter split-orientation="horizontal" split-proportion="0.18614271">
+              <split-first>
+                <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+                  <file leaf-file-name="individualRule.js" pinned="false" current-in-tab="true">
+                    <entry file="file://$PROJECT_DIR$/src/ui/individualRule.js">
+                      <provider selected="true" editor-type-id="text-editor">
+                        <state relative-caret-position="975">
+                          <caret line="150" column="39" lean-forward="false" selection-start-line="150" selection-start-column="39" selection-end-line="150" selection-end-column="39" />
+                          <folding>
+                            <element signature="n#!!block;n#render#0;n#IndividualRule#0" expanded="false" />
+                            <element signature="n#!!block;n#attachListener#0;n#IndividualRule#0" expanded="false" />
+                            <element signature="e#2466#2508#0" expanded="false" />
+                            <element signature="n#!!block;n#tagRender#0;n#IndividualRule#0" expanded="false" />
+                            <marker date="1505321956000" expanded="true" signature="473:486" ph="..." />
+                          </folding>
+                        </state>
+                      </provider>
+                    </entry>
+                  </file>
+                  <file leaf-file-name="individualRuleList.js" pinned="false" current-in-tab="false">
+                    <entry file="file://$PROJECT_DIR$/src/ui/individualRuleList.js">
+                      <provider selected="true" editor-type-id="text-editor">
+                        <state relative-caret-position="345">
+                          <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+                          <folding>
+                            <element signature="n#!!block;n#setButtonClass#0;n#IndividualRuleList#0" expanded="false" />
+                            <element signature="n#!!block;n#buttonTextRender#0;n#IndividualRuleList#0" expanded="false" />
+                          </folding>
+                        </state>
+                      </provider>
+                    </entry>
+                  </file>
+                </leaf>
+              </split-first>
+              <split-second>
+                <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+                  <file leaf-file-name="ruleTable.js" pinned="false" current-in-tab="true">
+                    <entry file="file://$PROJECT_DIR$/src/ui/ruleTable.js">
+                      <provider selected="true" editor-type-id="text-editor">
+                        <state relative-caret-position="225">
+                          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+                          <folding>
+                            <element signature="e#48#74#0" expanded="true" />
+                          </folding>
+                        </state>
+                      </provider>
+                    </entry>
+                  </file>
+                  <file leaf-file-name="rulePanel.js" pinned="false" current-in-tab="false">
+                    <entry file="file://$PROJECT_DIR$/src/ui/rulePanel.js">
+                      <provider selected="true" editor-type-id="text-editor">
+                        <state relative-caret-position="-208">
+                          <caret line="10" column="21" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+                          <folding>
+                            <element signature="n#!!doc" expanded="true" />
+                            <element signature="n#!!block;n#attachListener#0;n#RulePanel#0" expanded="false" />
+                            <element signature="n#!!block;n#tabHeaderRender#0;n#RulePanel#0" expanded="false" />
+                            <element signature="n#!!block;n#tagRender#0;n#RulePanel#0" expanded="false" />
+                            <element signature="n#!!block;n#listRender#0;n#RulePanel#0" expanded="false" />
+                            <element signature="n#!!block;n#resetStyling#0;n#RulePanel#0" expanded="false" />
+                            <element signature="n#!!block;n#resetFile#0;n#RulePanel#0" expanded="false" />
+                            <element signature="n#!!block;n#displayUpdateForFile#0;n#RulePanel#0" expanded="false" />
+                          </folding>
+                        </state>
+                      </provider>
+                    </entry>
+                  </file>
+                  <file leaf-file-name="index.css" pinned="false" current-in-tab="false">
+                    <entry file="file://$PROJECT_DIR$/src/index.css">
+                      <provider selected="true" editor-type-id="text-editor">
+                        <state relative-caret-position="435">
+                          <caret line="29" column="0" lean-forward="true" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+                          <folding />
+                        </state>
+                      </provider>
+                    </entry>
+                  </file>
+                </leaf>
+              </split-second>
+            </splitter>
+          </split-first>
+          <split-second>
             <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-              <file leaf-file-name="individualRule.js" pinned="false" current-in-tab="true">
-                <entry file="file://$PROJECT_DIR$/src/ui/individualRule.js">
+              <file leaf-file-name="App.js" pinned="false" current-in-tab="true">
+                <entry file="file://$PROJECT_DIR$/src/App.js">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="150">
-                      <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+                    <state relative-caret-position="591">
+                      <caret line="88" column="42" lean-forward="true" selection-start-line="88" selection-start-column="42" selection-end-line="88" selection-end-column="42" />
                       <folding>
-                        <element signature="n#!!block;n#render#0;n#IndividualRule#0" expanded="false" />
-                        <element signature="n#!!block;n#displayRule#0;n#IndividualRule#0" expanded="false" />
-                        <element signature="n#!!block;n#tagRender#0;n#IndividualRule#0" expanded="false" />
-                        <element signature="e#4272#4278#0" expanded="false" />
-                        <marker date="1504909594000" expanded="true" signature="430:443" ph="..." />
-                      </folding>
-                    </state>
-                  </provider>
-                </entry>
-              </file>
-              <file leaf-file-name="utilities.js" pinned="false" current-in-tab="false">
-                <entry file="file://$PROJECT_DIR$/src/core/utilities.js">
-                  <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="60">
-                      <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-                      <folding>
-                        <element signature="n#!!doc;n#Utilities#0" expanded="false" />
-                        <element signature="n#!!block;n#sendToServer#0;n#Utilities#0" expanded="false" />
-                        <element signature="n#!!block;n#ResultArraysEqual#0;n#Utilities#0" expanded="false" />
-                        <element signature="n#!!block;n#cloneXML#0;n#Utilities#0" expanded="false" />
-                      </folding>
-                    </state>
-                  </provider>
-                </entry>
-              </file>
-              <file leaf-file-name="rulePanel.js" pinned="false" current-in-tab="false">
-                <entry file="file://$PROJECT_DIR$/src/ui/rulePanel.js">
-                  <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="750">
-                      <caret line="145" column="0" lean-forward="false" selection-start-line="145" selection-start-column="0" selection-end-line="145" selection-end-column="0" />
-                      <folding>
-                        <element signature="e#48#74#0" expanded="true" />
-                        <element signature="e#163#194#0" expanded="true" />
-                        <element signature="n#!!block;n#render#0;n#RulePanel#0" expanded="false" />
-                        <element signature="n#!!block;n#tabHeaderRender#0;n#RulePanel#0" expanded="false" />
-                        <element signature="n#!!block;n#tagRender#0;n#RulePanel#0" expanded="false" />
-                        <element signature="n#!!block;n#listRender#0;n#RulePanel#0" expanded="false" />
-                      </folding>
-                    </state>
-                  </provider>
-                </entry>
-              </file>
-              <file leaf-file-name="individualRuleList.js" pinned="false" current-in-tab="false">
-                <entry file="file://$PROJECT_DIR$/src/ui/individualRuleList.js">
-                  <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="135">
-                      <caret line="11" column="42" lean-forward="false" selection-start-line="11" selection-start-column="42" selection-end-line="11" selection-end-column="42" />
-                      <folding>
-                        <element signature="e#48#74#0" expanded="true" />
-                        <element signature="n#!!block;n#constructor#0;n#IndividualRuleList#0" expanded="false" />
-                        <element signature="n#!!block;n#render#0;n#IndividualRuleList#0" expanded="false" />
-                        <element signature="n#!!block;n#setButtonClass#0;n#IndividualRuleList#0" expanded="false" />
-                        <element signature="n#!!block;n#listRender#0;n#IndividualRuleList#0" expanded="false" />
-                        <element signature="n#!!block;n#buttonTextRender#0;n#IndividualRuleList#0" expanded="false" />
+                        <element signature="e#0#26#0" expanded="true" />
+                        <element signature="n#!!block;n#init#0;n#App#0" expanded="false" />
                       </folding>
                     </state>
                   </provider>
@@ -87,44 +130,14 @@
               <file leaf-file-name="tableOfContent.js" pinned="false" current-in-tab="false">
                 <entry file="file://$PROJECT_DIR$/src/ui/tableOfContent.js">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="768">
-                      <caret line="173" column="0" lean-forward="false" selection-start-line="173" selection-start-column="0" selection-end-line="173" selection-end-column="0" />
+                    <state relative-caret-position="561">
+                      <caret line="84" column="11" lean-forward="true" selection-start-line="84" selection-start-column="11" selection-end-line="84" selection-end-column="11" />
                       <folding>
                         <element signature="e#137#162#0" expanded="true" />
                         <element signature="n#!!block;n#constructor#0;n#TableOfContent#0" expanded="false" />
-                        <element signature="e#1852#1876#0" expanded="false" />
                         <element signature="n#!!block;n#createAlphabetIndex#0;n#TableOfContent#0" expanded="false" />
-                        <element signature="n#!!block;n#displayTableOfContent#0;n#TableOfContent#0" expanded="false" />
-                      </folding>
-                    </state>
-                  </provider>
-                </entry>
-              </file>
-              <file leaf-file-name="ruleTable.js" pinned="false" current-in-tab="false">
-                <entry file="file://$PROJECT_DIR$/src/ui/ruleTable.js">
-                  <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="528">
-                      <caret line="62" column="0" lean-forward="false" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
-                      <folding>
-                        <element signature="e#48#74#0" expanded="true" />
-                        <element signature="e#1001#1027#0" expanded="false" />
-                      </folding>
-                    </state>
-                  </provider>
-                </entry>
-              </file>
-            </leaf>
-          </split-first>
-          <split-second>
-            <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-              <file leaf-file-name="App.js" pinned="false" current-in-tab="true">
-                <entry file="file://$PROJECT_DIR$/src/App.js">
-                  <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="681">
-                      <caret line="88" column="33" lean-forward="false" selection-start-line="88" selection-start-column="33" selection-end-line="88" selection-end-column="33" />
-                      <folding>
-                        <element signature="e#0#26#0" expanded="true" />
-                        <element signature="n#!!block;n#init#0;n#App#0" expanded="false" />
+                        <element signature="n#!!block;n#displayTags#0;n#TableOfContent#0" expanded="false" />
+                        <element signature="n#!!block;n#displayRules#0;n#TableOfContent#0" expanded="false" />
                       </folding>
                     </state>
                   </provider>
@@ -139,23 +152,33 @@
           <file leaf-file-name="webSocketManager.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/webSocketManager.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="750">
-                  <caret line="52" column="48" lean-forward="false" selection-start-line="52" selection-start-column="48" selection-end-line="52" selection-end-column="48" />
+                <state relative-caret-position="685">
+                  <caret line="80" column="109" lean-forward="false" selection-start-line="80" selection-start-column="109" selection-end-line="80" selection-end-column="109" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="hashManager.js" pinned="false" current-in-tab="true">
+          <file leaf-file-name="hashManager.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/hashManager.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="420">
-                  <caret line="30" column="37" lean-forward="false" selection-start-line="30" selection-start-column="26" selection-end-line="30" selection-end-column="37" />
+                <state relative-caret-position="720">
+                  <caret line="79" column="34" lean-forward="false" selection-start-line="79" selection-start-column="34" selection-end-line="79" selection-end-column="34" />
                   <folding>
-                    <element signature="e#48#73#0" expanded="true" />
                     <element signature="n#!!block;n#setupNavigationButtons#0;n#HashManager#0" expanded="false" />
-                    <element signature="e#2034#2624#0" expanded="false" />
                     <element signature="n#!!block;n#hashManager#0;n#HashManager#0" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="headerBar.js" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/src/ui/headerBar.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="562">
+                  <caret line="84" column="55" lean-forward="false" selection-start-line="84" selection-start-column="55" selection-end-line="84" selection-end-column="55" />
+                  <folding>
+                    <element signature="e#126#146#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -164,39 +187,15 @@
           <file leaf-file-name="ruleExecutor.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/core/ruleExecutor.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="855">
-                  <caret line="301" column="0" lean-forward="false" selection-start-line="301" selection-start-column="0" selection-end-line="301" selection-end-column="0" />
+                <state relative-caret-position="405">
+                  <caret line="30" column="5" lean-forward="true" selection-start-line="30" selection-start-column="5" selection-end-line="30" selection-end-column="5" />
                   <folding>
-                    <element signature="e#48#79#0" expanded="true" />
-                    <element signature="n#!!block;n#attachListener#0;n#RuleExecutor#0" expanded="false" />
                     <element signature="n#!!block;n#verifyRules#0;n#RuleExecutor#0" expanded="false" />
                     <element signature="n#!!block;n#runXPathQuery#0;n#RuleExecutor#0" expanded="false" />
                     <element signature="n#!!block;n#violatedResults#0;n#RuleExecutor#0" expanded="false" />
                     <element signature="n#!!block;n#checkRules#0;n#RuleExecutor#0" expanded="false" />
                     <element signature="n#!!block;n#getXmlData#0;n#RuleExecutor#0" expanded="false" />
                   </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="navBar.js" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/ui/navBar.js">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="225">
-                  <caret line="17" column="67" lean-forward="false" selection-start-line="17" selection-start-column="67" selection-end-line="17" selection-end-column="67" />
-                  <folding>
-                    <element signature="e#49#88#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="headerBar.js" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/ui/headerBar.js">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="0">
-                  <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-                  <folding />
                 </state>
               </provider>
             </entry>
@@ -214,8 +213,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>violatedResults</find>
-      <find>getXmlData</find>
       <find>ResultArraysEqual</find>
       <find>#</find>
       <find>italic</find>
@@ -239,11 +236,13 @@
       <find>locat</find>
       <find>this.ruleI</find>
       <find>ruleI</find>
-      <find>ReactDOM</find>
       <find>indi_matches_div</find>
       <find>thisNode</find>
       <find>cloneXML</find>
       <find>HASH</find>
+      <find>send</find>
+      <find>{setBadgeClassFile()}</find>
+      <find>ReactDOM</find>
     </findStrings>
     <replaceStrings>
       <replace>this.filtered</replace>
@@ -256,6 +255,7 @@
       <replace>ruleI</replace>
       <replace>this.ruleI</replace>
       <replace>indi_all_div</replace>
+      <replace>&quot;forFile hidden&quot;</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -264,26 +264,27 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/index.css" />
         <option value="$PROJECT_DIR$/src/index.js" />
         <option value="$PROJECT_DIR$/src/tableOfContent.js" />
         <option value="$PROJECT_DIR$/src/core/ruleExecuter.js" />
         <option value="$PROJECT_DIR$/src/ui/navBar.js" />
-        <option value="$PROJECT_DIR$/src/hashManager.js" />
-        <option value="$PROJECT_DIR$/src/webSocketManager.js" />
-        <option value="$PROJECT_DIR$/src/ui/headerBar.js" />
         <option value="$PROJECT_DIR$/package.json" />
         <option value="$PROJECT_DIR$/public/index.html" />
         <option value="$PROJECT_DIR$/src/ui/IndividualRuleList.js" />
         <option value="$PROJECT_DIR$/public/manifest.json" />
-        <option value="$PROJECT_DIR$/src/App.js" />
-        <option value="$PROJECT_DIR$/src/core/ruleExecutor.js" />
-        <option value="$PROJECT_DIR$/src/core/utilities.js" />
         <option value="$PROJECT_DIR$/src/ui/individualRuleList.js" />
-        <option value="$PROJECT_DIR$/src/ui/rulePanel.js" />
-        <option value="$PROJECT_DIR$/src/ui/ruleTable.js" />
-        <option value="$PROJECT_DIR$/src/ui/tableOfContent.js" />
+        <option value="$PROJECT_DIR$/src/App.js" />
+        <option value="$PROJECT_DIR$/src/core/utilities.js" />
+        <option value="$PROJECT_DIR$/src/core/ruleExecutor.js" />
+        <option value="$PROJECT_DIR$/src/ui/codeSnippet.js" />
         <option value="$PROJECT_DIR$/src/ui/individualRule.js" />
+        <option value="$PROJECT_DIR$/src/ui/ruleTable.js" />
+        <option value="$PROJECT_DIR$/src/ui/rulePanel.js" />
+        <option value="$PROJECT_DIR$/src/ui/tableOfContent.js" />
+        <option value="$PROJECT_DIR$/src/index.css" />
+        <option value="$PROJECT_DIR$/src/webSocketManager.js" />
+        <option value="$PROJECT_DIR$/src/hashManager.js" />
+        <option value="$PROJECT_DIR$/src/ui/headerBar.js" />
       </list>
     </option>
   </component>
@@ -320,7 +321,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -365,41 +366,9 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="active-doc-client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="active-doc-client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="active-doc-client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="active-doc-client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="public" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -534,7 +503,10 @@
       <option name="presentableId" value="Default" />
       <updated>1504626172086</updated>
       <workItem from="1504626173657" duration="23778000" />
-      <workItem from="1504792263851" duration="24524000" />
+      <workItem from="1504792263851" duration="24897000" />
+      <workItem from="1505139646930" duration="23731000" />
+      <workItem from="1505275778827" duration="14000" />
+      <workItem from="1505310492103" duration="18396000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <created>1504909962045</created>
@@ -547,30 +519,60 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="48302000" />
+    <option name="totallyTimeSpent" value="90816000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
   </component>
   <component name="ToolWindowManager">
     <frame x="1280" y="23" width="2560" height="1353" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.087042145" sideWeight="0.6414201" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298969" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.087042145" sideWeight="0.63461536" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32981133" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18080889" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3298969" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.087042145" sideWeight="0.35857987" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32981133" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298969" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.0" sideWeight="0.3653846" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28663447" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39095956" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298969" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32981133" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298969" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298969" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.087042145" sideWeight="0.3653846" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21509434" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39095956" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.087042145" sideWeight="0.63461536" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32981133" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="processedProjectFiles" value="true" />
@@ -584,18 +586,253 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="3" />
+      <option name="time" value="7" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/ui/ruleTable.js">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="615">
+          <caret line="43" column="30" lean-forward="false" selection-start-line="43" selection-start-column="30" selection-end-line="43" selection-end-column="30" />
+          <folding>
+            <element signature="e#48#74#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/rulePanel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2700">
+          <caret line="282" column="12" lean-forward="false" selection-start-line="282" selection-start-column="12" selection-end-line="282" selection-end-column="12" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <element signature="n#!!block;n#attachListener#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!block;n#tabHeaderRender#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!block;n#tagRender#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!block;n#listRender#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!block;n#resetStyling#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!block;n#resetFile#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!block;n#displayUpdateForFile#0;n#RulePanel#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/App.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="94" column="32" lean-forward="false" selection-start-line="94" selection-start-column="32" selection-end-line="94" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+            <element signature="n#!!block;n#init#0;n#App#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/tableOfContent.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="12" column="22" lean-forward="true" selection-start-line="12" selection-start-column="22" selection-end-line="12" selection-end-column="22" />
+          <folding>
+            <element signature="e#137#162#0" expanded="true" />
+            <element signature="n#!!block;n#constructor#0;n#TableOfContent#0" expanded="false" />
+            <element signature="n#!!block;n#createAlphabetIndex#0;n#TableOfContent#0" expanded="false" />
+            <element signature="n#!!block;n#displayTags#0;n#TableOfContent#0" expanded="false" />
+            <element signature="n#!!block;n#displayRules#0;n#TableOfContent#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/webSocketManager.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1005">
+          <caret line="69" column="56" lean-forward="false" selection-start-line="69" selection-start-column="36" selection-end-line="69" selection-end-column="56" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hashManager.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="31" column="57" lean-forward="true" selection-start-line="31" selection-start-column="12" selection-end-line="31" selection-end-column="57" />
+          <folding>
+            <element signature="n#!!block;n#setupNavigationButtons#0;n#HashManager#0" expanded="false" />
+            <element signature="n#!!block;n#hashManager#0;n#HashManager#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/headerBar.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="795">
+          <caret line="65" column="0" lean-forward="false" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
+          <folding>
+            <element signature="e#126#146#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/ruleExecutor.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="30" column="5" lean-forward="true" selection-start-line="30" selection-start-column="5" selection-end-line="30" selection-end-column="5" />
+          <folding>
+            <element signature="n#!!block;n#verifyRules#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#runXPathQuery#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#violatedResults#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#checkRules#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#getXmlData#0;n#RuleExecutor#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/individualRule.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!block;n#render#0;n#IndividualRule#0" expanded="false" />
+            <element signature="n#!!block;n#attachListener#0;n#IndividualRule#0" expanded="false" />
+            <element signature="e#2466#2508#0" expanded="false" />
+            <element signature="n#!!block;n#tagRender#0;n#IndividualRule#0" expanded="false" />
+            <marker date="1505321956000" expanded="true" signature="473:486" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/utilities.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!block;n#sendToServer#0;n#Utilities#0" expanded="false" />
+            <element signature="n#!!block;n#ResultArraysEqual#0;n#Utilities#0" expanded="false" />
+            <element signature="n#!!block;n#cloneXML#0;n#Utilities#0" expanded="false" />
+            <element signature="n#!!block;n#cloneJSON#0;n#Utilities#0" expanded="false" />
+            <element signature="n#!!block;n#arrayContains#0;n#Utilities#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/rulePanel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="750">
+          <caret line="145" column="0" lean-forward="false" selection-start-line="145" selection-start-column="0" selection-end-line="145" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <element signature="n#!!block;n#attachListener#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!block;n#tabHeaderRender#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!block;n#tagRender#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!block;n#listRender#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!block;n#resetStyling#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!block;n#resetFile#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!block;n#displayUpdateForFile#0;n#RulePanel#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/individualRuleList.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="11" column="42" lean-forward="false" selection-start-line="11" selection-start-column="42" selection-end-line="11" selection-end-column="42" />
+          <folding>
+            <element signature="n#!!block;n#setButtonClass#0;n#IndividualRuleList#0" expanded="false" />
+            <element signature="n#!!block;n#buttonTextRender#0;n#IndividualRuleList#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/tableOfContent.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="855">
+          <caret line="173" column="0" lean-forward="false" selection-start-line="173" selection-start-column="0" selection-end-line="173" selection-end-column="0" />
+          <folding>
+            <element signature="e#137#162#0" expanded="true" />
+            <element signature="n#!!block;n#constructor#0;n#TableOfContent#0" expanded="false" />
+            <element signature="n#!!block;n#createAlphabetIndex#0;n#TableOfContent#0" expanded="false" />
+            <element signature="n#!!block;n#displayTags#0;n#TableOfContent#0" expanded="false" />
+            <element signature="n#!!block;n#displayRules#0;n#TableOfContent#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/ruleTable.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="705">
+          <caret line="62" column="0" lean-forward="false" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
+          <folding>
+            <element signature="e#48#74#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/App.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="825">
+          <caret line="88" column="33" lean-forward="false" selection-start-line="88" selection-start-column="33" selection-end-line="88" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+            <element signature="n#!!block;n#init#0;n#App#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/webSocketManager.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="750">
+          <caret line="52" column="48" lean-forward="false" selection-start-line="52" selection-start-column="48" selection-end-line="52" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/ruleExecutor.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="855">
+          <caret line="301" column="0" lean-forward="false" selection-start-line="301" selection-start-column="0" selection-end-line="301" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!block;n#verifyRules#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#runXPathQuery#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#violatedResults#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#checkRules#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#getXmlData#0;n#RuleExecutor#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/navBar.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="17" column="67" lean-forward="false" selection-start-line="17" selection-start-column="67" selection-end-line="17" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/headerBar.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#126#146#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hashManager.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="29" column="25" lean-forward="true" selection-start-line="29" selection-start-column="25" selection-end-line="29" selection-end-column="25" />
+          <folding>
+            <element signature="n#!!block;n#setupNavigationButtons#0;n#HashManager#0" expanded="false" />
+            <element signature="n#!!block;n#hashManager#0;n#HashManager#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/ruleTable.js">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="210">
           <caret line="19" column="25" lean-forward="false" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="25" />
           <folding>
             <element signature="e#48#74#0" expanded="true" />
-            <element signature="e#1001#1027#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -607,9 +844,9 @@
           <folding>
             <element signature="e#137#162#0" expanded="true" />
             <element signature="n#!!block;n#constructor#0;n#TableOfContent#0" expanded="false" />
-            <element signature="e#1852#1876#0" expanded="false" />
             <element signature="n#!!block;n#createAlphabetIndex#0;n#TableOfContent#0" expanded="false" />
-            <element signature="n#!!block;n#displayTableOfContent#0;n#TableOfContent#0" expanded="false" />
+            <element signature="n#!!block;n#displayTags#0;n#TableOfContent#0" expanded="false" />
+            <element signature="n#!!block;n#displayRules#0;n#TableOfContent#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -631,10 +868,10 @@
           <caret line="39" column="18" lean-forward="false" selection-start-line="39" selection-start-column="18" selection-end-line="39" selection-end-column="18" />
           <folding>
             <element signature="n#!!block;n#render#0;n#IndividualRule#0" expanded="false" />
-            <element signature="n#!!block;n#displayRule#0;n#IndividualRule#0" expanded="false" />
+            <element signature="n#!!block;n#attachListener#0;n#IndividualRule#0" expanded="false" />
+            <element signature="e#2466#2508#0" expanded="false" />
             <element signature="n#!!block;n#tagRender#0;n#IndividualRule#0" expanded="false" />
-            <element signature="e#4272#4278#0" expanded="false" />
-            <marker date="1504909594000" expanded="true" signature="430:443" ph="..." />
+            <marker date="1505321956000" expanded="true" signature="473:486" ph="..." />
           </folding>
         </state>
       </provider>
@@ -644,12 +881,14 @@
         <state relative-caret-position="1200">
           <caret line="83" column="0" lean-forward="false" selection-start-line="83" selection-start-column="0" selection-end-line="83" selection-end-column="0" />
           <folding>
-            <element signature="e#48#74#0" expanded="true" />
-            <element signature="e#163#194#0" expanded="true" />
-            <element signature="n#!!block;n#render#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!doc" expanded="true" />
+            <element signature="n#!!block;n#attachListener#0;n#RulePanel#0" expanded="false" />
             <element signature="n#!!block;n#tabHeaderRender#0;n#RulePanel#0" expanded="false" />
             <element signature="n#!!block;n#tagRender#0;n#RulePanel#0" expanded="false" />
             <element signature="n#!!block;n#listRender#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!block;n#resetStyling#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!block;n#resetFile#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!block;n#displayUpdateForFile#0;n#RulePanel#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -659,9 +898,7 @@
         <state relative-caret-position="810">
           <caret line="64" column="13" lean-forward="false" selection-start-line="64" selection-start-column="13" selection-end-line="64" selection-end-column="13" />
           <folding>
-            <element signature="e#48#73#0" expanded="true" />
             <element signature="n#!!block;n#setupNavigationButtons#0;n#HashManager#0" expanded="false" />
-            <element signature="e#2034#2624#0" expanded="false" />
             <element signature="n#!!block;n#hashManager#0;n#HashManager#0" expanded="false" />
           </folding>
         </state>
@@ -680,8 +917,6 @@
         <state relative-caret-position="495">
           <caret line="35" column="7" lean-forward="true" selection-start-line="35" selection-start-column="7" selection-end-line="35" selection-end-column="7" />
           <folding>
-            <element signature="e#48#79#0" expanded="true" />
-            <element signature="n#!!block;n#attachListener#0;n#RuleExecutor#0" expanded="false" />
             <element signature="n#!!block;n#verifyRules#0;n#RuleExecutor#0" expanded="false" />
             <element signature="n#!!block;n#runXPathQuery#0;n#RuleExecutor#0" expanded="false" />
             <element signature="n#!!block;n#violatedResults#0;n#RuleExecutor#0" expanded="false" />
@@ -695,7 +930,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2340">
           <caret line="156" column="9" lean-forward="false" selection-start-line="156" selection-start-column="3" selection-end-line="156" selection-end-column="9" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -703,9 +937,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
           <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
-          <folding>
-            <element signature="e#49#88#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -713,7 +944,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -721,9 +951,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="317">
           <caret line="112" column="19" lean-forward="false" selection-start-line="112" selection-start-column="13" selection-end-line="112" selection-end-column="19" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -741,15 +968,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/index.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2340">
-          <caret line="156" column="9" lean-forward="false" selection-start-line="156" selection-start-column="3" selection-end-line="156" selection-end-column="9" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -757,7 +975,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
           <caret line="11" column="2" lean-forward="false" selection-start-line="11" selection-start-column="2" selection-end-line="11" selection-end-column="2" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -765,7 +982,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="570">
           <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -773,36 +989,90 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
           <caret line="15" column="0" lean-forward="true" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/App.js">
+    <entry file="file://$PROJECT_DIR$/src/ui/navBar.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="681">
-          <caret line="88" column="33" lean-forward="false" selection-start-line="88" selection-start-column="33" selection-end-line="88" selection-end-column="33" />
+        <state relative-caret-position="135">
+          <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/utilities.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="570">
+          <caret line="108" column="23" lean-forward="false" selection-start-line="108" selection-start-column="23" selection-end-line="108" selection-end-column="23" />
           <folding>
-            <element signature="e#0#26#0" expanded="true" />
-            <element signature="n#!!block;n#init#0;n#App#0" expanded="false" />
+            <element signature="n#!!block;n#sendToServer#0;n#Utilities#0" expanded="false" />
+            <element signature="n#!!block;n#ResultArraysEqual#0;n#Utilities#0" expanded="false" />
+            <element signature="n#!!block;n#cloneXML#0;n#Utilities#0" expanded="false" />
+            <element signature="n#!!block;n#cloneJSON#0;n#Utilities#0" expanded="false" />
+            <element signature="n#!!block;n#arrayContains#0;n#Utilities#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/headerBar.js">
+    <entry file="file://$PROJECT_DIR$/src/ui/individualRuleList.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="345">
+          <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!block;n#setButtonClass#0;n#IndividualRuleList#0" expanded="false" />
+            <element signature="n#!!block;n#buttonTextRender#0;n#IndividualRuleList#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/codeSnippet.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="19" lean-forward="false" selection-start-line="17" selection-start-column="19" selection-end-line="17" selection-end-column="19" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/individualRule.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="975">
+          <caret line="150" column="39" lean-forward="false" selection-start-line="150" selection-start-column="39" selection-end-line="150" selection-end-column="39" />
+          <folding>
+            <element signature="n#!!block;n#render#0;n#IndividualRule#0" expanded="false" />
+            <element signature="n#!!block;n#attachListener#0;n#IndividualRule#0" expanded="false" />
+            <element signature="e#2466#2508#0" expanded="false" />
+            <element signature="n#!!block;n#tagRender#0;n#IndividualRule#0" expanded="false" />
+            <marker date="1505321956000" expanded="true" signature="473:486" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/index.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="435">
+          <caret line="29" column="0" lean-forward="true" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/tableOfContent.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="561">
+          <caret line="84" column="11" lean-forward="true" selection-start-line="84" selection-start-column="11" selection-end-line="84" selection-end-column="11" />
+          <folding>
+            <element signature="e#137#162#0" expanded="true" />
+            <element signature="n#!!block;n#constructor#0;n#TableOfContent#0" expanded="false" />
+            <element signature="n#!!block;n#createAlphabetIndex#0;n#TableOfContent#0" expanded="false" />
+            <element signature="n#!!block;n#displayTags#0;n#TableOfContent#0" expanded="false" />
+            <element signature="n#!!block;n#displayRules#0;n#TableOfContent#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/core/ruleExecutor.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="855">
-          <caret line="301" column="0" lean-forward="false" selection-start-line="301" selection-start-column="0" selection-end-line="301" selection-end-column="0" />
+        <state relative-caret-position="405">
+          <caret line="30" column="5" lean-forward="true" selection-start-line="30" selection-start-column="5" selection-end-line="30" selection-end-column="5" />
           <folding>
-            <element signature="e#48#79#0" expanded="true" />
-            <element signature="n#!!block;n#attachListener#0;n#RuleExecutor#0" expanded="false" />
             <element signature="n#!!block;n#verifyRules#0;n#RuleExecutor#0" expanded="false" />
             <element signature="n#!!block;n#runXPathQuery#0;n#RuleExecutor#0" expanded="false" />
             <element signature="n#!!block;n#violatedResults#0;n#RuleExecutor#0" expanded="false" />
@@ -812,115 +1082,69 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/navBar.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="17" column="67" lean-forward="false" selection-start-line="17" selection-start-column="67" selection-end-line="17" selection-end-column="67" />
-          <folding>
-            <element signature="e#49#88#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/webSocketManager.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="750">
-          <caret line="52" column="48" lean-forward="false" selection-start-line="52" selection-start-column="48" selection-end-line="52" selection-end-column="48" />
+        <state relative-caret-position="685">
+          <caret line="80" column="109" lean-forward="false" selection-start-line="80" selection-start-column="109" selection-end-line="80" selection-end-column="109" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/hashManager.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="30" column="37" lean-forward="false" selection-start-line="30" selection-start-column="26" selection-end-line="30" selection-end-column="37" />
+        <state relative-caret-position="720">
+          <caret line="79" column="34" lean-forward="false" selection-start-line="79" selection-start-column="34" selection-end-line="79" selection-end-column="34" />
           <folding>
-            <element signature="e#48#73#0" expanded="true" />
             <element signature="n#!!block;n#setupNavigationButtons#0;n#HashManager#0" expanded="false" />
-            <element signature="e#2034#2624#0" expanded="false" />
             <element signature="n#!!block;n#hashManager#0;n#HashManager#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/ruleTable.js">
+    <entry file="file://$PROJECT_DIR$/src/ui/headerBar.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="528">
-          <caret line="62" column="0" lean-forward="false" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
+        <state relative-caret-position="562">
+          <caret line="84" column="55" lean-forward="false" selection-start-line="84" selection-start-column="55" selection-end-line="84" selection-end-column="55" />
           <folding>
-            <element signature="e#48#74#0" expanded="true" />
-            <element signature="e#1001#1027#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/tableOfContent.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="768">
-          <caret line="173" column="0" lean-forward="false" selection-start-line="173" selection-start-column="0" selection-end-line="173" selection-end-column="0" />
-          <folding>
-            <element signature="e#137#162#0" expanded="true" />
-            <element signature="n#!!block;n#constructor#0;n#TableOfContent#0" expanded="false" />
-            <element signature="e#1852#1876#0" expanded="false" />
-            <element signature="n#!!block;n#createAlphabetIndex#0;n#TableOfContent#0" expanded="false" />
-            <element signature="n#!!block;n#displayTableOfContent#0;n#TableOfContent#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/individualRuleList.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="11" column="42" lean-forward="false" selection-start-line="11" selection-start-column="42" selection-end-line="11" selection-end-column="42" />
-          <folding>
-            <element signature="e#48#74#0" expanded="true" />
-            <element signature="n#!!block;n#constructor#0;n#IndividualRuleList#0" expanded="false" />
-            <element signature="n#!!block;n#render#0;n#IndividualRuleList#0" expanded="false" />
-            <element signature="n#!!block;n#setButtonClass#0;n#IndividualRuleList#0" expanded="false" />
-            <element signature="n#!!block;n#listRender#0;n#IndividualRuleList#0" expanded="false" />
-            <element signature="n#!!block;n#buttonTextRender#0;n#IndividualRuleList#0" expanded="false" />
+            <element signature="e#126#146#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ui/rulePanel.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="750">
-          <caret line="145" column="0" lean-forward="false" selection-start-line="145" selection-start-column="0" selection-end-line="145" selection-end-column="0" />
+        <state relative-caret-position="-208">
+          <caret line="10" column="21" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
           <folding>
-            <element signature="e#48#74#0" expanded="true" />
-            <element signature="e#163#194#0" expanded="true" />
-            <element signature="n#!!block;n#render#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!doc" expanded="true" />
+            <element signature="n#!!block;n#attachListener#0;n#RulePanel#0" expanded="false" />
             <element signature="n#!!block;n#tabHeaderRender#0;n#RulePanel#0" expanded="false" />
             <element signature="n#!!block;n#tagRender#0;n#RulePanel#0" expanded="false" />
             <element signature="n#!!block;n#listRender#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!block;n#resetStyling#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!block;n#resetFile#0;n#RulePanel#0" expanded="false" />
+            <element signature="n#!!block;n#displayUpdateForFile#0;n#RulePanel#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/core/utilities.js">
+    <entry file="file://$PROJECT_DIR$/src/ui/ruleTable.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+        <state relative-caret-position="225">
+          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
           <folding>
-            <element signature="n#!!doc;n#Utilities#0" expanded="false" />
-            <element signature="n#!!block;n#sendToServer#0;n#Utilities#0" expanded="false" />
-            <element signature="n#!!block;n#ResultArraysEqual#0;n#Utilities#0" expanded="false" />
-            <element signature="n#!!block;n#cloneXML#0;n#Utilities#0" expanded="false" />
+            <element signature="e#48#74#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/individualRule.js">
+    <entry file="file://$PROJECT_DIR$/src/App.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+        <state relative-caret-position="591">
+          <caret line="88" column="42" lean-forward="true" selection-start-line="88" selection-start-column="42" selection-end-line="88" selection-end-column="42" />
           <folding>
-            <element signature="n#!!block;n#render#0;n#IndividualRule#0" expanded="false" />
-            <element signature="n#!!block;n#displayRule#0;n#IndividualRule#0" expanded="false" />
-            <element signature="n#!!block;n#tagRender#0;n#IndividualRule#0" expanded="false" />
-            <element signature="e#4272#4278#0" expanded="false" />
-            <marker date="1504909594000" expanded="true" signature="430:443" ph="..." />
+            <element signature="e#0#26#0" expanded="true" />
+            <element signature="n#!!block;n#init#0;n#App#0" expanded="false" />
           </folding>
         </state>
       </provider>

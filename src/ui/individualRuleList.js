@@ -17,11 +17,21 @@ class IndividualRuleList extends React.Component {
 
     constructor() {
         super();
+        this.attachListener();
+
         this.state = {};
+    }
+
+    /**
+     * subscribe for events
+     */
+    attachListener() {
+
     }
 
     render() {
         this.ruleI = this.props['ruleI'];
+        this.ws = this.props['ws'];
         return (
             <div>
                 <Button onClick={ () => this.setState({open: !this.state.open})} bsStyle={this.setButtonClass()}
@@ -38,6 +48,10 @@ class IndividualRuleList extends React.Component {
 
     }
 
+    /**
+     * set the class of buttons for styling
+     * @returns {*}
+     */
     setButtonClass() {
         if (this.props['group'] === 'all')
             return "primary";
@@ -50,10 +64,9 @@ class IndividualRuleList extends React.Component {
     /**
      * create a list div node for quantifier and satisfied result
      * @param group
-     * @returns {}
+     * @returns
      */
     listRender(group) {
-
 
         let list = [];
         switch (group) {
@@ -85,11 +98,15 @@ class IndividualRuleList extends React.Component {
         }
 
         return list.map((d) => {
-            return (<div className="partResultDiv">
-                <pre className="link" onClick={Utilities.sendToServer(this.ws, "XML_RESULT", d['xml'])}>
+            return (
+                <div className="partResultDiv" onClick={() => {
+                    Utilities.sendToServer(this.ws, "XML_RESULT", d['xml'])
+                }}>
+                <pre className="link">
                     <div className="content" dangerouslySetInnerHTML={{__html: d['snippet']}}/>
                 </pre>
-            </div>)
+                </div>
+            )
         });
     }
 

@@ -17,6 +17,7 @@ import * as tableOfContent from './ui/tableOfContent';
 import * as ruleTable from './ui/ruleTable';
 import IndividualRule from './ui/individualRule';
 import NavBar from './ui/navBar';
+import HeaderBar from './ui/headerBar';
 
 class App {
 
@@ -76,8 +77,13 @@ class App {
         // main div - all div are within this div
         const main = this.thisNode.append('div');
 
-        // create tagBar
-
+        main.append('div')
+            .classed('main container hidden',true)
+            .attr('id','headerBar');
+        ReactDOM.render(
+            React.createElement(HeaderBar),
+            document.getElementById('headerBar')
+        );
         const tableOfContentDiv = main.append('div')
             .classed('main container', true)
             .attr('id', 'tableOfContent');

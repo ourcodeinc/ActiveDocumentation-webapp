@@ -11,6 +11,7 @@ import PubSub from 'pubsub-js';
 
 import IndividualRuleList from './individualRuleList';
 import {FormControl, Label} from 'react-bootstrap';
+import Utilities from '../core/utilities';
 
 class IndividualRule extends React.Component {
 
@@ -27,23 +28,20 @@ class IndividualRule extends React.Component {
     }
 
     render() {
-        // this.ruleI = this.props['ruleData'];
         return (
             <div>
                 <div className="tableRow">
                     <div className="tableCell labelCell"><h4>Rule Description</h4></div>
                     <div className="tableCell infoCell">
                         <FormControl id="indi_desc_textarea" componentClass="textarea" placeholder="Description"
-                                     onChange={() => {
-                                     } }/>
+                                     onBlur={() => this.updateRules()}/>
                     </div>
                 </div>
                 <div className="tableRow">
                     <div className="tableCell labelCell"><h4>Rule Detail</h4></div>
                     <div className="tableCell infoCell">
                         <FormControl id="indi_detail_textarea" componentClass="textarea" placeholder="Detail"
-                                     onChange={() => {
-                                     } }/>
+                                     onBlur={() => this.updateRules()}/>
                     </div>
                 </div>
                 <div className="tableRow">
@@ -66,13 +64,17 @@ class IndividualRule extends React.Component {
     }
 
     /**
-     * Attach listeners
+     * subscribe for events
      */
     attachListener() {
+        // [ws]
+        PubSub.subscribe('NEW_WS', (msg, data) => {
+            this.ws = data[0];
+        });
+
         // [hash value]
         PubSub.subscribe('HASH', (msg, data) => {
             if (data[0] === 'rule') {
-
                 this.ruleI = this.rules.filter((d) => d.index === +data[1])[0];
                 this.displayRule();
                 d3.select('#individualRule').classed('hidden', false);
@@ -80,6 +82,13 @@ class IndividualRule extends React.Component {
             else {
                 d3.select('#individualRule').classed('hidden', true);
             }
+        });
+
+        // [ruleIndex, rule]
+        PubSub.subscribe('UPDATE_RULE', (msg, data) => {
+            let oldRule = this.rules.filter((d) => d['index'] === +data[0])[0];
+            oldRule['ruleDescription'] = data[1]['ruleDescription'];
+            oldRule['detail'] = data[1]['detail'];
         });
 
         // called in RuleExecutor.verifyRules() and RuleExecutor.checkRules()
@@ -98,22 +107,22 @@ class IndividualRule extends React.Component {
      */
     displayRule() {
 
-        d3.select('#indi_desc_textarea').text(this.ruleI['ruleDescription']);
-        d3.select('#indi_detail_textarea').text(this.ruleI['detail']);
+        document.getElementById('indi_desc_textarea').value = this.ruleI['ruleDescription'];
+        document.getElementById('indi_detail_textarea').value = this.ruleI['detail'];
 
         ReactDOM.render(
             (<div>{this.tagRender()}</div>),
             document.getElementById('indi_tags_div'));
 
         ReactDOM.render(
-            (<IndividualRuleList ruleI={this.ruleI} group="all"/>),
+            (<IndividualRuleList ruleI={this.ruleI} ws={this.ws} group="all"/>),
             document.getElementById("indi_all_div"));
 
         ReactDOM.render(
-            (<IndividualRuleList ruleI={this.ruleI} group="satisfied"/>),
+            (<IndividualRuleList ruleI={this.ruleI} ws={this.ws} group="satisfied"/>),
             document.getElementById("indi_satisfied_div"));
         ReactDOM.render(
-            (<IndividualRuleList ruleI={this.ruleI} group="violated"/>),
+            (<IndividualRuleList ruleI={this.ruleI} ws={this.ws} group="violated"/>),
             document.getElementById("indi_violated_div"));
     };
 
@@ -130,28 +139,21 @@ class IndividualRule extends React.Component {
         });
     }
 
-    // /**
-    //  * update the rule and send to server
-    //  */
-    // updateRules = function () {
-    //
-    //     for (let i = 0; i < this.rules.length; i++) {
-    //         if (this.rules[i]['index'] === this.ruleI['index']) {
-    //
-    //             let newObj = this.cloneJSON(this.rules[i]);
-    //             delete newObj['xPathQueryResult'];
-    //
-    //             this.rules[i].ruleDescription = document.getElementById(`ruleDescription`).value;
-    //             this.rules[i].detail = document.getElementById(`ruleDetail`).value;
-    //             Utilities.sendToServer(this.ws, "MODIFIED_RULE", newObj);
-    //
-    //             return;
-    //         }
-    //     }
-    //
-    //     console.log('failed');
-    //
-    // };
+    /**
+     * update the rule and send to server
+     */
+    updateRules = function () {
+
+        let newObj = Utilities.cloneJSON(this.ruleI);
+        delete newObj['xPathQueryResult'];
+
+        newObj['ruleDescription'] = document.getElementById(`indi_desc_textarea`).value;
+        newObj['detail'] = document.getElementById(`indi_detail_textarea`).value;
+
+        if (newObj['ruleDescription'] !== this.ruleI['ruleDescription'] || newObj['detail'] !== this.ruleI['detail'])
+            Utilities.sendToServer(this.ws, "MODIFIED_RULE", newObj);
+
+    };
 
 
 }

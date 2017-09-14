@@ -25,7 +25,7 @@ class RuleExecutor {
         // [xml, ruleTable, message.data -> filePath]
         PubSub.subscribe('CHECK_RULES_FOR_FILE', (msg, data) => {
             let ruleTable = this.checkRules(data[0], data[1], data[2]);
-            PubSub.publish('DISPLAY_UPDATE_RULES', [ruleTable, data[2]]);
+            PubSub.publish('DISPLAY_UPDATE_RULES_FOR_FILE', [ruleTable, data[2]]);
         });
 
     }
@@ -214,11 +214,6 @@ class RuleExecutor {
             ruleResultI['allChanged'] = ((prevSatisfied + prevViolated) < (ruleResultI['violated'] + ruleResultI['satisfied']) ? 'greater' :
                 (prevSatisfied + prevViolated) > (ruleResultI['violated'] + ruleResultI['satisfied']) ? 'smaller' : 'none');
 
-            // if (ruleResultI['changed']) {
-            //     console.log("changed", ruleTable[i])
-            // }
-            //
-            // console.log("========");
         }
         return ruleTable;
     }

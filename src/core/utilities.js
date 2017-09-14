@@ -34,7 +34,6 @@ class Utilities {
                     break;
             }
 
-            // console.log(messageJson);
             ws.send(JSON.stringify(messageJson));
         }
     }
@@ -90,6 +89,37 @@ class Utilities {
 
         return newDocument;
     }
+
+    /**
+     * deep copy of a JSON variable
+     * @param json
+     * @returns
+     */
+    static cloneJSON(json) {
+
+    let newObj = {};
+    for (let ky in json)
+        newObj[ky] = json[ky];
+
+    return newObj;
+}
+
+    /**
+     * check whether one arrays contains all elements of the other array
+     * @param container
+     * @param arr
+     * @returns {boolean}
+     */
+    static arrayContains(container, arr) {
+    let arrContainer = container.slice(0);
+
+    for (let i = arr.length; i--;) {
+        if (arrContainer.indexOf(arr[i]) === -1)
+            return false;
+        arrContainer.splice(arrContainer.indexOf(arr[i]), 1)
+    }
+    return true;
+}
 
 }
 

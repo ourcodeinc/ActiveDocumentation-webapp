@@ -15,7 +15,7 @@ class WebSocketManager {
         let ruleTable = []; // retrieved from ruleJson.txt
         let tagTable = []; // retrieved from tagJson.txt
         let ws = new WebSocket("ws://localhost:8887");
-        // let filtered;
+        let filtered;
 
         PubSub.publish('NEW_WS', [ws]);
 
@@ -54,48 +54,42 @@ class WebSocketManager {
                     PubSub.publish('VERIFY_RULES', [xml, ruleTable, tagTable]);
                     break;
 
-                // // followed by CHECK_RULES_FOR_FILE
-                // case "UPDATE_XML":
-                //     filtered = xml.filter((d) => d.filePath === message.data['filePath']);
-                //     if (filtered.length === 0)
-                //         xml.push({'filePath': message.data['filePath'], 'xml': message.data['xml']});
-                //     else
-                //         filtered[0].xml = message.data['xml'];
-                //     break;
-                //
-                // // when the code changes, after UPDATE_XML
-                // case "CHECK_RULES_FOR_FILE":
-                //     // received by checkRules()
-                //     PubSub.publish('CHECK_RULES_FOR_FILE', [xml, ruleTable, message.data]);
-                //     //window.location.hash = "#/codeChanged";
-                //     PubSub.publish('HASH', ['codeChanged']);
-                //     break;
-                //
-                // // tagName and tag
-                // case "UPDATE_TAG":
-                //     let newTag = JSON.parse(message.data);
-                //     filtered = tagTable.filter((d) => d.tagName === newTag['tagName']);
-                //     if (filtered.length === 0)
-                //         tagTable.push(newTag);
-                //     else
-                //         filtered[0].detail = newTag['detail'];
-                //
-                //     PubSub.publish('UPDATE_TAG', [tagTable, newTag]);
-                //     //window.location.hash = `#/tag/${newTag['tagName']}`;
-                //     PubSub.publish('HASH', ['tag', newTag['tagName']]);
-                //     break;
-                //
-                // // ruleIndex and rule
-                // case "UPDATE_RULE":
-                //     let newRule = JSON.parse(message.data['rule']);
-                //     filtered = ruleTable.filter((d) => d.index === +message.data['ruleIndex']);
-                //     if (filtered.length === 0)
-                //         ruleTable.push(newRule);
-                //     else
-                //         filtered[0] = newRule;
-                //
-                //     PubSub.publish('UPDATE_RULE', [ruleTable, newRule]);
-                //     break;
+                // followed by CHECK_RULES_FOR_FILE
+                case "UPDATE_XML":
+                    filtered = xml.filter((d) => d.filePath === message.data['filePath']);
+                    if (filtered.length === 0)
+                        xml.push({'filePath': message.data['filePath'], 'xml': message.data['xml']});
+                    else
+                        filtered[0].xml = message.data['xml'];
+                    break;
+
+                // when the code changes, after UPDATE_XML
+                case "CHECK_RULES_FOR_FILE":
+                    let filePath = message.data;
+                    // received by checkRules()
+                    PubSub.publish('CHECK_RULES_FOR_FILE', [xml, ruleTable, filePath]);
+                    PubSub.publish('UPDATE_HASH', ['codeChanged']);
+                    break;
+
+                // tagName and tag
+                case "UPDATE_TAG":
+                    let newTag = JSON.parse(message.data);
+                    filtered = tagTable.filter((d) => d.tagName === newTag['tagName']);
+                    if (filtered.length === 0)
+                        tagTable.push(newTag);
+                    else
+                        tagTable.filter((d) => d.tagName === newTag['tagName'])[0].detail = newTag['detail'];
+
+                    PubSub.publish('UPDATE_TAG', [tagTable, newTag]);
+                    PubSub.publish('UPDATE_HASH', ['tag', newTag['tagName']]);
+                    break;
+
+                // Followed after sending MODIFIED_RULE
+                // ruleIndex and rule
+                case "UPDATE_RULE":
+                    let newRule = JSON.parse(message.data['rule']);
+                    PubSub.publish('UPDATE_RULE', [message.data['ruleIndex'], newRule]);
+                    break;
 
                 case "ENTER":
                 case "LEFT":

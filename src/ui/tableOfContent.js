@@ -23,8 +23,7 @@ class TableOfContent {
 
     constructor(parent) {
         this.thisNode = d3.select(parent)
-            .append('div')
-            .classed('container', true);
+            .append('div');
 
         // add elements
         this.thisNode.append('div')
@@ -58,7 +57,7 @@ class TableOfContent {
     }
 
     /**
-     * Attach listeners
+     * subscribe for events
      */
     attachListener() {
 
@@ -73,23 +72,24 @@ class TableOfContent {
         PubSub.subscribe('DISPLAY_RULES', (msg, data) => {
             this.rules = data[0];
             this.tags = data[1];
-            this.displayTableOfContent();
+            this.displayTags();
+            this.displayRules();
         });
 
-        // // [tagTable, newTag]
-        // PubSub.subscribe('UPDATE_TAG', (msg, data) => {
-        //     this.tags = data[0];            // reset the table
-        //     this.clearTableOfContent();
-        //     this.displayTableOfContent();
-        // });
-        //
-        // // [ruleTable, newRule]
-        // PubSub.subscribe('UPDATE_RULE', (msg, data) => {
-        //     this.rules = data[0];
-        //     // reset the table
-        //     this.clearTableOfContent();
-        //     this.displayTableOfContent();
-        // });
+        // [ruleIndex, rule]
+        PubSub.subscribe('UPDATE_RULE', (msg, data) => {
+            let oldRule = this.rules.filter((d) => d['index'] === +data[0])[0];
+            oldRule['ruleDescription'] = data[1]['ruleDescription'];
+            oldRule['detail'] = data[1]['detail'];
+            this.displayRules();
+        });
+
+        // [tagTable, newTag]
+        PubSub.subscribe('UPDATE_TAG', (msg, data) => {
+            this.tags = data[0];
+            this.displayTags();
+        });
+
 
     }
 
@@ -135,11 +135,11 @@ class TableOfContent {
             });
     };
 
-    /**
-     * display the list of rules and list aof tags
-     */
-    displayTableOfContent() {
 
+    /**
+     * display tags
+     */
+    displayTags() {
         // tag list
         let tagList = this.tags.map(function (d) {
             return d['tagName']
@@ -150,18 +150,32 @@ class TableOfContent {
         });
 
 
-        this.tags_list.selectAll("li")
-            .data(uniqueTags)
-            .enter()
+        let tagItems = this.tags_list.selectAll("li")
+            .data(uniqueTags);
+
+        tagItems.enter()
             .append('li')
             .html((d) => d)
             .on("click", (d) => {
                 PubSub.publish('UPDATE_HASH', ['tag', d]);
             });
 
-        this.rules_list.selectAll("a")
-            .data(this.rules)
-            .enter()
+        tagItems
+            .html((d) => d)
+            .on("click", (d) => {
+                PubSub.publish('UPDATE_HASH', ['tag', d]);
+            });
+    }
+
+
+    /**
+     * display rules
+     */
+    displayRules() {
+        let ruleItems = this.rules_list.selectAll("a")
+            .data(this.rules);
+
+        ruleItems.enter()
             .append('a')
             .classed('list-group-item', true)
             .html((d) => d['ruleDescription'])
@@ -169,7 +183,13 @@ class TableOfContent {
                 PubSub.publish('UPDATE_HASH', ['rule', d.index]);
             });
 
-    };
+        ruleItems
+            .html((d) => d['ruleDescription'])
+            .on("click", (d) => {
+                PubSub.publish('UPDATE_HASH', ['rule', d.index]);
+            });
+
+    }
 
 
 }

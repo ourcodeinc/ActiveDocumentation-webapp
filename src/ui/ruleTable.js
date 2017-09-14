@@ -13,26 +13,27 @@ import RulePanel from './rulePanel';
 
 class RuleTable {
 
-    thisNode;
-    rules;
-
-
     constructor(parent) {
         this.thisNode = d3.select(parent)
-            .append('div')
-            .classed('container', true); // rule-table
+            .append('div'); // rule-table
 
         this.attachListener();
     }
 
     /**
-     * Attach listeners
+     * subscribe for events
      */
     attachListener() {
+        // [ws]
+        PubSub.subscribe('NEW_WS', (msg, data) => {
+            this.ws = data[0];
+        });
 
         // [hash, value]
         PubSub.subscribe('HASH', (msg, data) => {
-            d3.select(this.thisNode.node().parentNode).classed('hidden', data[0] !== 'rules');
+            d3.select(this.thisNode.node().parentNode).classed('hidden', () => {
+                return (['rules', 'tag', 'codeChanged'].indexOf(data[0]) === -1 )
+            });
         });
 
         // called in RuleExecutor.verifyRules() and RuleExecutor.checkRules()
@@ -43,20 +44,11 @@ class RuleTable {
             this.displayRules();
         });
 
-        // // [ruleTable, newRule]
-        // PubSub.subscribe('UPDATE_RULE', (msg, data) => {
-        //     this.rules = data[0];
-        //     // reset the table
-        //     this.clearRuleTable();
-        //     this.displayRules();
-        // });
-        //
-        // // [ruleTable, filePath]
-        // PubSub.subscribe('DISPLAY_UPDATE_RULES', (msg, data) => {
-        //     this.rules = data[0];
-        //     // reset the table
-        //     this.updateDisplayRules(data[1]);
-        // });
+
+        // [ruleTable, filePath]
+        PubSub.subscribe('DISPLAY_UPDATE_RULES_FOR_FILE', (msg, data) => {
+            this.rules = data[0];
+        });
 
     }
 
@@ -71,11 +63,20 @@ class RuleTable {
                 .classed('largePaddedDiv ruleContainer', true);
 
             ReactDOM.render(
-                <RulePanel ruleData={this.rules[i]}/>,
+                <RulePanel ruleData={this.rules[i]} ws={this.ws}/>,
                 ruleTableDiv.node()
             );
         }
     };
+
+    // /**
+    //  * remove all rulePanels
+    //  */
+    // clearAllRulePanels() {
+    //     this.thisNode
+    //         .selectAll('div')
+    //         .remove();
+    // }
 
 }
 
