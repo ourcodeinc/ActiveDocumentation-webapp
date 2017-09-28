@@ -14,7 +14,7 @@ import * as hashManager from './hashManager';
 import * as ruleExecutor from './core/ruleExecutor';
 
 import * as tableOfContent from './ui/tableOfContent';
-import * as ruleTable from './ui/ruleTable';
+import RuleTable from './ui/ruleTable';
 import IndividualRule from './ui/individualRule';
 import NavBar from './ui/navBar';
 import HeaderBar from './ui/headerBar';
@@ -89,11 +89,13 @@ class App {
             .attr('id', 'tableOfContent');
         tableOfContent.create(tableOfContentDiv.node());
 
-        const ruleTableDiv = main.append('div')
+        main.append('div')
             .classed('main container hidden', true)
             .attr('id', 'ruleResults');
-        ruleTable.create(ruleTableDiv.node());
-
+        ReactDOM.render(
+            React.createElement(RuleTable),
+            document.getElementById('ruleResults')
+        );
 
         main.append('nav')
             .classed('main container hidden',true)

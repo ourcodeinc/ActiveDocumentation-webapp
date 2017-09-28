@@ -89,6 +89,7 @@ class WebSocketManager {
                 case "UPDATE_RULE":
                     let newRule = JSON.parse(message.data['rule']);
                     PubSub.publish('UPDATE_RULE', [message.data['ruleIndex'], newRule]);
+                    PubSub.publish('UPDATE_HASH', ['rule', message.data['ruleIndex']]);
                     break;
 
                 case "ENTER":

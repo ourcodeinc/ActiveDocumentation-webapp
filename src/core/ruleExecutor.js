@@ -47,7 +47,7 @@ class RuleExecutor {
 
 
     /**
-     * runs the XPath query
+     * runs the XPath query and compare results
      * @param xmlFile
      * @param ruleI
      */
@@ -109,6 +109,7 @@ class RuleExecutor {
             index += 1;
         }
 
+        // compare results
         let violatedResult = this.violatedResults(quantifierResult, satisfiedResult);
 
         let resultData = {
@@ -136,36 +137,6 @@ class RuleExecutor {
         return ruleI;
 
     }
-
-    /**
-     * compare the quantifier and the result
-     * @param quantifierResult
-     * @param satisfiedResult
-     */
-    violatedResults(quantifierResult, satisfiedResult) {
-
-        let matches = [];
-        let mismatches = [];
-
-        let sliceArr = satisfiedResult.slice(0);
-        for (let i = 0; i < quantifierResult.length; i++) {
-            let found = false;
-            for (let j = 0; j < sliceArr.length; j++) {
-                if (quantifierResult[i]['snippet'] === sliceArr[j]['snippet']) {
-                    matches.push(quantifierResult[i]);
-                    sliceArr.splice(j, 1);
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                mismatches.push(quantifierResult[i]);
-            }
-        }
-
-        return mismatches;
-    }
-
 
     /**
      * re-run the xpath queries and detect changes for one file.
@@ -216,6 +187,36 @@ class RuleExecutor {
 
         }
         return ruleTable;
+    }
+
+
+    /**
+     * compare the quantifier and the result
+     * @param quantifierResult
+     * @param satisfiedResult
+     */
+    violatedResults(quantifierResult, satisfiedResult) {
+
+        let matches = [];
+        let mismatches = [];
+
+        let sliceArr = satisfiedResult.slice(0);
+        for (let i = 0; i < quantifierResult.length; i++) {
+            let found = false;
+            for (let j = 0; j < sliceArr.length; j++) {
+                if (quantifierResult[i]['snippet'] === sliceArr[j]['snippet']) {
+                    matches.push(quantifierResult[i]);
+                    sliceArr.splice(j, 1);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                mismatches.push(quantifierResult[i]);
+            }
+        }
+
+        return mismatches;
     }
 
 
