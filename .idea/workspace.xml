@@ -3,6 +3,13 @@
   <component name="ChangeListManager">
     <list default="true" id="a45deb3d-4627-4770-b515-a28ce9b69c87" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/core/ruleExecutor.js" afterPath="$PROJECT_DIR$/src/core/ruleExecutor.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ui/headerBar.js" afterPath="$PROJECT_DIR$/src/ui/headerBar.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ui/individualRule.js" afterPath="$PROJECT_DIR$/src/ui/individualRule.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ui/rulePanel.js" afterPath="$PROJECT_DIR$/src/ui/rulePanel.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ui/ruleTable.js" afterPath="$PROJECT_DIR$/src/ui/ruleTable.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ui/tableOfContent.js" afterPath="$PROJECT_DIR$/src/ui/tableOfContent.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/webSocketManager.js" afterPath="$PROJECT_DIR$/src/webSocketManager.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -16,34 +23,25 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.31839725">
+    <splitter split-orientation="horizontal" split-proportion="0.5096941">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="ruleExecutor.js" pinned="false" current-in-tab="false">
+          <file leaf-file-name="ruleExecutor.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/core/ruleExecutor.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="540">
-                  <caret line="189" column="5" lean-forward="false" selection-start-line="189" selection-start-column="5" selection-end-line="189" selection-end-column="5" />
+                <state relative-caret-position="742">
+                  <caret line="201" column="25" lean-forward="false" selection-start-line="201" selection-start-column="25" selection-end-line="201" selection-end-column="25" />
                   <folding>
+                    <element signature="e#48#79#0" expanded="true" />
                     <element signature="n#!!block;n#attachListener#0;n#RuleExecutor#0" expanded="false" />
-                    <element signature="n#!!block;n#verifyRules#0;n#RuleExecutor#0" expanded="false" />
+                    <element signature="n#!!block;n#checkRulesForAll#0;n#RuleExecutor#0" expanded="false" />
+                    <element signature="n#!!block;n#checkRulesForFile#0;n#RuleExecutor#0" expanded="false" />
+                    <element signature="n#!!block;n#runRulesByTypes#0;n#RuleExecutor#0" expanded="false" />
+                    <element signature="n#!!block;n#runXPathQueryWithin#0;n#RuleExecutor#0" expanded="false" />
+                    <element signature="n#!!block;n#runXpathQueryBetween#0;n#RuleExecutor#0" expanded="false" />
                     <element signature="n#!!block;n#runXPathQuery#0;n#RuleExecutor#0" expanded="false" />
-                    <element signature="n#!!block;n#checkRules#0;n#RuleExecutor#0" expanded="false" />
                     <element signature="n#!!block;n#violatedResults#0;n#RuleExecutor#0" expanded="false" />
                     <element signature="n#!!block;n#getXmlData#0;n#RuleExecutor#0" expanded="false" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="App.js" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/src/App.js">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="404">
-                  <caret line="101" column="8" lean-forward="true" selection-start-line="101" selection-start-column="8" selection-end-line="101" selection-end-column="8" />
-                  <folding>
-                    <element signature="e#0#26#0" expanded="true" />
-                    <element signature="n#!!block;n#init#0;n#App#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -52,116 +50,52 @@
         </leaf>
       </split-first>
       <split-second>
-        <splitter split-orientation="horizontal" split-proportion="0.47534767">
-          <split-first>
-            <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-              <file leaf-file-name="webSocketManager.js" pinned="false" current-in-tab="false">
-                <entry file="file://$PROJECT_DIR$/src/webSocketManager.js">
-                  <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="1425">
-                      <caret line="97" column="13" lean-forward="false" selection-start-line="97" selection-start-column="13" selection-end-line="97" selection-end-column="13" />
-                      <folding />
-                    </state>
-                  </provider>
-                </entry>
-              </file>
-              <file leaf-file-name="hashManager.js" pinned="false" current-in-tab="false">
-                <entry file="file://$PROJECT_DIR$/src/hashManager.js">
-                  <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="720">
-                      <caret line="79" column="34" lean-forward="false" selection-start-line="79" selection-start-column="34" selection-end-line="79" selection-end-column="34" />
-                      <folding>
-                        <element signature="n#!!block;n#setupNavigationButtons#0;n#HashManager#0" expanded="false" />
-                        <element signature="n#!!block;n#hashManager#0;n#HashManager#0" expanded="false" />
-                      </folding>
-                    </state>
-                  </provider>
-                </entry>
-              </file>
-              <file leaf-file-name="rulePanel.js" pinned="false" current-in-tab="false">
-                <entry file="file://$PROJECT_DIR$/src/ui/rulePanel.js">
-                  <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="345">
-                      <caret line="23" column="18" lean-forward="false" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="18" />
-                      <folding>
-                        <element signature="n#!!doc" expanded="true" />
-                        <element signature="e#48#74#0" expanded="true" />
-                        <element signature="e#163#194#0" expanded="true" />
-                        <element signature="n#!!block;n#componentWillReceiveProps#0;n#RulePanel#0" expanded="false" />
-                        <element signature="n#!!block;n#tabHeaderRender#0;n#RulePanel#0" expanded="false" />
-                        <element signature="n#!!block;n#tagRender#0;n#RulePanel#0" expanded="false" />
-                        <element signature="n#!!block;n#listRender#0;n#RulePanel#0" expanded="false" />
-                        <element signature="n#!!block;n#updateRules#0;n#RulePanel#0" expanded="false" />
-                      </folding>
-                    </state>
-                  </provider>
-                </entry>
-              </file>
-              <file leaf-file-name="ruleTable.js" pinned="false" current-in-tab="true">
-                <entry file="file://$PROJECT_DIR$/src/ui/ruleTable.js">
-                  <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="360">
-                      <caret line="31" column="15" lean-forward="false" selection-start-line="31" selection-start-column="15" selection-end-line="31" selection-end-column="15" />
-                      <folding />
-                    </state>
-                  </provider>
-                </entry>
-              </file>
-            </leaf>
-          </split-first>
-          <split-second>
-            <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-              <file leaf-file-name="utilities.js" pinned="false" current-in-tab="false">
-                <entry file="file://$PROJECT_DIR$/src/core/utilities.js">
-                  <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="0">
-                      <caret line="74" column="17" lean-forward="false" selection-start-line="71" selection-start-column="0" selection-end-line="74" selection-end-column="17" />
-                      <folding>
-                        <element signature="n#!!block;n#ResultArraysEqual#0;n#Utilities#0" expanded="false" />
-                        <element signature="n#!!block;n#cloneXML#0;n#Utilities#0" expanded="false" />
-                        <element signature="n#!!block;n#cloneJSON#0;n#Utilities#0" expanded="false" />
-                        <element signature="n#!!block;n#arrayContains#0;n#Utilities#0" expanded="false" />
-                      </folding>
-                    </state>
-                  </provider>
-                </entry>
-              </file>
-              <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
-                <entry file="file://$PROJECT_DIR$/package.json">
-                  <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="195">
-                      <caret line="13" column="3" lean-forward="false" selection-start-line="4" selection-start-column="2" selection-end-line="13" selection-end-column="3" />
-                      <folding />
-                    </state>
-                  </provider>
-                </entry>
-              </file>
-              <file leaf-file-name="index.js" pinned="false" current-in-tab="true">
-                <entry file="file://$PROJECT_DIR$/src/index.js">
-                  <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="15">
-                      <caret line="1" column="24" lean-forward="false" selection-start-line="1" selection-start-column="24" selection-end-line="1" selection-end-column="24" />
-                      <folding />
-                    </state>
-                  </provider>
-                </entry>
-              </file>
-              <file leaf-file-name="individualRuleList.js" pinned="false" current-in-tab="false">
-                <entry file="file://$PROJECT_DIR$/src/ui/individualRuleList.js">
-                  <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="75">
-                      <caret line="8" column="28" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="28" />
-                      <folding>
-                        <element signature="n#!!block;n#setButtonClass#0;n#IndividualRuleList#0" expanded="false" />
-                        <element signature="n#!!block;n#buttonTextRender#0;n#IndividualRuleList#0" expanded="false" />
-                      </folding>
-                    </state>
-                  </provider>
-                </entry>
-              </file>
-            </leaf>
-          </split-second>
-        </splitter>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file leaf-file-name="individualRule.js" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/src/ui/individualRule.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="810">
+                  <caret line="136" column="56" lean-forward="false" selection-start-line="136" selection-start-column="56" selection-end-line="136" selection-end-column="56" />
+                  <folding>
+                    <marker date="1506958074000" expanded="true" signature="473:486" ph="..." />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="webSocketManager.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/webSocketManager.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="73">
+                  <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="headerBar.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/ui/headerBar.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="930">
+                  <caret line="105" column="11" lean-forward="true" selection-start-line="105" selection-start-column="11" selection-end-line="105" selection-end-column="11" />
+                  <folding>
+                    <element signature="e#1497#2614#0" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="ruleTable.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/ui/ruleTable.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="900">
+                  <caret line="73" column="14" lean-forward="false" selection-start-line="73" selection-start-column="8" selection-end-line="73" selection-end-column="14" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
       </split-second>
     </splitter>
   </component>
@@ -174,9 +108,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>ruleResults</find>
-      <find>rule-table</find>
-      <find>tagInf</find>
       <find>tagInfo</find>
       <find>RT</find>
       <find>loca</find>
@@ -204,6 +135,9 @@
       <find>this.state</find>
       <find>this.setState</find>
       <find>this.ruleI</find>
+      <find>PubSub</find>
+      <find>publish</find>
+      <find>ruleTable[i]</find>
     </findStrings>
     <replaceStrings>
       <replace>this.filtered</replace>
@@ -213,10 +147,10 @@
       <replace>this.ruleI['quantifierTitle']</replace>
       <replace>this.thisNode</replace>
       <replace>this.ruleI['index']</replace>
-      <replace>ruleI</replace>
       <replace>this.ruleI</replace>
       <replace>indi_all_div</replace>
       <replace>&quot;forFile hidden&quot;</replace>
+      <replace>ruleI</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -239,12 +173,13 @@
         <option value="$PROJECT_DIR$/src/ui/tableOfContent.js" />
         <option value="$PROJECT_DIR$/src/index.css" />
         <option value="$PROJECT_DIR$/src/hashManager.js" />
-        <option value="$PROJECT_DIR$/src/ui/headerBar.js" />
         <option value="$PROJECT_DIR$/src/App.js" />
+        <option value="$PROJECT_DIR$/package.json" />
+        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/ui/ruleTable.js" />
         <option value="$PROJECT_DIR$/src/webSocketManager.js" />
-        <option value="$PROJECT_DIR$/package.json" />
         <option value="$PROJECT_DIR$/src/ui/rulePanel.js" />
+        <option value="$PROJECT_DIR$/src/ui/headerBar.js" />
         <option value="$PROJECT_DIR$/src/core/ruleExecutor.js" />
       </list>
     </option>
@@ -300,6 +235,12 @@
               <item name="active-doc-client" type="b2602c69:ProjectViewProjectNode" />
               <item name="active-doc-client" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="active-doc-client" type="b2602c69:ProjectViewProjectNode" />
+              <item name="active-doc-client" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="active-doc-client" type="b2602c69:ProjectViewProjectNode" />
@@ -450,7 +391,7 @@
       <workItem from="1505853211963" duration="88000" />
       <workItem from="1506088197622" duration="7986000" />
       <workItem from="1506539995672" duration="2682000" />
-      <workItem from="1506566657060" duration="1717000" />
+      <workItem from="1506566657060" duration="21248000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <created>1504909962045</created>
@@ -463,7 +404,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="110417000" />
+    <option name="totallyTimeSpent" value="129948000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -476,16 +417,18 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1680" y="-367" width="2560" height="1417" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32981133" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Debug Logs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.089534886" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.08586057" sideWeight="0.38833746" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17776097" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.08586057" sideWeight="0.3857791" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298969" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Execute Anonymous" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3903177" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.08586057" sideWeight="0.6116625" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3903177" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.08586057" sideWeight="0.61422086" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980332" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13745569" sideWeight="0.49266863" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -496,7 +439,6 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32981133" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
@@ -532,40 +474,17 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="9" />
+      <option name="time" value="12" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/ui/tableOfContent.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="12" column="22" lean-forward="true" selection-start-line="12" selection-start-column="22" selection-end-line="12" selection-end-column="22" />
-          <folding>
-            <element signature="e#137#162#0" expanded="false" />
-            <element signature="n#!!block;n#constructor#0;n#TableOfContent#0" expanded="false" />
-            <element signature="n#!!block;n#createAlphabetIndex#0;n#TableOfContent#0" expanded="false" />
-            <element signature="n#!!block;n#displayTags#0;n#TableOfContent#0" expanded="false" />
-            <element signature="n#!!block;n#displayRules#0;n#TableOfContent#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/webSocketManager.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1005">
-          <caret line="69" column="56" lean-forward="false" selection-start-line="69" selection-start-column="36" selection-end-line="69" selection-end-column="56" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/hashManager.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
           <caret line="31" column="57" lean-forward="true" selection-start-line="31" selection-start-column="12" selection-end-line="31" selection-end-column="57" />
           <folding>
-            <element signature="n#!!block;n#setupNavigationButtons#0;n#HashManager#0" expanded="false" />
-            <element signature="n#!!block;n#hashManager#0;n#HashManager#0" expanded="false" />
+            <element signature="e#48#73#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -583,10 +502,14 @@
         <state relative-caret-position="405">
           <caret line="30" column="5" lean-forward="true" selection-start-line="30" selection-start-column="5" selection-end-line="30" selection-end-column="5" />
           <folding>
+            <element signature="e#48#79#0" expanded="true" />
             <element signature="n#!!block;n#attachListener#0;n#RuleExecutor#0" expanded="false" />
-            <element signature="n#!!block;n#verifyRules#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#checkRulesForAll#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#checkRulesForFile#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#runRulesByTypes#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#runXPathQueryWithin#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#runXpathQueryBetween#0;n#RuleExecutor#0" expanded="false" />
             <element signature="n#!!block;n#runXPathQuery#0;n#RuleExecutor#0" expanded="false" />
-            <element signature="n#!!block;n#checkRules#0;n#RuleExecutor#0" expanded="false" />
             <element signature="n#!!block;n#violatedResults#0;n#RuleExecutor#0" expanded="false" />
             <element signature="n#!!block;n#getXmlData#0;n#RuleExecutor#0" expanded="false" />
           </folding>
@@ -598,7 +521,7 @@
         <state relative-caret-position="150">
           <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
           <folding>
-            <marker date="1505321956000" expanded="true" signature="473:486" ph="..." />
+            <marker date="1506958074000" expanded="true" signature="473:486" ph="..." />
           </folding>
         </state>
       </provider>
@@ -623,7 +546,6 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#48#74#0" expanded="true" />
-            <element signature="e#163#194#0" expanded="true" />
             <element signature="n#!!block;n#componentWillReceiveProps#0;n#RulePanel#0" expanded="false" />
             <element signature="n#!!block;n#tabHeaderRender#0;n#RulePanel#0" expanded="false" />
             <element signature="n#!!block;n#tagRender#0;n#RulePanel#0" expanded="false" />
@@ -671,7 +593,7 @@
         <state relative-caret-position="825">
           <caret line="88" column="33" lean-forward="false" selection-start-line="88" selection-start-column="33" selection-end-line="88" selection-end-column="33" />
           <folding>
-            <element signature="e#0#26#0" expanded="true" />
+            <element signature="e#0#26#0" expanded="false" />
             <element signature="n#!!block;n#init#0;n#App#0" expanded="false" />
           </folding>
         </state>
@@ -690,10 +612,14 @@
         <state relative-caret-position="855">
           <caret line="301" column="0" lean-forward="false" selection-start-line="301" selection-start-column="0" selection-end-line="301" selection-end-column="0" />
           <folding>
+            <element signature="e#48#79#0" expanded="true" />
             <element signature="n#!!block;n#attachListener#0;n#RuleExecutor#0" expanded="false" />
-            <element signature="n#!!block;n#verifyRules#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#checkRulesForAll#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#checkRulesForFile#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#runRulesByTypes#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#runXPathQueryWithin#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#runXpathQueryBetween#0;n#RuleExecutor#0" expanded="false" />
             <element signature="n#!!block;n#runXPathQuery#0;n#RuleExecutor#0" expanded="false" />
-            <element signature="n#!!block;n#checkRules#0;n#RuleExecutor#0" expanded="false" />
             <element signature="n#!!block;n#violatedResults#0;n#RuleExecutor#0" expanded="false" />
             <element signature="n#!!block;n#getXmlData#0;n#RuleExecutor#0" expanded="false" />
           </folding>
@@ -720,8 +646,7 @@
         <state relative-caret-position="390">
           <caret line="29" column="25" lean-forward="true" selection-start-line="29" selection-start-column="25" selection-end-line="29" selection-end-column="25" />
           <folding>
-            <element signature="n#!!block;n#setupNavigationButtons#0;n#HashManager#0" expanded="false" />
-            <element signature="n#!!block;n#hashManager#0;n#HashManager#0" expanded="false" />
+            <element signature="e#48#73#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -753,7 +678,7 @@
         <state relative-caret-position="1065">
           <caret line="103" column="42" lean-forward="false" selection-start-line="103" selection-start-column="42" selection-end-line="103" selection-end-column="42" />
           <folding>
-            <element signature="e#0#26#0" expanded="true" />
+            <element signature="e#0#26#0" expanded="false" />
             <element signature="n#!!block;n#init#0;n#App#0" expanded="false" />
           </folding>
         </state>
@@ -764,7 +689,7 @@
         <state relative-caret-position="540">
           <caret line="39" column="18" lean-forward="false" selection-start-line="39" selection-start-column="18" selection-end-line="39" selection-end-column="18" />
           <folding>
-            <marker date="1505321956000" expanded="true" signature="473:486" ph="..." />
+            <marker date="1506958074000" expanded="true" signature="473:486" ph="..." />
           </folding>
         </state>
       </provider>
@@ -776,7 +701,6 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#48#74#0" expanded="true" />
-            <element signature="e#163#194#0" expanded="true" />
             <element signature="n#!!block;n#componentWillReceiveProps#0;n#RulePanel#0" expanded="false" />
             <element signature="n#!!block;n#tabHeaderRender#0;n#RulePanel#0" expanded="false" />
             <element signature="n#!!block;n#tagRender#0;n#RulePanel#0" expanded="false" />
@@ -791,8 +715,7 @@
         <state relative-caret-position="810">
           <caret line="64" column="13" lean-forward="false" selection-start-line="64" selection-start-column="13" selection-end-line="64" selection-end-column="13" />
           <folding>
-            <element signature="n#!!block;n#setupNavigationButtons#0;n#HashManager#0" expanded="false" />
-            <element signature="n#!!block;n#hashManager#0;n#HashManager#0" expanded="false" />
+            <element signature="e#48#73#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -810,10 +733,14 @@
         <state relative-caret-position="495">
           <caret line="35" column="7" lean-forward="true" selection-start-line="35" selection-start-column="7" selection-end-line="35" selection-end-column="7" />
           <folding>
+            <element signature="e#48#79#0" expanded="true" />
             <element signature="n#!!block;n#attachListener#0;n#RuleExecutor#0" expanded="false" />
-            <element signature="n#!!block;n#verifyRules#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#checkRulesForAll#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#checkRulesForFile#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#runRulesByTypes#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#runXPathQueryWithin#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#runXpathQueryBetween#0;n#RuleExecutor#0" expanded="false" />
             <element signature="n#!!block;n#runXPathQuery#0;n#RuleExecutor#0" expanded="false" />
-            <element signature="n#!!block;n#checkRules#0;n#RuleExecutor#0" expanded="false" />
             <element signature="n#!!block;n#violatedResults#0;n#RuleExecutor#0" expanded="false" />
             <element signature="n#!!block;n#getXmlData#0;n#RuleExecutor#0" expanded="false" />
           </folding>
@@ -834,20 +761,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/registerServiceWorker.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/node_modules/pubsub-js/src/pubsub.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="317">
-          <caret line="112" column="19" lean-forward="false" selection-start-line="112" selection-start-column="13" selection-end-line="112" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/manifest.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
@@ -856,38 +769,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ui/codeSnippet.js" />
-    <entry file="file://$PROJECT_DIR$/src/ui/tableOfContent.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="735">
-          <caret line="84" column="11" lean-forward="false" selection-start-line="84" selection-start-column="11" selection-end-line="84" selection-end-column="11" />
-          <folding>
-            <element signature="e#137#162#0" expanded="false" />
-            <element signature="n#!!block;n#constructor#0;n#TableOfContent#0" expanded="false" />
-            <element signature="n#!!block;n#createAlphabetIndex#0;n#TableOfContent#0" expanded="false" />
-            <element signature="n#!!block;n#displayTags#0;n#TableOfContent#0" expanded="false" />
-            <element signature="n#!!block;n#displayRules#0;n#TableOfContent#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/individualRule.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2085">
-          <caret line="150" column="39" lean-forward="false" selection-start-line="150" selection-start-column="39" selection-end-line="150" selection-end-column="39" />
-          <folding>
-            <marker date="1505321956000" expanded="true" signature="473:486" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/index.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="29" column="0" lean-forward="false" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/App.css">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -902,21 +783,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/navBar.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/headerBar.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1155">
-          <caret line="84" column="55" lean-forward="false" selection-start-line="84" selection-start-column="55" selection-end-line="84" selection-end-column="55" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/react-icons/lib/fa/close.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -924,61 +790,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/hashManager.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="720">
-          <caret line="79" column="34" lean-forward="false" selection-start-line="79" selection-start-column="34" selection-end-line="79" selection-end-column="34" />
-          <folding>
-            <element signature="n#!!block;n#setupNavigationButtons#0;n#HashManager#0" expanded="false" />
-            <element signature="n#!!block;n#hashManager#0;n#HashManager#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/webSocketManager.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1425">
-          <caret line="97" column="13" lean-forward="false" selection-start-line="97" selection-start-column="13" selection-end-line="97" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/core/utilities.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="74" column="17" lean-forward="false" selection-start-line="71" selection-start-column="0" selection-end-line="74" selection-end-column="17" />
-          <folding>
-            <element signature="n#!!block;n#ResultArraysEqual#0;n#Utilities#0" expanded="false" />
-            <element signature="n#!!block;n#cloneXML#0;n#Utilities#0" expanded="false" />
-            <element signature="n#!!block;n#cloneJSON#0;n#Utilities#0" expanded="false" />
-            <element signature="n#!!block;n#arrayContains#0;n#Utilities#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/package-lock.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="73">
           <caret line="5" column="19" lean-forward="true" selection-start-line="5" selection-start-column="19" selection-end-line="5" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/individualRuleList.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="8" column="28" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="28" />
-          <folding>
-            <element signature="n#!!block;n#setButtonClass#0;n#IndividualRuleList#0" expanded="false" />
-            <element signature="n#!!block;n#buttonTextRender#0;n#IndividualRuleList#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" column="3" lean-forward="false" selection-start-line="4" selection-start-column="2" selection-end-line="13" selection-end-column="3" />
           <folding />
         </state>
       </provider>
@@ -991,6 +806,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="45">
+            <caret line="3" column="51" lean-forward="false" selection-start-line="3" selection-start-column="51" selection-end-line="3" selection-end-column="51" />
+            <folding />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
@@ -999,36 +825,122 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/core/ruleExecutor.js">
+    <entry file="file://$PROJECT_DIR$/node_modules/pubsub-js/src/pubsub.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="189" column="5" lean-forward="false" selection-start-line="189" selection-start-column="5" selection-end-line="189" selection-end-column="5" />
-          <folding>
-            <element signature="n#!!block;n#attachListener#0;n#RuleExecutor#0" expanded="false" />
-            <element signature="n#!!block;n#verifyRules#0;n#RuleExecutor#0" expanded="false" />
-            <element signature="n#!!block;n#runXPathQuery#0;n#RuleExecutor#0" expanded="false" />
-            <element signature="n#!!block;n#checkRules#0;n#RuleExecutor#0" expanded="false" />
-            <element signature="n#!!block;n#violatedResults#0;n#RuleExecutor#0" expanded="false" />
-            <element signature="n#!!block;n#getXmlData#0;n#RuleExecutor#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="317">
+          <caret line="112" column="19" lean-forward="false" selection-start-line="112" selection-start-column="13" selection-end-line="112" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="23" lean-forward="true" selection-start-line="8" selection-start-column="23" selection-end-line="8" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/registerServiceWorker.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/index.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="435">
+          <caret line="29" column="0" lean-forward="false" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/App.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="404">
+        <state relative-caret-position="1230">
           <caret line="101" column="8" lean-forward="true" selection-start-line="101" selection-start-column="8" selection-end-line="101" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hashManager.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="7" column="17" lean-forward="false" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="17" />
           <folding>
-            <element signature="e#0#26#0" expanded="true" />
-            <element signature="n#!!block;n#init#0;n#App#0" expanded="false" />
+            <element signature="e#48#73#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/utilities.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="16" lean-forward="true" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="16" />
+          <folding>
+            <element signature="n#!!block;n#ResultArraysEqual#0;n#Utilities#0" expanded="false" />
+            <element signature="n#!!block;n#cloneXML#0;n#Utilities#0" expanded="false" />
+            <element signature="n#!!block;n#cloneJSON#0;n#Utilities#0" expanded="false" />
+            <element signature="n#!!block;n#arrayContains#0;n#Utilities#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/App.test.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#26#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/individualRuleList.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="20" column="0" lean-forward="true" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!block;n#setButtonClass#0;n#IndividualRuleList#0" expanded="false" />
+            <element signature="n#!!block;n#buttonTextRender#0;n#IndividualRuleList#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/navBar.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/tableOfContent.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="843">
+          <caret line="182" column="30" lean-forward="false" selection-start-line="182" selection-start-column="23" selection-end-line="182" selection-end-column="30" />
+          <folding>
+            <element signature="n#!!block;n#constructor#0;n#TableOfContent#0" expanded="false" />
+            <element signature="n#!!block;n#createAlphabetIndex#0;n#TableOfContent#0" expanded="false" />
+            <element signature="n#!!block;n#displayTags#0;n#TableOfContent#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/ruleTable.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="900">
+          <caret line="73" column="14" lean-forward="false" selection-start-line="73" selection-start-column="8" selection-end-line="73" selection-end-column="14" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ui/rulePanel.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="23" column="18" lean-forward="false" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="18" />
+        <state relative-caret-position="315">
+          <caret line="21" column="0" lean-forward="true" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#48#74#0" expanded="true" />
@@ -1042,11 +954,50 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/ruleTable.js">
+    <entry file="file://$PROJECT_DIR$/src/ui/headerBar.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="31" column="15" lean-forward="false" selection-start-line="31" selection-start-column="15" selection-end-line="31" selection-end-column="15" />
+        <state relative-caret-position="930">
+          <caret line="105" column="11" lean-forward="true" selection-start-line="105" selection-start-column="11" selection-end-line="105" selection-end-column="11" />
+          <folding>
+            <element signature="e#1497#2614#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/ruleExecutor.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="742">
+          <caret line="201" column="25" lean-forward="false" selection-start-line="201" selection-start-column="25" selection-end-line="201" selection-end-column="25" />
+          <folding>
+            <element signature="e#48#79#0" expanded="true" />
+            <element signature="n#!!block;n#attachListener#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#checkRulesForAll#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#checkRulesForFile#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#runRulesByTypes#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#runXPathQueryWithin#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#runXpathQueryBetween#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#runXPathQuery#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#violatedResults#0;n#RuleExecutor#0" expanded="false" />
+            <element signature="n#!!block;n#getXmlData#0;n#RuleExecutor#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/webSocketManager.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="73">
+          <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/individualRule.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="810">
+          <caret line="136" column="56" lean-forward="false" selection-start-line="136" selection-start-column="56" selection-end-line="136" selection-end-column="56" />
+          <folding>
+            <marker date="1506958074000" expanded="true" signature="473:486" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>

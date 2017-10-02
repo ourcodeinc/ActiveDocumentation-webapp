@@ -18,13 +18,13 @@ class RuleExecutor {
 
         // [xml, ruleTable, tagTable]
         PubSub.subscribe('VERIFY_RULES', (msg, data) => {
-            let ruleTable = this.verifyRules(data[0], data[1]);
+            let ruleTable = this.checkRulesForAll(data[0], data[1]);
             PubSub.publish('DISPLAY_RULES', [ruleTable, data[2]]);
         });
 
-        // [xml, ruleTable, message.data -> filePath]
+        // [xml, ruleTable, filePath]
         PubSub.subscribe('CHECK_RULES_FOR_FILE', (msg, data) => {
-            let ruleTable = this.checkRules(data[0], data[1], data[2]);
+            let ruleTable = this.checkRulesForFile(data[0], data[1], data[2]);
             PubSub.publish('DISPLAY_UPDATE_RULES_FOR_FILE', [ruleTable, data[2]]);
         });
 
@@ -35,79 +35,138 @@ class RuleExecutor {
      * @param xmlFiles : object of `filePath` and `xml`
      * @param ruleTable retrieved from ruleJson.txt
      */
-    verifyRules(xmlFiles, ruleTable) {
-        for (let i = 0; i < ruleTable.length; i++) {
-            for (let j = 0; j < xmlFiles.length; j++)
-                ruleTable[i] = this.runXPathQuery(xmlFiles[j], ruleTable[i]);
-        }
-        // console.log(ruleTable);
+    checkRulesForAll(xmlFiles, ruleTable) {
+        for (let i = 0; i < ruleTable.length; i++)
+            ruleTable[i] = this.runRulesByTypes(xmlFiles, ruleTable[i]);
 
+        return ruleTable;
+    }
+
+    /**
+     * re-run the xpath queries and detect changes for one file.
+     * @param xmlFiles
+     * @param ruleTable
+     * @param filePath
+     */
+    checkRulesForFile(xmlFiles, ruleTable, filePath) {
+
+        let targetXml = xmlFiles.filter((d) => {
+            return d['filePath'] === filePath
+        });
+
+        for (let i = 0; i < ruleTable.length; i++) {
+
+            let ruleResultI = ruleTable[i]['xPathQueryResult'].filter((d) => {
+                return d['filePath'] === filePath;
+            })[0]['data'];
+
+            // console.log(ruleResultI);
+
+            let prevQuantifierResult = ruleResultI['quantifierResult'].slice(0);
+            let prevSatisfiedResult = ruleResultI['satisfiedResult'].slice(0);
+            let prevSatisfied = ruleResultI['satisfied'];
+            let prevViolated = ruleResultI['violated'];
+
+            // console.log(prevSatisfied, prevMissing);
+
+            ruleTable[i] = this.runRulesByTypes(targetXml, ruleTable[i]);
+
+            ruleResultI = ruleTable[i]['xPathQueryResult'].filter((d) => {
+                return d['filePath'] === filePath;
+            })[0]['data'];
+
+            // console.log(ruleResultI);
+
+            ruleResultI['changed'] = (!Utilities.ResultArraysEqual(prevQuantifierResult, ruleResultI['quantifierResult']) ||
+                !Utilities.ResultArraysEqual(prevSatisfiedResult, ruleResultI['satisfiedResult']) ||
+                prevSatisfied !== ruleResultI['satisfied'] ||
+                prevViolated !== ruleResultI['violated']);
+
+            ruleResultI['violatedChanged'] = (prevViolated < ruleResultI['violated'] ? 'greater' :
+                prevViolated > ruleResultI['violated'] ? 'smaller' : 'none');
+            ruleResultI['satisfiedChanged'] = (prevSatisfied < ruleResultI['satisfied'] ? 'greater' :
+                prevSatisfied > ruleResultI['satisfied'] ? 'smaller' : 'none');
+            ruleResultI['allChanged'] = ((prevSatisfied + prevViolated) < (ruleResultI['violated'] + ruleResultI['satisfied']) ? 'greater' :
+                (prevSatisfied + prevViolated) > (ruleResultI['violated'] + ruleResultI['satisfied']) ? 'smaller' : 'none');
+
+        }
         return ruleTable;
     }
 
 
     /**
-     * runs the XPath query and compare results
+     * find relevant xml files based on the rule 'checkFor' property
+     * and call respective methods based on 'ruleType' property of the rule.
+     * @param xmlFiles
+     * @param ruleI
+     * @returns ruleI
+     */
+    runRulesByTypes(xmlFiles, ruleI) {
+
+        let xmlFilesToVerify = [];
+        let checkForFiles = ruleI['ruleType']['checkFor'].slice(0); // deep copy
+
+
+        switch (ruleI['ruleType']['constraint']) {
+            case 'NONE':
+                xmlFilesToVerify = xmlFiles.slice(0); // deep copy
+                break;
+
+            case 'SOME':
+                for (let j = 0; j < checkForFiles.length; j++)
+                    // Warning
+                    // This can lead to error if fileName is saved as X.java in ruleJson.txt and there exists also aX.java
+                    xmlFilesToVerify = xmlFilesToVerify.concat(xmlFiles.filter((d) => d['filePath'].endsWith(checkForFiles[j])));
+                break;
+
+            case 'EXCEPT':
+                xmlFilesToVerify = xmlFiles.filter((d) => {
+                    for (let j = 0; j < checkForFiles.length; j++)
+                        // Warning
+                        // This can lead to error if fileName is saved as X.java in ruleJson.txt and there exists also aX.java
+                        if (d['filePath'].endsWith(checkForFiles['checkFor'][j])) {
+                            checkForFiles.splice(j, 1);
+                            return false;
+                        }
+                    return true;
+                });
+                break;
+
+            case 'FOLDER':
+                for (let j = 0; j < checkForFiles.length; j++)
+                    // Warning
+                    // This can lead to error if the target folder is X in ruleJson.txt and there exists also a folder Xy
+                    xmlFilesToVerify = xmlFilesToVerify.concat(xmlFiles.filter((d) => d['filePath'].endsWith(checkForFiles[j])));
+                break;
+
+            default:
+                console.log('error in XML: ruleTable[index=' + ruleI['index'] + '][\'constraint\']');
+                return;
+        }
+
+
+        if (ruleI['ruleType']['type'] === 'WITHIN') {
+            for (let j = 0; j < xmlFilesToVerify.length; j++)
+                ruleI = this.runXPathQueryWithin(xmlFilesToVerify[j], ruleI);
+        }
+        else if (ruleI['ruleType']['type'] === 'BETWEEN') {
+            ruleI = this.runXpathQueryBetween(xmlFilesToVerify, ruleI);
+        }
+
+        return ruleI;
+    }
+
+
+    /**
+     * run xPath queries for rules that hold for each file independently
      * @param xmlFile
      * @param ruleI
+     * @returns ruleI
      */
-    runXPathQuery(xmlFile, ruleI) {
-        let parser = new DOMParser();
-        let quantifierResult = [];
-        let satisfiedResult = [];
+    runXPathQueryWithin(xmlFile, ruleI) {
 
-        function nsResolver(prefix) {
-            let ns = {'src': 'http://www.srcML.org/srcML/src'};
-            return ns[prefix] || null;
-        }
-
-        // checks validity of the XML
-        let xml = parser.parseFromString(xmlFile['xml'], "text/xml");
-        if (!xml.evaluate) {
-            console.log('error in xml.evaluate');
-            return;
-        }
-
-        // run xpath queries
-        let quantifierNodes = xml.evaluate(ruleI.quantifierXpath, xml, nsResolver, XPathResult.ANY_TYPE, null);
-        let quantifierNameNodes = xml.evaluate(ruleI.quantifierXpathName, xml, nsResolver, XPathResult.ANY_TYPE, null);
-        let resultQNode = quantifierNodes.iterateNext();
-        let resultQNameNode = quantifierNameNodes.iterateNext();
-        let index = 0;
-        while (resultQNode) {
-            let xmlAndText = this.getXmlData(xml, ruleI.quantifierXpath, index);
-            quantifierResult.push({
-                "filePath": xmlFile['filePath'],
-                // "result": new XMLSerializer().serializeToString(resultQNode),
-                "xml": xmlAndText.xmlJson,
-                // "xmlText": xmlAndText.xmlText,
-                "name": resultQNameNode ? new XMLSerializer().serializeToString(resultQNameNode) : "error in xpath",
-                "snippet": xmlAndText.snippet
-            });
-            resultQNode = quantifierNodes.iterateNext();
-            resultQNameNode = quantifierNameNodes.iterateNext();
-            index += 1;
-        }
-
-        let satisfiedNodes = xml.evaluate(ruleI.conditionedXpath, xml, nsResolver, XPathResult.ANY_TYPE, null);
-        let satisfiedNameNodes = xml.evaluate(ruleI.conditionedXpathName, xml, nsResolver, XPathResult.ANY_TYPE, null);
-        let resultCNode = satisfiedNodes.iterateNext();
-        let resultCNameNode = satisfiedNameNodes.iterateNext();
-        index = 0;
-        while (resultCNode) {
-            let xmlAndText = this.getXmlData(xml, ruleI.conditionedXpath, index);
-            satisfiedResult.push({
-                "filePath": xmlFile['filePath'],
-                // "result": new XMLSerializer().serializeToString(resultCNode),
-                "xml": xmlAndText.xmlJson,
-                // "xmlText": xmlAndText.xmlText,
-                "name": resultCNameNode ? new XMLSerializer().serializeToString(resultCNameNode) : "error in xpath",
-                "snippet": xmlAndText.snippet
-            });
-            resultCNode = satisfiedNodes.iterateNext();
-            resultCNameNode = satisfiedNameNodes.iterateNext();
-            index += 1;
-        }
+        let quantifierResult = this.runXPathQuery(xmlFile, ruleI, 'quantifier');
+        let satisfiedResult = this.runXPathQuery(xmlFile, ruleI, 'conditioned');
 
         // compare results
         let violatedResult = this.violatedResults(quantifierResult, satisfiedResult);
@@ -138,55 +197,87 @@ class RuleExecutor {
 
     }
 
+
     /**
-     * re-run the xpath queries and detect changes for one file.
+     * << NOT tested yet >>
+     * run xPath queries for rules that depends on several files
      * @param xmlFiles
-     * @param ruleTable
-     * @param filePath
+     * @param ruleI
+     * @returns ruleI
      */
-    checkRules(xmlFiles, ruleTable, filePath) {
+    runXpathQueryBetween(xmlFiles, ruleI) {
 
-        let targetXml = xmlFiles.filter((d) => {
-            return d['filePath'] === filePath
-        })[0];
-
-        for (let i = 0; i < ruleTable.length; i++) {
-
-            let ruleResultI = ruleTable[i]['xPathQueryResult'].filter((d) => {
-                return d['filePath'] === filePath;
-            })[0]['data'];
-
-            // console.log(ruleResultI);
-
-            let prevQuantifierResult = ruleResultI['quantifierResult'].slice(0);
-            let prevSatisfiedResult = ruleResultI['satisfiedResult'].slice(0);
-            let prevSatisfied = ruleResultI['satisfied'];
-            let prevViolated = ruleResultI['violated'];
-
-            // console.log(prevSatisfied, prevMissing);
-
-            ruleTable[i] = this.runXPathQuery(targetXml, ruleTable[i]);
-
-            ruleResultI = ruleTable[i]['xPathQueryResult'].filter((d) => {
-                return d['filePath'] === filePath;
-            })[0]['data'];
-
-            // console.log(ruleResultI);
-
-            ruleResultI['changed'] = (!Utilities.ResultArraysEqual(prevQuantifierResult, ruleResultI['quantifierResult']) ||
-            !Utilities.ResultArraysEqual(prevSatisfiedResult, ruleResultI['satisfiedResult']) ||
-            prevSatisfied !== ruleResultI['satisfied'] ||
-            prevViolated !== ruleResultI['violated']);
-
-            ruleResultI['violatedChanged'] = (prevViolated < ruleResultI['violated'] ? 'greater' :
-                prevViolated > ruleResultI['violated'] ? 'smaller' : 'none');
-            ruleResultI['satisfiedChanged'] = (prevSatisfied < ruleResultI['satisfied'] ? 'greater' :
-                prevSatisfied > ruleResultI['satisfied'] ? 'smaller' : 'none');
-            ruleResultI['allChanged'] = ((prevSatisfied + prevViolated) < (ruleResultI['violated'] + ruleResultI['satisfied']) ? 'greater' :
-                (prevSatisfied + prevViolated) > (ruleResultI['violated'] + ruleResultI['satisfied']) ? 'smaller' : 'none');
-
+        let quantifierResult = [];
+        let conditionedResult = [];
+        for (let j = 0; j < xmlFiles.length; j++) {
+            quantifierResult = quantifierResult.concat(this.runXPathQuery(xmlFiles[j], ruleI, 'quantifier'));
+            conditionedResult = conditionedResult.concat(this.runXPathQuery(xmlFiles[j], ruleI, 'conditioned'));
         }
-        return ruleTable;
+        // compare results
+        let violatedResult = this.violatedResults(quantifierResult, conditionedResult);
+
+        let resultData = {
+            'quantifierResult': quantifierResult,
+            'satisfiedResult': conditionedResult,
+            'violatedResult': violatedResult,
+            'satisfied': quantifierResult.length - violatedResult.length,
+            'violated': violatedResult.length
+        };
+
+        if (!ruleI.hasOwnProperty('xPathQueryResult'))
+            ruleI['xPathQueryResult'] = [];
+
+        ruleI['xPathQueryResult'].push({'filePath': ruleI['scope'], 'data': resultData});
+
+        return ruleI;
+
+    }
+
+    /**
+     * runs the XPath query and compare results
+     * @param xmlFile
+     * @param ruleI
+     * @param group either 'quantifier' or 'conditioned'
+     */
+    runXPathQuery(xmlFile, ruleI, group) {
+        let parser = new DOMParser();
+        let result = [];
+
+        function nsResolver(prefix) {
+            let ns = {'src': 'http://www.srcML.org/srcML/src'};
+            return ns[prefix] || null;
+        }
+
+        // checks validity of the XML
+        let xml = parser.parseFromString(xmlFile['xml'], "text/xml");
+        if (!xml.evaluate) {
+            console.log('error in xml.evaluate');
+            return;
+        }
+
+        // run xpath queries
+        let quantifierNodes = xml.evaluate(ruleI[group]['command'], xml, nsResolver, XPathResult.ANY_TYPE, null);
+        let quantifierNameNodes = xml.evaluate(ruleI[group]['command'], xml, nsResolver, XPathResult.ANY_TYPE, null);
+        let resultQNode = quantifierNodes.iterateNext();
+        let resultQNameNode = quantifierNameNodes.iterateNext();
+        let index = 0;
+        while (resultQNode) {
+            let xmlAndText = this.getXmlData(xml, ruleI[group]['command'], index);
+            result.push({
+                "filePath": xmlFile['filePath'],
+                // "result": new XMLSerializer().serializeToString(resultQNode),
+                "xml": xmlAndText.xmlJson,
+                // "xmlText": xmlAndText.xmlText,
+                "name": resultQNameNode ? new XMLSerializer().serializeToString(resultQNameNode) : "error in xpath",
+                "snippet": xmlAndText.snippet
+            });
+            resultQNode = quantifierNodes.iterateNext();
+            resultQNameNode = quantifierNameNodes.iterateNext();
+            index += 1;
+        }
+
+        return result;
+
     }
 
 
@@ -247,6 +338,7 @@ class RuleExecutor {
             i += 1;
         }
 
+        // TODO extract better snippet
         // get the first two line
         let resTextArray = new XMLSerializer().serializeToString(res).split(/\r?\n/);
         let resText = resTextArray.length > 1 ? resTextArray[0] + '\n' + resTextArray[1] : resTextArray[0];

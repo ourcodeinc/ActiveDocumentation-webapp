@@ -93,7 +93,7 @@ export class HeaderBar extends Component {
             this.ws = data[0];
         });
 
-        // called in RuleExecutor.verifyRules() and RuleExecutor.checkRules()
+        // called in RuleExecutor.checkRulesForAll() and RuleExecutor.checkRules_org()
         // [ruleTable, tagTable]
         PubSub.subscribe('DISPLAY_RULES', (msg, data) => {
             this.tags = data[1];
@@ -102,7 +102,7 @@ export class HeaderBar extends Component {
         // [tagTable, newTag]
         PubSub.subscribe('UPDATE_TAG', (msg, data) => {
             this.tags = data[0];
-            console.log(this.tags);
+            // console.log(this.tags);
         });
     }
 

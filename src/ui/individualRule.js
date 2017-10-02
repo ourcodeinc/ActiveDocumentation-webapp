@@ -91,7 +91,7 @@ class IndividualRule extends React.Component {
             oldRule['detail'] = data[1]['detail'];
         });
 
-        // called in RuleExecutor.verifyRules() and RuleExecutor.checkRules()
+        // called in RuleExecutor.checkRulesForAll() and RuleExecutor.checkRules_org()
         // [ruleTable, tagTable]
         PubSub.subscribe('DISPLAY_RULES', (msg, data) => {
             this.rules = data[0];

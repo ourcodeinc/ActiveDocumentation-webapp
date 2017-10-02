@@ -23,7 +23,7 @@ class RulePanel extends React.Component {
     render() {
         this.ruleI = this.props['ruleData'];
 
-        console.log(this.ruleI);
+        // console.log(this.ruleI);
 
         this.ws = this.props['ws'];
         this.codeChanged = this.props['codeChanged'];

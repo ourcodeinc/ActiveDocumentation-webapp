@@ -50,7 +50,7 @@ class WebSocketManager {
                     break;
 
                 case "VERIFY_RULES":
-                    // received by RuleExecutor.verifyRules()
+                    // received by RuleExecutor
                     PubSub.publish('VERIFY_RULES', [xml, ruleTable, tagTable]);
                     break;
 
@@ -66,7 +66,7 @@ class WebSocketManager {
                 // when the code changes, after UPDATE_XML
                 case "CHECK_RULES_FOR_FILE":
                     let filePath = message.data;
-                    // received by checkRules()
+                    // received by RuleExecutor
                     PubSub.publish('CHECK_RULES_FOR_FILE', [xml, ruleTable, filePath]);
                     PubSub.publish('UPDATE_HASH', ['codeChanged']);
                     break;
