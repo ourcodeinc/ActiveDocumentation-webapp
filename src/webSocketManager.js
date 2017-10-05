@@ -32,6 +32,9 @@ class WebSocketManager {
 
             let message = JSON.parse(e.data);
 
+            // if (message.command !== 'XML')
+            //     console.log(message);
+
             switch (message.command) {
 
                 // send initially on open
@@ -90,6 +93,18 @@ class WebSocketManager {
                     let newRule = JSON.parse(message.data['rule']);
                     PubSub.publish('UPDATE_RULE', [message.data['ruleIndex'], newRule]);
                     PubSub.publish('UPDATE_HASH', ['rule', message.data['ruleIndex']]);
+                    break;
+
+                // when the tagJson.txt changes, after TAG_TABLE
+                case "UPDATE_TAG_TABLE":
+                    PubSub.publish('UPDATE_TAG_TABLE', [tagTable]);
+                    PubSub.publish('UPDATE_HASH', ['tagJsonChanged']);
+                    break;
+
+                // when the ruleJson.txt changes, after RULE_TABLE
+                case "UPDATE_RULE_TABLE":
+                    PubSub.publish('UPDATE_RULE_TABLE', [ruleTable]);
+                    PubSub.publish('UPDATE_HASH', ['ruleJsonChanged']);
                     break;
 
                 case "ENTER":

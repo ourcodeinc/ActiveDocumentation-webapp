@@ -74,7 +74,6 @@ class RulePanel extends React.Component {
             return;
         }
 
-        let flag = false;
         let ruleIfile = nextProps['ruleData']['xPathQueryResult'][0]['data'];
         if (ruleIfile['allChanged'] === 'greater' && ruleIfile['satisfiedChanged'] === ruleIfile['violatedChanged'] === 'none') {
             this.setState({open: true, class: "ruleDiv blue-bg"});
@@ -132,9 +131,9 @@ class RulePanel extends React.Component {
      * render tag badges
      */
     tagRender() {
-        return this.ruleI['tags'].map((d) => {
+        return this.ruleI['tags'].map((d, i) => {
             return (
-                <div className="buttonDiv">
+                <div className="buttonDiv" key={i}>
                     <Label onClick={() => PubSub.publish('UPDATE_HASH', ['tag', d])}>{d}</Label>
                 </div>)
         });
@@ -170,9 +169,9 @@ class RulePanel extends React.Component {
                 break;
         }
 
-        return list.map((d) => {
+        return list.map((d, i) => {
             return (
-                <div data-file-path={d['filePath']} className="partResultDiv">
+                <div data-file-path={d['filePath']} className="partResultDiv" key={i}>
                         <pre className="link" onClick={() => {
                             Utilities.sendToServer(self.ws, "XML_RESULT", d['xml'])
                         }}>

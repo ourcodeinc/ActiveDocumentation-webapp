@@ -63,7 +63,9 @@ class TableOfContent {
 
         // [hash, value]
         PubSub.subscribe('HASH', (msg, data) => {
-            d3.select(this.thisNode.node().parentNode).classed('hidden', data[0] !== 'index');
+            d3.select(this.thisNode.node().parentNode).classed('hidden', () =>
+                data[0] !== 'index' && data[0] !== 'tagJsonChanged' && data[0] !== 'ruleJsonChanged'
+            );
         });
 
 
@@ -90,7 +92,18 @@ class TableOfContent {
             this.displayTags();
         });
 
+        // [tagTable]
+        PubSub.subscribe('UPDATE_TAG_TABLE', (msg, data) => {
+            this.tags = data[0];
+            console.log(this.tags);
+            this.displayTags();
+        });
 
+        // [ruleTable]
+        PubSub.subscribe('UPDATE_RULE_TABLE', (msg, data) => {
+            this.rules = data[0];
+            this.displayRules();
+        });
     }
 
 
@@ -188,7 +201,6 @@ class TableOfContent {
             .on("click", (d) => {
                 PubSub.publish('UPDATE_HASH', ['rule', d.index]);
             });
-
     }
 
 

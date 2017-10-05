@@ -56,6 +56,11 @@ class RuleExecutor {
 
         for (let i = 0; i < ruleTable.length; i++) {
 
+            if(ruleTable[i]['xPathQueryResult'].filter((d) => {
+                    return d['filePath'] === filePath;
+                }).length === 0)
+                continue;
+
             let ruleResultI = ruleTable[i]['xPathQueryResult'].filter((d) => {
                 return d['filePath'] === filePath;
             })[0]['data'];
@@ -67,7 +72,7 @@ class RuleExecutor {
             let prevSatisfied = ruleResultI['satisfied'];
             let prevViolated = ruleResultI['violated'];
 
-            // console.log(prevSatisfied, prevMissing);
+            // console.log(prevSatisfied, prevViolated);
 
             ruleTable[i] = this.runRulesByTypes(targetXml, ruleTable[i]);
 
@@ -124,7 +129,7 @@ class RuleExecutor {
                     for (let j = 0; j < checkForFiles.length; j++)
                         // Warning
                         // This can lead to error if fileName is saved as X.java in ruleJson.txt and there exists also aX.java
-                        if (d['filePath'].endsWith(checkForFiles['checkFor'][j])) {
+                        if (d['filePath'].endsWith(checkForFiles[j])) {
                             checkForFiles.splice(j, 1);
                             return false;
                         }
@@ -136,12 +141,44 @@ class RuleExecutor {
                 for (let j = 0; j < checkForFiles.length; j++)
                     // Warning
                     // This can lead to error if the target folder is X in ruleJson.txt and there exists also a folder Xy
-                    xmlFilesToVerify = xmlFilesToVerify.concat(xmlFiles.filter((d) => d['filePath'].endsWith(checkForFiles[j])));
+                    xmlFilesToVerify = xmlFilesToVerify.concat(xmlFiles.filter((d) => d['filePath'].indexOf(checkForFiles[j]) !== -1));
+                break;
+
+            case 'FOLDER EXCEPT':
+                for (let j = 0; j < checkForFiles[0].length; j++)
+                    // Warning
+                    // This can lead to error if the target folder is X in ruleJson.txt and there exists also a folder Xy
+                    xmlFilesToVerify = xmlFilesToVerify.concat(xmlFiles.filter((d) => d['filePath'].indexOf(checkForFiles[0][j]) !== -1));
+
+                xmlFilesToVerify = xmlFilesToVerify.filter((d) => {
+                    for (let j = 0; j < checkForFiles[1].length; j++)
+                        // Warning
+                        // This can lead to error if fileName is saved as X.java in ruleJson.txt and there exists also aX.java
+                        if (d['filePath'].endsWith(checkForFiles[1][j]))
+                            return false;
+                    return true;
+                });
+                break;
+
+            case 'FOLDER SOME':
+                for (let j = 0; j < checkForFiles[0].length; j++)
+                    // Warning
+                    // This can lead to error if the target folder is X in ruleJson.txt and there exists also a folder Xy
+                    xmlFilesToVerify = xmlFilesToVerify.concat(xmlFiles.filter((d) => d['filePath'].indexOf(checkForFiles[0][j]) !== -1));
+
+                xmlFilesToVerify = xmlFilesToVerify.filter((d) => {
+                    for (let j = 0; j < checkForFiles[1].length; j++)
+                        // Warning
+                        // This can lead to error if fileName is saved as X.java in ruleJson.txt and there exists also aX.java
+                        if (d['filePath'].endsWith(checkForFiles[1][j]))
+                            return true;
+                    return false;
+                });
                 break;
 
             default:
                 console.log('error in XML: ruleTable[index=' + ruleI['index'] + '][\'constraint\']');
-                return;
+                return ruleI;
         }
 
 

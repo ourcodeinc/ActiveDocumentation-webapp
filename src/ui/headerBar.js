@@ -10,7 +10,7 @@ import Utilities from '../core/utilities';
 
 import * as d3 from 'd3';
 import PubSub from 'pubsub-js';
-import {Panel, PanelGroup, FormGroup, ControlLabel, FormControl} from 'react-bootstrap';
+import {Panel, PanelGroup, FormGroup, FormControl} from 'react-bootstrap';
 
 
 export class HeaderBar extends Component {
@@ -73,6 +73,12 @@ export class HeaderBar extends Component {
                     break;
                 case 'codeChanged':
                     break;
+                case "tagJsonChanged":
+                    this.setState({title: `tagJson.txt is changed.`, content: ""});
+                    break;
+                case "ruleJsonChanged":
+                    this.setState({title: `ruleJson.txt is changed.`, content: ""});
+                    break;
                 default:
                     d3.select('#headerBar').classed('hidden', true);
                     break;
@@ -103,6 +109,11 @@ export class HeaderBar extends Component {
         PubSub.subscribe('UPDATE_TAG', (msg, data) => {
             this.tags = data[0];
             // console.log(this.tags);
+        });
+
+        // [tagTable]
+        PubSub.subscribe('UPDATE_TAG_TABLE', (msg, data) => {
+            this.tags = data[0];
         });
     }
 

@@ -26,8 +26,8 @@ class RuleTable extends React.Component {
             <div>
                 {
                     this.state.rulesToDisplay.map((d, i) => {
-                        return (<div className="largePaddedDiv ruleContainer">
-                            <RulePanel ruleData={d} ws={this.state.ws} key={i} codeChanged={this.state.codeChanged}/>
+                        return (<div className="largePaddedDiv ruleContainer" key={i}>
+                            <RulePanel ruleData={d} ws={this.state.ws} key={new Date()} codeChanged={this.state.codeChanged}/>
                         </div>)
                     })
                 }
@@ -59,6 +59,7 @@ class RuleTable extends React.Component {
                 })
             }
             if (data[0] === 'rules') {
+                // console.log(this.rules.filter((d) => d['index'] === 123)[0]);
                 this.setState({rulesToDisplay: this.rules, codeChanged: false});
             }
         });
@@ -69,21 +70,23 @@ class RuleTable extends React.Component {
             this.rules = data[0];
         });
 
-
         // [ruleTable, filePath]
         PubSub.subscribe('DISPLAY_UPDATE_RULES_FOR_FILE', (msg, data) => {
             this.rules = data[0];
             this.setState({rulesToDisplay: this.findRuleSet(data[1]), codeChanged: true});
         });
 
+
     }
 
     findRuleSet(filePath) {
-        return this.rules.map((rule) => {
-            let thisRule = Utilities.cloneJSON(rule);
-            thisRule['xPathQueryResult'] = rule['xPathQueryResult'].filter((d) => d['filePath'] === filePath)
-            return thisRule;
-        })
+        return this.rules
+            .filter((d) => d['xPathQueryResult'].filter((d) => d['filePath'] === filePath).length !== 0)
+            .map((rule) => {
+                let thisRule = Utilities.cloneJSON(rule);
+                thisRule['xPathQueryResult'] = rule['xPathQueryResult'].filter((d) => d['filePath'] === filePath);
+                return thisRule;
+            })
     }
 
 
