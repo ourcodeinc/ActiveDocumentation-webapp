@@ -8,8 +8,8 @@ import ReactDOM from 'react-dom';
 import * as d3 from 'd3';
 import PubSub from 'pubsub-js';
 
-import * as webSocketManager from './webSocketManager';
-import * as hashManager from './hashManager';
+import * as webSocketManager from './appManager/webSocketManager';
+import * as hashManager from './appManager/hashManager';
 
 import * as ruleExecutor from './core/ruleExecutor';
 
@@ -18,6 +18,7 @@ import RuleTable from './ui/ruleTable';
 import IndividualRule from './ui/individualRule';
 import NavBar from './ui/navBar';
 import HeaderBar from './ui/headerBar';
+import ProjectHierarchy from './ui/projectHierarchy';
 
 class App {
 
@@ -78,7 +79,7 @@ class App {
         const main = this.thisNode.append('div');
 
         main.append('div')
-            .classed('main container hidden',true)
+            .classed('main container',true)
             .attr('id','headerBar');
         ReactDOM.render(
             React.createElement(HeaderBar),
@@ -103,6 +104,14 @@ class App {
         ReactDOM.render(
             React.createElement(IndividualRule),
             document.getElementById('individualRule')
+        );
+
+        main.append('nav')
+            .classed('main container hidden',true)
+            .attr('id','projectHierarchy');
+        ReactDOM.render(
+            React.createElement(ProjectHierarchy),
+            document.getElementById('projectHierarchy')
         );
 
 

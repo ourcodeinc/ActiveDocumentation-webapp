@@ -13,7 +13,7 @@ class HashManager {
 
 
     constructor() {
-        this.history = [];
+        this.history = ["#/index"];
         this.clicked = false;
         this.activeHash = -1;
 
@@ -68,7 +68,7 @@ class HashManager {
 
 
     /**
-     * up date the hash list and 'active hash'
+     * update the hash list and 'active hash'
      * @param hash
      */
     updateHistory = function (hash) {

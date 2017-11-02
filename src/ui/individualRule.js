@@ -131,9 +131,9 @@ class IndividualRule extends React.Component {
      * render tag badges
      */
     tagRender() {
-        return this.ruleI['tags'].map((d) => {
+        return this.ruleI['tags'].map((d, i) => {
             return (
-                <div className="buttonDiv">
+                <div className="buttonDiv" key={i}>
                     <Label onClick={() => PubSub.publish('UPDATE_HASH', ['tag', d])}>{d}</Label>
                 </div>)
         });

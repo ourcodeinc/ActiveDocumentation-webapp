@@ -97,11 +97,11 @@ class IndividualRuleList extends React.Component {
 
         }
 
-        return list.map((d) => {
+        return list.map((d, i) => {
             return (
                 <div className="partResultDiv" onClick={() => {
                     Utilities.sendToServer(this.ws, "XML_RESULT", d['xml'])
-                }}>
+                }} key={i}>
                 <pre className="link">
                     <div className="content" dangerouslySetInnerHTML={{__html: d['snippet']}}/>
                 </pre>

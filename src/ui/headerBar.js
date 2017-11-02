@@ -8,9 +8,9 @@ import React, {Component} from 'react';
 import '../App.css';
 import Utilities from '../core/utilities';
 
-import * as d3 from 'd3';
+// import * as d3 from 'd3';
 import PubSub from 'pubsub-js';
-import {Panel, PanelGroup, FormGroup, FormControl} from 'react-bootstrap';
+import {FormControl} from 'react-bootstrap';
 
 
 export class HeaderBar extends Component {
@@ -24,18 +24,10 @@ export class HeaderBar extends Component {
     render() {
 
         return (
-            <div>
-                <PanelGroup>
-                    <Panel
-                        header={<h3 className="text-center">{this.state.title}</h3>}
-                        bsStyle="info" collapsible>
-
-                        <FormGroup>
-                            <FormControl componentClass="textarea" defaultValue={this.state.content} id="tag_desc"
-                                         onBlur={() => this.updateTag()}/>
-                        </FormGroup>
-                    </Panel>
-                </PanelGroup>
+            <div style={{paddingBottom: "30px"}} id="headerBar">
+                <div className="headerDiv">
+                    {this.renderHeader()}
+                </div>
             </div>
         )
     }
@@ -46,41 +38,37 @@ export class HeaderBar extends Component {
     attachListener() {
         // [ruleIndex, rule]
         PubSub.subscribe('UPDATE_RULE', (msg, data) => {
-            d3.select('#headerBar').classed('hidden', false);
-            this.setState({title: `Rule ${data[0]} is changed.`});
+            this.setState({hash: 'ruleChanged', title: data[0], content: ""});
         });
 
         // [hash, value]
         PubSub.subscribe('HASH', (msg, data) => {
-            d3.select('#headerBar').classed('hidden', false);
-            d3.select('#headerBar').selectAll('.panel-collapse').classed('in', false);
 
             switch (data[0]) {
                 case 'tag':
-                    this.tag = this.tags.filter((d) => {
-                        return d['tagName'] === data[1]
-                    })[0];
-
-                    this.setState({title: `Tag: ${data[1]}`, content: this.tag['detail']});
-                    document.getElementById('tag_desc').value = this.tag['detail'];
-                    d3.select('#headerBar').selectAll('.panel-collapse').classed('in', true);
+                    this.tag = this.tags.filter((d) => d['tagName'] === data[1])[0];
+                    this.setState({hash: 'tag', title: data[1], content: this.tag['detail']});
                     break;
                 case 'rule':
-                    this.setState({title: `Rule: ${data[1]}`, content: ""});
+                    this.setState({hash: 'rule', title: data[1], content: ""});
                     break;
                 case 'rules':
-                    this.setState({title: `All Rules`, content: ""});
-                    break;
-                case 'codeChanged':
+                    this.setState({hash: 'rules', title: "All Rules", content: ""});
                     break;
                 case "tagJsonChanged":
-                    this.setState({title: `tagJson.txt is changed.`, content: ""});
+                    this.setState({hash: 'tagJsonChanged', title: "tagJson.txt is changed.", content: ""});
                     break;
                 case "ruleJsonChanged":
-                    this.setState({title: `ruleJson.txt is changed.`, content: ""});
+                    this.setState({hash: 'ruleJsonChanged', title: "ruleJson.txt is changed.", content: ""});
+                    break;
+                case "hierarchy":
+                    this.setState({hash: 'hierarchy', title: "Project Hierarchy", content: ""});
+                    break;
+                case "index":
+                    this.setState({hash: 'index', title: "Active Documentation", content: ""});
                     break;
                 default:
-                    d3.select('#headerBar').classed('hidden', true);
+                    //this.setState({hash: 'index', title: "Active Documentation", content: ""});
                     break;
             }
 
@@ -88,9 +76,7 @@ export class HeaderBar extends Component {
 
         // [ruleTable, filePath]
         PubSub.subscribe('DISPLAY_UPDATE_RULES_FOR_FILE', (msg, data) => {
-            this.setState({title: 'Code Changed in File', content: data[1]});
-            document.getElementById('tag_desc').value = data[1];
-            d3.select('#headerBar').selectAll('.panel-collapse').classed('in', true);
+            this.setState({hash: 'codeChanged', title: '', content: data[1]});
         });
 
 
@@ -128,6 +114,49 @@ export class HeaderBar extends Component {
         }
     }
 
+    renderHeader() {
+        switch (this.state.hash) {
+            case 'tag':
+                return (
+                    <div>
+                        <span className="text-16 primary">Rules related to tag: </span><br/>
+                        <span className="text-24 important">{this.state.title}</span>
+                        <FormControl componentClass="textarea" defaultValue={this.state.content}
+                                     onBlur={() => this.updateTag()} key={new Date()}
+                                     placeholder="Information about tag"/>
+                    </div>
+                );
+            case 'rule':
+                return (
+                    <div>
+                        <span className="text-16 primary">Rule Index: </span>
+                        <span className="text-24 important">{this.state.title}</span>
+                    </div>
+                );
+            case 'codeChanged':
+                return (
+                    <div>
+                        <span className="text-16 primary">Code Changed in File:</span><br/>
+                        <span className="text-24 important">{this.state.content}</span>
+
+                    </div>
+                );
+            case 'ruleChanged':
+                return (
+                    <div>
+                        <h3>Rule {this.state.title} is changed.</h3>
+                    </div>
+                );
+            default:
+                return (
+                    <div>
+                        <h3>{this.state.title}</h3>
+                    </div>
+                );
+        }
+
+
+    }
 }
 
 

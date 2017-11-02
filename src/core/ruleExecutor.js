@@ -56,7 +56,7 @@ class RuleExecutor {
 
         for (let i = 0; i < ruleTable.length; i++) {
 
-            if(ruleTable[i]['xPathQueryResult'].filter((d) => {
+            if (ruleTable[i]['xPathQueryResult'].filter((d) => {
                     return d['filePath'] === filePath;
                 }).length === 0)
                 continue;
@@ -225,10 +225,14 @@ class RuleExecutor {
 
         if (resultArray.length === 0)
             ruleI['xPathQueryResult'].push({'filePath': xmlFile['filePath'], 'data': resultData});
-        else // TODO error prone! check this later!
-            ruleI['xPathQueryResult'].filter((d) => {
-                return d['filePath'] === xmlFile['filePath']
-            })[0]['data'] = resultData;
+        else {
+            if (ruleI['xPathQueryResult'].filter((d) => {
+                    return d['filePath'] === xmlFile['filePath']
+                }).length > 0)
+                ruleI['xPathQueryResult'].filter((d) => {
+                    return d['filePath'] === xmlFile['filePath']
+                })[0]['data'] = resultData;
+        }
 
         return ruleI;
 
@@ -294,9 +298,9 @@ class RuleExecutor {
 
         // run xpath queries
         let quantifierNodes = xml.evaluate(ruleI[group]['command'], xml, nsResolver, XPathResult.ANY_TYPE, null);
-        let quantifierNameNodes = xml.evaluate(ruleI[group]['command'], xml, nsResolver, XPathResult.ANY_TYPE, null);
+        // let quantifierNameNodes = xml.evaluate(ruleI[group]['command'], xml, nsResolver, XPathResult.ANY_TYPE, null);
         let resultQNode = quantifierNodes.iterateNext();
-        let resultQNameNode = quantifierNameNodes.iterateNext();
+        // let resultQNameNode = quantifierNameNodes.iterateNext();
         let index = 0;
         while (resultQNode) {
             let xmlAndText = this.getXmlData(xml, ruleI[group]['command'], index);
@@ -305,11 +309,11 @@ class RuleExecutor {
                 // "result": new XMLSerializer().serializeToString(resultQNode),
                 "xml": xmlAndText.xmlJson,
                 // "xmlText": xmlAndText.xmlText,
-                "name": resultQNameNode ? new XMLSerializer().serializeToString(resultQNameNode) : "error in xpath",
+                // "name": resultQNameNode ? new XMLSerializer().serializeToString(resultQNameNode) : "error in xpath",
                 "snippet": xmlAndText.snippet
             });
             resultQNode = quantifierNodes.iterateNext();
-            resultQNameNode = quantifierNameNodes.iterateNext();
+            // resultQNameNode = quantifierNameNodes.iterateNext();
             index += 1;
         }
 
@@ -332,6 +336,7 @@ class RuleExecutor {
         for (let i = 0; i < quantifierResult.length; i++) {
             let found = false;
             for (let j = 0; j < sliceArr.length; j++) {
+                // TODO find a better comparison measures
                 if (quantifierResult[i]['snippet'] === sliceArr[j]['snippet']) {
                     matches.push(quantifierResult[i]);
                     sliceArr.splice(j, 1);
