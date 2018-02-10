@@ -114,6 +114,10 @@ class App {
             document.getElementById('projectHierarchy')
         );
 
+        main.append('div')
+            .style('width', '100%')
+            .style('height', '100px');
+
 
         // ----
 

@@ -72,20 +72,19 @@ class HashManager {
      * @param hash
      */
     updateHistory = function (hash) {
-        let self = this;
-
-        if (!self.clicked) {
-            if (self.history.length - 1 > self.activeHash) {
-                for (let i = self.history.length - 1; i > self.activeHash; i--)
-                    console.log(self.history.pop());
+        if (!this.clicked) {
+            if (this.history.length - 1 > this.activeHash) {
+                for (let i = this.history.length - 1; i > this.activeHash; i--)
+                    console.log(this.history.pop());
             }
-            self.history.push(hash);
-            self.activeHash += 1;
-            d3.select(d3.select('#back_button').node().parentNode).classed('disabled', self.activeHash === 0);
+            this.history.push(hash);
+            this.activeHash += 1;
+            d3.select(d3.select('#back_button').node().parentNode).classed('disabled', this.activeHash === 0);
             d3.select(d3.select('#forward_button').node().parentNode).classed('disabled', true);
         }
-        self.clicked = false;
+        this.clicked = false;
 
+        console.log(this.history);
     };
 
     /**
