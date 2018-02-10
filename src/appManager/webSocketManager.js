@@ -32,7 +32,7 @@ class WebSocketManager {
 
             let message = JSON.parse(e.data);
 
-            // if (message.command !== 'XML')
+            // if (message.command === 'PROJECT_HIERARCHY')
             //     console.log(message);
 
             switch (message.command) {
@@ -44,12 +44,17 @@ class WebSocketManager {
 
                 // send initially on open, when the ruleJson.txt is changed, followed by VERIFY_RULES
                 case "RULE_TABLE":
-                    eval(message.data);
+                    ruleTable = JSON.parse(message.data);
                     break;
 
                 // send initially on open, when the tagJson.txt is changed, followed by VERIFY_RULES
                 case "TAG_TABLE":
-                    eval(message.data);
+                    tagTable = JSON.parse(message.data);
+                    break;
+
+                case "PROJECT_HIERARCHY":
+                    // received by projectHierarchy
+                    PubSub.publish('PROJECT_HIERARCHY', [message.data]);
                     break;
 
                 case "VERIFY_RULES":

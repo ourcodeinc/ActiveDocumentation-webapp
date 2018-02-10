@@ -6,35 +6,43 @@ import React from 'react';
 import '../App.css';
 
 // import ReactDOM from 'react-dom';
-// import * as d3 from 'd3';
 import PubSub from 'pubsub-js';
 import Utilities from '../core/utilities';
 import {Tab, Tabs, Badge, FormGroup, ControlLabel, FormControl, Label, Collapse} from 'react-bootstrap';
-import FaClose from 'react-icons/lib/fa/close';
-
+import FaCaretDown from 'react-icons/lib/fa/caret-down';
+import FaCaretUp from 'react-icons/lib/fa/caret-up';
 
 class RulePanel extends React.Component {
 
     constructor() {
         super();
-        this.state = {open: true, class: "ruleDiv"};
+        this.state = {open: true, class: "ruleDiv", activeTab: 0};
+        this.caretClass = {
+            true: {cursor: "pointer", color: "black"},
+            false: {cursor: "pointer", color: "darkgrey"}
+        };
+
+        this.handleToggleTabs = this.handleToggleTabs.bind(this);
     }
 
     render() {
         this.ruleI = this.props['ruleData'];
-
-        // console.log(this.ruleI);
-
         this.ws = this.props['ws'];
         this.codeChanged = this.props['codeChanged'];
 
         return (
             <div className={this.state.class} id={`rule_panel_${this.ruleI['index']}`}>
-                <FormGroup onClick={() => this.setState({open: !this.state.open})}>
+                <FormGroup>{/*onClick={() => this.setState({open: !this.state.open})}>*/}
                     <ControlLabel>Rule Description</ControlLabel>
+                    <div style={{float: 'right'}}>
+                        <FaCaretUp size={20} onClick={() => this.setState({open: false})}
+                                   style={this.caretClass[this.state.open.toString()]}/>
+                        <FaCaretDown size={20} onClick={() => this.setState({open: true})}
+                                     style={this.caretClass[(!this.state.open).toString()]}/>
+                    </div>
                     <FormControl componentClass="textarea" defaultValue={this.ruleI['ruleDescription']}
                                  id={`rule_desc_${this.ruleI['index']}`}
-                                 onBlur={() => this.updateRules(this.ruleI['index'])}/>
+                                 onBlur={() => this.updateRules(this.ruleI['index'])} placeholder="Rule Description"/>
                 </FormGroup>
                 <Collapse in={this.state.open}>
                     <div>
@@ -42,19 +50,20 @@ class RulePanel extends React.Component {
                             <ControlLabel>Rule Detail</ControlLabel>
                             <FormControl componentClass="textarea" defaultValue={this.ruleI['detail']}
                                          id={`rule_detail_${this.ruleI['index']}`}
-                                         onBlur={() => this.updateRules(this.ruleI['index'])}/>
+                                         onBlur={() => this.updateRules(this.ruleI['index'])}
+                                         placeholder="Rule Detail"/>
                         </FormGroup>
                         <div>{this.tagRender()}</div>
                         <div style={{paddingTop: 10 + 'px', clear: 'both'}}>
-                            <Tabs animation={true} id={"rules_" + this.ruleI['index']}>
+                            <Tabs animation={true} id={"rules_" + this.ruleI['index']} activeKey={this.state.activeTab}
+                                  onSelect={this.handleToggleTabs}>
                                 <Tab eventKey={0} disabled>{}</Tab>
-                                <Tab eventKey={1} title={this.tabHeaderRender('all')}
+                                <Tab eventKey={'all'} title={this.tabHeaderRender('all')}
                                      animation={true}>{this.listRender('all')}</Tab>
-                                <Tab eventKey={2}
+                                <Tab eventKey={'satisfied'}
                                      title={this.tabHeaderRender('satisfied')}>{this.listRender('satisfied')}</Tab>
-                                <Tab eventKey={3}
+                                <Tab eventKey={'violated'}
                                      title={this.tabHeaderRender('violated')}>{this.listRender('violated')}</Tab>
-                                <Tab title={(<span style={{color:'darkgray'}}>Close <FaClose/></span>)}/>
                             </Tabs>
                         </div>
                     </div>
@@ -64,17 +73,16 @@ class RulePanel extends React.Component {
     }
 
     /**
-     * set the states 'open' and 'class' upon updates of the component.
-     * @param nextProps
+     * set the states 'open' and 'class' after mounting.
      */
-    componentWillReceiveProps(nextProps) {
+    componentDidMount() {
 
-        if (!nextProps['codeChanged']) {
+        if (!this.codeChanged) {
             this.setState({open: true, class: "ruleDiv"});
             return;
         }
 
-        let ruleIfile = nextProps['ruleData']['xPathQueryResult'][0]['data'];
+        let ruleIfile = this.ruleI['xPathQueryResult'][0]['data'];
         if (ruleIfile['allChanged'] === 'greater' && ruleIfile['satisfiedChanged'] === ruleIfile['violatedChanged'] === 'none') {
             this.setState({open: true, class: "ruleDiv blue-bg"});
             return;
@@ -180,6 +188,7 @@ class RulePanel extends React.Component {
                 </div>
             )
         })
+
     };
 
 
@@ -197,6 +206,18 @@ class RulePanel extends React.Component {
         if (newObj['ruleDescription'] !== this.ruleI['ruleDescription'] || newObj['detail'] !== this.ruleI['detail'])
             Utilities.sendToServer(this.ws, "MODIFIED_RULE", newObj);
     };
+
+
+    /**
+     * toggle tabs
+     * @param key
+     */
+    handleToggleTabs(key) {
+        if (this.state.activeTab === key)
+            this.setState({activeTab: 0});
+        else
+            this.setState({activeTab: key});
+    }
 
 }
 
