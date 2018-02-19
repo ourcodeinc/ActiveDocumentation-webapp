@@ -25,7 +25,7 @@ export class ProjectHierarchy extends Component {
     render() {
         return (
             <div id="projectHierarchyDropDownDiv">
-                {this.drawDropDowns()}
+                {/*{this.drawDropDowns()}*/}
             </div>
         )
     }

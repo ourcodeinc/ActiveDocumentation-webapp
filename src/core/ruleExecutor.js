@@ -189,6 +189,9 @@ class RuleExecutor {
         else if (ruleI['ruleType']['type'] === 'BETWEEN') {
             ruleI = this.runXpathQueryBetween(xmlFilesToVerify, ruleI);
         }
+        else if (ruleI['ruleType']['type'] === 'MIXED') {
+            ruleI = this.runXpathQueryMixed(xmlFilesToVerify, ruleI);
+        }
 
         return ruleI;
     }
@@ -274,6 +277,120 @@ class RuleExecutor {
 
     }
 
+
+    /**
+     * run Xpath query when a group has multiple commands
+     * @param xmlFiles
+     * @param ruleI
+     * @returns {*}
+     */
+    runXpathQueryMixed(xmlFiles, ruleI) {
+
+        let quantifierResult = [];
+        let conditionedResult = [];
+
+        if (ruleI['quantifier'].hasOwnProperty('type') && ruleI['quantifier']['type'] === 'FIND_FROM_TEXT')
+            quantifierResult = this.findFromText(xmlFiles, ruleI, 'quantifier');
+        else if (ruleI['quantifier'].hasOwnProperty('type') && ruleI['quantifier']['type'] === 'RETURN_TO_BASE')
+            quantifierResult = this.findAndReturnToBase(xmlFiles, ruleI, 'quantifier');
+        else
+            for (let j = 0; j < xmlFiles.length; j++)
+                quantifierResult = quantifierResult.concat(this.runXPathQuery(xmlFiles[j], ruleI, 'quantifier'));
+
+
+        if (ruleI['conditioned'].hasOwnProperty('type') && ruleI['conditioned']['type'] === 'FIND_FROM_TEXT')
+            conditionedResult = this.findFromText(xmlFiles, ruleI, 'conditioned');
+        else if (ruleI['conditioned'].hasOwnProperty('type') && ruleI['conditioned']['type'] === 'RETURN_TO_BASE')
+            conditionedResult = this.findAndReturnToBase(xmlFiles, ruleI, 'conditioned');
+        else
+            for (let j = 0; j < xmlFiles.length; j++)
+                conditionedResult = conditionedResult.concat(this.runXPathQuery(xmlFiles[j], ruleI, 'conditioned'));
+
+
+        // console.log(ruleI['quantifier'], quantifierResult);
+        // console.log(ruleI['conditioned'], conditionedResult);
+
+
+        // compare results
+        let violatedResult = this.containResults(conditionedResult, quantifierResult);
+
+        let resultData = {
+            'quantifierResult': quantifierResult,
+            'satisfiedResult': conditionedResult,
+            'violatedResult': violatedResult,
+            'satisfied': quantifierResult.length - violatedResult.length,
+            'violated': violatedResult.length
+        };
+
+        if (!ruleI.hasOwnProperty('xPathQueryResult'))
+            ruleI['xPathQueryResult'] = [];
+
+        ruleI['xPathQueryResult'].push({'filePath': ruleI['scope'], 'data': resultData});
+
+        // console.log(ruleI.index, resultData);
+        return ruleI;
+
+    }
+
+
+    /**
+     * When a group consists of two commands, the first command
+     * @param xmlFiles
+     * @param ruleIOrg
+     * @param group
+     * @returns {Array}
+     */
+    findFromText(xmlFiles, ruleIOrg, group) {
+        let result1 = [], result2 = [];
+        let ruleI = Utilities.cloneJSON(ruleIOrg);
+
+        ruleI[group]['command'] = ruleI[group]['command1'];
+        for (let j = 0; j < xmlFiles.length; j++) {
+            result1 = result1.concat(this.runXPathQuery(xmlFiles[j], ruleI, group));
+        }
+
+        for (let i = 0; i < result1.length; i++) {
+            ruleI[group]['command'] = ruleI[group]['command2'].replace('<TEMP>', result1[i].snippet);
+            for (let j = 0; j < xmlFiles.length; j++) {
+                result2 = result2.concat(this.runXPathQuery(xmlFiles[j], ruleI, group));
+            }
+        }
+        return result2;
+    }
+
+
+    /**
+     * When a group consists of tree commands, the first and last command is on the same file
+     * @param xmlFiles
+     * @param ruleIOrg
+     * @param group
+     * @returns {Array}
+     */
+    findAndReturnToBase(xmlFiles, ruleIOrg, group) {
+        let result1, result2, result3 = [];
+        let ruleI = Utilities.cloneJSON(ruleIOrg);
+
+        for (let base = 0; base < xmlFiles.length; base++) {
+            ruleI[group]['command'] = ruleI[group]['command1'];
+            result1 = this.runXPathQuery(xmlFiles[base], ruleI, group);
+
+            for (let i = 0; i < result1.length; i++) {
+                for (let j = 0; j < xmlFiles.length; j++) {
+                    ruleI[group]['command'] = ruleI[group]['command2'].replace(new RegExp('<TEMP>', 'g'), result1[i].snippet);
+                    result2 = this.runXPathQuery(xmlFiles[j], ruleI, group);
+
+                    for (let k = 0; k < result2.length; k++) {
+                        ruleI[group]['command'] = ruleI[group]['command3'].replace('<TEMP>', result2[k].snippet);
+                        result3 = result3.concat(this.runXPathQuery(xmlFiles[base], ruleI, group));
+                    }
+
+                }
+            }
+        }
+        return result3;
+    }
+
+
     /**
      * runs the XPath query and compare results
      * @param xmlFile
@@ -354,6 +471,36 @@ class RuleExecutor {
 
 
     /**
+     * check if all elements of a sample array exists in the container array
+     * repetition is allowed
+     * @param containerResult
+     * @param sampleResult
+     * @returns {Array}
+     */
+    containResults(containerResult, sampleResult) {
+        let matches = [];
+        let mismatches = [];
+
+        for (let i = 0; i < sampleResult.length; i++) {
+            let found = false;
+            for (let j = 0; j < containerResult.length; j++) {
+                // TODO find a better comparison measures
+                if (sampleResult[i]['snippet'] === containerResult[j]['snippet']) {
+                    matches.push(sampleResult[i]);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                mismatches.push(sampleResult[i]);
+            }
+        }
+
+        return mismatches;
+    }
+
+
+    /**
      * remove the following nodes.The resulting xml is sent to the server to be processed by srcML
      * and find the line number.
      * @param mainXml
@@ -402,21 +549,26 @@ class RuleExecutor {
             return removeSib(node.parentNode);
         }
 
-        let par, nameIndex;
-        for (nameIndex = 0; nameIndex < res.children.length; nameIndex++)
-            if (res.children[nameIndex].tagName.toString() === 'name') {
-                break;
-            }
 
-        if (res.firstChild && res.firstChild.nodeType !== -1 && nameIndex !== -1 && nameIndex !== res.children.length)
-            par = removeSib(res.children[nameIndex]);
-        else if (res.nextSibling)
-            par = removeSib(res.nextSibling);
-        else
-            par = res;
+        let par = res, nameIndex, fileName = "";
+        if (res.children) {
+
+            for (nameIndex = 0; nameIndex < res.children.length; nameIndex++)
+                if (res.children[nameIndex].tagName.toString() === 'name') {
+                    break;
+                }
+
+            if (res.firstChild && res.firstChild.nodeType !== -1 && nameIndex !== -1 && nameIndex !== res.children.length)
+                par = removeSib(res.children[nameIndex]);
+            else if (res.nextSibling)
+                par = removeSib(res.nextSibling);
+            else
+                par = res;
+
+            fileName = par.getAttribute("filename");
+        }
 
 
-        let fileName = par.getAttribute("filename");
         let temp = new XMLSerializer().serializeToString(par);
         return {
             'xmlJson': {

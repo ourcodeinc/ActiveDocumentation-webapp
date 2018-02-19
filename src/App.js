@@ -4,6 +4,8 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 
+import './index.css';
+
 import ReactDOM from 'react-dom';
 import * as d3 from 'd3';
 import PubSub from 'pubsub-js';
@@ -18,7 +20,7 @@ import RuleTable from './ui/ruleTable';
 import IndividualRule from './ui/individualRule';
 import NavBar from './ui/navBar';
 import HeaderBar from './ui/headerBar';
-import ProjectHierarchy from './ui/projectHierarchy';
+// import ProjectHierarchy from './ui/projectHierarchy';
 
 class App {
 
@@ -106,13 +108,13 @@ class App {
             document.getElementById('individualRule')
         );
 
-        main.append('nav')
-            .classed('main container hidden',true)
-            .attr('id','projectHierarchy');
-        ReactDOM.render(
-            React.createElement(ProjectHierarchy),
-            document.getElementById('projectHierarchy')
-        );
+        // main.append('nav')
+        //     .classed('main container hidden',true)
+        //     .attr('id','projectHierarchy');
+        // ReactDOM.render(
+        //     React.createElement(ProjectHierarchy),
+        //     document.getElementById('projectHierarchy')
+        // );
 
         main.append('div')
             .style('width', '100%')
