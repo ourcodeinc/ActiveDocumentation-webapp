@@ -42,7 +42,13 @@ class RulePanel extends React.Component {
                     </div>
                     <FormControl componentClass="textarea" defaultValue={this.ruleI['ruleDescription']}
                                  id={`rule_desc_${this.ruleI['index']}`}
-                                 onBlur={() => this.updateRules(this.ruleI['index'])} placeholder="Rule Description"/>
+                                 onBlur={() => this.updateRules(this.ruleI['index'])} placeholder="Rule Description"
+                                 onKeyUp={() => {
+                                     let el = document.getElementById(`rule_desc_${this.ruleI['index']}`);
+
+                                     el.style.cssText = 'height:auto; padding:0';
+                                     el.style.cssText = 'height:' + el.scrollHeight + 'px';
+                                 }}/>
                 </FormGroup>
                 <Collapse in={this.state.open}>
                     <div>
@@ -51,7 +57,13 @@ class RulePanel extends React.Component {
                             <FormControl componentClass="textarea" defaultValue={this.ruleI['detail']}
                                          id={`rule_detail_${this.ruleI['index']}`}
                                          onBlur={() => this.updateRules(this.ruleI['index'])}
-                                         placeholder="Rule Detail"/>
+                                         placeholder="Rule Detail"
+                                         onKeyUp={() => {
+                                             let el = document.getElementById(`rule_detail_${this.ruleI['index']}`);
+
+                                             el.style.cssText = 'height:auto; padding:0';
+                                             el.style.cssText = 'height:' + el.scrollHeight + 'px';
+                                         }}/>
                         </FormGroup>
                         <div>{this.tagRender()}</div>
                         <div style={{paddingTop: 10 + 'px', clear: 'both'}}>
@@ -100,6 +112,7 @@ class RulePanel extends React.Component {
             return;
         }
         this.setState({open: false, class: "ruleDiv"});
+
     }
 
 

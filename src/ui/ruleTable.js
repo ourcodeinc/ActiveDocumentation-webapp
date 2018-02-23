@@ -35,6 +35,17 @@ class RuleTable extends React.Component {
         );
     }
 
+    /**
+     * update the length of a text area to remove scroll
+     */
+    updateTextareaLength() {
+        d3.select("#ruleResults").selectAll("textarea")
+            .each(function () {
+                let el = this;
+                el.style.cssText = 'height:0';
+                el.style.cssText = 'overflow:hidden;height:' + el.scrollHeight + 'px';
+            });
+    }
 
     /**
      * subscribe for events
@@ -62,6 +73,9 @@ class RuleTable extends React.Component {
                 // console.log(this.rules.filter((d) => d['index'] === 123)[0]);
                 this.setState({rulesToDisplay: this.rules, codeChanged: false});
             }
+
+            this.updateTextareaLength();
+
         });
 
         // called in RuleExecutor.checkRulesForAll() and RuleExecutor.checkRules_org()

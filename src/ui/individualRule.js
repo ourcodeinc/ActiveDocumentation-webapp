@@ -41,7 +41,13 @@ class IndividualRule extends React.Component {
                     <div className="tableCell labelCell"><h4>Rule Detail</h4></div>
                     <div className="tableCell infoCell">
                         <FormControl id="indi_detail_textarea" componentClass="textarea" placeholder="Detail"
-                                     onBlur={() => this.updateRules()}/>
+                                     onBlur={() => this.updateRules()}
+                                     onKeyUp={() => {
+                                         let el = document.getElementById("indi_detail_textarea");
+
+                                         el.style.cssText = 'height:auto; padding:0';
+                                         el.style.cssText = 'height:' + el.scrollHeight + 'px';
+                                     }}/>
                     </div>
                 </div>
                 <div className="tableRow">
@@ -64,6 +70,18 @@ class IndividualRule extends React.Component {
     }
 
     /**
+     * update the length of a text area to remove scroll
+     */
+    updateTextareaLength() {
+        d3.select("#individualRule").selectAll("textarea")
+            .each(function () {
+                let el = this;
+                el.style.cssText = 'height:0';
+                el.style.cssText = 'overflow:hidden;height:' + el.scrollHeight + 'px';
+            });
+    }
+
+    /**
      * subscribe for events
      */
     attachListener() {
@@ -78,6 +96,7 @@ class IndividualRule extends React.Component {
                 this.ruleI = this.rules.filter((d) => d.index === +data[1])[0];
                 this.displayRule();
                 d3.select('#individualRule').classed('hidden', false);
+                this.updateTextareaLength();
             }
             else {
                 d3.select('#individualRule').classed('hidden', true);
@@ -155,6 +174,9 @@ class IndividualRule extends React.Component {
 
     };
 
+    setHeight(o) {
+        return (25 + o.scrollHeight) + "px";
+    }
 
 }
 
