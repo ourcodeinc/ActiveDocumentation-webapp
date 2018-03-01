@@ -33,8 +33,11 @@ class RulePanel extends React.Component {
         return (
             <div className={this.state.class} id={`rule_panel_${this.ruleI['index']}`}>
                 <FormGroup>{/*onClick={() => this.setState({open: !this.state.open})}>*/}
-                    <ControlLabel>Rule Description</ControlLabel>
+                    <ControlLabel>Rule Description
+                        {/*<Label bsStyle="default" onClick={() => PubSub.publish('UPDATE_HASH', ['rule', this.ruleI['index']])}>{this.ruleI['index']}</Label>*/}
+                    </ControlLabel>
                     <div style={{float: 'right'}}>
+                        (<a onClick={() => PubSub.publish('UPDATE_HASH', ['rule', this.ruleI['index']])}>view</a>)
                         <FaCaretUp size={20} onClick={() => this.setState({open: false})}
                                    style={this.caretClass[this.state.open.toString()]}/>
                         <FaCaretDown size={20} onClick={() => this.setState({open: true})}
