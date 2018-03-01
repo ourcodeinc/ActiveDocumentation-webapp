@@ -25,7 +25,7 @@ export class NavBar extends Component {
                         <li><a href="#/rules">Rules</a></li>
                         {/*<li className="disabled"><a>Project Hierarchy</a></li>*/}
                         {/*href="#/hierarchy"*/}
-                        {/*//<li className="disabled"><a>Generate Rules</a></li>*/}
+                        <li><a href="#/genRule">Generate Rules</a></li>
                     </ul>
                 </div>
             </nav>

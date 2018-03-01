@@ -20,6 +20,7 @@ import RuleTable from './ui/ruleTable';
 import IndividualRule from './ui/individualRule';
 import NavBar from './ui/navBar';
 import HeaderBar from './ui/headerBar';
+import GenerateRule from './ui/generateRule';
 // import ProjectHierarchy from './ui/projectHierarchy';
 
 class App {
@@ -106,6 +107,14 @@ class App {
         ReactDOM.render(
             React.createElement(IndividualRule),
             document.getElementById('individualRule')
+        );
+
+        main.append('nav')
+            .classed('main container hidden',true)
+            .attr('id','generateRule');
+        ReactDOM.render(
+            React.createElement(GenerateRule),
+            document.getElementById('generateRule')
         );
 
         // main.append('nav')
