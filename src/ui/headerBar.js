@@ -8,7 +8,7 @@ import React, {Component} from 'react';
 import '../App.css';
 import Utilities from '../core/utilities';
 
-// import * as d3 from 'd3';
+import * as d3 from 'd3';
 import PubSub from 'pubsub-js';
 import {FormControl} from 'react-bootstrap';
 
@@ -71,6 +71,7 @@ export class HeaderBar extends Component {
                     //this.setState({hash: 'index', title: "Active Documentation", content: ""});
                     break;
             }
+            this.updateTextareaLength();
 
         });
 
@@ -94,12 +95,14 @@ export class HeaderBar extends Component {
         // [tagTable, newTag]
         PubSub.subscribe('UPDATE_TAG', (msg, data) => {
             this.tags = data[0];
+            this.updateTextareaLength();
             // console.log(this.tags);
         });
 
         // [tagTable]
         PubSub.subscribe('UPDATE_TAG_TABLE', (msg, data) => {
             this.tags = data[0];
+            this.updateTextareaLength();
         });
     }
 
@@ -156,6 +159,19 @@ export class HeaderBar extends Component {
         }
 
 
+    }
+
+
+    /**
+     * update the length of a text area to remove scroll
+     */
+    updateTextareaLength() {
+        d3.select("#headerBar").selectAll("textarea")
+            .each(function () {
+                let el = this;
+                el.style.cssText = 'height:0';
+                el.style.cssText = 'overflow:hidden;height:' + el.scrollHeight + 'px';
+            });
     }
 }
 
