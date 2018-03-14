@@ -212,3 +212,53 @@ annotation, annotation * {
 .primary {
     color: #5d5d5d;
 }
+
+/*** Rule generating ***/
+
+.ruleGroupDiv {
+    padding: 10px 10px;
+    border: 1px solid gray;
+    margin: 10px 0;
+}
+
+#generateRule button {
+    margin-top: 5px;
+}
+
+.rowItem {
+    float: left;
+    padding-right: 5px;
+}
+
+.inlineText {
+    margin-top: 10px;
+}
+
+#generateRule .btn {
+    padding: 2px;
+}
+
+#generateRule button.follows {
+    background-image: -webkit-linear-gradient(top, #5bc0de 0%, #2aabd2 100%);
+    background-image: -o-linear-gradient(top, #5bc0de 0%, #2aabd2 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#5bc0de), to(#2aabd2));
+    background-image: linear-gradient(to bottom, #5bc0de 0%, #2aabd2 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff5bc0de', endColorstr='#ff2aabd2', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    background-repeat: repeat-x;
+    border-color: #28a4c9;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, .2);
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
+    color: #fff;
+    background-color: #5bc0de;
+    border-color: #46b8da;
+}
+
+#generateRule .ruleGroupDiv.default {
+    border: 1px solid gray;
+}
+
+#generateRule .ruleGroupDiv.follows {
+    border: 2px solid #2aabd2;
+}

@@ -10,7 +10,7 @@ import ReactDOM from 'react-dom';
 import * as d3 from 'd3';
 import PubSub from 'pubsub-js';
 
-import * as webSocketManager from './appManager/webSocketManager';
+// import * as webSocketManager from './appManager/webSocketManager';
 import * as hashManager from './appManager/hashManager';
 
 import * as ruleExecutor from './core/ruleExecutor';
@@ -133,10 +133,12 @@ class App {
         // ----
 
         ruleExecutor.create();
-        webSocketManager.create();
+        // webSocketManager.create();
         hashManager.create();
 
         window.location.hash = "#/index";
+        window.location.hash = "#/genRule";
+
     }
 
 
