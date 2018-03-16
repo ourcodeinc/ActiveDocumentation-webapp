@@ -8,8 +8,9 @@ import '../../App.css';
 import {DropdownButton, FormControl, MenuItem, Row} from 'react-bootstrap';
 import {constants} from '../constants';
 import FunctionFragment from './functionFragment'
-import ExpressionFragment from "./expressionFragment";
+// import ExpressionFragment from "./expressionFragment";
 import DeclarationFragment from "./declarationFragment";
+
 import * as d3 from "d3";
 
 
@@ -19,25 +20,27 @@ class ClassFragment extends React.Component {
         super(props);
 
         this.xpath = {
+            "root": props["root"],
             "xpathConstraint": {
-                "top": [[]],
-                "before": [[]],
-                "after": [[], []],
-                "within": [[]]
+                "top": [],
+                "before": [],
+                "after_1": [],
+                "after_2": [],
+                "within": []
             },
             "xpathFollows": "",
-            "xpathFollowNodes": ""
         };
 
         this.state = {
             "assignedID": props["assignedId"],
             "target": props["target"],
 
-            "top": [[]], // {key: "HAS_ANNOTATION_NAMED", value: "Entity"}
-            "before": [[]],
-            "after": [[], []], // {key: "NAME_EQUALS_TO", value: "Command"}
-            "within": [[]],
-            "follows": []
+            "top": [], // {key: key, value: constant Obj}
+            "before": [],
+            "after_1": [],
+            "after_2": [],
+            "within": [],
+            "follows": {}
         }
 
     }
@@ -45,11 +48,14 @@ class ClassFragment extends React.Component {
     render() {
         return (
             <div className={"ruleGroupDiv " + this.state.target} id={this.state.assignedID}>
-                {this.renderGroup("top")}
                 <Row style={{marginLeft: "0"}}>
-                    {this.renderGroup("before")}
+                    {this.renderGroup("top")}
+                </Row>
+                <Row style={{marginLeft: "0"}}>
+                    {/*{this.renderGroup("before")}*/}
                     <div className={"rowItem inlineText"}><b>class</b></div>
-                    {this.renderGroup("after")}
+                    {this.renderGroup("after_1")}
+                    {this.renderGroup("after_2")}
                 </Row>
                 <b>&#123;</b>
                 {this.renderGroup("within")}
@@ -64,55 +70,61 @@ class ClassFragment extends React.Component {
      * render the 'follows' elements and constraints, drop down or a component
      */
     renderFollows() {
-        if (this.state["follows"].length === 0)
+        if (!this.state["follows"].hasOwnProperty("key"))
             return (
                 <div>
-                    {constants.code_fragment["class"]["follows"].map((elem, index) => {
-                        return (
-                            <DropdownButton title={`follows`} id="dropdown-size-medium"
-                                            key={index} className={this.state.target}>
-                                {Object.keys(elem).map((key, i) => {
-                                    return (
-                                        <MenuItem eventKey={key} key={i}
-                                                  onSelect={(evt) => {
-                                                      this.setState({
-                                                          follows: [{
-                                                              key: constants.code_fragment["class"]["follows"][0][evt].follows,
-                                                              value: evt
-                                                          }]
-                                                      })
-                                                  }}
-                                        >{elem[key].name}
-                                        </MenuItem>);
-                                })}
-                            </DropdownButton>
-                        )
-                    })}
+                    <DropdownButton title={`follows`} className={this.state.target} id={"drop_down"}>
+                        {Object.keys(constants.code_fragment["class"]["follows"]).map((key, i) => {
+                            return (
+                                <MenuItem eventKey={key} key={i}
+                                          onSelect={(evt) => {
+                                              this.setState({
+                                                  follows: {
+                                                      key: evt,
+                                                      value: constants.code_fragment["class"]["follows"][evt]
+                                                  }
+                                              })
+                                          }}
+                                >{constants.code_fragment["class"]["follows"][key].name}
+                                </MenuItem>);
+                        })}
+                    </DropdownButton>
                 </div>
             );
 
         else {
             this.updateXpathFollows();
-            switch (this.state["follows"][0].key) {
-                case "class":
+            switch (this.state["follows"].key) {
+                case "subclass":
                     return (
-                        <ClassFragment target={this.state.target} assignedId={this.state.assignedID + "_class_0"}
-                                       callbackFromParent={this.receiveXpathDataFollows} isConstraint={false}/>);
+                        <ClassFragment target={this.state.target} assignedId={this.state.assignedID + "_class_follows"}
+                                       callbackFromParent={this.receiveXpathDataFollows} isConstraint={false}
+                                       root={constants.code_fragment["class"]["follows"][this.state["follows"].key].xpath}/>);
+
                 case "function":
-                    return (<FunctionFragment target={this.state.target} category={"function"}
-                                              assignedId={this.state.assignedID + "_function_0"}/>);
+                    return (
+                        <FunctionFragment target={this.state.target} category={"function"}
+                                          assignedId={this.state.assignedID + "_function_follows"}
+                                          callbackFromParent={this.receiveXpathDataFollows} isConstraint={false}
+                                          root={constants.code_fragment["class"]["follows"][this.state["follows"].key].xpath}/>);
+
                 case "constructor":
                     return (<FunctionFragment target={this.state.target} category={"constructor"}
-                                              assignedId={this.state.assignedID + "_constructor_0"}/>);
+                                              assignedId={this.state.assignedID + "_constructor_follows"}
+                                              callbackFromParent={this.receiveXpathDataFollows} isConstraint={false}
+                                              root={constants.code_fragment["class"]["follows"][this.state["follows"].key].xpath}/>);
                 case "function declaration":
                     return (<FunctionFragment target={this.state.target} category={"function declaration"}
-                                              assignedId={this.state.assignedID + "_function_decl_0"}/>);
-                case "expression":
-                    return (<ExpressionFragment target={this.state.target}/>);
+                                              assignedId={this.state.assignedID + "_function_decl_follows"}
+                                              callbackFromParent={this.receiveXpathDataFollows} isConstraint={false}
+                                              root={constants.code_fragment["class"]["follows"][this.state["follows"].key].xpath}/>);
                 case "declaration":
-                    return (<DeclarationFragment target={this.state.target}/>);
+                    return (<DeclarationFragment target={this.state.target}
+                                                 assignedId={this.state.assignedID + "_decl_follows"}
+                                                 callbackFromParent={this.receiveXpathDataFollows} isConstraint={false}
+                                                 root={constants.code_fragment["class"]["follows"][this.state["follows"].key].xpath}/>);
                 case "name":
-                    d3.select(`#${this.state.assignedID}`).select("#after_0").classed(`ruleGroupDiv ${this.state["target"]}`, true);
+                    d3.select(`#${this.state.assignedID}-after_1`).classed(`ruleGroupDiv ${this.state["target"]}`, true);
                     break;
                 default:
                     return (<div/>)
@@ -125,83 +137,92 @@ class ClassFragment extends React.Component {
      */
     renderGroup(group) {
         return (
-            <Row style={{margin: "0"}}>
-                {constants.code_fragment["class"][group].map((elem, index) => {
+            <div className={group === "within" ? "" : "rowItem"} id={`${this.state.assignedID}-${group}`}>
+                {this.state[group].map((cons, i) => {
                     return (
-                        <div key={index} className={group === "within" ? "" : "rowItem"} id={`${group}_${index}`}>
-                            {this.state[group][index].map((cons, i) => {
-                                return (
-                                    <div className={group === "within" ? "" : "rowItem"} key={i}>
-                                        <div className={"rowItem inlineText"}>
-                                            <b>{constants.code_fragment["class"][group][index][cons["key"]]["pre"]}</b>
-                                        </div>
-                                        <div className={group === "within" ? "" : "rowItem"}>
-                                            {this.switchMethod(group, index, i, cons)}
-                                        </div>
-                                        <div className={group === "within" ? "inlineText" : "rowItem inlineText"}>
-                                            <b>{constants.code_fragment["class"][group][index][cons["key"]]["post"]}</b>
-                                        </div>
-                                    </div>
-                                )
-                            })}
-
-
-                            <DropdownButton title={``} id="dropdown-size-medium">
-                                {Object.keys(elem).map((key, i) => {
-                                    return (
-                                        <MenuItem eventKey={key} key={i}
-                                                  onSelect={(evt) => {
-                                                      this.xpath.xpathConstraint[group][index].push("");
-                                                      this.state[group][index].push({key: evt, value: ""});
-                                                      this.forceUpdate();
-                                                  }}
-                                        >{elem[key].name}
-                                        </MenuItem>);
-                                })}
-                            </DropdownButton>
+                        <div className={group === "within" ? "" : "rowItem"} key={i}>
+                            <div className={"rowItem inlineText"}>
+                                <b>{constants.code_fragment["class"][group][cons["key"]]["pre"]}</b>
+                            </div>
+                            <div className={group === "within" ? "" : "rowItem"}>
+                                {this.switchMethod(group, i, cons)}
+                            </div>
+                            <div className={group === "within" ? "inlineText" : "rowItem inlineText"}>
+                                <b>{constants.code_fragment["class"][group][cons["key"]]["post"]}</b>
+                            </div>
                         </div>
                     )
                 })}
-            </Row>
+
+
+                <DropdownButton title={``} id="dropdown-size-medium">
+                    {Object.keys(constants.code_fragment["class"][group]).map((key, i) => {
+                        return (
+                            <MenuItem eventKey={key} key={i}
+                                      onSelect={(evt) => {
+                                          this.xpath.xpathConstraint[group].push(constants.code_fragment["class"][group][evt]["xpath"]);
+                                          this.sendDataBack();
+                                          this.state[group].push({
+                                              key: evt,
+                                              value: constants.code_fragment["class"][group][evt],
+                                              text: ""
+                                          });
+                                          this.forceUpdate();
+                                      }}
+                            >{constants.code_fragment["class"][group][key].name}
+                            </MenuItem>);
+                    })}
+                </DropdownButton>
+            </div>
         )
     }
 
     /**
      * switch method for rendering within constraints
      * @param group
-     * @param index index of subgroup
      * @param i index of each constraint object
      * @param cons
      * @returns {XML}
      */
-    switchMethod(group, index, i, cons) {
-        let key = this.state[group][index][i]["key"];
-        let component = constants.code_fragment["class"][group][index][key].type;
-
-        switch (component) {
+    switchMethod(group, i, cons) {
+        let type = this.state[group][i].value.type;
+        switch (type) {
             case "class":
-                return (<ClassFragment target={"default"} assignedId={this.state.assignedID + "_class_0"}
+                return (<ClassFragment target={"default"} assignedId={this.state.assignedID + "_class_" + i}
                                        callbackFromParent={this.receiveXpathDataConstraints} isConstraint={true}
-                                       constraint={this.xpath.xpathConstraint[group][index][i]}/>);
+                                       constraintIndices={{"group": group, "i": i}}
+                                       root={constants.code_fragment["class"][group][this.state[group][i].key].xpath}/>);
             case "function":
                 return (<FunctionFragment target={"default"} category={"function"}
-                                          assignedId={this.state.assignedID + "_function_0"}/>);
+                                          assignedId={this.state.assignedID + "_function_" + i}
+                                          callbackFromParent={this.receiveXpathDataConstraints} isConstraint={true}
+                                          constraintIndices={{"group": group, "i": i}}
+                                          root={constants.code_fragment["class"][group][this.state[group][i].key].xpath}/>);
             case "constructor":
                 return (<FunctionFragment target={"default"} category={"constructor"}
-                                          assignedId={this.state.assignedID + "_constructor_0"}/>);
+                                          assignedId={this.state.assignedID + "_constructor_" + i}
+                                          callbackFromParent={this.receiveXpathDataConstraints} isConstraint={true}
+                                          constraintIndices={{"group": group, "i": i}}
+                                          root={constants.code_fragment["class"][group][this.state[group][i].key].xpath}/>);
             case "function declaration":
                 return (<FunctionFragment target={"default"} category={"function declaration"}
-                                          assignedId={this.state.assignedID + "_function_decl_0"}/>);
-            case "expression":
-                return (<ExpressionFragment target={"default"}/>);
+                                          assignedId={this.state.assignedID + "_function_decl_" + i}
+                                          callbackFromParent={this.receiveXpathDataConstraints} isConstraint={true}
+                                          constraintIndices={{"group": group, "i": i}}
+                                          root={constants.code_fragment["class"][group][this.state[group][i].key].xpath}/>);
             case "declaration":
-                return (<DeclarationFragment target={"default"}/>);
+                return (<DeclarationFragment target={""}
+                                             assignedId={this.state.assignedID + "_decl_" + i}
+                                             callbackFromParent={this.receiveXpathDataConstraints} isConstraint={true}
+                                             constraintIndices={{"group": group, "i": i}}
+                                             root={constants.code_fragment["class"][group][this.state[group][i].key].xpath}/>);
             case "text":
                 return (
-                    <FormControl type="text" value={cons["value"]}
-                                 placeholder="Enter text"
+                    <FormControl type="text" value={cons["text"]}
+                                 placeholder={this.state[group][i].value.placeholder}
                                  onChange={(e) => {
-                                     cons.value = e.target.value;
+                                     cons.text = e.target.value;
+                                     this.updateXpathText(group, i);
                                      let newStateGroup = {};
                                      newStateGroup[group] = this.state[group];
                                      this.setState(newStateGroup);
@@ -218,24 +239,19 @@ class ClassFragment extends React.Component {
      * update follows data after selecting followed element
      */
     updateXpathFollows() {
-        this.xpath.xpathFollows = constants.code_fragment["class"]["follows"][0][this.state["follows"][0].value]["xpath"];
-
-        if(this.props["isConstraint"])
-            this.props["callbackFromParent"]("[" + this.traverseConstraints() + "]/" + this.xpath.xpathFollows + this.xpath.xpathFollowNodes, this.props["constraint"]);
-
-        this.props["callbackFromParent"]("[" + this.traverseConstraints() + "]/" + this.xpath.xpathFollows + this.xpath.xpathFollowNodes);
+        this.xpath.xpathFollows = this.state["follows"].value["xpath"];
+        this.sendDataBack();
     }
 
 
     /**
      * receive xpath data from the child nodes
      * @param xpathData
-     * @param xpathConstraint
+     * @param constraintIndices
      */
-    receiveXpathDataConstraints = (xpathData, xpathConstraint) => {
-        xpathConstraint = xpathData;
-        this.props["callbackFromParent"]("[" + this.traverseConstraints() + "]/" + this.xpath.xpathFollows + this.xpath.xpathFollowNodes);
-
+    receiveXpathDataConstraints = (xpathData, constraintIndices) => {
+        this.xpath.xpathConstraint[constraintIndices.group][constraintIndices.i] = xpathData;
+        this.sendDataBack();
     };
 
     /**
@@ -243,18 +259,40 @@ class ClassFragment extends React.Component {
      * @param xpathData
      */
     receiveXpathDataFollows = (xpathData) => {
-        this.xpath.xpathFollowNodes = xpathData;
-        this.props["callbackFromParent"]("[" + this.traverseConstraints() + "]/" + this.xpath.xpathFollows + this.xpath.xpathFollowNodes);
-
+        this.xpath.xpathFollows = xpathData;
+        this.sendDataBack();
     };
 
-    traverseConstraints() {
-        return this.xpath.xpathConstraint["top"][0]
-            .concat(this.xpath.xpathConstraint["before"][0])
-            .concat(this.xpath.xpathConstraint["before"][0])
-            .concat(this.xpath.xpathConstraint["before"][1])
-            .concat(this.xpath.xpathConstraint["within"][0])
-            .join(' and ');
+    /**
+     * update the text of constraints
+     * @param group
+     * @param i
+     */
+    updateXpathText(group, i) {
+        this.xpath.xpathConstraint[group][i] = this.state[group][i].value["xpath"].replace('<NAME>',this.state[group][i].text);
+        this.sendDataBack();
+    }
+
+    /**
+     * send the xpath data to the parent node
+     */
+    sendDataBack() {
+
+        let cons = this.xpath.xpathConstraint["top"]
+            .concat(this.xpath.xpathConstraint["before"])
+            .concat(this.xpath.xpathConstraint["after_1"])
+            .concat(this.xpath.xpathConstraint["after_2"])
+            .concat(this.xpath.xpathConstraint["within"]).join(' and ');
+
+        let xpathData = this.xpath.root;
+        xpathData = (cons === "") ? xpathData : xpathData + "[" + cons + "]";
+        xpathData = (this.xpath.xpathFollows === "") ? xpathData : xpathData + "/" + this.xpath.xpathFollows;
+
+        if (this.props["isConstraint"])
+            this.props["callbackFromParent"](xpathData, this.props["constraintIndices"]);
+        else
+            this.props["callbackFromParent"](xpathData);
+
     }
 
 

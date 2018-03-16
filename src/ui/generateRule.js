@@ -21,22 +21,32 @@ class GenerateRule extends React.Component {
 
         this.xpath = "src:unit/src:class";
 
-        // this.state = {
-        //     list: [{ // for hierarchical view
-        //         key: "class",
-        //         constraints: [] // [{title: "Name equals to ...", value: "MyClassName", id: "NAME_EQUALS_TO"}]
-        //     }]
-        // };
+        this.state = {
+            list: [{ // for hierarchical view
+                key: "class",
+                constraints: [] // [{title: "Name equals to ...", value: "MyClassName", id: "NAME_EQUALS_TO"}]
+            }]
+        };
 
     }
 
     render() {
         return (
             <div>
-                {/*<form>{this.renderItemsInList()}</form>*/}
-                <form><ClassFragment target={"follows"} assignedId={"class_0"}
-                                     callbackFromParent={this.receiveXpathData} isConstraint={false}/></form>
-                <p id={"generated_xpath"}>{this.xpath}</p>
+                <div>
+                    <h3>Quantifier</h3>
+                    <p id={"generated_xpath"}>{this.xpath}</p>
+                    {/*<form>{this.renderItemsInList()}</form>*/}
+                    <form><ClassFragment target={"follows"} assignedId={"class_0"}
+                                         callbackFromParent={this.receiveXpathData} isConstraint={false} root={"src:class"}/></form>
+                </div>
+                {/*<div>*/}
+                    {/*<h3>Constraint</h3>*/}
+                    {/*/!*<form>{this.renderItemsInList()}</form>*!/*/}
+                    {/*<form><ClassFragment target={"follows"} assignedId={"class_0"}*/}
+                                         {/*callbackFromParent={this.receiveXpathData} isConstraint={false}/></form>*/}
+                    {/*/!*<p id={"generated_xpath"}>{this.xpath}</p>*!/*/}
+                {/*</div>*/}
             </div>
         );
     }
@@ -112,7 +122,7 @@ class GenerateRule extends React.Component {
      * @param xpathData
      */
     receiveXpathData = (xpathData) => {
-        this.xpath = "src:unit/src:class" + xpathData;
+        this.xpath = "src:unit/" + xpathData;
         d3.select("#generated_xpath").text(this.xpath);
     };
 

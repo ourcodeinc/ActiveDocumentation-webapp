@@ -197,11 +197,12 @@ export class constants {
 
     static code_fragment = {
         "class": {
-            "top": [{
+            "top": {
                 "HAS_ANNOTATION_NAMED": {
                     name: "Has annotation named",
                     xpath: "src:annotation[src:name/text()=\"<NAME>\"]",
                     type: "text",
+                    placeholder: "annotation",
                     pre: "@",
                     post: ""
                 },
@@ -209,6 +210,7 @@ export class constants {
                     name: "Doesn't have annotation named",
                     xpath: "not(src:annotation[src:name/text()=\"<NAME>\"])",
                     type: "text",
+                    placeholder: "annotation",
                     pre: "@",
                     post: ""
                 },
@@ -216,90 +218,91 @@ export class constants {
                     name: "Has annotation with argument",
                     xpath: "src:annotation[src:name/text()=\"<NAME>\" and src:argument_list[<PROPERTY>]]",
                     type: "text",
+                    placeholder: "annotation",
                     pre: "@",
                     post: ""
                     // follows: "argument_list"
                 }
-            }],
-            "before": [],
-            "after": [
-                {
-                    "NAME_EQUALS_TO": {
-                        name: "Name equals to ...",
-                        xpath: "src:name/text()=\"<NAME>\"",
-                        type: "text",
-                        pre: "",
-                        post: ""
-                    },
-                    "NAME_NOT_EQUALS_TO": {
-                        name: "Name not equals to ...",
-                        xpath: "src:name/text()!=\"<NAME>\"",
-                        type: "text",
-                        pre: "",
-                        post: ""
-                    }
+            },
+            "before": {},
+            "after_1": {
+                "NAME_EQUALS_TO": {
+                    name: "Name equals to ...",
+                    xpath: "src:name/text()=\"<NAME>\"",
+                    type: "text",
+                    placeholder: "className",
+                    pre: "",
+                    post: ""
                 },
-                {
-                    "HAS_SUPERCLASS_NAMED": {
-                        name: "Extends class named ...",
-                        xpath: "src:super/src:extends/src:name/text()=\"<NAME>\"",
-                        type: "text",
-                        pre: "extends",
-                        post: ""
-                    }
+                "NAME_NOT_EQUALS_TO": {
+                    name: "Name not equals to ...",
+                    xpath: "src:name/text()!=\"<NAME>\"",
+                    type: "text",
+                    placeholder: "className",
+                    pre: "",
+                    post: ""
                 }
-            ],
-            "within": [
-                {
-                    "HAS_FUNCTION": {
-                        name: "Has function ...",
-                        xpath: "src:block/src:function[<PROPERTY>]",
-                        type: "function"
-                    },
-                    "HAS_FUNCTION_DECL": {
-                        name: "Has function declaration ...",
-                        xpath: "src:block/src:function_decl[<PROPERTY>]",
-                        type: "function declaration"
-                    },
-                    "HAS_CONSTRUCTOR": {
-                        name: "Has constructor ...",
-                        xpath: "src:block/src:constructor[<PROPERTY>]",
-                        type: "constructor"
-                    },
-                    "HAS_DECLARATION": {
-                        name: "Has declaration ...",
-                        xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl[<PROPERTY>]",
-                        type: "declaration"
-                    },
-                    "HAS_SUBCLASS": {
-                        name: "Has subclass ...",
-                        xpath: "src:block/src:class[<PROPERTY>]",
-                        type: "class"
-                    }
+            },
+            "after_2": {
+                "HAS_SUPERCLASS_NAMED": {
+                    name: "Extends class named ...",
+                    xpath: "src:super/src:extends/src:name/text()=\"<NAME>\"",
+                    type: "text",
+                    pre: "extends",
+                    post: ""
                 }
-            ],
-            "follows": [
-                {
-                    "name": {name: "name", xpath: "src:name/text()", follows: "name"},
-                    "subclass": {name: "subclass", xpath: "src:block/src:class", follows: "class"},
-                    "function": {name: "function", xpath: "src:block/src:function", follows: "function"},
-                    "constructor": {name: "constructor", xpath: "src:block/src:constructor", follows: "constructor"},
-                    "function declaration": {
-                        name: "function declaration",
-                        xpath: "src:block/src:function_decl",
-                        follows: "function declaration"
-                    },
-                    // "expressions": {name: "expression", xpath: "src:expr_stmt/src:expr", follows: "expression"},
-                    "declarations": {name: "declaration", xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl", follows: "declaration"}
+            },
+            "within": {
+                "HAS_FUNCTION": {
+                    name: "Has function ...",
+                    xpath: "src:block/src:function",
+                    type: "function"
+                },
+                "HAS_FUNCTION_DECL": {
+                    name: "Has function declaration ...",
+                    xpath: "src:block/src:function_decl",
+                    type: "function declaration"
+                },
+                "HAS_CONSTRUCTOR": {
+                    name: "Has constructor ...",
+                    xpath: "src:block/src:constructor",
+                    type: "constructor"
+                },
+                "HAS_DECLARATION": {
+                    name: "Has declaration ...",
+                    xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
+                    type: "declaration"
+                },
+                "HAS_SUBCLASS": {
+                    name: "Has subclass ...",
+                    xpath: "src:block/src:class",
+                    type: "class"
                 }
-            ]
+            },
+            "follows": {
+                "name": {name: "name", xpath: "src:name/text()", follows: "name"},
+                "subclass": {name: "subclass", xpath: "src:block/src:class", follows: "class"},
+                "function": {name: "function", xpath: "src:block/src:function", follows: "function"},
+                "constructor": {name: "constructor", xpath: "src:block/src:constructor", follows: "constructor"},
+                "function declaration": {
+                    name: "function declaration",
+                    xpath: "src:block/src:function_decl",
+                    follows: "function declaration"
+                },
+                "declaration": {
+                    name: "declaration",
+                    xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
+                    follows: "declaration"
+                }
+            }
         },
         "function": {
-            "top": [{
+            "top": {
                 "HAS_ANNOTATION_NAMED": {
                     name: "Has annotation named ...",
                     xpath: "src:annotation[src:name/text()=\"<NAME>\"]",
                     type: "text",
+                    placeholder: "annotation",
                     pre: "@",
                     post: ""
                 },
@@ -307,6 +310,7 @@ export class constants {
                     name: "Doesn't have annotation named ...",
                     xpath: "not(src:annotation[src:name/text()=\"<NAME>\"])",
                     type: "text",
+                    placeholder: "annotation",
                     pre: "@",
                     post: ""
                 },
@@ -314,199 +318,112 @@ export class constants {
                     name: "Has annotation with argument ...",
                     xpath: "src:annotation[src:name/text()=\"<NAME>\" and src:argument_list[<PROPERTY>]]",
                     type: "text",
+                    placeholder: "annotation",
                     pre: "@",
                     post: ""
                     // follows: "argument_list"
                 }
-            }],
-            "before": [
-                {
-                    "SPECIFIER": {
-                        name: "Specifier is ...",
-                        xpath: "src:specifier/text()=\"<NAME>\"",
-                        type: "text",
-                        pre: "",
-                        post: ""
-                    }
-                },
-                {
-                    "NAME_EQUALS_TO": {
-                        name: "Name equals to ...",
-                        xpath: "src:name/text()=\"<NAME>\"",
-                        type: "text",
-                        pre: "",
-                        post: ""
-                    },
-                    "NAME_NOT_EQUALS_TO": {
-                        name: "Name not equals to ...",
-                        xpath: "src:name/text()!=\"<NAME>\"",
-                        type: "text",
-                        pre: "",
-                        post: ""
-                    }
-
-                }],
-            "after": [
-                {
-                    "NUMBER_OF_PARAMETERS": {
-                        name: "Its number of parameter is ...",
-                        xpath: "count(src:parameter_list/src:parameter)<COUNT>",
-                        type: "text",
-                        pre: "#Parameters=",
-                        post: ""
-                    },
-                    "HAS_PARAMETER": {
-                        name: "One of its parameter is ...",
-                        xpath: "src:parameter_list/src:parameter/src:decl<PROPERTY>",
-                        type: "declaration",
-                        pre: "",
-                        post: ""
-                    }
-                }
-            ],
-            "within": [
-                {
-                    "RETURN_VALUE_IS_EXPR": {
-                        name: "Return value/expression is ...",
-                        text: "src:block/descendant-or-self::src:return/src:expr[<PROPERTY>]",
-                        type: "expression",
-                        pre: "",
-                        post: ""
-                    },
-                    "HAS_EXPRESSION": {
-                        name: "Has expression ...",
-                        text: "src:block/descendant-or-self::src:expr_stmt/src:expr[<PROPERTY>]",
-                        type: "expression",
-                        pre: "",
-                        post: ""
-                    },
-                    "HAS_DECLARATION": {
-                        name: "Has declaration ...",
-                        text: "src:block/descendant-or-self::src:decl_stmt/src:decl[<PROPERTY>]",
-                        type: "declaration",
-                        pre: "",
-                        post: ""
-                    }
-                }
-            ],
-            "follows": [
-                {
-                    "name": {name: "name", xpath: "src:name/text()", follows: "name"},
-                    "expressions": {
-                        name: "expression",
-                        xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                        follows: "expression"
-                    },
-                    "declarations": {
-                        name: "declaration",
-                        xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
-                        follows: "declaration"
-                    },
-                    "return_expr": {
-                        name: "return expression",
-                        xpath: "src:block/descendant-or-self::src:return/src:expr",
-                        follows: "expression"
-                    },
-                    "parameter": {
-                        name: "function parameter",
-                        xpath: "src:parameter_list/src:parameter/src:decl",
-                        follows: "parameter"
-                    }
-                }
-            ]
-        },
-        "constructor": {
-            "top": [{
-                "HAS_ANNOTATION_NAMED": {
-                    name: "Has annotation named ...",
-                    xpath: "src:annotation[src:name/text()=\"<NAME>\"]",
-                    type: "text",
-                    pre: "@",
-                    post: ""
-                },
-                "NOT_HAVE_ANNOTATION_NAMED": {
-                    name: "Doesn't have annotation named ...",
-                    xpath: "not(src:annotation[src:name/text()=\"<NAME>\"])",
-                    type: "text",
-                    pre: "@",
-                    post: ""
-                },
-                "HAS_ANNOTATION_W_ARGUMENT_NAMED": {
-                    name: "Has annotation with argument ...",
-                    xpath: "src:annotation[src:name/text()=\"<NAME>\" and src:argument_list[<PROPERTY>]]",
-                    type: "text",
-                    pre: "@",
-                    post: ""
-                    // follows: "argument_list"
-                }
-            }],
-            "before": [{
+            },
+            "before_1": {
                 "SPECIFIER": {
                     name: "Specifier is ...",
                     xpath: "src:specifier/text()=\"<NAME>\"",
+                    placeholder: "specifier",
                     type: "text",
                     pre: "",
                     post: ""
                 }
-            }],
-            "after": [{
+            },
+            "before_2": {
+                "NAME_EQUALS_TO": {
+                    name: "Name equals to ...",
+                    xpath: "src:name/text()=\"<NAME>\"",
+                    type: "text",
+                    placeholder: "functionName",
+                    pre: "",
+                    post: ""
+                },
+                "NAME_NOT_EQUALS_TO": {
+                    name: "Name not equals to ...",
+                    xpath: "src:name/text()!=\"<NAME>\"",
+                    type: "text",
+                    placeholder: "functionName",
+                    pre: "",
+                    post: ""
+                }
+
+            },
+            "after": {
                 "NUMBER_OF_PARAMETERS": {
                     name: "Its number of parameter is ...",
-                    xpath: "count(src:parameter_list/src:parameter)<COUNT>",
-                    type: "text",
-                    pre: "",
+                    xpath: "count(src:parameter_list/src:parameter)=<COUNT>",
+                    type: "number",
+                    placeholder: "0",
+                    pre: "#Parameters=",
                     post: ""
                 },
                 "HAS_PARAMETER": {
                     name: "One of its parameter is ...",
-                    xpath: "src:parameter_list/src:parameter/src:decl<PROPERTY>",
+                    xpath: "src:parameter_list/src:parameter/src:decl",
                     type: "declaration",
                     pre: "",
                     post: ""
                 }
-            }],
-            "within": [{
+            },
+            "within": {
+                "RETURN_VALUE_IS_EXPR": {
+                    name: "Return value/expression is ...",
+                    xpath: "src:block/descendant-or-self::src:return/src:expr",
+                    type: "expression",
+                    pre: "",
+                    post: ""
+                },
                 "HAS_EXPRESSION": {
                     name: "Has expression ...",
-                    text: "src:block/descendant-or-self::src:expr_stmt/src:expr[<PROPERTY>]",
+                    xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
                     type: "expression",
                     pre: "",
                     post: ""
                 },
                 "HAS_DECLARATION": {
                     name: "Has declaration ...",
-                    text: "src:block/descendant-or-self::src:decl_stmt/src:decl[<PROPERTY>]",
+                    xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
                     type: "declaration",
                     pre: "",
                     post: ""
                 }
-            }],
-            "follows": [
-                {
-                    "expressions": {
-                        name: "expression",
-                        xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                        follows: "expression"
-                    },
-                    "declarations": {
-                        name: "declaration",
-                        xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
-                        follows: "declaration"
-                    },
-                    "parameter": {
-                        name: "function parameter",
-                        xpath: "src:parameter_list/src:parameter/src:decl",
-                        follows: "expression"
-                    }
+            },
+            "follows": {
+                "name": {name: "name", xpath: "src:name/text()", follows: "name"},
+                "expression": {
+                    name: "expression",
+                    xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
+                    follows: "expression"
+                },
+                "declaration": {
+                    name: "declaration",
+                    xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
+                    follows: "declaration"
+                },
+                "return_expr": {
+                    name: "return expression",
+                    xpath: "src:block/descendant-or-self::src:return/src:expr",
+                    follows: "expression"
+                },
+                "parameter": {
+                    name: "function parameter",
+                    xpath: "src:parameter_list/src:parameter/src:decl",
+                    follows: "parameter"
                 }
-            ]
+            }
         },
-        "function declaration": {
-            "top": [{
+        "constructor": {
+            "top": {
                 "HAS_ANNOTATION_NAMED": {
                     name: "Has annotation named ...",
                     xpath: "src:annotation[src:name/text()=\"<NAME>\"]",
                     type: "text",
+                    placeholder: "annotation",
                     pre: "@",
                     post: ""
                 },
@@ -514,6 +431,7 @@ export class constants {
                     name: "Doesn't have annotation named ...",
                     xpath: "not(src:annotation[src:name/text()=\"<NAME>\"])",
                     type: "text",
+                    placeholder: "annotation",
                     pre: "@",
                     post: ""
                 },
@@ -521,59 +439,170 @@ export class constants {
                     name: "Has annotation with argument ...",
                     xpath: "src:annotation[src:name/text()=\"<NAME>\" and src:argument_list[<PROPERTY>]]",
                     type: "text",
+                    placeholder: "annotation",
                     pre: "@",
                     post: ""
                     // follows: "argument_list"
                 }
-            }],
-            "before": [
-                {
-                    "SPECIFIER": {
-                        name: "Its specifier is", xpath: "src:specifier/text()=\"<NAME>\"",
-                        type: "text", pre: "", post: ""
-                    },
-
-                },
-                {
-                    "NAME_EQUALS_TO": {
-                        name: "Name equals to ...", xpath: "src:name/text()=\"<NAME>\"",
-                        type: "text", pre: "", post: ""
-                    },
-                    "NAME_NOT_EQUALS_TO": {
-                        name: "Name not equals to ...",
-                        xpath: "src:name/text()!=\"<NAME>\"",
-                        type: "text", pre: "", post: ""
-                    }
-                }],
-            "after": [{
+            },
+            "before_1": {
+                "SPECIFIER": {
+                    name: "Specifier is ...",
+                    xpath: "src:specifier/text()=\"<NAME>\"",
+                    type: "text",
+                    placeholder: "specifier",
+                    pre: "",
+                    post: ""
+                }
+            },
+            "before_2": {},
+            "after": {
                 "NUMBER_OF_PARAMETERS": {
                     name: "Its number of parameter is ...",
-                    xpath: "count(src:parameter_list/src:parameter)<COUNT>",
-                    type: "text",
+                    xpath: "count(src:parameter_list/src:parameter)=<COUNT>",
+                    placeholder: "0",
+                    type: "number",
                     pre: "",
                     post: ""
                 },
                 "HAS_PARAMETER": {
                     name: "One of its parameter is ...",
-                    xpath: "src:parameter_list/src:parameter/src:decl<PROPERTY>",
+                    xpath: "src:parameter_list/src:parameter/src:decl",
                     type: "declaration",
                     pre: "",
                     post: ""
                 }
-            }],
+            },
+            "within": {
+                "HAS_EXPRESSION": {
+                    name: "Has expression ...",
+                    xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
+                    type: "expression",
+                    pre: "",
+                    post: ""
+                },
+                "HAS_DECLARATION": {
+                    name: "Has declaration ...",
+                    xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
+                    type: "declaration",
+                    pre: "",
+                    post: ""
+                }
+            },
+            "follows": {
+                "expression": {
+                    name: "expression",
+                    xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
+                    follows: "expression"
+                },
+                "declaration": {
+                    name: "declaration",
+                    xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
+                    follows: "declaration"
+                },
+                "parameter": {
+                    name: "function parameter",
+                    xpath: "src:parameter_list/src:parameter/src:decl",
+                    follows: "expression"
+                }
+            }
+        },
+        "function declaration": {
+            "top": {
+                "HAS_ANNOTATION_NAMED": {
+                    name: "Has annotation named ...",
+                    xpath: "src:annotation[src:name/text()=\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "annotation",
+                    pre: "@",
+                    post: ""
+                },
+                "NOT_HAVE_ANNOTATION_NAMED": {
+                    name: "Doesn't have annotation named ...",
+                    xpath: "not(src:annotation[src:name/text()=\"<NAME>\"])",
+                    type: "text",
+                    placeholder: "annotation",
+                    pre: "@",
+                    post: ""
+                },
+                "HAS_ANNOTATION_W_ARGUMENT_NAMED": {
+                    name: "Has annotation with argument ...",
+                    xpath: "src:annotation[src:name/text()=\"<NAME>\" and src:argument_list[<PROPERTY>]]",
+                    type: "text",
+                    placeholder: "annotation",
+                    pre: "@",
+                    post: ""
+                    // follows: "argument_list"
+                }
+            },
+            "before_1": {
+                "SPECIFIER": {
+                    name: "Its specifier is",
+                    xpath: "src:specifier/text()=\"<NAME>\"",
+                    type: "text",
+                    placeholder: "specifier",
+                    pre: "", post: ""
+                },
+
+            },
+            "before_2": {
+                "NAME_EQUALS_TO": {
+                    name: "Name equals to ...",
+                    xpath: "src:name/text()=\"<NAME>\"",
+                    type: "text",
+                    placeholder: "functionName",
+                    pre: "", post: ""
+                },
+                "NAME_NOT_EQUALS_TO": {
+                    name: "Name not equals to ...",
+                    xpath: "src:name/text()!=\"<NAME>\"",
+                    type: "text",
+                    placeholder: "functionName",
+                    pre: "", post: ""
+                }
+            },
+            "after": {
+                "NUMBER_OF_PARAMETERS": {
+                    name: "Its number of parameter is ...",
+                    xpath: "count(src:parameter_list/src:parameter)=<COUNT>",
+                    type: "number",
+                    placeholder: "0",
+                    pre: "",
+                    post: ""
+                },
+                "HAS_PARAMETER": {
+                    name: "One of its parameter is ...",
+                    xpath: "src:parameter_list/src:parameter/src:decl",
+                    type: "declaration",
+                    pre: "",
+                    post: ""
+                }
+            },
+            "within": {},
+            "follows": {
+                "name": {name: "name", xpath: "src:name/text()", follows: "name"},
+                "parameter": {
+                    name: "parameter",
+                    xpath: "src:parameter_list/src:parameter/src:decl",
+                    follows: "parameter"
+                }
+            }
+
+        },
+        "expression": {
+            "top": [],
+            "before": [],
+            "after": [],
             "within": [],
             "follows": [
                 {
-                    "name": {name: "name", xpath: "src:name/text()", follows: "name"},
-                    "parameter": {
-                        name: "parameter",
-                        xpath: "src:parameter_list/src:parameter/src:decl",
-                        follows: "parameter"
-                    }
+                    "name": {name: "name", xpath: "src:name/text()", follows: ""},
+                    "name/name": {name: "name/name", xpath: "src:name/src:name/text()", follows: ""},
+                    "call": {name: "call", xpath: "src:call", follows: "call"}
                 }
             ]
         },
-        "expression": {
+        "declaration": {
             "top": [],
             "before": [],
             "after": [],
