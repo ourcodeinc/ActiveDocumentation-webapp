@@ -30,6 +30,16 @@ class Utilities {
                 case 'XML_RESULT':
                     messageJson['data'] = data;
                     break;
+
+                case 'EXPR_STMT':
+                    messageJson['data'] = data;
+                    break;
+
+                case 'DECL_STMT':
+                    console.log(data);
+                    messageJson['data'] = data;
+                    break;
+
                 default:
                     break;
             }

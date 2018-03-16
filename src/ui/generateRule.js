@@ -25,27 +25,30 @@ class GenerateRule extends React.Component {
             list: [{ // for hierarchical view
                 key: "class",
                 constraints: [] // [{title: "Name equals to ...", value: "MyClassName", id: "NAME_EQUALS_TO"}]
-            }]
+            }],
+            ws: null
         };
 
     }
 
     render() {
+        console.log(this.state.ws);
         return (
             <div>
                 <div>
                     <h3>Quantifier</h3>
                     <p id={"generated_xpath"}>{this.xpath}</p>
                     {/*<form>{this.renderItemsInList()}</form>*/}
-                    <form><ClassFragment target={"follows"} assignedId={"class_0"}
-                                         callbackFromParent={this.receiveXpathData} isConstraint={false} root={"src:class"}/></form>
+                    <form><ClassFragment target={"follows"} assignedId={"class_0"} ws={this.state.ws} key={new Date()}
+                                         callbackFromParent={this.receiveXpathData} isConstraint={false}
+                                         root={"src:class"}/></form>
                 </div>
                 {/*<div>*/}
-                    {/*<h3>Constraint</h3>*/}
-                    {/*/!*<form>{this.renderItemsInList()}</form>*!/*/}
-                    {/*<form><ClassFragment target={"follows"} assignedId={"class_0"}*/}
-                                         {/*callbackFromParent={this.receiveXpathData} isConstraint={false}/></form>*/}
-                    {/*/!*<p id={"generated_xpath"}>{this.xpath}</p>*!/*/}
+                {/*<h3>Constraint</h3>*/}
+                {/*/!*<form>{this.renderItemsInList()}</form>*!/*/}
+                {/*<form><ClassFragment target={"follows"} assignedId={"class_0"}*/}
+                {/*callbackFromParent={this.receiveXpathData} isConstraint={false}/></form>*/}
+                {/*/!*<p id={"generated_xpath"}>{this.xpath}</p>*!/*/}
                 {/*</div>*/}
             </div>
         );
@@ -55,6 +58,11 @@ class GenerateRule extends React.Component {
      * subscribe for events
      */
     attachListener() {
+
+        // [ws]
+        PubSub.subscribe('NEW_WS', (msg, data) => {
+            this.setState({ws : data[0]});
+        });
 
         // [hash value]
         PubSub.subscribe('HASH', (msg, data) => {
@@ -125,6 +133,9 @@ class GenerateRule extends React.Component {
         this.xpath = "src:unit/" + xpathData;
         d3.select("#generated_xpath").text(this.xpath);
     };
+
+
+
 
 
 }

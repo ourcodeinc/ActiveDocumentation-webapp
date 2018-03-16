@@ -19,6 +19,8 @@ class ClassFragment extends React.Component {
     constructor(props) {
         super(props);
 
+        this.ws = props["ws"];
+
         this.xpath = {
             "root": props["root"],
             "xpathConstraint": {
@@ -97,29 +99,29 @@ class ClassFragment extends React.Component {
             switch (this.state["follows"].key) {
                 case "subclass":
                     return (
-                        <ClassFragment target={this.state.target} assignedId={this.state.assignedID + "_class_follows"}
+                        <ClassFragment target={this.state.target} assignedId={this.state.assignedID + "_class_follows"} ws={this.ws}
                                        callbackFromParent={this.receiveXpathDataFollows} isConstraint={false}
                                        root={constants.code_fragment["class"]["follows"][this.state["follows"].key].xpath}/>);
 
                 case "function":
                     return (
-                        <FunctionFragment target={this.state.target} category={"function"}
+                        <FunctionFragment target={this.state.target} category={"function"} ws={this.ws}
                                           assignedId={this.state.assignedID + "_function_follows"}
                                           callbackFromParent={this.receiveXpathDataFollows} isConstraint={false}
                                           root={constants.code_fragment["class"]["follows"][this.state["follows"].key].xpath}/>);
 
                 case "constructor":
-                    return (<FunctionFragment target={this.state.target} category={"constructor"}
+                    return (<FunctionFragment target={this.state.target} category={"constructor"} ws={this.ws}
                                               assignedId={this.state.assignedID + "_constructor_follows"}
                                               callbackFromParent={this.receiveXpathDataFollows} isConstraint={false}
                                               root={constants.code_fragment["class"]["follows"][this.state["follows"].key].xpath}/>);
                 case "function declaration":
-                    return (<FunctionFragment target={this.state.target} category={"function declaration"}
+                    return (<FunctionFragment target={this.state.target} category={"function declaration"} ws={this.ws}
                                               assignedId={this.state.assignedID + "_function_decl_follows"}
                                               callbackFromParent={this.receiveXpathDataFollows} isConstraint={false}
                                               root={constants.code_fragment["class"]["follows"][this.state["follows"].key].xpath}/>);
                 case "declaration":
-                    return (<DeclarationFragment target={this.state.target}
+                    return (<DeclarationFragment target={this.state.target} ws={this.ws}
                                                  assignedId={this.state.assignedID + "_decl_follows"}
                                                  callbackFromParent={this.receiveXpathDataFollows} isConstraint={false}
                                                  root={constants.code_fragment["class"]["follows"][this.state["follows"].key].xpath}/>);
@@ -188,31 +190,31 @@ class ClassFragment extends React.Component {
         let type = this.state[group][i].value.type;
         switch (type) {
             case "class":
-                return (<ClassFragment target={"default"} assignedId={this.state.assignedID + "_class_" + i}
+                return (<ClassFragment target={"default"} assignedId={this.state.assignedID + "_class_" + i} ws={this.ws}
                                        callbackFromParent={this.receiveXpathDataConstraints} isConstraint={true}
                                        constraintIndices={{"group": group, "i": i}}
                                        root={constants.code_fragment["class"][group][this.state[group][i].key].xpath}/>);
             case "function":
-                return (<FunctionFragment target={"default"} category={"function"}
+                return (<FunctionFragment target={"default"} category={"function"} ws={this.ws}
                                           assignedId={this.state.assignedID + "_function_" + i}
                                           callbackFromParent={this.receiveXpathDataConstraints} isConstraint={true}
                                           constraintIndices={{"group": group, "i": i}}
                                           root={constants.code_fragment["class"][group][this.state[group][i].key].xpath}/>);
             case "constructor":
-                return (<FunctionFragment target={"default"} category={"constructor"}
+                return (<FunctionFragment target={"default"} category={"constructor"} ws={this.ws}
                                           assignedId={this.state.assignedID + "_constructor_" + i}
                                           callbackFromParent={this.receiveXpathDataConstraints} isConstraint={true}
                                           constraintIndices={{"group": group, "i": i}}
                                           root={constants.code_fragment["class"][group][this.state[group][i].key].xpath}/>);
             case "function declaration":
-                return (<FunctionFragment target={"default"} category={"function declaration"}
+                return (<FunctionFragment target={"default"} category={"function declaration"} ws={this.ws}
                                           assignedId={this.state.assignedID + "_function_decl_" + i}
                                           callbackFromParent={this.receiveXpathDataConstraints} isConstraint={true}
                                           constraintIndices={{"group": group, "i": i}}
                                           root={constants.code_fragment["class"][group][this.state[group][i].key].xpath}/>);
             case "declaration":
                 return (<DeclarationFragment target={""}
-                                             assignedId={this.state.assignedID + "_decl_" + i}
+                                             assignedId={this.state.assignedID + "_decl_" + i} ws={this.ws}
                                              callbackFromParent={this.receiveXpathDataConstraints} isConstraint={true}
                                              constraintIndices={{"group": group, "i": i}}
                                              root={constants.code_fragment["class"][group][this.state[group][i].key].xpath}/>);

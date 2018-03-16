@@ -112,6 +112,16 @@ class WebSocketManager {
                     PubSub.publish('UPDATE_HASH', ['ruleJsonChanged']);
                     break;
 
+                // after sending a piece of code EXPR_STMT
+                case "EXPR_STMT_XML":
+                    PubSub.publish('EXPR_STMT_XML', [message.data]);
+                    break;
+
+                // after sending a piece of code DECL_STMT
+                case "DECL_STMT_XML":
+                    PubSub.publish('DECL_STMT_XML', [message.data]);
+                    break;
+
                 case "ENTER":
                 case "LEFT":
                 default:

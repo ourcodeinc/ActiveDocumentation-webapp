@@ -19,6 +19,8 @@ class FunctionFragment extends React.Component {
     constructor(props) {
         super(props);
 
+        this.ws = props["ws"];
+
         this.xpath = {
             "root": props["root"],
             "xpathConstraint": {
@@ -117,13 +119,13 @@ class FunctionFragment extends React.Component {
             this.updateXpathFollows();
             switch (this.state["follows"].key) {
                 case "declaration":
-                    return (<DeclarationFragment target={this.state.target}
+                    return (<DeclarationFragment target={this.state.target} ws={this.ws}
                                                  assignedId={this.state.assignedID + "_decl_follows"}
                                                  callbackFromParent={this.receiveXpathDataFollows} isConstraint={false}
                                                  root={constants.code_fragment[this.state["category"]]["follows"][this.state["follows"].key].xpath}/>);
 
                 case "expression":
-                    return (<ExpressionFragment target={this.state.target}
+                    return (<ExpressionFragment target={this.state.target} ws={this.ws}
                                                 assignedId={this.state.assignedID + "_expr_follows"}
                                                 callbackFromParent={this.receiveXpathDataFollows} isConstraint={false}
                                                 root={constants.code_fragment[this.state["category"]]["follows"][this.state["follows"].key].xpath}/>);
@@ -197,13 +199,13 @@ class FunctionFragment extends React.Component {
         switch (type) {
 
             case "declaration":
-                return (<DeclarationFragment target={""}
+                return (<DeclarationFragment target={""} ws={this.ws}
                                              assignedId={this.state.assignedID + "_decl_" + i}
                                              callbackFromParent={this.receiveXpathDataConstraints} isConstraint={true}
                                              constraintIndices={{"group": group, "i": i}}
                                              root={constants.code_fragment[this.state["category"]][group][this.state[group][i].key].xpath}/>);
             case "expression":
-                return (<ExpressionFragment target={""}
+                return (<ExpressionFragment target={""} ws={this.ws}
                                             assignedId={this.state.assignedID + "_expr_" + i}
                                             callbackFromParent={this.receiveXpathDataConstraints} isConstraint={true}
                                             constraintIndices={{"group": group, "i": i}}
@@ -253,7 +255,7 @@ class FunctionFragment extends React.Component {
      * @param constraintIndices
      */
     receiveXpathDataConstraints = (xpathData, constraintIndices) => {
-        this.xpath.xpathConstraint[constraintIndices.group][constraintIndices.index][constraintIndices.i] = xpathData;
+        this.xpath.xpathConstraint[constraintIndices.group][constraintIndices.i] = xpathData;
         this.sendDataBack();
     };
 

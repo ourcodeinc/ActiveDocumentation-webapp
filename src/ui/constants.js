@@ -270,7 +270,7 @@ export class constants {
                 },
                 "HAS_DECLARATION": {
                     name: "Has declaration ...",
-                    xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
+                    xpath: "src:block/descendant-or-self::src:decl_stmt",
                     type: "declaration"
                 },
                 "HAS_SUBCLASS": {
@@ -291,7 +291,7 @@ export class constants {
                 },
                 "declaration": {
                     name: "declaration",
-                    xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
+                    xpath: "src:block/descendant-or-self::src:decl_stmt",
                     follows: "declaration"
                 }
             }
@@ -380,14 +380,14 @@ export class constants {
                 },
                 "HAS_EXPRESSION": {
                     name: "Has expression ...",
-                    xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
+                    xpath: "src:block/descendant-or-self::src:expr_stmt",
                     type: "expression",
                     pre: "",
                     post: ""
                 },
                 "HAS_DECLARATION": {
                     name: "Has declaration ...",
-                    xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
+                    xpath: "src:block/descendant-or-self::src:decl_stmt",
                     type: "declaration",
                     pre: "",
                     post: ""
@@ -397,12 +397,12 @@ export class constants {
                 "name": {name: "name", xpath: "src:name/text()", follows: "name"},
                 "expression": {
                     name: "expression",
-                    xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
+                    xpath: "src:block/descendant-or-self::src:expr_stmt",
                     follows: "expression"
                 },
                 "declaration": {
                     name: "declaration",
-                    xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
+                    xpath: "src:block/descendant-or-self::src:decl_stmt",
                     follows: "declaration"
                 },
                 "return_expr": {
@@ -476,14 +476,14 @@ export class constants {
             "within": {
                 "HAS_EXPRESSION": {
                     name: "Has expression ...",
-                    xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
+                    xpath: "src:block/descendant-or-self::src:expr_stmt",
                     type: "expression",
                     pre: "",
                     post: ""
                 },
                 "HAS_DECLARATION": {
                     name: "Has declaration ...",
-                    xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
+                    xpath: "src:block/descendant-or-self::src:decl_stmt",
                     type: "declaration",
                     pre: "",
                     post: ""
@@ -492,12 +492,12 @@ export class constants {
             "follows": {
                 "expression": {
                     name: "expression",
-                    xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
+                    xpath: "src:block/descendant-or-self::src:expr_stmt",
                     follows: "expression"
                 },
                 "declaration": {
                     name: "declaration",
-                    xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
+                    xpath: "src:block/descendant-or-self::src:decl_stmt",
                     follows: "declaration"
                 },
                 "parameter": {
@@ -590,10 +590,22 @@ export class constants {
 
         },
         "expression": {
-            "top": [],
-            "before": [],
-            "after": [],
-            "within": [],
+            "top": {},
+            "before": {},
+            "after": {},
+            "within": {},
+            "follows": {
+                    // "name": {name: "name", xpath: "src:name/text()", follows: ""},
+                    // "name/name": {name: "name/name", xpath: "src:name/src:name/text()", follows: ""},
+                    "call": {name: "call", xpath: "src:call", follows: "call"}
+                }
+
+        },
+        "declaration": {
+            "top": {},
+            "before": {},
+            "after": {},
+            "within": {},
             "follows": [
                 {
                     "name": {name: "name", xpath: "src:name/text()", follows: ""},
@@ -602,18 +614,41 @@ export class constants {
                 }
             ]
         },
-        "declaration": {
-            "top": [],
-            "before": [],
-            "after": [],
-            "within": [],
-            "follows": [
-                {
-                    "name": {name: "name", xpath: "src:name/text()", follows: ""},
-                    "name/name": {name: "name/name", xpath: "src:name/src:name/text()", follows: ""},
-                    "call": {name: "call", xpath: "src:call", follows: "call"}
+        "call": {
+            "top": {},
+            "before": {
+                "CALLER_IS": {
+                    name: "The caller is",
+                    xpath: "src:name/text()=\"<NAME>\"",
+                    type: "text",
+                    placeholder: "caller",
+                    pre: "", post: ""
                 }
-            ]
+            },
+            "after": {
+                "NUMBER_OF_ARGUMENTS": {
+                    name: "Its number of arguments is ...",
+                    xpath: "count(src:argument_list/src:argument)=<COUNT>",
+                    type: "number",
+                    placeholder: "0",
+                    pre: "",
+                    post: ""
+                },
+                "HAS_ARGUMENT": {
+                    name: "One of its argument is ...",
+                    xpath: "src:argument_list/src:argument/src:expr",
+                    type: "expression",
+                    placeholder: "argument",
+                    pre: "",
+                    post: ""
+                }
+            },
+            "within": {},
+            "follows": {
+                    "name": {name: "name", xpath: "src:name/text()", follows: ""},
+                    "argument": {name: "argument", xpath: "src:argument_list/src:argument/src:expr", follows: "expression"}
+                }
+
         }
     }
 }
