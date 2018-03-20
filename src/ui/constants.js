@@ -39,7 +39,7 @@ export class constants {
                     type: "function"
                 },
                 "HAS_FUNCTION_DECL": {
-                    name: "Has function declaration ...",
+                    name: "Has functionDeclaration ...",
                     xpath: "src:block/src:function_decl[<PROPERTY>]",
                     type: "function_decl"
                 },
@@ -259,9 +259,9 @@ export class constants {
                     type: "function"
                 },
                 "HAS_FUNCTION_DECL": {
-                    name: "Has function declaration ...",
+                    name: "Has functionDeclaration ...",
                     xpath: "src:block/src:function_decl",
-                    type: "function declaration"
+                    type: "functionDeclaration"
                 },
                 "HAS_CONSTRUCTOR": {
                     name: "Has constructor ...",
@@ -284,10 +284,10 @@ export class constants {
                 "subclass": {name: "subclass", xpath: "src:block/src:class", follows: "class"},
                 "function": {name: "function", xpath: "src:block/src:function", follows: "function"},
                 "constructor": {name: "constructor", xpath: "src:block/src:constructor", follows: "constructor"},
-                "function declaration": {
-                    name: "function declaration",
+                "functionDeclaration": {
+                    name: "functionDeclaration",
                     xpath: "src:block/src:function_decl",
-                    follows: "function declaration"
+                    follows: "functionDeclaration"
                 },
                 "declaration": {
                     name: "declaration",
@@ -375,7 +375,7 @@ export class constants {
                     name: "Return value/expression is ...",
                     xpath: "src:block/descendant-or-self::src:return/src:expr",
                     type: "expression",
-                    pre: "",
+                    pre: "return",
                     post: ""
                 },
                 "HAS_EXPRESSION": {
@@ -507,7 +507,7 @@ export class constants {
                 }
             }
         },
-        "function declaration": {
+        "functionDeclaration": {
             "top": {
                 "HAS_ANNOTATION_NAMED": {
                     name: "Has annotation named ...",
@@ -595,10 +595,10 @@ export class constants {
             "after": {},
             "within": {},
             "follows": {
-                    // "name": {name: "name", xpath: "src:name/text()", follows: ""},
-                    // "name/name": {name: "name/name", xpath: "src:name/src:name/text()", follows: ""},
-                    "call": {name: "call", xpath: "src:call", follows: "call"}
-                }
+                // "name": {name: "name", xpath: "src:name/text()", follows: ""},
+                // "name/name": {name: "name/name", xpath: "src:name/src:name/text()", follows: ""},
+                "call": {name: "call", xpath: "src:call", follows: "call"}
+            }
 
         },
         "declaration": {
@@ -645,11 +645,23 @@ export class constants {
             },
             "within": {},
             "follows": {
-                    "name": {name: "name", xpath: "src:name/text()", follows: ""},
-                    "argument": {name: "argument", xpath: "src:argument_list/src:argument/src:expr", follows: "expression"}
-                }
+                "name": {name: "name", xpath: "src:name/text()", follows: ""},
+                "argument": {name: "argument", xpath: "src:argument_list/src:argument/src:expr", follows: "expression"}
+            }
 
         }
+    };
+
+    static state_children = {
+        "top": [],
+        "before": [],
+        "before_1": [],
+        "before_2": [],
+        "after": [],
+        "after_1": [],
+        "after_2": [],
+        "within": [],
+        "follows": {}
     }
 }
 

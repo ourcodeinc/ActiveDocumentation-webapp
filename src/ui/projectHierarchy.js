@@ -60,7 +60,7 @@ export class ProjectHierarchy extends Component {
                                          this.updateDropDownList(myData['itemData']['properties']['canonicalPath'])
                                      }}>
 
-                            {/* filter directory children */}
+                            {/* filter directory state_children */}
                             {myData['itemData']['children']
                                 .filter((d) => {
                                     return d['properties']['isDirectory']
@@ -75,7 +75,7 @@ export class ProjectHierarchy extends Component {
 
                             <MenuItem divider/>
 
-                            {/* filter normal file children */}
+                            {/* filter normal file state_children */}
                             {myData['itemData']['children']
                                 .filter((d) => {
                                     return !d['properties']['isDirectory']
@@ -130,7 +130,7 @@ export class ProjectHierarchy extends Component {
         while (indexToKeep < clonedArray.length - 1)
             clonedArray.splice(indexToKeep + 1, clonedArray.length - indexToKeep - 1);
 
-        // find the node of the new selection among children of the parent
+        // find the node of the new selection among state_children of the parent
         let newData = this.state.dropDowns[indexToKeep]['itemData']['children'].filter((d, i) => d['properties']['canonicalPath'] === canonicalPath)[0];
         clonedArray.push({itemData: newData});
 

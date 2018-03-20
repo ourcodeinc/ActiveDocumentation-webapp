@@ -7,7 +7,6 @@ import '../../App.css';
 
 import {DropdownButton, FormControl, MenuItem, Row} from 'react-bootstrap';
 import {constants} from '../constants';
-// import ClassFragment from './classFragment';
 import ExpressionFragment from "./expressionFragment";
 import DeclarationFragment from "./declarationFragment";
 
@@ -18,54 +17,31 @@ class FunctionFragment extends React.Component {
 
     constructor(props) {
         super(props);
+        // target assignedId ws callbackFromParent isConstraint constraintIndices root category
 
         this.ws = props["ws"];
-
-        this.xpath = {
-            "root": props["root"],
-            "xpathConstraint": {
-                "top": [],
-                "before_1": [],
-                "before_2": [],
-                "after": [],
-                "within": []
-            },
-            "xpathFollows": "",
-        };
-
-        this.state = {
-            "assignedID": props["assignedId"],
-            "category": props["category"],
-            "target": props["target"],
-
-            "top": [],
-            "before_1": [],
-            "before_2": [],
-            "after": [],
-            "within": [],
-            "follows": {}
-        }
+        this.state = props["state"]
     }
 
     render() {
         return (
-            <div className={"ruleGroupDiv " + this.state.target} id={this.state.assignedID}>
-                <div style={{marginTop: "10px"}}><em>{this.state.category}</em></div>
+            <div className={"ruleGroupDiv " + this.state.target} id={this.props["assignedID"]}>
+                {/*<div style={{marginTop: "10px"}}><em>{this.props["category"]}</em></div>*/}
                 <Row style={{margin: "0"}}>{this.renderGroup("top")}</Row>
                 <Row style={{margin: "0"}}>
 
                     {this.renderGroup("before_1")}
-                    {this.renderGroup("before_2")}
+                    {(this.props["category"] !== "constructor") ? this.renderGroup("before_2") : ""}
                     <div className={"rowItem inlineText"}>
-                        <b>{this.state["category"] === "constructor" ? "className (" : "("}</b>
+                        <b>{this.props["category"] === "constructor" ? "className (" : "("}</b>
                     </div>
                     {this.renderGroup("after")}
                     <div className={"inlineText"}>
-                        <p><b>{this.state["category"] === "function declaration" ? ");" : ")"} </b></p>
+                        <p><b>{this.props["category"] === "functionDeclaration" ? ");" : ")"} </b></p>
                     </div>
                 </Row>
                 <p><b>{this.renderBraces("start")} </b></p>
-                {(this.state["category"] !== "function declaration") ? this.renderGroup("within") : ""}
+                {(this.props["category"] !== "functionDeclaration") ? this.renderGroup("within") : ""}
                 {this.renderFollows()}
                 <p><b>{this.renderBraces("end")} </b></p>
             </div>
@@ -78,7 +54,7 @@ class FunctionFragment extends React.Component {
      * @returns {*}
      */
     renderBraces(location) {
-        let isBrace = (this.state["category"] !== "function declaration");
+        let isBrace = (this.props["category"] !== "functionDeclaration");
         switch (location) {
             case "start":
                 return isBrace ? "{" : "";
@@ -93,22 +69,25 @@ class FunctionFragment extends React.Component {
      * render the 'follows' elements and constraints, drop down or a component
      */
     renderFollows() {
-        if (!this.state["follows"].hasOwnProperty("key"))
+        if (!this.state.children["follows"].hasOwnProperty("key"))
             return (
                 <div>
                     <DropdownButton title={`follows`} id={"drop_down"} className={this.state.target}>
-                        {Object.keys(constants.code_fragment[this.state["category"]]["follows"]).map((key, i) => {
+                        {Object.keys(constants.code_fragment[this.props["category"]]["follows"]).map((key, i) => {
                             return (
                                 <MenuItem eventKey={key} key={i}
                                           onSelect={(evt) => {
-                                              this.setState({
-                                                  follows: {
-                                                      key: evt,
-                                                      value: constants.code_fragment[this.state["category"]]["follows"][evt],
-                                                  }
-                                              })
+                                              this.state.children.follows = {
+                                                  key: evt,
+                                                  value: constants.code_fragment[this.props["category"]]["follows"][evt],
+                                                  target: this.state.target,
+                                                  children: JSON.parse(JSON.stringify(constants.state_children)),
+                                                  xpath: ""
+                                              };
+
+                                              this.forceUpdate();
                                           }}
-                                >{constants.code_fragment[this.state["category"]]["follows"][key].name}
+                                >{constants.code_fragment[this.props["category"]]["follows"][key].name}
                                 </MenuItem>);
                         })}
                     </DropdownButton>
@@ -116,24 +95,23 @@ class FunctionFragment extends React.Component {
             );
 
         else {
-            this.updateXpathFollows();
-            switch (this.state["follows"].key) {
+            this.sendDataBack();
+            switch (this.state.children["follows"].key) {
                 case "declaration":
-                    return (<DeclarationFragment target={this.state.target} ws={this.ws}
-                                                 assignedId={this.state.assignedID + "_decl_follows"}
-                                                 callbackFromParent={this.receiveXpathDataFollows} isConstraint={false}
-                                                 root={constants.code_fragment[this.state["category"]]["follows"][this.state["follows"].key].xpath}/>);
+                    return (<DeclarationFragment ws={this.ws} state={this.state.children["follows"]}
+                                                 assignedId={this.props["assignedID"] + "_decl_follows"}
+                                                 callbackFromParent={this.receiveDataFollows} isConstraint={false}/>);
 
                 case "expression":
-                    return (<ExpressionFragment target={this.state.target} ws={this.ws}
-                                                assignedId={this.state.assignedID + "_expr_follows"}
-                                                callbackFromParent={this.receiveXpathDataFollows} isConstraint={false}
-                                                root={constants.code_fragment[this.state["category"]]["follows"][this.state["follows"].key].xpath}/>);
+                    return (<ExpressionFragment
+                        ws={this.ws} state={this.state.children["follows"]}
+                        assignedId={this.props["assignedID"] + "_expr_follows"}
+                        callbackFromParent={this.receiveDataFollows} isConstraint={false}/>);
                 case "name":
-                    d3.select(`#${this.state.assignedID}-before_2`).classed(`ruleGroupDiv ${this.state["target"]}`, true);
+                    d3.select(`#${this.props["assignedID"]}-before_2`).classed(`ruleGroupDiv ${this.state["target"]}`, true);
                     break;
                 case "parameter":
-                    d3.select(`#${this.state.assignedID}-after`).classed(`ruleGroupDiv ${this.state["target"]}`, true);
+                    d3.select(`#${this.props["assignedID"]}-after`).classed(`ruleGroupDiv ${this.state["target"]}`, true);
                     break;
                 default:
                     return (<div/>)
@@ -148,18 +126,22 @@ class FunctionFragment extends React.Component {
      */
     renderGroup(group) {
         return (
-            <div className={group === "within" ? "" : "rowItem"} id={`${this.state.assignedID}-${group}`}>
-                {this.state[group].map((cons, i) => {
+            <div className={group === "within" ? "" : "rowItem"} id={`${this.props["assignedID"]}-${group}`}>
+                {(group === 'before_2' && this.state.children["before_2"].length === 0) ?
+                    <div className={" rowItem inlineText"}><p><b>{this.props["category"] + "Name"}</b>
+                    </p></div> : ""
+                }
+                {this.state.children[group].map((cons, i) => {
                     return (
                         <div className={group === "within" ? "" : "rowItem"} key={i}>
                             <div className={"rowItem inlineText"}>
-                                <b>{constants.code_fragment[this.state["category"]][group][cons["key"]]["pre"]}</b>
+                                <b>{constants.code_fragment[this.props["category"]][group][cons["key"]]["pre"]}</b>
                             </div>
                             <div className={group === "within" ? "" : "rowItem"}>
                                 {this.switchMethod(group, i, cons)}
                             </div>
                             <div className={group === "within" ? "inlineText" : "rowItem inlineText"}>
-                                <b>{constants.code_fragment[this.state["category"]][group][cons["key"]]["post"]}</b>
+                                <b>{constants.code_fragment[this.props["category"]][group][cons["key"]]["post"]}</b>
                             </div>
                         </div>
                     )
@@ -167,19 +149,21 @@ class FunctionFragment extends React.Component {
 
 
                 <DropdownButton title={``} id="dropdown-size-medium">
-                    {Object.keys(constants.code_fragment[this.state["category"]][group]).map((key, i) => {
+                    {Object.keys(constants.code_fragment[this.props["category"]][group]).map((key, i) => {
                         return (
                             <MenuItem eventKey={key} key={i}
                                       onSelect={(evt) => {
-                                          this.xpath.xpathConstraint[group].push(constants.code_fragment[this.state["category"]][group][evt]["xpath"]);
-                                          this.sendDataBack();
-                                          this.state[group].push({
+                                          this.state.children[group].push({
                                               key: evt,
-                                              value: constants.code_fragment[this.state["category"]][group][evt]
+                                              value: constants.code_fragment[this.props["category"]][group][evt],
+                                              target: "default",
+                                              children: JSON.parse(JSON.stringify(constants.state_children)),
+                                              xpath: constants.code_fragment[this.props["category"]][group][evt]["xpath"]
                                           });
+                                          this.sendDataBack();
                                           this.forceUpdate();
                                       }}
-                            >{constants.code_fragment[this.state["category"]][group][key].name}
+                            >{constants.code_fragment[this.props["category"]][group][key].name}
                             </MenuItem>);
                     })}
                 </DropdownButton>
@@ -195,21 +179,19 @@ class FunctionFragment extends React.Component {
      * @returns {XML}
      */
     switchMethod(group, i, cons) {
-        let type = this.state[group][i].value.type;
+        let type = this.state.children[group][i].value.type;
         switch (type) {
 
             case "declaration":
-                return (<DeclarationFragment target={""} ws={this.ws}
-                                             assignedId={this.state.assignedID + "_decl_" + i}
-                                             callbackFromParent={this.receiveXpathDataConstraints} isConstraint={true}
-                                             constraintIndices={{"group": group, "i": i}}
-                                             root={constants.code_fragment[this.state["category"]][group][this.state[group][i].key].xpath}/>);
+                return (<DeclarationFragment ws={this.ws} state={this.state.children[group][i]}
+                                             assignedId={this.props["assignedID"] + "_decl_" + i}
+                                             callbackFromParent={this.receiveDataConstraints} isConstraint={true}
+                                             constraintIndices={{"group": group, "i": i}}/>);
             case "expression":
-                return (<ExpressionFragment target={""} ws={this.ws}
-                                            assignedId={this.state.assignedID + "_expr_" + i}
-                                            callbackFromParent={this.receiveXpathDataConstraints} isConstraint={true}
-                                            constraintIndices={{"group": group, "i": i}}
-                                            root={constants.code_fragment[this.state["category"]][group][this.state[group][i].key].xpath}/>);
+                return (<ExpressionFragment ws={this.ws} state={this.state.children[group][i]}
+                                            assignedId={this.props["assignedID"] + "_expr_" + i}
+                                            callbackFromParent={this.receiveDataConstraints} isConstraint={true}
+                                            constraintIndices={{"group": group, "i": i}}/>);
             case "text":
                 return (
                     <FormControl type="text" value={cons["text"]}
@@ -241,30 +223,21 @@ class FunctionFragment extends React.Component {
 
 
     /**
-     * update follows data after selecting followed element
-     */
-    updateXpathFollows() {
-        this.xpath.xpathFollows = this.state["follows"].value["xpath"];
-        this.sendDataBack();
-    }
-
-
-    /**
      * receive xpath data from the child nodes
-     * @param xpathData
+     * @param stateData
      * @param constraintIndices
      */
-    receiveXpathDataConstraints = (xpathData, constraintIndices) => {
-        this.xpath.xpathConstraint[constraintIndices.group][constraintIndices.i] = xpathData;
+    receiveDataConstraints = (stateData, constraintIndices) => {
+        this.state.children[constraintIndices.group][constraintIndices.i] = stateData;
         this.sendDataBack();
     };
 
     /**
      * receive xpath data from the child nodes
-     * @param xpathData
+     * @param stateData
      */
-    receiveXpathDataFollows = (xpathData) => {
-        this.xpath.xpathFollows = xpathData;
+    receiveDataFollows = (stateData) => {
+        this.state.children["follows"] = stateData;
         this.sendDataBack();
     };
 
@@ -274,7 +247,7 @@ class FunctionFragment extends React.Component {
      * @param i
      */
     updateXpathText(group, i) {
-        this.xpath.xpathConstraint[group][i] = this.state[group][i].value["xpath"].replace('<NAME>', this.state[group][i].text);
+        this.state.children[group][i].xpath = this.state.children[group][i].value["xpath"].replace('<NAME>', this.state.children[group][i].text);
         this.sendDataBack();
     }
 
@@ -285,7 +258,7 @@ class FunctionFragment extends React.Component {
      * @param i
      */
     updateXpathNumber(group, i) {
-        this.xpath.xpathConstraint[group][i] = this.state[group][i].value["xpath"].replace('<COUNT>', this.state[group][i].text);
+        this.state.children[group][i].xpath = this.state.children[group][i].value["xpath"].replace('<COUNT>', this.state.children[group][i].text);
         this.sendDataBack();
     }
 
@@ -293,21 +266,10 @@ class FunctionFragment extends React.Component {
      * send the xpath data to the parent node
      */
     sendDataBack() {
-
-        let cons = this.xpath.xpathConstraint["top"]
-            .concat(this.xpath.xpathConstraint["before_1"])
-            .concat(this.xpath.xpathConstraint["before_2"])
-            .concat(this.xpath.xpathConstraint["after"])
-            .concat(this.xpath.xpathConstraint["within"]).join(' and ');
-
-        let xpathData = this.xpath.root;
-        xpathData = (cons === "") ? xpathData : xpathData + "[" + cons + "]";
-        xpathData = (this.xpath.xpathFollows === "") ? xpathData : xpathData + "/" + this.xpath.xpathFollows;
-
         if (this.props["isConstraint"])
-            this.props["callbackFromParent"](xpathData, this.props["constraintIndices"]);
+            this.props["callbackFromParent"](this.state, this.props["constraintIndices"]);
         else
-            this.props["callbackFromParent"](xpathData);
+            this.props["callbackFromParent"](this.state);
 
     }
 
