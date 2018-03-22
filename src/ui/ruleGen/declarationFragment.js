@@ -27,7 +27,6 @@ class DeclarationFragment extends React.Component {
     }
 
     render() {
-        console.log(this.state);
         return (
             <div id={this.props["assignedId"]}
                  className={(this.state.target === "") ? "" : "ruleGroupDiv " + this.state.target}>
@@ -78,7 +77,7 @@ class DeclarationFragment extends React.Component {
      */
     prepareXpath() {
 
-        this.state.xpath = this.traverseXml(this.xml);
+        this.setState({xpath: this.traverseXml(this.xml)});
         this.sendDataBack();
     }
 
@@ -87,11 +86,7 @@ class DeclarationFragment extends React.Component {
      * send the xpath data to the parent node
      */
     sendDataBack() {
-        if (this.props["isConstraint"])
-            this.props["callbackFromParent"](this.state, this.props["constraintIndices"]);
-        else
-            this.props["callbackFromParent"](this.state);
-
+        this.props["callbackFromParent"]();
     }
 
 

@@ -218,7 +218,7 @@ annotation, annotation * {
 .ruleGroupDiv {
     padding: 10px 10px;
     border: 1px solid gray;
-    margin: 10px 0;
+    /*margin: 10px 0;*/
 }
 
 #generateRule button {
@@ -261,4 +261,26 @@ annotation, annotation * {
 
 #generateRule .ruleGroupDiv.follows {
     border: 2px solid #2aabd2;
+}
+
+#generateRule .generatedXpath {
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+#generateRule .divBorder {
+    border: 1px solid #bfbfbf;
+    min-height: 45px;
+    padding: 0 5px 3px 5px;
+}
+
+code {
+    color: #3c3c3c;
+    background-color: #eeeeee;
+}
+
+div > code {
+    padding: 5px;
+    font-weight: bold;
+    font-size: 14px;
 }

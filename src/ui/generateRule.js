@@ -7,8 +7,7 @@ import '../App.css';
 
 import * as d3 from 'd3';
 import PubSub from 'pubsub-js';
-// import {DropdownButton, MenuItem, HelpBlock, Tabs, Tab} from 'react-bootstrap';
-import {HelpBlock} from 'react-bootstrap';
+import {DropdownButton, MenuItem, HelpBlock, Tabs, Tab} from 'react-bootstrap';
 import ClassFragment from './ruleGen/classFragment';
 
 // import TempClassFragment from "./ruleGen/tempClassFragment";
@@ -20,304 +19,177 @@ class GenerateRule extends React.Component {
         super();
         this.attachListener();
 
-        this.xpath = {
-            quant0: "src:unit/src:class",
-            quant1: "src:unit/src:class",
-            quant2: "src:unit/src:class",
-            constr0: "src:unit/src:class",
-            constr1: "src:unit/src:class",
-            constr2: "src:unit/src:class"
-        };
-
         this.state = {
             ws: null,
             ruleType: "",
             cRuleType: "",
-            activeTab: "quant"
-        };
-
-        this.st =
-        // {
-        //     "key": "",
-        //     "value": "",
-        //     "target": "follows",
-        //     "children": {
-        //         "top": [],
-        //         "before": [],
-        //         "after_1": [],
-        //         "after_2": [],
-        //         "within": [{
-        //             "key": "HAS_FUNCTION",
-        //             "value": {"name": "Has function ...", "xpath": "src:block/src:function", "type": "function"},
-        //             "target": "default",
-        //             "children": {
-        //                 "top": [],
-        //                 "before": [],
-        //                 "before_1": [],
-        //                 "before_2": [],
-        //                 "after": [],
-        //                 "after_1": [],
-        //                 "after_2": [],
-        //                 "within": [],
-        //                 "follows": {
-        //                     "key": "expression",
-        //                     "value": {
-        //                         "name": "expression",
-        //                         "xpath": "src:block/descendant-or-self::src:expr_stmt",
-        //                         "follows": "expression"
-        //                     },
-        //                     "target": "default",
-        //                     "children": {
-        //                         "top": [],
-        //                         "before": [],
-        //                         "before_1": [],
-        //                         "before_2": [],
-        //                         "after": [],
-        //                         "after_1": [],
-        //                         "after_2": [],
-        //                         "within": [],
-        //                         "follows": {}
-        //                     },
-        //                     "xpath": "",
-        //                     "text": ""
-        //                 }
-        //             },
-        //             "xpath": "src:block/src:function"
-        //         }, {
-        //             "key": "HAS_FUNCTION_DECL",
-        //             "value": {
-        //                 "name": "Has functionDeclaration ...",
-        //                 "xpath": "src:block/src:function_decl",
-        //                 "type": "functionDeclaration"
-        //             },
-        //             "target": "default",
-        //             "children": {
-        //                 "top": [],
-        //                 "before": [],
-        //                 "before_1": [],
-        //                 "before_2": [],
-        //                 "after": [],
-        //                 "after_1": [],
-        //                 "after_2": [],
-        //                 "within": [],
-        //                 "follows": {}
-        //             },
-        //             "xpath": "src:block/src:function_decl"
-        //         }, {
-        //             "key": "HAS_CONSTRUCTOR",
-        //             "value": {
-        //                 "name": "Has constructor ...",
-        //                 "xpath": "src:block/src:constructor",
-        //                 "type": "constructor"
-        //             },
-        //             "target": "default",
-        //             "children": {
-        //                 "top": [],
-        //                 "before": [],
-        //                 "before_1": [],
-        //                 "before_2": [],
-        //                 "after": [],
-        //                 "after_1": [],
-        //                 "after_2": [],
-        //                 "within": [],
-        //                 "follows": {
-        //                     "key": "declaration",
-        //                     "value": {
-        //                         "name": "declaration",
-        //                         "xpath": "src:block/descendant-or-self::src:decl_stmt",
-        //                         "follows": "declaration"
-        //                     },
-        //                     "target": "default",
-        //                     "children": {
-        //                         "top": [],
-        //                         "before": [],
-        //                         "before_1": [],
-        //                         "before_2": [],
-        //                         "after": [],
-        //                         "after_1": [],
-        //                         "after_2": [],
-        //                         "within": [],
-        //                         "follows": {}
-        //                     },
-        //                     "xpath": "",
-        //                     "text": ""
-        //                 }
-        //             },
-        //             "xpath": "src:block/src:constructor"
-        //         }, {
-        //             "key": "HAS_SUBCLASS",
-        //             "value": {"name": "Has subclass ...", "xpath": "src:block/src:class", "type": "class"},
-        //             "target": "default",
-        //             "children": {
-        //                 "top": [],
-        //                 "before": [],
-        //                 "before_1": [],
-        //                 "before_2": [],
-        //                 "after": [],
-        //                 "after_1": [],
-        //                 "after_2": [],
-        //                 "within": [{
-        //                     "key": "HAS_FUNCTION",
-        //                     "value": {
-        //                         "name": "Has function ...",
-        //                         "xpath": "src:block/src:function",
-        //                         "type": "function"
-        //                     },
-        //                     "target": "default",
-        //                     "children": {
-        //                         "top": [],
-        //                         "before": [],
-        //                         "before_1": [],
-        //                         "before_2": [],
-        //                         "after": [],
-        //                         "after_1": [],
-        //                         "after_2": [],
-        //                         "within": [],
-        //                         "follows": {}
-        //                     },
-        //                     "xpath": "src:block/src:function"
-        //                 }],
-        //                 "follows": {
-        //                     "key": "constructor",
-        //                     "value": {
-        //                         "name": "constructor",
-        //                         "xpath": "src:block/src:constructor",
-        //                         "follows": "constructor"
-        //                     },
-        //                     "target": "default",
-        //                     "children": {
-        //                         "top": [],
-        //                         "before": [],
-        //                         "before_1": [],
-        //                         "before_2": [],
-        //                         "after": [],
-        //                         "after_1": [],
-        //                         "after_2": [],
-        //                         "within": [],
-        //                         "follows": {}
-        //                     },
-        //                     "xpath": ""
-        //                 }
-        //             },
-        //             "xpath": "src:block/src:class"
-        //         }],
-        //         "follows": {
-        //             "key": "functionDeclaration",
-        //             "value": {
-        //                 "name": "functionDeclaration",
-        //                 "xpath": "src:block/src:function_decl",
-        //                 "follows": "functionDeclaration"
-        //             },
-        //             "target": "follows",
-        //             "children": {
-        //                 "top": [],
-        //                 "before": [],
-        //                 "before_1": [],
-        //                 "before_2": [],
-        //                 "after": [],
-        //                 "after_1": [],
-        //                 "after_2": [],
-        //                 "within": [],
-        //                 "follows": {
-        //                     "key": "name",
-        //                     "value": {"name": "name", "xpath": "src:name/text()", "follows": "name"},
-        //                     "target": "follows",
-        //                     "children": {
-        //                         "top": [],
-        //                         "before": [],
-        //                         "before_1": [],
-        //                         "before_2": [],
-        //                         "after": [],
-        //                         "after_1": [],
-        //                         "after_2": [],
-        //                         "within": [],
-        //                         "follows": {}
-        //                     },
-        //                     "xpath": ""
-        //                 }
-        //             },
-        //             "xpath": ""
-        //         }
-        //     },
-        //     "xpath": "src:class"
-        // };
-
-        {
-            key: "",
-            value: "",
-            target: "follows",
-            children: {
-                "top": [],
-                "before": [],
-                "after_1": [],
-                "after_2": [],
-                "within": [],
-                "follows": {}
+            activeTab: "quantifier",
+            quantifier: {
+                q0: {
+                    key: "",
+                    value: "",
+                    target: "follows",
+                    children: {
+                        "top": [],
+                        "before": [],
+                        "before_1": [],
+                        "before_2": [],
+                        "after": [],
+                        "after_1": [],
+                        "after_2": [],
+                        "within": [],
+                        "follows": {}
+                    },
+                    xpath: "src:class"
+                },
+                q1: {
+                    key: "",
+                    value: "",
+                    target: "follows",
+                    children: {
+                        "top": [],
+                        "before": [],
+                        "before_1": [],
+                        "before_2": [],
+                        "after": [],
+                        "after_1": [],
+                        "after_2": [],
+                        "within": [],
+                        "follows": {}
+                    },
+                    xpath: "src:class"
+                },
+                q2: {
+                    key: "",
+                    value: "",
+                    target: "follows",
+                    children: {
+                        "top": [],
+                        "before": [],
+                        "before_1": [],
+                        "before_2": [],
+                        "after": [],
+                        "after_1": [],
+                        "after_2": [],
+                        "within": [],
+                        "follows": {}
+                    },
+                    xpath: "src:class"
+                }
             },
-            xpath: "src:class"
+            constraint: {
+                q0: {
+                    key: "",
+                    value: "",
+                    target: "follows",
+                    children: {
+                        "top": [],
+                        "before": [],
+                        "before_1": [],
+                        "before_2": [],
+                        "after": [],
+                        "after_1": [],
+                        "after_2": [],
+                        "within": [],
+                        "follows": {}
+                    },
+                    xpath: "src:class"
+                },
+                q1: {
+                    key: "",
+                    value: "",
+                    target: "follows",
+                    children: {
+                        "top": [],
+                        "before": [],
+                        "before_1": [],
+                        "before_2": [],
+                        "after": [],
+                        "after_1": [],
+                        "after_2": [],
+                        "within": [],
+                        "follows": {}
+                    },
+                    xpath: "src:class"
+                },
+                q2: {
+                    key: "",
+                    value: "",
+                    target: "follows",
+                    children: {
+                        "top": [],
+                        "before": [],
+                        "before_1": [],
+                        "before_2": [],
+                        "after": [],
+                        "after_1": [],
+                        "after_2": [],
+                        "within": [],
+                        "follows": {}
+                    },
+                    xpath: "src:class"
+                }
+            },
+            q0: "src:unit/src:class",
+            q1: "src:unit/src:class",
+            q2: "src:unit/src:class",
+            c0: "src:unit/src:class",
+            c1: "src:unit/src:class",
+            c2: "src:unit/src:class"
         };
-
 
     }
 
     render() {
+        // console.log(this.state);
+
         return (
             <div>
-                <p id={"generated_xpath_quant_0"}>{this.xpath.quant0}</p>
-                <ClassFragment
-                    assignedId={"class_0"} ws={this.state.ws}
-                    key={new Date()} state={this.st}
-                    callbackFromParent={this.receiveXpathData0} isConstraint={false}
-                />
+                <Tabs animation={true} id={"gen_rule_quantifier_constraint"} activeKey={this.state.activeTab}
+                      onSelect={(key) => this.setState({activeTab: key})}>
+                    <Tab eventKey={"quantifier"} title={"Quantifier Query"} animation={true}>
+                        <div style={{marginTop: "10px"}}>
+                            <em>{"Select the type of the quantifier: "}</em>
+                            <DropdownButton title={this.state.ruleType} id="dropdown-size-medium">
+                                <MenuItem key={"one-class"} eventKey={"selected from one class"}
+                                          onSelect={(evt) => this.setState({ruleType: evt, cRuleType: evt})}
+                                >{"selected from one class"}</MenuItem>
+                                <MenuItem key={"two-class"}
+                                          eventKey={"selected from one class which directs to another class"}
+                                          onSelect={(evt) => this.setState({ruleType: evt, cRuleType: evt})}
+                                >{"selected from one class which directs to another class"}</MenuItem>
+                                <MenuItem key={"two-class-returning"}
+                                          eventKey={"selected from one class with the help of another class"}
+                                          onSelect={(evt) => this.setState({ruleType: evt, cRuleType: evt})}
+                                >{"selected from one class with the help of another class"}</MenuItem>
+                            </DropdownButton>
+
+                            <div style={{marginTop: "10px"}}>{this.createQuantifierDivs()}</div>
+                        </div>
+                    </Tab>
+                    <Tab eventKey={"constraint"} title={"Constraint Query"} animation={true}>
+                        <div style={{marginTop: "10px"}}>
+                            <em>{"Select the type of the constraint: "}</em>
+                            <DropdownButton title={this.state.cRuleType} id="dropdown-size-medium">
+                                <MenuItem key={"one-class"} eventKey={"selected from one class"}
+                                          onSelect={(evt) => this.setState({cRuleType: evt})}
+                                >{"selected from one class"}</MenuItem>
+                                <MenuItem key={"two-class"}
+                                          eventKey={"selected from one class which directs to another class"}
+                                          onSelect={(evt) => this.setState({cRuleType: evt})}
+                                >{"selected from one class which directs to another class"}</MenuItem>
+                                <MenuItem key={"two-class-returning"}
+                                          eventKey={"selected from one class with the help of another class"}
+                                          onSelect={(evt) => this.setState({cRuleType: evt})}
+                                >{"selected from one class with the help of another class"}</MenuItem>
+                            </DropdownButton>
+
+                            <div style={{marginTop: "10px"}}>{this.createConstraintDivs()}</div>
+                        </div>
+                    </Tab>
+                </Tabs>
             </div>
-        )
-        // return (
-        //     <div>
-        //         <Tabs animation={true} id={"gen_rule_quant"} activeKey={this.state.activeTab}
-        //               onSelect={(key) => this.setState({activeTab: key})}>
-        //             <Tab eventKey={"quant"} title={"Quantifier Query"} animation={true}>
-        //                 <div style={{marginTop: "10px"}}>
-        //                     <em>{"Select the type of the quantifier: "}</em>
-        //                     <DropdownButton title={this.state.ruleType} id="dropdown-size-medium">
-        //                         <MenuItem key={"one-class"} eventKey={"selected from one class"}
-        //                                   onSelect={(evt) => this.setState({ruleType: evt})}
-        //                         >{"selected from one class"}</MenuItem>
-        //                         <MenuItem key={"two-class"}
-        //                                   eventKey={"selected from one class which directs to another class"}
-        //                                   onSelect={(evt) => this.setState({ruleType: evt})}
-        //                         >{"selected from one class which directs to another class"}</MenuItem>
-        //                         <MenuItem key={"two-class-returning"}
-        //                                   eventKey={"selected from one class with the help of another class"}
-        //                                   onSelect={(evt) => this.setState({ruleType: evt})}
-        //                         >{"selected from one class with the help of another class"}</MenuItem>
-        //                     </DropdownButton>
-        //
-        //                     <div style={{marginTop: "10px"}}>{this.createQuantDivs()}</div>
-        //                 </div>
-        //             </Tab>
-        //             <Tab eventKey={"constr"} title={"Constraint Query"} animation={true}>
-        //                 <div style={{marginTop: "10px"}}>
-        //                     <em>{"Select the type of the constraint: "}</em>
-        //                     <DropdownButton title={this.state.cRuleType} id="dropdown-size-medium">
-        //                         <MenuItem key={"one-class"} eventKey={"selected from one class"}
-        //                                   onSelect={(evt) => this.setState({cRuleType: evt})}
-        //                         >{"selected from one class"}</MenuItem>
-        //                         <MenuItem key={"two-class"}
-        //                                   eventKey={"selected from one class which directs to another class"}
-        //                                   onSelect={(evt) => this.setState({cRuleType: evt})}
-        //                         >{"selected from one class which directs to another class"}</MenuItem>
-        //                         <MenuItem key={"two-class-returning"}
-        //                                   eventKey={"selected from one class with the help of another class"}
-        //                                   onSelect={(evt) => this.setState({cRuleType: evt})}
-        //                         >{"selected from one class with the help of another class"}</MenuItem>
-        //                     </DropdownButton>
-        //
-        //                     <div style={{marginTop: "10px"}}>{this.createConstrDivs()}</div>
-        //                 </div>
-        //             </Tab>
-        //         </Tabs>
-        //     </div>
-        // );
+        );
     }
 
     /**
@@ -345,54 +217,69 @@ class GenerateRule extends React.Component {
      * render the div for quantifier query
      * @returns {XML}
      */
-    createQuantDivs() {
+    createQuantifierDivs() {
         switch (this.state.ruleType) {
             case "selected from one class":
                 return (
                     <div>
-                        <p id={"generated_xpath_quant_0"}>{this.xpath.quant0}</p>
-                        <form><ClassFragment target={"follows"} assignedId={"class_0"} ws={this.state.ws}
-                                             key={new Date()}
-                                             callbackFromParent={this.receiveXpathData0} isConstraint={false}
-                                             root={"src:class"}/></form>
+                        <div className={"generatedXpath"}>
+                            <code id={"generated_xpath_quant_0"}>{this.state.q0}</code>
+                        </div>
+                        <form><ClassFragment assignedId={"class_0"} ws={this.state.ws}
+                                             key={new Date()} state={this.state.quantifier.q0}
+                                             callbackFromParent={this.receiveStateData0}/></form>
                     </div>
                 );
             case "selected from one class which directs to another class":
                 return (
                     <div>
-                        <div><p id={"generated_xpath_quant_0"}>{this.xpath.quant0}</p></div>
-                        <HelpBlock>The output of this query must be text()</HelpBlock>
-                        <form><ClassFragment target={"follows"} assignedId={"class_0"} ws={this.state.ws}
-                                             key={new Date()}
-                                             callbackFromParent={this.receiveXpathData0} isConstraint={false}
-                                             root={"src:class"}/></form>
-                        <p id={"generated_xpath_quant_1"}>{this.xpath.quant1}</p>
-                        <form><ClassFragment target={"follows"} assignedId={"class_1"} ws={this.state.ws}
-                                             key={new Date()}
-                                             callbackFromParent={this.receiveXpathData1} isConstraint={false}
-                                             root={"src:class"}/></form>
+                        <HelpBlock>The output of this query must be <code
+                            style={{fontFamily: "monospace"}}>text()</code></HelpBlock>
+                        <div className={"generatedXpath"}>
+                            <code id={"generated_xpath_quant_0"}>{this.state.q0}</code>
+                        </div>
+                        <form><ClassFragment assignedId={"class_0"} ws={this.state.ws}
+                                             key={new Date()} state={this.state.quantifier.q0}
+                                             callbackFromParent={this.receiveStateData0}/></form>
+                        <HelpBlock>Use <code style={{fontFamily: "monospace"}}>&#60;TEMP&#62;</code> to refer to the
+                            output of the previous query.</HelpBlock>
+                        <div className={"generatedXpath"}>
+                            <code id={"generated_xpath_quant_1"}>{this.state.q1}</code>
+                        </div>
+                        <form><ClassFragment assignedId={"class_1"} ws={this.state.ws}
+                                             key={new Date()} state={this.state.quantifier.q1}
+                                             callbackFromParent={this.receiveStateData1}/></form>
                     </div>
                 );
             case "selected from one class with the help of another class":
                 return (
                     <div>
-                        <div><p id={"generated_xpath_quant_0"}>{this.xpath.quant0}</p></div>
-                        <HelpBlock>The output of this query must be text()</HelpBlock>
-                        <form><ClassFragment target={"follows"} assignedId={"class_0"} ws={this.state.ws}
-                                             key={new Date()}
-                                             callbackFromParent={this.receiveXpathData0} isConstraint={false}
-                                             root={"src:class"}/></form>
-                        <div><p id={"generated_xpath_quant_1"}>{this.xpath.quant1}</p></div>
-                        <HelpBlock>The output of this query must be text()</HelpBlock>
-                        <form><ClassFragment target={"follows"} assignedId={"class_1"} ws={this.state.ws}
-                                             key={new Date()}
-                                             callbackFromParent={this.receiveXpathData1} isConstraint={false}
-                                             root={"src:class"}/></form>
-                        <p id={"generated_xpath_quant_2"}>{this.xpath.quant2}</p>
-                        <form><ClassFragment target={"follows"} assignedId={"class_2"} ws={this.state.ws}
-                                             key={new Date()}
-                                             callbackFromParent={this.receiveXpathData2} isConstraint={false}
-                                             root={"src:class"}/></form>
+                        <HelpBlock>The output of this query must be <code
+                            style={{fontFamily: "monospace"}}>text()</code></HelpBlock>
+                        <div className={"generatedXpath"}>
+                            <code id={"generated_xpath_quant_0"}>{this.state.q0}</code>
+                        </div>
+                        <form><ClassFragment assignedId={"class_0"} ws={this.state.ws}
+                                             key={new Date()} state={this.state.quantifier.q0}
+                                             callbackFromParent={this.receiveStateData0}/></form>
+                        <HelpBlock>The output of this query must be <code
+                            style={{fontFamily: "monospace"}}>text()</code>.
+                            Use <code style={{fontFamily: "monospace"}}>&#60;TEMP&#62;</code> to refer to the
+                            output of the previous query.</HelpBlock>
+                        <div className={"generatedXpath"}>
+                            <code id={"generated_xpath_quant_1"}>{this.state.q1}</code>
+                        </div>
+                        <form><ClassFragment assignedId={"class_1"} ws={this.state.ws}
+                                             key={new Date()} state={this.state.quantifier.q1}
+                                             callbackFromParent={this.receiveStateData1}/></form>
+                        <HelpBlock>Use <code style={{fontFamily: "monospace"}}>&#60;TEMP&#62;</code> to refer to the
+                            output of the previous query.</HelpBlock>
+                        <div className={"generatedXpath"}>
+                            <code id={"generated_xpath_quant_2"}>{this.state.q2}</code>
+                        </div>
+                        <form><ClassFragment assignedId={"class_2"} ws={this.state.ws}
+                                             key={new Date()} state={this.state.quantifier.q2}
+                                             callbackFromParent={this.receiveStateData2}/></form>
                     </div>
                 );
             default:
@@ -404,54 +291,67 @@ class GenerateRule extends React.Component {
      * render the div for constraint query
      * @returns {XML}
      */
-    createConstrDivs() {
+    createConstraintDivs() {
         switch (this.state.cRuleType) {
             case "selected from one class":
                 return (
                     <div>
-                        <p id={"generated_xpath_constr_0"}>{this.xpath.constr0}</p>
-                        <form><ClassFragment target={"follows"} assignedId={"c_class_0"} ws={this.state.ws}
-                                             key={new Date()}
-                                             callbackFromParent={this.receiveCXpathData0} isConstraint={false}
-                                             root={"src:class"}/></form>
+                        <coed id={"generated_xpath_constr_0"} className={"generatedXpath"}>{this.state.c0}</coed>
+                        <form><ClassFragment assignedId={"c_class_0"} ws={this.state.ws}
+                                             key={new Date()} state={this.state.constraint.q0}
+                                             callbackFromParent={this.receiveCStateData0}/></form>
                     </div>
                 );
             case "selected from one class which directs to another class":
                 return (
                     <div>
-                        <div><p id={"generated_xpath_constr_0"}>{this.xpath.constr0}</p></div>
-                        <HelpBlock>The output of this query must be text()</HelpBlock>
-                        <form><ClassFragment target={"follows"} assignedId={"c_class_0"} ws={this.state.ws}
-                                             key={new Date()}
-                                             callbackFromParent={this.receiveCXpathData0} isConstraint={false}
-                                             root={"src:class"}/></form>
-                        <p id={"generated_xpath_constr_1"}>{this.xpath.constr1}</p>
-                        <form><ClassFragment target={"follows"} assignedId={"c_class_1"} ws={this.state.ws}
-                                             key={new Date()}
-                                             callbackFromParent={this.receiveCXpathData1} isConstraint={false}
-                                             root={"src:class"}/></form>
+                        <HelpBlock>The output of this query must be <code
+                            style={{fontFamily: "monospace"}}>text()</code></HelpBlock>
+                        <div className={"generatedXpath"}>
+                            <code id={"generated_xpath_constr_0"}>{this.state.c0}</code>
+                        </div>
+                        <form><ClassFragment assignedId={"c_class_0"} ws={this.state.ws}
+                                             key={new Date()} state={this.state.constraint.q0}
+                                             callbackFromParent={this.receiveCStateData0}/></form>
+                        <HelpBlock>Use <code style={{fontFamily: "monospace"}}>&#60;TEMP&#62;</code> to refer to the
+                            output of the previous query.</HelpBlock>
+                        <div className={"generatedXpath"}>
+                            <code id={"generated_xpath_constr_1"}>{this.state.c1}</code>
+                        </div>
+                        <form><ClassFragment assignedId={"c_class_1"} ws={this.state.ws}
+                                             key={new Date()} state={this.state.constraint.q1}
+                                             callbackFromParent={this.receiveCStateData1}/></form>
                     </div>
                 );
             case "selected from one class with the help of another class":
                 return (
                     <div>
-                        <div><p id={"generated_xpath_constr_0"}>{this.xpath.constr0}</p></div>
-                        <HelpBlock>The output of this query must be text()</HelpBlock>
-                        <form><ClassFragment target={"follows"} assignedId={"c_class_0"} ws={this.state.ws}
-                                             key={new Date()}
-                                             callbackFromParent={this.receiveCXpathData0} isConstraint={false}
-                                             root={"src:class"}/></form>
-                        <div><p id={"generated_xpath_constr_1"}>{this.xpath.constr1}</p></div>
-                        <HelpBlock>The output of this query must be text()</HelpBlock>
-                        <form><ClassFragment target={"follows"} assignedId={"c_class_1"} ws={this.state.ws}
-                                             key={new Date()}
-                                             callbackFromParent={this.receiveCXpathData1} isConstraint={false}
-                                             root={"src:class"}/></form>
-                        <p id={"generated_xpath_constr_2"}>{this.xpath.constr2}</p>
-                        <form><ClassFragment target={"follows"} assignedId={"c_class_2"} ws={this.state.ws}
-                                             key={new Date()}
-                                             callbackFromParent={this.receiveCXpathData2} isConstraint={false}
-                                             root={"src:class"}/></form>
+                        <HelpBlock>The output of this query must be <code
+                            style={{fontFamily: "monospace"}}>text()</code></HelpBlock>
+                        <div className={"generatedXpath"}>
+                            <code id={"generated_xpath_constr_0"}>{this.state.c0}</code>
+                        </div>
+                        <form><ClassFragment assignedId={"c_class_0"} ws={this.state.ws}
+                                             key={new Date()} state={this.state.constraint.q0}
+                                             callbackFromParent={this.receiveCStateData0}/></form>
+                        <HelpBlock>The output of this query must be <code
+                            style={{fontFamily: "monospace"}}>text()</code>.
+                            Use <code style={{fontFamily: "monospace"}}>&#60;TEMP&#62;</code> to refer to the
+                            output of the previous query.</HelpBlock>
+                        <div className={"generatedXpath"}>
+                            <code id={"generated_xpath_constr_1"}>{this.state.c1}</code>
+                        </div>
+                        <form><ClassFragment assignedId={"c_class_1"} ws={this.state.ws}
+                                             key={new Date()} state={this.state.constraint.q1}
+                                             callbackFromParent={this.receiveCStateData1}/></form>
+                        <HelpBlock>Use <code style={{fontFamily: "monospace"}}>&#60;TEMP&#62;</code> to refer to the
+                            output of the previous query.</HelpBlock>
+                        <div className={"generatedXpath"}>
+                            <code id={"generated_xpath_constr_2"}>{this.state.c2}</code>
+                        </div>
+                        <form><ClassFragment assignedId={"c_class_2"} ws={this.state.ws}
+                                             key={new Date()} state={this.state.constraint.q2}
+                                             callbackFromParent={this.receiveCStateData2}/></form>
                     </div>
                 );
             default:
@@ -461,64 +361,104 @@ class GenerateRule extends React.Component {
 
 
     /**
-     * receive xpath data from the child nodes
+     * receive state data from the child nodes
+     */
+    receiveStateData0 = () => {
+        let xpathRes = "src:unit/" + this.traverseChildren(this.state.quantifier.q0);
+        const constraint = this.state.constraint;
+        constraint.q0 = this.state.quantifier.q0;
+        this.setState({
+            constraint,
+            q0: xpathRes,
+            c0: xpathRes
+        });
+    };
+
+    /**
+     * receive state data from the child nodes
+     */
+    receiveStateData1 = () => {
+        let xpathRes = "src:unit/" + this.traverseChildren(this.state.quantifier.q1);
+        const constraint = this.state.constraint;
+        constraint.q1 = this.state.quantifier.q1;
+        this.setState({
+            constraint,
+            q1: xpathRes,
+            c1: xpathRes
+        });
+    };
+
+    /**
+     * receive state data from the child nodes
+     */
+    receiveStateData2 = () => {
+        let xpathRes = "src:unit/" + this.traverseChildren(this.state.quantifier.q2);
+        const constraint = this.state.constraint;
+        constraint.q2 = this.state.quantifier.q2;
+        this.setState({
+            constraint,
+            q2: xpathRes,
+            c2: xpathRes
+        });
+    };
+
+
+    /**
+     * receive state data from the child nodes
+     */
+    receiveCStateData0 = () => {
+        let xpathRes = "src:unit/" + this.traverseChildren(this.state.constraint.q0);
+        this.setState({c0: xpathRes});
+    };
+
+    /**
+     * receive state data from the child nodes
      * @param stateData
      */
-    receiveXpathData0 = (stateData) => {
-        console.log(">>>");
-        console.log(stateData);
-        console.log(JSON.stringify(stateData));
-        console.log("<<<")
-        // this.xpath.quant0 = "src:unit/" + xpathData;
-        // d3.select("#generated_xpath_quant_0").text(this.xpath.quant0);
+    receiveCStateData1 = (stateData) => {
+        let xpathRes = "src:unit/" + this.traverseChildren(stateData);
+        this.setState({c1: xpathRes});
     };
 
     /**
-     * receive xpath data from the child nodes
-     * @param xpathData
+     * receive state data from the child nodes
+     * @param stateData
      */
-    receiveXpathData1 = (xpathData) => {
-        this.xpath.quant1 = "src:unit/" + xpathData;
-        d3.select("#generated_xpath_quant_1").text(this.xpath.quant1);
-    };
-
-    /**
-     * receive xpath data from the child nodes
-     * @param xpathData
-     */
-    receiveXpathData2 = (xpathData) => {
-        this.xpath.quant2 = "src:unit/" + xpathData;
-        d3.select("#generated_xpath_quant_2").text(this.xpath.quant2);
+    receiveCStateData2 = (stateData) => {
+        let xpathRes = "src:unit/" + this.traverseChildren(stateData);
+        this.setState({c2: xpathRes});
     };
 
 
     /**
-     * receive xpath data from the child nodes
-     * @param xpathData
+     * traverse the state_children of a parent node to generate xpath query conditions
+     * @param parentNode
+     * @returns {string} xpath
      */
-    receiveCXpathData0 = (xpathData) => {
-        this.xpath.constr0 = "src:unit/" + xpathData;
-        d3.select("#generated_xpath_constr_0").text(this.xpath.constr0);
-    };
+    traverseChildren(parentNode) {
 
-    /**
-     * receive xpath data from the child nodes
-     * @param xpathData
-     */
-    receiveCXpathData1 = (xpathData) => {
-        this.xpath.constr1 = "src:unit/" + xpathData;
-        d3.select("#generated_xpath_constr_1").text(this.xpath.constr1);
-    };
+        let res = parentNode.xpath;
+        let children =
+            parentNode.children["top"]
+                .concat(parentNode.children["after"])
+                .concat(parentNode.children["after_1"])
+                .concat(parentNode.children["after_2"])
+                .concat(parentNode.children["before"])
+                .concat(parentNode.children["before_1"])
+                .concat(parentNode.children["before_2"])
+                .concat(parentNode.children["within"]);
 
-    /**
-     * receive xpath data from the child nodes
-     * @param xpathData
-     */
-    receiveCXpathData2 = (xpathData) => {
-        this.xpath.constr2 = "src:unit/" + xpathData;
-        d3.select("#generated_xpath_constr_2").text(this.xpath.constr2);
-    };
+        let resChildren = [];
 
+        for (let i = 0; i < children.length; i++)
+            resChildren.push(this.traverseChildren(children[i]));
+
+        res = (children.length !== 0) ? res + "[" + resChildren.join(' and ') + "]" : res;
+        res = (parentNode.children["follows"].hasOwnProperty('key')) ?
+            res + '/' + this.traverseChildren(parentNode.children["follows"]) : res;
+
+        return res;
+    }
 }
 
 export default GenerateRule;

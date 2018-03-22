@@ -280,7 +280,7 @@ export class constants {
                 }
             },
             "follows": {
-                "name": {name: "name", xpath: "src:name/text()", follows: "name"},
+                "name": {name: "name", xpath: "src:name/text()", follows: ""},
                 "subclass": {name: "subclass", xpath: "src:block/src:class", follows: "class"},
                 "function": {name: "function", xpath: "src:block/src:function", follows: "function"},
                 "constructor": {name: "constructor", xpath: "src:block/src:constructor", follows: "constructor"},

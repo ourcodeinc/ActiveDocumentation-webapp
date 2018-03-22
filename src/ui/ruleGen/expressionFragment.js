@@ -76,7 +76,7 @@ class ExpressionFragment extends React.Component {
      */
     prepareXpath() {
 
-        this.state.xpath = this.traverseXml(this.xml);
+        this.setState({xpath: this.traverseXml(this.xml)});
         this.sendDataBack();
     }
 
@@ -85,11 +85,7 @@ class ExpressionFragment extends React.Component {
      * send the xpath data to the parent node
      */
     sendDataBack() {
-
-        if (this.props["isConstraint"])
-            this.props["callbackFromParent"](this.state, this.props["constraintIndices"]);
-        else
-            this.props["callbackFromParent"](this.state);
+        this.props["callbackFromParent"]();
 
     }
 

@@ -6,18 +6,20 @@ import React from 'react';
 import '../../App.css';
 
 import {DropdownButton, FormControl, MenuItem, Row} from 'react-bootstrap';
+import MdDelete from 'react-icons/lib/md/delete';
+
 import {constants} from '../constants';
 import FunctionFragment from './functionFragment'
 import DeclarationFragment from "./declarationFragment";
 
-import * as d3 from "d3";
+// import * as d3 from "d3";
 
 
 class ClassFragment extends React.Component {
 
     constructor(props) {
         super(props);
-        // target assignedId ws callbackFromParent isConstraint constraintIndices root
+        // target assignedId ws callbackFromParent root
 
         this.ws = props["ws"];
         this.state = props["state"]
@@ -57,15 +59,16 @@ class ClassFragment extends React.Component {
                             return (
                                 <MenuItem eventKey={key} key={i}
                                           onSelect={(evt) => {
-                                              this.state.children.follows = {
+                                              const children = this.state.children;
+                                              children.follows = {
                                                   key: evt,
                                                   value: constants.code_fragment["class"]["follows"][evt],
                                                   target: this.state.target,
                                                   children: JSON.parse(JSON.stringify(constants.state_children)),
-                                                  xpath: ""
+                                                  xpath: constants.code_fragment["class"]["follows"][evt].xpath
                                               };
-
-                                              this.forceUpdate();
+                                              this.setState({children});
+                                              this.sendDataBack();
                                           }}
                                 >{constants.code_fragment["class"]["follows"][key].name}
                                 </MenuItem>);
@@ -75,40 +78,52 @@ class ClassFragment extends React.Component {
             );
 
         else {
-            this.sendDataBack();
-            switch (this.state.children["follows"].key) {
-                case "subclass":
-                    return (
-                        <ClassFragment ws={this.ws} state={this.state.children["follows"]}
-                                       assignedId={this.props["assignedId"] + "_class_follows"}
-                                       callbackFromParent={this.receiveDataFollows} isConstraint={false}/>);
+            return (
+                <div>
+                    <div style={{float: 'right'}}><MdDelete size={25}
+                                                            style={{cursor: "pointer", marginTop: "8px"}}
+                                                            onClick={() => {
+                                                                const children = this.state.children;
+                                                                children["follows"] = {};
+                                                                this.setState({children});
+                                                                this.sendDataBack();
+                                                            }}/></div>
+                    {(() => {
+                        switch (this.state.children["follows"].key) {
+                            case "subclass":
+                                return (<ClassFragment ws={this.ws} state={this.state.children["follows"]}
+                                                       assignedId={this.props["assignedId"] + "_class_follows"}
+                                                       callbackFromParent={this.sendDataBack}/>);
 
-                case "function":
-                    return (
-                        <FunctionFragment category={"function"} ws={this.ws} state={this.state.children["follows"]}
-                                          assignedId={this.props["assignedId"] + "_function_follows"}
-                                          callbackFromParent={this.receiveDataFollows} isConstraint={false}/>);
+                            case "function":
+                                return (<FunctionFragment category={"function"} ws={this.ws}
+                                                          state={this.state.children["follows"]}
+                                                          assignedId={this.props["assignedId"] + "_function_follows"}
+                                                          callbackFromParent={this.sendDataBack}/>);
 
-                case "constructor":
-                    return (
-                        <FunctionFragment category={"constructor"} ws={this.ws} state={this.state.children["follows"]}
-                                          assignedId={this.props["assignedId"] + "_constructor_follows"}
-                                          callbackFromParent={this.receiveDataFollows} isConstraint={false}/>);
-                case "functionDeclaration":
-                    return (<FunctionFragment category={"functionDeclaration"} ws={this.ws}
-                                              state={this.state.children["follows"]}
-                                              assignedId={this.props["assignedId"] + "_function_decl_follows"}
-                                              callbackFromParent={this.receiveDataFollows} isConstraint={false}/>);
-                case "declaration":
-                    return (<DeclarationFragment ws={this.ws} state={this.state.children["follows"]}
-                                                 assignedId={this.props["assignedId"] + "_decl_follows"}
-                                                 callbackFromParent={this.receiveDataFollows} isConstraint={false}/>);
-                case "name":
-                    d3.select(`#${this.props["assignedId"]}-after_1`).classed(`ruleGroupDiv ${this.state["target"]}`, true);
-                    break;
-                default:
-                    return (<div/>)
-            }
+                            case "constructor":
+                                return (<FunctionFragment category={"constructor"} ws={this.ws}
+                                                          state={this.state.children["follows"]}
+                                                          assignedId={this.props["assignedId"] + "_constructor_follows"}
+                                                          callbackFromParent={this.sendDataBack}/>);
+                            case "functionDeclaration":
+                                return (<FunctionFragment category={"functionDeclaration"} ws={this.ws}
+                                                          state={this.state.children["follows"]}
+                                                          assignedId={this.props["assignedId"] + "_function_decl_follows"}
+                                                          callbackFromParent={this.sendDataBack}/>);
+                            case "declaration":
+                                return (<DeclarationFragment ws={this.ws} state={this.state.children["follows"]}
+                                                             assignedId={this.props["assignedId"] + "_decl_follows"}
+                                                             callbackFromParent={this.sendDataBack}/>);
+                            case "name":
+                                // d3.select(`#${this.props["assignedId"]}-after_1`).classed(`ruleGroupDiv ${this.state["target"]}`, true);
+                                break;
+                            default:
+                                return (<div/>)
+                        }
+                    })()}
+                </div>
+            )
         }
     }
 
@@ -117,17 +132,26 @@ class ClassFragment extends React.Component {
      */
     renderGroup(group) {
         return (
-            <div className={group === "within" ? "" : "rowItem"} id={`${this.props["assignedId"]}-${group}`}>
+            <div className={this.chooseClass(group)} id={`${this.props["assignedId"]}-${group}`}>
                 {(group === 'after_1' && this.state.children["after_1"].length === 0) ?
                     <div className={" rowItem inlineText"}><p><b>{"className"}</b></p></div> : ""
                 }
                 {this.state.children[group].map((cons, i) => {
                     return (
                         <div className={group === "within" ? "" : "rowItem"} key={i}>
+                            <div style={{float: 'right'}}><MdDelete size={25}
+                                                                    style={{cursor: "pointer", marginTop: "8px"}}
+                                                                    onClick={() => {
+                                                                        const children = this.state.children;
+                                                                        children[group].splice(i, 1);
+                                                                        this.setState({children});
+                                                                        this.sendDataBack();
+                                                                    }}/></div>
                             <div className={"rowItem inlineText"}>
                                 <b>{constants.code_fragment["class"][group][cons["key"]]["pre"]}</b>
                             </div>
-                            <div className={group === "within" ? "" : "rowItem"}>
+                            <div className={group === "within" ? "" : "rowItem"}
+                                 style={(this.state.children[group][i].value.type === 'text') ? {paddingTop: "5px"} : {}}>
                                 {this.switchMethod(group, i, cons)}
                             </div>
                             <div className={group === "within" ? "inlineText" : "rowItem inlineText"}>
@@ -175,29 +199,24 @@ class ClassFragment extends React.Component {
                 return (
                     <ClassFragment ws={this.ws} state={this.state.children[group][i]}
                                    assignedId={this.props["assignedId"] + "_class_" + i}
-                                   callbackFromParent={this.receiveDataConstraints} isConstraint={true}
-                                   constraintIndices={{"group": group, "i": i}}/>);
+                                   callbackFromParent={this.sendDataBack}/>);
             case "function":
                 return (<FunctionFragment category={"function"} ws={this.ws} state={this.state.children[group][i]}
                                           assignedId={this.props["assignedId"] + "_function_" + i}
-                                          callbackFromParent={this.receiveDataConstraints} isConstraint={true}
-                                          constraintIndices={{"group": group, "i": i}}/>);
+                                          callbackFromParent={this.sendDataBack}/>);
             case "constructor":
                 return (<FunctionFragment category={"constructor"} ws={this.ws} state={this.state.children[group][i]}
                                           assignedId={this.props["assignedId"] + "_constructor_" + i}
-                                          callbackFromParent={this.receiveDataConstraints} isConstraint={true}
-                                          constraintIndices={{"group": group, "i": i}}/>);
+                                          callbackFromParent={this.sendDataBack}/>);
             case "functionDeclaration":
                 return (<FunctionFragment category={"functionDeclaration"} ws={this.ws}
                                           state={this.state.children[group][i]}
                                           assignedId={this.props["assignedId"] + "_function_decl_" + i}
-                                          callbackFromParent={this.receiveDataConstraints} isConstraint={true}
-                                          constraintIndices={{"group": group, "i": i}}/>);
+                                          callbackFromParent={this.sendDataBack}/>);
             case "declaration":
                 return (<DeclarationFragment ws={this.ws} state={this.state.children[group][i]}
                                              assignedId={this.props["assignedId"] + "_decl_" + i}
-                                             callbackFromParent={this.receiveDataConstraints} isConstraint={true}
-                                             constraintIndices={{"group": group, "i": i}}/>);
+                                             callbackFromParent={this.sendDataBack}/>);
             case "text":
                 return (
                     <FormControl type="text" value={cons["text"]}
@@ -213,48 +232,37 @@ class ClassFragment extends React.Component {
         }
     }
 
-
-    /**
-     * receive xpath data from the child nodes
-     * @param stateData
-     * @param constraintIndices
-     */
-    receiveDataConstraints = (stateData, constraintIndices) => {
-        this.state.children[constraintIndices.group][constraintIndices.i] = stateData;
-        this.sendDataBack();
-    };
-
-    /**
-     * receive xpath data from the child nodes
-     * @param stateData
-     */
-    receiveDataFollows = (stateData) => {
-        this.state.children["follows"] = stateData;
-        this.sendDataBack();
-    };
-
     /**
      * update the text of constraints
      * @param group
      * @param i
      */
     updateXpathText(group, i) {
-        this.state.children[group][i].xpath = this.state.children[group][i].value["xpath"].replace('<NAME>', this.state.children[group][i].text);
+        const children = this.state.children;
+        children[group][i].xpath = this.state.children[group][i].value["xpath"].replace('<NAME>', this.state.children[group][i].text);
+        this.setState({children});
         this.sendDataBack();
     }
 
     /**
      * send the xpath data to the parent node
      */
-    sendDataBack() {
+    sendDataBack = () => {
+        this.props["callbackFromParent"]();
+    };
 
-        if (this.props["isConstraint"])
-            this.props["callbackFromParent"](this.state, this.props["constraintIndices"]);
-        else
-            this.props["callbackFromParent"](this.state);
-
+    /**
+     * choose the class of the div to display the border for the selected node (name)
+     * @param group
+     * @returns {*}
+     */
+    chooseClass(group) {
+        if (group === "within")
+            return "";
+        if (this.state.children["follows"].hasOwnProperty("key") && this.state.children["follows"].key === 'name' && group === 'after_1')
+            return "divBorder rowItem ruleGroupDiv " + this.state["target"];
+        return "divBorder rowItem";
     }
-
 
 }
 
