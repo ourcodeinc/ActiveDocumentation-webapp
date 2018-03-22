@@ -133,7 +133,7 @@ class App {
         // ----
 
         ruleExecutor.create();
-        // webSocketManager.create();
+        webSocketManager.create();
         hashManager.create();
 
         window.location.hash = "#/index";

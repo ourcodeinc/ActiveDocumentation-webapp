@@ -141,8 +141,6 @@ class GenerateRule extends React.Component {
     }
 
     render() {
-        // console.log(this.state);
-
         return (
             <div>
                 <Tabs animation={true} id={"gen_rule_quantifier_constraint"} activeKey={this.state.activeTab}
@@ -155,9 +153,9 @@ class GenerateRule extends React.Component {
                                           onSelect={(evt) => this.setState({ruleType: evt, cRuleType: evt})}
                                 >{"selected from one class"}</MenuItem>
                                 <MenuItem key={"two-class"}
-                                          eventKey={"selected from one class which directs to another class"}
+                                          eventKey={"selected from one class which is directed from another class"}
                                           onSelect={(evt) => this.setState({ruleType: evt, cRuleType: evt})}
-                                >{"selected from one class which directs to another class"}</MenuItem>
+                                >{"selected from one class which is directed from another class"}</MenuItem>
                                 <MenuItem key={"two-class-returning"}
                                           eventKey={"selected from one class with the help of another class"}
                                           onSelect={(evt) => this.setState({ruleType: evt, cRuleType: evt})}
@@ -175,9 +173,9 @@ class GenerateRule extends React.Component {
                                           onSelect={(evt) => this.setState({cRuleType: evt})}
                                 >{"selected from one class"}</MenuItem>
                                 <MenuItem key={"two-class"}
-                                          eventKey={"selected from one class which directs to another class"}
+                                          eventKey={"selected from one class which is directed from another class"}
                                           onSelect={(evt) => this.setState({cRuleType: evt})}
-                                >{"selected from one class which directs to another class"}</MenuItem>
+                                >{"selected from one class which is directed from another class"}</MenuItem>
                                 <MenuItem key={"two-class-returning"}
                                           eventKey={"selected from one class with the help of another class"}
                                           onSelect={(evt) => this.setState({cRuleType: evt})}
@@ -230,7 +228,7 @@ class GenerateRule extends React.Component {
                                              callbackFromParent={this.receiveStateData0}/></form>
                     </div>
                 );
-            case "selected from one class which directs to another class":
+            case "selected from one class which is directed from another class":
                 return (
                     <div>
                         <HelpBlock>The output of this query must be <code
@@ -296,13 +294,15 @@ class GenerateRule extends React.Component {
             case "selected from one class":
                 return (
                     <div>
-                        <coed id={"generated_xpath_constr_0"} className={"generatedXpath"}>{this.state.c0}</coed>
+                        <div className={"generatedXpath"}>
+                            <code id={"generated_xpath_constr_0"}>{this.state.c0}</code>
+                        </div>
                         <form><ClassFragment assignedId={"c_class_0"} ws={this.state.ws}
                                              key={new Date()} state={this.state.constraint.q0}
                                              callbackFromParent={this.receiveCStateData0}/></form>
                     </div>
                 );
-            case "selected from one class which directs to another class":
+            case "selected from one class which is directed from another class":
                 return (
                     <div>
                         <HelpBlock>The output of this query must be <code

@@ -7,6 +7,7 @@ import '../../App.css';
 
 import {FormControl, Row, Button} from 'react-bootstrap';
 import Utilities from "../../core/utilities";
+import {constants} from '../constants';
 
 import * as d3 from "d3";
 import PubSub from 'pubsub-js';
@@ -32,10 +33,22 @@ class DeclarationFragment extends React.Component {
                  className={(this.state.target === "") ? "" : "ruleGroupDiv " + this.state.target}>
                 <Row style={{margin: "0"}}>
                     <div className={"rowItem"}>
-                        <FormControl type="text" value={this.state.text}
+                        <FormControl type="text"
+                                     value={this.state.children["within"].length !== 0 ? this.state.children["within"][0].value : ""}
                                      placeholder="Declaration"
                                      onChange={(e) => {
-                                         this.setState({"text": e.target.value});
+                                         const children = this.state.children["within"];
+                                         if(children.length===0)
+                                             children.push({
+                                                 key: "decl",
+                                                 value: "",
+                                                 target: this.state.target,
+                                                 children: JSON.parse(JSON.stringify(constants.state_children)),
+                                                 xpath: ""
+                                             });
+                                         const child = children[0];
+                                         child.value = e.target.value;
+                                         this.setState({child});
                                      }}/>
                     </div>
                     <div className={"rowItem"}>
@@ -76,8 +89,9 @@ class DeclarationFragment extends React.Component {
      * compile and prepare the xpath
      */
     prepareXpath() {
-
-        this.setState({xpath: this.traverseXml(this.xml)});
+        const child = this.state.children["within"][0];
+        child.xpath=  this.traverseXml(this.xml);
+        this.setState({child});
         this.sendDataBack();
     }
 

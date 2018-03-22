@@ -36,7 +36,6 @@ class Utilities {
                     break;
 
                 case 'DECL_STMT':
-                    console.log(data);
                     messageJson['data'] = data;
                     break;
 
