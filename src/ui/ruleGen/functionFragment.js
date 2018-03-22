@@ -12,7 +12,7 @@ import {constants} from '../constants';
 import ExpressionFragment from "./expressionFragment";
 import DeclarationFragment from "./declarationFragment";
 
-import * as d3 from "d3";
+// import * as d3 from "d3";
 
 
 class FunctionFragment extends React.Component {
@@ -39,11 +39,11 @@ class FunctionFragment extends React.Component {
                     </div>
                     {this.renderGroup("after")}
                     <div className={"inlineText"}>
-                        <p><b>{this.props["category"] === "functionDeclaration" ? ");" : ")"} </b></p>
+                        <p><b>{this.props["category"] === "abstractFunction" ? ");" : ")"} </b></p>
                     </div>
                 </Row>
                 <p><b>{this.renderBraces("start")} </b></p>
-                {(this.props["category"] !== "functionDeclaration") ? this.renderGroup("within") : ""}
+                {(this.props["category"] !== "abstractFunction") ? this.renderGroup("within") : ""}
                 {this.renderFollows()}
                 <p><b>{this.renderBraces("end")} </b></p>
             </div>
@@ -56,7 +56,7 @@ class FunctionFragment extends React.Component {
      * @returns {*}
      */
     renderBraces(location) {
-        let isBrace = (this.props["category"] !== "functionDeclaration");
+        let isBrace = (this.props["category"] !== "abstractFunction");
         switch (location) {
             case "start":
                 return isBrace ? "{" : "";
@@ -123,7 +123,7 @@ class FunctionFragment extends React.Component {
                                 // d3.select(`#${this.props["assignedID"]}-before_2`).classed(`ruleGroupDiv ${this.state["target"]}`, true);
                                 break;
                             case "parameter":
-                                d3.select(`#${this.props["assignedID"]}-after`).classed(`ruleGroupDiv ${this.state["target"]}`, true);
+                                // d3.select(`#${this.props["assignedID"]}-after`).classed(`ruleGroupDiv ${this.state["target"]}`, true);
                                 break;
                             default:
                                 return (<div/>)

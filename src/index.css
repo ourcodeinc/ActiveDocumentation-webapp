@@ -256,11 +256,15 @@ annotation, annotation * {
 }
 
 #generateRule .ruleGroupDiv.default {
-    border: 1px solid gray;
+    border: 2px solid gray;
+    border-radius: 5px;
+
 }
 
 #generateRule .ruleGroupDiv.follows {
     border: 2px solid #2aabd2;
+    border-radius: 5px;
+
 }
 
 #generateRule .generatedXpath {
@@ -269,7 +273,8 @@ annotation, annotation * {
 }
 
 #generateRule .divBorder {
-    border: 1px solid #bfbfbf;
+    border: 1px solid #dadada;
+    border-radius: 5px;
     min-height: 45px;
     padding: 0 5px 3px 5px;
 }

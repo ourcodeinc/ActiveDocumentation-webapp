@@ -39,7 +39,7 @@ export class constants {
                     type: "function"
                 },
                 "HAS_FUNCTION_DECL": {
-                    name: "Has functionDeclaration ...",
+                    name: "Has abstractFunction ...",
                     xpath: "src:block/src:function_decl[<PROPERTY>]",
                     type: "function_decl"
                 },
@@ -259,9 +259,9 @@ export class constants {
                     type: "function"
                 },
                 "HAS_FUNCTION_DECL": {
-                    name: "Has functionDeclaration ...",
+                    name: "Has abstractFunction ...",
                     xpath: "src:block/src:function_decl",
-                    type: "functionDeclaration"
+                    type: "abstractFunction"
                 },
                 "HAS_CONSTRUCTOR": {
                     name: "Has constructor ...",
@@ -284,10 +284,10 @@ export class constants {
                 "subclass": {name: "subclass", xpath: "src:block/src:class", follows: "class"},
                 "function": {name: "function", xpath: "src:block/src:function", follows: "function"},
                 "constructor": {name: "constructor", xpath: "src:block/src:constructor", follows: "constructor"},
-                "functionDeclaration": {
-                    name: "functionDeclaration",
+                "abstractFunction": {
+                    name: "abstractFunction",
                     xpath: "src:block/src:function_decl",
-                    follows: "functionDeclaration"
+                    follows: "abstractFunction"
                 },
                 "declaration": {
                     name: "declaration",
@@ -507,7 +507,7 @@ export class constants {
                 }
             }
         },
-        "functionDeclaration": {
+        "abstractFunction": {
             "top": {
                 "HAS_ANNOTATION_NAMED": {
                     name: "Has annotation named ...",
