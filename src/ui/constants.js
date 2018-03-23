@@ -259,7 +259,7 @@ export class constants {
                     type: "function"
                 },
                 "HAS_FUNCTION_DECL": {
-                    name: "Has abstractFunction ...",
+                    name: "Has abstract function ...",
                     xpath: "src:block/src:function_decl",
                     type: "abstractFunction"
                 },
@@ -268,10 +268,10 @@ export class constants {
                     xpath: "src:block/src:constructor",
                     type: "constructor"
                 },
-                "HAS_DECLARATION": {
-                    name: "Has declaration ...",
+                "HAS_DECLARATION_STMT": {
+                    name: "Has declaration statement ...",
                     xpath: "src:block/descendant-or-self::src:decl_stmt",
-                    type: "declaration"
+                    type: "declarationStatement"
                 },
                 "HAS_SUBCLASS": {
                     name: "Has subclass ...",
@@ -289,10 +289,10 @@ export class constants {
                     xpath: "src:block/src:function_decl",
                     follows: "abstractFunction"
                 },
-                "declaration": {
-                    name: "declaration",
+                "declarationStatement": {
+                    name: "declaration statement",
                     xpath: "src:block/descendant-or-self::src:decl_stmt",
-                    follows: "declaration"
+                    follows: "declarationStatement"
                 }
             }
         },
@@ -364,7 +364,7 @@ export class constants {
                 },
                 "HAS_PARAMETER": {
                     name: "One of its parameter is ...",
-                    xpath: "src:parameter_list/src:parameter/src:decl",
+                    xpath: "src:parameter_list/src:parameter",
                     type: "declaration",
                     pre: "",
                     post: ""
@@ -386,9 +386,9 @@ export class constants {
                     post: ""
                 },
                 "HAS_DECLARATION": {
-                    name: "Has declaration ...",
+                    name: "Has declaration statement ...",
                     xpath: "src:block/descendant-or-self::src:decl_stmt",
-                    type: "declaration",
+                    type: "declarationStatement",
                     pre: "",
                     post: ""
                 }
@@ -400,10 +400,10 @@ export class constants {
                     xpath: "src:block/descendant-or-self::src:expr_stmt",
                     follows: "expression"
                 },
-                "declaration": {
-                    name: "declaration",
+                "declarationStatement": {
+                    name: "declaration statement",
                     xpath: "src:block/descendant-or-self::src:decl_stmt",
-                    follows: "declaration"
+                    follows: "declarationStatement"
                 },
                 "return_expr": {
                     name: "return expression",
@@ -589,15 +589,40 @@ export class constants {
             }
 
         },
+        "expressionStatement": {
+            "top": {},
+            "before": {},
+            "after": {},
+            "within": {},
+            "follows": {
+                "name": {name: "name", xpath: "src:name/text()", follows: ""},
+                "name/name": {name: "name/name", xpath: "src:name/src:name/text()", follows: ""},
+                "call": {name: "call", xpath: "src:call", follows: "call"}
+            }
+
+        },
         "expression": {
             "top": {},
             "before": {},
             "after": {},
             "within": {},
             "follows": {
-                // "name": {name: "name", xpath: "src:name/text()", follows: ""},
-                // "name/name": {name: "name/name", xpath: "src:name/src:name/text()", follows: ""},
+                "name": {name: "name", xpath: "src:name/text()", follows: ""},
+                "name/name": {name: "name/name", xpath: "src:name/src:name/text()", follows: ""},
                 "call": {name: "call", xpath: "src:call", follows: "call"}
+            }
+
+        },
+        "declarationStatement": {
+            "top": {},
+            "before": {},
+            "after": {},
+            "within": {},
+            "follows": {
+                "type": {name: "type", xpath: "src:type/src:name/text()", follows: ""},
+                "name": {name: "name", xpath: "src:name/text()", follows: ""},
+                "name/name": {name: "name/name", xpath: "src:name/src:name/text()", follows: ""},
+                "initialization expression": {name: "initialization expression", xpath: "src:init/src:expr", follows: "expression"}
             }
 
         },
@@ -606,13 +631,11 @@ export class constants {
             "before": {},
             "after": {},
             "within": {},
-            "follows": [
-                {
-                    "name": {name: "name", xpath: "src:name/text()", follows: ""},
-                    "name/name": {name: "name/name", xpath: "src:name/src:name/text()", follows: ""},
-                    "call": {name: "call", xpath: "src:call", follows: "call"}
-                }
-            ]
+            "follows": {
+                "type": {name: "type", xpath: "src:type/src:name/text()", follows: ""},
+                "name": {name: "name", xpath: "src:name/text()", follows: ""}
+            }
+
         },
         "call": {
             "top": {},

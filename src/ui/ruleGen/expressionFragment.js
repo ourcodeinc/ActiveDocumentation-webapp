@@ -5,7 +5,9 @@
 import React from 'react';
 import '../../App.css';
 
-import {Button, FormControl, Row} from 'react-bootstrap';
+import {Button, FormControl, Row, DropdownButton, MenuItem} from 'react-bootstrap';
+import MdDelete from 'react-icons/lib/md/delete';
+
 import Utilities from "../../core/utilities";
 import {constants} from '../constants';
 
@@ -39,7 +41,7 @@ class ExpressionFragment extends React.Component {
                                      placeholder="Expression"
                                      onChange={(e) => {
                                          const children = this.state.children["within"];
-                                         if(children.length===0)
+                                         if (children.length === 0)
                                              children.push({
                                                  key: "expr",
                                                  value: "",
@@ -55,6 +57,7 @@ class ExpressionFragment extends React.Component {
                     <div className={"rowItem"}>
                         <Button bsSize="small" onClick={() => this.requestXML()}>Confirm Expression</Button>
                     </div>
+                    {this.renderFollows()}
                 </Row>
             </div>
         )
@@ -89,7 +92,7 @@ class ExpressionFragment extends React.Component {
      */
     prepareXpath() {
         const child = this.state.children["within"][0];
-        child.xpath=  this.traverseXml(this.xml);
+        child.xpath = this.traverseXml(this.xml);
         this.setState({child});
         this.sendDataBack();
     }
@@ -156,6 +159,89 @@ class ExpressionFragment extends React.Component {
         return "src:" + parentNode.nodeName + "[" + res.join(' and ') + "]";
     }
 
+    /**
+     * render the 'follows' elements and constraints, drop down or a component
+     */
+    renderFollows() {
+        if (!this.state.children["follows"].hasOwnProperty("key"))
+            return (
+                <div>
+                    <DropdownButton title={`follows`} id={"drop_down"} className={this.state.target}>
+                        {Object.keys(constants.code_fragment["expression"]["follows"]).map((key, i) => {
+                            return (
+                                <MenuItem eventKey={key} key={i}
+                                          onSelect={(evt) => {
+                                              const children = this.state.children;
+                                              children.follows = {
+                                                  key: evt,
+                                                  value: constants.code_fragment["expression"]["follows"][evt],
+                                                  target: this.state.target,
+                                                  children: JSON.parse(JSON.stringify(constants.state_children)),
+                                                  xpath: constants.code_fragment["expression"]["follows"][evt].xpath
+                                              };
+                                              this.setState({children});
+                                              this.sendDataBack();
+                                          }}
+                                >{constants.code_fragment["expression"]["follows"][key].name}
+                                </MenuItem>);
+                        })}
+                    </DropdownButton>
+                </div>
+            );
+
+        else {
+            return (
+                <div className={(this.state.target === "") ? "" : "ruleGroupDiv " + this.state.target + " exprDiv"}>
+                    <div style={{float: 'right'}}><MdDelete size={25}
+                                                            style={{cursor: "pointer", marginTop: "8px"}}
+                                                            onClick={() => {
+                                                                const children = this.state.children;
+                                                                children["follows"] = {};
+                                                                this.setState({children});
+                                                                this.sendDataBack();
+                                                            }}/></div>
+                    {(() => {
+                        switch (this.state.children["follows"].key) {
+                            case "name":
+                                return (
+                                    <div>
+                                        <em>The expression and the output is in form of the following formats (but not
+                                            limited to):</em><br/>
+                                        <code><b>Name</b> = MethodCall();<br/></code>
+                                        <code><b>Name</b> = Name;<br/></code>
+                                        <code><b>Name.Name</b> = Name<br/></code>
+                                        <code><b>Name.Name</b> = Name.Name<br/></code>
+                                        <code>Name = <b>Name;</b><br/></code>
+                                        <code>Name = <b>Name.Name;</b></code>
+                                    </div>);
+                            case "name/name":
+                                return (
+                                    <div>
+                                        <em>The expression and the output is in form of the following formats (but not
+                                            limited to):</em><br/>
+                                        <code><b>Name</b>.Name = MethodCall();<br/></code>
+                                        <code>Name.<b>Name</b> = MethodCall();<br/></code>
+                                        <code>Name = <b>Name</b>.Name;<br/></code>
+                                        <code>Name = Name.<b>Name</b>;</code>
+                                    </div>);
+                            case "call":
+                                return (
+                                    <div>
+                                        <em>The expression and the output is in form of the following formats (but not
+                                            limited to):</em><br/>
+                                        <code><b>MethodCall</b>(); <br/></code>
+                                        <code><b>Name.MethodCall</b>(); <br/></code>
+                                        <code>Name = <b>MethodCall()</b>;<br/></code>
+                                        <code>Name.Name = <b>MethodCall()</b>; </code>
+                                    </div>);
+                            default:
+                                return (<div/>)
+                        }
+                    })()}
+                </div>
+            )
+        }
+    }
 
 }
 

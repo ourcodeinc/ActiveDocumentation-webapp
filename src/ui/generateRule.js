@@ -220,64 +220,67 @@ class GenerateRule extends React.Component {
             case "selected from one class":
                 return (
                     <div>
-                        <div className={"generatedXpath"}>
-                            <code id={"generated_xpath_quant_0"}>{this.state.q0}</code>
-                        </div>
                         <form><ClassFragment assignedId={"class_0"} ws={this.state.ws}
                                              key={new Date()} state={this.state.quantifier.q0}
                                              callbackFromParent={this.receiveStateData0}/></form>
+                        <div className={"generatedXpath"}>
+                            <code id={"generated_xpath_quant_0"}>{this.state.q0}</code>
+                        </div>
                     </div>
                 );
             case "selected from one class which is directed from another class":
                 return (
                     <div>
-                        <HelpBlock>The output of this query must be <code
-                            style={{fontFamily: "monospace"}}>text()</code></HelpBlock>
-                        <div className={"generatedXpath"}>
-                            <code id={"generated_xpath_quant_0"}>{this.state.q0}</code>
-                        </div>
                         <form><ClassFragment assignedId={"class_0"} ws={this.state.ws}
                                              key={new Date()} state={this.state.quantifier.q0}
                                              callbackFromParent={this.receiveStateData0}/></form>
-                        <HelpBlock>Use <code style={{fontFamily: "monospace"}}>&#60;TEMP&#62;</code> to refer to the
-                            output of the previous query.</HelpBlock>
+                        <HelpBlock>The innermost <span style={{color: "#2aabd2"}}>blue</span> box (output of this query)
+                            must be <code>text()</code></HelpBlock>
                         <div className={"generatedXpath"}>
-                            <code id={"generated_xpath_quant_1"}>{this.state.q1}</code>
+                            <code id={"generated_xpath_quant_0"}>{this.state.q0}</code>
                         </div>
                         <form><ClassFragment assignedId={"class_1"} ws={this.state.ws}
                                              key={new Date()} state={this.state.quantifier.q1}
                                              callbackFromParent={this.receiveStateData1}/></form>
+                        <HelpBlock>Use <code>&#60;TEMP&#62;</code> to refer to the
+                            output of the previous query.</HelpBlock>
+                        <div className={"generatedXpath"}>
+                            <code id={"generated_xpath_quant_1"}>{this.state.q1}</code>
+                        </div>
                     </div>
                 );
             case "selected from one class with the help of another class":
                 return (
                     <div>
-                        <HelpBlock>The output of this query must be <code
-                            style={{fontFamily: "monospace"}}>text()</code></HelpBlock>
-                        <div className={"generatedXpath"}>
-                            <code id={"generated_xpath_quant_0"}>{this.state.q0}</code>
-                        </div>
+
                         <form><ClassFragment assignedId={"class_0"} ws={this.state.ws}
                                              key={new Date()} state={this.state.quantifier.q0}
                                              callbackFromParent={this.receiveStateData0}/></form>
-                        <HelpBlock>The output of this query must be <code
-                            style={{fontFamily: "monospace"}}>text()</code>.
-                            Use <code style={{fontFamily: "monospace"}}>&#60;TEMP&#62;</code> to refer to the
+                        <HelpBlock>The innermost <span style={{color: "#2aabd2"}}>blue</span> box (output of this query)
+                            must be <code>text()</code></HelpBlock>
+                        <div className={"generatedXpath"}>
+                            <code id={"generated_xpath_quant_0"}>{this.state.q0}</code>
+                        </div>
+
+                        <form><ClassFragment assignedId={"class_1"} ws={this.state.ws}
+                                             key={new Date()} state={this.state.quantifier.q1}
+                                             callbackFromParent={this.receiveStateData1}/></form>
+                        <HelpBlock>The innermost <span style={{color: "#2aabd2"}}>blue</span> box (output of this query)
+                            must be <code>text()</code>.
+                            Use <code>&#60;TEMP&#62;</code> to refer to the
                             output of the previous query.</HelpBlock>
                         <div className={"generatedXpath"}>
                             <code id={"generated_xpath_quant_1"}>{this.state.q1}</code>
                         </div>
-                        <form><ClassFragment assignedId={"class_1"} ws={this.state.ws}
-                                             key={new Date()} state={this.state.quantifier.q1}
-                                             callbackFromParent={this.receiveStateData1}/></form>
-                        <HelpBlock>Use <code style={{fontFamily: "monospace"}}>&#60;TEMP&#62;</code> to refer to the
+
+                        <form><ClassFragment assignedId={"class_2"} ws={this.state.ws}
+                                             key={new Date()} state={this.state.quantifier.q2}
+                                             callbackFromParent={this.receiveStateData2}/></form>
+                        <HelpBlock>Use <code>&#60;TEMP&#62;</code> to refer to the
                             output of the previous query.</HelpBlock>
                         <div className={"generatedXpath"}>
                             <code id={"generated_xpath_quant_2"}>{this.state.q2}</code>
                         </div>
-                        <form><ClassFragment assignedId={"class_2"} ws={this.state.ws}
-                                             key={new Date()} state={this.state.quantifier.q2}
-                                             callbackFromParent={this.receiveStateData2}/></form>
                     </div>
                 );
             default:
@@ -294,64 +297,64 @@ class GenerateRule extends React.Component {
             case "selected from one class":
                 return (
                     <div>
-                        <div className={"generatedXpath"}>
-                            <code id={"generated_xpath_constr_0"}>{this.state.c0}</code>
-                        </div>
                         <form><ClassFragment assignedId={"c_class_0"} ws={this.state.ws}
                                              key={new Date()} state={this.state.constraint.q0}
                                              callbackFromParent={this.receiveCStateData0}/></form>
+                        <div className={"generatedXpath"}>
+                            <code id={"generated_xpath_constr_0"}>{this.state.c0}</code>
+                        </div>
                     </div>
                 );
             case "selected from one class which is directed from another class":
                 return (
                     <div>
-                        <HelpBlock>The output of this query must be <code
-                            style={{fontFamily: "monospace"}}>text()</code></HelpBlock>
-                        <div className={"generatedXpath"}>
-                            <code id={"generated_xpath_constr_0"}>{this.state.c0}</code>
-                        </div>
                         <form><ClassFragment assignedId={"c_class_0"} ws={this.state.ws}
                                              key={new Date()} state={this.state.constraint.q0}
                                              callbackFromParent={this.receiveCStateData0}/></form>
-                        <HelpBlock>Use <code style={{fontFamily: "monospace"}}>&#60;TEMP&#62;</code> to refer to the
-                            output of the previous query.</HelpBlock>
+                        <HelpBlock>The innermost <span style={{color: "#2aabd2"}}>blue</span> box (output of this query)
+                            must be <code>text()</code></HelpBlock>
                         <div className={"generatedXpath"}>
-                            <code id={"generated_xpath_constr_1"}>{this.state.c1}</code>
+                            <code id={"generated_xpath_constr_0"}>{this.state.c0}</code>
                         </div>
                         <form><ClassFragment assignedId={"c_class_1"} ws={this.state.ws}
                                              key={new Date()} state={this.state.constraint.q1}
                                              callbackFromParent={this.receiveCStateData1}/></form>
+                        <HelpBlock>Use <code>&#60;TEMP&#62;</code> to refer to the
+                            output of the previous query.</HelpBlock>
+                        <div className={"generatedXpath"}>
+                            <code id={"generated_xpath_constr_1"}>{this.state.c1}</code>
+                        </div>
                     </div>
                 );
             case "selected from one class with the help of another class":
                 return (
                     <div>
-                        <HelpBlock>The output of this query must be <code
-                            style={{fontFamily: "monospace"}}>text()</code></HelpBlock>
-                        <div className={"generatedXpath"}>
-                            <code id={"generated_xpath_constr_0"}>{this.state.c0}</code>
-                        </div>
                         <form><ClassFragment assignedId={"c_class_0"} ws={this.state.ws}
                                              key={new Date()} state={this.state.constraint.q0}
                                              callbackFromParent={this.receiveCStateData0}/></form>
-                        <HelpBlock>The output of this query must be <code
-                            style={{fontFamily: "monospace"}}>text()</code>.
-                            Use <code style={{fontFamily: "monospace"}}>&#60;TEMP&#62;</code> to refer to the
-                            output of the previous query.</HelpBlock>
+                        <HelpBlock>The innermost <span style={{color: "#2aabd2"}}>blue</span> box (output of this query)
+                            must be <code>text()</code></HelpBlock>
                         <div className={"generatedXpath"}>
-                            <code id={"generated_xpath_constr_1"}>{this.state.c1}</code>
+                            <code id={"generated_xpath_constr_0"}>{this.state.c0}</code>
                         </div>
                         <form><ClassFragment assignedId={"c_class_1"} ws={this.state.ws}
                                              key={new Date()} state={this.state.constraint.q1}
                                              callbackFromParent={this.receiveCStateData1}/></form>
-                        <HelpBlock>Use <code style={{fontFamily: "monospace"}}>&#60;TEMP&#62;</code> to refer to the
+                        <HelpBlock>The innermost <span style={{color: "#2aabd2"}}>blue</span> box (output of this query)
+                            must be <code>text()</code>.
+                            Use <code>&#60;TEMP&#62;</code> to refer to the
                             output of the previous query.</HelpBlock>
                         <div className={"generatedXpath"}>
-                            <code id={"generated_xpath_constr_2"}>{this.state.c2}</code>
+                            <code id={"generated_xpath_constr_1"}>{this.state.c1}</code>
                         </div>
                         <form><ClassFragment assignedId={"c_class_2"} ws={this.state.ws}
                                              key={new Date()} state={this.state.constraint.q2}
                                              callbackFromParent={this.receiveCStateData2}/></form>
+                        <HelpBlock>Use <code>&#60;TEMP&#62;</code> to refer to the
+                            output of the previous query.</HelpBlock>
+                        <div className={"generatedXpath"}>
+                            <code id={"generated_xpath_constr_2"}>{this.state.c2}</code>
+                        </div>
                     </div>
                 );
             default:
@@ -365,8 +368,8 @@ class GenerateRule extends React.Component {
      */
     receiveStateData0 = () => {
         let xpathRes = "src:unit/" + this.traverseChildren(this.state.quantifier.q0);
-        const constraint = this.state.constraint;
-        constraint.q0 = this.state.quantifier.q0;
+        const constraint = JSON.parse(JSON.stringify(this.state.constraint));
+        constraint.q0 = JSON.parse(JSON.stringify(this.state.quantifier.q0));
         this.setState({
             constraint,
             q0: xpathRes,
@@ -379,8 +382,8 @@ class GenerateRule extends React.Component {
      */
     receiveStateData1 = () => {
         let xpathRes = "src:unit/" + this.traverseChildren(this.state.quantifier.q1);
-        const constraint = this.state.constraint;
-        constraint.q1 = this.state.quantifier.q1;
+        const constraint = JSON.parse(JSON.stringify(this.state.constraint));
+        constraint.q1 = JSON.parse(JSON.stringify(this.state.quantifier.q1));
         this.setState({
             constraint,
             q1: xpathRes,
@@ -393,8 +396,8 @@ class GenerateRule extends React.Component {
      */
     receiveStateData2 = () => {
         let xpathRes = "src:unit/" + this.traverseChildren(this.state.quantifier.q2);
-        const constraint = this.state.constraint;
-        constraint.q2 = this.state.quantifier.q2;
+        const constraint = JSON.parse(JSON.stringify(this.state.constraint));
+        constraint.q2 = JSON.parse(JSON.stringify(this.state.quantifier.q2));
         this.setState({
             constraint,
             q2: xpathRes,
@@ -413,19 +416,17 @@ class GenerateRule extends React.Component {
 
     /**
      * receive state data from the child nodes
-     * @param stateData
      */
-    receiveCStateData1 = (stateData) => {
-        let xpathRes = "src:unit/" + this.traverseChildren(stateData);
+    receiveCStateData1 = () => {
+        let xpathRes = "src:unit/" + this.traverseChildren(this.state.constraint.q1);
         this.setState({c1: xpathRes});
     };
 
     /**
      * receive state data from the child nodes
-     * @param stateData
      */
-    receiveCStateData2 = (stateData) => {
-        let xpathRes = "src:unit/" + this.traverseChildren(stateData);
+    receiveCStateData2 = () => {
+        let xpathRes = "src:unit/" + this.traverseChildren(this.state.constraint.q2);
         this.setState({c2: xpathRes});
     };
 

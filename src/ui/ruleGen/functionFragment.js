@@ -110,11 +110,16 @@ class FunctionFragment extends React.Component {
                                                             }}/></div>
                     {(() => {
                         switch (this.state.children["follows"].key) {
-                            case "declaration":
-                                return (<DeclarationFragment ws={this.ws} state={this.state.children["follows"]}
+                            case "declarationStatement":
+                                return (<DeclarationFragment category={"declarationStatement"}
+                                                             ws={this.ws} state={this.state.children["follows"]}
                                                              assignedId={this.props["assignedID"] + "_decl_follows"}
                                                              callbackFromParent={this.sendDataBack}/>);
-
+                            case "declaration":
+                                return (<DeclarationFragment category={"declaration"}
+                                                             ws={this.ws} state={this.state.children["follows"]}
+                                                             assignedId={this.props["assignedID"] + "_decl_follows"}
+                                                             callbackFromParent={this.sendDataBack}/>);
                             case "expression":
                                 return (<ExpressionFragment ws={this.ws} state={this.state.children["follows"]}
                                                             assignedId={this.props["assignedID"] + "_expr_follows"}
@@ -162,7 +167,7 @@ class FunctionFragment extends React.Component {
                             </div>
                             <div className={group === "within" ? "" : "rowItem"}
                                  style={(this.state.children[group][i].value.type === 'text') ? {paddingTop: "5px"} : {}}>
-                            {this.switchMethod(group, i, cons)}
+                                {this.switchMethod(group, i, cons)}
                             </div>
                             <div className={group === "within" ? "inlineText" : "rowItem inlineText"}>
                                 <b>{constants.code_fragment[this.props["category"]][group][cons["key"]]["post"]}</b>
@@ -206,8 +211,14 @@ class FunctionFragment extends React.Component {
         let type = this.state.children[group][i].value.type;
         switch (type) {
 
+            case "declarationStatement":
+                return (<DeclarationFragment category={"declarationStatement"}
+                                             ws={this.ws} state={this.state.children[group][i]}
+                                             assignedId={this.props["assignedID"] + "_decl_" + i}
+                                             callbackFromParent={this.sendDataBack}/>);
             case "declaration":
-                return (<DeclarationFragment ws={this.ws} state={this.state.children[group][i]}
+                return (<DeclarationFragment category={"declaration"}
+                                             ws={this.ws} state={this.state.children[group][i]}
                                              assignedId={this.props["assignedID"] + "_decl_" + i}
                                              callbackFromParent={this.sendDataBack}/>);
             case "expression":
@@ -221,9 +232,6 @@ class FunctionFragment extends React.Component {
                                  onChange={(e) => {
                                      cons.text = e.target.value;
                                      this.updateXpathText(group, i);
-                                     let newStateGroup = {};
-                                     newStateGroup[group] = this.state.children[group];
-                                     this.setState(newStateGroup);
                                  }}/>
                 );
             case "number":
@@ -233,9 +241,6 @@ class FunctionFragment extends React.Component {
                                  onChange={(e) => {
                                      cons.text = e.target.value;
                                      this.updateXpathNumber(group, i);
-                                     let newStateGroup = {};
-                                     newStateGroup[group] = this.state.children[group];
-                                     this.setState(newStateGroup);
                                  }}/>
                 );
             default:

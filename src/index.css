@@ -269,7 +269,7 @@ annotation, annotation * {
 
 #generateRule .generatedXpath {
     padding: 5px;
-    margin-bottom: 5px;
+    margin-bottom: 20px;
 }
 
 #generateRule .divBorder {
@@ -279,12 +279,25 @@ annotation, annotation * {
     padding: 0 5px 3px 5px;
 }
 
+#generateRule .exprDiv {
+    clear: both;
+    padding-bottom: 15px;
+}
+
+/*
+override bootstrap
+ */
+#generateRule .help-block {
+    margin-bottom: 5px;
+}
+
 code {
     color: #3c3c3c;
     background-color: #eeeeee;
+    font-family: monospace;
 }
 
-div > code {
+.generatedXpath code {
     padding: 5px;
     font-weight: bold;
     font-size: 14px;

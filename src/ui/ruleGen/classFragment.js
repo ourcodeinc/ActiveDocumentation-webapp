@@ -111,8 +111,9 @@ class ClassFragment extends React.Component {
                                                           state={this.state.children["follows"]}
                                                           assignedId={this.props["assignedId"] + "_function_decl_follows"}
                                                           callbackFromParent={this.sendDataBack}/>);
-                            case "declaration":
-                                return (<DeclarationFragment ws={this.ws} state={this.state.children["follows"]}
+                            case "declarationStatement":
+                                return (<DeclarationFragment category={"declarationStatement"}
+                                                             ws={this.ws} state={this.state.children["follows"]}
                                                              assignedId={this.props["assignedId"] + "_decl_follows"}
                                                              callbackFromParent={this.sendDataBack}/>);
                             case "name":
@@ -213,8 +214,9 @@ class ClassFragment extends React.Component {
                                           state={this.state.children[group][i]}
                                           assignedId={this.props["assignedId"] + "_function_decl_" + i}
                                           callbackFromParent={this.sendDataBack}/>);
-            case "declaration":
-                return (<DeclarationFragment ws={this.ws} state={this.state.children[group][i]}
+            case "declarationStatement":
+                return (<DeclarationFragment category={"declarationStatement"}
+                                             ws={this.ws} state={this.state.children[group][i]}
                                              assignedId={this.props["assignedId"] + "_decl_" + i}
                                              callbackFromParent={this.sendDataBack}/>);
             case "text":
