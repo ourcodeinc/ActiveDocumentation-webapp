@@ -198,30 +198,10 @@ export class constants {
     static code_fragment = {
         "class": {
             "top": {
-                "HAS_ANNOTATION_NAMED": {
-                    name: "Has annotation named",
-                    xpath: "src:annotation[src:name/text()=\"<NAME>\"]",
-                    type: "text",
-                    placeholder: "annotation",
-                    pre: "@",
-                    post: ""
-                },
-                "NOT_HAVE_ANNOTATION_NAMED": {
-                    name: "Doesn't have annotation named",
-                    xpath: "not(src:annotation[src:name/text()=\"<NAME>\"])",
-                    type: "text",
-                    placeholder: "annotation",
-                    pre: "@",
-                    post: ""
-                },
-                "HAS_ANNOTATION_W_ARGUMENT_NAMED": {
-                    name: "Has annotation with argument",
-                    xpath: "src:annotation[src:name/text()=\"<NAME>\" and src:argument_list[<PROPERTY>]]",
-                    type: "text",
-                    placeholder: "annotation",
-                    pre: "@",
-                    post: ""
-                    // follows: "argument_list"
+                "HAS_ANNOTATION": {
+                    name: "Has annotation",
+                    xpath: "src:annotation",
+                    type: "annotation"
                 }
             },
             "before": {},
@@ -270,7 +250,7 @@ export class constants {
                 },
                 "HAS_DECLARATION_STMT": {
                     name: "Has declaration statement ...",
-                    xpath: "src:block/descendant-or-self::src:decl_stmt",
+                    xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
                     type: "declarationStatement"
                 },
                 "HAS_SUBCLASS": {
@@ -291,37 +271,17 @@ export class constants {
                 },
                 "declarationStatement": {
                     name: "declaration statement",
-                    xpath: "src:block/descendant-or-self::src:decl_stmt",
+                    xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
                     follows: "declarationStatement"
                 }
             }
         },
         "function": {
             "top": {
-                "HAS_ANNOTATION_NAMED": {
-                    name: "Has annotation named ...",
-                    xpath: "src:annotation[src:name/text()=\"<NAME>\"]",
-                    type: "text",
-                    placeholder: "annotation",
-                    pre: "@",
-                    post: ""
-                },
-                "NOT_HAVE_ANNOTATION_NAMED": {
-                    name: "Doesn't have annotation named ...",
-                    xpath: "not(src:annotation[src:name/text()=\"<NAME>\"])",
-                    type: "text",
-                    placeholder: "annotation",
-                    pre: "@",
-                    post: ""
-                },
-                "HAS_ANNOTATION_W_ARGUMENT_NAMED": {
-                    name: "Has annotation with argument ...",
-                    xpath: "src:annotation[src:name/text()=\"<NAME>\" and src:argument_list[<PROPERTY>]]",
-                    type: "text",
-                    placeholder: "annotation",
-                    pre: "@",
-                    post: ""
-                    // follows: "argument_list"
+                "HAS_ANNOTATION": {
+                    name: "Has annotation",
+                    xpath: "src:annotation",
+                    type: "annotation"
                 }
             },
             "before_1": {
@@ -402,7 +362,7 @@ export class constants {
                 },
                 "declarationStatement": {
                     name: "declaration statement",
-                    xpath: "src:block/descendant-or-self::src:decl_stmt",
+                    xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
                     follows: "declarationStatement"
                 },
                 "return_expr": {
@@ -419,30 +379,10 @@ export class constants {
         },
         "constructor": {
             "top": {
-                "HAS_ANNOTATION_NAMED": {
-                    name: "Has annotation named ...",
-                    xpath: "src:annotation[src:name/text()=\"<NAME>\"]",
-                    type: "text",
-                    placeholder: "annotation",
-                    pre: "@",
-                    post: ""
-                },
-                "NOT_HAVE_ANNOTATION_NAMED": {
-                    name: "Doesn't have annotation named ...",
-                    xpath: "not(src:annotation[src:name/text()=\"<NAME>\"])",
-                    type: "text",
-                    placeholder: "annotation",
-                    pre: "@",
-                    post: ""
-                },
-                "HAS_ANNOTATION_W_ARGUMENT_NAMED": {
-                    name: "Has annotation with argument ...",
-                    xpath: "src:annotation[src:name/text()=\"<NAME>\" and src:argument_list[<PROPERTY>]]",
-                    type: "text",
-                    placeholder: "annotation",
-                    pre: "@",
-                    post: ""
-                    // follows: "argument_list"
+                "HAS_ANNOTATION": {
+                    name: "Has annotation",
+                    xpath: "src:annotation",
+                    type: "annotation"
                 }
             },
             "before_1": {
@@ -509,30 +449,10 @@ export class constants {
         },
         "abstractFunction": {
             "top": {
-                "HAS_ANNOTATION_NAMED": {
-                    name: "Has annotation named ...",
-                    xpath: "src:annotation[src:name/text()=\"<NAME>\"]",
-                    type: "text",
-                    placeholder: "annotation",
-                    pre: "@",
-                    post: ""
-                },
-                "NOT_HAVE_ANNOTATION_NAMED": {
-                    name: "Doesn't have annotation named ...",
-                    xpath: "not(src:annotation[src:name/text()=\"<NAME>\"])",
-                    type: "text",
-                    placeholder: "annotation",
-                    pre: "@",
-                    post: ""
-                },
-                "HAS_ANNOTATION_W_ARGUMENT_NAMED": {
-                    name: "Has annotation with argument ...",
-                    xpath: "src:annotation[src:name/text()=\"<NAME>\" and src:argument_list[<PROPERTY>]]",
-                    type: "text",
-                    placeholder: "annotation",
-                    pre: "@",
-                    post: ""
-                    // follows: "argument_list"
+                "HAS_ANNOTATION": {
+                    name: "Has annotation",
+                    xpath: "src:annotation",
+                    type: "annotation"
                 }
             },
             "before_1": {
@@ -614,22 +534,111 @@ export class constants {
 
         },
         "declarationStatement": {
-            "top": {},
-            "before": {},
-            "after": {},
-            "within": {},
+            "top": {
+                "HAS_ANNOTATION": {
+                    name: "Has annotation",
+                    xpath: "src:annotation",
+                    type: "annotation"
+                }
+            },
+            "before_1": {
+                "SPECIFIER": {
+                    name: "Specifier is ...",
+                    xpath: "src:type/src:specifier/text()=\"<NAME>\"",
+                    placeholder: "specifier",
+                    type: "text",
+                    pre: "",
+                    post: ""
+                }
+            },
+            "before_2": {
+                "TYPE_EQUALS_TO": {
+                    name: "Type is ...",
+                    xpath: "src:type/src:name/text()=\"<NAME>\"",
+                    type: "text",
+                    placeholder: "type",
+                    pre: "",
+                    post: ""
+                }
+            },
+            "after": {
+                "NAME_EQUALS_TO": {
+                    name: "Name equals to ...",
+                    xpath: "src:name/text()=\"<NAME>\"",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: ""
+                },
+                "NAME_NOT_EQUALS_TO": {
+                    name: "Name not equals to ...",
+                    xpath: "src:name/text()!=\"<NAME>\"",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: ""
+                }
+            },
+            "within": {
+                "HAS_INIT": {
+                    name: "Has initialization ...",
+                    xpath: "src:init",
+                    type: "expression",
+                    pre: "",
+                    post: ""
+                }
+            },
             "follows": {
                 "type": {name: "type", xpath: "src:type/src:name/text()", follows: ""},
                 "name": {name: "name", xpath: "src:name/text()", follows: ""},
-                "name/name": {name: "name/name", xpath: "src:name/src:name/text()", follows: ""},
-                "initialization expression": {name: "initialization expression", xpath: "src:init/src:expr", follows: "expression"}
+                "initialization expression": {
+                    name: "initialization expression",
+                    xpath: "src:init/src:expr",
+                    follows: "expression"
+                }
             }
 
         },
         "declaration": {
             "top": {},
-            "before": {},
-            "after": {},
+            "before_1": {
+                "SPECIFIER": {
+                    name: "Specifier is ...",
+                    xpath: "src:type/src:specifier/text()=\"<NAME>\"",
+                    placeholder: "specifier",
+                    type: "text",
+                    pre: "",
+                    post: ""
+                }
+            },
+            "before_2": {
+                "TYPE_EQUALS_TO": {
+                    name: "Name equals to ...",
+                    xpath: "src:type/src:name/text()=\"<NAME>\"",
+                    type: "text",
+                    placeholder: "functionName",
+                    pre: "",
+                    post: ""
+                }
+            },
+            "after": {
+                "NAME_EQUALS_TO": {
+                    name: "Name equals to ...",
+                    xpath: "src:name/text()=\"<NAME>\"",
+                    type: "text",
+                    placeholder: "functionName",
+                    pre: "",
+                    post: ""
+                },
+                "NAME_NOT_EQUALS_TO": {
+                    name: "Name not equals to ...",
+                    xpath: "src:name/text()!=\"<NAME>\"",
+                    type: "text",
+                    placeholder: "functionName",
+                    pre: "",
+                    post: ""
+                }
+            },
             "within": {},
             "follows": {
                 "type": {name: "type", xpath: "src:type/src:name/text()", follows: ""},
@@ -671,6 +680,40 @@ export class constants {
                 "name": {name: "name", xpath: "src:name/text()", follows: ""},
                 "argument": {name: "argument", xpath: "src:argument_list/src:argument/src:expr", follows: "expression"}
             }
+
+        },
+        "annotation": {
+            "top": {},
+            "before": {
+                "NAME_EQUALS_TO": {
+                    name: "Name equals to ...",
+                    xpath: "src:name/text()=\"<NAME>\"",
+                    type: "text",
+                    placeholder: "annotationName",
+                    pre: "",
+                    post: ""
+                },
+                "NAME_NOT_EQUALS_TO": {
+                    name: "Name not equals to ...",
+                    xpath: "src:name/text()!=\"<NAME>\"",
+                    type: "text",
+                    placeholder: "annotationName",
+                    pre: "",
+                    post: ""
+                }
+            },
+            "after": {
+                "HAS_ARGUMENT": {
+                    name: "It has argument ...",
+                    xpath: "src:argument_list/src:argument",
+                    type: "expression",
+                    pre: "",
+                    post: ""
+                }
+
+            },
+            "within": {},
+            "follows": {}
 
         }
     };

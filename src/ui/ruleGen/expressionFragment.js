@@ -27,37 +27,37 @@ class ExpressionFragment extends React.Component {
         this.state = props["state"];
         this.state.text = "";
 
+        this.waiting = false; // substitute for one-to-one send and receive
         this.attachListener();
     }
 
     render() {
         return (
             <div id={this.props["assignedId"]}
-                 className={(this.state.target === "") ? "" : "ruleGroupDiv " + this.state.target}>
+                 className={(this.state.target === "") ? "divBorder" : "ruleGroupDiv " + this.state.target}>
                 <Row style={{margin: "0"}}>
                     <div className={"rowItem"}>
                         <FormControl type="text"
                                      value={this.state.children["within"].length !== 0 ? this.state.children["within"][0].value : ""}
                                      placeholder="Expression"
                                      onChange={(e) => {
-                                         const children = this.state.children["within"];
-                                         if (children.length === 0)
-                                             children.push({
+                                         const children = this.state.children;
+                                         if (children["within"].length === 0)
+                                             children["within"].push({
                                                  key: "expr",
                                                  value: "",
                                                  target: this.state.target,
                                                  children: JSON.parse(JSON.stringify(constants.state_children)),
                                                  xpath: ""
                                              });
-                                         const child = children[0];
-                                         child.value = e.target.value;
-                                         this.setState({child});
+                                         children["within"][0].value = e.target.value;
+                                         this.setState({children});
                                      }}/>
                     </div>
                     <div className={"rowItem"}>
                         <Button bsSize="small" onClick={() => this.requestXML()}>Confirm Expression</Button>
                     </div>
-                    {this.renderFollows()}
+                    {(this.props["category"] === 'expressionStatement') ? this.renderFollows() : ""}
                 </Row>
             </div>
         )
@@ -70,8 +70,11 @@ class ExpressionFragment extends React.Component {
 
         // [expr xml]
         PubSub.subscribe('EXPR_STMT_XML', (msg, data) => {
-            this.xml = data[0];
-            this.prepareXpath()
+            if (this.waiting) {
+                this.xml = data[0];
+                this.prepareXpath();
+                this.waiting = false;
+            }
         });
     }
 
@@ -82,8 +85,10 @@ class ExpressionFragment extends React.Component {
     requestXML() {
 
         let node = d3.select(`#${this.props["assignedId"]}`).select("input").node();
-        if (node !== null)
+        if (node !== null) {
             Utilities.sendToServer(this.ws, "EXPR_STMT", node.value);
+            this.waiting = true;
+        }
         // it then receives the xml from the server
     }
 
@@ -192,14 +197,15 @@ class ExpressionFragment extends React.Component {
         else {
             return (
                 <div className={(this.state.target === "") ? "" : "ruleGroupDiv " + this.state.target + " exprDiv"}>
-                    <div style={{float: 'right'}}><MdDelete size={25}
-                                                            style={{cursor: "pointer", marginTop: "8px"}}
-                                                            onClick={() => {
-                                                                const children = this.state.children;
-                                                                children["follows"] = {};
-                                                                this.setState({children});
-                                                                this.sendDataBack();
-                                                            }}/></div>
+                    <div style={{float: 'right'}}>
+                        <MdDelete size={25}
+                                  style={{cursor: "pointer", marginTop: "8px", color: "grey"}}
+                                  onClick={() => {
+                                      const children = this.state.children;
+                                      children["follows"] = {};
+                                      this.setState({children});
+                                      this.sendDataBack();
+                                  }}/></div>
                     {(() => {
                         switch (this.state.children["follows"].key) {
                             case "name":

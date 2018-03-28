@@ -5,15 +5,13 @@
 import React from 'react';
 import '../../App.css';
 
-import {FormControl, Row, Button, DropdownButton, MenuItem} from 'react-bootstrap';
+import {FormControl, Row, DropdownButton, MenuItem} from 'react-bootstrap';
 import MdDelete from 'react-icons/lib/md/delete';
 
-import Utilities from "../../core/utilities";
 import {constants} from '../constants';
 
-import * as d3 from "d3";
-import PubSub from 'pubsub-js';
 import ExpressionFragment from "./expressionFragment";
+import AnnotationFragment from "./annotationFragment";
 
 
 class DeclarationFragment extends React.Component {
@@ -25,40 +23,24 @@ class DeclarationFragment extends React.Component {
         this.ws = props["ws"];
 
         this.state = props["state"];
-        this.state.text = "";
 
-        this.waiting = false; // substitute for one-to-one send and receive
-
-        this.attachListener();
+        this.state.text = JSON.parse(JSON.stringify(this.state.children));
     }
 
     render() {
         return (
             <div id={this.props["assignedId"]}
-                 className={(this.state.target === "") ? "" : "ruleGroupDiv " + this.state.target}>
+                 className={(this.state.target === "") ? "divBorder" : "ruleGroupDiv " + this.state.target}>
+                <Row style={{marginLeft: "0"}}>
+                    {this.renderGroup("top")}
+                </Row>
                 <Row style={{margin: "0"}}>
                     <div className={"rowItem"}>
-                        <FormControl type="text"
-                                     value={this.state.children["within"].length !== 0 ? this.state.children["within"][0].value : ""}
-                                     placeholder={this.props["category"]}
-                                     onChange={(e) => {
-                                         const children = this.state.children["within"];
-                                         if (children.length === 0)
-                                             children.push({
-                                                 key: "decl",
-                                                 value: "",
-                                                 target: this.state.target,
-                                                 children: JSON.parse(JSON.stringify(constants.state_children)),
-                                                 xpath: ""
-                                             });
-                                         const child = children[0];
-                                         child.value = e.target.value;
-                                         this.setState({child});
-                                     }}/>
-                    </div>
-                    <div className={"rowItem"}>
-                        <Button bsSize="small"
-                                onClick={() => this.requestXML()}>Confirm {this.props["category"]}</Button>
+                        {this.renderGroup("before_1")}
+                        {this.renderGroup("before_2")}
+                        {this.renderGroup("after")}
+                        {(this.props["category"] === 'declarationStatement') ? this.renderGroup("within") : ""}
+
                     </div>
                     {this.renderFollows()}
                 </Row>
@@ -67,108 +49,12 @@ class DeclarationFragment extends React.Component {
     }
 
     /**
-     * subscribe for events
-     */
-    attachListener() {
-
-        // [expr xml]
-        PubSub.subscribe('DECL_STMT_XML', (msg, data) => {
-            if(this.waiting) {
-                this.xml = data[0];
-                this.prepareXpath();
-                this.waiting = false;
-            }
-        });
-    }
-
-
-    /**
-     * send the text of the text area to the server
-     */
-    requestXML() {
-
-        // console.log(this.ws);
-
-        let node = d3.select(`#${this.props["assignedId"]}`).select("input").node();
-        if (node !== null) {
-            if (node.value[node.value.length - 1] !== ';')
-                Utilities.sendToServer(this.ws, "DECL_STMT", node.value + ';');
-            else
-                Utilities.sendToServer(this.ws, "DECL_STMT", node.value);
-            this.waiting = true;
-        }
-        // it then receives the xml from the server
-    }
-
-    /**
-     * compile and prepare the xpath
-     */
-    prepareXpath() {
-        const child = this.state.children["within"][0];
-        child.xpath = this.traverseXml(this.xml);
-        this.setState({child});
-        this.sendDataBack();
-    }
-
-
-    /**
      * send the xpath data to the parent node
      */
     sendDataBack = () => {
         this.props["callbackFromParent"]();
     };
 
-
-    /**
-     * check validity of an xml and generate the xpath query
-     * @param text
-     * @returns {string}
-     */
-    traverseXml(text) {
-
-        let exprValidation = "//src:unit[count(*)=1 and count(src:decl_stmt)=1]/src:decl_stmt/src:decl";
-        let parser = new DOMParser();
-
-        function nsResolver(prefix) {
-            let ns = {'src': 'http://www.srcML.org/srcML/src'};
-            return ns[prefix] || null;
-        }
-
-        // checks validity of the XML
-        let xml = parser.parseFromString(text, "text/xml");
-        if (!xml.evaluate) {
-            console.log('error in xml.evaluate');
-            return "";
-        }
-
-        let validNodes = xml.evaluate(exprValidation, xml, nsResolver, XPathResult.ANY_TYPE, null);
-        let resultValidNode = validNodes.iterateNext(); // expr_stmt/expr
-        if (!resultValidNode) {
-            console.log("error");
-            return "";
-        }
-        return this.traverseChildren(resultValidNode);
-    }
-
-    /**
-     * traverse the state_children of a parent node to generate xpath query conditions
-     * @param parentNode
-     * @returns {string}
-     */
-    traverseChildren(parentNode) {
-        let res = [];
-        let children = parentNode.childNodes;
-        for (let i = 0; i < children.length; i++) {
-
-            if (children[i].nodeName === "#text") {
-                if (children.length === 1)
-                    res.push("text()=\"" + children[i].nodeValue + "\"");
-            }
-            else
-                res.push(this.traverseChildren(children[i]));
-        }
-        return "src:" + parentNode.nodeName + "[" + res.join(' and ') + "]";
-    }
 
     /**
      * render the 'follows' elements and constraints, drop down or a component
@@ -202,57 +88,150 @@ class DeclarationFragment extends React.Component {
 
         else {
             return (
-                <div className={(this.state.target === "") ? "" : "ruleGroupDiv " + this.state.target + " exprDiv"}
-                     style={this.state.children["follows"].key === "initialization expression" ? {border: "none"} : {}}>
-                    <div style={{float: 'right'}}><MdDelete size={25}
-                                                            style={{cursor: "pointer", marginTop: "8px"}}
-                                                            onClick={() => {
-                                                                const children = this.state.children;
-                                                                children["follows"] = {};
-                                                                this.setState({children});
-                                                                this.sendDataBack();
-                                                            }}/></div>
-                    {(() => {
-                        switch (this.state.children["follows"].key) {
-                            case "name":
-                                return (
-                                    <div>
-                                        <em>The declaration and the output is in form of the following formats (but not
-                                            limited to):</em><br/>
-                                        <code><b>Name</b> = MethodCall();<br/></code>
-                                        <code><b>Name</b> = Name;<br/></code>
-                                        <code><b>Name.Name</b> = Name<br/></code>
-                                        <code><b>Name.Name</b> = Name.Name<br/></code>
-                                        <code>Name = <b>Name;</b><br/></code>
-                                        <code>Name = <b>Name.Name;</b></code>
-                                    </div>);
-                            case "name/name":
-                                return (
-                                    <div>
-                                        <em>The declaration and the output is in form of the following formats (but not
-                                            limited to):</em><br/>
-                                        <code><b>Name</b>.Name = MethodCall();<br/></code>
-                                        <code>Name.<b>Name</b> = MethodCall();<br/></code>
-                                        <code>Name = <b>Name</b>.Name;<br/></code>
-                                        <code>Name = Name.<b>Name</b>;</code>
-                                    </div>);
-                            case "initialization expression":
-                                return (
-                                    <div>
-                                        <em>The initialization expression is in the form:</em><br/>
-                                        <div style={{marginTop: "15px"}}>
-                                            <ExpressionFragment ws={this.ws} state={this.state.children["follows"]}
-                                                                assignedId={this.props["assignedID"] + "_expr_follows"}
-                                                                callbackFromParent={this.sendDataBack}/>
-                                        </div>
-                                    </div>);
-                            default:
-                                return (<div>{this.state.children["follows"].key}</div>)
-                        }
-                    })()}
+                <div style={{float: 'right', marginTop: "20px"}}><
+                    MdDelete size={25}
+                             style={{cursor: "pointer", marginTop: "8px", color: "grey"}}
+                             onClick={() => {
+                                 const children = this.state.children;
+                                 children["follows"] = {};
+                                 this.setState({children});
+                                 this.sendDataBack();
+                             }}/>
                 </div>
             )
         }
+    }
+
+    /**
+     * render groups: top, before, after, within
+     */
+    renderGroup(group) {
+        return (
+            <div className={this.chooseClass(group)} id={`${this.props["assignedId"]}-${group}`}>
+                {(group === 'after_1' && this.state.children["after_1"].length === 0) ?
+                    <div className={" rowItem inlineText"}><p><b>{"className"}</b></p></div> : ""
+                }
+                {this.state.children[group].map((cons, i) => {
+                    return (
+                        <div className={group === "within" ? "" : "rowItem"} key={i}>
+                            <div style={{float: 'right'}}>
+                                <MdDelete size={25}
+                                          style={{cursor: "pointer", marginTop: "8px", color: "grey"}}
+                                          onClick={() => {
+                                              const children = this.state.children;
+                                              children[group].splice(i, 1);
+                                              this.setState({children});
+                                              this.sendDataBack();
+                                          }}/></div>
+                            <div className={"rowItem inlineText"}>
+                                <b>{constants.code_fragment[this.props["category"]][group][cons["key"]]["pre"]}</b>
+                            </div>
+                            <div className={group === "within" ? "" : "rowItem"}
+                                 style={(this.state.children[group][i].value.type === 'text') ? {paddingTop: "5px"} : {}}>
+                                {this.switchMethod(group, i, cons)}
+                            </div>
+                            <div className={group === "within" ? "inlineText" : "rowItem inlineText"}>
+                                <b>{constants.code_fragment[this.props["category"]][group][cons["key"]]["post"]}</b>
+                            </div>
+                        </div>
+                    )
+                })}
+
+                {(() => {
+                    if (this.state.children[group].length === 0) return (
+                        <DropdownButton title={``} id="dropdown-size-medium">
+                            {Object.keys(constants.code_fragment[this.props["category"]][group]).map((key, i) => {
+                                return (
+                                    <MenuItem eventKey={key} key={i}
+                                              onSelect={(evt) => {
+                                                  this.state.children[group].push({
+                                                      key: evt,
+                                                      value: constants.code_fragment[this.props["category"]][group][evt],
+                                                      target: "",
+                                                      children: JSON.parse(JSON.stringify(constants.state_children)),
+                                                      xpath: constants.code_fragment[this.props["category"]][group][evt]["xpath"]
+                                                  });
+                                                  this.state.text[group].push(this.state.children[group][this.state.children[group].length - 1]);
+                                                  this.sendDataBack();
+                                                  this.forceUpdate();
+                                              }}
+                                    >{constants.code_fragment[this.props["category"]][group][key].name}
+                                    </MenuItem>);
+                            })}
+                        </DropdownButton>)
+                })()}
+            </div>
+        )
+    }
+
+    /**
+     * switch method for rendering within constraints
+     * @param group
+     * @param i index of each constraint object
+     * @param cons
+     * @returns {XML}
+     */
+    switchMethod(group, i, cons) {
+        let type = this.state.children[group][i].value.type;
+        switch (type) {
+            case "annotation":
+                return (<AnnotationFragment ws={this.ws} state={this.state.children[group][i]}
+                                            assignedId={this.props["assignedId"] + "_annotation_" + i}
+                                            callbackFromParent={this.sendDataBack}/>);
+            case "expressionStatement":
+                return (<ExpressionFragment category={"expressionStatement"}
+                                            ws={this.ws} state={this.state.children[group][i]}
+                                            assignedId={this.props["assignedId"] + "_expr_" + i}
+                                            callbackFromParent={this.sendDataBack}/>);
+            case "text":
+                return (
+                    <FormControl type="text" value={this.state.text[group][i].text}
+                                 placeholder={this.state.children[group][i].value.placeholder}
+                                 onBlur={(e) => {
+                                     cons.text = e.target.value;
+                                     this.updateXpathText(group, i);
+                                 }}
+                                 onChange={(e) => {
+                                     const text = this.state.text;
+                                     text[group][i].text = e.target.value;
+                                     this.setState({text});
+                                 }}/>
+                );
+            default:
+                return (<div/>)
+
+        }
+    }
+
+    /**
+     * update the text of constraints
+     * @param group
+     * @param i
+     */
+    updateXpathText(group, i) {
+        const children = this.state.children;
+        children[group][i].xpath = this.state.children[group][i].value["xpath"].replace('<NAME>', this.state.children[group][i].text);
+        this.setState({children});
+        this.sendDataBack();
+    }
+
+
+    /**
+     * choose the class of the div to display the border for the selected node (name)
+     * @param group 'name', 'type'
+     * @returns {*}
+     */
+    chooseClass(group) {
+        if (this.state.children["follows"].hasOwnProperty("key")) {
+            if (this.state.children["follows"].key === 'type' && group === 'before_2')
+                return "divBorder rowItem ruleGroupDiv " + this.state["target"];
+            if (this.state.children["follows"].key === 'name' && group === 'after')
+                return "divBorder rowItem ruleGroupDiv " + this.state["target"];
+            if (this.state.children["follows"].key === 'initialization expression' && group === 'within')
+                return "divBorder rowItem ruleGroupDiv " + this.state["target"];
+
+        }
+        return "divBorder rowItem";
     }
 
 }

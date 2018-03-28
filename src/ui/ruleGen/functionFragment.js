@@ -11,6 +11,7 @@ import MdDelete from 'react-icons/lib/md/delete';
 import {constants} from '../constants';
 import ExpressionFragment from "./expressionFragment";
 import DeclarationFragment from "./declarationFragment";
+import AnnotationFragment from "./annotationFragment";
 
 // import * as d3 from "d3";
 
@@ -22,12 +23,15 @@ class FunctionFragment extends React.Component {
         // target assignedId ws callbackFromParent constraintIndices root category
 
         this.ws = props["ws"];
-        this.state = props["state"]
+        this.state = props["state"];
+
+        this.state.text = JSON.parse(JSON.stringify(this.state.children));
+
     }
 
     render() {
         return (
-            <div className={"ruleGroupDiv " + this.state.target} id={this.props["assignedID"]}>
+            <div className={"ruleGroupDiv " + this.state.target} id={this.props["assignedId"]}>
                 {/*<div style={{marginTop: "10px"}}><em>{this.props["category"]}</em></div>*/}
                 <Row style={{margin: "0"}}>{this.renderGroup("top")}</Row>
                 <Row style={{margin: "0"}}>
@@ -100,35 +104,37 @@ class FunctionFragment extends React.Component {
         else {
             return (
                 <div>
-                    <div style={{float: 'right'}}><MdDelete size={25}
-                                                            style={{cursor: "pointer", marginTop: "8px"}}
-                                                            onClick={() => {
-                                                                const children = this.state.children;
-                                                                children["follows"] = {};
-                                                                this.setState({children});
-                                                                this.sendDataBack();
-                                                            }}/></div>
+                    <div style={{float: 'right'}}>
+                        <MdDelete size={25}
+                                  style={{cursor: "pointer", marginTop: "8px", color: "grey"}}
+                                  onClick={() => {
+                                      const children = this.state.children;
+                                      children["follows"] = {};
+                                      this.setState({children});
+                                      this.sendDataBack();
+                                  }}/></div>
                     {(() => {
                         switch (this.state.children["follows"].key) {
                             case "declarationStatement":
                                 return (<DeclarationFragment category={"declarationStatement"}
                                                              ws={this.ws} state={this.state.children["follows"]}
-                                                             assignedId={this.props["assignedID"] + "_decl_follows"}
+                                                             assignedId={this.props["assignedId"] + "_decl_follows"}
                                                              callbackFromParent={this.sendDataBack}/>);
                             case "declaration":
                                 return (<DeclarationFragment category={"declaration"}
                                                              ws={this.ws} state={this.state.children["follows"]}
-                                                             assignedId={this.props["assignedID"] + "_decl_follows"}
+                                                             assignedId={this.props["assignedId"] + "_decl_follows"}
                                                              callbackFromParent={this.sendDataBack}/>);
-                            case "expression":
-                                return (<ExpressionFragment ws={this.ws} state={this.state.children["follows"]}
-                                                            assignedId={this.props["assignedID"] + "_expr_follows"}
+                            case "expressionStatement":
+                                return (<ExpressionFragment category={"expressionStatement"}
+                                                            ws={this.ws} state={this.state.children["follows"]}
+                                                            assignedId={this.props["assignedId"] + "_expr_follows"}
                                                             callbackFromParent={this.sendDataBack}/>);
                             case "name":
-                                // d3.select(`#${this.props["assignedID"]}-before_2`).classed(`ruleGroupDiv ${this.state["target"]}`, true);
+                                // d3.select(`#${this.props["assignedId"]}-before_2`).classed(`ruleGroupDiv ${this.state["target"]}`, true);
                                 break;
                             case "parameter":
-                                // d3.select(`#${this.props["assignedID"]}-after`).classed(`ruleGroupDiv ${this.state["target"]}`, true);
+                                // d3.select(`#${this.props["assignedId"]}-after`).classed(`ruleGroupDiv ${this.state["target"]}`, true);
                                 break;
                             default:
                                 return (<div/>)
@@ -146,7 +152,7 @@ class FunctionFragment extends React.Component {
      */
     renderGroup(group) {
         return (
-            <div className={this.chooseClass(group)} id={`${this.props["assignedID"]}-${group}`}>
+            <div className={this.chooseClass(group)} id={`${this.props["assignedId"]}-${group}`}>
                 {(group === 'before_2' && this.state.children["before_2"].length === 0) ?
                     <div className={" rowItem inlineText"}><p><b>{this.props["category"] + "Name"}</b>
                     </p></div> : ""
@@ -154,14 +160,15 @@ class FunctionFragment extends React.Component {
                 {this.state.children[group].map((cons, i) => {
                     return (
                         <div className={group === "within" ? "" : "rowItem"} key={i}>
-                            <div style={{float: 'right'}}><MdDelete size={25}
-                                                                    style={{cursor: "pointer", marginTop: "8px"}}
-                                                                    onClick={() => {
-                                                                        const children = this.state.children;
-                                                                        children[group].splice(i, 1);
-                                                                        this.setState({children});
-                                                                        this.sendDataBack();
-                                                                    }}/></div>
+                            <div style={{float: 'right'}}>
+                                <MdDelete size={25}
+                                          style={{cursor: "pointer", marginTop: "8px", color: "grey"}}
+                                          onClick={() => {
+                                              const children = this.state.children;
+                                              children[group].splice(i, 1);
+                                              this.setState({children});
+                                              this.sendDataBack();
+                                          }}/></div>
                             <div className={"rowItem inlineText"}>
                                 <b>{constants.code_fragment[this.props["category"]][group][cons["key"]]["pre"]}</b>
                             </div>
@@ -185,7 +192,7 @@ class FunctionFragment extends React.Component {
                                           this.state.children[group].push({
                                               key: evt,
                                               value: constants.code_fragment[this.props["category"]][group][evt],
-                                              target: "default",
+                                              target: evt !== "HAS_ANNOTATION" ? "default" : "",
                                               children: JSON.parse(JSON.stringify(constants.state_children)),
                                               xpath: constants.code_fragment[this.props["category"]][group][evt]["xpath"]
                                           });
@@ -214,33 +221,48 @@ class FunctionFragment extends React.Component {
             case "declarationStatement":
                 return (<DeclarationFragment category={"declarationStatement"}
                                              ws={this.ws} state={this.state.children[group][i]}
-                                             assignedId={this.props["assignedID"] + "_decl_" + i}
+                                             assignedId={this.props["assignedId"] + "_decl_" + i}
                                              callbackFromParent={this.sendDataBack}/>);
             case "declaration":
                 return (<DeclarationFragment category={"declaration"}
                                              ws={this.ws} state={this.state.children[group][i]}
-                                             assignedId={this.props["assignedID"] + "_decl_" + i}
+                                             assignedId={this.props["assignedId"] + "_decl_" + i}
                                              callbackFromParent={this.sendDataBack}/>);
-            case "expression":
-                return (<ExpressionFragment ws={this.ws} state={this.state.children[group][i]}
-                                            assignedId={this.props["assignedID"] + "_expr_" + i}
+            case "expressionStatement":
+                return (<ExpressionFragment category={"expressionStatement"}
+                                            ws={this.ws} state={this.state.children[group][i]}
+                                            assignedId={this.props["assignedId"] + "_expr_" + i}
+                                            callbackFromParent={this.sendDataBack}/>);
+            case "annotation":
+                return (<AnnotationFragment ws={this.ws} state={this.state.children[group][i]}
+                                            assignedId={this.props["assignedId"] + "_annotation_" + i}
                                             callbackFromParent={this.sendDataBack}/>);
             case "text":
                 return (
                     <FormControl type="text" value={cons["text"]}
                                  placeholder={this.state.children[group][i].value.placeholder}
-                                 onChange={(e) => {
+                                 onBlur={(e) => {
                                      cons.text = e.target.value;
                                      this.updateXpathText(group, i);
+                                 }}
+                                 onChange={(e) => {
+                                     const text = this.state.text;
+                                     text[group][i].text = e.target.value;
+                                     this.setState({text});
                                  }}/>
                 );
             case "number":
                 return (
                     <FormControl type="number" value={cons["text"]}
                                  placeholder={this.state.children[group][i].value.placeholder}
-                                 onChange={(e) => {
+                                 onBlur={(e) => {
                                      cons.text = e.target.value;
                                      this.updateXpathNumber(group, i);
+                                 }}
+                                 onChange={(e) => {
+                                     const text = this.state.text;
+                                     text[group][i].text = e.target.value;
+                                     this.setState({text});
                                  }}/>
                 );
             default:

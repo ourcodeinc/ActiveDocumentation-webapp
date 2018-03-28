@@ -11,6 +11,7 @@ import MdDelete from 'react-icons/lib/md/delete';
 import {constants} from '../constants';
 import FunctionFragment from './functionFragment'
 import DeclarationFragment from "./declarationFragment";
+import AnnotationFragment from "./annotationFragment";
 
 // import * as d3 from "d3";
 
@@ -22,7 +23,10 @@ class ClassFragment extends React.Component {
         // target assignedId ws callbackFromParent root
 
         this.ws = props["ws"];
-        this.state = props["state"]
+        this.state = props["state"];
+
+        this.state.text = JSON.parse(JSON.stringify(this.state.children));
+
 
     }
 
@@ -80,14 +84,15 @@ class ClassFragment extends React.Component {
         else {
             return (
                 <div>
-                    <div style={{float: 'right'}}><MdDelete size={25}
-                                                            style={{cursor: "pointer", marginTop: "8px"}}
-                                                            onClick={() => {
-                                                                const children = this.state.children;
-                                                                children["follows"] = {};
-                                                                this.setState({children});
-                                                                this.sendDataBack();
-                                                            }}/></div>
+                    <div style={{float: 'right'}}>
+                        <MdDelete size={25}
+                                  style={{cursor: "pointer", marginTop: "8px", color: "grey"}}
+                                  onClick={() => {
+                                      const children = this.state.children;
+                                      children["follows"] = {};
+                                      this.setState({children});
+                                      this.sendDataBack();
+                                  }}/></div>
                     {(() => {
                         switch (this.state.children["follows"].key) {
                             case "subclass":
@@ -140,14 +145,15 @@ class ClassFragment extends React.Component {
                 {this.state.children[group].map((cons, i) => {
                     return (
                         <div className={group === "within" ? "" : "rowItem"} key={i}>
-                            <div style={{float: 'right'}}><MdDelete size={25}
-                                                                    style={{cursor: "pointer", marginTop: "8px"}}
-                                                                    onClick={() => {
-                                                                        const children = this.state.children;
-                                                                        children[group].splice(i, 1);
-                                                                        this.setState({children});
-                                                                        this.sendDataBack();
-                                                                    }}/></div>
+                            <div style={{float: 'right'}}>
+                                <MdDelete size={25}
+                                          style={{cursor: "pointer", marginTop: "8px", color: "grey"}}
+                                          onClick={() => {
+                                              const children = this.state.children;
+                                              children[group].splice(i, 1);
+                                              this.setState({children});
+                                              this.sendDataBack();
+                                          }}/></div>
                             <div className={"rowItem inlineText"}>
                                 <b>{constants.code_fragment["class"][group][cons["key"]]["pre"]}</b>
                             </div>
@@ -171,7 +177,7 @@ class ClassFragment extends React.Component {
                                           this.state.children[group].push({
                                               key: evt,
                                               value: constants.code_fragment["class"][group][evt],
-                                              target: "default",
+                                              target: evt !== "HAS_ANNOTATION" ? "default" : "",
                                               children: JSON.parse(JSON.stringify(constants.state_children)),
                                               xpath: constants.code_fragment["class"][group][evt]["xpath"]
                                           });
@@ -219,13 +225,22 @@ class ClassFragment extends React.Component {
                                              ws={this.ws} state={this.state.children[group][i]}
                                              assignedId={this.props["assignedId"] + "_decl_" + i}
                                              callbackFromParent={this.sendDataBack}/>);
+            case "annotation":
+                return (<AnnotationFragment ws={this.ws} state={this.state.children[group][i]}
+                                            assignedId={this.props["assignedId"] + "_annotation_" + i}
+                                            callbackFromParent={this.sendDataBack}/>);
             case "text":
                 return (
                     <FormControl type="text" value={cons["text"]}
                                  placeholder={this.state.children[group][i].value.placeholder}
-                                 onChange={(e) => {
+                                 onBlur={(e) => {
                                      cons.text = e.target.value;
                                      this.updateXpathText(group, i);
+                                 }}
+                                 onChange={(e) => {
+                                     const text = this.state.text;
+                                     text[group][i].text = e.target.value;
+                                     this.setState({text});
                                  }}/>
                 );
             default:

@@ -1,0 +1,159 @@
+/**
+ * Created by saharmehrpour on 3/13/18.
+ */
+
+import React from 'react';
+import '../../App.css';
+
+import {FormControl, Row, DropdownButton, MenuItem} from 'react-bootstrap';
+import MdDelete from 'react-icons/lib/md/delete';
+
+import {constants} from '../constants';
+
+import ExpressionFragment from "./expressionFragment";
+
+
+class AnnotationFragment extends React.Component {
+
+
+    constructor(props) {
+        super(props);
+        // target assignedId ws callbackFromParent isConstraint constraintIndices root
+
+        this.ws = props["ws"];
+
+        this.state = props["state"];
+
+        this.state.text = JSON.parse(JSON.stringify(this.state.children));
+    }
+
+    render() {
+        return (
+            <div id={this.props["assignedId"]}
+                 className={(this.state.target === "") ? "divBorder" : "ruleGroupDiv " + this.state.target}>
+                <Row style={{margin: "0"}}>
+                    <div className={"rowItem"}><b>@</b></div>
+                    <div className={"rowItem"}>{this.renderGroup("before")}</div>
+                    <div className={"rowItem"}><b>(</b></div>
+                    <div className={"rowItem"}>{this.renderGroup("after")}</div>
+                    <div className={"rowItem"}><b>)</b></div>
+                </Row>
+            </div>
+        )
+    }
+
+
+    /**
+     * render groups: top, before, after, within
+     */
+    renderGroup(group) {
+        return (
+            <div className={"rowItem"} id={`${this.props["assignedId"]}-${group}`}>
+                {this.state.children[group].map((cons, i) => {
+                    return (
+                        <div className={"rowItem"} key={i}>
+                            <div style={{float: 'right'}}>
+                                <MdDelete size={25}
+                                          style={{cursor: "pointer", marginTop: "8px", color: "grey"}}
+                                          onClick={() => {
+                                              const children = this.state.children;
+                                              children[group].splice(i, 1);
+                                              this.setState({children});
+                                              this.sendDataBack();
+                                          }}/></div>
+                            <div className={"rowItem inlineText"}>
+                                <b>{constants.code_fragment["annotation"][group][cons["key"]]["pre"]}</b>
+                            </div>
+                            <div className={group === "within" ? "" : "rowItem"}
+                                 style={(this.state.children[group][i].value.type === 'text') ? {paddingTop: "5px"} : {}}>
+                                {this.switchMethod(group, i, cons)}
+                            </div>
+                            <div className={group === "within" ? "inlineText" : "rowItem inlineText"}>
+                                <b>{constants.code_fragment["annotation"][group][cons["key"]]["post"]}</b>
+                            </div>
+                        </div>
+                    )
+                })}
+
+
+                <DropdownButton title={``} id="dropdown-size-medium">
+                    {Object.keys(constants.code_fragment["annotation"][group]).map((key, i) => {
+                        return (
+                            <MenuItem eventKey={key} key={i}
+                                      onSelect={(evt) => {
+                                          this.state.children[group].push({
+                                              key: evt,
+                                              value: constants.code_fragment["annotation"][group][evt],
+                                              target: "",
+                                              children: JSON.parse(JSON.stringify(constants.state_children)),
+                                              xpath: constants.code_fragment["annotation"][group][evt]["xpath"]
+                                          });
+                                          this.sendDataBack();
+                                          this.forceUpdate();
+                                      }}
+                            >{constants.code_fragment["annotation"][group][key].name}
+                            </MenuItem>);
+                    })}
+                </DropdownButton>
+
+            </div>
+        )
+    }
+
+    /**
+     * switch method for rendering within constraints
+     * @param group
+     * @param i index of each constraint object
+     * @param cons
+     * @returns {XML}
+     */
+    switchMethod(group, i, cons) {
+        let type = this.state.children[group][i].value.type;
+        switch (type) {
+            case "expression":
+                return (<ExpressionFragment ws={this.ws} state={this.state.children[group][i]}
+                                            assignedId={this.props["assignedId"] + "_expr_" + i}
+                                            callbackFromParent={this.sendDataBack}/>);
+            case "text":
+                return (<FormControl type="text" value={cons["text"]}
+                                     placeholder={this.state.children[group][i].value.placeholder}
+                                     onBlur={(e) => {
+                                         cons.text = e.target.value;
+                                         this.updateXpathText(group, i);
+                                     }}
+                                     onChange={(e) => {
+                                         const text = this.state.text;
+                                         text[group][i].text = e.target.value;
+                                         this.setState({text});
+                                     }}/>
+                );
+            default:
+                return (<div/>)
+
+        }
+    }
+
+    /**
+     * send the xpath data to the parent node
+     */
+    sendDataBack() {
+        this.props["callbackFromParent"]();
+
+    }
+
+    /**
+     * update the text of constraints
+     * @param group
+     * @param i
+     */
+    updateXpathText(group, i) {
+        const children = this.state.children;
+        children[group][i].xpath = this.state.children[group][i].value["xpath"].replace('<NAME>', this.state.children[group][i].text);
+        this.setState({children});
+        this.sendDataBack();
+    }
+
+
+}
+
+export default AnnotationFragment;
