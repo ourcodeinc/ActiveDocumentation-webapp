@@ -32,13 +32,16 @@ class DeclarationFragment extends React.Component {
             <div id={this.props["assignedId"]}
                  className={(this.state.target === "") ? "divBorder" : "ruleGroupDiv " + this.state.target}>
                 <Row style={{marginLeft: "0"}}>
-                    {this.renderGroup("top")}
+                    {(this.props["category"] === 'declarationStatement') ? this.renderGroup("top") : ""}
                 </Row>
                 <Row style={{margin: "0"}}>
                     <div className={"rowItem"}>
-                        {this.renderGroup("before_1")}
+                        {(this.props["category"] === 'declarationStatement') ? this.renderGroup("before_1") : ""}
                         {this.renderGroup("before_2")}
                         {this.renderGroup("after")}
+                        <div className={"rowItem"}>
+                            {(this.props["category"] === 'declarationStatement') ? "=" : ""}
+                        </div>
                         {(this.props["category"] === 'declarationStatement') ? this.renderGroup("within") : ""}
 
                     </div>

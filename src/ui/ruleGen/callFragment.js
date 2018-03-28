@@ -13,7 +13,7 @@ import {constants} from '../constants';
 import ExpressionFragment from "./expressionFragment";
 
 
-class AnnotationFragment extends React.Component {
+class CallFragment extends React.Component {
 
 
     constructor(props) {
@@ -157,4 +157,4 @@ class AnnotationFragment extends React.Component {
 
 }
 
-export default AnnotationFragment;
+export default CallFragment;

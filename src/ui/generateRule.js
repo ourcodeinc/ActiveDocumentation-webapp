@@ -10,8 +10,6 @@ import PubSub from 'pubsub-js';
 import {DropdownButton, MenuItem, HelpBlock, Tabs, Tab} from 'react-bootstrap';
 import ClassFragment from './ruleGen/classFragment';
 
-// import TempClassFragment from "./ruleGen/tempClassFragment";
-
 
 class GenerateRule extends React.Component {
 
