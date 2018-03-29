@@ -5,11 +5,16 @@
 import React from 'react';
 import '../../App.css';
 
-import {Button, FormControl, Row, DropdownButton, MenuItem} from 'react-bootstrap';
+import {Button, DropdownButton, MenuItem, Dropdown} from 'react-bootstrap';
 import MdDelete from 'react-icons/lib/md/delete';
+// import MdAddBox from 'react-icons/lib/md/add-box';
+import TiDelete from 'react-icons/lib/ti/delete';
 
 import Utilities from "../../core/utilities";
 import {constants} from '../constants';
+
+// import CustomToggle from "./customToggle";
+// import CustomMenu from "./customMenu";
 
 import * as d3 from "d3";
 import PubSub from 'pubsub-js';
@@ -34,10 +39,10 @@ class SrcMLFragment extends React.Component {
     render() {
         return (
             <div id={this.props["assignedId"]}
-                 className={(this.state.target === "") ? "divBorder" : "ruleGroupDiv " + this.state.target}>
-                <Row style={{margin: "0"}}>
-                    <div className={"rowItem"}>
-                        <FormControl type="text"
+                 className={(this.state.target === "") ? "divBorder rowItem" : "rowItem ruleGroupDiv " + this.state.target}>
+                <div className={"rowGroup"}>
+                    <div className={"rowItem"} style={{marginTop: "2px"}}>
+                        <input type={"text"} className={"inputText"}
                                      value={this.state.children["within"].length !== 0 ? this.state.children["within"][0].value : ""}
                                      placeholder={this.props["placeholder"]}
                                      onChange={(e) => {
@@ -57,7 +62,13 @@ class SrcMLFragment extends React.Component {
                     <div className={"rowItem"}>
                         <Button bsSize="small" onClick={() => this.requestXML()}>Confirm Expression</Button>
                     </div>
-                </Row>
+                    {(this.props["removeFunction"]) ?
+                        <div className={"removeIcon"}>
+                            <TiDelete size={25}
+                                      className={"tiDelete"}
+                                      onClick={() => this.props["removeFunction"]()}/>
+                        </div> : ""}
+                </div>
             </div>
         )
     }

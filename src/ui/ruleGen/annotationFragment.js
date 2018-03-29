@@ -5,8 +5,7 @@
 import React from 'react';
 import '../../App.css';
 
-import {FormControl, DropdownButton, MenuItem, Dropdown} from 'react-bootstrap';
-import MdDelete from 'react-icons/lib/md/delete';
+import {MenuItem, Dropdown} from 'react-bootstrap';
 import MdAddBox from 'react-icons/lib/md/add-box';
 import TiDelete from 'react-icons/lib/ti/delete';
 
