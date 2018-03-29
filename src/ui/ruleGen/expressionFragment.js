@@ -5,14 +5,16 @@
 import React from 'react';
 import '../../App.css';
 
-import {Row, DropdownButton, MenuItem} from 'react-bootstrap';
-import MdDelete from 'react-icons/lib/md/delete';
+import {Dropdown, MenuItem} from 'react-bootstrap';
+import MdAddBox from 'react-icons/lib/md/add-box';
+import TiDelete from 'react-icons/lib/ti/delete';
 
 import {constants} from '../constants';
 
 import SrcMLFragment from "./srcML";
 import CallFragment from "./callFragment";
-
+import CustomToggle from "./customToggle";
+import CustomMenu from "./customMenu";
 
 class ExpressionFragment extends React.Component {
 
@@ -28,7 +30,13 @@ class ExpressionFragment extends React.Component {
         return (
             <div id={this.props["assignedId"]}
                  className={(this.state.target === "") ? "divBorder" : "ruleGroupDiv " + this.state.target}>
-                <Row style={{margin: "0"}}>
+                {(this.props["removeFunction"]) ?
+                    <div className={"innerRemoveIcon"}>
+                        <TiDelete size={25}
+                                  className={"tiDelete"}
+                                  onClick={() => this.props["removeFunction"]()}/>
+                    </div> : ""}
+                <div className={"rowGroup"}>
                     <div className={"rowItem"}>
                         {this.renderGroup("before")}
                     </div>
@@ -36,7 +44,7 @@ class ExpressionFragment extends React.Component {
                     <div className={"rowItem"}>
                         {this.renderGroup("after")}
                     </div>
-                </Row>
+                </div>
             </div>
         )
     }
@@ -57,50 +65,49 @@ class ExpressionFragment extends React.Component {
                 {this.state.children[group].map((cons, i) => {
                     return (
                         <div className={"rowItem"} key={i}>
-                            <div style={{float: 'right'}}>
-                                <MdDelete size={25}
-                                          style={{cursor: "pointer", marginTop: "8px", color: "grey"}}
-                                          onClick={() => {
-                                              const children = this.state.children;
-                                              children[group].splice(i, 1);
-                                              this.setState({children});
-                                              this.sendDataBack();
-                                          }}/></div>
-                            <div className={"rowItem inlineText"}>
-                                <b>{constants.code_fragment["expression"][group][cons["key"]]["pre"]}</b>
-                            </div>
-                            <div className={group === "within" ? "" : "rowItem"}
-                                 style={(this.state.children[group][i].value.type === 'text') ? {paddingTop: "5px"} : {}}>
+                            {(constants.code_fragment["expression"][group][cons["key"]]["pre"] === "") ? "" :
+                                <div className={"rowItem inlineText"}>
+                                    <b>{constants.code_fragment["expression"][group][cons["key"]]["pre"]}</b>
+                                </div>
+                            }
+                            <div className={group === "within" ? "" : "rowItem"}>
                                 {this.switchMethod(group, i, cons)}
                             </div>
-                            <div className={group === "within" ? "inlineText" : "rowItem inlineText"}>
-                                <b>{constants.code_fragment["expression"][group][cons["key"]]["post"]}</b>
-                            </div>
+                            {(constants.code_fragment["expression"][group][cons["key"]]["post"] === "") ? "" :
+                                <div className={group === "within" ? "inlineText" : "rowItem inlineText"}>
+                                    <b>{constants.code_fragment["expression"][group][cons["key"]]["post"]}</b>
+                                </div>
+                            }
                         </div>
                     )
                 })}
 
                 {(() => {
                     if (this.state.children[group].length === 0) return (
-                        <DropdownButton title={``} id="dropdown-size-medium">
-                            {Object.keys(constants.code_fragment["expression"][group]).map((key, i) => {
-                                return (
-                                    <MenuItem eventKey={key} key={i}
-                                              onSelect={(evt) => {
-                                                  this.state.children[group].push({
-                                                      key: evt,
-                                                      value: constants.code_fragment["expression"][group][evt],
-                                                      target: "",
-                                                      children: JSON.parse(JSON.stringify(constants.state_children)),
-                                                      xpath: constants.code_fragment["expression"][group][evt]["xpath"]
-                                                  });
-                                                  this.sendDataBack();
-                                                  this.forceUpdate();
-                                              }}
-                                    >{constants.code_fragment["expression"][group][key].name}
-                                    </MenuItem>);
-                            })}
-                        </DropdownButton>)
+                        <Dropdown id="dropdown-size-medium">
+                            <CustomToggle bsRole="toggle">
+                                <MdAddBox size={25} style={{cursor: "pointer", color: "#969696"}}/>
+                            </CustomToggle>
+                            <CustomMenu bsRole="menu">
+                                {Object.keys(constants.code_fragment["expression"][group]).map((key, i) => {
+                                    return (
+                                        <MenuItem eventKey={key} key={i}
+                                                  onSelect={(evt) => {
+                                                      this.state.children[group].push({
+                                                          key: evt,
+                                                          value: constants.code_fragment["expression"][group][evt],
+                                                          target: "",
+                                                          children: JSON.parse(JSON.stringify(constants.state_children)),
+                                                          xpath: constants.code_fragment["expression"][group][evt]["xpath"]
+                                                      });
+                                                      this.sendDataBack();
+                                                      this.forceUpdate();
+                                                  }}
+                                        >{constants.code_fragment["expression"][group][key].name}
+                                        </MenuItem>);
+                                })}
+                            </CustomMenu>
+                        </Dropdown>)
 
                 })()}
             </div>
@@ -117,16 +124,24 @@ class ExpressionFragment extends React.Component {
      */
     switchMethod(group, i, cons) {
         let type = this.state.children[group][i].value.type;
+        let removeFunction = () => {
+            const children = this.state.children;
+            children[group].splice(i, 1);
+            this.setState({children});
+            this.sendDataBack();
+        };
         switch (type) {
             case "call":
                 return (<CallFragment ws={this.ws} state={this.state.children[group][i]}
                                       assignedId={this.props["assignedId"] + "_call"}
-                                      callbackFromParent={this.sendDataBack}/>);
+                                      callbackFromParent={this.sendDataBack}
+                                      removeFunction={removeFunction}/>);
             case "srcml":
                 return (
                     <SrcMLFragment ws={this.ws} state={this.state.children[group][i]} placeholder={"Name or Literal"}
                                    assignedId={this.props["assignedId"] + "_name_" + group + "_" + i}
-                                   callbackFromParent={this.sendDataBack}/>);
+                                   callbackFromParent={this.sendDataBack}
+                                   removeFunction={removeFunction}/>);
             default:
                 return (<div/>);
         }
