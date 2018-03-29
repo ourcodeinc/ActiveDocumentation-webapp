@@ -7,10 +7,13 @@ import '../App.css';
 
 import * as d3 from 'd3';
 import PubSub from 'pubsub-js';
-import {DropdownButton, MenuItem, HelpBlock, Tabs, Tab, FormControl, Label, Button} from 'react-bootstrap';
+import {DropdownButton, MenuItem, HelpBlock, Tabs, Tab} from 'react-bootstrap';
+import {FormControl, Label, Button, FormGroup, ButtonToolbar} from 'react-bootstrap';
+import {Row, Col} from 'react-bootstrap';
 import ClassFragment from './ruleGen/classFragment';
 
-import TiDelete from 'react-icons/lib/ti/delete'
+import TiDelete from 'react-icons/lib/ti/delete';
+
 import Utilities from "../core/utilities";
 
 
@@ -21,7 +24,47 @@ class GenerateRule extends React.Component {
         this.attachListener();
 
         this.state = {
-            tags: [],
+            index: "",
+            description: "",
+            detail: "",
+            tags: [
+                {
+                    "detail": "rules about artifact classes. These classes are entities and are persisted by \"Objectify\"",
+                    "tagName": "Artifact"
+                },
+                {
+                    "detail": "rules about Microtasks",
+                    "tagName": "Microtask"
+                },
+                {
+                    "detail": "rules about \"Command\" classes and their subclasses, methods and method calls.",
+                    "tagName": "Command"
+                },
+                {
+                    "detail": "rules about Sharding and policies about persisting data \nDefinition: Sharding is a process of ensuring that computation done in different classes does not require data from other classes. Sharding is a process of finding different portions of the runtime execution states that can be executed in parallel.\nHere is this region of data and we are going to do computation on this data without requiring other data\nReason: Rather than having one process that require the whole data, you can have separate processes that are doing different computation on different regions in isolation, so it makes it easy to parallelize\nHow to do parallelism",
+                    "tagName": "Sharding"
+                },
+                {
+                    "detail": "rules about entity classes and subclasses, i.e. those classes annotated with \"Entity\" and \"Subclass\". Entity objects are persisted by \"Objectify\"",
+                    "tagName": "Entity"
+                },
+                {
+                    "detail": "rules about Objectify and Objectify method calls which are needed for persisting data",
+                    "tagName": "Objectify"
+                },
+                {
+                    "detail": "rules about Data Transfer Object\nWe need some subset of the state of the class that is important and needed to be persisted. \nSome other parts of the state is a volatile state or not important and can be reconstructed. \nWhen part of a class is persisted (in Firebase) or transferred to a client.",
+                    "tagName": "DTO"
+                },
+                {
+                    "detail": "rules about serialization required for persisting data",
+                    "tagName": "Serialization"
+                },
+                {
+                    "detail": "rules about arguments and body of class constructors",
+                    "tagName": "Constructor"
+                }
+            ],
             folderConstraint: "",
             filesFolders: [],
             selectedTags: [],
@@ -82,6 +125,7 @@ class GenerateRule extends React.Component {
                     xpath: "src:class"
                 }
             },
+            quantifierDetail: "",
             constraint: {
                 q0: {
                     key: "",
@@ -135,6 +179,7 @@ class GenerateRule extends React.Component {
                     xpath: "src:class"
                 }
             },
+            constraintDetail: "",
             q0: "src:unit/src:class",
             q1: "src:unit/src:class",
             q2: "src:unit/src:class",
@@ -148,51 +193,80 @@ class GenerateRule extends React.Component {
     render() {
         return (
             <div>
-                <div style={{maxWidth: 400, margin: '0 auto 10px'}}>
-                    <Button bsStyle="primary" block onClick={() => this.submitNewRule()}>Submit</Button>
-                </div>
                 <div>
-                    <div style={{padding: "10px 5px"}}>
-                        <h4>Rule Index</h4>
-                        <FormControl id="index_textarea" type="text" placeholder="Index"/>
-                    </div>
-                    <div style={{padding: "10px 5px"}}>
-                        <h4>Rule Description</h4>
-                        <FormControl id="desc_textarea" componentClass="textarea" placeholder="Description"/>
-                    </div>
-                    <div style={{padding: "10px 5px"}}>
-                        <h4>Rule Detail</h4>
-                        <FormControl id="detail_textarea" componentClass="textarea" placeholder="Detail"
-                                     onKeyUp={() => {
-                                         let el = document.getElementById("detail_textarea");
-
-                                         el.style.cssText = 'height:auto; padding:0';
-                                         el.style.cssText = 'height:' + el.scrollHeight + 'px';
-                                     }}/>
-                    </div>
-                    <div style={{padding: "10px 5px", clear: "both"}}>
-                        <h4>Rule Tags</h4>
-                        <div>{this.renderTags()}</div>
-                    </div>
-                    <div style={{padding: "10px 5px", clear: "both"}}>
-                        <h4>Files/Folders</h4>
-                        <div>{this.renderFileConstraints()}</div>
-                    </div>
+                    <FormGroup validationState={(this.state.index === "") ? "error" : "success"}>
+                        <div style={{padding: "10px 5px"}}>
+                            <h4>Rule Index</h4>
+                            <HelpBlock>The index is a key ID of the rule. It needs to be a unique integer.</HelpBlock>
+                            <FormControl type="number" placeholder="Index" value={this.state.index}
+                                         onChange={(e) => this.setState({index: e.target.value})}/>
+                        </div>
+                    </FormGroup>
+                    <FormGroup validationState={(this.state.description === "") ? "error" : "success"}>
+                        <div style={{padding: "10px 5px"}}>
+                            <h4>Rule Description</h4>
+                            <HelpBlock>Describe what this rule verifies.</HelpBlock>
+                            <FormControl componentClass="textarea" placeholder="Description"
+                                         value={this.state.description}
+                                         onChange={(e) => {
+                                             this.setState({description: e.target.value})
+                                         }}
+                                         onKeyUp={(e) => {
+                                             e.target.style.cssText = 'height:auto; padding:0';
+                                             e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
+                                         }}/>
+                        </div>
+                    </FormGroup>
+                    <FormGroup>
+                        <div style={{padding: "10px 5px"}}>
+                            <h4>Rule Detail</h4>
+                            <HelpBlock>More high level details about the rule.</HelpBlock>
+                            <FormControl componentClass="textarea" placeholder="Detail"
+                                         value={this.state.detail}
+                                         onChange={(e) => {
+                                             this.setState({detail: e.target.value})
+                                         }}
+                                         onKeyUp={(e) => {
+                                             e.target.style.cssText = 'height:auto; padding:0';
+                                             e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
+                                         }}/>
+                        </div>
+                    </FormGroup>
+                    <FormGroup>
+                        <div style={{padding: "10px 5px", clear: "both"}}>
+                            <h4>Rule Tags</h4>
+                            <HelpBlock>Select the tags associated with this rule.</HelpBlock>
+                            <div>{this.renderTags()}</div>
+                        </div>
+                    </FormGroup>
+                    <FormGroup
+                        validationState={(this.state.folderConstraint === "" || (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0)) ? "error" : "success"}>
+                        <div style={{padding: "10px 5px", clear: "both"}}>
+                            <h4>Files/Folders</h4>
+                            <HelpBlock>Select how the rules are verified; 'NONE' if the rule is verified on all files
+                                and folders,
+                                'FOLDER' if the rule is checked on specific folders/files. If the restriction is
+                                'FOLDER',
+                                at least one folder/file must be specified.</HelpBlock>
+                            <div>{this.renderFileConstraints()}</div>
+                        </div>
+                    </FormGroup>
                 </div>
-
                 <div style={{clear: "both", marginTop: "20px"}}>
                     <Tabs animation={true} id={"gen_rule_quantifier_constraint"} activeKey={this.state.activeTab}
                           onSelect={(key) => this.setState({activeTab: key})}>
                         <Tab eventKey={"quantifier"} title={"Quantifier Query"} animation={true}>
                             <div style={{marginTop: "10px"}}>
-
-                                <FormControl id="quant_textarea" componentClass="textarea"
+                                <HelpBlock>The quantifier query finds the matches that the rules must be applied on.
+                                    Provide details about the quantifier.</HelpBlock>
+                                <FormControl componentClass="textarea" value={this.state.quantifierDetail}
                                              placeholder="Detail about quantifier"
-                                             onKeyUp={() => {
-                                                 let el = document.getElementById("quant_textarea");
-
-                                                 el.style.cssText = 'height:auto; padding:0';
-                                                 el.style.cssText = 'height:' + el.scrollHeight + 'px';
+                                             onChange={(e) => {
+                                                 this.setState({quantifierDetail: e.target.value})
+                                             }}
+                                             onKeyUp={(e) => {
+                                                 e.target.style.cssText = 'height:auto; padding:0';
+                                                 e.target.style.cssText = 'height:' + e.target.scrollHeight + 'px';
                                              }}/>
 
                                 <em>{"Select the type of the quantifier: "}</em>
@@ -216,13 +290,16 @@ class GenerateRule extends React.Component {
 
                         <Tab eventKey={"constraint"} title={"Constraint Query"} animation={true}>
                             <div style={{marginTop: "10px"}}>
-                                <FormControl id="constr_textarea" componentClass="textarea"
+                                <HelpBlock>The constraint query verifies that the rule is satisfied by the matches.
+                                    Provide details about the quantifier.</HelpBlock>
+                                <FormControl componentClass="textarea" value={this.state.constraintDetail}
                                              placeholder="Detail about conditioned"
-                                             onKeyUp={() => {
-                                                 let el = document.getElementById("constr_textarea");
-
-                                                 el.style.cssText = 'height:auto; padding:0';
-                                                 el.style.cssText = 'height:' + el.scrollHeight + 'px';
+                                             onChange={(e) => {
+                                                 this.setState({constraintDetail: e.target.value})
+                                             }}
+                                             onKeyUp={(e) => {
+                                                 e.target.style.cssText = 'height:auto; padding:0';
+                                                 e.target.style.cssText = 'height:' + e.target.scrollHeight + 'px';
                                              }}/>
 
                                 <em>{"Select the type of the constraint: "}</em>
@@ -244,6 +321,14 @@ class GenerateRule extends React.Component {
                             </div>
                         </Tab>
                     </Tabs>
+                </div>
+                <div>
+                    <div style={{width: 200, float: "left", paddingRight: "5px"}}>
+                        <Button bsStyle="primary" block onClick={() => this.submitNewRule()}>Submit</Button>
+                    </div>
+                    <div style={{width: 200, float: "left"}}>
+                        <Button bsStyle="default" block onClick={() => this.clearForm()}>Clear Form</Button>
+                    </div>
                 </div>
             </div>
         );
@@ -281,6 +366,137 @@ class GenerateRule extends React.Component {
 
     }
 
+    /**
+     * clear form
+     */
+    clearForm() {
+        this.setState({
+            index: "",
+            description: "",
+            detail: "",
+            folderConstraint: "",
+            filesFolders: [],
+            selectedTags: [],
+            ruleType: "",
+            cRuleType: "",
+            activeTab: "quantifier",
+            quantifier: {
+                q0: {
+                    key: "",
+                    value: "",
+                    target: "follows",
+                    children: {
+                        "top": [],
+                        "before": [],
+                        "before_1": [],
+                        "before_2": [],
+                        "after": [],
+                        "after_1": [],
+                        "after_2": [],
+                        "within": [],
+                        "follows": {}
+                    },
+                    xpath: "src:class"
+                },
+                q1: {
+                    key: "",
+                    value: "",
+                    target: "follows",
+                    children: {
+                        "top": [],
+                        "before": [],
+                        "before_1": [],
+                        "before_2": [],
+                        "after": [],
+                        "after_1": [],
+                        "after_2": [],
+                        "within": [],
+                        "follows": {}
+                    },
+                    xpath: "src:class"
+                },
+                q2: {
+                    key: "",
+                    value: "",
+                    target: "follows",
+                    children: {
+                        "top": [],
+                        "before": [],
+                        "before_1": [],
+                        "before_2": [],
+                        "after": [],
+                        "after_1": [],
+                        "after_2": [],
+                        "within": [],
+                        "follows": {}
+                    },
+                    xpath: "src:class"
+                }
+            },
+            quantifierDetail: "",
+            constraint: {
+                q0: {
+                    key: "",
+                    value: "",
+                    target: "follows",
+                    children: {
+                        "top": [],
+                        "before": [],
+                        "before_1": [],
+                        "before_2": [],
+                        "after": [],
+                        "after_1": [],
+                        "after_2": [],
+                        "within": [],
+                        "follows": {}
+                    },
+                    xpath: "src:class"
+                },
+                q1: {
+                    key: "",
+                    value: "",
+                    target: "follows",
+                    children: {
+                        "top": [],
+                        "before": [],
+                        "before_1": [],
+                        "before_2": [],
+                        "after": [],
+                        "after_1": [],
+                        "after_2": [],
+                        "within": [],
+                        "follows": {}
+                    },
+                    xpath: "src:class"
+                },
+                q2: {
+                    key: "",
+                    value: "",
+                    target: "follows",
+                    children: {
+                        "top": [],
+                        "before": [],
+                        "before_1": [],
+                        "before_2": [],
+                        "after": [],
+                        "after_1": [],
+                        "after_2": [],
+                        "within": [],
+                        "follows": {}
+                    },
+                    xpath: "src:class"
+                }
+            },
+            constraintDetail: "",
+            q0: "src:unit/src:class",
+            q1: "src:unit/src:class",
+            q2: "src:unit/src:class",
+            c0: "src:unit/src:class",
+            c1: "src:unit/src:class",
+            c2: "src:unit/src:class"
+        });
+    }
+
 
     /**
      * get the data from DOM and create a new rule
@@ -314,44 +530,38 @@ class GenerateRule extends React.Component {
      */
     submitNewRule() {
         let rule = {
-            index: "",
-            ruleDescription: "",
-            detail: "",
-            tags: [],
-            ruleType: {constraint: "", checkFor: []},
+            index: this.state.index,
+            ruleDescription: this.state.description,
+            detail: this.state.detail,
+            tags: this.state.selectedTags,
+            ruleType: {
+                constraint: this.state.folderConstraint,
+                checkFor: this.state.filesFolders.filter((d) => d !== ""),
+                type: "WITHIN"
+            },
             quantifier: {},
             conditioned: {}
         };
-
-        rule.index = d3.select("#index_textarea").node().value;
-        rule.ruleDescription = d3.select("#desc_textarea").node().value;
-        rule.detail = d3.select("#detail_textarea").node().value;
 
         if (rule.index === "" || rule.ruleDescription === "" || rule.detail === "") {
             console.log("empty fields");
             return;
         }
 
-        rule.tags = this.state.selectedTags;
-
-        let files = this.state.filesFolders.filter((d) => d !== "");
-
-        rule.ruleType = {constraint: this.state.folderConstraint, checkFor: files, type: "WITHIN"};
-
-        if (this.state.folderConstraint === "" || (this.state.folderConstraint === "FOLDER" && files.length === 0)) {
+        if (rule.ruleType.constraint === "" || (rule.ruleType.constraint === "FOLDER" && rule.ruleType.checkFor.length === 0)) {
             console.log("folder constraints are not specified");
             return;
         }
 
         switch (this.state.ruleType) {
             case "selected from one class":
-                rule.quantifier = {detail: d3.select("#quant_textarea").node().value, command: this.state.q0};
+                rule.quantifier = {detail: this.state.quantifierDetail, command: this.state.q0};
                 rule.ruleType.type = "WITHIN";
                 break;
             case "selected from one class which is directed from another class":
                 rule.quantifier = {
                     type: "FIND_FROM_TEXT",
-                    detail: d3.select("#quant_textarea").node().value,
+                    detail: this.state.quantifierDetail,
                     command1: this.state.q0,
                     command2: this.state.q1
                 };
@@ -360,7 +570,7 @@ class GenerateRule extends React.Component {
             case "selected from one class with the help of another class":
                 rule.quantifier = {
                     type: "RETURN_TO_BASE",
-                    detail: d3.select("#quant_textarea").node().value,
+                    detail: this.state.quantifierDetail,
                     command1: this.state.q0,
                     command2: this.state.q1,
                     command3: this.state.q2
@@ -375,12 +585,12 @@ class GenerateRule extends React.Component {
 
         switch (this.state.cRuleType) {
             case "selected from one class":
-                rule.conditioned = {detail: d3.select("#constr_textarea").node().value, command: this.state.c0};
+                rule.conditioned = {detail: this.state.constraintDetail, command: this.state.c0};
                 break;
             case "selected from one class which is directed from another class":
                 rule.conditioned = {
                     type: "FIND_FROM_TEXT",
-                    detail: d3.select("#constr_textarea").node().value,
+                    detail: this.state.constraintDetail,
                     command1: this.state.c0,
                     command2: this.state.c1
                 };
@@ -388,7 +598,7 @@ class GenerateRule extends React.Component {
             case "selected from one class with the help of another class":
                 rule.conditioned = {
                     type: "RETURN_TO_BASE",
-                    detail: d3.select("#constr_textarea").node().value,
+                    detail: this.state.constraintDetail,
                     command1: this.state.c0,
                     command2: this.state.c1,
                     command3: this.state.c2
@@ -401,6 +611,7 @@ class GenerateRule extends React.Component {
         }
 
         Utilities.sendToServer(this.state.ws, "NEW_RULE", rule);
+        this.clearForm();
     }
 
     /**
@@ -581,14 +792,14 @@ class GenerateRule extends React.Component {
                     {this.state.selectedTags.map((d, i) => {
                         return (
                             <div style={{float: "left", margin: "0 15px 10px 0"}} key={i}>
-                                <TiDelete size={25}
-                                          style={{cursor: "pointer", color: "#903c3c"}}
+                                <Label onClick={() => PubSub.publish('UPDATE_HASH', ['tag', d])}>{d}</Label>
+                                <TiDelete size={23}
+                                          style={{cursor: "pointer", color: "#969696"}}
                                           onClick={() => {
                                               const selectedTags = this.state.selectedTags;
                                               selectedTags.splice(i, 1);
                                               this.setState({selectedTags});
                                           }}/>
-                                <Label onClick={() => PubSub.publish('UPDATE_HASH', ['tag', d])}>{d}</Label>
                             </div>)
                     })}
                 </div>
@@ -605,33 +816,32 @@ class GenerateRule extends React.Component {
             <div>
                 <div style={{paddingBottom: "10px"}}>
                     <em>{"Restriction:   "}</em>
-                    <DropdownButton
-                        title={this.state.folderConstraint === "" ? "Select" : this.state.folderConstraint}
-                        className={this.state.target} id={"drop_down"}>
-                        <MenuItem eventKey={"FOLDER"} onSelect={(evt) => {
-                            this.setState({folderConstraint: evt})
-                        }}>FOLDER
-                        </MenuItem>
-                        <MenuItem eventKey={"NONE"} onSelect={(evt) => {
-                            this.setState({folderConstraint: evt})
-                        }}>NONE
-                        </MenuItem>
-                    </DropdownButton>
+                    <ButtonToolbar>
+                        <DropdownButton
+                            title={this.state.folderConstraint === "" ? "Select" : this.state.folderConstraint}
+                            className={this.state.target} id={"drop_down"}>
+                            <MenuItem eventKey={"FOLDER"} onSelect={(evt) => {
+                                this.setState({folderConstraint: evt})
+                            }}>FOLDER
+                            </MenuItem>
+                            <MenuItem eventKey={"NONE"} onSelect={(evt) => {
+                                this.setState({folderConstraint: evt})
+                            }}>NONE
+                            </MenuItem>
+                        </DropdownButton>
+                        <Button onClick={() => {
+                            const filesFolders = this.state.filesFolders;
+                            filesFolders.push("");
+                            this.setState({filesFolders});
+                        }}>Add files/folders
+                        </Button>
+                    </ButtonToolbar>
                 </div>
                 <div>
                     {this.state.filesFolders.map((d, i) => {
                         return (
-                            <div style={{margin: "0 15px 10px 0"}} key={i}>
-                                <div style={{float: "left"}}>
-                                    <TiDelete size={25}
-                                              style={{cursor: "pointer", color: "#903c3c"}}
-                                              onClick={() => {
-                                                  const filesFolders = this.state.filesFolders;
-                                                  filesFolders.splice(i, 1);
-                                                  this.setState({filesFolders});
-                                              }}/>
-                                </div>
-                                <div>
+                            <Row key={i} style={{paddingBottom: "5px"}}>
+                                <Col sm={11} md={10}>
                                     <FormControl id={"filesFolders_textarea_" + i} type="text"
                                                  placeholder="relative File/Folder path"
                                                  onBlur={(e) => {
@@ -639,17 +849,19 @@ class GenerateRule extends React.Component {
                                                      filesFolders[i] = e.target.value;
                                                      this.setState({filesFolders});
                                                  }}/>
-                                </div>
-                            </div>)
+                                </Col>
+                                <Col sm={1} md={1} style={{paddingTop: "5px"}}>
+                                    <TiDelete size={25}
+                                              style={{cursor: "pointer", color: "#969696"}}
+                                              onClick={() => {
+                                                  const filesFolders = this.state.filesFolders;
+                                                  filesFolders.splice(i, 1);
+                                                  this.setState({filesFolders});
+                                              }}/>
+                                </Col>
+                            </Row>
+                        )
                     })}
-                    <div style={{clear: "both"}}>
-                        <button onClick={() => {
-                            const filesFolders = this.state.filesFolders;
-                            filesFolders.push("");
-                            this.setState({filesFolders});
-                        }}>Add files/folders
-                        </button>
-                    </div>
                 </div>
             </div>
         )
