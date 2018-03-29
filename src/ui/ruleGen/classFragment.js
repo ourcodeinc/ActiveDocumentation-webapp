@@ -132,7 +132,19 @@ class ClassFragment extends React.Component {
                                                              callbackFromParent={this.sendDataBack}
                                                              removeFunction={removeFunction}/>);
                             case "name":
-                                // d3.select(`#${this.props["assignedId"]}-after_1`).classed(`ruleGroupDiv ${this.state["target"]}`, true);
+                                return (
+                                    <div style={{float: 'left', width: "100%"}}>
+                                        <TiDelete size={25}
+                                                  className={"tiDelete"}
+                                                  style={{color: "#2babd2"}}
+                                                  onClick={() => {
+                                                      const children = this.state.children;
+                                                      children["follows"] = {};
+                                                      this.setState({children});
+                                                      this.sendDataBack();
+                                                  }}/>
+                                    </div>
+                                );
                                 break;
                             default:
                                 return (<div/>)

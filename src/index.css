@@ -258,7 +258,7 @@ annotation, annotation * {
     border-radius: 5px;
 
     border: 1px solid #dadada;
-    min-height: 45px;
+    /*min-height: 45px;*/
 }
 
 #generateRule .ruleGroupDiv.follows {
@@ -313,11 +313,19 @@ annotation, annotation * {
 
 #generateRule .tiDelete {
     cursor: pointer;
+    color: #d6d6d6;
+}
+
+#generateRule .tiDelete:hover {
     color: #969696;
 }
 
 #generateRule .mdAddBox {
     cursor: pointer;
+    color: #d6d6d6
+}
+
+#generateRule .mdAddBox:hover {
     color: #969696
 }
 
@@ -338,10 +346,6 @@ code {
     padding: 5px;
     font-weight: bold;
     font-size: 14px;
-}
-
-#generateRule button {
-    margin-top: 5px;
 }
 
 #generateRule .btn {

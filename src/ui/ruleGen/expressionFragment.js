@@ -5,7 +5,7 @@
 import React from 'react';
 import '../../App.css';
 
-import {Dropdown, MenuItem} from 'react-bootstrap';
+import {Dropdown, MenuItem, Row} from 'react-bootstrap';
 import MdAddBox from 'react-icons/lib/md/add-box';
 import TiDelete from 'react-icons/lib/ti/delete';
 
@@ -36,7 +36,7 @@ class ExpressionFragment extends React.Component {
                                   className={"tiDelete"}
                                   onClick={() => this.props["removeFunction"]()}/>
                     </div> : ""}
-                <div className={"rowGroup"}>
+                <Row style={{margin: "0"}}>
                     <div className={"rowItem"}>
                         {this.renderGroup("before")}
                     </div>
@@ -44,7 +44,7 @@ class ExpressionFragment extends React.Component {
                     <div className={"rowItem"}>
                         {this.renderGroup("after")}
                     </div>
-                </div>
+                </Row>
             </div>
         )
     }

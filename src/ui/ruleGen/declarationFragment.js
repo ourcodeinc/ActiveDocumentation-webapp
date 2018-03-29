@@ -50,7 +50,7 @@ class DeclarationFragment extends React.Component {
                         {this.renderGroup("before_2")}
                         {this.renderGroup("after")}
                         <div className={"rowItem inlineText"}>
-                            {(this.props["category"] === 'declarationStatement') ? "=" : ""}
+                            {(this.props["category"] === 'declarationStatement') ? <b>=</b> : ""}
                         </div>
                         {(this.props["category"] === 'declarationStatement') ? this.renderGroup("within") : ""}
 
@@ -104,6 +104,7 @@ class DeclarationFragment extends React.Component {
                 <div className={"removeIcon"}>
                     <TiDelete size={25}
                               className={"tiDelete"}
+                              style={{color: "#2babd2"}}
                               onClick={() => {
                                   const children = this.state.children;
                                   children["follows"] = {};

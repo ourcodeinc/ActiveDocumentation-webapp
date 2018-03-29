@@ -5,8 +5,7 @@
 import React from 'react';
 import '../../App.css';
 
-import {Dropdown, DropdownButton, FormControl, MenuItem, Row} from 'react-bootstrap';
-import MdDelete from 'react-icons/lib/md/delete';
+import {Dropdown, DropdownButton, MenuItem} from 'react-bootstrap';
 import TiDelete from 'react-icons/lib/ti/delete'
 import MdAddBox from 'react-icons/lib/md/add-box';
 
@@ -18,8 +17,6 @@ import CallFragment from "./callFragment";
 import SrcMLFragment from "./srcML";
 import CustomToggle from "./customToggle";
 import CustomMenu from "./customMenu";
-
-// import * as d3 from "d3";
 
 
 class FunctionFragment extends React.Component {
@@ -146,10 +143,20 @@ class FunctionFragment extends React.Component {
                                                       callbackFromParent={this.sendDataBack}
                                                       removeFunction={removeFunction}/>);
                             case "name":
-                                // d3.select(`#${this.props["assignedId"]}-before_2`).classed(`ruleGroupDiv ${this.state["target"]}`, true);
-                                break;
                             case "parameter":
-                                // d3.select(`#${this.props["assignedId"]}-after`).classed(`ruleGroupDiv ${this.state["target"]}`, true);
+                                return (
+                                    <div style={{float: 'left', width: "100%"}}>
+                                        <TiDelete size={25}
+                                                  className={"tiDelete"}
+                                                  style={{color: "#2babd2"}}
+                                                  onClick={() => {
+                                                      const children = this.state.children;
+                                                      children["follows"] = {};
+                                                      this.setState({children});
+                                                      this.sendDataBack();
+                                                  }}/>
+                                    </div>
+                                );
                                 break;
                             default:
                                 return (<div/>)
@@ -175,7 +182,7 @@ class FunctionFragment extends React.Component {
                 }
                 {this.state.children[group].map((cons, i) => {
                     return (
-                        <div className={group === "within" ? "" : "rowItem"} key={i}>
+                        <div className={group === "within" ? "row" : "rowItem"} style={{margin: "0"}} key={i}>
                             {(constants.code_fragment[this.props["category"]][group][cons["key"]]["pre"] === "") ? "" :
                                 <div className={"rowItem inlineText"}>
                                     <b>{constants.code_fragment[this.props["category"]][group][cons["key"]]["pre"]}</b>

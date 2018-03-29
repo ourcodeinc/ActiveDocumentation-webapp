@@ -39,7 +39,7 @@ class SrcMLFragment extends React.Component {
     render() {
         return (
             <div id={this.props["assignedId"]}
-                 className={(this.state.target === "") ? "divBorder rowItem" : "rowItem ruleGroupDiv " + this.state.target}>
+                 className={(this.state.target === "") ? "divBorder rowItem" : "rowItem divBorder " + this.state.target}>
                 <div className={"rowGroup"}>
                     <div className={"rowItem"} style={{marginTop: "2px"}}>
                         <input type={"text"} className={"inputText"}
