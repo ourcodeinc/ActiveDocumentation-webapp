@@ -9,7 +9,7 @@ import {Dropdown, DropdownButton, MenuItem} from 'react-bootstrap';
 // import MdAddCircleOutline from 'react-icons/lib/md/add-circle-outline';
 // import MdAddCircle from 'react-icons/lib/md/add-circle';
 import MdAddBox from 'react-icons/lib/md/add-box';
-import TiDelete from 'react-icons/lib/ti/delete'
+import TiDelete from 'react-icons/lib/ti/delete';
 
 import {constants} from '../constants';
 import FunctionFragment from './functionFragment'
@@ -161,7 +161,8 @@ class ClassFragment extends React.Component {
                                     <b>{constants.code_fragment["class"][group][cons["key"]]["pre"]}</b>
                                 </div>
                             }
-                            <div className={group === "within" ? "" : "rowItem"}>
+                            <div
+                                className={group === "within" || group === "top" ? "" : "rowItem"}>
                                 {this.switchMethod(group, i, cons)}
                             </div>
                             {(constants.code_fragment["class"][group][cons["key"]]["post"] === "") ? "" :
@@ -272,7 +273,7 @@ class ClassFragment extends React.Component {
                         </div>
                         <div className={"removeIcon"}>
                             <TiDelete size={25}
-                                      style={{cursor: "pointer", color: "#969696"}}
+                                      className={"tiDelete"}
                                       onClick={() => {
                                           const children = this.state.children;
                                           children[group].splice(i, 1);
