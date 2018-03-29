@@ -5,7 +5,7 @@
 import React from 'react';
 import '../../App.css';
 
-import {Dropdown, DropdownButton, FormControl, MenuItem, Row} from 'react-bootstrap';
+import {Dropdown, DropdownButton, MenuItem} from 'react-bootstrap';
 // import MdAddCircleOutline from 'react-icons/lib/md/add-circle-outline';
 // import MdAddCircle from 'react-icons/lib/md/add-circle';
 import MdAddBox from 'react-icons/lib/md/add-box';
@@ -39,7 +39,7 @@ class ClassFragment extends React.Component {
                 {(this.props["removeFunction"]) ?
                     <div className={"innerRemoveIcon"}>
                         <TiDelete size={25}
-                                  style={{cursor: "pointer", color: "#969696"}}
+                                  className={"tiDelete"}
                                   onClick={() => this.props["removeFunction"]()}/>
                     </div> : ""}
                 <div className={"rowGroup"}>

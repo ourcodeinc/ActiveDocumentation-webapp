@@ -310,6 +310,12 @@ annotation, annotation * {
     background-color: lightgray;
 }
 
+
+#generateRule .tiDelete {
+    cursor: pointer;
+    color: #969696;
+}
+
 /*
 override bootstrap
  */
