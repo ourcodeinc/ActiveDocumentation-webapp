@@ -316,6 +316,11 @@ annotation, annotation * {
     color: #969696;
 }
 
+#generateRule .mdAddBox {
+    cursor: pointer;
+    color: #969696
+}
+
 /*
 override bootstrap
  */

@@ -81,7 +81,7 @@ class CallFragment extends React.Component {
 
                 <Dropdown id="dropdown-size-medium">
                     <CustomToggle bsRole="toggle">
-                        <MdAddBox size={25} style={{cursor: "pointer", color: "#969696"}}/>
+                        <MdAddBox size={25} className={"mdAddBox"}/>
                     </CustomToggle>
                     <CustomMenu bsRole="menu">
                         {Object.keys(constants.code_fragment["call"][group]).map((key, i) => {

@@ -195,7 +195,7 @@ class FunctionFragment extends React.Component {
 
                 <Dropdown id="dropdown-custom-menu">
                     <CustomToggle bsRole="toggle">
-                        <MdAddBox size={25} style={{cursor: "pointer", color: "#969696"}}/>
+                        <MdAddBox size={25} className={"mdAddBox"}/>
                     </CustomToggle>
 
                     <CustomMenu bsRole="menu">

@@ -148,7 +148,7 @@ class DeclarationFragment extends React.Component {
                     if (this.state.children[group].length === 0) return (
                         <Dropdown id="dropdown-size-medium">
                             <CustomToggle bsRole="toggle">
-                                <MdAddBox size={25} style={{cursor: "pointer", color: "#969696"}}/>
+                                <MdAddBox size={25} className={"mdAddBox"}/>
                             </CustomToggle>
 
                             <CustomMenu bsRole="menu">
