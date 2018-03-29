@@ -6,7 +6,9 @@ export class constants {
                 "HAS_ANNOTATION": {
                     name: "Has annotation",
                     xpath: "src:annotation",
-                    type: "annotation"
+                    type: "annotation",
+                    pre: "",
+                    post: ""
                 }
             },
             "before": {},
@@ -41,27 +43,37 @@ export class constants {
                 "HAS_FUNCTION": {
                     name: "Has function ...",
                     xpath: "src:block/src:function",
-                    type: "function"
+                    type: "function",
+                    pre: "",
+                    post: ""
                 },
                 "HAS_FUNCTION_DECL": {
                     name: "Has abstract function ...",
                     xpath: "src:block/src:function_decl",
-                    type: "abstractFunction"
+                    type: "abstractFunction",
+                    pre: "",
+                    post: ""
                 },
                 "HAS_CONSTRUCTOR": {
                     name: "Has constructor ...",
                     xpath: "src:block/src:constructor",
-                    type: "constructor"
+                    type: "constructor",
+                    pre: "",
+                    post: ""
                 },
                 "HAS_DECLARATION_STMT": {
                     name: "Has declaration statement ...",
                     xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
-                    type: "declarationStatement"
+                    type: "declarationStatement",
+                    pre: "",
+                    post: ""
                 },
                 "HAS_SUBCLASS": {
                     name: "Has subclass ...",
                     xpath: "src:block/src:class",
-                    type: "class"
+                    type: "class",
+                    pre: "",
+                    post: ""
                 }
             },
             "follows": {
@@ -86,7 +98,9 @@ export class constants {
                 "HAS_ANNOTATION": {
                     name: "Has annotation",
                     xpath: "src:annotation",
-                    type: "annotation"
+                    type: "annotation",
+                    pre: "",
+                    post: ""
                 }
             },
             "before_1": {
@@ -206,7 +220,9 @@ export class constants {
                 "HAS_ANNOTATION": {
                     name: "Has annotation",
                     xpath: "src:annotation",
-                    type: "annotation"
+                    type: "annotation",
+                    pre: "",
+                    post: ""
                 }
             },
             "before_1": {
@@ -288,7 +304,9 @@ export class constants {
                 "HAS_ANNOTATION": {
                     name: "Has annotation",
                     xpath: "src:annotation",
-                    type: "annotation"
+                    type: "annotation",
+                    pre: "",
+                    post: ""
                 }
             },
             "before_1": {
@@ -348,11 +366,23 @@ export class constants {
         "expression": {
             "top": {},
             "before": {
-                "NAME": {name: "name", xpath: "", type: "srcml"}
+                "NAME": {
+                    name: "name", xpath: "", type: "srcml",
+                    pre: "",
+                    post: ""
+                }
             },
             "after": {
-                "CALL": {name: "method invoke", xpath: "src:call", type: "call"},
-                "NAME/LITERAL": {name: "value/variable", xpath: "", type: "srcml"}
+                "CALL": {
+                    name: "method invoke", xpath: "src:call", type: "call",
+                    pre: "",
+                    post: ""
+                },
+                "NAME/LITERAL": {
+                    name: "value/variable", xpath: "", type: "srcml",
+                    pre: "",
+                    post: ""
+                }
             },
             "within": {},
             "follows": {
@@ -368,6 +398,8 @@ export class constants {
                     name: "The caller is",
                     xpath: "",
                     type: "srcml",
+                    pre: "",
+                    post: ""
                 }
             },
             "after": {
@@ -409,7 +441,9 @@ export class constants {
                 "HAS_ANNOTATION": {
                     name: "Has annotation",
                     xpath: "src:annotation",
-                    type: "annotation"
+                    type: "annotation",
+                    pre: "",
+                    post: ""
                 }
             },
             "before_1": {

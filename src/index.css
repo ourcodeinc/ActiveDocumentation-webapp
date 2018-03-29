@@ -221,21 +221,19 @@ annotation, annotation * {
     /*margin: 10px 0;*/
 }
 
-#generateRule button {
-    margin-top: 5px;
-}
-
 .rowItem {
     float: left;
     padding-right: 5px;
 }
 
 .inlineText {
-    margin-top: 10px;
-}
+    /*margin-top: 10px;*/
 
-#generateRule .btn {
-    padding: 2px;
+    border: 1px solid #ffffff;
+    border-radius: 5px;
+    /*min-height: 45px;*/
+    /*padding: 3px 5px 3px 5px;*/
+    padding: 0 3px;
 }
 
 #generateRule button.follows {
@@ -277,13 +275,39 @@ annotation, annotation * {
 #generateRule .divBorder {
     border: 1px solid #dadada;
     border-radius: 5px;
-    min-height: 45px;
-    padding: 3px 5px 3px 5px;
+    /*min-height: 45px;*/
+    /*padding: 3px 5px 3px 5px;*/
+    padding: 0 3px;
 }
 
 #generateRule .exprDiv {
     clear: both;
     padding-bottom: 15px;
+}
+
+#generateRule .temporary-text {
+    color: #828282;
+}
+
+
+#generateRule .rowGroup {
+    margin-left: 0;
+    width: 100%;
+    clear: both;
+}
+
+#generateRule .removeIcon {
+    float: left;
+}
+
+#generateRule .innerRemoveIcon {
+    float: right;
+    margin: -12px;
+}
+
+#generateRule .inputText {
+    border: none;
+    background-color: lightgray;
 }
 
 /*
@@ -303,4 +327,12 @@ code {
     padding: 5px;
     font-weight: bold;
     font-size: 14px;
+}
+
+#generateRule button {
+    margin-top: 5px;
+}
+
+#generateRule .btn {
+    padding: 2px;
 }
