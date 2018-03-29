@@ -794,7 +794,7 @@ class GenerateRule extends React.Component {
                             <div style={{float: "left", margin: "0 15px 10px 0"}} key={i}>
                                 <Label onClick={() => PubSub.publish('UPDATE_HASH', ['tag', d])}>{d}</Label>
                                 <TiDelete size={23}
-                                          style={{cursor: "pointer", color: "#969696"}}
+                                          className={"tiDelete"}
                                           onClick={() => {
                                               const selectedTags = this.state.selectedTags;
                                               selectedTags.splice(i, 1);
@@ -852,7 +852,7 @@ class GenerateRule extends React.Component {
                                 </Col>
                                 <Col sm={1} md={1} style={{paddingTop: "5px"}}>
                                     <TiDelete size={25}
-                                              style={{cursor: "pointer", color: "#969696"}}
+                                              className={"tiDelete"}
                                               onClick={() => {
                                                   const filesFolders = this.state.filesFolders;
                                                   filesFolders.splice(i, 1);

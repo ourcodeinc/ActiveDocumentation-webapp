@@ -41,7 +41,7 @@ class FunctionFragment extends React.Component {
                 {(this.props["removeFunction"]) ?
                     <div className={"innerRemoveIcon"}>
                         <TiDelete size={25}
-                                  style={{cursor: "pointer", color: "#969696"}}
+                                  className={"tiDelete"}
                                   onClick={() => this.props["removeFunction"]()}/>
                     </div> : ""}
 
@@ -292,7 +292,7 @@ class FunctionFragment extends React.Component {
                         </div>
                         <div className={"removeIcon"}>
                             <TiDelete size={25}
-                                      style={{cursor: "pointer", color: "#969696"}}
+                                      className={"tiDelete"}
                                       onClick={() => {
                                           const children = this.state.children;
                                           children[group].splice(i, 1);
