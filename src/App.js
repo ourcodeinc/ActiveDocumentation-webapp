@@ -137,7 +137,7 @@ class App {
         hashManager.create();
 
         window.location.hash = "#/index";
-        window.location.hash = "#/genRule";
+        // window.location.hash = "#/genRule";
 
     }
 

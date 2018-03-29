@@ -28,6 +28,14 @@ class RuleExecutor {
             PubSub.publish('DISPLAY_UPDATE_RULES_FOR_FILE', [ruleTable, data[2]]);
         });
 
+        // [xml, ruleTable, tagTable]
+        PubSub.subscribe('VERIFY_RULE', (msg, data) => {
+            data[1][data[1].length - 1] = this.runRulesByTypes(data[0], data[1][data[1].length - 1]);
+            PubSub.publish('DISPLAY_RULES', [data[1], data[2]]);
+            PubSub.publish('UPDATE_HASH', ['rule', data[1][data[1].length - 1].index]);
+        });
+
+
     }
 
     /**

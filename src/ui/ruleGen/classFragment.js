@@ -6,7 +6,8 @@ import React from 'react';
 import '../../App.css';
 
 import {DropdownButton, FormControl, MenuItem, Row} from 'react-bootstrap';
-import MdDelete from 'react-icons/lib/md/delete';
+// import MdDelete from 'react-icons/lib/md/delete';
+import TiDelete from 'react-icons/lib/ti/delete'
 
 import {constants} from '../constants';
 import FunctionFragment from './functionFragment'
@@ -84,15 +85,16 @@ class ClassFragment extends React.Component {
         else {
             return (
                 <div>
-                    <div style={{float: 'right'}}>
-                        <MdDelete size={25}
-                                  style={{cursor: "pointer", marginTop: "8px", color: "grey"}}
+                    <div style={{float: 'left', width: "100%"}}>
+                        <TiDelete size={25}
+                                  style={{cursor: "pointer", color: "#903c3c"}}
                                   onClick={() => {
                                       const children = this.state.children;
                                       children["follows"] = {};
                                       this.setState({children});
                                       this.sendDataBack();
-                                  }}/></div>
+                                  }}/>
+                    </div>
                     {(() => {
                         switch (this.state.children["follows"].key) {
                             case "subclass":
@@ -145,9 +147,9 @@ class ClassFragment extends React.Component {
                 {this.state.children[group].map((cons, i) => {
                     return (
                         <div className={group === "within" ? "" : "rowItem"} key={i}>
-                            <div style={{float: 'right'}}>
-                                <MdDelete size={25}
-                                          style={{cursor: "pointer", marginTop: "8px", color: "grey"}}
+                            <div style={{float: 'left', width: "100%"}}>
+                                <TiDelete size={25}
+                                          style={{cursor: "pointer", color: "#903c3c"}}
                                           onClick={() => {
                                               const children = this.state.children;
                                               children[group].splice(i, 1);

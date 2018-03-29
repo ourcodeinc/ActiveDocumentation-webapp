@@ -39,6 +39,13 @@ class Utilities {
                     messageJson['data'] = data;
                     break;
 
+                case 'NEW_RULE':
+                    messageJson['data'] = {
+                        "index": data.index,
+                        "ruleText": data
+                    };
+                    break;
+
                 default:
                     break;
             }

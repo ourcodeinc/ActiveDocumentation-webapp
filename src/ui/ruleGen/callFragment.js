@@ -11,6 +11,7 @@ import MdDelete from 'react-icons/lib/md/delete';
 import {constants} from '../constants';
 
 import ExpressionFragment from "./expressionFragment";
+import SrcMLFragment from "./srcML";
 
 
 class CallFragment extends React.Component {
@@ -23,8 +24,8 @@ class CallFragment extends React.Component {
         this.ws = props["ws"];
 
         this.state = props["state"];
-
         this.state.text = JSON.parse(JSON.stringify(this.state.children));
+
     }
 
     render() {
@@ -32,11 +33,10 @@ class CallFragment extends React.Component {
             <div id={this.props["assignedId"]}
                  className={(this.state.target === "") ? "divBorder" : "ruleGroupDiv " + this.state.target}>
                 <Row style={{margin: "0"}}>
-                    <div className={"rowItem"}><b>@</b></div>
                     <div className={"rowItem"}>{this.renderGroup("before")}</div>
-                    <div className={"rowItem"}><b>(</b></div>
+                    <div className={"rowItem inlineText"}><b>(</b></div>
                     <div className={"rowItem"}>{this.renderGroup("after")}</div>
-                    <div className={"rowItem"}><b>)</b></div>
+                    <div className={"rowItem inlineText"}><b>)</b></div>
                 </Row>
             </div>
         )
@@ -62,14 +62,14 @@ class CallFragment extends React.Component {
                                               this.sendDataBack();
                                           }}/></div>
                             <div className={"rowItem inlineText"}>
-                                <b>{constants.code_fragment["annotation"][group][cons["key"]]["pre"]}</b>
+                                <b>{constants.code_fragment["call"][group][cons["key"]]["pre"]}</b>
                             </div>
                             <div className={group === "within" ? "" : "rowItem"}
                                  style={(this.state.children[group][i].value.type === 'text') ? {paddingTop: "5px"} : {}}>
                                 {this.switchMethod(group, i, cons)}
                             </div>
                             <div className={group === "within" ? "inlineText" : "rowItem inlineText"}>
-                                <b>{constants.code_fragment["annotation"][group][cons["key"]]["post"]}</b>
+                                <b>{constants.code_fragment["call"][group][cons["key"]]["post"]}</b>
                             </div>
                         </div>
                     )
@@ -77,21 +77,21 @@ class CallFragment extends React.Component {
 
 
                 <DropdownButton title={``} id="dropdown-size-medium">
-                    {Object.keys(constants.code_fragment["annotation"][group]).map((key, i) => {
+                    {Object.keys(constants.code_fragment["call"][group]).map((key, i) => {
                         return (
                             <MenuItem eventKey={key} key={i}
                                       onSelect={(evt) => {
                                           this.state.children[group].push({
                                               key: evt,
-                                              value: constants.code_fragment["annotation"][group][evt],
+                                              value: constants.code_fragment["call"][group][evt],
                                               target: "",
                                               children: JSON.parse(JSON.stringify(constants.state_children)),
-                                              xpath: constants.code_fragment["annotation"][group][evt]["xpath"]
+                                              xpath: constants.code_fragment["call"][group][evt]["xpath"]
                                           });
                                           this.sendDataBack();
                                           this.forceUpdate();
                                       }}
-                            >{constants.code_fragment["annotation"][group][key].name}
+                            >{constants.code_fragment["call"][group][key].name}
                             </MenuItem>);
                     })}
                 </DropdownButton>
@@ -115,6 +115,15 @@ class CallFragment extends React.Component {
                                             ws={this.ws} state={this.state.children[group][i]}
                                             assignedId={this.props["assignedId"] + "_expr_" + i}
                                             callbackFromParent={this.sendDataBack}/>);
+            case "call":
+                return (<CallFragment ws={this.ws} state={this.state.children[group][i]}
+                                      assignedId={this.props["assignedId"] + "_call_" + i}
+                                      callbackFromParent={this.sendDataBack}/>);
+            case "srcml":
+                return (
+                    <SrcMLFragment ws={this.ws} state={this.state.children[group][i]} placeholder={"Name or Literal"}
+                                   assignedId={this.props["assignedId"] + "_name_" + group + "_" + i}
+                                   callbackFromParent={this.sendDataBack}/>);
             case "text":
                 return (<FormControl type="text" value={cons["text"]}
                                      placeholder={this.state.children[group][i].value.placeholder}
@@ -128,6 +137,20 @@ class CallFragment extends React.Component {
                                          this.setState({text});
                                      }}/>
                 );
+            case "number":
+                return (
+                    <FormControl type="number" value={cons["text"]}
+                                 placeholder={this.state.children[group][i].value.placeholder}
+                                 onBlur={(e) => {
+                                     cons.text = e.target.value;
+                                     this.updateXpathNumber(group, i);
+                                 }}
+                                 onChange={(e) => {
+                                     const text = this.state.text;
+                                     text[group][i].text = e.target.value;
+                                     this.setState({text});
+                                 }}/>
+                );
             default:
                 return (<div/>)
 
@@ -137,10 +160,9 @@ class CallFragment extends React.Component {
     /**
      * send the xpath data to the parent node
      */
-    sendDataBack() {
+    sendDataBack = () => {
         this.props["callbackFromParent"]();
-
-    }
+    };
 
     /**
      * update the text of constraints
@@ -154,6 +176,17 @@ class CallFragment extends React.Component {
         this.sendDataBack();
     }
 
+    /**
+     * update the text of constraints
+     * @param group
+     * @param i
+     */
+    updateXpathNumber(group, i) {
+        const children = this.state.children;
+        children[group][i].xpath = this.state.children[group][i].value["xpath"].replace('<COUNT>', this.state.children[group][i].text);
+        this.setState({children});
+        this.sendDataBack();
+    }
 
 }
 

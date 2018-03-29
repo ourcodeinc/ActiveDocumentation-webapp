@@ -12,6 +12,8 @@ import {constants} from '../constants';
 
 import ExpressionFragment from "./expressionFragment";
 import AnnotationFragment from "./annotationFragment";
+import CallFragment from "./callFragment";
+import SrcMLFragment from "./srcML";
 
 
 class DeclarationFragment extends React.Component {
@@ -39,7 +41,7 @@ class DeclarationFragment extends React.Component {
                         {(this.props["category"] === 'declarationStatement') ? this.renderGroup("before_1") : ""}
                         {this.renderGroup("before_2")}
                         {this.renderGroup("after")}
-                        <div className={"rowItem"}>
+                        <div className={"rowItem inlineText"}>
                             {(this.props["category"] === 'declarationStatement') ? "=" : ""}
                         </div>
                         {(this.props["category"] === 'declarationStatement') ? this.renderGroup("within") : ""}
@@ -177,13 +179,21 @@ class DeclarationFragment extends React.Component {
     switchMethod(group, i, cons) {
         let type = this.state.children[group][i].value.type;
         switch (type) {
+            case "call":
+                return (<CallFragment ws={this.ws} state={this.state.children[group][i]}
+                                      assignedId={this.props["assignedId"] + "_call_" + i}
+                                      callbackFromParent={this.sendDataBack}/>);
+            case "srcml":
+                return (
+                    <SrcMLFragment ws={this.ws} state={this.state.children[group][i]} placeholder={"Name or Literal"}
+                                   assignedId={this.props["assignedId"] + "_name_" + group + "_" + i}
+                                   callbackFromParent={this.sendDataBack}/>);
             case "annotation":
                 return (<AnnotationFragment ws={this.ws} state={this.state.children[group][i]}
                                             assignedId={this.props["assignedId"] + "_annotation_" + i}
                                             callbackFromParent={this.sendDataBack}/>);
-            case "expressionStatement":
-                return (<ExpressionFragment category={"expressionStatement"}
-                                            ws={this.ws} state={this.state.children[group][i]}
+            case "expression":
+                return (<ExpressionFragment ws={this.ws} state={this.state.children[group][i]}
                                             assignedId={this.props["assignedId"] + "_expr_" + i}
                                             callbackFromParent={this.sendDataBack}/>);
             case "text":

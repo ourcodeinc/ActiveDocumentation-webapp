@@ -103,6 +103,12 @@ class TableOfContent {
             this.rules = data[0];
             this.displayRules();
         });
+
+        // [ruleIndex, rule]
+        PubSub.subscribe('NEW_RULE', (msg, data) => {
+            this.rules.push(data[1]);
+            this.displayRules();
+        });
     }
 
 

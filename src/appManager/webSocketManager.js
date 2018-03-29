@@ -122,6 +122,14 @@ class WebSocketManager {
                     PubSub.publish('DECL_STMT_XML', [message.data]);
                     break;
 
+                // after sending a piece of code DECL_STMT
+                case "NEW_RULE":
+                    let newAddedRule = JSON.parse(message.data['rule']);
+                    ruleTable.push(newAddedRule);
+                    // received by RuleExecutor
+                    PubSub.publish('VERIFY_RULE', [xml, ruleTable, tagTable]);
+                    break;
+
                 case "ENTER":
                 case "LEFT":
                 default:

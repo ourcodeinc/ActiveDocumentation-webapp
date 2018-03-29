@@ -12,6 +12,8 @@ import {constants} from '../constants';
 import ExpressionFragment from "./expressionFragment";
 import DeclarationFragment from "./declarationFragment";
 import AnnotationFragment from "./annotationFragment";
+import CallFragment from "./callFragment";
+import SrcMLFragment from "./srcML";
 
 // import * as d3 from "d3";
 
@@ -125,11 +127,14 @@ class FunctionFragment extends React.Component {
                                                              ws={this.ws} state={this.state.children["follows"]}
                                                              assignedId={this.props["assignedId"] + "_decl_follows"}
                                                              callbackFromParent={this.sendDataBack}/>);
-                            case "expressionStatement":
-                                return (<ExpressionFragment category={"expressionStatement"}
-                                                            ws={this.ws} state={this.state.children["follows"]}
+                            case "expression":
+                                return (<ExpressionFragment ws={this.ws} state={this.state.children["follows"]}
                                                             assignedId={this.props["assignedId"] + "_expr_follows"}
                                                             callbackFromParent={this.sendDataBack}/>);
+                            case "call":
+                                return (<CallFragment ws={this.ws} state={this.state.children["follows"]}
+                                                      assignedId={this.props["assignedId"] + "_expr_follows"}
+                                                      callbackFromParent={this.sendDataBack}/>);
                             case "name":
                                 // d3.select(`#${this.props["assignedId"]}-before_2`).classed(`ruleGroupDiv ${this.state["target"]}`, true);
                                 break;
@@ -192,7 +197,7 @@ class FunctionFragment extends React.Component {
                                           this.state.children[group].push({
                                               key: evt,
                                               value: constants.code_fragment[this.props["category"]][group][evt],
-                                              target: evt !== "HAS_ANNOTATION" ? "default" : "",
+                                              target: "default",
                                               children: JSON.parse(JSON.stringify(constants.state_children)),
                                               xpath: constants.code_fragment[this.props["category"]][group][evt]["xpath"]
                                           });
@@ -228,15 +233,24 @@ class FunctionFragment extends React.Component {
                                              ws={this.ws} state={this.state.children[group][i]}
                                              assignedId={this.props["assignedId"] + "_decl_" + i}
                                              callbackFromParent={this.sendDataBack}/>);
-            case "expressionStatement":
-                return (<ExpressionFragment category={"expressionStatement"}
-                                            ws={this.ws} state={this.state.children[group][i]}
+            case "expression":
+                return (<ExpressionFragment ws={this.ws} state={this.state.children[group][i]}
                                             assignedId={this.props["assignedId"] + "_expr_" + i}
                                             callbackFromParent={this.sendDataBack}/>);
+            case "call":
+                return (<CallFragment ws={this.ws} state={this.state.children[group][i]}
+                                      assignedId={this.props["assignedId"] + "_call_" + i}
+                                      callbackFromParent={this.sendDataBack}/>);
             case "annotation":
                 return (<AnnotationFragment ws={this.ws} state={this.state.children[group][i]}
                                             assignedId={this.props["assignedId"] + "_annotation_" + i}
                                             callbackFromParent={this.sendDataBack}/>);
+            case "srcml":
+                return (
+                    <SrcMLFragment ws={this.ws} state={this.state.children[group][i]}
+                                   placeholder={"Name or Literal"}
+                                   assignedId={this.props["assignedId"] + "_name_" + group + "_" + i}
+                                   callbackFromParent={this.sendDataBack}/>);
             case "text":
                 return (
                     <FormControl type="text" value={cons["text"]}

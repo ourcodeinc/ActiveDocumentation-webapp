@@ -7,8 +7,11 @@ import '../App.css';
 
 import * as d3 from 'd3';
 import PubSub from 'pubsub-js';
-import {DropdownButton, MenuItem, HelpBlock, Tabs, Tab} from 'react-bootstrap';
+import {DropdownButton, MenuItem, HelpBlock, Tabs, Tab, FormControl, Label, Button} from 'react-bootstrap';
 import ClassFragment from './ruleGen/classFragment';
+
+import TiDelete from 'react-icons/lib/ti/delete'
+import Utilities from "../core/utilities";
 
 
 class GenerateRule extends React.Component {
@@ -18,6 +21,10 @@ class GenerateRule extends React.Component {
         this.attachListener();
 
         this.state = {
+            tags: [],
+            folderConstraint: "",
+            filesFolders: [],
+            selectedTags: [],
             ws: null,
             ruleType: "",
             cRuleType: "",
@@ -141,49 +148,103 @@ class GenerateRule extends React.Component {
     render() {
         return (
             <div>
-                <Tabs animation={true} id={"gen_rule_quantifier_constraint"} activeKey={this.state.activeTab}
-                      onSelect={(key) => this.setState({activeTab: key})}>
-                    <Tab eventKey={"quantifier"} title={"Quantifier Query"} animation={true}>
-                        <div style={{marginTop: "10px"}}>
-                            <em>{"Select the type of the quantifier: "}</em>
-                            <DropdownButton title={this.state.ruleType} id="dropdown-size-medium">
-                                <MenuItem key={"one-class"} eventKey={"selected from one class"}
-                                          onSelect={(evt) => this.setState({ruleType: evt, cRuleType: evt})}
-                                >{"selected from one class"}</MenuItem>
-                                <MenuItem key={"two-class"}
-                                          eventKey={"selected from one class which is directed from another class"}
-                                          onSelect={(evt) => this.setState({ruleType: evt, cRuleType: evt})}
-                                >{"selected from one class which is directed from another class"}</MenuItem>
-                                <MenuItem key={"two-class-returning"}
-                                          eventKey={"selected from one class with the help of another class"}
-                                          onSelect={(evt) => this.setState({ruleType: evt, cRuleType: evt})}
-                                >{"selected from one class with the help of another class"}</MenuItem>
-                            </DropdownButton>
+                <div style={{maxWidth: 400, margin: '0 auto 10px'}}>
+                    <Button bsStyle="primary" block onClick={() => this.submitNewRule()}>Submit</Button>
+                </div>
+                <div>
+                    <div style={{padding: "10px 5px"}}>
+                        <h4>Rule Index</h4>
+                        <FormControl id="index_textarea" type="text" placeholder="Index"/>
+                    </div>
+                    <div style={{padding: "10px 5px"}}>
+                        <h4>Rule Description</h4>
+                        <FormControl id="desc_textarea" componentClass="textarea" placeholder="Description"/>
+                    </div>
+                    <div style={{padding: "10px 5px"}}>
+                        <h4>Rule Detail</h4>
+                        <FormControl id="detail_textarea" componentClass="textarea" placeholder="Detail"
+                                     onKeyUp={() => {
+                                         let el = document.getElementById("detail_textarea");
 
-                            <div style={{marginTop: "10px"}}>{this.createQuantifierDivs()}</div>
-                        </div>
-                    </Tab>
-                    <Tab eventKey={"constraint"} title={"Constraint Query"} animation={true}>
-                        <div style={{marginTop: "10px"}}>
-                            <em>{"Select the type of the constraint: "}</em>
-                            <DropdownButton title={this.state.cRuleType} id="dropdown-size-medium">
-                                <MenuItem key={"one-class"} eventKey={"selected from one class"}
-                                          onSelect={(evt) => this.setState({cRuleType: evt})}
-                                >{"selected from one class"}</MenuItem>
-                                <MenuItem key={"two-class"}
-                                          eventKey={"selected from one class which is directed from another class"}
-                                          onSelect={(evt) => this.setState({cRuleType: evt})}
-                                >{"selected from one class which is directed from another class"}</MenuItem>
-                                <MenuItem key={"two-class-returning"}
-                                          eventKey={"selected from one class with the help of another class"}
-                                          onSelect={(evt) => this.setState({cRuleType: evt})}
-                                >{"selected from one class with the help of another class"}</MenuItem>
-                            </DropdownButton>
+                                         el.style.cssText = 'height:auto; padding:0';
+                                         el.style.cssText = 'height:' + el.scrollHeight + 'px';
+                                     }}/>
+                    </div>
+                    <div style={{padding: "10px 5px", clear: "both"}}>
+                        <h4>Rule Tags</h4>
+                        <div>{this.renderTags()}</div>
+                    </div>
+                    <div style={{padding: "10px 5px", clear: "both"}}>
+                        <h4>Files/Folders</h4>
+                        <div>{this.renderFileConstraints()}</div>
+                    </div>
+                </div>
 
-                            <div style={{marginTop: "10px"}}>{this.createConstraintDivs()}</div>
-                        </div>
-                    </Tab>
-                </Tabs>
+                <div style={{clear: "both", marginTop: "20px"}}>
+                    <Tabs animation={true} id={"gen_rule_quantifier_constraint"} activeKey={this.state.activeTab}
+                          onSelect={(key) => this.setState({activeTab: key})}>
+                        <Tab eventKey={"quantifier"} title={"Quantifier Query"} animation={true}>
+                            <div style={{marginTop: "10px"}}>
+
+                                <FormControl id="quant_textarea" componentClass="textarea"
+                                             placeholder="Detail about quantifier"
+                                             onKeyUp={() => {
+                                                 let el = document.getElementById("quant_textarea");
+
+                                                 el.style.cssText = 'height:auto; padding:0';
+                                                 el.style.cssText = 'height:' + el.scrollHeight + 'px';
+                                             }}/>
+
+                                <em>{"Select the type of the quantifier: "}</em>
+                                <DropdownButton title={this.state.ruleType} id="dropdown-size-medium">
+                                    <MenuItem key={"one-class"} eventKey={"selected from one class"}
+                                              onSelect={(evt) => this.setState({ruleType: evt, cRuleType: evt})}
+                                    >{"selected from one class"}</MenuItem>
+                                    <MenuItem key={"two-class"}
+                                              eventKey={"selected from one class which is directed from another class"}
+                                              onSelect={(evt) => this.setState({ruleType: evt, cRuleType: evt})}
+                                    >{"selected from one class which is directed from another class"}</MenuItem>
+                                    <MenuItem key={"two-class-returning"}
+                                              eventKey={"selected from one class with the help of another class"}
+                                              onSelect={(evt) => this.setState({ruleType: evt, cRuleType: evt})}
+                                    >{"selected from one class with the help of another class"}</MenuItem>
+                                </DropdownButton>
+
+                                <div style={{marginTop: "10px"}}>{this.createQuantifierDivs()}</div>
+                            </div>
+                        </Tab>
+
+                        <Tab eventKey={"constraint"} title={"Constraint Query"} animation={true}>
+                            <div style={{marginTop: "10px"}}>
+                                <FormControl id="constr_textarea" componentClass="textarea"
+                                             placeholder="Detail about conditioned"
+                                             onKeyUp={() => {
+                                                 let el = document.getElementById("constr_textarea");
+
+                                                 el.style.cssText = 'height:auto; padding:0';
+                                                 el.style.cssText = 'height:' + el.scrollHeight + 'px';
+                                             }}/>
+
+                                <em>{"Select the type of the constraint: "}</em>
+                                <DropdownButton title={this.state.cRuleType} id="dropdown-size-medium">
+                                    <MenuItem key={"one-class"} eventKey={"selected from one class"}
+                                              onSelect={(evt) => this.setState({cRuleType: evt})}
+                                    >{"selected from one class"}</MenuItem>
+                                    <MenuItem key={"two-class"}
+                                              eventKey={"selected from one class which is directed from another class"}
+                                              onSelect={(evt) => this.setState({cRuleType: evt})}
+                                    >{"selected from one class which is directed from another class"}</MenuItem>
+                                    <MenuItem key={"two-class-returning"}
+                                              eventKey={"selected from one class with the help of another class"}
+                                              onSelect={(evt) => this.setState({cRuleType: evt})}
+                                    >{"selected from one class with the help of another class"}</MenuItem>
+                                </DropdownButton>
+
+                                <div style={{marginTop: "10px"}}>{this.createConstraintDivs()}</div>
+                            </div>
+                        </Tab>
+                    </Tabs>
+                </div>
             </div>
         );
     }
@@ -207,6 +268,139 @@ class GenerateRule extends React.Component {
 
         });
 
+        // called in RuleExecutor.checkRulesForAll() and RuleExecutor.checkRules_org()
+        // [ruleTable, tagTable]
+        PubSub.subscribe('DISPLAY_RULES', (msg, data) => {
+            this.setState({tags: data[1]});
+        });
+
+        // [tagTable, newTag]
+        PubSub.subscribe('UPDATE_TAG', (msg, data) => {
+            this.setState({tags: data[0]});
+        });
+
+    }
+
+
+    /**
+     * get the data from DOM and create a new rule
+     *
+     * {
+        "ruleDescription": "",
+        "detail": "",
+        "tags": [],
+        "ruleType": {
+            "constraint": "FOLDER",
+            "checkFor": [
+                "src/com/crowdcoding/commands", "src/com/crowdcoding/entities"
+            ],
+            "type": "MIXED"
+        },
+        "index": 6,
+        "conditioned": {
+            "type": "RETURN_TO_BASE",
+            "detail": "",
+            "command1": "",
+            "command2": "",
+            "command3": ""
+        },
+        "quantifier": {
+            "type": "FIND_FROM_TEXT",
+            "detail": "",
+            "command1": "",
+            "command2": ""
+        }
+    }
+     */
+    submitNewRule() {
+        let rule = {
+            index: "",
+            ruleDescription: "",
+            detail: "",
+            tags: [],
+            ruleType: {constraint: "", checkFor: []},
+            quantifier: {},
+            conditioned: {}
+        };
+
+        rule.index = d3.select("#index_textarea").node().value;
+        rule.ruleDescription = d3.select("#desc_textarea").node().value;
+        rule.detail = d3.select("#detail_textarea").node().value;
+
+        if (rule.index === "" || rule.ruleDescription === "" || rule.detail === "") {
+            console.log("empty fields");
+            return;
+        }
+
+        rule.tags = this.state.selectedTags;
+
+        let files = this.state.filesFolders.filter((d) => d !== "");
+
+        rule.ruleType = {constraint: this.state.folderConstraint, checkFor: files, type: "WITHIN"};
+
+        if (this.state.folderConstraint === "" || (this.state.folderConstraint === "FOLDER" && files.length === 0)) {
+            console.log("folder constraints are not specified");
+            return;
+        }
+
+        switch (this.state.ruleType) {
+            case "selected from one class":
+                rule.quantifier = {detail: d3.select("#quant_textarea").node().value, command: this.state.q0};
+                rule.ruleType.type = "WITHIN";
+                break;
+            case "selected from one class which is directed from another class":
+                rule.quantifier = {
+                    type: "FIND_FROM_TEXT",
+                    detail: d3.select("#quant_textarea").node().value,
+                    command1: this.state.q0,
+                    command2: this.state.q1
+                };
+                rule.ruleType.type = "MIXED";
+                break;
+            case "selected from one class with the help of another class":
+                rule.quantifier = {
+                    type: "RETURN_TO_BASE",
+                    detail: d3.select("#quant_textarea").node().value,
+                    command1: this.state.q0,
+                    command2: this.state.q1,
+                    command3: this.state.q2
+                };
+                rule.ruleType.type = "MIXED";
+                break;
+            default:
+                console.log("quantifier is not specified");
+                return;
+
+        }
+
+        switch (this.state.cRuleType) {
+            case "selected from one class":
+                rule.conditioned = {detail: d3.select("#constr_textarea").node().value, command: this.state.c0};
+                break;
+            case "selected from one class which is directed from another class":
+                rule.conditioned = {
+                    type: "FIND_FROM_TEXT",
+                    detail: d3.select("#constr_textarea").node().value,
+                    command1: this.state.c0,
+                    command2: this.state.c1
+                };
+                break;
+            case "selected from one class with the help of another class":
+                rule.conditioned = {
+                    type: "RETURN_TO_BASE",
+                    detail: d3.select("#constr_textarea").node().value,
+                    command1: this.state.c0,
+                    command2: this.state.c1,
+                    command3: this.state.c2
+                };
+                break;
+            default:
+                console.log("condition is not specified");
+                return;
+
+        }
+
+        Utilities.sendToServer(this.state.ws, "NEW_RULE", rule);
     }
 
     /**
@@ -362,6 +556,106 @@ class GenerateRule extends React.Component {
 
 
     /**
+     * create a dropdown for tags
+     */
+    renderTags() {
+        return (
+            <div>
+                <div style={{paddingBottom: "10px"}}>
+                    <DropdownButton title={"Select Tags"} id={"drop_down"}>
+                        {this.state.tags.map((el, i) => {
+                            if (this.state.selectedTags.indexOf(el.tagName) === -1)
+                                return (
+                                    <MenuItem eventKey={el.tagName} key={i}
+                                              onSelect={(evt) => {
+                                                  const selectedTags = this.state.selectedTags;
+                                                  selectedTags.push(evt);
+                                                  this.setState({selectedTags})
+                                              }}
+                                    >{el.tagName}
+                                    </MenuItem>);
+                        })}
+                    </DropdownButton>
+                </div>
+                <div>
+                    {this.state.selectedTags.map((d, i) => {
+                        return (
+                            <div style={{float: "left", margin: "0 15px 10px 0"}} key={i}>
+                                <TiDelete size={25}
+                                          style={{cursor: "pointer", color: "#903c3c"}}
+                                          onClick={() => {
+                                              const selectedTags = this.state.selectedTags;
+                                              selectedTags.splice(i, 1);
+                                              this.setState({selectedTags});
+                                          }}/>
+                                <Label onClick={() => PubSub.publish('UPDATE_HASH', ['tag', d])}>{d}</Label>
+                            </div>)
+                    })}
+                </div>
+            </div>
+        )
+    }
+
+
+    /**
+     * render the drop down for the file/folder constraint
+     */
+    renderFileConstraints() {
+        return (
+            <div>
+                <div style={{paddingBottom: "10px"}}>
+                    <em>{"Restriction:   "}</em>
+                    <DropdownButton
+                        title={this.state.folderConstraint === "" ? "Select" : this.state.folderConstraint}
+                        className={this.state.target} id={"drop_down"}>
+                        <MenuItem eventKey={"FOLDER"} onSelect={(evt) => {
+                            this.setState({folderConstraint: evt})
+                        }}>FOLDER
+                        </MenuItem>
+                        <MenuItem eventKey={"NONE"} onSelect={(evt) => {
+                            this.setState({folderConstraint: evt})
+                        }}>NONE
+                        </MenuItem>
+                    </DropdownButton>
+                </div>
+                <div>
+                    {this.state.filesFolders.map((d, i) => {
+                        return (
+                            <div style={{margin: "0 15px 10px 0"}} key={i}>
+                                <div style={{float: "left"}}>
+                                    <TiDelete size={25}
+                                              style={{cursor: "pointer", color: "#903c3c"}}
+                                              onClick={() => {
+                                                  const filesFolders = this.state.filesFolders;
+                                                  filesFolders.splice(i, 1);
+                                                  this.setState({filesFolders});
+                                              }}/>
+                                </div>
+                                <div>
+                                    <FormControl id={"filesFolders_textarea_" + i} type="text"
+                                                 placeholder="relative File/Folder path"
+                                                 onBlur={(e) => {
+                                                     const filesFolders = this.state.filesFolders;
+                                                     filesFolders[i] = e.target.value;
+                                                     this.setState({filesFolders});
+                                                 }}/>
+                                </div>
+                            </div>)
+                    })}
+                    <div style={{clear: "both"}}>
+                        <button onClick={() => {
+                            const filesFolders = this.state.filesFolders;
+                            filesFolders.push("");
+                            this.setState({filesFolders});
+                        }}>Add files/folders
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    /**
      * receive state data from the child nodes
      */
     receiveStateData0 = () => {
@@ -452,7 +746,7 @@ class GenerateRule extends React.Component {
         for (let i = 0; i < children.length; i++)
             resChildren.push(this.traverseChildren(children[i]));
 
-        res = (children.length !== 0) ? res + "[" + resChildren.join(' and ') + "]" : res;
+        res = (children.length !== 0) ? res + ((res !== "") ? "[" : "") + resChildren.join(' and ') + ((res !== "") ? "]" : "") : res;
         res = (parentNode.children["follows"].hasOwnProperty('key')) ?
             res + '/' + this.traverseChildren(parentNode.children["follows"]) : res;
 

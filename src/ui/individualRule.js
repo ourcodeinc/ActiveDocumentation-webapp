@@ -52,17 +52,17 @@ class IndividualRule extends React.Component {
                 </div>
                 <div className="tableRow">
                     <div className="tableCell labelCell"><h4>Rule Tags</h4></div>
-                    <div id="indi_tags_div" className="tableCell infoCell"></div>
+                    <div id="indi_tags_div" className="tableCell infoCell"/>
                 </div>
                 <div className="tableRow">
                     <div className="tableCell labelCell"><h4>Matches</h4></div>
-                    <div id="indi_all_div" className="tableCell infoCell"></div>
+                    <div id="indi_all_div" className="tableCell infoCell"/>
                 </div>
                 <div className="tableRow">
                     <div className="tableCell labelCell"><h4>Rule Verified</h4></div>
                     <div className="tableCell infoCell">
-                        <div id="indi_satisfied_div" className="largePaddedDiv"></div>
-                        <div id="indi_violated_div" className="largePaddedDiv"></div>
+                        <div id="indi_satisfied_div" className="largePaddedDiv"/>
+                        <div id="indi_violated_div" className="largePaddedDiv"/>
                     </div>
                 </div>
             </div>
@@ -93,7 +93,7 @@ class IndividualRule extends React.Component {
         // [hash value]
         PubSub.subscribe('HASH', (msg, data) => {
             if (data[0] === 'rule') {
-                this.ruleI = this.rules.filter((d) => d.index === +data[1])[0];
+                this.ruleI = this.rules.filter((d) => +d.index === +data[1])[0];
                 this.displayRule();
                 d3.select('#individualRule').classed('hidden', false);
                 this.updateTextareaLength();

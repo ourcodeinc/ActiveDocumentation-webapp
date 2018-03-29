@@ -137,10 +137,9 @@ class AnnotationFragment extends React.Component {
     /**
      * send the xpath data to the parent node
      */
-    sendDataBack() {
+    sendDataBack = () => {
         this.props["callbackFromParent"]();
-
-    }
+    };
 
     /**
      * update the text of constraints

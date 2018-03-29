@@ -256,9 +256,11 @@ annotation, annotation * {
 }
 
 #generateRule .ruleGroupDiv.default {
-    border: 2px solid gray;
+    /*border: 2px solid gray;*/
     border-radius: 5px;
 
+    border: 1px solid #dadada;
+    min-height: 45px;
 }
 
 #generateRule .ruleGroupDiv.follows {
@@ -276,7 +278,7 @@ annotation, annotation * {
     border: 1px solid #dadada;
     border-radius: 5px;
     min-height: 45px;
-    padding: 0 5px 3px 5px;
+    padding: 3px 5px 3px 5px;
 }
 
 #generateRule .exprDiv {
