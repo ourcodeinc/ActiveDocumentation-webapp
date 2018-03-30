@@ -109,7 +109,7 @@ class RuleExecutor {
 
     /**
      * find relevant xml files based on the rule 'checkFor' property
-     * and chainCall respective methods based on 'ruleType' property of the rule.
+     * and call respective methods based on 'ruleType' property of the rule.
      * @param xmlFiles
      * @param ruleI
      * @returns ruleI
