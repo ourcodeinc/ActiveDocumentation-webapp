@@ -13,7 +13,7 @@ import {constants} from '../constants';
 import ExpressionFragment from "./expressionFragment";
 import DeclarationFragment from "./declarationFragment";
 import AnnotationFragment from "./annotationFragment";
-import CallFragment from "./callFragment";
+import CallFragment from "./chainCallFragment";
 import SrcMLFragment from "./srcML";
 import CustomToggle from "./customToggle";
 import CustomMenu from "./customMenu";
@@ -95,7 +95,7 @@ class FunctionFragment extends React.Component {
                                               children.follows = {
                                                   key: evt,
                                                   value: constants.code_fragment[this.props["category"]]["follows"][evt],
-                                                  target: this.state.target,
+                                                  target: this.state.target !== "" ? this.state.target : "default",
                                                   children: JSON.parse(JSON.stringify(constants.state_children)),
                                                   xpath: constants.code_fragment[this.props["category"]]["follows"][evt].xpath
                                               };
@@ -137,11 +137,36 @@ class FunctionFragment extends React.Component {
                                                             assignedId={this.props["assignedId"] + "_expr_follows"}
                                                             callbackFromParent={this.sendDataBack}
                                                             removeFunction={removeFunction}/>);
-                            case "call":
+                            case "chainCall":
                                 return (<CallFragment ws={this.ws} state={this.state.children["follows"]}
                                                       assignedId={this.props["assignedId"] + "_expr_follows"}
                                                       callbackFromParent={this.sendDataBack}
                                                       removeFunction={removeFunction}/>);
+                            case "return_value":
+                                return (
+                                    <div className={"row"} style={{margin: "0"}}>
+                                        <div className={"rowItem inlineText"}><b>return</b></div>
+                                        <div>
+                                            <SrcMLFragment ws={this.ws} state={this.state.children["follows"]}
+                                                           placeholder={"Return VariableName or Literal"}
+                                                           assignedId={this.props["assignedId"] + "_return_value"}
+                                                           callbackFromParent={this.sendDataBack}
+                                                           removeFunction={removeFunction}/>
+                                        </div>
+                                    </div>
+                                );
+                            case "return_method_call":
+                                return (
+                                    <div className={"row"} style={{margin: "0"}}>
+                                        <div className={"rowItem inlineText"}><b>return</b></div>
+                                        <div>
+                                            <CallFragment ws={this.ws} state={this.state.children["follows"]}
+                                                          assignedId={this.props["assignedId"] + "_return_call"}
+                                                          callbackFromParent={this.sendDataBack}
+                                                          removeFunction={removeFunction}/>
+                                        </div>
+                                    </div>
+                                );
                             case "name":
                             case "parameter":
                                 return (
@@ -157,7 +182,6 @@ class FunctionFragment extends React.Component {
                                                   }}/>
                                     </div>
                                 );
-                                break;
                             default:
                                 return (<div/>)
                         }
@@ -213,7 +237,7 @@ class FunctionFragment extends React.Component {
                                               this.state.children[group].push({
                                                   key: evt,
                                                   value: constants.code_fragment[this.props["category"]][group][evt],
-                                                  target: "default",
+                                                  target: "",//"default",
                                                   children: JSON.parse(JSON.stringify(constants.state_children)),
                                                   xpath: constants.code_fragment[this.props["category"]][group][evt]["xpath"]
                                               });
@@ -263,7 +287,7 @@ class FunctionFragment extends React.Component {
                                             assignedId={this.props["assignedId"] + "_expr_" + i}
                                             callbackFromParent={this.sendDataBack}
                                             removeFunction={removeFunction}/>);
-            case "call":
+            case "chainCall":
                 return (<CallFragment ws={this.ws} state={this.state.children[group][i]}
                                       assignedId={this.props["assignedId"] + "_call_" + i}
                                       callbackFromParent={this.sendDataBack}
@@ -385,9 +409,9 @@ class FunctionFragment extends React.Component {
         if (group === "within")
             return "";
         if (this.state.children["follows"].hasOwnProperty("key") && this.state.children["follows"].key === 'name' && group === 'before_2')
-            return "divBorder rowItem ruleGroupDiv " + this.state["target"];
+            return "divBorder rowItem ruleGroupDiv " + (this.state["target"] !== "" ? this.state["target"] : "default");
         if (this.state.children["follows"].hasOwnProperty("key") && this.state.children["follows"].key === 'parameter' && group === 'after')
-            return "divBorder rowItem ruleGroupDiv " + this.state["target"];
+            return "divBorder rowItem ruleGroupDiv " + (this.state["target"] !== "" ? this.state["target"] : "default");
         return "divBorder rowItem";
     }
 

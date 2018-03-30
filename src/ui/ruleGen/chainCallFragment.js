@@ -11,12 +11,11 @@ import TiDelete from 'react-icons/lib/ti/delete';
 
 import {constants} from '../constants';
 
-import ExpressionFragment from "./expressionFragment";
-import SrcMLFragment from "./srcML";
 import CustomToggle from "./customToggle";
 import CustomMenu from "./customMenu";
+import CallFragment from "./callFragment";
 
-class CallFragment extends React.Component {
+class ChainCallFragment extends React.Component {
 
 
     constructor(props) {
@@ -36,10 +35,6 @@ class CallFragment extends React.Component {
                  className={(this.state.target === "") ? "rowItem divBorder" : "rowItem ruleGroupDiv " + this.state.target}>
                 <div className={"rowGroup"}>
                     <div className={"rowItem"}>{this.renderGroup("before")}</div>
-                    <div className={"rowItem inlineText"}><b>(</b></div>
-                    <div className={"rowItem"}>{this.renderGroup("after_1")}</div>
-                    <div className={"rowItem inlineText"}><b>)</b></div>
-                    <div className={"rowItem"}>{this.renderGroup("after_2")}</div>
                     {(this.props["removeFunction"]) ?
                         <div className={"removeIcon"}>
                             <TiDelete size={25}
@@ -61,50 +56,48 @@ class CallFragment extends React.Component {
                 {this.state.children[group].map((cons, i) => {
                     return (
                         <div className={"rowItem"} key={i}>
-                            {(constants.code_fragment["call"][group][cons["key"]]["pre"] === "") ? "" :
+                            {(constants.code_fragment["chainCall"][group][cons["key"]]["pre"] === "") ? "" :
                                 <div className={"rowItem inlineText"}>
-                                    <b>{constants.code_fragment["call"][group][cons["key"]]["pre"]}</b>
+                                    <b>{constants.code_fragment["chainCall"][group][cons["key"]]["pre"]}</b>
                                 </div>
                             }
                             <div className={group === "within" ? "" : "rowItem"}
                                  style={(this.state.children[group][i].value.type === 'text') ? {paddingTop: "5px"} : {}}>
                                 {this.switchMethod(group, i, cons)}
                             </div>
-                            {(constants.code_fragment["call"][group][cons["key"]]["post"] === "") ? "" :
+                            {(constants.code_fragment["chainCall"][group][cons["key"]]["post"] === "") ? "" :
                                 <div className={group === "within" ? "inlineText" : "rowItem inlineText"}>
-                                    <b>{constants.code_fragment["call"][group][cons["key"]]["post"]}</b>
+                                    <b>{constants.code_fragment["chainCall"][group][cons["key"]]["post"]}</b>
                                 </div>
                             }
                         </div>
                     )
                 })}
 
-                {(group !== "before" || this.state.children["before"].length === 0) ?
-                    <Dropdown id="dropdown-size-medium">
-                        <CustomToggle bsRole="toggle">
-                            <MdAddBox size={25} className={"mdAddBox"}/>
-                        </CustomToggle>
-                        <CustomMenu bsRole="menu">
-                            {Object.keys(constants.code_fragment["call"][group]).map((key, i) => {
-                                return (
-                                    <MenuItem eventKey={key} key={i}
-                                              onSelect={(evt) => {
-                                                  this.state.children[group].push({
-                                                      key: evt,
-                                                      value: constants.code_fragment["call"][group][evt],
-                                                      target: "",
-                                                      children: JSON.parse(JSON.stringify(constants.state_children)),
-                                                      xpath: constants.code_fragment["call"][group][evt]["xpath"]
-                                                  });
-                                                  this.sendDataBack();
-                                                  this.forceUpdate();
-                                              }}
-                                    >{constants.code_fragment["call"][group][key].name}
-                                    </MenuItem>);
-                            })}
-                        </CustomMenu>
-                    </Dropdown>
-                    : ""}
+                <Dropdown id="dropdown-size-medium">
+                    <CustomToggle bsRole="toggle">
+                        <MdAddBox size={25} className={"mdAddBox"}/>
+                    </CustomToggle>
+                    <CustomMenu bsRole="menu">
+                        {Object.keys(constants.code_fragment["chainCall"][group]).map((key, i) => {
+                            return (
+                                <MenuItem eventKey={key} key={i}
+                                          onSelect={(evt) => {
+                                              this.state.children[group].push({
+                                                  key: evt,
+                                                  value: constants.code_fragment["chainCall"][group][evt],
+                                                  target: "",
+                                                  children: JSON.parse(JSON.stringify(constants.state_children)),
+                                                  xpath: constants.code_fragment["chainCall"][group][evt]["xpath"]
+                                              });
+                                              this.sendDataBack();
+                                              this.forceUpdate();
+                                          }}
+                                >{constants.code_fragment["chainCall"][group][key].name}
+                                </MenuItem>);
+                        })}
+                    </CustomMenu>
+                </Dropdown>
 
             </div>
         )
@@ -126,81 +119,11 @@ class CallFragment extends React.Component {
             this.sendDataBack();
         };
         switch (type) {
-            case "expression":
-                return (<ExpressionFragment category={"expression"}
-                                            ws={this.ws} state={this.state.children[group][i]}
-                                            assignedId={this.props["assignedId"] + "_expr_" + i}
-                                            callbackFromParent={this.sendDataBack}
-                                            removeFunction={removeFunction}/>);
             case "call":
                 return (<CallFragment ws={this.ws} state={this.state.children[group][i]}
                                       assignedId={this.props["assignedId"] + "_call_" + i}
                                       callbackFromParent={this.sendDataBack}
                                       removeFunction={removeFunction}/>);
-            case "srcml":
-                return (
-                    <SrcMLFragment ws={this.ws} state={this.state.children[group][i]} placeholder={"Name or Literal"}
-                                   assignedId={this.props["assignedId"] + "_name_" + group + "_" + i}
-                                   callbackFromParent={this.sendDataBack}
-                                   removeFunction={removeFunction}/>);
-            case "text":
-                return (
-                    <div style={{marginTop: "2px"}}>
-                        <div style={{float: "left"}}>
-                            <input type={"text"} className={"inputText"}
-                                   value={cons["text"]}
-                                   placeholder={this.state.children[group][i].value.placeholder}
-                                   onBlur={(e) => {
-                                       cons.text = e.target.value;
-                                       this.updateXpathText(group, i);
-                                   }}
-                                   onChange={(e) => {
-                                       const text = this.state.text;
-                                       text[group][i].text = e.target.value;
-                                       this.setState({text});
-                                   }}/>
-                        </div>
-                        <div className={"removeIcon"}>
-                            <TiDelete size={25}
-                                      className={"tiDelete"}
-                                      onClick={() => {
-                                          const children = this.state.children;
-                                          children[group].splice(i, 1);
-                                          this.setState({children});
-                                          this.sendDataBack();
-                                      }}/>
-                        </div>
-                    </div>
-                );
-            case "number":
-                return (
-                    <div style={{marginTop: "2px"}}>
-                        <div style={{float: "left"}}>
-                            <input type={"number"} className={"inputText"}
-                                   value={cons["text"]}
-                                   placeholder={this.state.children[group][i].value.placeholder}
-                                   onBlur={(e) => {
-                                       cons.text = e.target.value;
-                                       this.updateXpathNumber(group, i);
-                                   }}
-                                   onChange={(e) => {
-                                       const text = this.state.text;
-                                       text[group][i].text = e.target.value;
-                                       this.setState({text});
-                                   }}/>
-                        </div>
-                        <div className={"removeIcon"}>
-                            <TiDelete size={25}
-                                      className={"tiDelete"}
-                                      onClick={() => {
-                                          const children = this.state.children;
-                                          children[group].splice(i, 1);
-                                          this.setState({children});
-                                          this.sendDataBack();
-                                      }}/>
-                        </div>
-                    </div>
-                );
             default:
                 return (<div/>)
 
@@ -240,4 +163,4 @@ class CallFragment extends React.Component {
 
 }
 
-export default CallFragment;
+export default ChainCallFragment;

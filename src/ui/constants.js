@@ -158,9 +158,9 @@ export class constants {
                     post: ""
                 },
                 "RETURN_VALUE_IS_METHOD_CALL": {
-                    name: "Return expression is a method call ...",
+                    name: "Return expression is a method chainCall ...",
                     xpath: "src:block/descendant-or-self::src:return/src:expr",
-                    type: "call",
+                    type: "chainCall",
                     pre: "return",
                     post: ""
                 },
@@ -174,7 +174,7 @@ export class constants {
                 "HAS_INVOKE_EXPRESSION": {
                     name: "Has method invoke expression ...",
                     xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                    type: "call",
+                    type: "chainCall",
                     pre: "",
                     post: ""
                 },
@@ -193,20 +193,25 @@ export class constants {
                     xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
                     follows: "expression"
                 },
-                "call": {
-                    name: "method call expression",
+                "chainCall": {
+                    name: "method chainCall expression",
                     xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                    follows: "call"
+                    follows: "chainCall"
                 },
                 "declarationStatement": {
                     name: "declaration statement",
                     xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
                     follows: "declarationStatement"
                 },
-                "return_expr": {
-                    name: "return expression",
+                "return_value": {
+                    name: "return value/variable",
                     xpath: "src:block/descendant-or-self::src:return/src:expr",
-                    follows: "expression"
+                    follows: "srcml"
+                },
+                "return_method_call": {
+                    name: "return method chainCall",
+                    xpath: "src:block/descendant-or-self::src:return/src:expr",
+                    follows: "chainCall"
                 },
                 "parameter": {
                     name: "function parameter",
@@ -264,7 +269,7 @@ export class constants {
                 "HAS_INVOKE_EXPRESSION": {
                     name: "Has method invoke expression ...",
                     xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                    type: "call",
+                    type: "chainCall",
                     pre: "",
                     post: ""
                 },
@@ -277,15 +282,15 @@ export class constants {
                 }
             },
             "follows": {
-                "assignmentExpression": {
+                "expression": {
                     name: "assignment expression",
                     xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
                     follows: "expression"
                 },
-                "methodCall": {
-                    name: "method call expression",
+                "chainCall": {
+                    name: "method chainCall expression",
                     xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                    follows: "call"
+                    follows: "chainCall"
                 },
                 "declaration": {
                     name: "declaration",
@@ -295,7 +300,7 @@ export class constants {
                 "parameter": {
                     name: "function parameter",
                     xpath: "src:parameter_list/src:parameter/src:decl",
-                    follows: "expression"
+                    follows: "parameter"
                 }
             }
         },
@@ -374,7 +379,7 @@ export class constants {
             },
             "after": {
                 "CALL": {
-                    name: "method invoke", xpath: "src:call", type: "call",
+                    name: "method invoke", xpath: "src:chainCall", type: "chainCall",
                     pre: "",
                     post: ""
                 },
@@ -388,7 +393,7 @@ export class constants {
             "follows": {
                 "name": {name: "name", xpath: "src:name/text()", follows: ""},
                 "name/name": {name: "name/name", xpath: "src:name/src:name/text()", follows: ""},
-                "call": {name: "call", xpath: "src:call", follows: "call"}
+                "chainCall": {name: "chainCall", xpath: "src:chainCall", follows: "chainCall"}
             }
         },
         "call": {
@@ -413,8 +418,8 @@ export class constants {
                 },
                 "HAS_CALL_ARGUMENT": {
                     name: "One of its argument calls ...",
-                    xpath: "src:argument_list/src:argument/src:expr/src:call",
-                    type: "call",
+                    xpath: "src:argument_list/src:argument/src:expr/src:chainCall",
+                    type: "chainCall",
                     placeholder: "argument",
                     pre: "",
                     post: ","
@@ -434,6 +439,21 @@ export class constants {
                 "name/name": {name: "name/name", xpath: "src:name/src:name/text()", follows: ""},
                 "argument": {name: "argument", xpath: "src:argument_list/src:argument/src:expr", follows: "expression"}
             }
+
+        },
+        "chainCall": {
+            "top": {},
+            "before": {
+                "CALL": {
+                    name: "The called method is ...",
+                    xpath: "src:call",
+                    type: "call",
+                    pre: "",
+                    post: "."
+                }
+            },
+            "within": {},
+            "follows": {}
 
         },
         "declarationStatement": {
@@ -501,9 +521,9 @@ export class constants {
                     post: ""
                 },
                 "HAS_INIT_CALL": {
-                    name: "Has initialization by method call ...",
+                    name: "Has initialization by method chainCall ...",
                     xpath: "src:init",
-                    type: "call",
+                    type: "chainCall",
                     pre: "",
                     post: ""
                 }

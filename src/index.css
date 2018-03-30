@@ -216,8 +216,9 @@ annotation, annotation * {
 /*** Rule generating ***/
 
 .ruleGroupDiv {
-    padding: 10px 10px;
-    border: 1px solid gray;
+    padding: 0 10px;
+    border: 1px solid #dadada;
+    border-radius: 5px;
     /*margin: 10px 0;*/
 }
 
@@ -254,10 +255,10 @@ annotation, annotation * {
 }
 
 #generateRule .ruleGroupDiv.default {
-    /*border: 2px solid gray;*/
+    border: 2px solid gray;
     border-radius: 5px;
 
-    border: 1px solid #dadada;
+    /*border: 1px solid #dadada;*/
     /*min-height: 45px;*/
 }
 

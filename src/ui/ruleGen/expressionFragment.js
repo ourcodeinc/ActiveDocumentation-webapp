@@ -12,7 +12,7 @@ import TiDelete from 'react-icons/lib/ti/delete';
 import {constants} from '../constants';
 
 import SrcMLFragment from "./srcML";
-import CallFragment from "./callFragment";
+import CallFragment from "./chainCallFragment";
 import CustomToggle from "./customToggle";
 import CustomMenu from "./customMenu";
 
@@ -131,7 +131,7 @@ class ExpressionFragment extends React.Component {
             this.sendDataBack();
         };
         switch (type) {
-            case "call":
+            case "chainCall":
                 return (<CallFragment ws={this.ws} state={this.state.children[group][i]}
                                       assignedId={this.props["assignedId"] + "_call"}
                                       callbackFromParent={this.sendDataBack}

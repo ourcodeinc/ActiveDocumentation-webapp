@@ -7,9 +7,9 @@ import ReactDOM from 'react-dom';
 import '../../App.css';
 
 class CustomMenu extends React.Component {
-    constructor(props, context) {
-        super(props, context);
-    }
+    // constructor(props, context) {
+    //     super(props, context);
+    // }
 
     focusNext() {
         const input = ReactDOM.findDOMNode(this.input);

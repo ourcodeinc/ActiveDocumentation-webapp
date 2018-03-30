@@ -5,7 +5,7 @@
 import React from 'react';
 import '../../App.css';
 
-import {Button, DropdownButton, MenuItem, Dropdown} from 'react-bootstrap';
+import {Button, DropdownButton, MenuItem} from 'react-bootstrap';
 import MdDelete from 'react-icons/lib/md/delete';
 // import MdAddBox from 'react-icons/lib/md/add-box';
 import TiDelete from 'react-icons/lib/ti/delete';
@@ -241,7 +241,7 @@ class SrcMLFragment extends React.Component {
                                         <code>Name = <b>Name</b>.Name;<br/></code>
                                         <code>Name = Name.<b>Name</b>;</code>
                                     </div>);
-                            case "call":
+                            case "chainCall":
                                 return (
                                     <div>
                                         <em>The expression and the output is in form of the following formats (but not

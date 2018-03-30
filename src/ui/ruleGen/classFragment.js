@@ -75,7 +75,7 @@ class ClassFragment extends React.Component {
                                               children.follows = {
                                                   key: evt,
                                                   value: constants.code_fragment["class"]["follows"][evt],
-                                                  target: this.state.target,
+                                                  target: this.state.target !== "" ? this.state.target : "default",
                                                   children: JSON.parse(JSON.stringify(constants.state_children)),
                                                   xpath: constants.code_fragment["class"]["follows"][evt].xpath
                                               };
@@ -145,7 +145,6 @@ class ClassFragment extends React.Component {
                                                   }}/>
                                     </div>
                                 );
-                                break;
                             default:
                                 return (<div/>)
                         }
@@ -200,7 +199,7 @@ class ClassFragment extends React.Component {
                                               this.state.children[group].push({
                                                   key: evt,
                                                   value: constants.code_fragment["class"][group][evt],
-                                                  target: evt !== "HAS_ANNOTATION" ? "default" : "",
+                                                  target: "",//evt !== "HAS_ANNOTATION" ? "default" : "",
                                                   children: JSON.parse(JSON.stringify(constants.state_children)),
                                                   xpath: constants.code_fragment["class"][group][evt]["xpath"]
                                               });
@@ -329,7 +328,7 @@ class ClassFragment extends React.Component {
         if (group === "within")
             return "";
         if (this.state.children["follows"].hasOwnProperty("key") && this.state.children["follows"].key === 'name' && group === 'after_1')
-            return "divBorder rowItem ruleGroupDiv " + this.state["target"];
+            return "divBorder rowItem ruleGroupDiv " + (this.state["target"] !== "" ? this.state["target"] : "default");
         return "divBorder rowItem";
     }
 

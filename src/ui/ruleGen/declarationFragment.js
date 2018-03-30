@@ -13,7 +13,7 @@ import {constants} from '../constants';
 
 import ExpressionFragment from "./expressionFragment";
 import AnnotationFragment from "./annotationFragment";
-import CallFragment from "./callFragment";
+import CallFragment from "./chainCallFragment";
 import SrcMLFragment from "./srcML";
 import CustomToggle from "./customToggle";
 import CustomMenu from "./customMenu";
@@ -34,7 +34,7 @@ class DeclarationFragment extends React.Component {
     render() {
         return (
             <div id={this.props["assignedId"]}
-                 className={(this.state.target === "") ? "divBorder" : "ruleGroupDiv " + this.state.target}>
+                 className={(this.state.target === "") ? "divBorder rowItem" : "rowItem ruleGroupDiv " + this.state.target}>
                 {(this.props["removeFunction"]) ?
                     <div className={"innerRemoveIcon"}>
                         <TiDelete size={25}
@@ -55,7 +55,9 @@ class DeclarationFragment extends React.Component {
                         {(this.props["category"] === 'declarationStatement') ? this.renderGroup("within") : ""}
 
                     </div>
-                    {this.renderFollows()}
+                    <div className={"rowItem"}>
+                        {this.renderFollows()}
+                    </div>
                 </div>
             </div>
         )
@@ -195,7 +197,7 @@ class DeclarationFragment extends React.Component {
         };
 
         switch (type) {
-            case "call":
+            case "chainCall":
                 return (<CallFragment ws={this.ws} state={this.state.children[group][i]}
                                       assignedId={this.props["assignedId"] + "_call_" + i}
                                       callbackFromParent={this.sendDataBack}
@@ -272,11 +274,11 @@ class DeclarationFragment extends React.Component {
     chooseClass(group) {
         if (this.state.children["follows"].hasOwnProperty("key")) {
             if (this.state.children["follows"].key === 'type' && group === 'before_2')
-                return "divBorder rowItem ruleGroupDiv " + this.state["target"];
+                return "divBorder rowItem ruleGroupDiv " + (this.state["target"] !== "" ? this.state["target"] : "default");
             if (this.state.children["follows"].key === 'name' && group === 'after')
-                return "divBorder rowItem ruleGroupDiv " + this.state["target"];
+                return "divBorder rowItem ruleGroupDiv " + (this.state["target"] !== "" ? this.state["target"] : "default");
             if (this.state.children["follows"].key === 'initialization expression' && group === 'within')
-                return "divBorder rowItem ruleGroupDiv " + this.state["target"];
+                return "divBorder rowItem ruleGroupDiv " + (this.state["target"] !== "" ? this.state["target"] : "default");
 
         }
         return "divBorder rowItem";
