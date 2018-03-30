@@ -193,143 +193,16 @@ class GenerateRule extends React.Component {
     render() {
         return (
             <div>
-                {/*<div>*/}
-                    {/*<FormGroup validationState={(this.state.index === "") ? "error" : "success"}>*/}
-                        {/*<div style={{padding: "10px 5px"}}>*/}
-                            {/*<h4>Rule Index</h4>*/}
-                            {/*<HelpBlock>The index is a key ID of the rule. It needs to be a unique integer.</HelpBlock>*/}
-                            {/*<FormControl type="number" placeholder="Index" value={this.state.index}*/}
-                                         {/*onChange={(e) => this.setState({index: e.target.value})}/>*/}
-                        {/*</div>*/}
-                    {/*</FormGroup>*/}
-                    {/*<FormGroup validationState={(this.state.description === "") ? "error" : "success"}>*/}
-                        {/*<div style={{padding: "10px 5px"}}>*/}
-                            {/*<h4>Rule Description</h4>*/}
-                            {/*<HelpBlock>Describe what this rule verifies.</HelpBlock>*/}
-                            {/*<FormControl componentClass="textarea" placeholder="Description"*/}
-                                         {/*value={this.state.description}*/}
-                                         {/*onChange={(e) => {*/}
-                                             {/*this.setState({description: e.target.value})*/}
-                                         {/*}}*/}
-                                         {/*onKeyUp={(e) => {*/}
-                                             {/*e.target.style.cssText = 'height:auto; padding:0';*/}
-                                             {/*e.target.style.cssText = 'height:' + this.scrollHeight + 'px';*/}
-                                         {/*}}/>*/}
-                        {/*</div>*/}
-                    {/*</FormGroup>*/}
-                    {/*<FormGroup>*/}
-                        {/*<div style={{padding: "10px 5px"}}>*/}
-                            {/*<h4>Rule Detail</h4>*/}
-                            {/*<HelpBlock>More high level details about the rule.</HelpBlock>*/}
-                            {/*<FormControl componentClass="textarea" placeholder="Detail"*/}
-                                         {/*value={this.state.detail}*/}
-                                         {/*onChange={(e) => {*/}
-                                             {/*this.setState({detail: e.target.value})*/}
-                                         {/*}}*/}
-                                         {/*onKeyUp={(e) => {*/}
-                                             {/*e.target.style.cssText = 'height:auto; padding:0';*/}
-                                             {/*e.target.style.cssText = 'height:' + this.scrollHeight + 'px';*/}
-                                         {/*}}/>*/}
-                        {/*</div>*/}
-                    {/*</FormGroup>*/}
-                    {/*<FormGroup>*/}
-                        {/*<div style={{padding: "10px 5px", clear: "both"}}>*/}
-                            {/*<h4>Rule Tags</h4>*/}
-                            {/*<HelpBlock>Select the tags associated with this rule.</HelpBlock>*/}
-                            {/*<div>{this.renderTags()}</div>*/}
-                        {/*</div>*/}
-                    {/*</FormGroup>*/}
-                    {/*<FormGroup*/}
-                        {/*validationState={(this.state.folderConstraint === "" || (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0)) ? "error" : "success"}>*/}
-                        {/*<div style={{padding: "10px 5px", clear: "both"}}>*/}
-                            {/*<h4>Files/Folders</h4>*/}
-                            {/*<HelpBlock>Select how the rules are verified; 'NONE' if the rule is verified on all files*/}
-                                {/*and folders,*/}
-                                {/*'FOLDER' if the rule is checked on specific folders/files. If the restriction is*/}
-                                {/*'FOLDER',*/}
-                                {/*at least one folder/file must be specified.</HelpBlock>*/}
-                            {/*<div>{this.renderFileConstraints()}</div>*/}
-                        {/*</div>*/}
-                    {/*</FormGroup>*/}
-                {/*</div>*/}
-                <div style={{clear: "both", marginTop: "20px"}}>
-                    <Tabs animation={true} id={"gen_rule_quantifier_constraint"} activeKey={this.state.activeTab}
-                          onSelect={(key) => this.setState({activeTab: key})}>
-                        <Tab eventKey={"quantifier"} title={"Quantifier Query"} animation={true}>
-                            <div style={{marginTop: "10px"}}>
-                                <HelpBlock>The quantifier query finds the matches that the rules must be applied on.
-                                    Provide details about the quantifier.</HelpBlock>
-                                <FormControl componentClass="textarea" value={this.state.quantifierDetail}
-                                             placeholder="Detail about quantifier"
-                                             onChange={(e) => {
-                                                 this.setState({quantifierDetail: e.target.value})
-                                             }}
-                                             onKeyUp={(e) => {
-                                                 e.target.style.cssText = 'height:auto; padding:0';
-                                                 e.target.style.cssText = 'height:' + e.target.scrollHeight + 'px';
-                                             }}/>
-
-                                <em>{"Select the type of the quantifier: "}</em>
-                                <DropdownButton title={this.state.ruleType} id="dropdown-size-medium">
-                                    <MenuItem key={"one-class"} eventKey={"selected from one class"}
-                                              onSelect={(evt) => this.setState({ruleType: evt, cRuleType: evt})}
-                                    >{"selected from one class"}</MenuItem>
-                                    <MenuItem key={"two-class"}
-                                              eventKey={"selected from one class which is directed from another class"}
-                                              onSelect={(evt) => this.setState({ruleType: evt, cRuleType: evt})}
-                                    >{"selected from one class which is directed from another class"}</MenuItem>
-                                    <MenuItem key={"two-class-returning"}
-                                              eventKey={"selected from one class with the help of another class"}
-                                              onSelect={(evt) => this.setState({ruleType: evt, cRuleType: evt})}
-                                    >{"selected from one class with the help of another class"}</MenuItem>
-                                </DropdownButton>
-
-                                <div style={{marginTop: "10px"}}>{this.createQuantifierDivs()}</div>
-                            </div>
-                        </Tab>
-
-                        <Tab eventKey={"constraint"} title={"Constraint Query"} animation={true}>
-                            <div style={{marginTop: "10px"}}>
-                                <HelpBlock>The constraint query verifies that the rule is satisfied by the matches.
-                                    Provide details about the quantifier.</HelpBlock>
-                                <FormControl componentClass="textarea" value={this.state.constraintDetail}
-                                             placeholder="Detail about conditioned"
-                                             onChange={(e) => {
-                                                 this.setState({constraintDetail: e.target.value})
-                                             }}
-                                             onKeyUp={(e) => {
-                                                 e.target.style.cssText = 'height:auto; padding:0';
-                                                 e.target.style.cssText = 'height:' + e.target.scrollHeight + 'px';
-                                             }}/>
-
-                                <em>{"Select the type of the constraint: "}</em>
-                                <DropdownButton title={this.state.cRuleType} id="dropdown-size-medium">
-                                    <MenuItem key={"one-class"} eventKey={"selected from one class"}
-                                              onSelect={(evt) => this.setState({cRuleType: evt})}
-                                    >{"selected from one class"}</MenuItem>
-                                    <MenuItem key={"two-class"}
-                                              eventKey={"selected from one class which is directed from another class"}
-                                              onSelect={(evt) => this.setState({cRuleType: evt})}
-                                    >{"selected from one class which is directed from another class"}</MenuItem>
-                                    <MenuItem key={"two-class-returning"}
-                                              eventKey={"selected from one class with the help of another class"}
-                                              onSelect={(evt) => this.setState({cRuleType: evt})}
-                                    >{"selected from one class with the help of another class"}</MenuItem>
-                                </DropdownButton>
-
-                                <div style={{marginTop: "10px"}}>{this.createConstraintDivs()}</div>
-                            </div>
-                        </Tab>
-                    </Tabs>
+                {this.renderForm()}
+                {this.renderTabs()}
+                <div>
+                    <div style={{width: 200, float: "left", paddingRight: "5px"}}>
+                        <Button bsStyle="primary" block onClick={() => this.submitNewRule()}>Submit</Button>
+                    </div>
+                    <div style={{width: 200, float: "left"}}>
+                        <Button bsStyle="default" block onClick={() => this.clearForm()}>Clear Form</Button>
+                    </div>
                 </div>
-                {/*<div>*/}
-                    {/*<div style={{width: 200, float: "left", paddingRight: "5px"}}>*/}
-                        {/*<Button bsStyle="primary" block onClick={() => this.submitNewRule()}>Submit</Button>*/}
-                    {/*</div>*/}
-                    {/*<div style={{width: 200, float: "left"}}>*/}
-                        {/*<Button bsStyle="default" block onClick={() => this.clearForm()}>Clear Form</Button>*/}
-                    {/*</div>*/}
-                {/*</div>*/}
             </div>
         );
     }
@@ -364,6 +237,156 @@ class GenerateRule extends React.Component {
             this.setState({tags: data[0]});
         });
 
+    }
+
+
+    /**
+     * render the form about rule description, detail, tags, files, etc.
+     * @returns {XML}
+     */
+    renderForm() {
+        return (
+            <div>
+                <FormGroup validationState={(this.state.index === "") ? "error" : "success"}>
+                    <div style={{padding: "10px 5px"}}>
+                        <h4>Rule Index</h4>
+                        <HelpBlock>The index is a key ID of the rule. It needs to be a unique integer.</HelpBlock>
+                        <FormControl type="number" placeholder="Index" value={this.state.index}
+                                     onChange={(e) => this.setState({index: e.target.value})}/>
+                    </div>
+                </FormGroup>
+                <FormGroup validationState={(this.state.description === "") ? "error" : "success"}>
+                    <div style={{padding: "10px 5px"}}>
+                        <h4>Rule Description</h4>
+                        <HelpBlock>Describe what this rule verifies.</HelpBlock>
+                        <FormControl componentClass="textarea" placeholder="Description"
+                                     value={this.state.description}
+                                     onChange={(e) => {
+                                         this.setState({description: e.target.value})
+                                     }}
+                                     onKeyUp={(e) => {
+                                         e.target.style.cssText = 'height:auto; padding:0';
+                                         e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
+                                     }}/>
+                    </div>
+                </FormGroup>
+                <FormGroup>
+                    <div style={{padding: "10px 5px"}}>
+                        <h4>Rule Detail</h4>
+                        <HelpBlock>More high level details about the rule.</HelpBlock>
+                        <FormControl componentClass="textarea" placeholder="Detail"
+                                     value={this.state.detail}
+                                     onChange={(e) => {
+                                         this.setState({detail: e.target.value})
+                                     }}
+                                     onKeyUp={(e) => {
+                                         e.target.style.cssText = 'height:auto; padding:0';
+                                         e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
+                                     }}/>
+                    </div>
+                </FormGroup>
+                <FormGroup>
+                    <div style={{padding: "10px 5px", clear: "both"}}>
+                        <h4>Rule Tags</h4>
+                        <HelpBlock>Select the tags associated with this rule.</HelpBlock>
+                        <div>{this.renderTags()}</div>
+                    </div>
+                </FormGroup>
+                <FormGroup
+                    validationState={(this.state.folderConstraint === "" || (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0)) ? "error" : "success"}>
+                    <div style={{padding: "10px 5px", clear: "both"}}>
+                        <h4>Files/Folders</h4>
+                        <HelpBlock>Select how the rules are verified; 'NONE' if the rule is verified on all files
+                            and folders,
+                            'FOLDER' if the rule is checked on specific folders/files. If the restriction is
+                            'FOLDER',
+                            at least one folder/file must be specified.</HelpBlock>
+                        <div>{this.renderFileConstraints()}</div>
+                    </div>
+                </FormGroup>
+            </div>
+        );
+    }
+
+    /**
+     * render the quantifier and constraint tabs
+     * @returns {XML}
+     */
+    renderTabs() {
+        return (
+            <div style={{clear: "both", marginTop: "20px"}}>
+                <Tabs animation={true} id={"gen_rule_quantifier_constraint"} activeKey={this.state.activeTab}
+                      onSelect={(key) => this.setState({activeTab: key})}>
+                    <Tab eventKey={"quantifier"} title={"Quantifier Query"} animation={true}>
+                        <div style={{marginTop: "10px"}}>
+                            <HelpBlock>The quantifier query finds the matches that the rules must be applied on.
+                                Provide details about the quantifier.</HelpBlock>
+                            <FormControl componentClass="textarea" value={this.state.quantifierDetail}
+                                         placeholder="Detail about quantifier"
+                                         onChange={(e) => {
+                                             this.setState({quantifierDetail: e.target.value})
+                                         }}
+                                         onKeyUp={(e) => {
+                                             e.target.style.cssText = 'height:auto; padding:0';
+                                             e.target.style.cssText = 'height:' + e.target.scrollHeight + 'px';
+                                         }}/>
+
+                            <div style={{marginTop: "5px"}}>
+                                <em>{"Select the type of the quantifier: "}</em>
+                                <DropdownButton title={this.state.ruleType} id="dropdown-size-medium">
+                                    <MenuItem key={"one-class"} eventKey={"selected from one class"}
+                                              onSelect={(evt) => this.setState({ruleType: evt, cRuleType: evt})}
+                                    >{"selected from one class"}</MenuItem>
+                                    <MenuItem key={"two-class"}
+                                              eventKey={"selected from one class which is directed from another class"}
+                                              onSelect={(evt) => this.setState({ruleType: evt, cRuleType: evt})}
+                                    >{"selected from one class which is directed from another class"}</MenuItem>
+                                    <MenuItem key={"two-class-returning"}
+                                              eventKey={"selected from one class with the help of another class"}
+                                              onSelect={(evt) => this.setState({ruleType: evt, cRuleType: evt})}
+                                    >{"selected from one class with the help of another class"}</MenuItem>
+                                </DropdownButton>
+                            </div>
+
+                            <div style={{marginTop: "10px"}}>{this.createQuantifierDivs()}</div>
+                        </div>
+                    </Tab>
+
+                    <Tab eventKey={"constraint"} title={"Constraint Query"} animation={true}>
+                        <div style={{marginTop: "10px"}}>
+                            <HelpBlock>The constraint query verifies that the rule is satisfied by the matches.
+                                Provide details about the quantifier.</HelpBlock>
+                            <FormControl componentClass="textarea" value={this.state.constraintDetail}
+                                         placeholder="Detail about conditioned"
+                                         onChange={(e) => {
+                                             this.setState({constraintDetail: e.target.value})
+                                         }}
+                                         onKeyUp={(e) => {
+                                             e.target.style.cssText = 'height:auto; padding:0';
+                                             e.target.style.cssText = 'height:' + e.target.scrollHeight + 'px';
+                                         }}/>
+
+                            <em>{"Select the type of the constraint: "}</em>
+                            <DropdownButton title={this.state.cRuleType} id="dropdown-size-medium">
+                                <MenuItem key={"one-class"} eventKey={"selected from one class"}
+                                          onSelect={(evt) => this.setState({cRuleType: evt})}
+                                >{"selected from one class"}</MenuItem>
+                                <MenuItem key={"two-class"}
+                                          eventKey={"selected from one class which is directed from another class"}
+                                          onSelect={(evt) => this.setState({cRuleType: evt})}
+                                >{"selected from one class which is directed from another class"}</MenuItem>
+                                <MenuItem key={"two-class-returning"}
+                                          eventKey={"selected from one class with the help of another class"}
+                                          onSelect={(evt) => this.setState({cRuleType: evt})}
+                                >{"selected from one class with the help of another class"}</MenuItem>
+                            </DropdownButton>
+
+                            <div style={{marginTop: "10px"}}>{this.createConstraintDivs()}</div>
+                        </div>
+                    </Tab>
+                </Tabs>
+            </div>
+        );
     }
 
     /**
@@ -785,6 +808,7 @@ class GenerateRule extends React.Component {
                                               }}
                                     >{el.tagName}
                                     </MenuItem>);
+                            return (null);
                         })}
                     </DropdownButton>
                 </div>

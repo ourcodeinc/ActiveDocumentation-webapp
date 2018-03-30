@@ -37,8 +37,9 @@ class CallFragment extends React.Component {
                 <div className={"rowGroup"}>
                     <div className={"rowItem"}>{this.renderGroup("before")}</div>
                     <div className={"rowItem inlineText"}><b>(</b></div>
-                    <div className={"rowItem"}>{this.renderGroup("after")}</div>
+                    <div className={"rowItem"}>{this.renderGroup("after_1")}</div>
                     <div className={"rowItem inlineText"}><b>)</b></div>
+                    <div className={"rowItem"}>{this.renderGroup("after_2")}</div>
                     {(this.props["removeFunction"]) ?
                         <div className={"removeIcon"}>
                             <TiDelete size={25}
@@ -78,31 +79,32 @@ class CallFragment extends React.Component {
                     )
                 })}
 
-
-                <Dropdown id="dropdown-size-medium">
-                    <CustomToggle bsRole="toggle">
-                        <MdAddBox size={25} className={"mdAddBox"}/>
-                    </CustomToggle>
-                    <CustomMenu bsRole="menu">
-                        {Object.keys(constants.code_fragment["call"][group]).map((key, i) => {
-                            return (
-                                <MenuItem eventKey={key} key={i}
-                                          onSelect={(evt) => {
-                                              this.state.children[group].push({
-                                                  key: evt,
-                                                  value: constants.code_fragment["call"][group][evt],
-                                                  target: "",
-                                                  children: JSON.parse(JSON.stringify(constants.state_children)),
-                                                  xpath: constants.code_fragment["call"][group][evt]["xpath"]
-                                              });
-                                              this.sendDataBack();
-                                              this.forceUpdate();
-                                          }}
-                                >{constants.code_fragment["call"][group][key].name}
-                                </MenuItem>);
-                        })}
-                    </CustomMenu>
-                </Dropdown>
+                {(group !== "before" || this.state.children["before"].length === 0) ?
+                    <Dropdown id="dropdown-size-medium">
+                        <CustomToggle bsRole="toggle">
+                            <MdAddBox size={25} className={"mdAddBox"}/>
+                        </CustomToggle>
+                        <CustomMenu bsRole="menu">
+                            {Object.keys(constants.code_fragment["call"][group]).map((key, i) => {
+                                return (
+                                    <MenuItem eventKey={key} key={i}
+                                              onSelect={(evt) => {
+                                                  this.state.children[group].push({
+                                                      key: evt,
+                                                      value: constants.code_fragment["call"][group][evt],
+                                                      target: "",
+                                                      children: JSON.parse(JSON.stringify(constants.state_children)),
+                                                      xpath: constants.code_fragment["call"][group][evt]["xpath"]
+                                                  });
+                                                  this.sendDataBack();
+                                                  this.forceUpdate();
+                                              }}
+                                    >{constants.code_fragment["call"][group][key].name}
+                                    </MenuItem>);
+                            })}
+                        </CustomMenu>
+                    </Dropdown>
+                    : ""}
 
             </div>
         )
