@@ -67,7 +67,7 @@ export class HeaderBar extends Component {
                 case "index":
                     this.setState({hash: 'index', title: "Active Documentation", content: ""});
                     break;
-                case "ruleGen":
+                case "genRule":
                     this.setState({hash: 'genRule', title: "New Rule", content: ""});
                     break;
                 default:
