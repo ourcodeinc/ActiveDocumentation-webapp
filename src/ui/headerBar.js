@@ -67,6 +67,9 @@ export class HeaderBar extends Component {
                 case "index":
                     this.setState({hash: 'index', title: "Active Documentation", content: ""});
                     break;
+                case "ruleGen":
+                    this.setState({hash: 'genRule', title: "New Rule", content: ""});
+                    break;
                 default:
                     //this.setState({hash: 'index', title: "Active Documentation", content: ""});
                     break;
@@ -148,6 +151,12 @@ export class HeaderBar extends Component {
                 return (
                     <div>
                         <h3>Rule {this.state.title} is changed.</h3>
+                    </div>
+                );
+            case 'genRule':
+                return (
+                    <div>
+                        <h3>{this.state.title}</h3>
                     </div>
                 );
             default:

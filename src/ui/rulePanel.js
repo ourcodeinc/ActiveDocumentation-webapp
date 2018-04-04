@@ -4,6 +4,7 @@
 
 import React from 'react';
 import '../App.css';
+import * as d3 from 'd3';
 
 // import ReactDOM from 'react-dom';
 import PubSub from 'pubsub-js';
@@ -49,8 +50,8 @@ class RulePanel extends React.Component {
                                  onKeyUp={() => {
                                      let el = document.getElementById(`rule_desc_${this.ruleI['index']}`);
 
-                                     el.style.cssText = 'height:auto; padding:0';
-                                     el.style.cssText = 'height:' + el.scrollHeight + 'px';
+                                     el.style.cssText = 'height:0';
+                                     el.style.cssText = 'overflow:hidden;height:' + el.scrollHeight + 'px';
                                  }}/>
                 </FormGroup>
                 <Collapse in={this.state.open}>
@@ -64,8 +65,8 @@ class RulePanel extends React.Component {
                                          onKeyUp={() => {
                                              let el = document.getElementById(`rule_detail_${this.ruleI['index']}`);
 
-                                             el.style.cssText = 'height:auto; padding:0';
-                                             el.style.cssText = 'height:' + el.scrollHeight + 'px';
+                                             el.style.cssText = 'height:0';
+                                             el.style.cssText = 'overflow:hidden;height:' + el.scrollHeight + 'px';
                                          }}/>
                         </FormGroup>
                         <div>{this.tagRender()}</div>
@@ -115,6 +116,14 @@ class RulePanel extends React.Component {
             return;
         }
         this.setState({open: false, class: "ruleDiv"});
+
+        // fixed the height of text areas
+        d3.select("#ruleResults").selectAll("textarea")
+            .each(function () {
+                let el = this;
+                el.style.cssText = 'height:0';
+                el.style.cssText = 'overflow:hidden;height:' + (el.scrollHeight + 5) + 'px';
+            });
 
     }
 
