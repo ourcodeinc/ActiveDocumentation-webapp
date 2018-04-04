@@ -14,7 +14,7 @@ import {constants} from '../constants';
 import ExpressionFragment from "./expressionFragment";
 import AnnotationFragment from "./annotationFragment";
 import CallFragment from "./chainCallFragment";
-import SrcMLFragment from "./srcML";
+import SrcMLFragment from "./srcMLFragment";
 import CustomToggle from "./customToggle";
 import CustomMenu from "./customMenu";
 

@@ -12,7 +12,7 @@ import TiDelete from 'react-icons/lib/ti/delete';
 import {constants} from '../constants';
 
 import ExpressionFragment from "./expressionFragment";
-import SrcMLFragment from "./srcML";
+import SrcMLFragment from "./srcMLFragment";
 import CustomToggle from "./customToggle";
 import CustomMenu from "./customMenu";
 import ChainCallFragment from "./chainCallFragment";

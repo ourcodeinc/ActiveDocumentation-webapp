@@ -11,7 +11,7 @@ import TiDelete from 'react-icons/lib/ti/delete';
 
 import {constants} from '../constants';
 
-import SrcMLFragment from "./srcML";
+import SrcMLFragment from "./srcMLFragment";
 import CallFragment from "./chainCallFragment";
 import CustomToggle from "./customToggle";
 import CustomMenu from "./customMenu";

@@ -14,7 +14,7 @@ import ExpressionFragment from "./expressionFragment";
 import DeclarationFragment from "./declarationFragment";
 import AnnotationFragment from "./annotationFragment";
 import CallFragment from "./chainCallFragment";
-import SrcMLFragment from "./srcML";
+import SrcMLFragment from "./srcMLFragment";
 import CustomToggle from "./customToggle";
 import CustomMenu from "./customMenu";
 

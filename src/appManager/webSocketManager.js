@@ -33,7 +33,7 @@ class WebSocketManager {
             let message = JSON.parse(e.data);
 
             // if (message.command === 'PROJECT_HIERARCHY')
-            //     console.log(message);
+                console.log(message);
 
             switch (message.command) {
 
@@ -128,6 +128,10 @@ class WebSocketManager {
                     ruleTable.push(newAddedRule);
                     // received by RuleExecutor
                     PubSub.publish('VERIFY_RULE', [xml, ruleTable, tagTable]);
+                    break;
+
+                case "PROJECT":
+                    // console.log(message);
                     break;
 
                 case "ENTER":
