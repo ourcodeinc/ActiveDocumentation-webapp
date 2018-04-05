@@ -32,8 +32,8 @@ class WebSocketManager {
 
             let message = JSON.parse(e.data);
 
-            // if (message.command === 'PROJECT_HIERARCHY')
-                console.log(message);
+            // if (message.command !== 'XML')
+            //     console.log(message);
 
             switch (message.command) {
 
@@ -118,16 +118,18 @@ class WebSocketManager {
                     break;
 
                 // after sending a piece of code DECL_STMT
-                case "DECL_STMT_XML":
-                    PubSub.publish('DECL_STMT_XML', [message.data]);
-                    break;
-
-                // after sending a piece of code DECL_STMT
                 case "NEW_RULE":
                     let newAddedRule = JSON.parse(message.data['rule']);
                     ruleTable.push(newAddedRule);
                     // received by RuleExecutor
                     PubSub.publish('VERIFY_RULE', [xml, ruleTable, tagTable]);
+                    break;
+
+                // after sending a piece of code DECL_STMT
+                case "SHOW_RULES_FOR_FILE":
+                    let focusedFilePath = message.data;
+                    PubSub.publish('SHOW_RULES_FOR_FILE', [focusedFilePath]);
+                    PubSub.publish('UPDATE_HASH', ['rulesForFile']);
                     break;
 
                 case "PROJECT":

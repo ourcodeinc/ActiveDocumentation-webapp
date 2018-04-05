@@ -70,6 +70,9 @@ export class HeaderBar extends Component {
                 case "genRule":
                     this.setState({hash: 'genRule', title: "New Rule", content: ""});
                     break;
+                case "rulesForFile":
+                    // this.setState({hash: 'rulesForFile', title: "", content: data[0]});
+                    break;
                 default:
                     //this.setState({hash: 'index', title: "Active Documentation", content: ""});
                     break;
@@ -107,6 +110,13 @@ export class HeaderBar extends Component {
             this.tags = data[0];
             this.updateTextareaLength();
         });
+
+        // [tagTable]
+        PubSub.subscribe('SHOW_RULES_FOR_FILE', (msg, data) => {
+            this.tags = data[0];
+            this.setState({hash: 'rulesForFile', title: "", content: data[0]});
+        });
+
     }
 
     /**
@@ -144,7 +154,6 @@ export class HeaderBar extends Component {
                     <div>
                         <span className="text-16 primary">Code Changed in File:</span><br/>
                         <span className="text-24 important">{this.state.content}</span>
-
                     </div>
                 );
             case 'ruleChanged':
@@ -157,6 +166,13 @@ export class HeaderBar extends Component {
                 return (
                     <div>
                         <h3>{this.state.title}</h3>
+                    </div>
+                );
+            case 'rulesForFile':
+                return (
+                    <div>
+                        <span className="text-16 primary">Rules applicable for File:</span><br/>
+                        <span className="text-24 important">{this.state.content}</span>
                     </div>
                 );
             default:

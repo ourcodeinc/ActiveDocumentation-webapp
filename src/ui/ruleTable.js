@@ -60,7 +60,7 @@ class RuleTable extends React.Component {
         PubSub.subscribe('HASH', (msg, data) => {
 
             d3.select('#ruleResults').classed('hidden', () => {
-                return (['rules', 'tag', 'codeChanged'].indexOf(data[0]) === -1 )
+                return (['rules', 'tag', 'codeChanged', 'rulesForFile'].indexOf(data[0]) === -1 )
             });
 
             if (data[0] === 'tag') {
@@ -88,6 +88,13 @@ class RuleTable extends React.Component {
         PubSub.subscribe('DISPLAY_UPDATE_RULES_FOR_FILE', (msg, data) => {
             this.rules = data[0];
             this.setState({rulesToDisplay: this.findRuleSet(data[1]), codeChanged: true});
+            this.updateTextareaLength();
+        });
+
+        // [filePath]
+        PubSub.subscribe('SHOW_RULES_FOR_FILE', (msg, data) => {
+            this.setState({rulesToDisplay: this.findRuleSet(data[0]), codeChanged: false});
+            this.updateTextareaLength();
         });
 
 
