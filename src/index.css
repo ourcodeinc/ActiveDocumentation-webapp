@@ -195,14 +195,17 @@ annotation, annotation * {
 
 .text-24 {
     font-size: 24px;
+    word-break: break-all;
 }
 
 .text-20 {
     font-size: 20px;
+    word-break: break-all;
 }
 
 .text-16 {
     font-size: 16px;
+    word-break: break-all;
 }
 
 .important {
