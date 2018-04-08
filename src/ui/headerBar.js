@@ -121,8 +121,7 @@ export class HeaderBar extends Component {
     /**
      * update tag desc and send to server
      */
-    updateTag() {
-        let newDesc = document.getElementById('tag_desc').value;
+    updateTag(newDesc) {
         if (newDesc !== this.tag['detail']) {
             this.tag['detail'] = newDesc;
             Utilities.sendToServer(this.ws, "MODIFIED_TAG", this.tag);
@@ -137,7 +136,7 @@ export class HeaderBar extends Component {
                         <span className="text-16 primary">Rules related to tag: </span><br/>
                         <span className="text-24 important">{this.state.title}</span>
                         <FormControl componentClass="textarea" defaultValue={this.state.content}
-                                     onBlur={() => this.updateTag()} key={new Date()}
+                                     onBlur={(e) => this.updateTag(e.target.value)} key={new Date()}
                                      placeholder="Information about tag"/>
                     </div>
                 );
