@@ -279,7 +279,7 @@ class RuleExecutor {
         if (!ruleI.hasOwnProperty('xPathQueryResult'))
             ruleI['xPathQueryResult'] = [];
 
-        ruleI['xPathQueryResult'].push({'filePath': ruleI['scope'], 'data': resultData});
+        ruleI['xPathQueryResult'].push({'filePath': 'MIXED', 'data': resultData});
 
         return ruleI;
 
@@ -333,7 +333,7 @@ class RuleExecutor {
         if (!ruleI.hasOwnProperty('xPathQueryResult'))
             ruleI['xPathQueryResult'] = [];
 
-        ruleI['xPathQueryResult'].push({'filePath': ruleI['scope'], 'data': resultData});
+        ruleI['xPathQueryResult'].push({'filePath': 'MIXED', 'data': resultData});
 
         // console.log(ruleI.index, resultData);
         return ruleI;
