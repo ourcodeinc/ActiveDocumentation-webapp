@@ -111,9 +111,8 @@ export class HeaderBar extends Component {
             this.updateTextareaLength();
         });
 
-        // [tagTable]
+        // [focusedFilePath]
         PubSub.subscribe('SHOW_RULES_FOR_FILE', (msg, data) => {
-            this.tags = data[0];
             this.setState({hash: 'rulesForFile', title: "", content: data[0]});
         });
 
