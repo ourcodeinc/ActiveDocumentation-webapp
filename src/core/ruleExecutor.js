@@ -30,7 +30,7 @@ class RuleExecutor {
 
         // [xml, ruleTable, tagTable]
         PubSub.subscribe('VERIFY_RULE', (msg, data) => {
-            data[1][data[1].length - 1] = this.runRulesByTypes(data[0], data[1][data[1].length - 1]);
+            data[1][data[1].length - 1] = this.runRulesByTypes(data[0], data[1][data[1].length - 1]); // for new file
             PubSub.publish('DISPLAY_RULES', [data[1], data[2]]);
             PubSub.publish('UPDATE_HASH', ['rule', data[1][data[1].length - 1].index]);
         });
@@ -65,12 +65,12 @@ class RuleExecutor {
         for (let i = 0; i < ruleTable.length; i++) {
 
             if (ruleTable[i]['xPathQueryResult'].filter((d) => {
-                    return d['filePath'] === filePath;
+                    return d['filePath'] === filePath || d['filePath'] === "MIXED";
                 }).length === 0)
                 continue;
 
             let ruleResultI = ruleTable[i]['xPathQueryResult'].filter((d) => {
-                return d['filePath'] === filePath;
+                return d['filePath'] === filePath || d['filePath'] === "MIXED";
             })[0]['data'];
 
             // console.log(ruleResultI);
@@ -81,11 +81,10 @@ class RuleExecutor {
             let prevViolated = ruleResultI['violated'];
 
             // console.log(prevSatisfied, prevViolated);
-
-            ruleTable[i] = this.runRulesByTypes(targetXml, ruleTable[i]);
+            ruleTable[i] = this.runRulesByTypes(ruleTable[i]['xPathQueryResult'][0]['filePath'] === "MIXED" ? xmlFiles : targetXml, ruleTable[i]);
 
             ruleResultI = ruleTable[i]['xPathQueryResult'].filter((d) => {
-                return d['filePath'] === filePath;
+                return d['filePath'] === filePath || d['filePath'] === "MIXED";
             })[0]['data'];
 
             // console.log(ruleResultI);
@@ -279,7 +278,7 @@ class RuleExecutor {
         if (!ruleI.hasOwnProperty('xPathQueryResult'))
             ruleI['xPathQueryResult'] = [];
 
-        ruleI['xPathQueryResult'].push({'filePath': 'MIXED', 'data': resultData});
+        ruleI['xPathQueryResult'] = [{'filePath': 'BETWEEN', 'data': resultData}];
 
         return ruleI;
 
@@ -333,9 +332,8 @@ class RuleExecutor {
         if (!ruleI.hasOwnProperty('xPathQueryResult'))
             ruleI['xPathQueryResult'] = [];
 
-        ruleI['xPathQueryResult'].push({'filePath': 'MIXED', 'data': resultData});
+        ruleI['xPathQueryResult'] = [{'filePath': 'MIXED', 'data': resultData}];
 
-        // console.log(ruleI.index, resultData);
         return ruleI;
 
     }

@@ -112,7 +112,7 @@ class RulePanel extends React.Component {
             return;
         }
         if (!ruleIfile['changed'] && ruleIfile['violated'] === 0 && ruleIfile['satisfied'] === 0) {
-            this.setState({open: false, class: "ruleDiv hidden"});
+            this.setState({open: false, class: "ruleDiv"});
             return;
         }
         this.setState({open: false, class: "ruleDiv"});
