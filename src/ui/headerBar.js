@@ -70,6 +70,9 @@ export class HeaderBar extends Component {
                 case "genRule":
                     this.setState({hash: 'genRule', title: "New Rule", content: ""});
                     break;
+                case "violatedRules":
+                    this.setState({hash: 'genRule', title: "Violated Rules", content: ""});
+                    break;
                 case "rulesForFile":
                     // this.setState({hash: 'rulesForFile', title: "", content: data[0]});
                     break;
@@ -144,7 +147,7 @@ export class HeaderBar extends Component {
                 return (
                     <div>
                         <span className="text-16 primary">Rule Index: </span>
-                        <span className="text-24 important">{this.state.title}</span>
+                        <span className="text-24 important">{this.state.title.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
                     </div>
                 );
             case 'codeChanged':
@@ -170,7 +173,7 @@ export class HeaderBar extends Component {
                 return (
                     <div>
                         <span className="text-16 primary">Rules applicable for File:</span><br/>
-                        <span className="text-24 important">{this.state.content}</span>
+                        <span className="text-24 important">{this.state.content.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
                     </div>
                 );
             default:

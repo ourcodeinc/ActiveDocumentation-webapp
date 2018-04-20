@@ -27,7 +27,8 @@ class RuleTable extends React.Component {
                 {
                     this.state.rulesToDisplay.map((d, i) => {
                         return (<div className="largePaddedDiv ruleContainer" key={i}>
-                            <RulePanel ruleData={d} ws={this.state.ws} key={new Date()} codeChanged={this.state.codeChanged}/>
+                            <RulePanel ruleData={d} ws={this.state.ws} key={new Date()}
+                                       codeChanged={this.state.codeChanged}/>
                         </div>)
                     })
                 }
@@ -60,7 +61,7 @@ class RuleTable extends React.Component {
         PubSub.subscribe('HASH', (msg, data) => {
 
             d3.select('#ruleResults').classed('hidden', () => {
-                return (['rules', 'tag', 'codeChanged', 'rulesForFile'].indexOf(data[0]) === -1 )
+                return (['rules', 'tag', 'codeChanged', 'rulesForFile', 'violatedRules'].indexOf(data[0]) === -1 )
             });
 
             if (data[0] === 'tag') {
@@ -72,6 +73,13 @@ class RuleTable extends React.Component {
             if (data[0] === 'rules') {
                 // console.log(this.rules.filter((d) => d['index'] === 123)[0]);
                 this.setState({rulesToDisplay: this.rules, codeChanged: false});
+            }
+
+            if (data[0] === 'violatedRules') {
+                this.setState({
+                    rulesToDisplay: this.rules.filter(d => d['xPathQueryResult'].map(dd => dd['data'].violated).reduce((a, b) => a + b) !== 0),
+                    codeChanged: false
+                });
             }
 
             this.updateTextareaLength();

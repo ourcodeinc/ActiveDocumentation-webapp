@@ -30,14 +30,20 @@ export class NavBar extends Component {
                 </Navbar.Header>
                 <Navbar.Collapse>
                     <Nav
-                        onSelect={key => {window.location.hash = (key === 1) ? "#/index" : (key === 2) ? "#/rules" : (key === 3) ? "#/genRule" : "#/index"}}>
+                        onSelect={key => {
+                            window.location.hash = (key === 1) ? "#/index" : (key === 2) ? "#/rules"
+                                : (key === 3) ? "#/violatedRules" : (key === 4) ? "#/genRule" : "#/index"
+                        }}>
                         <NavItem eventKey={1}>
                             Table of Content
                         </NavItem>
                         <NavItem eventKey={2}>
-                            Rules
+                            All Rules
                         </NavItem>
                         <NavItem eventKey={3}>
+                            Violated Rules
+                        </NavItem>
+                        <NavItem eventKey={4}>
                             Generate Rules
                         </NavItem>
                     </Nav>
