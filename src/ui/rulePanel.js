@@ -94,7 +94,7 @@ class RulePanel extends React.Component {
     componentDidMount() {
 
         if (!this.codeChanged) {
-            this.setState({open: true, class: "ruleDiv"});
+            this.setState({open: this.ruleI['xPathQueryResult'].map(dd => dd['data'].violated).reduce((a, b) => a + b) !== 0, class: "ruleDiv"});
             return;
         }
 
