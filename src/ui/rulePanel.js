@@ -38,7 +38,7 @@ class RulePanel extends React.Component {
                         {/*<Label bsStyle="default" onClick={() => PubSub.publish('UPDATE_HASH', ['rule', this.ruleI['index']])}>{this.ruleI['index']}</Label>*/}
                     </ControlLabel>
                     <div style={{float: 'right'}}>
-                        (<a onClick={() => PubSub.publish('UPDATE_HASH', ['rule', this.ruleI['index']])}>view</a>)
+                        (<a onClick={() => PubSub.publish('UPDATE_HASH', ['rule', this.ruleI['index']])}>view the rule and all snippets</a>)
                         <FaCaretUp size={20} onClick={() => this.setState({open: false})}
                                    style={this.caretClass[this.state.open.toString()]}/>
                         <FaCaretDown size={20} onClick={() => this.setState({open: true})}
@@ -111,11 +111,15 @@ class RulePanel extends React.Component {
             this.setState({open: true, class: "ruleDiv red-bg"});
             return;
         }
-        if (!ruleIfile['changed'] && ruleIfile['violated'] === 0 && ruleIfile['satisfied'] === 0) {
+        // if (!ruleIfile['changed'] && ruleIfile['violated'] === 0 && ruleIfile['satisfied'] === 0) {
+        //     this.setState({open: false, class: "ruleDiv"});
+        //     return;
+        // }
+        if (ruleIfile['violated'] === 0) {
             this.setState({open: false, class: "ruleDiv"});
             return;
         }
-        this.setState({open: false, class: "ruleDiv"});
+        this.setState({open: true, class: "ruleDiv"});
 
         // fixed the height of text areas
         d3.select("#ruleResults").selectAll("textarea")
