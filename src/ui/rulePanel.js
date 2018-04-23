@@ -9,7 +9,7 @@ import * as d3 from 'd3';
 // import ReactDOM from 'react-dom';
 import PubSub from 'pubsub-js';
 import Utilities from '../core/utilities';
-import {Tab, Tabs, Badge, FormGroup, ControlLabel, FormControl, Label, Collapse} from 'react-bootstrap';
+import {Tab, Tabs, Badge, FormGroup, ControlLabel, Label, Collapse} from 'react-bootstrap';
 import FaCaretDown from 'react-icons/lib/fa/caret-down';
 import FaCaretUp from 'react-icons/lib/fa/caret-up';
 
@@ -34,9 +34,9 @@ class RulePanel extends React.Component {
         return (
             <div className={this.state.class} id={`rule_panel_${this.ruleI['index']}`}>
                 <FormGroup>{/*onClick={() => this.setState({open: !this.state.open})}>*/}
-                    <ControlLabel>Rule Description
+                    {/*<ControlLabel>Rule Description*/}
                         {/*<Label bsStyle="default" onClick={() => PubSub.publish('UPDATE_HASH', ['rule', this.ruleI['index']])}>{this.ruleI['index']}</Label>*/}
-                    </ControlLabel>
+                    {/*</ControlLabel>*/}
                     <div style={{float: 'right'}}>
                         (<a onClick={() => PubSub.publish('UPDATE_HASH', ['rule', this.ruleI['index']])}>view the rule and all snippets</a>)
                         <FaCaretUp size={20} onClick={() => this.setState({open: false})}
@@ -44,31 +44,33 @@ class RulePanel extends React.Component {
                         <FaCaretDown size={20} onClick={() => this.setState({open: true})}
                                      style={this.caretClass[(!this.state.open).toString()]}/>
                     </div>
-                    <FormControl componentClass="textarea" defaultValue={this.ruleI['ruleDescription']}
-                                 id={`rule_desc_${this.ruleI['index']}`}
-                                 onBlur={() => this.updateRules(this.ruleI['index'])} placeholder="Rule Description"
-                                 onKeyUp={() => {
-                                     let el = document.getElementById(`rule_desc_${this.ruleI['index']}`);
+                    <ControlLabel>{this.ruleI['ruleDescription']}</ControlLabel>
+                    <p>{this.ruleI['detail']}</p>
+                    {/*<FormControl componentClass="textarea" defaultValue={this.ruleI['ruleDescription']}*/}
+                                 {/*id={`rule_desc_${this.ruleI['index']}`}*/}
+                                 {/*onBlur={() => this.updateRules(this.ruleI['index'])} placeholder="Rule Description"*/}
+                                 {/*onKeyUp={() => {*/}
+                                     {/*let el = document.getElementById(`rule_desc_${this.ruleI['index']}`);*/}
 
-                                     el.style.cssText = 'height:0';
-                                     el.style.cssText = 'overflow:hidden;height:' + el.scrollHeight + 'px';
-                                 }}/>
+                                     {/*el.style.cssText = 'height:0';*/}
+                                     {/*el.style.cssText = 'overflow:hidden;height:' + el.scrollHeight + 'px';*/}
+                                 {/*}}/>*/}
                 </FormGroup>
                 <Collapse in={this.state.open}>
                     <div>
-                        <FormGroup>
-                            <ControlLabel>Rule Detail</ControlLabel>
-                            <FormControl componentClass="textarea" defaultValue={this.ruleI['detail']}
-                                         id={`rule_detail_${this.ruleI['index']}`}
-                                         onBlur={() => this.updateRules(this.ruleI['index'])}
-                                         placeholder="Rule Detail"
-                                         onKeyUp={() => {
-                                             let el = document.getElementById(`rule_detail_${this.ruleI['index']}`);
+                        {/*<FormGroup>*/}
+                            {/*<ControlLabel>Rule Detail</ControlLabel>*/}
+                            {/*<FormControl componentClass="textarea" defaultValue={this.ruleI['detail']}*/}
+                                         {/*id={`rule_detail_${this.ruleI['index']}`}*/}
+                                         {/*onBlur={() => this.updateRules(this.ruleI['index'])}*/}
+                                         {/*placeholder="Rule Detail"*/}
+                                         {/*onKeyUp={() => {*/}
+                                             {/*let el = document.getElementById(`rule_detail_${this.ruleI['index']}`);*/}
 
-                                             el.style.cssText = 'height:0';
-                                             el.style.cssText = 'overflow:hidden;height:' + el.scrollHeight + 'px';
-                                         }}/>
-                        </FormGroup>
+                                             {/*el.style.cssText = 'height:0';*/}
+                                             {/*el.style.cssText = 'overflow:hidden;height:' + el.scrollHeight + 'px';*/}
+                                         {/*}}/>*/}
+                        {/*</FormGroup>*/}
                         <div>{this.tagRender()}</div>
                         <div style={{paddingTop: 10 + 'px', clear: 'both'}}>
                             <Tabs animation={true} id={"rules_" + this.ruleI['index']} activeKey={this.state.activeTab}
