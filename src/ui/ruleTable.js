@@ -18,7 +18,7 @@ class RuleTable extends React.Component {
         super();
 
         this.attachListener();
-        this.state = {rulesToDisplay: [], codeChanged: false};
+        this.state = {rulesToDisplay: [], codeChanged: false, filePath: ""};
     }
 
     render() {
@@ -27,7 +27,7 @@ class RuleTable extends React.Component {
                 {
                     this.state.rulesToDisplay.map((d, i) => {
                         return (<div className="largePaddedDiv ruleContainer" key={i}>
-                            <RulePanel ruleData={d} ws={this.state.ws} key={new Date()}
+                            <RulePanel ruleData={d} ws={this.state.ws} key={new Date()} filePath={this.state.filePath}
                                        codeChanged={this.state.codeChanged}/>
                         </div>)
                     })
@@ -67,18 +67,20 @@ class RuleTable extends React.Component {
             if (data[0] === 'tag') {
                 this.setState({
                     rulesToDisplay: this.rules.filter((d) => d['tags'].indexOf(data[1]) !== -1),
-                    codeChanged: false
+                    codeChanged: false,
+                    filePath: ""
                 })
             }
             if (data[0] === 'rules') {
                 // console.log(this.rules.filter((d) => d['index'] === 123)[0]);
-                this.setState({rulesToDisplay: this.rules, codeChanged: false});
+                this.setState({rulesToDisplay: this.rules, codeChanged: false, filePath: "none"});
             }
 
             if (data[0] === 'violatedRules') {
                 this.setState({
                     rulesToDisplay: this.rules.filter(d => d['xPathQueryResult'].map(dd => dd['data'].violated).reduce((a, b) => a + b) !== 0),
-                    codeChanged: false
+                    codeChanged: false,
+                    filePath: "none"
                 });
             }
 
@@ -95,13 +97,13 @@ class RuleTable extends React.Component {
         // [ruleTable, filePath]
         PubSub.subscribe('DISPLAY_UPDATE_RULES_FOR_FILE', (msg, data) => {
             this.rules = data[0];
-            this.setState({rulesToDisplay: this.findRuleSet(data[1]), codeChanged: true});
+            this.setState({rulesToDisplay: this.rules, codeChanged: true, filePath: data[1]});
             this.updateTextareaLength();
         });
 
         // [filePath]
         PubSub.subscribe('SHOW_RULES_FOR_FILE', (msg, data) => {
-            this.setState({rulesToDisplay: this.findRuleSet(data[0]), codeChanged: false});
+            this.setState({rulesToDisplay: this.rules, codeChanged: false, filePath: data[0]});
             this.updateTextareaLength();
         });
 

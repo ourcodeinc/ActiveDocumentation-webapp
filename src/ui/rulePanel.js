@@ -30,15 +30,14 @@ class RulePanel extends React.Component {
         this.ruleI = this.props['ruleData'];
         this.ws = this.props['ws'];
         this.codeChanged = this.props['codeChanged'];
+        this.filePath = this.props['filePath'];
 
         return (
             <div className={this.state.class} id={`rule_panel_${this.ruleI['index']}`}>
-                <FormGroup>{/*onClick={() => this.setState({open: !this.state.open})}>*/}
-                    {/*<ControlLabel>Rule Description*/}
-                        {/*<Label bsStyle="default" onClick={() => PubSub.publish('UPDATE_HASH', ['rule', this.ruleI['index']])}>{this.ruleI['index']}</Label>*/}
-                    {/*</ControlLabel>*/}
+                <FormGroup>
                     <div style={{float: 'right'}}>
-                        (<a onClick={() => PubSub.publish('UPDATE_HASH', ['rule', this.ruleI['index']])}>view the rule and all snippets</a>)
+                        (<a onClick={() => PubSub.publish('UPDATE_HASH', ['rule', this.ruleI['index']])}>view the rule
+                        and all snippets</a>)
                         <FaCaretUp size={20} onClick={() => this.setState({open: false})}
                                    style={this.caretClass[this.state.open.toString()]}/>
                         <FaCaretDown size={20} onClick={() => this.setState({open: true})}
@@ -46,31 +45,9 @@ class RulePanel extends React.Component {
                     </div>
                     <ControlLabel>{this.ruleI['ruleDescription']}</ControlLabel>
                     <p>{this.ruleI['detail']}</p>
-                    {/*<FormControl componentClass="textarea" defaultValue={this.ruleI['ruleDescription']}*/}
-                                 {/*id={`rule_desc_${this.ruleI['index']}`}*/}
-                                 {/*onBlur={() => this.updateRules(this.ruleI['index'])} placeholder="Rule Description"*/}
-                                 {/*onKeyUp={() => {*/}
-                                     {/*let el = document.getElementById(`rule_desc_${this.ruleI['index']}`);*/}
-
-                                     {/*el.style.cssText = 'height:0';*/}
-                                     {/*el.style.cssText = 'overflow:hidden;height:' + el.scrollHeight + 'px';*/}
-                                 {/*}}/>*/}
                 </FormGroup>
                 <Collapse in={this.state.open}>
                     <div>
-                        {/*<FormGroup>*/}
-                            {/*<ControlLabel>Rule Detail</ControlLabel>*/}
-                            {/*<FormControl componentClass="textarea" defaultValue={this.ruleI['detail']}*/}
-                                         {/*id={`rule_detail_${this.ruleI['index']}`}*/}
-                                         {/*onBlur={() => this.updateRules(this.ruleI['index'])}*/}
-                                         {/*placeholder="Rule Detail"*/}
-                                         {/*onKeyUp={() => {*/}
-                                             {/*let el = document.getElementById(`rule_detail_${this.ruleI['index']}`);*/}
-
-                                             {/*el.style.cssText = 'height:0';*/}
-                                             {/*el.style.cssText = 'overflow:hidden;height:' + el.scrollHeight + 'px';*/}
-                                         {/*}}/>*/}
-                        {/*</FormGroup>*/}
                         <div>{this.tagRender()}</div>
                         <div style={{paddingTop: 10 + 'px', clear: 'both'}}>
                             <Tabs animation={true} id={"rules_" + this.ruleI['index']} activeKey={this.state.activeTab}
@@ -96,11 +73,21 @@ class RulePanel extends React.Component {
     componentDidMount() {
 
         if (!this.codeChanged) {
-            this.setState({open: this.ruleI['xPathQueryResult'].map(dd => dd['data'].violated).reduce((a, b) => a + b) !== 0, class: "ruleDiv"});
+            this.setState({
+                class: "ruleDiv",
+                open: (() => {
+                    if (this.filePath === "none") return true;
+                    let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.filePath);
+                    return (file.length > 0)
+                    //     return file[0]['data'].violated !== 0 || file[0]['data'].satisfied !== 0;
+                    // return false;
+                })()
+            });
             return;
         }
 
-        let ruleIfile = this.ruleI['xPathQueryResult'][0]['data'];
+        let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.filePath);
+        let ruleIfile = file.length !== 0 ? file[0]['data'] : {};
         if (ruleIfile['allChanged'] === 'greater' && ruleIfile['satisfiedChanged'] === ruleIfile['violatedChanged'] === 'none') {
             this.setState({open: true, class: "ruleDiv blue-bg"});
             return;
@@ -117,11 +104,17 @@ class RulePanel extends React.Component {
         //     this.setState({open: false, class: "ruleDiv"});
         //     return;
         // }
+
+        if (file.length > 0) {
+            this.setState({open: true, class: "ruleDiv"});
+            return;
+        }
+
         if (ruleIfile['violated'] === 0) {
             this.setState({open: false, class: "ruleDiv"});
             return;
         }
-        this.setState({open: true, class: "ruleDiv"});
+        this.setState({open: false, class: "ruleDiv"});
 
         // fixed the height of text areas
         d3.select("#ruleResults").selectAll("textarea")
@@ -140,27 +133,71 @@ class RulePanel extends React.Component {
      */
     tabHeaderRender(group) {
         // sum up the number of satisfied and violated
-        let totalSatisfied = 0, totalMissing = 0;
+        let totalSatisfied = 0, totalViolated = 0;
         for (let i = 0; i < this.ruleI['xPathQueryResult'].length; i++) {
             totalSatisfied += this.ruleI['xPathQueryResult'][i]['data']['satisfied'];
-            totalMissing += this.ruleI['xPathQueryResult'][i]['data']['violated']
+            totalViolated += this.ruleI['xPathQueryResult'][i]['data']['violated']
+        }
+
+        let fileSatisfied = 0, fileViolated = 0;
+        let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.filePath);
+        if (file.length > 0) {
+            fileSatisfied = file[0]['data']['satisfied'];
+            fileViolated = file[0]['data']['violated'];
         }
 
         switch (group) {
             case 'all':
                 return (
-                    <span className="general_">Matches <Badge
-                        className="forAll">{totalSatisfied + totalMissing}</Badge>
-                    <Badge className="forFile hidden">{}</Badge></span>);
+                    <span className="general_">Matches
+                        {(() => {
+                            if (this.filePath !== "none")
+                                return (<Badge className="forAll">{fileSatisfied + fileViolated}</Badge>);
+                            return (<Badge className="forAll">{totalSatisfied + totalViolated}</Badge>)
+                        })()}
+                        {(() => {
+                            if (this.filePath !== "none") return (<span style={{color: "#777"}}>out of</span>)
+                        })()}
+                        {(() => {
+                            if (this.filePath !== "none")
+                                return (<Badge className="forAll">{totalSatisfied + totalViolated}</Badge>)
+                        })()}
+                        <Badge className="forFile hidden">{}</Badge>
+                    </span>);
             case 'satisfied':
                 return (
-                    <span className="satisfied_">Satisfied <Badge
-                        className="forAll">{totalSatisfied}</Badge>
-                    <Badge className="forFile hidden">{}</Badge></span>);
+                    <span className="satisfied_">Satisfied
+                        {(() => {
+                            if (this.filePath !== "none")
+                                return (<Badge className="forAll">{fileSatisfied}</Badge>);
+                            return (<Badge className="forAll">{totalSatisfied}</Badge>)
+                        })()}
+                        {(() => {
+                            if (this.filePath !== "none") return (<span style={{color: "#777"}}>out of</span>)
+                        })()}
+                        {(() => {
+                            if (this.filePath !== "none")
+                                return (<Badge className="forAll">{totalSatisfied}</Badge>)
+                        })()}
+                        <Badge className="forFile hidden">{}</Badge>
+                    </span>);
             case 'violated':
                 return (
-                    <span className="violated_">Violated <Badge className="forAll">{totalMissing}</Badge>
-                <Badge className="forFile hidden">{}</Badge></span>);
+                    <span className="violated_">Violated
+                        {(() => {
+                            if (this.filePath !== "none")
+                                return (<Badge className="forAll">{fileViolated}</Badge>);
+                            return (<Badge className="forAll">{totalViolated}</Badge>)
+                        })()}
+                        {(() => {
+                            if (this.filePath !== "none") return (<span style={{color: "#777"}}>out of</span>)
+                        })()}
+                        {(() => {
+                            if (this.filePath !== "none")
+                                return (<Badge className="forAll">{totalViolated}</Badge>)
+                        })()}
+                        <Badge className="forFile hidden">{}</Badge>
+                    </span>);
             default:
                 break;
         }
@@ -179,48 +216,85 @@ class RulePanel extends React.Component {
     }
 
     /**
-     * create a list div node for quantifier and satisfied result
+     * create a list div node for quantifier and satisfied result and wrap them in a div
      * @param group
-     * @returns {Array}
+     * @returns {XML}
      */
     listRender(group) {
 
         let self = this;
 
-        let list = [];
+        let otherFilesList = [], fileList = [];
+        let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.filePath);
+
         switch (group) {
             case 'all':
+                if (this.filePath !== "none") {
+                    if (file.length > 0)
+                        fileList = file[0]['data']['quantifierResult'];
+                }
                 for (let i = 0; i < this.ruleI['xPathQueryResult'].length; i++) {
-                    list = list.concat(this.ruleI['xPathQueryResult'][i]['data']['quantifierResult'])
+                    if (this.ruleI['xPathQueryResult'][i]["filePath"] === this.filePath) continue;
+                    otherFilesList = otherFilesList.concat(this.ruleI['xPathQueryResult'][i]['data']['quantifierResult'])
                 }
                 break;
             case 'satisfied':
+                if (this.filePath !== "none") {
+                    if (file.length > 0)
+                        fileList = file[0]['data']['satisfiedResult'];
+                }
                 for (let i = 0; i < this.ruleI['xPathQueryResult'].length; i++) {
-                    list = list.concat(this.ruleI['xPathQueryResult'][i]['data']['satisfiedResult'])
+                    if (this.ruleI['xPathQueryResult'][i]["filePath"] === this.filePath) continue;
+                    otherFilesList = otherFilesList.concat(this.ruleI['xPathQueryResult'][i]['data']['satisfiedResult'])
                 }
                 break;
             case 'violated':
+                if (this.filePath !== "none") {
+                    if (file.length > 0)
+                        fileList = file[0]['data']['violatedResult'];
+                }
                 for (let i = 0; i < this.ruleI['xPathQueryResult'].length; i++) {
-                    list = list.concat(this.ruleI['xPathQueryResult'][i]['data']['violatedResult'])
+                    if (this.ruleI['xPathQueryResult'][i]["filePath"] === this.filePath) continue;
+                    otherFilesList = otherFilesList.concat(this.ruleI['xPathQueryResult'][i]['data']['violatedResult'])
                 }
                 break;
             default:
                 break;
         }
 
-        return list.map((d, i) => {
-            return (
-                <div data-file-path={d['filePath']} className="partResultDiv" key={i}>
-                        <pre className="link" onClick={() => {
-                            Utilities.sendToServer(self.ws, "XML_RESULT", d['xml'])
-                        }}>
-                            <div className="content" dangerouslySetInnerHTML={{__html: d['snippet']}}/>
-                        </pre>
-                </div>
-            )
-        })
+        function returnList(list) {
+            if (list.length === 0)
+                return (<h5>No snippet</h5>);
+            return list.map((d, i) => {
+                return (
+                    <div data-file-path={d['filePath']} className="partResultDiv" key={i}>
+                                <pre className="link" onClick={() => {
+                                    Utilities.sendToServer(self.ws, "XML_RESULT", d['xml'])
+                                }}>
+                                    <div className="content" dangerouslySetInnerHTML={{__html: d['snippet']}}/>
+                                </pre>
+                    </div>
+                )
+            })
+        }
 
-    };
+        let headerText = group === "all" ? "Matches" : group === "satisfied" ? "Satisfied Snippet" : "Violated snippet";
+
+        return (
+            <div>
+                {(() => {
+                    if (this.filePath !== "none") return (<h4>{headerText + " for this file"}</h4>)
+                })()}
+                {(() => {
+                    if (this.filePath !== "none") return (<div>{returnList(fileList)}</div>)
+                })()}
+                {(() => {
+                    if (this.filePath !== "none") return (<h4>{headerText + " for other files"}</h4>)
+                })()}
+                <div>{returnList(otherFilesList)}</div>
+            </div>
+        )
+    }
 
 
     /**
