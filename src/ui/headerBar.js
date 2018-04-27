@@ -154,7 +154,7 @@ export class HeaderBar extends Component {
                 return (
                     <div>
                         <span className="text-16 primary">Code Changed in File:</span><br/>
-                        <span className="text-24 important">{this.state.content}</span>
+                        <span className="text-24 important">{this.state.content.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
                     </div>
                 );
             case 'ruleChanged':
