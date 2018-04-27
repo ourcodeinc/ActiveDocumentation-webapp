@@ -18,7 +18,7 @@ class RuleTable extends React.Component {
         super();
 
         this.attachListener();
-        this.state = {rulesToDisplay: [], codeChanged: false, filePath: ""};
+        this.state = {rulesToDisplay: [], codeChanged: false, filePath: "nonegit status"};
     }
 
     render() {
@@ -68,7 +68,7 @@ class RuleTable extends React.Component {
                 this.setState({
                     rulesToDisplay: this.rules.filter((d) => d['tags'].indexOf(data[1]) !== -1),
                     codeChanged: false,
-                    filePath: ""
+                    filePath: "none"
                 })
             }
             if (data[0] === 'rules') {
