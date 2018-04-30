@@ -24,12 +24,13 @@ class HashManager {
     attachListener() {
         // [hash, values]
         PubSub.subscribe('HASH', (msg, data) => {
-            this.hashManager(data);
+            if (data[0] !== 'codeChanged')
+                this.hashManager(data);
         });
 
         // [hash, values]
         PubSub.subscribe('UPDATE_HASH', (msg, data) => {
-            data.forEach((d, i, a)=> a[i] = d.replace('/Users/saharmehrpour/Documents/Workspace/', '').replace(/\//g,'%2F'));
+            data.forEach((d, i, a) => a[i] = d.replace('/Users/saharmehrpour/Documents/Workspace/', '').replace(/\//g, '%2F'));
             window.location.hash = '#/' + data.join('/');
         });
     }
