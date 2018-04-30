@@ -19,6 +19,7 @@ export class HeaderBar extends Component {
         super();
         this.attachListener();
         this.state = {title: "Active Documentation", content: ""};
+        this.ignoreFile = false;
     }
 
     render() {
@@ -39,6 +40,10 @@ export class HeaderBar extends Component {
         // [ruleIndex, rule]
         PubSub.subscribe('UPDATE_RULE', (msg, data) => {
             this.setState({hash: 'ruleChanged', title: data[0], content: ""});
+        });
+
+        PubSub.subscribe('IGNORE_FILE', (msg, data) => {
+            this.ignoreFile = data[0];
         });
 
         // [hash, value]
@@ -116,7 +121,9 @@ export class HeaderBar extends Component {
 
         // [focusedFilePath]
         PubSub.subscribe('SHOW_RULES_FOR_FILE', (msg, data) => {
-            this.setState({hash: 'rulesForFile', title: "", content: data[0]});
+            if (!this.ignoreFile)
+                this.setState({hash: 'rulesForFile', title: "", content: data[0]});
+            else PubSub.publish('IGNORE_FILE', [false])
         });
 
     }
@@ -147,14 +154,16 @@ export class HeaderBar extends Component {
                 return (
                     <div>
                         <span className="text-16 primary">Rule Index: </span>
-                        <span className="text-24 important">{this.state.title.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
+                        <span
+                            className="text-24 important">{this.state.title.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
                     </div>
                 );
             case 'codeChanged':
                 return (
                     <div>
                         <span className="text-16 primary">Code Changed in File:</span><br/>
-                        <span className="text-24 important">{this.state.content.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
+                        <span
+                            className="text-24 important">{this.state.content.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
                     </div>
                 );
             case 'ruleChanged':
@@ -173,7 +182,8 @@ export class HeaderBar extends Component {
                 return (
                     <div>
                         <span className="text-16 primary">Rules applicable for File:</span><br/>
-                        <span className="text-24 important">{this.state.content.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
+                        <span
+                            className="text-24 important">{this.state.content.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
                     </div>
                 );
             default:

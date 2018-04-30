@@ -19,6 +19,7 @@ class RuleTable extends React.Component {
 
         this.attachListener();
         this.state = {rulesToDisplay: [], codeChanged: false, filePath: "nonegit status"};
+        this.ignoreFile = false;
     }
 
     render() {
@@ -88,6 +89,10 @@ class RuleTable extends React.Component {
 
         });
 
+        PubSub.subscribe('IGNORE_FILE', (msg, data) => {
+            this.ignoreFile = data[0];
+        });
+
         // called in RuleExecutor.checkRulesForAll() and RuleExecutor.checkRules_org()
         // [ruleTable, tagTable]
         PubSub.subscribe('DISPLAY_RULES', (msg, data) => {
@@ -103,8 +108,11 @@ class RuleTable extends React.Component {
 
         // [filePath]
         PubSub.subscribe('SHOW_RULES_FOR_FILE', (msg, data) => {
-            this.setState({rulesToDisplay: this.rules, codeChanged: false, filePath: data[0]});
-            this.updateTextareaLength();
+            if (!this.ignoreFile) {
+                this.setState({rulesToDisplay: this.rules, codeChanged: false, filePath: data[0]});
+                this.updateTextareaLength();
+            }
+            else PubSub.publish('IGNORE_FILE', [false])
         });
 
 

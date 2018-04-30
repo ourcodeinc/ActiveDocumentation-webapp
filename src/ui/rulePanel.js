@@ -53,8 +53,8 @@ class RulePanel extends React.Component {
                             <Tabs animation={true} id={"rules_" + this.ruleI['index']} activeKey={this.state.activeTab}
                                   onSelect={this.handleToggleTabs}>
                                 <Tab eventKey={0} disabled>{}</Tab>
-                                <Tab eventKey={'all'} title={this.tabHeaderRender('all')}
-                                     animation={true}>{this.listRender('all')}</Tab>
+                                {/*<Tab eventKey={'all'} title={this.tabHeaderRender('all')}*/}
+                                     {/*animation={true}>{this.listRender('all')}</Tab>*/}
                                 <Tab eventKey={'satisfied'}
                                      title={this.tabHeaderRender('satisfied')}>{this.listRender('satisfied')}</Tab>
                                 <Tab eventKey={'violated'}
@@ -166,7 +166,7 @@ class RulePanel extends React.Component {
                     </span>);
             case 'satisfied':
                 return (
-                    <span className="satisfied_">Satisfied
+                    <span className="satisfied_">Examples
                         {(() => {
                             if (this.filePath !== "none")
                                 return (<Badge className="forAll">{fileSatisfied}</Badge>);
@@ -269,6 +269,7 @@ class RulePanel extends React.Component {
                 return (
                     <div data-file-path={d['filePath']} className="partResultDiv" key={i}>
                                 <pre className="link" onClick={() => {
+                                    PubSub.publish("IGNORE_FILE", [true]);
                                     Utilities.sendToServer(self.ws, "XML_RESULT", d['xml'])
                                 }}>
                                     <div className="content" dangerouslySetInnerHTML={{__html: d['snippet']}}/>
