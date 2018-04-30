@@ -279,7 +279,7 @@ class RulePanel extends React.Component {
             })
         }
 
-        let headerText = group === "all" ? "Matches" : group === "satisfied" ? "Satisfied Snippet" : "Violated snippet";
+        let headerText = group === "all" ? "Matches" : group === "satisfied" ? "Example Snippet" : "Violated snippet";
 
         return (
             <div>
