@@ -129,7 +129,7 @@ class WebSocketManager {
                 case "SHOW_RULES_FOR_FILE":
                     let focusedFilePath = message.data;
                     PubSub.publish('SHOW_RULES_FOR_FILE', [focusedFilePath]);
-                    PubSub.publish('UPDATE_HASH', ['rulesForFile']);
+                    PubSub.publish('UPDATE_HASH', ['rulesForFile', focusedFilePath]);
                     break;
 
                 case "PROJECT":

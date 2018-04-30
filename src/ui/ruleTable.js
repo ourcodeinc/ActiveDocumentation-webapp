@@ -85,6 +85,15 @@ class RuleTable extends React.Component {
                 });
             }
 
+            if (data[0] === 'rulesForFile') {
+                this.setState({
+                    rulesToDisplay: this.rules,
+                    codeChanged: false,
+                    filePath: '/Users/saharmehrpour/Documents/Workspace/' + data[1].replace(/%2F/g, '/')
+                });
+                this.updateTextareaLength();
+            }
+
             this.updateTextareaLength();
 
         });

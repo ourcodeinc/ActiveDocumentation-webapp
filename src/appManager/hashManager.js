@@ -15,7 +15,7 @@ class HashManager {
     constructor() {
         this.history = ["#/index"];
         this.clicked = false;
-        this.activeHash = -1;
+        this.activeHash = 0;
 
         this.attachListener();
         this.setupNavigationButtons();
@@ -29,6 +29,7 @@ class HashManager {
 
         // [hash, values]
         PubSub.subscribe('UPDATE_HASH', (msg, data) => {
+            data.forEach((d, i, a)=> a[i] = d.replace('/Users/saharmehrpour/Documents/Workspace/', '').replace(/\//g,'%2F'));
             window.location.hash = '#/' + data.join('/');
         });
     }

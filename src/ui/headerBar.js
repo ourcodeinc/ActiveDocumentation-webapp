@@ -79,7 +79,7 @@ export class HeaderBar extends Component {
                     this.setState({hash: 'genRule', title: "Violated Rules", content: ""});
                     break;
                 case "rulesForFile":
-                    // this.setState({hash: 'rulesForFile', title: "", content: data[0]});
+                    this.setState({hash: 'rulesForFile', title: "", content: data[1].replace(/%2F/g,'/')});
                     break;
                 default:
                     //this.setState({hash: 'index', title: "Active Documentation", content: ""});
