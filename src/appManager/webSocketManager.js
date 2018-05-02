@@ -128,7 +128,7 @@ class WebSocketManager {
                 // after sending a piece of code DECL_STMT
                 case "SHOW_RULES_FOR_FILE":
                     let focusedFilePath = message.data;
-                    PubSub.publish('SHOW_RULES_FOR_FILE', [focusedFilePath]);
+                    // PubSub.publish('SHOW_RULES_FOR_FILE', [focusedFilePath]);
                     PubSub.publish('UPDATE_HASH', ['rulesForFile', focusedFilePath]);
                     break;
 

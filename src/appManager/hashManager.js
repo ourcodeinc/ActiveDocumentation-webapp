@@ -16,6 +16,7 @@ class HashManager {
         this.history = ["#/index"];
         this.clicked = false;
         this.activeHash = 0;
+        this.ignoreFile = false;
 
         this.attachListener();
         this.setupNavigationButtons();
@@ -30,8 +31,17 @@ class HashManager {
 
         // [hash, values]
         PubSub.subscribe('UPDATE_HASH', (msg, data) => {
-            data.forEach((d, i, a) => a[i] = d.replace('/Users/saharmehrpour/Documents/Workspace/', '').replace(/\//g, '%2F'));
-            window.location.hash = '#/' + data.join('/');
+            if(!this.ignoreFile) {
+                if (data.length > 0)
+                    data.forEach((d, i, a) => a[i] = d.replace('/Users/saharmehrpour/Documents/Workspace/', '').replace(/\//g, '%2F'));
+                window.location.hash = '#/' + data.join('/');
+            }
+            else
+                PubSub.publish('IGNORE_FILE', [false]);
+        });
+
+        PubSub.subscribe('IGNORE_FILE', (msg, data) => {
+            this.ignoreFile = data[0];
         });
     }
 

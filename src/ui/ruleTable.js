@@ -19,7 +19,6 @@ class RuleTable extends React.Component {
 
         this.attachListener();
         this.state = {rulesToDisplay: [], codeChanged: false, filePath: "nonegit status"};
-        this.ignoreFile = false;
     }
 
     render() {
@@ -108,6 +107,7 @@ class RuleTable extends React.Component {
             this.rules = data[0];
         });
 
+        // Publishing from WebSocket - commented
         // [ruleTable, filePath]
         PubSub.subscribe('DISPLAY_UPDATE_RULES_FOR_FILE', (msg, data) => {
             this.rules = data[0];
@@ -117,11 +117,8 @@ class RuleTable extends React.Component {
 
         // [filePath]
         PubSub.subscribe('SHOW_RULES_FOR_FILE', (msg, data) => {
-            if (!this.ignoreFile) {
-                this.setState({rulesToDisplay: this.rules, codeChanged: false, filePath: data[0]});
-                this.updateTextareaLength();
-            }
-            else PubSub.publish('IGNORE_FILE', [false])
+            this.setState({rulesToDisplay: this.rules, codeChanged: false, filePath: data[0]});
+            this.updateTextareaLength();
         });
 
 
