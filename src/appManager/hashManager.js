@@ -31,9 +31,15 @@ class HashManager {
 
         // [hash, values]
         PubSub.subscribe('UPDATE_HASH', (msg, data) => {
-            if(!this.ignoreFile) {
+            if (!this.ignoreFile) {
                 if (data.length > 0)
-                    data.forEach((d, i, a) => a[i] = d.replace('/Users/saharmehrpour/Documents/Workspace/', '').replace(/\//g, '%2F'));
+                    data.forEach((d, i, a) => {
+                        try {
+                            a[i] = d.replace('/Users/saharmehrpour/Documents/Workspace/', '').replace(/\//g, '%2F')
+                        } catch (err) {
+                            a[i] = d
+                        }
+                    });
                 window.location.hash = '#/' + data.join('/');
             }
             else
