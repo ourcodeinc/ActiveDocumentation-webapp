@@ -81,7 +81,7 @@ class TableOfContent {
         // [ruleIndex, rule]
         PubSub.subscribe('UPDATE_RULE', (msg, data) => {
             let oldRule = this.rules.filter((d) => d['index'] === +data[0])[0];
-            oldRule['ruleDescription'] = data[1]['ruleDescription'];
+            oldRule['title'] = data[1]['title'];
             oldRule['detail'] = data[1]['detail'];
             this.displayRules();
         });
@@ -210,7 +210,7 @@ class TableOfContent {
                     .append('td')
                     .append('a')
                     .classed('list-group-item', true)
-                    .html(() => d['ruleDescription'])
+                    .html(() => d['title'])
                     .on("click", () => {
                         PubSub.publish('UPDATE_HASH', ['rule', d.index]);
                     })
@@ -218,7 +218,7 @@ class TableOfContent {
         ;
 
         ruleItems
-            .html((d) => d['ruleDescription'])
+            .html((d) => d['title'])
             .on("click", (d) => {
                 PubSub.publish('UPDATE_HASH', ['rule', d.index]);
             });

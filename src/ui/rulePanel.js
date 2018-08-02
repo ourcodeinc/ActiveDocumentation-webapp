@@ -43,8 +43,8 @@ class RulePanel extends React.Component {
                         <FaCaretDown size={20} onClick={() => this.setState({open: true})}
                                      style={this.caretClass[(!this.state.open).toString()]}/>
                     </div>
-                    <ControlLabel>{this.ruleI['ruleDescription']}</ControlLabel>
-                    <p>{this.ruleI['detail']}</p>
+                    <ControlLabel>{this.ruleI['title']}</ControlLabel>
+                    <p>{this.ruleI['description']}</p>
                 </FormGroup>
                 <Collapse in={this.state.open}>
                     <div>
@@ -306,10 +306,10 @@ class RulePanel extends React.Component {
         let newObj = Utilities.cloneJSON(this.ruleI);
         delete newObj['xPathQueryResult'];
 
-        newObj['ruleDescription'] = document.getElementById(`rule_desc_${this.ruleI['index']}`).value;
-        newObj['detail'] = document.getElementById(`rule_detail_${this.ruleI['index']}`).value;
+        newObj['title'] = document.getElementById(`rule_title_${this.ruleI['index']}`).value;
+        newObj['description'] = document.getElementById(`rule_description_${this.ruleI['index']}`).value;
 
-        if (newObj['ruleDescription'] !== this.ruleI['ruleDescription'] || newObj['detail'] !== this.ruleI['detail'])
+        if (newObj['title'] !== this.ruleI['title'] || newObj['description'] !== this.ruleI['description'])
             Utilities.sendToServer(this.ws, "MODIFIED_RULE", newObj);
     };
 

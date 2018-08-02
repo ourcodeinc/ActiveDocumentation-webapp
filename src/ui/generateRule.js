@@ -25,8 +25,8 @@ class GenerateRule extends React.Component {
 
         this.state = {
             index: "",
+            title: "",
             description: "",
-            detail: "",
             tags: [
                 {
                     "detail": "rules about artifact classes. These classes are entities and are persisted by \"Objectify\"",
@@ -241,7 +241,7 @@ class GenerateRule extends React.Component {
 
 
     /**
-     * render the form about rule description, detail, tags, files, etc.
+     * render the form about rule title, description, tags, files, etc.
      * @returns {XML}
      */
     renderForm() {
@@ -255,14 +255,14 @@ class GenerateRule extends React.Component {
                                      onChange={(e) => this.setState({index: e.target.value})}/>
                     </div>
                 </FormGroup>
-                <FormGroup validationState={(this.state.description === "") ? "error" : "success"}>
+                <FormGroup validationState={(this.state.title === "") ? "error" : "success"}>
                     <div style={{padding: "10px 5px"}}>
-                        <h4>Rule Description</h4>
-                        <HelpBlock>Describe what this rule verifies.</HelpBlock>
-                        <FormControl componentClass="textarea" placeholder="Description"
-                                     value={this.state.description}
+                        <h4>Rule Title</h4>
+                        <HelpBlock>Specify the rule title.</HelpBlock>
+                        <FormControl componentClass="textarea" placeholder="Title"
+                                     value={this.state.title}
                                      onChange={(e) => {
-                                         this.setState({description: e.target.value})
+                                         this.setState({title: e.target.value})
                                      }}
                                      onKeyUp={(e) => {
                                          e.target.style.cssText = 'height:auto; padding:0';
@@ -272,12 +272,12 @@ class GenerateRule extends React.Component {
                 </FormGroup>
                 <FormGroup>
                     <div style={{padding: "10px 5px"}}>
-                        <h4>Rule Detail</h4>
+                        <h4>Rule Description</h4>
                         <HelpBlock>More high level details about the rule.</HelpBlock>
-                        <FormControl componentClass="textarea" placeholder="Detail"
-                                     value={this.state.detail}
+                        <FormControl componentClass="textarea" placeholder="Description"
+                                     value={this.state.description}
                                      onChange={(e) => {
-                                         this.setState({detail: e.target.value})
+                                         this.setState({description: e.target.value})
                                      }}
                                      onKeyUp={(e) => {
                                          e.target.style.cssText = 'height:auto; padding:0';
@@ -395,8 +395,8 @@ class GenerateRule extends React.Component {
     clearForm() {
         this.setState({
             index: "",
+            title: "",
             description: "",
-            detail: "",
             folderConstraint: "",
             filesFolders: [],
             selectedTags: [],
@@ -521,41 +521,11 @@ class GenerateRule extends React.Component {
     }
 
 
-    /**
-     * get the data from DOM and create a new rule
-     *
-     * {
-        "ruleDescription": "",
-        "detail": "",
-        "tags": [],
-        "ruleType": {
-            "constraint": "FOLDER",
-            "checkFor": [
-                "src/com/crowdcoding/commands", "src/com/crowdcoding/entities"
-            ],
-            "type": "MIXED"
-        },
-        "index": 6,
-        "conditioned": {
-            "type": "RETURN_TO_BASE",
-            "detail": "",
-            "command1": "",
-            "command2": "",
-            "command3": ""
-        },
-        "quantifier": {
-            "type": "FIND_FROM_TEXT",
-            "detail": "",
-            "command1": "",
-            "command2": ""
-        }
-    }
-     */
     submitNewRule() {
         let rule = {
             index: this.state.index,
-            ruleDescription: this.state.description,
-            detail: this.state.detail,
+            ruleTitle: this.state.title,
+            description: this.state.description,
             tags: this.state.selectedTags,
             ruleType: {
                 constraint: this.state.folderConstraint,
@@ -566,7 +536,7 @@ class GenerateRule extends React.Component {
             conditioned: {}
         };
 
-        if (rule.index === "" || rule.ruleDescription === "" || rule.detail === "") {
+        if (rule.index === "" || rule.ruleTitle === "" || rule.description === "") {
             console.log("empty fields");
             return;
         }

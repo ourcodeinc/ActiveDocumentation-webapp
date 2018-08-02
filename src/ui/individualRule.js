@@ -31,19 +31,19 @@ class IndividualRule extends React.Component {
         return (
             <div>
                 <div className="tableRow">
-                    <div className="tableCell labelCell"><h4>Rule Description</h4></div>
+                    <div className="tableCell labelCell"><h4>Rule Title</h4></div>
                     <div className="tableCell infoCell">
-                        <FormControl id="indi_desc_textarea" componentClass="textarea" placeholder="Description"
+                        <FormControl id="indi_title_textarea" componentClass="textarea" placeholder="Title"
                                      onBlur={() => this.updateRules()}/>
                     </div>
                 </div>
                 <div className="tableRow">
-                    <div className="tableCell labelCell"><h4>Rule Detail</h4></div>
+                    <div className="tableCell labelCell"><h4>Rule Description</h4></div>
                     <div className="tableCell infoCell">
-                        <FormControl id="indi_detail_textarea" componentClass="textarea" placeholder="Detail"
+                        <FormControl id="indi_description_textarea" componentClass="textarea" placeholder="Description"
                                      onBlur={() => this.updateRules()}
                                      onKeyUp={() => {
-                                         let el = document.getElementById("indi_detail_textarea");
+                                         let el = document.getElementById("indi_description_textarea");
 
                                          el.style.cssText = 'height:auto; padding:0';
                                          el.style.cssText = 'height:' + el.scrollHeight + 'px';
@@ -106,8 +106,8 @@ class IndividualRule extends React.Component {
         // [ruleIndex, rule]
         PubSub.subscribe('UPDATE_RULE', (msg, data) => {
             let oldRule = this.rules.filter((d) => d['index'] === +data[0])[0];
-            oldRule['ruleDescription'] = data[1]['ruleDescription'];
-            oldRule['detail'] = data[1]['detail'];
+            oldRule['title'] = data[1]['title'];
+            oldRule['description'] = data[1]['description'];
         });
 
         // called in RuleExecutor.checkRulesForAll() and RuleExecutor.checkRules_org()
@@ -126,8 +126,8 @@ class IndividualRule extends React.Component {
      */
     displayRule() {
 
-        document.getElementById('indi_desc_textarea').value = this.ruleI['ruleDescription'];
-        document.getElementById('indi_detail_textarea').value = this.ruleI['detail'];
+        document.getElementById('indi_title_textarea').value = this.ruleI['title'];
+        document.getElementById('indi_description_textarea').value = this.ruleI['description'];
 
         ReactDOM.render(
             (<div>{this.tagRender()}</div>),
@@ -166,10 +166,10 @@ class IndividualRule extends React.Component {
         let newObj = Utilities.cloneJSON(this.ruleI);
         delete newObj['xPathQueryResult'];
 
-        newObj['ruleDescription'] = document.getElementById(`indi_desc_textarea`).value;
-        newObj['detail'] = document.getElementById(`indi_detail_textarea`).value;
+        newObj['title'] = document.getElementById(`indi_title_textarea`).value;
+        newObj['description'] = document.getElementById(`indi_description_textarea`).value;
 
-        if (newObj['ruleDescription'] !== this.ruleI['ruleDescription'] || newObj['detail'] !== this.ruleI['detail'])
+        if (newObj['title'] !== this.ruleI['title'] || newObj['description'] !== this.ruleI['description'])
             Utilities.sendToServer(this.ws, "MODIFIED_RULE", newObj);
 
     };
