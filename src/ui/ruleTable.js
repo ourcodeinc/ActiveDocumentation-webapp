@@ -8,7 +8,6 @@ import '../App.css';
 // import ReactDOM from 'react-dom';
 import * as d3 from 'd3';
 import PubSub from 'pubsub-js';
-import Utilities from '../core/utilities';
 
 import RulePanel from './rulePanel';
 
