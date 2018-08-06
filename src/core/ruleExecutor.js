@@ -213,7 +213,7 @@ class RuleExecutor {
     runXPathQueryWithin(xmlFile, ruleI) {
 
         let quantifierResult = this.runXPathQuery(xmlFile, ruleI, 'quantifier');
-        let satisfiedResult = this.runXPathQuery(xmlFile, ruleI, 'conditioned');
+        let satisfiedResult = this.runXPathQuery(xmlFile, ruleI, 'constraint');
 
         // compare results
         let violatedResult = this.violatedResults(quantifierResult, satisfiedResult);
@@ -259,17 +259,17 @@ class RuleExecutor {
     runXpathQueryBetween(xmlFiles, ruleI) {
 
         let quantifierResult = [];
-        let conditionedResult = [];
+        let constraintResult = [];
         for (let j = 0; j < xmlFiles.length; j++) {
             quantifierResult = quantifierResult.concat(this.runXPathQuery(xmlFiles[j], ruleI, 'quantifier'));
-            conditionedResult = conditionedResult.concat(this.runXPathQuery(xmlFiles[j], ruleI, 'conditioned'));
+            constraintResult = constraintResult.concat(this.runXPathQuery(xmlFiles[j], ruleI, 'constraint'));
         }
         // compare results
-        let violatedResult = this.violatedResults(quantifierResult, conditionedResult);
+        let violatedResult = this.violatedResults(quantifierResult, constraintResult);
 
         let resultData = {
             'quantifierResult': quantifierResult,
-            'satisfiedResult': conditionedResult,
+            'satisfiedResult': constraintResult,
             'violatedResult': violatedResult,
             'satisfied': quantifierResult.length - violatedResult.length,
             'violated': violatedResult.length
@@ -294,7 +294,7 @@ class RuleExecutor {
     runXpathQueryMixed(xmlFiles, ruleI) {
 
         let quantifierResult = [];
-        let conditionedResult = [];
+        let constraintResult = [];
 
         if (ruleI['quantifier'].hasOwnProperty('type') && ruleI['quantifier']['type'] === 'FIND_FROM_TEXT')
             quantifierResult = this.findFromText(xmlFiles, ruleI, 'quantifier');
@@ -305,25 +305,25 @@ class RuleExecutor {
                 quantifierResult = quantifierResult.concat(this.runXPathQuery(xmlFiles[j], ruleI, 'quantifier'));
 
 
-        if (ruleI['conditioned'].hasOwnProperty('type') && ruleI['conditioned']['type'] === 'FIND_FROM_TEXT')
-            conditionedResult = this.findFromText(xmlFiles, ruleI, 'conditioned');
-        else if (ruleI['conditioned'].hasOwnProperty('type') && ruleI['conditioned']['type'] === 'RETURN_TO_BASE')
-            conditionedResult = this.findAndReturnToBase(xmlFiles, ruleI, 'conditioned');
+        if (ruleI['constraint'].hasOwnProperty('type') && ruleI['constraint']['type'] === 'FIND_FROM_TEXT')
+            constraintResult = this.findFromText(xmlFiles, ruleI, 'constraint');
+        else if (ruleI['constraint'].hasOwnProperty('type') && ruleI['constraint']['type'] === 'RETURN_TO_BASE')
+            constraintResult = this.findAndReturnToBase(xmlFiles, ruleI, 'constraint');
         else
             for (let j = 0; j < xmlFiles.length; j++)
-                conditionedResult = conditionedResult.concat(this.runXPathQuery(xmlFiles[j], ruleI, 'conditioned'));
+                constraintResult = constraintResult.concat(this.runXPathQuery(xmlFiles[j], ruleI, 'constraint'));
 
 
         // console.log(ruleI['quantifier'], quantifierResult);
-        // console.log(ruleI['conditioned'], conditionedResult);
+        // console.log(ruleI['constraint'], constraintResult);
 
 
         // compare results
-        let violatedResult = this.containResults(conditionedResult, quantifierResult);
+        let violatedResult = this.containResults(constraintResult, quantifierResult);
 
         let resultData = {
             'quantifierResult': quantifierResult,
-            'satisfiedResult': conditionedResult,
+            'satisfiedResult': constraintResult,
             'violatedResult': violatedResult,
             'satisfied': quantifierResult.length - violatedResult.length,
             'violated': violatedResult.length
@@ -401,7 +401,7 @@ class RuleExecutor {
      * runs the XPath query and compare results
      * @param xmlFile
      * @param ruleI
-     * @param group either 'quantifier' or 'conditioned'
+     * @param group either 'quantifier' or 'constraint'
      */
     runXPathQuery(xmlFile, ruleI, group) {
         let parser = new DOMParser();
