@@ -143,7 +143,7 @@ export class constants {
                 },
                 "HAS_PARAMETER": {
                     name: "One of its parameter is ...",
-                    xpath: "src:parameter_list/src:parameter",
+                    xpath: "src:parameter_list/src:parameter/src:decl",
                     type: "declaration",
                     pre: "",
                     post: ""
@@ -276,7 +276,7 @@ export class constants {
                 "HAS_DECLARATION": {
                     name: "Has declaration ...",
                     xpath: "src:block/descendant-or-self::src:decl_stmt",
-                    type: "declaration",
+                    type: "declarationStatement",
                     pre: "",
                     post: ""
                 }
@@ -292,10 +292,10 @@ export class constants {
                     xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
                     follows: "chainCall"
                 },
-                "declaration": {
-                    name: "declaration",
+                "declarationStatement": {
+                    name: "declaration statement",
                     xpath: "src:block/descendant-or-self::src:decl_stmt",
-                    follows: "declaration"
+                    follows: "declarationStatement"
                 },
                 "parameter": {
                     name: "function parameter",
@@ -601,7 +601,7 @@ export class constants {
                 "HAS_ARGUMENT": {
                     name: "It has argument ...",
                     xpath: "src:argument_list/src:argument/src:expr",
-                    type: "expression",
+                    type: "expression", // TODO change to srcml
                     pre: "",
                     post: ","
                 }
@@ -751,7 +751,116 @@ export class constants {
             c1: "src:unit/src:class",
             c2: "src:unit/src:class"
         }
-    }
+    };
+
+    static grammar_code_fragment = {
+        "Class": {
+            OF: ["Annotation", "Name", "Function", "Constructor", "AbstractFunction", "Declaration", "Subclass"],
+            WHERE: ["Specifier", "Annotation", "Name", "Extends", "Function", "Constructor", "AbstractFunction", "Declaration", "Subclass"]
+        },
+        "Function": {
+            OF: ["Specifier", "Annotation", "Name", "Expression", "Declaration", "Return Value", "Parameter"],
+            WHERE: ["Annotation", "Specifier", "Name", "Parameter", "Return Value", "Declaration", "Expression"],
+            restrictions: [
+                "WHERE"
+            ]
+        },
+        "Constructor": {
+            OF: ["Specifier", "Annotation", "Expression", "Declaration", "Parameter"],
+            WHERE: ["Specifier", "Annotation", "Parameter", "Return Value", "Declaration", "Expression"],
+            restrictions: [
+                "WHERE"
+            ]
+        },
+        "AbstractFunction": {
+            OF: ["Specifier", "Annotation", "Name", "Parameter"],
+            WHERE: ["Annotation", "Specifier", "Name", "Parameter"],
+            restrictions: [
+                "WHERE"
+            ]
+        },
+        "Specifier": {
+            OF: ["Name"],
+            WHERE: ["Name"],
+            restrictions: [
+                ["its Specifier", ["IS", "IS NOT"], "textbox"]
+            ]
+        },
+        "Annotation": {
+            OF: ["Name"],
+            WHERE: ["Name", "Argument"],
+            restrictions: [
+                [["HAS", "HAS NOT"], "Annotation", "textbox"],
+                "WHERE"
+            ]
+        },
+        "Declaration": {
+            OF: ["Name", "Type"],
+            WHERE: ["Name"],
+            restrictions: [
+                "WHERE"
+            ]
+        },
+        "Subclass": {
+            OF: ["Annotation", "Name", "Function", "Constructor", "AbstractFunction", "Declaration", "Subclass"],
+            WHERE: ["Specifier", "Annotation", "Name", "Extends", "Function", "Constructor", "AbstractFunction", "Declaration", "Subclass"],
+            restrictions: [
+                "WHERE"
+            ]
+        },
+        "Return Value": {
+            OF: ["Name", "Type"],
+            WHERE: [], // TODO
+            restrictions: [
+                ["its return Value", ["IS", "IS NOT"], "textbox"],
+                "WHERE"
+            ]
+        },
+        "Parameter": {
+            OF: [],
+            WHERE: [], // TODO
+            restrictions: [
+                ["its Number Of Parameter", ["IS", "IS Greater than", "IS Less than"], "textbox"],
+                "WHERE"
+            ]
+        },
+        "Expression": {
+            OF: ["Name", "Type"],
+            WHERE: [], // TODO
+            restrictions: [
+                "WHERE"
+            ]
+        },
+        "Type": {
+            OF: [],
+            WHERE: [],
+            restrictions: [
+                ["its Name", ["IS", "IS NOT", "INCLUDE", "NOT INCLUDE"], "textbox"]
+            ]
+        },
+        "Name": {
+            OF: [],
+            WHERE: [],
+            restrictions: [
+                ["its Name", ["IS", "IS NOT", "INCLUDE", "NOT INCLUDE"], "textbox"]
+            ]
+        },
+        "Extends": {
+            OF: [],
+            WHERE: [],
+            restrictions: [
+                ["textbox"]
+            ]
+        },
+        "Argument": {
+            OF: [],
+            WHERE: [],
+            restrictions: [
+                ["its Argument", ["IS", "IS NOT"], "textbox"]
+            ]
+        }
+    };
+
 }
 
 

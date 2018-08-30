@@ -272,7 +272,7 @@ annotation, annotation * {
 }
 
 #generateRule .generatedXpath {
-    padding: 5px;
+    padding-top: 5px;
     margin-bottom: 20px;
 }
 

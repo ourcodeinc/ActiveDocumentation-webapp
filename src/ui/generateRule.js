@@ -12,10 +12,13 @@ import {FormControl, Label, Button, FormGroup, ButtonToolbar} from 'react-bootst
 import {Row, Col} from 'react-bootstrap';
 
 import TiDelete from 'react-icons/lib/ti/delete';
+import MdAddBox from 'react-icons/lib/md/add-box';
 
 import XPathGenerator from './ruleGen/xPathGenerator';
 import Utilities from "../core/utilities";
 import {constants} from "./constants";
+import CustomToggle from "./ruleGen/customToggle";
+import CustomMenu from "./ruleGen/customMenu";
 
 
 class GenerateRule extends React.Component {
@@ -317,10 +320,85 @@ class GenerateRule extends React.Component {
 
 
     /**
+     * inline XPath generator
+     * didn't work
+     * requires initial this.state.children = []
+     * @returns {XML}
+     */
+    testRenderGrammar() {
+        return (
+            <div>
+                Class WHERE[
+                {this.state.children.map((cons) =>
+                    constants.grammar_code_fragment[cons].restrictions.map((res) => {
+                        if (res === "WHERE") {
+
+                        }
+                        else {
+                            res.value.map((el, j) => {
+                                if (Array.isArray(el)) {
+                                    return (
+                                        <DropdownButton
+                                            title={el[0]}
+                                            key={j}
+                                            id={"dropdown"}>
+                                            {el.map((item, i) => {
+                                                if (i > 0)
+                                                    return (<MenuItem eventKey={i}>{item}</MenuItem>)
+                                            })}
+                                        </DropdownButton>
+                                    )
+                                }
+                                if (el === "textbox")
+                                    return (<input type={"text"} className={"inputText"} key={j}/>);
+                                if (el === "WHERE")
+                                    return (<span>WHERE [ ]</span>);
+                                return (<span key={j}>{el}</span>)
+                            })
+                        }
+                    })
+                )}
+
+
+                {this.state.children.length === 0 ? (
+                    <Dropdown id={"drop_down"}>
+                        <CustomToggle bsRole="toggle">
+                            <MdAddBox size={25} className={"mdAddBox"}/>
+                        </CustomToggle>
+                        <CustomMenu bsRole="menu">
+                            {Object.keys(constants.grammar_code_fragment["Class"]["WHERE"]).map((key, i) => {
+                                return (
+                                    <MenuItem eventKey={key} key={i}
+                                              onSelect={(evt) => {
+                                                  this.state.children.push(evt);
+                                                  this.setState({...this.state});
+                                              }}>
+                                        {key}
+                                    </MenuItem>);
+                            })}
+                        </CustomMenu>
+                    </Dropdown>
+
+                ) : (
+                    <Dropdown id={"drop_down"}>
+                        <CustomToggle bsRole="toggle">
+                            <MdAddBox size={25} className={"mdAddBox"}/>
+                        </CustomToggle>
+                        <CustomMenu bsRole="menu">
+                            <MenuItem eventKey={"AND"}>{"AND"}</MenuItem>
+                            <MenuItem eventKey={"OR"}>{"OR"}</MenuItem>
+                        </CustomMenu>
+                    </Dropdown>
+                )}
+                ]
+            </div>
+        )
+    }
+
+    /**
      * render the drop down for the file/folder constraint
      */
     renderFileConstraints() {
-        console.log(this.state.filesFolders);
         return (
             <div>
                 <div style={{paddingBottom: "10px"}}>
@@ -348,7 +426,7 @@ class GenerateRule extends React.Component {
                 </div>
                 <div>
                     {this.state.filesFolders.map((d, i) => {
-                        console.log(d,i);
+                        console.log(d, i);
                         return (
                             <Row key={i} style={{paddingBottom: "5px"}}>
                                 <Col sm={11} md={10}>
