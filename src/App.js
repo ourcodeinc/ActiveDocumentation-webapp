@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import './App.css';
 
 import 'bootstrap/dist/css/bootstrap.css';
@@ -6,8 +6,6 @@ import 'bootstrap/dist/css/bootstrap-theme.css';
 
 import './index.css';
 
-import ReactDOM from 'react-dom';
-import * as d3 from 'd3';
 import PubSub from 'pubsub-js';
 
 import * as webSocketManager from './appManager/webSocketManager';
@@ -15,24 +13,18 @@ import * as hashManager from './appManager/hashManager';
 
 import * as ruleExecutor from './core/ruleExecutor';
 
-import * as tableOfContent from './ui/tableOfContent';
+import TableOfContent from './ui/tableOfContent';
 import RuleTable from './ui/ruleTable';
-import IndividualRule from './ui/individualRule';
+// import IndividualRule from './ui/individualRule';
 import NavBar from './ui/navBar';
 import HeaderBar from './ui/headerBar';
 import GenerateRule from './ui/generateRule';
 // import ProjectHierarchy from './ui/projectHierarchy';
 
-class App {
+class App extends Component {
 
-    thisNode;
-
-    constructor(parent) {
-        this.thisNode = d3.select(parent);
-    }
-
-    init() {
-
+    constructor() {
+        super();
         /**
          * https://stackoverflow.com/questions/710586/json-stringify-array-bizarreness-with-prototype-js
          */
@@ -66,72 +58,35 @@ class App {
         return this.build();
     }
 
-    build(){
+    render() {
+        return (
+            <div>
+                <nav className={"navbar navbar-inverse"} id={"navBar"}>
+                    <NavBar/>
+                </nav>
+                <div>
+                    <div className={"main container"} id={"headerBar"}>
+                        <HeaderBar/>
+                    </div>
+                    <div className={"main container"} id={"tableOfContent"}>
+                        <TableOfContent/>
+                    </div>
+                    <div className={"main container hidden"} id={"ruleResults"}>
+                        <RuleTable/>
+                    </div>
+                    <div className={"main container hidden"} id={"generateRule"}>
+                        <GenerateRule/>
+                    </div>
+                    {/*<div className={"main container hidden"} id={"projectHierarchy"}>*/}
+                        {/*<ProjectHierarchy/>*/}
+                    {/*</div>*/}
+                    <div style={{width: "100%", height: "100px"}}/>
+                </div>
+            </div>
+        )
+    }
 
-        // ---- UI
-
-        this.thisNode.append('nav')
-            .classed('navbar navbar-inverse',true)
-            .attr('id','navBar');
-        ReactDOM.render(
-            React.createElement(NavBar),
-            document.getElementById('navBar')
-        );
-
-        // main div - all div are within this div
-        const main = this.thisNode.append('div');
-
-        main.append('div')
-            .classed('main container',true)
-            .attr('id','headerBar');
-        ReactDOM.render(
-            React.createElement(HeaderBar),
-            document.getElementById('headerBar')
-        );
-        const tableOfContentDiv = main.append('div')
-            .classed('main container', true)
-            .attr('id', 'tableOfContent');
-        tableOfContent.create(tableOfContentDiv.node());
-
-        main.append('div')
-            .classed('main container hidden', true)
-            .attr('id', 'ruleResults');
-        ReactDOM.render(
-            React.createElement(RuleTable),
-            document.getElementById('ruleResults')
-        );
-
-        main.append('nav')
-            .classed('main container hidden',true)
-            .attr('id','individualRule');
-        ReactDOM.render(
-            React.createElement(IndividualRule),
-            document.getElementById('individualRule')
-        );
-
-        main.append('nav')
-            .classed('main container hidden',true)
-            .attr('id','generateRule');
-        ReactDOM.render(
-            React.createElement(GenerateRule),
-            document.getElementById('generateRule')
-        );
-
-        // main.append('nav')
-        //     .classed('main container hidden',true)
-        //     .attr('id','projectHierarchy');
-        // ReactDOM.render(
-        //     React.createElement(ProjectHierarchy),
-        //     document.getElementById('projectHierarchy')
-        // );
-
-        main.append('div')
-            .style('width', '100%')
-            .style('height', '100px');
-
-
-        // ----
-
+    build() {
         ruleExecutor.create();
         webSocketManager.create();
         hashManager.create();
@@ -144,11 +99,4 @@ class App {
 
 }
 
-/**
- * Factory method to create a new app instance
- * @param parent
- * @returns {App}
- */
-export function create(parent) {
-    return new App(parent);
-}
+export default App;

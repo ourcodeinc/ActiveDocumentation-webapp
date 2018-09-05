@@ -2,7 +2,7 @@
  * Created by saharmehrpour on 9/5/17.
  */
 
-// import React from 'react';
+import React, {Component} from 'react';
 import '../App.css';
 
 // import ReactDOM from 'react-dom';
@@ -10,50 +10,64 @@ import * as d3 from 'd3';
 import PubSub from 'pubsub-js';
 
 
-class TableOfContent {
+class TableOfContent extends Component {
 
-    thisNode;
+    constructor() {
+        super();
 
-    alphabetIndex;
-    tags_list;
-    rules_list;
+        this.state = {
+            tags: [],
+            rules: [],
+            selectedAlphabet: "All"
+        };
 
-    tags;
-    rules;
-
-    constructor(parent) {
-        this.thisNode = d3.select(parent)
-            .append('div');
-
-        // add elements
-        this.thisNode.append('div')
-            .classed('well well-sm', true)
-            .append('h4')
-            .text('Tags');
-
-        this.alphabetIndex = this.thisNode.append('div')
-            .classed('list-inline', true)
-            .attr('id', 'alphabet_index');
-
-        this.thisNode.append('hr')
-            .classed('bottomBorder', true);
-
-        this.tags_list = this.thisNode.append('ul')
-            .classed('list-inline', true)
-            .attr('id', 'tags_list');
-
-        this.thisNode.append('div')
-            .classed('well well-sm', true)
-            .append('h4')
-            .text('Rules');
-
-        this.rules_list = this.thisNode.append('div')
-            .classed('list-inline', true)
-            .attr('id', 'rules_list');
-
-        this.createAlphabetIndex();
-
+        this.setWrapperRef = this.setWrapperRef.bind(this);
         this.attachListener();
+    }
+
+    render() {
+        return (
+            <div ref={this.setWrapperRef}>
+                <div className={"well well-sm"}>
+                    <h4>Tags</h4>
+                </div>
+                <div className={"list-inline"} id={"alphabet_index"}>{this.createAlphabetIndex()}</div>
+                <hr className={"bottomBorder"}/>
+                <ul className={"list-inline"} id={"tags_list"}>
+                    {this.state.tags.map((tag, i) =>
+                        (<li key={i}
+                             style={{display: this.selectAlphabet(tag)}}
+                             onClick={(d) => {
+                                 PubSub.publish('UPDATE_HASH', ['tag', d]);
+                             }}>{tag['tagName']}</li>)
+                    )}
+                </ul>
+
+                <div className={"well well-sm"}>
+                    <h4>Rules</h4>
+                </div>
+                <div className={"ist-inline"}>
+                    {this.state.rules.map((rule, i) =>
+                        <tr key={i}>
+                            <td><a className={"list-group-item"} onClick={() => {
+                                PubSub.publish('UPDATE_HASH', ['rule', rule.index]);
+                            }}>
+                                {rule.index}
+                            </a></td>
+                            <td><a className={"list-group-item"} onClick={() => {
+                                PubSub.publish('UPDATE_HASH', ['rule', rule.index]);
+                            }}>
+                                {rule['title']}
+                            </a></td>
+                        </tr>
+                    )}
+                </div>
+            </div>
+        )
+    }
+
+    setWrapperRef(node) {
+        this.thisNode = node;
     }
 
     /**
@@ -63,7 +77,7 @@ class TableOfContent {
 
         // [hash, value]
         PubSub.subscribe('HASH', (msg, data) => {
-            d3.select(this.thisNode.node().parentNode).classed('hidden', () =>
+            d3.select(this.thisNode).classed('hidden', () =>
                 data[0] !== 'index' && data[0] !== 'tagJsonChanged' && data[0] !== 'ruleJsonChanged'
             );
         });
@@ -72,43 +86,51 @@ class TableOfContent {
         // called in RuleExecutor.checkRulesForAll() and RuleExecutor.checkRules_org()
         // [ruleTable, tagTable]
         PubSub.subscribe('DISPLAY_RULES', (msg, data) => {
-            this.rules = data[0];
-            this.tags = data[1];
-            this.displayTags();
-            this.displayRules();
+            this.setState({tags: data[1], rules: data[0]});
         });
 
         // [ruleIndex, rule]
         PubSub.subscribe('UPDATE_RULE', (msg, data) => {
-            let oldRule = this.rules.filter((d) => d['index'] === +data[0])[0];
+
+            let oldRules = this.state.rules.slice();
+
+            let oldRule = oldRules.filter((d) => d['index'] === +data[0])[0];
             oldRule['title'] = data[1]['title'];
             oldRule['detail'] = data[1]['detail'];
-            this.displayRules();
+
+            this.setState({rules: oldRules})
         });
 
         // [tagTable, newTag]
         PubSub.subscribe('UPDATE_TAG', (msg, data) => {
-            this.tags = data[0];
-            this.displayTags();
+            this.setState({tags: data[0]});
+
         });
 
         // [tagTable]
         PubSub.subscribe('UPDATE_TAG_TABLE', (msg, data) => {
-            this.tags = data[0];
-            this.displayTags();
+            this.setState({tags: data[0]});
         });
 
         // [ruleTable]
         PubSub.subscribe('UPDATE_RULE_TABLE', (msg, data) => {
-            this.rules = data[0];
-            this.displayRules();
+            this.setState({rules: data[0]});
         });
 
         // [ruleIndex, rule]
         PubSub.subscribe('NEW_RULE', (msg, data) => {
-            this.rules.push(data[1]);
-            this.displayRules();
+            this.setState({rules: this.state.rules.push(data[0])});
         });
+    }
+
+
+    selectAlphabet(tag) {
+        if (this.state.selectedAlphabet === "All") {
+            return "block";
+        }
+        if (tag["tagName"].charAt(0).toUpperCase() === this.state.selectedAlphabet)
+            return "block";
+        return "none";
     }
 
 
@@ -116,122 +138,23 @@ class TableOfContent {
      * This function creates an alphabet list on top
      */
     createAlphabetIndex() {
-        let self = this;
 
         let alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
         alphabet.push('All');
 
-        this.alphabetIndex
-            .selectAll("li")
-            .data(alphabet)
-            .enter()
-            .append("li")
-            .html(function (d) {
-                return d;
-            })
-            .classed("selected", function (d) {
-                return d === 'All';
-            })
-            .on("click", function (d) {
-                self.alphabetIndex
-                    .selectAll("li")
-                    .classed("selected", false);
-                d3.select(this)
-                    .classed("selected", true);
+        return alphabet.map((d, i) => {
+            return (
+                <li key={i}
+                    className={d === this.state.selectedAlphabet ? "selected" : ""}
+                    onClick={() => this.setState({selectedAlphabet: d})}>
+                    {d}
+                </li>
+            )
+        });
 
-                self.tags_list
-                    .selectAll("li")
-                    .style("display", function (g) {
-                        if (d === "All") {
-                            return null;
-                        }
-                        if (g.charAt(0).toUpperCase() === d)
-                            return null;
-                        return "none";
-                    });
-
-            });
     };
 
 
-    /**
-     * display tags
-     */
-    displayTags() {
-        // tag list
-        let tagList = this.tags.map(function (d) {
-            return d['tagName']
-        });
-        let uniqueTags = [...new Set(tagList)];
-        uniqueTags.sort(function (a, b) {
-            return d3.ascending(a, b);
-        });
-
-        this.tags_list.selectAll("li").remove();
-        let tagItems = this.tags_list.selectAll("li")
-            .data(uniqueTags);
-
-        tagItems.enter()
-            .append('li')
-            .html((d) => d)
-            .on("click", (d) => {
-                PubSub.publish('UPDATE_HASH', ['tag', d]);
-            });
-
-        tagItems
-            .html((d) => d)
-            .on("click", (d) => {
-                PubSub.publish('UPDATE_HASH', ['tag', d]);
-            });
-    }
-
-
-    /**
-     * display rules
-     */
-    displayRules() {
-        this.rules_list.selectAll("tr").remove();
-
-        let ruleItems = this.rules_list.selectAll("tr")
-            .data(this.rules);
-
-        ruleItems.enter()
-            .append('tr')
-            .each(function (d) {
-                d3.select(this)
-                    .append('td')
-                    .append('a')
-                    .classed('list-group-item', true)
-                    .html(() => d.index)
-                    .on("click", () => {
-                        PubSub.publish('UPDATE_HASH', ['rule', d.index]);
-                    });
-                d3.select(this)
-                    .append('td')
-                    .append('a')
-                    .classed('list-group-item', true)
-                    .html(() => d['title'])
-                    .on("click", () => {
-                        PubSub.publish('UPDATE_HASH', ['rule', d.index]);
-                    })
-            })
-        ;
-
-        ruleItems
-            .html((d) => d['title'])
-            .on("click", (d) => {
-                PubSub.publish('UPDATE_HASH', ['rule', d.index]);
-            });
-    }
-
-
 }
 
-/**
- * Factory method to create a new tableOfContent instance
- * @param parent
- * @returns {TableOfContent}
- */
-export function create(parent) {
-    return new TableOfContent(parent);
-}
+export default TableOfContent;
