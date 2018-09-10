@@ -2,18 +2,18 @@
  * Created by saharmehrpour on 9/6/17.
  */
 
-import React from 'react';
+import React, {Component} from 'react';
 import '../App.css';
 import * as d3 from 'd3';
 
-// import ReactDOM from 'react-dom';
-import PubSub from 'pubsub-js';
 import Utilities from '../core/utilities';
 import {Tab, Tabs, Badge, FormGroup, ControlLabel, Label, Collapse} from 'react-bootstrap';
 import FaCaretDown from 'react-icons/lib/fa/caret-down';
 import FaCaretUp from 'react-icons/lib/fa/caret-up';
+import {ignoreFile} from "../actions";
+import {connect} from "react-redux";
 
-class RulePanel extends React.Component {
+class RulePanel extends Component {
 
     constructor() {
         super();
@@ -36,8 +36,8 @@ class RulePanel extends React.Component {
             <div className={this.state.class} id={`rule_panel_${this.ruleI['index']}`}>
                 <FormGroup>
                     <div style={{float: 'right'}}>
-                        (<a onClick={() => PubSub.publish('UPDATE_HASH', ['rule', this.ruleI['index']])}>view the rule
-                        and all snippets</a>)
+                        (<a onClick={() => window.location.hash = '#/rule/' + this.ruleI['index']}>view the rule
+                            and all snippets</a>)
                         <FaCaretUp size={20} onClick={() => this.setState({open: false})}
                                    style={this.caretClass[this.state.open.toString()]}/>
                         <FaCaretDown size={20} onClick={() => this.setState({open: true})}
@@ -54,7 +54,7 @@ class RulePanel extends React.Component {
                                   onSelect={this.handleToggleTabs}>
                                 <Tab eventKey={0} disabled>{}</Tab>
                                 {/*<Tab eventKey={'all'} title={this.tabHeaderRender('all')}*/}
-                                     {/*animation={true}>{this.listRender('all')}</Tab>*/}
+                                {/*animation={true}>{this.listRender('all')}</Tab>*/}
                                 <Tab eventKey={'satisfied'}
                                      title={this.tabHeaderRender('satisfied')}>{this.listRender('satisfied')}</Tab>
                                 <Tab eventKey={'violated'}
@@ -210,7 +210,10 @@ class RulePanel extends React.Component {
         return this.ruleI['tags'].map((d, i) => {
             return (
                 <div className="buttonDiv" key={i}>
-                    <Label onClick={() => PubSub.publish('UPDATE_HASH', ['tag', d])}>{d}</Label>
+                    <Label onClick={() =>
+                        // PubSub.publish('UPDATE_HASH', ['tag', d])
+                        window.location.hash = '#/tag/' + d.replace(/\//g, '%2F')
+                    }>{d}</Label>
                 </div>)
         });
     }
@@ -262,14 +265,15 @@ class RulePanel extends React.Component {
                 break;
         }
 
-        function returnList(list) {
+        let returnList = (list) => {
             if (list.length === 0)
                 return (<h5>No snippet</h5>);
             return list.map((d, i) => {
                 return (
                     <div data-file-path={d['filePath']} className="partResultDiv" key={i}>
                                 <pre className="link" onClick={() => {
-                                    PubSub.publish("IGNORE_FILE", [true]);
+                                    this.props.onIgnoreFile(true);
+                                    // PubSub.publish("IGNORE_FILE", [true]);
                                     Utilities.sendToServer(self.ws, "XML_RESULT", d['xml'])
                                 }}>
                                     <div className="content" dangerouslySetInnerHTML={{__html: d['snippet']}}/>
@@ -277,7 +281,7 @@ class RulePanel extends React.Component {
                     </div>
                 )
             })
-        }
+        };
 
         let headerText = group === "all" ? "Matches" : group === "satisfied" ? "Example Snippet" : "Violated snippet";
 
@@ -327,5 +331,12 @@ class RulePanel extends React.Component {
 
 }
 
+function mapDispatchToProps(dispatch) {
+    return {
+        onIgnoreFile: (value) => {
+            dispatch(ignoreFile(value));
+        }
+    }
+}
 
-export default RulePanel;
+export default connect(null, mapDispatchToProps)(RulePanel);

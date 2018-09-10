@@ -4,26 +4,18 @@
 
 
 import React, {Component} from 'react';
-// import ReactDOM from 'react-dom';
 import '../App.css';
 import Utilities from '../core/utilities';
 
 import * as d3 from 'd3';
-import PubSub from 'pubsub-js';
 import {FormControl} from 'react-bootstrap';
+import {connect} from "react-redux";
+import {updateTagTable} from "../actions";
 
 
 export class HeaderBar extends Component {
 
-    constructor() {
-        super();
-        this.attachListener();
-        this.state = {title: "Active Documentation", content: ""};
-        this.ignoreFile = false;
-    }
-
     render() {
-
         return (
             <div style={{paddingBottom: "30px"}} id="headerBar">
                 <div className="headerDiv">
@@ -33,120 +25,16 @@ export class HeaderBar extends Component {
         )
     }
 
-    /**
-     * subscribe for events
-     */
-    attachListener() {
-        // [ruleIndex, rule]
-        PubSub.subscribe('UPDATE_RULE', (msg, data) => {
-            this.setState({hash: 'ruleChanged', title: data[0], content: ""});
-        });
-
-        PubSub.subscribe('IGNORE_FILE', (msg, data) => {
-            this.ignoreFile = data[0];
-        });
-
-        // [hash, value]
-        PubSub.subscribe('HASH', (msg, data) => {
-
-            switch (data[0]) {
-                case 'tag':
-                    this.tag = this.tags.filter((d) => d['tagName'] === data[1])[0];
-                    this.setState({hash: 'tag', title: data[1], content: this.tag['detail']});
-                    break;
-                case 'rule':
-                    this.setState({hash: 'rule', title: data[1], content: ""});
-                    break;
-                case 'rules':
-                    this.setState({hash: 'rules', title: "All Rules", content: ""});
-                    break;
-                case "tagJsonChanged":
-                    this.setState({hash: 'tagJsonChanged', title: "tagJson.txt is changed.", content: ""});
-                    break;
-                case "ruleJsonChanged":
-                    this.setState({hash: 'ruleJsonChanged', title: "ruleJson.txt is changed.", content: ""});
-                    break;
-                case "hierarchy":
-                    this.setState({hash: 'hierarchy', title: "Project Hierarchy", content: ""});
-                    break;
-                case "index":
-                    this.setState({hash: 'index', title: "Active Documentation", content: ""});
-                    break;
-                case "genRule":
-                    this.setState({hash: 'genRule', title: "New Rule", content: ""});
-                    break;
-                case "violatedRules":
-                    this.setState({hash: 'genRule', title: "Violated Rules", content: ""});
-                    break;
-                case "rulesForFile":
-                    this.setState({hash: 'rulesForFile', title: "", content: data[1].replace(/%2F/g,'/')});
-                    break;
-                default:
-                    //this.setState({hash: 'index', title: "Active Documentation", content: ""});
-                    break;
-            }
-            this.updateTextareaLength();
-
-        });
-
-        // [ruleTable, filePath]
-        PubSub.subscribe('DISPLAY_UPDATE_RULES_FOR_FILE', (msg, data) => {
-            this.setState({hash: 'codeChanged', title: '', content: data[1]});
-        });
-
-
-        // [ws]
-        PubSub.subscribe('NEW_WS', (msg, data) => {
-            this.ws = data[0];
-        });
-
-        // called in RuleExecutor.checkRulesForAll() and RuleExecutor.checkRules_org()
-        // [ruleTable, tagTable]
-        PubSub.subscribe('DISPLAY_RULES', (msg, data) => {
-            this.tags = data[1];
-        });
-
-        // [tagTable, newTag]
-        PubSub.subscribe('UPDATE_TAG', (msg, data) => {
-            this.tags = data[0];
-            this.updateTextareaLength();
-            // console.log(this.tags);
-        });
-
-        // [tagTable]
-        PubSub.subscribe('UPDATE_TAG_TABLE', (msg, data) => {
-            this.tags = data[0];
-            this.updateTextareaLength();
-        });
-
-        // [focusedFilePath]
-        PubSub.subscribe('SHOW_RULES_FOR_FILE', (msg, data) => {
-            if (!this.ignoreFile)
-                this.setState({hash: 'rulesForFile', title: "", content: data[0]});
-            else PubSub.publish('IGNORE_FILE', [false])
-        });
-
-    }
-
-    /**
-     * update tag desc and send to server
-     */
-    updateTag(newDesc) {
-        if (newDesc !== this.tag['detail']) {
-            this.tag['detail'] = newDesc;
-            Utilities.sendToServer(this.ws, "MODIFIED_TAG", this.tag);
-        }
-    }
 
     renderHeader() {
-        switch (this.state.hash) {
+        switch (this.props.hash[0]) {
             case 'tag':
                 return (
                     <div>
                         <span className="text-16 primary">Rules related to tag: </span><br/>
-                        <span className="text-24 important">{this.state.title}</span>
-                        <FormControl componentClass="textarea" defaultValue={this.state.content}
-                                     onBlur={(e) => this.updateTag(e.target.value)} key={new Date()}
+                        <span className="text-24 important">{this.props.title}</span>
+                        <FormControl componentClass="textarea" defaultValue={this.props.content}
+                                     onBlur={(e) => this.props.onUpdateTag(this.props, e.target.value)} key={new Date()}
                                      placeholder="Information about tag"/>
                     </div>
                 );
@@ -155,7 +43,7 @@ export class HeaderBar extends Component {
                     <div>
                         <span className="text-16 primary">Rule Index: </span>
                         <span
-                            className="text-24 important">{this.state.title.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
+                            className="text-24 important">{this.props.title.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
                     </div>
                 );
             case 'codeChanged':
@@ -163,19 +51,19 @@ export class HeaderBar extends Component {
                     <div>
                         <span className="text-16 primary">Code Changed in File:</span><br/>
                         <span
-                            className="text-24 important">{this.state.content.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
+                            className="text-24 important">{this.props.content.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
                     </div>
                 );
             case 'ruleChanged':
                 return (
                     <div>
-                        <h3>Rule {this.state.title} is changed.</h3>
+                        <h3>Rule {this.props.title} is changed.</h3>
                     </div>
                 );
             case 'genRule':
                 return (
                     <div>
-                        <h3>{this.state.title}</h3>
+                        <h3>{this.props.title}</h3>
                     </div>
                 );
             case 'rulesForFile':
@@ -183,17 +71,16 @@ export class HeaderBar extends Component {
                     <div>
                         <span className="text-16 primary">Rules applicable for File:</span><br/>
                         <span
-                            className="text-24 important">{this.state.content.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
+                            className="text-24 important">{this.props.content.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
                     </div>
                 );
             default:
                 return (
                     <div>
-                        <h3>{this.state.title}</h3>
+                        <h3>{this.props.title}</h3>
                     </div>
                 );
         }
-
 
     }
 
@@ -211,5 +98,82 @@ export class HeaderBar extends Component {
     }
 }
 
+// map state to props
+function mapStateToProps(state) {
 
-export default HeaderBar;
+    let props = {
+        tags: state["tagTable"],
+        hash: state["hash"],
+        ws: state["ws"],
+        ignoreFile: state["ignoreFile"]
+    };
+
+    switch (state["hash"][0]) {
+        case 'tag':
+            props["tag"] = state["tagTable"].filter((d) => d['tagName'] === state["hash"][1])[0]; // can throw errors
+            props["title"] = state["hash"][1];
+            props["content"] = props["tag"]["detail"];
+            break;
+        case 'rule':
+            props["title"] = state["hash"][1];
+            props["content"] = "";
+            break;
+        case 'rules':
+            props["title"] = "All Rules";
+            props["content"] = "";
+            break;
+        case "tagJsonChanged":
+            props["title"] = "tagJson.txt is changed.";
+            props["content"] = "";
+            break;
+        case "ruleJsonChanged":
+            props["title"] = "ruleJson.txt is changed.";
+            props["content"] = "";
+            break;
+        case "hierarchy":
+            props["title"] = "Project Hierarchy";
+            props["content"] = "";
+            break;
+        case "index":
+            props["title"] = "Active Documentation";
+            props["content"] = "";
+            break;
+        case "genRule":
+            props["title"] = "New Rule";
+            props["content"] = "";
+            break;
+        case "violatedRules":
+            props["title"] = "Violated Rules";
+            props["content"] = "";
+            break;
+        case "rulesForFile":
+            props["title"] = "";
+            props["content"] = state["filePath"];
+            break;
+        case "codeChanged":
+            props["title"] = "Code changed in";
+            props["content"] = state["filePath"];
+            break;
+        default:
+            props["title"] = "";
+            props["content"] = "Error no page is found for: " + state["hash"][0];
+            break;
+    }
+
+    return props;
+
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        onUpdateTag: (props, newValue) => {
+            if (newValue !== props["tag"]["detail"]) {
+                props["tags"].filter((d) => d["tagName"] === props["hash"][1])[0]["detail"] = newValue; // can throw errors
+                Utilities.sendToServer(props["ws"], "MODIFIED_TAG", props["tag"]);
+                dispatch(updateTagTable(props["tags"]));
+            }
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(HeaderBar);

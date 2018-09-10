@@ -2,30 +2,24 @@
  * Created by saharmehrpour on 2/23/18.
  */
 
-import React from 'react';
+import React, {Component} from 'react';
+import {connect} from "react-redux";
 import '../App.css';
 
-import * as d3 from 'd3';
-import PubSub from 'pubsub-js';
 import {DropdownButton, MenuItem, HelpBlock} from 'react-bootstrap';
 import {FormControl, Label, Button, FormGroup, ButtonToolbar} from 'react-bootstrap';
 import {Row, Col} from 'react-bootstrap';
-
 import TiDelete from 'react-icons/lib/ti/delete';
-import MdAddBox from 'react-icons/lib/md/add-box';
 
 import XPathGenerator from './ruleGen/xPathGenerator';
 import Utilities from "../core/utilities";
 import {constants} from "./constants";
-import CustomToggle from "./ruleGen/customToggle";
-import CustomMenu from "./ruleGen/customMenu";
 
 
-class GenerateRule extends React.Component {
+class GenerateRule extends Component {
 
     constructor() {
         super();
-        this.attachListener();
 
         this.state = JSON.parse(JSON.stringify(constants.initial_state));
         this.state.availableTags = [];
@@ -50,68 +44,11 @@ class GenerateRule extends React.Component {
         );
     }
 
-    /**
-     * subscribe for events
-     */
-    attachListener() {
-
-        // [ws]
-        PubSub.subscribe('NEW_WS', (msg, data) => {
-            this.setState({ws: data[0]});
-        });
-
-        // [hash value]
-        PubSub.subscribe('HASH', (msg, data) => {
-            if (data[0] === 'genRule')
-                d3.select('#generateRule').classed('hidden', false);
-
-            else if (data[0] === 'rule') {
-                d3.select('#generateRule').classed('hidden', false);
-                this.ruleI = this.rules.filter((d) => +d.index === +data[1])[0];
-
-                this.setState({
-                    ...this.state,
-                    index: this.ruleI.index,
-                    title: this.ruleI.title,
-                    description: this.ruleI.description,
-                    tags: this.ruleI.tags,
-                    folderConstraint: this.ruleI.ruleType.constraint,
-                    filesFolders: this.ruleI.ruleType.checkFor,
-                    xPathState: {
-                        ...this.state.xPathState,
-                        ruleType:
-                            this.ruleI.ruleType.type === "WITHIN" ? "selected from one class" :
-                                this.ruleI.ruleType.type === "FIND_FROM_TEXT" ? "selected from one class which is directed from another class" :
-                                    this.ruleI.ruleType.type === "RETURN_TO_BASE" ? "selected from one class with the help of another class" : "",
-                        q0: this.ruleI.ruleType.type === "WITHIN" ? this.ruleI.quantifier.command : this.ruleI.quantifier.command1,
-                        q1: this.ruleI.ruleType.type === "WITHIN" ? this.state.xPathState.q1 : this.ruleI.quantifier.command2,
-                        q2: this.ruleI.ruleType.type === "RETURN_TO_BASE" ? this.ruleI.quantifier.command3 : this.state.xPathState.q2,
-                        c0: this.ruleI.ruleType.type === "WITHIN" ? this.ruleI.constraint.command : this.ruleI.constraint.command1,
-                        c1: this.ruleI.ruleType.type === "WITHIN" ? this.state.xPathState.q1 : this.ruleI.constraint.command2,
-                        c2: this.ruleI.ruleType.type === "RETURN_TO_BASE" ? this.ruleI.constraint.command3 : this.state.xPathState.q2,
-                    }
-                });
-            }
-
-            else
-                d3.select('#generateRule').classed('hidden', true);
-
-        });
-
-        // called in RuleExecutor.checkRulesForAll() and RuleExecutor.checkRules_org()
-        // [ruleTable, tagTable]
-        PubSub.subscribe('DISPLAY_RULES', (msg, data) => {
-            this.rules = data[0];
-            this.setState({availableTags: data[1]});
-        });
-
-        // [tagTable, newTag]
-        PubSub.subscribe('UPDATE_TAG', (msg, data) => {
-            this.setState({availableTags: data[0]});
-        });
-
+    //componentDidUpdate doesn't work
+    componentWillReceiveProps(nextProps) {
+        if (JSON.stringify(nextProps) !== JSON.stringify(this.state))
+            this.setState({availableTags: nextProps.availableTags});
     }
-
 
     /**
      * render the form about rule title, description, tags, files, etc.
@@ -272,7 +209,7 @@ class GenerateRule extends React.Component {
 
         }
 
-        Utilities.sendToServer(this.state.ws, "NEW_RULE", rule);
+        Utilities.sendToServer(this.props.ws, "NEW_RULE", rule);
         this.clearForm();
     }
 
@@ -325,75 +262,75 @@ class GenerateRule extends React.Component {
      * requires initial this.state.children = []
      * @returns {XML}
      */
-    testRenderGrammar() {
-        return (
-            <div>
-                Class WHERE[
-                {this.state.children.map((cons) =>
-                    constants.grammar_code_fragment[cons].restrictions.map((res) => {
-                        if (res === "WHERE") {
-
-                        }
-                        else {
-                            res.value.map((el, j) => {
-                                if (Array.isArray(el)) {
-                                    return (
-                                        <DropdownButton
-                                            title={el[0]}
-                                            key={j}
-                                            id={"dropdown"}>
-                                            {el.map((item, i) => {
-                                                if (i > 0)
-                                                    return (<MenuItem eventKey={i}>{item}</MenuItem>)
-                                            })}
-                                        </DropdownButton>
-                                    )
-                                }
-                                if (el === "textbox")
-                                    return (<input type={"text"} className={"inputText"} key={j}/>);
-                                if (el === "WHERE")
-                                    return (<span>WHERE [ ]</span>);
-                                return (<span key={j}>{el}</span>)
-                            })
-                        }
-                    })
-                )}
-
-
-                {this.state.children.length === 0 ? (
-                    <Dropdown id={"drop_down"}>
-                        <CustomToggle bsRole="toggle">
-                            <MdAddBox size={25} className={"mdAddBox"}/>
-                        </CustomToggle>
-                        <CustomMenu bsRole="menu">
-                            {Object.keys(constants.grammar_code_fragment["Class"]["WHERE"]).map((key, i) => {
-                                return (
-                                    <MenuItem eventKey={key} key={i}
-                                              onSelect={(evt) => {
-                                                  this.state.children.push(evt);
-                                                  this.setState({...this.state});
-                                              }}>
-                                        {key}
-                                    </MenuItem>);
-                            })}
-                        </CustomMenu>
-                    </Dropdown>
-
-                ) : (
-                    <Dropdown id={"drop_down"}>
-                        <CustomToggle bsRole="toggle">
-                            <MdAddBox size={25} className={"mdAddBox"}/>
-                        </CustomToggle>
-                        <CustomMenu bsRole="menu">
-                            <MenuItem eventKey={"AND"}>{"AND"}</MenuItem>
-                            <MenuItem eventKey={"OR"}>{"OR"}</MenuItem>
-                        </CustomMenu>
-                    </Dropdown>
-                )}
-                ]
-            </div>
-        )
-    }
+    // testRenderGrammar() {
+    //     return (
+    //         <div>
+    //             Class WHERE[
+    //             {this.state.children.map((cons) =>
+    //                 constants.grammar_code_fragment[cons].restrictions.map((res) => {
+    //                     if (res === "WHERE") {
+    //
+    //                     }
+    //                     else {
+    //                         res.value.map((el, j) => {
+    //                             if (Array.isArray(el)) {
+    //                                 return (
+    //                                     <DropdownButton
+    //                                         title={el[0]}
+    //                                         key={j}
+    //                                         id={"dropdown"}>
+    //                                         {el.map((item, i) => {
+    //                                             if (i > 0)
+    //                                                 return (<MenuItem eventKey={i}>{item}</MenuItem>)
+    //                                         })}
+    //                                     </DropdownButton>
+    //                                 )
+    //                             }
+    //                             if (el === "textbox")
+    //                                 return (<input type={"text"} className={"inputText"} key={j}/>);
+    //                             if (el === "WHERE")
+    //                                 return (<span>WHERE [ ]</span>);
+    //                             return (<span key={j}>{el}</span>)
+    //                         })
+    //                     }
+    //                 })
+    //             )}
+    //
+    //
+    //             {this.state.children.length === 0 ? (
+    //                 <Dropdown id={"drop_down"}>
+    //                     <CustomToggle bsRole="toggle">
+    //                         <MdAddBox size={25} className={"mdAddBox"}/>
+    //                     </CustomToggle>
+    //                     <CustomMenu bsRole="menu">
+    //                         {Object.keys(constants.grammar_code_fragment["Class"]["WHERE"]).map((key, i) => {
+    //                             return (
+    //                                 <MenuItem eventKey={key} key={i}
+    //                                           onSelect={(evt) => {
+    //                                               this.state.children.push(evt);
+    //                                               this.setState({...this.state});
+    //                                           }}>
+    //                                     {key}
+    //                                 </MenuItem>);
+    //                         })}
+    //                     </CustomMenu>
+    //                 </Dropdown>
+    //
+    //             ) : (
+    //                 <Dropdown id={"drop_down"}>
+    //                     <CustomToggle bsRole="toggle">
+    //                         <MdAddBox size={25} className={"mdAddBox"}/>
+    //                     </CustomToggle>
+    //                     <CustomMenu bsRole="menu">
+    //                         <MenuItem eventKey={"AND"}>{"AND"}</MenuItem>
+    //                         <MenuItem eventKey={"OR"}>{"OR"}</MenuItem>
+    //                     </CustomMenu>
+    //                 </Dropdown>
+    //             )}
+    //             ]
+    //         </div>
+    //     )
+    // }
 
     /**
      * render the drop down for the file/folder constraint
@@ -457,4 +394,14 @@ class GenerateRule extends React.Component {
 
 }
 
-export default GenerateRule;
+function mapStateToProps(state) {
+
+    return {
+        rules: state.ruleTable,
+        availableTags: state.tagTable,
+        ws: state.ws
+    };
+
+}
+
+export default connect(mapStateToProps, null)(GenerateRule);

@@ -2,7 +2,7 @@
  * Created by saharmehrpour on 2/23/18.
  */
 
-import React from 'react';
+import React, {Component} from 'react';
 import '../../App.css';
 
 import {DropdownButton, MenuItem, HelpBlock, Tabs, Tab} from 'react-bootstrap';
@@ -11,7 +11,7 @@ import {FormControl} from 'react-bootstrap';
 import ClassFragment from './classFragment';
 
 
-class XPathGenerator extends React.Component {
+class XPathGenerator extends Component {
 
     constructor(props) {
         super(props);

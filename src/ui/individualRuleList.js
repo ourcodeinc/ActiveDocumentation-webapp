@@ -2,18 +2,14 @@
  * Created by saharmehrpour on 9/8/17.
  */
 
-import React from 'react';
+import React, {Component} from 'react';
 import '../App.css';
-
-// import ReactDOM from 'react-dom';
-// import * as d3 from 'd3';
-// import PubSub from 'pubsub-js';
 
 import Utilities from '../core/utilities';
 import {Button, Collapse} from 'react-bootstrap';
 
 
-class IndividualRuleList extends React.Component {
+class IndividualRuleList extends Component {
 
     constructor() {
         super();

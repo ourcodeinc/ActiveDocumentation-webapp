@@ -8,8 +8,9 @@ import '../App.css';
 import FaArrowLeft from 'react-icons/lib/fa/arrow-left';
 import FaArrowRight from 'react-icons/lib/fa/arrow-right';
 import {Nav, Navbar, NavItem} from "react-bootstrap";
+import {connect} from "react-redux";
+import {clickedOnBack, clickedOnForward} from "../actions";
 
-// import ReactDOM from 'react-dom';
 
 export class NavBar extends Component {
 
@@ -19,10 +20,12 @@ export class NavBar extends Component {
                     style={{backgroundColor: "transparent", backgroundImage: "none", border: "none"}}>
                 <Navbar.Header>
                     <Nav>
-                        <NavItem eventKey={1} className="disabled" id="back_button">
+                        <NavItem eventKey={1} className={this.props.backDisable} id="back_button"
+                                 onClick={() => this.props.backClick(this.props)}>
                             <FaArrowLeft size={20}/>
                         </NavItem>
-                        <NavItem eventKey={2} className="disabled" id="forward_button">
+                        <NavItem eventKey={2} className={this.props.forwardDisable} id="forward_button"
+                                 onClick={() => this.props.forwardClick(this.props)}>
                             <FaArrowRight size={20}/>
                         </NavItem>
                     </Nav>
@@ -54,5 +57,31 @@ export class NavBar extends Component {
 
 }
 
+// map state to props
+function mapStateToProps(state) {
+    return {
+        history: state["hashManager"]["history"],
+        activeHash: state["hashManager"]["activeHash"],
+        forwardDisable: state["hashManager"]["forwardDisable"],
+        backDisable: state["hashManager"]["backDisable"]
+    };
+}
 
-export default NavBar;
+function mapDispatchToProps(dispatch) {
+    return {
+        backClick: (props) => {
+            if (props.activeHash > 0) {
+                dispatch(clickedOnBack());
+                window.location.hash = props.history[props.activeHash - 1];
+            }
+        },
+        forwardClick: (props) => {
+            if (props.activeHash < props.history.length - 1) {
+                dispatch(clickedOnForward());
+                window.location.hash = props.history[props.activeHash + 1];
+            }
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(NavBar);

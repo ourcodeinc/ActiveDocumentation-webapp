@@ -2,30 +2,16 @@
  * Created by saharmehrpour on 9/6/17.
  */
 
-import React from 'react';
+import React, {Component} from 'react';
 import '../App.css';
-
-import ReactDOM from 'react-dom';
-import * as d3 from 'd3';
-import PubSub from 'pubsub-js';
 
 import IndividualRuleList from './individualRuleList';
 import {FormControl, Label} from 'react-bootstrap';
 import Utilities from '../core/utilities';
+import {connect} from "react-redux";
+import {updateIndividualRuleDescription, updateIndividualRuleTitle, updateRule} from "../actions";
 
-class IndividualRule extends React.Component {
-
-    // thisNode;
-    rules;
-    ruleI;
-    ws;
-
-    constructor() {
-        super();
-        this.attachListener();
-
-        this.state = {};
-    }
+class IndividualRule extends Component {
 
     render() {
         return (
@@ -33,151 +19,128 @@ class IndividualRule extends React.Component {
                 <div className="tableRow">
                     <div className="tableCell labelCell"><h4>Rule Title</h4></div>
                     <div className="tableCell infoCell">
-                        <FormControl id="indi_title_textarea" componentClass="textarea" placeholder="Title"
-                                     onBlur={() => this.updateRules()}/>
+                        <FormControl componentClass="textarea" placeholder="Title" //id="indi_title_textarea"
+                                     onBlur={() => this.props.onUpdateRule(this.props)}
+                                     value={this.props.individualRuleTitle}
+                                     onChange={(e) => this.props.onChangeTitle(e.target.value)}
+                        />
                     </div>
                 </div>
                 <div className="tableRow">
                     <div className="tableCell labelCell"><h4>Rule Description</h4></div>
                     <div className="tableCell infoCell">
-                        <FormControl id="indi_description_textarea" componentClass="textarea" placeholder="Description"
-                                     onBlur={() => this.updateRules()}
+                        <FormControl componentClass="textarea" placeholder="Description" id="indi_description_textarea"
+                                     onBlur={() => this.props.onUpdateRule(this.props)}
                                      onKeyUp={() => {
                                          let el = document.getElementById("indi_description_textarea");
 
                                          el.style.cssText = 'height:auto; padding:0';
-                                         el.style.cssText = 'height:' + el.scrollHeight + 'px';
-                                     }}/>
+                                         el.style.cssText = 'height:' + (25 + el.scrollHeight) + 'px';
+                                     }}
+                                     value={this.props.individualRuleDescription}
+                                     onChange={(e) => this.props.onChangeDescription(e.target.value)}
+                        />
                     </div>
                 </div>
                 <div className="tableRow">
                     <div className="tableCell labelCell"><h4>Rule Tags</h4></div>
-                    <div id="indi_tags_div" className="tableCell infoCell"/>
+                    <div id="indi_tags_div" className="tableCell infoCell">
+                        {!this.props.ruleI ? null : this.props.ruleI['tags'].map((d, i) =>
+                            (<div className="buttonDiv" key={i}>
+                                <Label
+                                    onClick={() => window.location.hash = "#/tag/" + d.replace(/\//g, '%2F')}>{d}</Label>
+                            </div>)
+                        )}
+                    </div>
                 </div>
                 <div className="tableRow">
                     <div className="tableCell labelCell"><h4>Matches</h4></div>
-                    <div id="indi_all_div" className="tableCell infoCell"/>
+                    <div id="indi_all_div" className="tableCell infoCell">
+                        {!this.props.ruleI ? null : (
+                            <IndividualRuleList ruleI={this.props.ruleI} ws={this.props.ws} group="all"/>
+                        )}
+                    </div>
                 </div>
                 <div className="tableRow">
                     <div className="tableCell labelCell"><h4>Rule Verified</h4></div>
                     <div className="tableCell infoCell">
-                        <div id="indi_satisfied_div" className="largePaddedDiv"/>
-                        <div id="indi_violated_div" className="largePaddedDiv"/>
+                        <div id="indi_satisfied_div" className="largePaddedDiv">
+                            {!this.props.ruleI ? null : (
+                                <IndividualRuleList ruleI={this.props.ruleI} ws={this.props.ws} group="satisfied"/>
+                            )}
+                        </div>
+                        <div id="indi_violated_div" className="largePaddedDiv">
+                            {!this.props.ruleI ? null : (
+                                <IndividualRuleList ruleI={this.props.ruleI} ws={this.props.ws} group="violated"/>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
         );
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return !(JSON.stringify(nextProps) === JSON.stringify(this.props));
+    }
+
     /**
      * update the length of a text area to remove scroll
      */
     updateTextareaLength() {
-        d3.select("#individualRule").selectAll("textarea")
-            .each(function () {
-                let el = this;
-                el.style.cssText = 'height:0';
-                el.style.cssText = 'overflow:hidden;height:' + el.scrollHeight + 'px';
-            });
-    }
-
-    /**
-     * subscribe for events
-     */
-    attachListener() {
-        // [ws]
-        PubSub.subscribe('NEW_WS', (msg, data) => {
-            this.ws = data[0];
-        });
-
-        // [hash value]
-        PubSub.subscribe('HASH', (msg, data) => {
-            if (data[0] === 'rule') {
-                this.ruleI = this.rules.filter((d) => +d.index === +data[1])[0];
-                this.displayRule();
-                d3.select('#individualRule').classed('hidden', false);
-                this.updateTextareaLength();
-            }
-            else {
-                d3.select('#individualRule').classed('hidden', true);
-            }
-        });
-
-        // [ruleIndex, rule]
-        PubSub.subscribe('UPDATE_RULE', (msg, data) => {
-            let oldRule = this.rules.filter((d) => d['index'] === +data[0])[0];
-            oldRule['title'] = data[1]['title'];
-            oldRule['description'] = data[1]['description'];
-        });
-
-        // called in RuleExecutor.checkRulesForAll() and RuleExecutor.checkRules_org()
-        // [ruleTable, tagTable]
-        PubSub.subscribe('DISPLAY_RULES', (msg, data) => {
-            this.rules = data[0];
-            this.tags = data[1];
-        });
-
-
-    }
-
-
-    /**
-     * display a specific rule
-     */
-    displayRule() {
-
-        document.getElementById('indi_title_textarea').value = this.ruleI['title'];
-        document.getElementById('indi_description_textarea').value = this.ruleI['description'];
-
-        ReactDOM.render(
-            (<div>{this.tagRender()}</div>),
-            document.getElementById('indi_tags_div'));
-
-        ReactDOM.render(
-            (<IndividualRuleList ruleI={this.ruleI} ws={this.ws} group="all"/>),
-            document.getElementById("indi_all_div"));
-
-        ReactDOM.render(
-            (<IndividualRuleList ruleI={this.ruleI} ws={this.ws} group="satisfied"/>),
-            document.getElementById("indi_satisfied_div"));
-        ReactDOM.render(
-            (<IndividualRuleList ruleI={this.ruleI} ws={this.ws} group="violated"/>),
-            document.getElementById("indi_violated_div"));
-    };
-
-
-    /**
-     * render tag badges
-     */
-    tagRender() {
-        return this.ruleI['tags'].map((d, i) => {
-            return (
-                <div className="buttonDiv" key={i}>
-                    <Label onClick={() => PubSub.publish('UPDATE_HASH', ['tag', d])}>{d}</Label>
-                </div>)
+        let elements = document.getElementById("individualRule").getElementsByTagName("textarea");
+        Array.from(elements).forEach( (el) => {
+            el.style.cssText = 'height:0';
+            el.style.cssText = 'overflow:hidden;height:' + el.scrollHeight + 'px';
         });
     }
-
-    /**
-     * update the rule and send to server
-     */
-    updateRules = function () {
-
-        let newObj = Utilities.cloneJSON(this.ruleI);
-        delete newObj['xPathQueryResult'];
-
-        newObj['title'] = document.getElementById(`indi_title_textarea`).value;
-        newObj['description'] = document.getElementById(`indi_description_textarea`).value;
-
-        if (newObj['title'] !== this.ruleI['title'] || newObj['description'] !== this.ruleI['description'])
-            Utilities.sendToServer(this.ws, "MODIFIED_RULE", newObj);
-
-    };
-
-    setHeight(o) {
-        return (25 + o.scrollHeight) + "px";
-    }
-
 }
 
-export default IndividualRule;
+// map state to props
+function mapStateToProps(state) {
+
+    let props = {
+        rules: state.ruleTable,
+        codeChanged: false,
+        filePath: "none",
+        ws: state.ws,
+        ignoreFile: state.ignoreFile,
+
+    };
+
+    if (state.hash[0] === "rule") {
+        props.ruleI = props.rules.filter((d) => +d.index === +state.hash[1])[0];
+        props.individualRuleTitle = state.individualRule.title === "" ? props.ruleI.title : state.individualRule.title;
+        props.individualRuleDescription = state.individualRule.description === "" ? props.ruleI.description : state.individualRule.description;
+    }
+
+    return props;
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        onUpdateRule: (props) => {
+            if (props.individualRuleTitle !== props.ruleI['title'] || props.individualRuleDescription !== props.ruleI['description']) {
+                let newObj = Utilities.cloneJSON(props.ruleI);
+                newObj['title'] = props.individualRuleTitle;
+                newObj['description'] = props.individualRuleDescription;
+                delete newObj['xPathQueryResult'];
+                Utilities.sendToServer(props.ws, "MODIFIED_RULE", newObj);
+
+                /* Same object will throw errors as the removed attribute is either present in both ot neither */
+                let modifiedObj = Utilities.cloneJSON(props.ruleI);
+                modifiedObj['title'] = props.individualRuleTitle;
+                modifiedObj['description'] = props.individualRuleDescription;
+                dispatch(updateRule(modifiedObj));
+            }
+        },
+        onChangeTitle: (text) => {
+            dispatch(updateIndividualRuleTitle(text))
+        },
+        onChangeDescription: (text) => {
+            dispatch(updateIndividualRuleDescription(text))
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(IndividualRule);

@@ -2,13 +2,16 @@
  * Created by saharmehrpour on 9/5/17.
  */
 
-// import React from 'react';
-import PubSub from 'pubsub-js';
+import {Component} from 'react';
+import {connect} from "react-redux";
 
-class WebSocketManager {
+import {updateFilePath, updateRuleTable, updateTagTable, updateWS} from "../actions";
+import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from '../core/ruleExecutor';
 
+class WebSocketManager extends Component {
 
-    constructor() {
+    constructor(props) {
+        super(props);
 
 
         let xml = []; // object of `filePath` and `xml`
@@ -17,10 +20,11 @@ class WebSocketManager {
         let ws = new WebSocket("ws://localhost:8887");
         let filtered;
 
-        PubSub.publish('NEW_WS', [ws]);
+        // PubSub.publish('NEW_WS', [ws]);
+        this.props.onUpdateWS(ws);
 
         ws.onopen = function () {
-            PubSub.publish('NEW_CONNECTION', []);
+            // PubSub.publish('NEW_CONNECTION', []);
         };
 
 
@@ -28,7 +32,7 @@ class WebSocketManager {
             alert("FATAL: WebSocket not natively supported. This demo will not work!");
         }
 
-        ws.onmessage = function (e) {
+        ws.onmessage = (e) => {
 
             let message = JSON.parse(e.data);
 
@@ -50,16 +54,18 @@ class WebSocketManager {
                 // send initially on open, when the tagJson.txt is changed, followed by VERIFY_RULES
                 case "TAG_TABLE":
                     tagTable = JSON.parse(message.data);
+                    this.props.onUpdateTagTable(tagTable);
                     break;
 
                 case "PROJECT_HIERARCHY":
                     // received by projectHierarchy
-                    PubSub.publish('PROJECT_HIERARCHY', [message.data]);
+                    this.props.onProjectHierarchy(message.data);
                     break;
 
                 case "VERIFY_RULES":
                     // received by RuleExecutor
-                    PubSub.publish('VERIFY_RULES', [xml, ruleTable, tagTable]);
+                    ruleTable = checkRulesForAll(xml, ruleTable);
+                    this.props.onUpdateRuleTable(ruleTable);
                     break;
 
                 // followed by CHECK_RULES_FOR_FILE
@@ -75,8 +81,10 @@ class WebSocketManager {
                 case "CHECK_RULES_FOR_FILE":
                     let filePath = message.data;
                     // received by RuleExecutor
-                    PubSub.publish('CHECK_RULES_FOR_FILE', [xml, ruleTable, filePath]);
-                    PubSub.publish('UPDATE_HASH', ['codeChanged']);
+                    ruleTable = checkRulesForFile(xml, ruleTable, filePath);
+                    this.props.onFilePathChange(filePath.replace('/Users/saharmehrpour/Documents/Workspace/', ''));
+                    this.props.onUpdateRuleTable(ruleTable);
+                    window.location.hash = "#/codeChanged";
                     break;
 
                 // tagName and tag
@@ -87,34 +95,32 @@ class WebSocketManager {
                         tagTable.push(newTag);
                     else
                         tagTable.filter((d) => d.tagName === newTag['tagName'])[0].detail = newTag['detail'];
+                    window.location.hash ="#/tag/" + newTag['tagName'];
 
-                    PubSub.publish('UPDATE_TAG', [tagTable, newTag]);
-                    PubSub.publish('UPDATE_HASH', ['tag', newTag['tagName']]);
                     break;
 
                 // Followed after sending MODIFIED_RULE
                 // ruleIndex and rule
                 case "UPDATE_RULE":
-                    let newRule = JSON.parse(message.data['rule']);
-                    PubSub.publish('UPDATE_RULE', [message.data['ruleIndex'], newRule]);
-                    PubSub.publish('UPDATE_HASH', ['rule', message.data['ruleIndex']]);
+                    // let newRule = JSON.parse(message.data['rule']);
+                    window.location.hash ="#/rule/" + message.data['ruleIndex'];
                     break;
 
                 // when the tagJson.txt changes, after TAG_TABLE
                 case "UPDATE_TAG_TABLE":
-                    PubSub.publish('UPDATE_TAG_TABLE', [tagTable]);
-                    PubSub.publish('UPDATE_HASH', ['tagJsonChanged']);
+                    this.props.onUpdateTagTable(tagTable);
+                    window.location.hash ="#/tagJsonChanged";
                     break;
 
                 // when the ruleJson.txt changes, after RULE_TABLE
                 case "UPDATE_RULE_TABLE":
-                    PubSub.publish('UPDATE_RULE_TABLE', [ruleTable]);
-                    PubSub.publish('UPDATE_HASH', ['ruleJsonChanged']);
+                    this.props.onUpdateRuleTable(ruleTable);
+                    window.location.hash ="#/ruleJsonChanged";
                     break;
 
                 // after sending a piece of code EXPR_STMT
                 case "EXPR_STMT_XML":
-                    PubSub.publish('EXPR_STMT_XML', [message.data]);
+                    // PubSub.publish('EXPR_STMT_XML', [message.data]);
                     break;
 
                 // after sending a piece of code DECL_STMT
@@ -122,14 +128,16 @@ class WebSocketManager {
                     let newAddedRule = JSON.parse(message.data['rule']);
                     ruleTable.push(newAddedRule);
                     // received by RuleExecutor
-                    PubSub.publish('VERIFY_RULE', [xml, ruleTable, tagTable]);
+                    ruleTable[ruleTable.length - 1] = runRulesByTypes(xml, newAddedRule);
+                    this.props.onUpdateRuleTable(ruleTable);
                     break;
 
                 // after sending a piece of code DECL_STMT
                 case "SHOW_RULES_FOR_FILE":
-                    let focusedFilePath = message.data;
-                    // PubSub.publish('SHOW_RULES_FOR_FILE', [focusedFilePath]);
-                    PubSub.publish('UPDATE_HASH', ['rulesForFile', focusedFilePath]);
+                    let focusedFilePath = message.data.replace('/Users/saharmehrpour/Documents/Workspace/', '');
+                    this.props.onFilePathChange(focusedFilePath);
+                    window.location.hash ="#/rulesForFile/" + focusedFilePath.replace(/\//g, '%2F');
+
                     break;
 
                 case "PROJECT":
@@ -143,12 +151,36 @@ class WebSocketManager {
         };
     }
 
+
+    render() {
+        return null;
+
+    }
+
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        onUpdateWS: (ws) => {
+            dispatch(updateWS(ws));
+        },
+        onProjectHierarchy: (hierarchyData) => {
+
+        },
+        onUpdateRuleTable: (ruleTable) => {
+            dispatch(updateRuleTable(ruleTable));
+        },
+        onUpdateTagTable: (tagTable) => {
+            dispatch(updateTagTable(tagTable));
+        },
+        onFilePathChange: (filePath) => {
+            dispatch(updateFilePath(filePath));
+        }
+    }
 }
 
 /**
  * Factory method to create a new WebSocketManager instance
  * @returns {WebSocketManager}
  */
-export function create() {
-    return new WebSocketManager();
-}
+export default connect(null, mapDispatchToProps)(WebSocketManager);

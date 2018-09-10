@@ -4,12 +4,9 @@
 
 
 import React, {Component} from 'react';
-// import ReactDOM from 'react-dom';
 import '../App.css';
 // import Utilities from '../core/utilities';
 
-import * as d3 from 'd3';
-import PubSub from 'pubsub-js';
 
 import {SplitButton, MenuItem, Button} from 'react-bootstrap';
 
@@ -19,7 +16,6 @@ export class ProjectHierarchy extends Component {
     constructor() {
         super();
         this.state = {projectHierarchyJson: {}, dropDowns: []};
-        this.attachListener();
     }
 
     render() {
@@ -29,25 +25,6 @@ export class ProjectHierarchy extends Component {
             </div>
         )
     }
-
-    /**
-     * subscribe for events
-     */
-    attachListener() {
-
-        // [hash, value]
-        PubSub.subscribe('HASH', (msg, data) => {
-            d3.select('#projectHierarchy').classed('hidden', () => {
-                return (['hierarchy'].indexOf(data[0]) === -1 )
-            });
-        });
-
-        // [projectHierarchyJson]
-        PubSub.subscribe('PROJECT_HIERARCHY', (msg, data) => {
-            this.setState({projectHierarchyJson: data[0], dropDowns: [{itemData: data[0]}]});
-        });
-    }
-
 
     drawDropDowns() {
         return this.state.dropDowns.map((myData, i) => {
