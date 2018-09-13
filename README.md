@@ -134,3 +134,9 @@ This system is using ANTLR4 and Simple CoreNLP.
 
 Demo of CoreNLP is available in [http://corenlp.run/](http://corenlp.run/)
 
+## Used Ports
+
+Three ports are used for this application:
+* 8887 for websocket
+* 3000 for application server
+* 9000 for CoreNLP
