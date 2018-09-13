@@ -267,6 +267,7 @@ class GenerateRule extends Component {
         this.props.onSubmitNewRule(rule);
         Utilities.sendToServer(this.props.ws, "NEW_RULE", rule);
         this.clearForm();
+        window.location.hash = "#/rule/" + rule.index;
 
     }
 
