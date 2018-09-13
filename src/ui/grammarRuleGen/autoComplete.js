@@ -22,13 +22,14 @@ class AutoComplete extends Component {
         this.onClickTextArea = this.onClickTextArea.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this);
         this.setWrapperRef = this.setWrapperRef.bind(this);
+        this.setSuggestionDivRef = this.setSuggestionDivRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
 
     }
 
     render() {
         return (
-            <div ref={this.setWrapperRef}>
+            <div ref={this.setWrapperRef} className={"autoCompleteContainer"}>
                 <form>
                     <FormGroup>
                         <FormControl componentClass="textarea" name="myCountry" placeholder="Design Rule"
@@ -36,29 +37,24 @@ class AutoComplete extends Component {
                                      onClick={this.onClickTextArea}
                                      onChange={this.handleChange}
                                      onKeyUp={this.onKeyUp}
-                                     onFocus={() => document.getElementById("suggestionDiv").style.display = "block"}
+                                     onFocus={() => this.suggestionDivRef.style.display = "block"}
                                      value={this.state.myText}
                         />
-                        <div id={"suggestionDiv"}>
+                        <div ref={this.setSuggestionDivRef} className={"suggestionDiv"}>
                             <Panel bsStyle="default">
 
-                                {/*{this.state.grammarSuggestion.length !== 0 || this.state.phraseSuggestion.length !== 0 ? null :*/}
-                                {/*(<Panel.Heading>*/}
-                                {/*<Panel.Title componentClass="h3">Templates</Panel.Title>*/}
-                                {/*</Panel.Heading>)*/}
-                                {/*}*/}
-                                {/*{this.state.grammarSuggestion.length !== 0 || this.state.phraseSuggestion.length !== 0 ? null :*/}
-                                {/*<ListGroup>*/}
-                                {/*{constants.templates.map((word, i) =>*/}
-                                {/*(<ListGroupItem key={i} className={"item"}*/}
-                                {/*// onClick={() => this.updateGrammarText(word)}*/}
-                                {/*>*/}
-                                {/*{word}*/}
-                                {/*</ListGroupItem>)*/}
-                                {/*)}*/}
-                                {/*</ListGroup>*/}
-                                {/*}*/}
-
+                                {this.state.grammarSuggestion.length !== 0 || this.state.phraseSuggestion.length !== 0 ? null :
+                                    (<Panel.Heading>
+                                        <Panel.Title componentClass="h3">Templates</Panel.Title>
+                                    </Panel.Heading>)
+                                }
+                                {this.state.grammarSuggestion.length !== 0 || this.state.phraseSuggestion.length !== 0 ? null :
+                                    <ListGroup>
+                                        {constants.templates.map((word, i) =>
+                                            (<ListGroupItem key={i} className={"item"}>{word}</ListGroupItem>)
+                                        )}
+                                    </ListGroup>
+                                }
 
                                 {this.state.grammarSuggestion.length === 0 ? null :
                                     (<Panel.Heading>
@@ -390,9 +386,14 @@ class AutoComplete extends Component {
         this.wrapperRef = node;
     }
 
+    setSuggestionDivRef(node) {
+        this.suggestionDivRef = node;
+    }
+
     handleClickOutside(event) {
         if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-            document.getElementById("suggestionDiv").style.display = "none";
+            this.suggestionDivRef.style.display = "none";
+            this.props.onBlur();
         }
     }
 

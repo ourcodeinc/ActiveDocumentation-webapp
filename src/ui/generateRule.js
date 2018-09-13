@@ -42,9 +42,9 @@ class GenerateRule extends Component {
                 {/*<XPathGenerator key={new Date()} state={this.state}/>*/}
                 <AutoComplete id={"raw_text"} ref={(autoComplete) => {
                     this.autoComplete = autoComplete;
-                }}/>
+                }} onBlur={() => this.verifyText()}/>
                 <div style={{padding: "30px"}}>
-                    <Button bsStyle="primary" block onClick={() => this.verifyText()}>Verify</Button>
+                    {/*<Button bsStyle="primary" block onClick={() => this.verifyText()}>Verify</Button>*/}
                     <h4>Quantifier:</h4><span style={{wordWrap: "break-word"}}>{this.state.quantifierXPath}</span>
                     <h4>Constraint:</h4><span style={{wordWrap: "break-word"}}>{this.state.constraintXPath}</span>
                 </div>
@@ -259,7 +259,7 @@ class GenerateRule extends Component {
         rule.quantifier = {detail: this.props.autoCompleteText, command: "src:unit/" + this.state.quantifierXPath};
         rule.constraint = {detail: this.props.autoCompleteText, command: "src:unit/" + this.state.constraintXPath};
 
-        if (rule.quantifier === "" || rule.constraint) {
+        if (rule.quantifier === "" || rule.constraint === "") {
             console.log("XPaths are not specified");
             return;
         }

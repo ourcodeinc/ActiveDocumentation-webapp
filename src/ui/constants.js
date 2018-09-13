@@ -954,6 +954,10 @@ export class constants {
         }
     };
 
+    static templates = [
+        "class where have function where have name where equal to <Name>",
+        "class where have entity where have name equal to <Name>"
+    ]
 
 }
 
