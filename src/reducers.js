@@ -17,6 +17,9 @@ const default_state = {
     individualRule: {
         title: "",
         description: ""
+    },
+    generateRule: {
+        autoCompleteText: ""
     }
 };
 
@@ -122,6 +125,13 @@ const reducer = (state = default_state, action) => {
                     title: state.individualRule.title,
                     description: action["value"]
                 }, message: "INDIVIDUAL_RULE_DESCRIPTION_UPDATED"
+            });
+
+        case "UPDATE_RULE_GENERATION_TEXT":
+            return Object.assign({}, state, {
+                generateRule: {
+                    autoCompleteText: action["value"]
+                }, message: "RULE_GENERATION_TEXT"
             });
 
         default:

@@ -861,6 +861,100 @@ export class constants {
         }
     };
 
+    // autoComplete for rule generation
+
+    static replace_phrase = {
+        "function foo": "function where (has name where equals to \"foo\")",
+        "bar function": "function where has name where equals to \"bar\""
+    };
+
+    static grammar = {
+        "of": ["class", "function", "abstract function", "declaration statement",
+            "parameter", "annotation", "type", "constructor", "argument", "extension"],
+        "where": ["have", "equal to", "not", "include"],
+        "have": ["class", "function", "abstract function", "declaration statement",
+            "parameter", "annotation", "type", "constructor", "argument", "extension"],
+        "not": ["include", "contain"],
+
+        "name": ["must", "must be equal to", "where [not] include/equal to", "of"],
+        "name of": ["class", "function", "abstract function", "type", "constructor", "argument", "extension"],
+
+        "annotation": ["must", "must be equal to", "where have", "of"],
+        "annotation where have": ["name", "argument"],
+        "annotation of": ["class", "function", "constructor", "abstract function", "declaration statement"],
+
+        "extension": ["must", "must be equal to", "where [not] equal to", "of class"],
+
+        "function": ["must", "must be equal to", "where have", "of class"],
+        "function where have": ["annotation", "specifier", "name", "parameter", "return value", "declaration statement", "expression statement"],
+        "function of": ["class"],
+
+        "abstract function": ["must", "must be equal to", "where have", "of class"],
+        "abstract function where have": ["annotation", "specifier", "name", "parameter"],
+
+        "constructor": ["must", "must be equal to", "where have", "of class"],
+        "constructor where have": ["annotation", "specifier", "parameter", "return value", "declaration statement", "expression statement"],
+
+        "parameter": ["must", "must be equal to", "where have", "of"],
+        "parameter where have": ["name", "type"],
+        "parameter of": ["function", "constructor", "abstract function"],
+
+        "type": ["must", "must be equal to", "where [not] equal to", "of"],
+        "type of": ["parameter", "declaration statement"],
+
+        "specifier": ["must", "must be equal to", "where [not] equal to", "of"],
+        "specifier of": ["function", "constructor", "abstract function", "declaration statement", "class"],
+
+        "return value": ["must", "must be equal to", "where have", "of function"],
+        "return value where have": ["calls", "name"],
+
+        "declaration statement": ["must", "must be equal to", "where have", "of"],
+        "declaration statement of": ["class", "function", "constructor"],
+        "declaration statement where have": ["annotation", "specifier", "types", "name", "initial value"],
+
+        "expression statement": ["must", "must be equal to", "where have", "of"],
+        "expression statement where have": ["calls", "name"],
+        "expression statement of": ["function", "constructor", "constructor"],
+
+        "initial value": ["must", "must be equal to", "where have", "of declaration statement"],
+        "initial value where have": ["calls", "name"],
+
+        "argument": ["must", "must be equal to", "where have", "of call"],
+        "argument where have": ["calls", "name"],
+
+        "call": ["must", "must be equal to", "where have", "of"],
+        "call where have": ["callers", "name"],
+        "call of": ["argument", "return value", "expression statement", "initValue"],
+
+        "caller": ["must", "must be equal to", "where have name [not] equal to", "of calls"],
+
+        "value": ["must", "must be equal to", "where [not] equal to", "of"],
+        "value of": ["argument", "return value", "expression statement", "initial value"],
+
+        "class": ["must", "must be equal to", "where have", "of class"],
+        "class where have": ["annotation", "specifier", "name", "extension", "function", "abstract function", "constructor", "declaration statement", "class", "return value"],
+
+    };
+
+    /**
+     * phrase: {value: replace with, auto_complete: string ( what to add after the first word)}
+     */
+    static phrases = {
+        "function foo": {
+            value: "function where (has name where equals to \"foo\")",
+            auto_complete: "foo"
+        },
+        "bar function": {
+            value: "function where has name where equals to \"bar\"",
+            auto_complete: "function"
+        },
+        "Command class": {
+            value: "class where has name where equals to \"Command\"",
+            auto_complete: "class"
+        }
+    };
+
+
 }
 
 

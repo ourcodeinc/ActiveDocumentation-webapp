@@ -114,7 +114,6 @@ class WebSocketManager extends Component {
 
                 // when the ruleJson.txt changes, after RULE_TABLE
                 case "UPDATE_RULE_TABLE":
-                    this.props.onUpdateRuleTable(ruleTable);
                     window.location.hash ="#/ruleJsonChanged";
                     break;
 

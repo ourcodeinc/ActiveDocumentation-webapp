@@ -113,12 +113,12 @@ class Utilities {
      */
     static cloneJSON(json) {
 
-    let newObj = {};
-    for (let ky in json)
-        newObj[ky] = json[ky];
+        let newObj = {};
+        for (let ky in json)
+            newObj[ky] = json[ky];
 
-    return newObj;
-}
+        return newObj;
+    }
 
     /**
      * check whether one arrays contains all elements of the other array
@@ -127,15 +127,29 @@ class Utilities {
      * @returns {boolean}
      */
     static arrayContains(container, arr) {
-    let arrContainer = container.slice(0);
+        let arrContainer = container.slice(0);
 
-    for (let i = arr.length; i--;) {
-        if (arrContainer.indexOf(arr[i]) === -1)
-            return false;
-        arrContainer.splice(arrContainer.indexOf(arr[i]), 1)
+        for (let i = arr.length; i--;) {
+            if (arrContainer.indexOf(arr[i]) === -1)
+                return false;
+            arrContainer.splice(arrContainer.indexOf(arr[i]), 1)
+        }
+        return true;
     }
-    return true;
-}
+
+
+    static arrayMove(arr, from, to) {
+        arr.splice(to, 0, arr.splice(from, 1)[0]);
+    };
+
+    static stringReplaceAll(str, search, replacement) {
+        return str.replace(new RegExp(search, 'g'), replacement);
+    };
+
+    static stringSplice(str, start, delCount, newSubStr) {
+        return str.slice(0, start) + newSubStr + str.slice(start + Math.abs(delCount));
+    };
+
 
 }
 

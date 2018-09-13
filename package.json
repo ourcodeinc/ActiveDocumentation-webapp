@@ -3,15 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "bootstrap": "^3.3.7",
-    "react": "^16.4.2",
-    "react-bootstrap": "^0.31.3",
-    "react-bootstrap-typeahead": "^3.2.0",
-    "react-dom": "^16.4.2",
+    "ajv": "^6.5.3",
+    "antlr4": "^4.7.1",
+    "corenlp": "^1.4.3",
+    "react": "^16.5.0",
+    "react-bootstrap": "^0.32.0",
+    "react-dom": "^16.5.0",
     "react-icons": "^2.2.5",
-    "react-scripts": "^1.1.4",
     "react-redux": "^5.0.7",
-    "redux": "^4.0.0"
+    "react-scripts": "^1.1.4",
+    "redux": "^4.0.0",
+    "d3": "^4.10.0"
   },
   "scripts": {
     "start": "PORT=3000 react-scripts start",
