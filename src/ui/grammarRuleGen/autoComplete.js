@@ -14,7 +14,8 @@ class AutoComplete extends Component {
             selectionStart: -1,
             selectionEnd: 0,
             grammarSuggestion: [],
-            phraseSuggestion: []
+            phraseSuggestion: [],
+            focused: false
         };
 
 
@@ -37,7 +38,10 @@ class AutoComplete extends Component {
                                      onClick={this.onClickTextArea}
                                      onChange={this.handleChange}
                                      onKeyUp={this.onKeyUp}
-                                     onFocus={() => this.suggestionDivRef.style.display = "block"}
+                                     onFocus={() => {
+                                         this.suggestionDivRef.style.display = "block";
+                                         this.setState({focused: true})
+                                     }}
                                      value={this.state.myText}
                         />
                         <div ref={this.setSuggestionDivRef} className={"suggestionDiv"}>
@@ -393,7 +397,9 @@ class AutoComplete extends Component {
     handleClickOutside(event) {
         if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
             this.suggestionDivRef.style.display = "none";
-            this.props.onBlur();
+            if(this.state.focused)
+                this.props.onBlur();
+            this.setState({focused: false});
         }
     }
 
