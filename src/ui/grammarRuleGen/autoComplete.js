@@ -2,15 +2,12 @@ import React, {Component} from 'react';
 import {constants} from "../constants";
 import {FormControl, FormGroup, ListGroup, ListGroupItem, Panel} from "react-bootstrap";
 
-import {updateRuleGenerationText} from "../../actions";
-import {connect} from "react-redux";
-
 class AutoComplete extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            myText: "",
+            myText: props.hasOwnProperty("defaultValue") ? props.defaultValue : "",
             selectionStart: -1,
             selectionEnd: 0,
             grammarSuggestion: [],
@@ -18,6 +15,11 @@ class AutoComplete extends Component {
             focused: false
         };
 
+        if (!props.onUpdateText || !props.onBlur)
+            return new Error(`'onUpdateText' and 'onBlur' are required functions in props`);
+
+        this.onUpdateText = props.onUpdateText;
+        this.onBlur = props.onBlur;
 
         this.handleChange = this.handleChange.bind(this);
         this.onClickTextArea = this.onClickTextArea.bind(this);
@@ -110,7 +112,7 @@ class AutoComplete extends Component {
                 grammarSuggestion: this.grammarSuggestion(e.target.value, start, end),
                 phraseSuggestion: this.phraseSuggestion(e.target.value, start, end)
             },
-            () => this.props.onUpdateText(newText));
+            () => this.onUpdateText(newText));
     }
 
 
@@ -295,7 +297,7 @@ class AutoComplete extends Component {
                 phraseSuggestion: this.phraseSuggestion(newText, -1, focus)
             },
             () => this.setCaretPosition("queryText", focus),
-            () => this.props.onUpdateText(newText)
+            () => this.onUpdateText(newText)
         );
     }
 
@@ -369,7 +371,7 @@ class AutoComplete extends Component {
                 phraseSuggestion: this.phraseSuggestion(newText, -1, focus)
             },
             () => this.setCaretPosition("queryText", focus),
-            () => this.props.onUpdateText(newText)
+            () => this.onUpdateText(newText)
         );
     }
 
@@ -397,8 +399,8 @@ class AutoComplete extends Component {
     handleClickOutside(event) {
         if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
             this.suggestionDivRef.style.display = "none";
-            if(this.state.focused)
-                this.props.onBlur();
+            if (this.state.focused)
+                this.onBlur();
             this.setState({focused: false});
         }
     }
@@ -431,11 +433,4 @@ class AutoComplete extends Component {
 
 }
 
-
-function mapDispatchToProps(dispatch) {
-    return {
-        onUpdateText: (text) => dispatch(updateRuleGenerationText(text))
-    }
-}
-
-export default connect(null, mapDispatchToProps)(AutoComplete);
+export default AutoComplete;
