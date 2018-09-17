@@ -13,13 +13,6 @@ const default_state = {
         activeHash: 0,
         forwardDisable: "disabled",
         backDisable: "disabled"
-    },
-    individualRule: {
-        title: "",
-        description: ""
-    },
-    generateRule: {
-        autoCompleteText: ""
     }
 };
 
@@ -112,27 +105,6 @@ const reducer = (state = default_state, action) => {
 
         case "FILE_PATH":
             return Object.assign({}, state, {filePath: action["value"], message: "FILE_PATH_UPDATED"});
-        case "UPDATE_INDIVIDUAL_RULE_TITLE":
-            return Object.assign({}, state, {
-                individualRule: {
-                    title: action["value"],
-                    description: state.individualRule.description
-                }, message: "INDIVIDUAL_RULE_TITLE_UPDATED"
-            });
-        case "UPDATE_INDIVIDUAL_RULE_Description":
-            return Object.assign({}, state, {
-                individualRule: {
-                    title: state.individualRule.title,
-                    description: action["value"]
-                }, message: "INDIVIDUAL_RULE_DESCRIPTION_UPDATED"
-            });
-
-        case "UPDATE_RULE_GENERATION_TEXT":
-            return Object.assign({}, state, {
-                generateRule: {
-                    autoCompleteText: action["value"]
-                }, message: "RULE_GENERATION_TEXT"
-            });
 
         default:
             return state;

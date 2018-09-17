@@ -36,18 +36,6 @@ export const updateFilePath = (filePath) => {
     return {type: "FILE_PATH", value: filePath};
 };
 
-export const updateIndividualRuleTitle = (text) => {
-  return {type: "UPDATE_INDIVIDUAL_RULE_TITLE", value: text}
-};
-
-export const updateIndividualRuleDescription = (text) => {
-    return {type: "UPDATE_INDIVIDUAL_RULE_Description", value: text}
-};
-
-export const updateRuleGenerationText = (text) => {
-    return {type: "UPDATE_RULE_GENERATION_TEXT", value: text}
-};
-
 export const submitNewRule = (newRuleProps) => {
     return {type: "SUBMIT_NEW_RULE", value: newRuleProps}
 };

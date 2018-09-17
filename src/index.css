@@ -365,6 +365,7 @@ code {
     font-size: 14px;
 }
 
+#individualRule .btn,
 #generateRule .btn {
     padding: 2px;
 }
