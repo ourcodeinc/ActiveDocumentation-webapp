@@ -74,7 +74,7 @@ class IndividualRule extends Component {
             this.setState({
                 title: nextProps.ruleI.title,
                 description: nextProps.ruleI.description,
-                availableTags: nextProps.tags.filter(d => nextProps.ruleI.tags.indexOf(d.tagName) !== -1),
+                availableTags: nextProps.tags.filter(d => nextProps.ruleI.tags.indexOf(d.tagName) === -1),
                 tags: nextProps.ruleI.tags,
                 folderConstraint: nextProps.ruleI.ruleType.constraint,
                 filesFolders: nextProps.ruleI.ruleType.checkFor,
@@ -310,7 +310,7 @@ class IndividualRule extends Component {
         this.setState({
             title: this.props.ruleI.title,
             description: this.props.ruleI.description,
-            availableTags: this.props.tags.filter(d => this.props.ruleI.tags.indexOf(d.tagName) !== -1),
+            availableTags: this.props.tags.filter(d => this.props.ruleI.tags.indexOf(d.tagName) === -1),
             tags: this.props.ruleI.tags,
             folderConstraint: this.props.ruleI.ruleType.constraint,
             filesFolders: this.props.ruleI.ruleType.checkFor,
