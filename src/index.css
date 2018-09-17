@@ -52,13 +52,13 @@ body {
 }
 
 .ruleDiv textarea {
-    background-color: transparent;
+    /*background-color: transparent;*/
     border: none;
 }
 
-.ruleDiv textarea:hover, .ruleDiv textarea:focus {
-    background-color: #fefefe !important;
-}
+/*.ruleDiv textarea:hover, .ruleDiv textarea:focus {*/
+    /*background-color: #fefefe !important;*/
+/*}*/
 
 .ruleDiv textarea:focus {
     border: 1px solid #fff !important;

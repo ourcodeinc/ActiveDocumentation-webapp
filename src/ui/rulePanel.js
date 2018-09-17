@@ -2,22 +2,44 @@
  * Created by saharmehrpour on 9/6/17.
  */
 
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import '../App.css';
 import * as d3 from 'd3';
 
 import Utilities from '../core/utilities';
-import {Tab, Tabs, Badge, FormGroup, ControlLabel, Label, Collapse} from 'react-bootstrap';
+import {
+    Tab, Tabs, Badge, FormGroup, ControlLabel, Label, Collapse, FormControl, DropdownButton,
+    MenuItem, Button, ButtonToolbar, Row, Col
+} from 'react-bootstrap';
 import FaCaretDown from 'react-icons/lib/fa/caret-down';
 import FaCaretUp from 'react-icons/lib/fa/caret-up';
+import MdEdit from 'react-icons/lib/md/edit';
+import TiDelete from "react-icons/lib/ti/delete";
+
 import {ignoreFile} from "../actions";
+import AutoComplete from "./grammarRuleGen/autoComplete";
+
 import {connect} from "react-redux";
 
 class RulePanel extends Component {
 
-    constructor() {
-        super();
-        this.state = {open: true, class: "ruleDiv", activeTab: 0};
+    constructor(props) {
+        super(props);
+        this.ruleIndex = props["ruleIndex"];
+        this.ruleI = null;
+
+        this.state = {
+            open: true, class: "ruleDiv", activeTab: 0, editMode: false,
+            // ruleI states
+            title: "",
+            description: "",
+            availableTags: [],
+            tags: [],
+            folderConstraint: "",
+            filesFolders: [],
+            autoCompleteText: ""
+        };
+
         this.caretClass = {
             true: {cursor: "pointer", color: "black"},
             false: {cursor: "pointer", color: "darkgrey"}
@@ -27,57 +49,108 @@ class RulePanel extends Component {
     }
 
     render() {
-        this.ruleI = this.props['ruleData'];
-        this.ws = this.props['ws'];
-        this.codeChanged = this.props['codeChanged'];
-        this.filePath = this.props['filePath'];
-
+        this.ruleI = this.props.rules.filter((d) => d.index === this.ruleIndex)[0]; // can throws error?
         return (
-            <div className={this.state.class} id={`rule_panel_${this.ruleI['index']}`}>
+            <div className={this.state.class}>
                 <FormGroup>
                     <div style={{float: 'right'}}>
-                        (<a onClick={() => window.location.hash = '#/rule/' + this.ruleI['index']}>view the rule
-                            and all snippets</a>)
+                        <MdEdit size={20} onClick={() => this.changeEditMode()}/>
                         <FaCaretUp size={20} onClick={() => this.setState({open: false})}
                                    style={this.caretClass[this.state.open.toString()]}/>
                         <FaCaretDown size={20} onClick={() => this.setState({open: true})}
                                      style={this.caretClass[(!this.state.open).toString()]}/>
                     </div>
-                    <ControlLabel>{this.ruleI['title']}</ControlLabel>
-                    <p>{this.ruleI['description']}</p>
+                    {!this.state.editMode ? (
+                        <Fragment>
+                            <ControlLabel>{this.ruleI["title"]}</ControlLabel>
+                            <p>{this.ruleI["description"]}</p>
+                        </Fragment>
+                    ) : (
+                        <Fragment>
+                            <FormControl componentClass="textarea" placeholder="Title"
+                                         style={{fontWeight: "bold"}}
+                                         value={this.state.title}
+                                         onChange={(e) => {
+                                             this.setState({title: e.target.value})
+                                         }}
+                                         onKeyUp={(e) => {
+                                             e.target.style.cssText = 'height:auto; padding:0';
+                                             e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
+                                         }}/>
+                            <FormControl componentClass="textarea" placeholder="Description"
+                                         value={this.state.description}
+                                         onChange={(e) => {
+                                             this.setState({description: e.target.value})
+                                         }}
+                                         onKeyUp={(e) => {
+                                             e.target.style.cssText = 'height:auto; padding:0';
+                                             e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
+                                         }}/>
+                            <AutoComplete ref={(autoComplete) => this.autoComplete = autoComplete}
+                                          defaultValue={this.state.autoCompleteText}
+                                          onBlur={() => console.log("onBlur")}
+                                          onUpdateText={() => console.log("onUpdateText")}/>
+
+                            <div>{this.renderFileConstraints()}</div>
+
+                        </Fragment>
+                    )}
                 </FormGroup>
                 <Collapse in={this.state.open}>
                     <div>
                         <div>{this.tagRender()}</div>
-                        <div style={{paddingTop: 10 + 'px', clear: 'both'}}>
-                            <Tabs animation={true} id={"rules_" + this.ruleI['index']} activeKey={this.state.activeTab}
-                                  onSelect={this.handleToggleTabs}>
-                                <Tab eventKey={0} disabled>{}</Tab>
-                                {/*<Tab eventKey={'all'} title={this.tabHeaderRender('all')}*/}
-                                {/*animation={true}>{this.listRender('all')}</Tab>*/}
-                                <Tab eventKey={'satisfied'}
-                                     title={this.tabHeaderRender('satisfied')}>{this.listRender('satisfied')}</Tab>
-                                <Tab eventKey={'violated'}
-                                     title={this.tabHeaderRender('violated')}>{this.listRender('violated')}</Tab>
-                            </Tabs>
-                        </div>
+                        {!this.state.editMode ? (
+                            <div style={{paddingTop: '10px', clear: 'both'}}>
+                                <Tabs animation={true} id={"rules_" + this.ruleIndex} activeKey={this.state.activeTab}
+                                      onSelect={this.handleToggleTabs}>
+                                    <Tab eventKey={0} disabled>{}</Tab>
+                                    <Tab eventKey={'satisfied'}
+                                         title={this.tabHeaderRender('satisfied')}>{this.listRender('satisfied')}</Tab>
+                                    <Tab eventKey={'violated'}
+                                         title={this.tabHeaderRender('violated')}>{this.listRender('violated')}</Tab>
+                                </Tabs>
+                            </div>
+                        ) : null}
                     </div>
                 </Collapse>
+                {this.state.editMode ? (
+                    <div>
+                        <div style={{width: 200, float: "left", paddingRight: "5px"}}>
+                            <Button bsStyle="primary" block onClick={() => this.onSubmitUpdatedRule()}>Submit</Button>
+                        </div>
+                        <div style={{width: 200, float: "left"}}>
+                            <Button bsStyle="default" block onClick={() => this.changeEditMode()}>Cancel</Button>
+                        </div>
+                    </div>
+                ) : null}
             </div>
         );
+    }
+
+    //componentDidUpdate doesn't work
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            title: this.ruleI.title,
+            description: this.ruleI.description,
+            availableTags: nextProps.tags.filter(d => this.ruleI.tags.indexOf(d.tagName) === -1),
+            tags: this.ruleI.tags,
+            folderConstraint: this.ruleI.ruleType.constraint,
+            filesFolders: this.ruleI.ruleType.checkFor,
+            autoCompleteText: this.ruleI.grammar ? this.ruleI.grammar : ""
+        });
+
     }
 
     /**
      * set the states 'open' and 'class' after mounting.
      */
     componentDidMount() {
-
-        if (!this.codeChanged) {
+        if (!this.props.codeChanged) {
             this.setState({
                 class: "ruleDiv",
                 open: (() => {
-                    if (this.filePath === "none") return true;
-                    let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.filePath);
+                    if (this.props.filePath === "none") return true;
+                    let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.props.filePath);
                     return (file.length > 0)
                     //     return file[0]['data'].violated !== 0 || file[0]['data'].satisfied !== 0;
                     // return false;
@@ -86,7 +159,7 @@ class RulePanel extends Component {
             return;
         }
 
-        let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.filePath);
+        let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.props.filePath);
         let ruleIfile = file.length !== 0 ? file[0]['data'] : {};
         if (ruleIfile['allChanged'] === 'greater' && ruleIfile['satisfiedChanged'] === ruleIfile['violatedChanged'] === 'none') {
             this.setState({open: true, class: "ruleDiv blue-bg"});
@@ -140,7 +213,7 @@ class RulePanel extends Component {
         }
 
         let fileSatisfied = 0, fileViolated = 0;
-        let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.filePath);
+        let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.props.filePath);
         if (file.length > 0) {
             fileSatisfied = file[0]['data']['satisfied'];
             fileViolated = file[0]['data']['violated'];
@@ -150,52 +223,43 @@ class RulePanel extends Component {
             case 'all':
                 return (
                     <span className="general_">Matches
-                        {(() => {
-                            if (this.filePath !== "none")
-                                return (<Badge className="forAll">{fileSatisfied + fileViolated}</Badge>);
-                            return (<Badge className="forAll">{totalSatisfied + totalViolated}</Badge>)
-                        })()}
-                        {(() => {
-                            if (this.filePath !== "none") return (<span style={{color: "#777"}}>out of</span>)
-                        })()}
-                        {(() => {
-                            if (this.filePath !== "none")
-                                return (<Badge className="forAll">{totalSatisfied + totalViolated}</Badge>)
-                        })()}
+                        {this.props.filePath !== "none" ? (
+                            <Fragment>
+                                <Badge className="forAll">{fileSatisfied + fileViolated}</Badge>
+                                <span style={{color: "#777"}}>out of</span>
+                                <Badge className="forAll">{totalSatisfied + totalViolated}</Badge>
+                            </Fragment>
+                        ) : (
+                            <Badge className="forAll">{totalSatisfied + totalViolated}</Badge>
+                        )}
                         <Badge className="forFile hidden">{}</Badge>
                     </span>);
             case 'satisfied':
                 return (
                     <span className="satisfied_">Examples
-                        {(() => {
-                            if (this.filePath !== "none")
-                                return (<Badge className="forAll">{fileSatisfied}</Badge>);
-                            return (<Badge className="forAll">{totalSatisfied}</Badge>)
-                        })()}
-                        {(() => {
-                            if (this.filePath !== "none") return (<span style={{color: "#777"}}>out of</span>)
-                        })()}
-                        {(() => {
-                            if (this.filePath !== "none")
-                                return (<Badge className="forAll">{totalSatisfied}</Badge>)
-                        })()}
+                        {this.props.filePath !== "none" ? (
+                            <Fragment>
+                                <Badge className="forAll">{fileSatisfied}</Badge>
+                                <span style={{color: "#777"}}>out of</span>
+                                <Badge className="forAll">{totalSatisfied}</Badge>
+                            </Fragment>
+                            ):(
+                            <Badge className="forAll">{totalSatisfied}</Badge>
+                        )}
                         <Badge className="forFile hidden">{}</Badge>
                     </span>);
             case 'violated':
                 return (
                     <span className="violated_">Violated
-                        {(() => {
-                            if (this.filePath !== "none")
-                                return (<Badge className="forAll">{fileViolated}</Badge>);
-                            return (<Badge className="forAll">{totalViolated}</Badge>)
-                        })()}
-                        {(() => {
-                            if (this.filePath !== "none") return (<span style={{color: "#777"}}>out of</span>)
-                        })()}
-                        {(() => {
-                            if (this.filePath !== "none")
-                                return (<Badge className="forAll">{totalViolated}</Badge>)
-                        })()}
+                        {this.props.filePath !== "none" ? (
+                            <Fragment>
+                                <Badge className="forAll">{fileViolated}</Badge>
+                                <span style={{color: "#777"}}>out of</span>
+                                <Badge className="forAll">{totalViolated}</Badge>
+                            </Fragment>
+                        ):(
+                            <Badge className="forAll">{totalViolated}</Badge>
+                        )}
                         <Badge className="forFile hidden">{}</Badge>
                     </span>);
             default:
@@ -207,7 +271,44 @@ class RulePanel extends Component {
      * render tag badges
      */
     tagRender() {
-        return this.ruleI['tags'].map((d, i) => {
+        if (this.state.editMode)
+            return (
+                <div>
+                    <div style={{paddingBottom: "10px"}}>
+                        <DropdownButton title={"Select Tags"} id={"drop_down"}>
+                            {this.state.availableTags.map((el, i) => {
+                                if (this.state.tags.indexOf(el.tagName) === -1)
+                                    return (
+                                        <MenuItem eventKey={el.tagName} key={i}
+                                                  onSelect={(evt) => {
+                                                      const tags = this.state.tags;
+                                                      tags.push(evt);
+                                                      this.setState({tags})
+                                                  }}
+                                        >{el.tagName}
+                                        </MenuItem>);
+                                return (null);
+                            })}
+                        </DropdownButton>
+                    </div>
+                    <div>
+                        {this.state.tags.map((d, i) => {
+                            return (
+                                <div style={{float: "left", margin: "0 15px 10px 0"}} key={i}>
+                                    <Label>{d}</Label>
+                                    <TiDelete size={23}
+                                              className={"tiDelete"}
+                                              onClick={() => {
+                                                  const tags = this.state.tags;
+                                                  tags.splice(i, 1);
+                                                  this.setState({tags});
+                                              }}/>
+                                </div>)
+                        })}
+                    </div>
+                </div>
+            );
+        return this.ruleI["tags"].map((d, i) => {
             return (
                 <div className="buttonDiv" key={i}>
                     <Label onClick={() =>
@@ -228,36 +329,36 @@ class RulePanel extends Component {
         let self = this;
 
         let otherFilesList = [], fileList = [];
-        let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.filePath);
+        let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.props.filePath);
 
         switch (group) {
             case 'all':
-                if (this.filePath !== "none") {
+                if (this.props.filePath !== "none") {
                     if (file.length > 0)
                         fileList = file[0]['data']['quantifierResult'];
                 }
                 for (let i = 0; i < this.ruleI['xPathQueryResult'].length; i++) {
-                    if (this.ruleI['xPathQueryResult'][i]["filePath"] === this.filePath) continue;
+                    if (this.ruleI['xPathQueryResult'][i]["filePath"] === this.props.filePath) continue;
                     otherFilesList = otherFilesList.concat(this.ruleI['xPathQueryResult'][i]['data']['quantifierResult'])
                 }
                 break;
             case 'satisfied':
-                if (this.filePath !== "none") {
+                if (this.props.filePath !== "none") {
                     if (file.length > 0)
                         fileList = file[0]['data']['satisfiedResult'];
                 }
                 for (let i = 0; i < this.ruleI['xPathQueryResult'].length; i++) {
-                    if (this.ruleI['xPathQueryResult'][i]["filePath"] === this.filePath) continue;
+                    if (this.ruleI['xPathQueryResult'][i]["filePath"] === this.props.filePath) continue;
                     otherFilesList = otherFilesList.concat(this.ruleI['xPathQueryResult'][i]['data']['satisfiedResult'])
                 }
                 break;
             case 'violated':
-                if (this.filePath !== "none") {
+                if (this.props.filePath !== "none") {
                     if (file.length > 0)
                         fileList = file[0]['data']['violatedResult'];
                 }
                 for (let i = 0; i < this.ruleI['xPathQueryResult'].length; i++) {
-                    if (this.ruleI['xPathQueryResult'][i]["filePath"] === this.filePath) continue;
+                    if (this.ruleI['xPathQueryResult'][i]["filePath"] === this.props.filePath) continue;
                     otherFilesList = otherFilesList.concat(this.ruleI['xPathQueryResult'][i]['data']['violatedResult'])
                 }
                 break;
@@ -287,15 +388,13 @@ class RulePanel extends Component {
 
         return (
             <div>
-                {(() => {
-                    if (this.filePath !== "none") return (<h4>{headerText + " for this file"}</h4>)
-                })()}
-                {(() => {
-                    if (this.filePath !== "none") return (<div>{returnList(fileList)}</div>)
-                })()}
-                {(() => {
-                    if (this.filePath !== "none") return (<h4>{headerText + " for other files"}</h4>)
-                })()}
+                {this.props.filePath !== "none" ? (
+                    <Fragment>
+                        <h4>{headerText + " for this file"}</h4>
+                        <div>{returnList(fileList)}</div>
+                        <h4>{headerText + " for other files"}</h4>
+                    </Fragment>
+                ) : null}
                 <div>{returnList(otherFilesList)}</div>
             </div>
         )
@@ -310,11 +409,11 @@ class RulePanel extends Component {
         let newObj = Utilities.cloneJSON(this.ruleI);
         delete newObj['xPathQueryResult'];
 
-        newObj['title'] = document.getElementById(`rule_title_${this.ruleI['index']}`).value;
-        newObj['description'] = document.getElementById(`rule_description_${this.ruleI['index']}`).value;
+        newObj['title'] = this.state.title;
+        newObj['description'] = this.state.description;
 
-        if (newObj['title'] !== this.ruleI['title'] || newObj['description'] !== this.ruleI['description'])
-            Utilities.sendToServer(this.ws, "MODIFIED_RULE", newObj);
+        if (this.state.title !== this.ruleI['title'] || this.state.description !== this.ruleI['description'])
+            Utilities.sendToServer(this.props.ws, "MODIFIED_RULE", newObj);
     };
 
 
@@ -329,6 +428,101 @@ class RulePanel extends Component {
             this.setState({activeTab: key});
     }
 
+
+    /**
+     * change edit mode, set the states
+     */
+    changeEditMode() {
+        this.setState({
+            editMode: !this.state.editMode,
+            title: this.ruleI.title,
+            description: this.ruleI.description,
+            availableTags: this.props.tags.filter(d => this.ruleI.tags.indexOf(d.tagName) === -1),
+            tags: this.ruleI.tags,
+            folderConstraint: this.ruleI.ruleType.constraint,
+            filesFolders: this.ruleI.ruleType.checkFor,
+            autoCompleteText: this.ruleI.grammar ? this.ruleI.grammar : ""
+        })
+    }
+
+
+    /**
+     * render the drop down for the file/folder constraint
+     */
+    renderFileConstraints() {
+        return (
+            <div>
+                <div style={{paddingBottom: "10px"}}>
+                    <em>{"Restriction:   "}</em>
+                    <ButtonToolbar>
+                        <DropdownButton
+                            title={this.state.folderConstraint === "" ? "Select" : this.state.folderConstraint}
+                            className={this.state.target} id={"drop_down"}>
+                            <MenuItem eventKey={"FOLDER"} onSelect={(evt) => {
+                                this.setState({folderConstraint: evt})
+                            }}>FOLDER
+                            </MenuItem>
+                            <MenuItem eventKey={"NONE"} onSelect={(evt) => {
+                                this.setState({folderConstraint: evt})
+                            }}>NONE
+                            </MenuItem>
+                        </DropdownButton>
+                        <Button onClick={() => {
+                            const filesFolders = this.state.filesFolders;
+                            filesFolders.push("");
+                            this.setState({filesFolders});
+                        }}>Add files/folders
+                        </Button>
+                    </ButtonToolbar>
+                </div>
+                <div>
+                    {this.state.filesFolders.map((d, i) => {
+                        return (
+                            <Row key={i} style={{paddingBottom: "5px"}}>
+                                <Col sm={11} md={10}>
+                                    <FormControl id={"filesFolders_textarea_" + i} type="text" defaultValue={d}
+                                                 placeholder="relative File/Folder path"
+                                                 onBlur={(e) => {
+                                                     const filesFolders = this.state.filesFolders;
+                                                     filesFolders[i] = e.target.value;
+                                                     this.setState({filesFolders});
+                                                 }}/>
+                                </Col>
+                                <Col sm={1} md={1} style={{paddingTop: "5px"}}>
+                                    <TiDelete size={25}
+                                              className={"tiDelete"}
+                                              onClick={() => {
+                                                  const filesFolders = this.state.filesFolders;
+                                                  filesFolders.splice(i, 1);
+                                                  this.setState({filesFolders});
+                                              }}/>
+                                </Col>
+                            </Row>
+                        )
+                    })}
+                </div>
+            </div>
+        )
+    }
+
+    /**
+     * submit the new rule
+     */
+    onSubmitUpdatedRule() {
+        // todo
+    }
+}
+
+// map state to props
+function mapStateToProps(state) {
+    return {
+        rules: state.ruleTable,
+        tags: state.tagTable,
+        codeChanged: state.hash[0] === "codeChanged",
+        filePath: ["rulesForFile", "codeChanged"].indexOf(state.hash[0]) !== -1 ?
+            ('/Users/saharmehrpour/Documents/Workspace/' + state.filePath) : "none",
+        ws: state.ws
+    };
 }
 
 function mapDispatchToProps(dispatch) {
@@ -339,4 +533,4 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(null, mapDispatchToProps)(RulePanel);
+export default connect(mapStateToProps, mapDispatchToProps)(RulePanel);

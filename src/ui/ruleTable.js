@@ -21,8 +21,7 @@ class RuleTable extends Component {
                 {
                     this.state.rulesToDisplay.map((d, i) => {
                         return (<div className="largePaddedDiv ruleContainer" key={i}>
-                            <RulePanel ruleData={d} ws={this.props.ws} key={new Date()} filePath={this.props.filePath}
-                                       codeChanged={this.props.codeChanged}/>
+                            <RulePanel ruleIndex={d.index} key={new Date()}/>
                         </div>)
                     })
                 }
@@ -47,6 +46,7 @@ function mapStateToProps(state) {
 
     let props = {
         rules: state.ruleTable,
+        tags: state.tagTable,
         codeChanged: false,
         filePath: "none",
         ws: state.ws,
