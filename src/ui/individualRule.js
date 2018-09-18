@@ -44,12 +44,12 @@ class IndividualRule extends Component {
                     )}
                 </div>
                 <div>
-                    <div className="largePaddedDiv">
+                    <div>
                         {!this.props.ruleI ? null : (
                             <IndividualRuleList ruleI={this.props.ruleI} ws={this.props.ws} group="satisfied"/>
                         )}
                     </div>
-                    <div className="largePaddedDiv">
+                    <div>
                         {!this.props.ruleI ? null : (
                             <IndividualRuleList ruleI={this.props.ruleI} ws={this.props.ws} group="violated"/>
                         )}
@@ -181,7 +181,7 @@ class IndividualRule extends Component {
                 <div>
                     {this.state.tags.map((d, i) => {
                         return (
-                            <div style={{float: "left", margin: "0 15px 10px 0"}} key={i}>
+                            <div className={"tagLabel"} key={i}>
                                 <Label>{d}</Label>
                                 <TiDelete size={23}
                                           className={"tiDelete"}
