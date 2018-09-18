@@ -95,7 +95,7 @@ class IndividualRuleList extends Component {
 
         return list.map((d, i) => {
             return (
-                <div className="partResultDiv" onClick={() => {
+                <div className="snippetDiv" onClick={() => {
                     Utilities.sendToServer(this.ws, "XML_RESULT", d['xml'])
                 }} key={i}>
                 <pre className="link">
