@@ -217,7 +217,7 @@ class GenerateRule extends Component {
                 <div>
                     {this.state.tags.map((d, i) => {
                         return (
-                            <div style={{float: "left", margin: "0 15px 10px 0"}} key={i}>
+                            <div className={"tagLabel"} key={i}>
                                 <Label>{d}</Label>
                                 <TiDelete size={23}
                                           className={"tiDelete"}
