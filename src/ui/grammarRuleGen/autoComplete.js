@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {constants} from "../constants";
 import {FormControl, FormGroup, ListGroup, ListGroupItem, Panel} from "react-bootstrap";
 
@@ -35,7 +35,7 @@ class AutoComplete extends Component {
             <div ref={this.setWrapperRef} className={"autoCompleteContainer"}>
                 <form>
                     <FormGroup>
-                        <FormControl componentClass="textarea" name="myCountry" placeholder="Design Rule"
+                        <FormControl componentClass="textarea" placeholder="Design Rule"
                                      id={"queryText"}
                                      onClick={this.onClickTextArea}
                                      onChange={this.handleChange}
@@ -49,45 +49,50 @@ class AutoComplete extends Component {
                         <div ref={this.setSuggestionDivRef} className={"suggestionDiv"}>
                             <Panel bsStyle="default">
 
-                                {this.state.grammarSuggestion.length !== 0 || this.state.phraseSuggestion.length !== 0 ? null :
-                                    (<Panel.Heading>
-                                        <Panel.Title componentClass="h3">Templates</Panel.Title>
-                                    </Panel.Heading>)
-                                }
-                                {this.state.grammarSuggestion.length !== 0 || this.state.phraseSuggestion.length !== 0 ? null :
-                                    <ListGroup>
-                                        {constants.templates.map((word, i) =>
-                                            (<ListGroupItem key={i} className={"item"}>{word}</ListGroupItem>)
-                                        )}
-                                    </ListGroup>
-                                }
+                                {this.state.grammarSuggestion.length !== 0 || this.state.phraseSuggestion.length !== 0 ? null : (
+                                    <Fragment>
+                                        <Panel.Heading>
+                                            <Panel.Title componentClass="h3">Templates</Panel.Title>
+                                        </Panel.Heading>
+                                        <ListGroup>
+                                            {constants.templates.map((word, i) =>
+                                                (<ListGroupItem key={i}>{word}</ListGroupItem>)
+                                            )}
+                                        </ListGroup>
+                                    </Fragment>
+                                )}
 
-                                {this.state.grammarSuggestion.length === 0 ? null :
-                                    (<Panel.Heading>
-                                        <Panel.Title componentClass="h3">Grammar</Panel.Title>
-                                    </Panel.Heading>)
-                                }
-                                <ListGroup>
-                                    {this.state.grammarSuggestion.map((word, i) =>
-                                        (<ListGroupItem key={i} className={"item"}
-                                                        onClick={() => this.updateGrammarText(word)}>
-                                            {word}
-                                        </ListGroupItem>)
-                                    )}
-                                </ListGroup>
-                                {this.state.phraseSuggestion.length === 0 ? null :
-                                    (<Panel.Heading>
-                                        <Panel.Title componentClass="h3">Phrase</Panel.Title>
-                                    </Panel.Heading>)
-                                }
-                                <ListGroup>
-                                    {this.state.phraseSuggestion.map((sug, i) =>
-                                        (<ListGroupItem key={i} className={"item"}
-                                                        onClick={() => this.updatePhraseText(sug)}>
-                                            {sug.phraseText}
-                                        </ListGroupItem>)
-                                    )}
-                                </ListGroup>
+                                {this.state.grammarSuggestion.length === 0 ? null : (
+                                    <Fragment>
+                                        <Panel.Heading>
+                                            <Panel.Title componentClass="h3">Grammar</Panel.Title>
+                                        </Panel.Heading>
+                                        <ListGroup>
+                                            {this.state.grammarSuggestion.map((word, i) =>
+                                                (<ListGroupItem key={i}
+                                                                onClick={() => this.updateGrammarText(word)}>
+                                                    {word}
+                                                </ListGroupItem>)
+                                            )}
+                                        </ListGroup>
+                                    </Fragment>
+                                )}
+                                {this.state.phraseSuggestion.length === 0 ? null : (
+                                    <Fragment>
+                                        <Panel.Heading>
+                                            <Panel.Title componentClass="h3">Phrase</Panel.Title>
+                                        </Panel.Heading>
+
+                                        <ListGroup>
+                                            {this.state.phraseSuggestion.map((sug, i) =>
+                                                (<ListGroupItem key={i}
+                                                                onClick={() => this.updatePhraseText(sug)}>
+                                                    {sug.phraseText}
+                                                </ListGroupItem>)
+                                            )}
+                                        </ListGroup>
+                                    </Fragment>
+                                )}
                             </Panel>
                         </div>
 
