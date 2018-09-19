@@ -511,11 +511,11 @@ class RulePanel extends Component {
                                           "if the rule is checked on <em>specific</em> files/folders.<br/>" +
                                           "If the restriction is set to \"Specific Files/Folders\", " +
                                           "at least one folder/file must be specified.</p>"}/>
-                        <ReactTooltip html={true} effect={"solid"} place={"right"} />
+                        <ReactTooltip html={true} effect={"solid"} place={"right"}/>
                     </HelpBlock>
                     <ButtonToolbar>
                         <DropdownButton
-                            title={this.state.folderConstraint === "" ? "Select" : this.state.folderConstraint}
+                            title={this.state.folderConstraint === "" ? "Select" : this.state.folderConstraint === "NONE" ? "No Restriction" : "Specific Files/Folders"}
                             className={this.state.target} id={"drop_down"}>
                             <MenuItem eventKey={"FOLDER"} onSelect={(evt) => {
                                 this.setState({folderConstraint: evt})
