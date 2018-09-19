@@ -3,10 +3,10 @@
  */
 
 import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
 
 import {MenuItem, Dropdown} from 'react-bootstrap';
 import MdAddBox from 'react-icons/lib/md/add-box';
+import {RootCloseWrapper} from "react-overlays";
 
 class CustomDropdown extends Component {
     constructor(props) {
@@ -18,25 +18,29 @@ class CustomDropdown extends Component {
         this.state = {
             menuItems: props.menuItems,
             onSelectFunction: props.onSelectFunction,
-            id: props.id ? props.id : "dropdown-custom-menu"
+            id: props.id ? props.id : "dropdown-custom-menu",
+            open: false
         }
     }
 
     render() {
         return (
-            <Dropdown id={this.state.id}>
-                <CustomToggle bsRole="toggle">
-                    <MdAddBox size={25} className={"mdAddBox"}/>
-                </CustomToggle>
-                <CustomMenu bsRole="menu">
-                    {this.state.menuItems.map((el, i) =>
-                        (<MenuItem eventKey={el} key={i}
-                                   onSelect={this.state.onSelectFunction}
-                        >{el}
-                        </MenuItem>)
-                    )}
-                </CustomMenu>
-            </Dropdown>
+            <RootCloseWrapper onRootClose={() => this.setState({open: false})}>
+                <Dropdown id={this.state.id} open={this.state.open}
+                          onToggle={() => this.setState({open: !this.state.open})}>
+                    <CustomToggle bsRole="toggle">
+                        <MdAddBox size={25} className={"mdAddBox"}/>
+                    </CustomToggle>
+                    <CustomMenu bsRole="menu">
+                        {this.state.menuItems.map((el, i) =>
+                            (<MenuItem eventKey={el} key={i}
+                                       onSelect={this.state.onSelectFunction}
+                            >{el}
+                            </MenuItem>)
+                        )}
+                    </CustomMenu>
+                </Dropdown>
+            </RootCloseWrapper>
         )
     }
 
@@ -51,14 +55,6 @@ class CustomDropdown extends Component {
 }
 
 class CustomMenu extends Component {
-
-    focusNext() {
-        const input = ReactDOM.findDOMNode(this.input);
-
-        if (input) {
-            input.focus();
-        }
-    }
 
     render() {
         const {children} = this.props;
