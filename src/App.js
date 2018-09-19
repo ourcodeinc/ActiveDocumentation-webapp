@@ -8,7 +8,7 @@ import './index.css';
 
 import {connect} from 'react-redux';
 
-import WebSocketManager from './appManager/webSocketManager';
+import WebSocketManager from './core/webSocketManager';
 import {hashChange} from "./actions";
 
 import TableOfContent from './ui/tableOfContent';

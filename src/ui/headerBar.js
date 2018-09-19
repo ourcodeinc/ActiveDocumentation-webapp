@@ -7,7 +7,6 @@ import React, {Component} from 'react';
 import '../App.css';
 import Utilities from '../core/utilities';
 
-import * as d3 from 'd3';
 import {FormControl} from 'react-bootstrap';
 import {connect} from "react-redux";
 import {updateTagTable} from "../actions";
@@ -84,18 +83,6 @@ export class HeaderBar extends Component {
 
     }
 
-
-    /**
-     * update the length of a text area to remove scroll
-     */
-    updateTextareaLength() {
-        d3.select("#headerBar").selectAll("textarea")
-            .each(function () {
-                let el = this;
-                el.style.cssText = 'height:0';
-                el.style.cssText = 'overflow:hidden;height:' + el.scrollHeight + 'px';
-            });
-    }
 }
 
 // map state to props

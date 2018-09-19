@@ -4,7 +4,6 @@
 
 import React, {Component, Fragment} from 'react';
 import '../App.css';
-import * as d3 from 'd3';
 import ReactTooltip from 'react-tooltip'
 
 import Utilities from '../core/utilities';
@@ -240,13 +239,11 @@ class RulePanel extends Component {
         this.setState({open: false, className: "rulePanelDiv"});
 
         // fixed the height of text areas
-        d3.select("#ruleResults").selectAll("textarea")
-            .each(function () {
-                let el = this;
-                el.style.cssText = 'height:0';
-                el.style.cssText = 'overflow:hidden;height:' + (el.scrollHeight + 5) + 'px';
-            });
-
+        let els = document.getElementsByTagName("textarea");
+        for (let i = 0; i < els.length; i++) {
+            els[i].style.cssText = 'height:0';
+            els[i].style.cssText = 'overflow:hidden;height:' + (els[i].scrollHeight + 5) + 'px';
+        }
     }
 
 

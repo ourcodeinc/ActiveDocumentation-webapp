@@ -6,7 +6,7 @@ import {Component} from 'react';
 import {connect} from "react-redux";
 
 import {updateFilePath, updateRuleTable, updateTagTable, updateWS} from "../actions";
-import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from '../core/ruleExecutor';
+import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from './ruleExecutor';
 
 class WebSocketManager extends Component {
 
