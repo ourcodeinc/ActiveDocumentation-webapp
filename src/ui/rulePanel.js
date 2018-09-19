@@ -327,14 +327,15 @@ class RulePanel extends Component {
                     {this.state.ruleTags.map((d, i) => {
                         return (
                             <div className={"tagLabel"} key={i}>
-                                <Label>{d}</Label>
-                                <TiDelete size={23}
-                                          className={"tiDelete"}
-                                          onClick={() => {
-                                              const tags = this.state.ruleTags;
-                                              tags.splice(i, 1);
-                                              this.setState({tags});
-                                          }}/>
+                                <Label style={{paddingRight: "1px"}}>{d}
+                                    <TiDelete size={23}
+                                              className={"tiDelete"}
+                                              onClick={() => {
+                                                  const tags = this.state.ruleTags;
+                                                  tags.splice(i, 1);
+                                                  this.setState({tags});
+                                              }}/>
+                                </Label>
                             </div>)
                     })}
                     {this.props.tags.length !== this.state.ruleTags.length ? (
@@ -347,8 +348,9 @@ class RulePanel extends Component {
                             }}/>
                     ) : null}
                     <FaQuestionCircle size={20} style={{color: "#9b9b9b"}}
-                                      data-tip={"<p>Tags associated with a rule</p>"}/>
-                    <ReactTooltip html={true} type={"light"} effect={"solid"} place={"right"}/>
+                                      data-class={"customTheme"}
+                                      data-tip={"<h5>Select tags associated with the rule.</h5>"}/>
+                    <ReactTooltip html={true} effect={"solid"} place={"right"}/>
                 </div>
             );
         return this.ruleI["tags"].map((d, i) => {
@@ -501,10 +503,15 @@ class RulePanel extends Component {
                 <div style={{paddingBottom: "10px"}}>
                     <HelpBlock><em>{"Restriction:   "}</em>
                         <FaQuestionCircle size={20} style={{color: "#9b9b9b"}}
-                                          data-tip={"<p>Select how the rules are verified; 'NONE' if the rule is verified on " +
-                                          "all files and folders, <br/>'FOLDER' if the rule is checked on specific folders/files.<br/> " +
-                                          "If the restriction is 'FOLDER', at least one folder/file must be specified.</p>"}/>
-                        <ReactTooltip html={true} type={"light"} effect={"solid"} place={"right"}/>
+                                          data-class={"customTheme"}
+                                          data-tip={"<h4>Select how the rules are verified.</h4> " +
+                                          "<p><span>\"No Restriction\"</span> " +
+                                          "if the rule must be verified on <em>all</em> files and folders.</p>" +
+                                          "<p><span>\"Specific Files/Folders\"</span> " +
+                                          "if the rule is checked on <em>specific</em> files/folders.<br/>" +
+                                          "If the restriction is set to \"Specific Files/Folders\", " +
+                                          "at least one folder/file must be specified.</p>"}/>
+                        <ReactTooltip html={true} effect={"solid"} place={"right"} />
                     </HelpBlock>
                     <ButtonToolbar>
                         <DropdownButton
@@ -512,19 +519,19 @@ class RulePanel extends Component {
                             className={this.state.target} id={"drop_down"}>
                             <MenuItem eventKey={"FOLDER"} onSelect={(evt) => {
                                 this.setState({folderConstraint: evt})
-                            }}>FOLDER
+                            }}>Specific Files/Folders
                             </MenuItem>
                             <MenuItem eventKey={"NONE"} onSelect={(evt) => {
                                 this.setState({folderConstraint: evt, filesFolders: []})
-                            }}>NONE
+                            }}>No Restriction
                             </MenuItem>
                         </DropdownButton>
                         <Button disabled={this.state.folderConstraint === "NONE"}
-                            onClick={() => {
-                                const filesFolders = this.state.filesFolders;
-                                filesFolders.push("");
-                                this.setState({filesFolders});
-                            }}
+                                onClick={() => {
+                                    const filesFolders = this.state.filesFolders;
+                                    filesFolders.push("");
+                                    this.setState({filesFolders});
+                                }}
                         >Add files/folders
                         </Button>
                     </ButtonToolbar>
