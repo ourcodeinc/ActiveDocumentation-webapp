@@ -625,7 +625,7 @@ class RulePanel extends Component {
      */
     onSubmitNewRule() {
         let rule = {
-            index: new Date().getTime() / 1000,
+            index: Math.floor(new Date().getTime() / 1000),
             title: this.state.title,
             description: this.state.description,
             tags: this.state.ruleTags,
