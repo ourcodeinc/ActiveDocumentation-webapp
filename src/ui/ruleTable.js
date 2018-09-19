@@ -2,41 +2,54 @@
  * Created by saharmehrpour on 9/6/17.
  */
 
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import '../App.css';
 
 import RulePanel from './rulePanel';
 import {connect} from "react-redux";
+import {Button} from "react-bootstrap";
 
 class RuleTable extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {rulesToDisplay: props.rulesToDisplay};
+        this.state = {newRule: false};
     }
 
     render() {
         return (
-            <div key={new Date()}>
-                {
-                    this.state.rulesToDisplay.map((d, i) => {
-                        return (<div className="largePaddedDiv ruleContainer" key={i}>
+            <Fragment>
+                {this.props.hash0 === "rules" ?
+                    (!this.state.newRule ? (
+                        <div style={{paddingBottom: '10px', clear: 'both'}}>
+                            <Button onClick={() => this.setState({newRule: true})}>Add a New Rule</Button>
+                        </div>
+                    ) : (
+                        <div style={{paddingBottom: "5px"}}>
+                            <RulePanel key={new Date()} newRule
+                                       cancelGeneratingNewRule={() => this.setState({newRule: false})}/>
+                        </div>
+                    ))
+                    : null}
+                <div key={new Date()}>
+                    {this.props.rulesToDisplay.map((d, i) =>
+                        (<div key={new Date().getTime() + i} style={{paddingBottom: "5px"}}>
                             <RulePanel ruleIndex={d.index} key={new Date()}/>
                         </div>)
-                    })
-                }
-            </div>
+                    )}
+                </div>
+                {this.props.hash0 !== "rules" && this.props.rulesToDisplay.length === 0 ? (
+                    <div>
+                        <h4>There are no rules to display.</h4>
+                    </div>
+                ) : null}
+            </Fragment>
         );
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-        return !(JSON.stringify(nextProps)=== JSON.stringify(this.props));
     }
 
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
-        if (JSON.stringify(nextProps.rulesToDisplay) !== JSON.stringify(this.state.rulesToDisplay))
-            this.setState({rulesToDisplay: nextProps.rulesToDisplay});
+        this.forceUpdate();
     }
 
 }
@@ -51,7 +64,9 @@ function mapStateToProps(state) {
         filePath: "none",
         ws: state.ws,
         ignoreFile: state.ignoreFile,
-        rulesToDisplay: []
+        rulesToDisplay: [],
+        hash0: state.hash[0],
+        message: state.message
     };
 
 

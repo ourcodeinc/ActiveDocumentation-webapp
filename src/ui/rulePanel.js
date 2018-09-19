@@ -5,39 +5,52 @@
 import React, {Component, Fragment} from 'react';
 import '../App.css';
 import * as d3 from 'd3';
+import ReactTooltip from 'react-tooltip'
 
 import Utilities from '../core/utilities';
 import {
     Tab, Tabs, Badge, FormGroup, ControlLabel, Label, Collapse, FormControl, DropdownButton,
-    MenuItem, Button, ButtonToolbar, Row, Col
+    MenuItem, Button, ButtonToolbar, Row, Col, HelpBlock
 } from 'react-bootstrap';
 import FaCaretDown from 'react-icons/lib/fa/caret-down';
 import FaCaretUp from 'react-icons/lib/fa/caret-up';
 import MdEdit from 'react-icons/lib/md/edit';
 import TiDelete from "react-icons/lib/ti/delete";
+import {FaQuestionCircle} from "react-icons/lib/fa/index";
 
-import {ignoreFile} from "../actions";
+import {ignoreFile, submitNewRule, updateRule} from "../actions";
 import AutoComplete from "./grammarRuleGen/autoComplete";
+import verifyTextBasedOnGrammar from "./grammarRuleGen/languageProcessing";
 
 import {connect} from "react-redux";
+import CustomDropdown from "./customDropdown";
 
 class RulePanel extends Component {
 
     constructor(props) {
         super(props);
-        this.ruleIndex = props["ruleIndex"];
+        this.ruleIndex = props["ruleIndex"] !== undefined ? props["ruleIndex"] : -1;
         this.ruleI = null;
+        this.newRuleRequest = !!props["newRule"];
+
+        if (this.newRuleRequest && !props["cancelGeneratingNewRule"])
+            return new Error(`'cancelGeneratingNewRule' is required in props when creating a new rule.`);
 
         this.state = {
-            open: true, class: "ruleDiv", activeTab: 0, editMode: false,
+            open: true,
+            className: "rulePanelDiv" + (this.newRuleRequest ? " edit-bg" : ""),
+            activeTab: 0,
+            editMode: !!props["newRule"], // default must be false unless a new rule is being generated
             // ruleI states
             title: "",
             description: "",
-            availableTags: [],
+            ruleTags: [],
             tags: [],
             folderConstraint: "",
             filesFolders: [],
-            autoCompleteText: ""
+            autoCompleteText: "",
+            quantifierXPath: "",
+            constraintXPath: ""
         };
 
         this.caretClass = {
@@ -45,20 +58,40 @@ class RulePanel extends Component {
             false: {cursor: "pointer", color: "darkgrey"}
         };
 
+        this.editIconClass = {
+            true: {color: "#337ab7", cursor: "pointer"},
+            false: {color: "black", cursor: "pointer"}
+        };
+
         this.handleToggleTabs = this.handleToggleTabs.bind(this);
     }
 
     render() {
-        this.ruleI = this.props.rules.filter((d) => d.index === this.ruleIndex)[0]; // can throws error?
+        if (!this.newRuleRequest) {
+            try {
+                this.ruleI = this.props.rules.filter((d) => d.index === this.ruleIndex)[0];
+            }
+            catch (e) {
+                console.log(`There is no rule with index ${this.ruleIndex}`);
+                this.ruleI = null;
+            }
+        }
+        else this.ruleI = null;
+
         return (
-            <div className={this.state.class}>
+            <div className={this.state.className}>
                 <FormGroup>
                     <div style={{float: 'right'}}>
-                        <MdEdit size={20} onClick={() => this.changeEditMode()}/>
-                        <FaCaretUp size={20} onClick={() => this.setState({open: false})}
-                                   style={this.caretClass[this.state.open.toString()]}/>
-                        <FaCaretDown size={20} onClick={() => this.setState({open: true})}
-                                     style={this.caretClass[(!this.state.open).toString()]}/>
+                        {!this.state.editMode ? (
+                            <Fragment>
+                                <FaCaretUp size={20} onClick={() => this.setState({open: false})}
+                                           style={this.caretClass[this.state.open.toString()]}/>
+                                <FaCaretDown size={20} onClick={() => this.setState({open: true})}
+                                             style={this.caretClass[(!this.state.open).toString()]}/>
+                            </Fragment>
+                        ) : null}
+                        <MdEdit size={20} style={this.editIconClass[this.state.editMode.toString()]}
+                                onClick={() => this.changeEditMode()}/>
                     </div>
                     {!this.state.editMode ? (
                         <Fragment>
@@ -67,38 +100,38 @@ class RulePanel extends Component {
                         </Fragment>
                     ) : (
                         <Fragment>
-                            <FormControl componentClass="textarea" placeholder="Title"
-                                         style={{fontWeight: "bold"}}
-                                         value={this.state.title}
-                                         onChange={(e) => {
-                                             this.setState({title: e.target.value})
-                                         }}
-                                         onKeyUp={(e) => {
-                                             e.target.style.cssText = 'height:auto; padding:0';
-                                             e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
-                                         }}/>
-                            <FormControl componentClass="textarea" placeholder="Description"
-                                         value={this.state.description}
-                                         onChange={(e) => {
-                                             this.setState({description: e.target.value})
-                                         }}
-                                         onKeyUp={(e) => {
-                                             e.target.style.cssText = 'height:auto; padding:0';
-                                             e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
-                                         }}/>
-                            <AutoComplete ref={(autoComplete) => this.autoComplete = autoComplete}
-                                          defaultValue={this.state.autoCompleteText}
-                                          onBlur={() => console.log("onBlur")}
-                                          onUpdateText={() => console.log("onUpdateText")}/>
-
-                            <div>{this.renderFileConstraints()}</div>
-
+                            <FormGroup validationState={(this.state.title === "") ? "error" : "success"}>
+                                <FormControl componentClass="textarea" placeholder="Rule title. (Required)"
+                                             style={{fontWeight: "bold"}}
+                                             value={this.state.title}
+                                             onChange={(e) => {
+                                                 this.setState({title: e.target.value})
+                                             }}
+                                             onKeyUp={(e) => {
+                                                 e.target.style.cssText = 'height:auto; padding:0';
+                                                 e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
+                                             }}/>
+                            </FormGroup>
+                            <FormGroup validationState={(this.state.description === "") ? "error" : "success"}>
+                                <FormControl componentClass="textarea"
+                                             placeholder="Description, high level details about the rule. (Required)"
+                                             value={this.state.description}
+                                             onChange={(e) => {
+                                                 this.setState({description: e.target.value})
+                                             }}
+                                             onKeyUp={(e) => {
+                                                 e.target.style.cssText = 'height:auto; padding:0';
+                                                 e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
+                                             }}/>
+                            </FormGroup>
                         </Fragment>
                     )}
                 </FormGroup>
                 <Collapse in={this.state.open}>
                     <div>
-                        <div>{this.tagRender()}</div>
+                        <div style={{paddingTop: '10px', clear: 'both'}}>
+                            {this.tagRender()}
+                        </div>
                         {!this.state.editMode ? (
                             <div style={{paddingTop: '10px', clear: 'both'}}>
                                 <Tabs animation={true} id={"rules_" + this.ruleIndex} activeKey={this.state.activeTab}
@@ -114,12 +147,25 @@ class RulePanel extends Component {
                     </div>
                 </Collapse>
                 {this.state.editMode ? (
-                    <div>
-                        <div style={{width: 200, float: "left", paddingRight: "5px"}}>
-                            <Button bsStyle="primary" block onClick={() => this.onSubmitUpdatedRule()}>Submit</Button>
-                        </div>
-                        <div style={{width: 200, float: "left"}}>
-                            <Button bsStyle="default" block onClick={() => this.changeEditMode()}>Cancel</Button>
+                    <div style={{paddingTop: '10px', clear: 'both'}}>
+                        <FormGroup
+                            validationState={(this.state.folderConstraint === "" || (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0)) ? "error" : "success"}>
+                            <div>{this.renderFileConstraints()}</div>
+                        </FormGroup>
+                        <AutoComplete ref={(autoComplete) => this.autoComplete = autoComplete}
+                                      defaultValue={this.state.autoCompleteText}
+                                      onBlur={() => verifyTextBasedOnGrammar(this.state.autoCompleteText)
+                                          .then((data) => {
+                                              this.setState(data)
+                                          })}
+                                      onUpdateText={(text) => this.setState({autoCompleteText: text})}/>
+                        <div>
+                            <ButtonToolbar className={"submitButtons"}>
+                                <Button bsStyle="primary"
+                                        onClick={() => this.newRuleRequest ? this.onSubmitNewRule() : this.onSubmitUpdatedRule()}>
+                                    Submit</Button>
+                                <Button bsStyle="default" onClick={() => this.changeEditMode()}>Cancel</Button>
+                            </ButtonToolbar>
                         </div>
                     </div>
                 ) : null}
@@ -129,25 +175,29 @@ class RulePanel extends Component {
 
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
-        this.setState({
-            title: this.ruleI.title,
-            description: this.ruleI.description,
-            availableTags: nextProps.tags.filter(d => this.ruleI.tags.indexOf(d.tagName) === -1),
-            tags: this.ruleI.tags,
-            folderConstraint: this.ruleI.ruleType.constraint,
-            filesFolders: this.ruleI.ruleType.checkFor,
-            autoCompleteText: this.ruleI.grammar ? this.ruleI.grammar : ""
-        });
+        if (this.ruleI)
+            this.setState({
+                title: this.ruleI.title,
+                description: this.ruleI.description,
+                tags: nextProps.tags,
+                ruleTags: this.ruleI.tags,
+                folderConstraint: this.ruleI.ruleType.constraint,
+                filesFolders: this.ruleI.ruleType.checkFor,
+                autoCompleteText: this.ruleI.grammar ? this.ruleI.grammar : "",
+                quantifierXPath: this.ruleI.quantifier.command,
+                constraintXPath: this.ruleI.constraint.command
+            });
+        this.setState({tags: nextProps.tags});
 
     }
 
     /**
-     * set the states 'open' and 'class' after mounting.
+     * set the states 'open' and 'className' after mounting.
      */
     componentDidMount() {
         if (!this.props.codeChanged) {
             this.setState({
-                class: "ruleDiv",
+                className: "rulePanelDiv" + (this.newRuleRequest ? " edit-bg" : ""),
                 open: (() => {
                     if (this.props.filePath === "none") return true;
                     let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.props.filePath);
@@ -162,32 +212,32 @@ class RulePanel extends Component {
         let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.props.filePath);
         let ruleIfile = file.length !== 0 ? file[0]['data'] : {};
         if (ruleIfile['allChanged'] === 'greater' && ruleIfile['satisfiedChanged'] === ruleIfile['violatedChanged'] === 'none') {
-            this.setState({open: true, class: "ruleDiv blue-bg"});
+            this.setState({open: true, className: "rulePanelDiv blue-bg"});
             return;
         }
         if (ruleIfile['satisfiedChanged'] === 'greater') {
-            this.setState({open: true, class: "ruleDiv green-bg"});
+            this.setState({open: true, className: "rulePanelDiv green-bg"});
             return;
         }
         if (ruleIfile['violatedChanged'] === 'greater') {
-            this.setState({open: true, class: "ruleDiv red-bg"});
+            this.setState({open: true, className: "rulePanelDiv red-bg"});
             return;
         }
         // if (!ruleIfile['changed'] && ruleIfile['violated'] === 0 && ruleIfile['satisfied'] === 0) {
-        //     this.setState({open: false, class: "ruleDiv"});
+        //     this.setState({open: false, className: "rulePanelDiv"});
         //     return;
         // }
 
         if (file.length > 0) {
-            this.setState({open: true, class: "ruleDiv"});
+            this.setState({open: true, className: "rulePanelDiv"});
             return;
         }
 
         if (ruleIfile['violated'] === 0) {
-            this.setState({open: false, class: "ruleDiv"});
+            this.setState({open: false, className: "rulePanelDiv"});
             return;
         }
-        this.setState({open: false, class: "ruleDiv"});
+        this.setState({open: false, className: "rulePanelDiv"});
 
         // fixed the height of text areas
         d3.select("#ruleResults").selectAll("textarea")
@@ -222,7 +272,7 @@ class RulePanel extends Component {
         switch (group) {
             case 'all':
                 return (
-                    <span className="general_">Matches
+                    <span className="rulePanelGeneralTab">Matches
                         {this.props.filePath !== "none" ? (
                             <Fragment>
                                 <Badge className="forAll">{fileSatisfied + fileViolated}</Badge>
@@ -236,28 +286,28 @@ class RulePanel extends Component {
                     </span>);
             case 'satisfied':
                 return (
-                    <span className="satisfied_">Examples
+                    <span className="rulePanelSatisfiedTab">Examples
                         {this.props.filePath !== "none" ? (
                             <Fragment>
                                 <Badge className="forAll">{fileSatisfied}</Badge>
                                 <span style={{color: "#777"}}>out of</span>
                                 <Badge className="forAll">{totalSatisfied}</Badge>
                             </Fragment>
-                            ):(
+                        ) : (
                             <Badge className="forAll">{totalSatisfied}</Badge>
                         )}
                         <Badge className="forFile hidden">{}</Badge>
                     </span>);
             case 'violated':
                 return (
-                    <span className="violated_">Violated
+                    <span className="rulePanelViolatedTab">Violated
                         {this.props.filePath !== "none" ? (
                             <Fragment>
                                 <Badge className="forAll">{fileViolated}</Badge>
                                 <span style={{color: "#777"}}>out of</span>
                                 <Badge className="forAll">{totalViolated}</Badge>
                             </Fragment>
-                        ):(
+                        ) : (
                             <Badge className="forAll">{totalViolated}</Badge>
                         )}
                         <Badge className="forFile hidden">{}</Badge>
@@ -274,47 +324,37 @@ class RulePanel extends Component {
         if (this.state.editMode)
             return (
                 <div>
-                    <div style={{paddingBottom: "10px"}}>
-                        <DropdownButton title={"Select Tags"} id={"drop_down"}>
-                            {this.state.availableTags.map((el, i) => {
-                                if (this.state.tags.indexOf(el.tagName) === -1)
-                                    return (
-                                        <MenuItem eventKey={el.tagName} key={i}
-                                                  onSelect={(evt) => {
-                                                      const tags = this.state.tags;
-                                                      tags.push(evt);
-                                                      this.setState({tags})
-                                                  }}
-                                        >{el.tagName}
-                                        </MenuItem>);
-                                return (null);
-                            })}
-                        </DropdownButton>
-                    </div>
-                    <div>
-                        {this.state.tags.map((d, i) => {
-                            return (
-                                <div style={{float: "left", margin: "0 15px 10px 0"}} key={i}>
-                                    <Label>{d}</Label>
-                                    <TiDelete size={23}
-                                              className={"tiDelete"}
-                                              onClick={() => {
-                                                  const tags = this.state.tags;
-                                                  tags.splice(i, 1);
-                                                  this.setState({tags});
-                                              }}/>
-                                </div>)
-                        })}
-                    </div>
+                    {this.state.ruleTags.map((d, i) => {
+                        return (
+                            <div className={"tagLabel"} key={i}>
+                                <Label>{d}</Label>
+                                <TiDelete size={23}
+                                          className={"tiDelete"}
+                                          onClick={() => {
+                                              const tags = this.state.ruleTags;
+                                              tags.splice(i, 1);
+                                              this.setState({tags});
+                                          }}/>
+                            </div>)
+                    })}
+                    {this.props.tags.length !== this.state.ruleTags.length ? (
+                        <CustomDropdown
+                            menuItems={this.props.tags.map(d => d.tagName).filter(d => this.state.ruleTags.indexOf(d) === -1)}
+                            onSelectFunction={(evt) => {
+                                const tags = this.state.ruleTags;
+                                tags.push(evt);
+                                this.setState({tags})
+                            }}/>
+                    ) : null}
+                    <FaQuestionCircle size={20} style={{color: "#9b9b9b"}}
+                                      data-tip={"<p>Tags associated with a rule</p>"}/>
+                    <ReactTooltip html={true} type={"light"} effect={"solid"} place={"right"}/>
                 </div>
             );
         return this.ruleI["tags"].map((d, i) => {
             return (
                 <div className="buttonDiv" key={i}>
-                    <Label onClick={() =>
-                        // PubSub.publish('UPDATE_HASH', ['tag', d])
-                        window.location.hash = '#/tag/' + d.replace(/\//g, '%2F')
-                    }>{d}</Label>
+                    <Label onClick={() => window.location.hash = '#/tag/' + d.replace(/\//g, '%2F')}>{d}</Label>
                 </div>)
         });
     }
@@ -325,8 +365,6 @@ class RulePanel extends Component {
      * @returns {XML}
      */
     listRender(group) {
-
-        let self = this;
 
         let otherFilesList = [], fileList = [];
         let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.props.filePath);
@@ -371,11 +409,11 @@ class RulePanel extends Component {
                 return (<h5>No snippet</h5>);
             return list.map((d, i) => {
                 return (
-                    <div data-file-path={d['filePath']} className="partResultDiv" key={i}>
+                    <div data-file-path={d['filePath']} className="snippetDiv" key={i}>
                                 <pre className="link" onClick={() => {
                                     this.props.onIgnoreFile(true);
                                     // PubSub.publish("IGNORE_FILE", [true]);
-                                    Utilities.sendToServer(self.ws, "XML_RESULT", d['xml'])
+                                    Utilities.sendToServer(this.props.ws, "XML_RESULT", d['xml'])
                                 }}>
                                     <div className="content" dangerouslySetInnerHTML={{__html: d['snippet']}}/>
                                 </pre>
@@ -433,16 +471,24 @@ class RulePanel extends Component {
      * change edit mode, set the states
      */
     changeEditMode() {
-        this.setState({
-            editMode: !this.state.editMode,
-            title: this.ruleI.title,
-            description: this.ruleI.description,
-            availableTags: this.props.tags.filter(d => this.ruleI.tags.indexOf(d.tagName) === -1),
-            tags: this.ruleI.tags,
-            folderConstraint: this.ruleI.ruleType.constraint,
-            filesFolders: this.ruleI.ruleType.checkFor,
-            autoCompleteText: this.ruleI.grammar ? this.ruleI.grammar : ""
-        })
+        if (this.ruleI)
+            this.setState({
+                className: "rulePanelDiv" + (!this.state.editMode ? " edit-bg" : ""),
+                open: true,
+                editMode: !this.state.editMode,
+                title: this.ruleI.title,
+                description: this.ruleI.description,
+                ruleTags: this.ruleI.tags,
+                folderConstraint: this.ruleI.ruleType.constraint,
+                filesFolders: this.ruleI.ruleType.checkFor,
+                autoCompleteText: this.ruleI.grammar ? this.ruleI.grammar : "",
+                quantifierXPath: this.ruleI.quantifier.command,
+                constraintXPath: this.ruleI.constraint.command
+            });
+        // generating newRule
+        else {
+            this.props["cancelGeneratingNewRule"]();
+        }
     }
 
 
@@ -453,7 +499,13 @@ class RulePanel extends Component {
         return (
             <div>
                 <div style={{paddingBottom: "10px"}}>
-                    <em>{"Restriction:   "}</em>
+                    <HelpBlock><em>{"Restriction:   "}</em>
+                        <FaQuestionCircle size={20} style={{color: "#9b9b9b"}}
+                                          data-tip={"<p>Select how the rules are verified; 'NONE' if the rule is verified on " +
+                                          "all files and folders, <br/>'FOLDER' if the rule is checked on specific folders/files.<br/> " +
+                                          "If the restriction is 'FOLDER', at least one folder/file must be specified.</p>"}/>
+                        <ReactTooltip html={true} type={"light"} effect={"solid"} place={"right"}/>
+                    </HelpBlock>
                     <ButtonToolbar>
                         <DropdownButton
                             title={this.state.folderConstraint === "" ? "Select" : this.state.folderConstraint}
@@ -463,15 +515,17 @@ class RulePanel extends Component {
                             }}>FOLDER
                             </MenuItem>
                             <MenuItem eventKey={"NONE"} onSelect={(evt) => {
-                                this.setState({folderConstraint: evt})
+                                this.setState({folderConstraint: evt, filesFolders: []})
                             }}>NONE
                             </MenuItem>
                         </DropdownButton>
-                        <Button onClick={() => {
-                            const filesFolders = this.state.filesFolders;
-                            filesFolders.push("");
-                            this.setState({filesFolders});
-                        }}>Add files/folders
+                        <Button disabled={this.state.folderConstraint === "NONE"}
+                            onClick={() => {
+                                const filesFolders = this.state.filesFolders;
+                                filesFolders.push("");
+                                this.setState({filesFolders});
+                            }}
+                        >Add files/folders
                         </Button>
                     </ButtonToolbar>
                 </div>
@@ -506,10 +560,100 @@ class RulePanel extends Component {
     }
 
     /**
-     * submit the new rule
+     * submit the updated rule (with the given Index)
      */
     onSubmitUpdatedRule() {
-        // todo
+
+        let rule = {
+            index: this.ruleIndex,
+            title: this.state.title,
+            description: this.state.description,
+            tags: this.state.ruleTags,
+            ruleType: {
+                constraint: this.state.folderConstraint,
+                checkFor: this.state.filesFolders.filter((d) => d !== ""),
+                type: "WITHIN"
+            },
+            quantifier: {},
+            constraint: {},
+            grammar: this.state.autoCompleteText
+        };
+
+        rule.quantifier = {detail: this.ruleI.quantifier.detail, command: "src:unit/" + this.state.quantifierXPath};
+        rule.constraint = {detail: this.ruleI.constraint.detail, command: "src:unit/" + this.state.constraintXPath};
+
+        if (rule.index === "" || rule.title === "" || rule.description === "") {
+            console.log("empty fields");
+            return;
+        }
+
+        if (rule.ruleType.constraint === "" || (rule.ruleType.constraint === "FOLDER" && rule.ruleType.checkFor.length === 0)) {
+            console.log("folder constraints are not specified");
+            return;
+        }
+
+        if (this.state.quantifierXPath === "" || this.state.constraintXPath === "") {
+            console.log("XPaths are not specified");
+            return;
+        }
+
+        let isChanged = (rule.title !== this.ruleI.title) ||
+            (rule.description !== this.ruleI.description) ||
+            (JSON.stringify(rule.tags) !== JSON.stringify(this.ruleI.tags)) ||
+            (rule.ruleType.constraint !== this.ruleI.ruleType.constraint) ||
+            (JSON.stringify(rule.ruleType.checkFor) !== JSON.stringify(this.ruleI.ruleType.checkFor)) ||
+            (rule.grammar !== this.ruleI.grammar) ||
+            (rule.constraint.command !== this.ruleI.constraint.command) ||
+            (rule.quantifier.command !== this.ruleI.quantifier.command);
+
+        if (isChanged) {
+            this.props.onUpdateRule(rule);
+            Utilities.sendToServer(this.props.ws, "MODIFIED_RULE", rule);
+        }
+        this.changeEditMode();
+    }
+
+    /**
+     * submit a new rule
+     */
+    onSubmitNewRule() {
+        let rule = {
+            index: new Date().getTime() / 1000,
+            title: this.state.title,
+            description: this.state.description,
+            tags: this.state.ruleTags,
+            ruleType: {
+                constraint: this.state.folderConstraint,
+                checkFor: this.state.filesFolders.filter((d) => d !== ""),
+                type: "WITHIN"
+            },
+            quantifier: {},
+            constraint: {},
+            grammar: this.state.autoCompleteText
+        };
+
+        rule.quantifier = {detail: "", command: "src:unit/" + this.state.quantifierXPath};
+        rule.constraint = {detail: "", command: "src:unit/" + this.state.constraintXPath};
+
+
+        if (rule.index === "" || rule.title === "" || rule.description === "") {
+            console.log("empty fields");
+            return;
+        }
+
+        if (rule.ruleType.constraint === "" || (rule.ruleType.constraint === "FOLDER" && rule.ruleType.checkFor.length === 0)) {
+            console.log("folder constraints are not specified");
+            return;
+        }
+
+        if (this.state.quantifierXPath === "" || this.state.constraintXPath === "") {
+            console.log("XPaths are not specified");
+            return;
+        }
+
+        this.props.onSubmitNewRule(rule);
+        Utilities.sendToServer(this.props.ws, "NEW_RULE", rule);
+        this.changeEditMode();
     }
 }
 
@@ -529,6 +673,12 @@ function mapDispatchToProps(dispatch) {
     return {
         onIgnoreFile: (value) => {
             dispatch(ignoreFile(value));
+        },
+        onSubmitNewRule: (newRule) => {
+            dispatch(submitNewRule(newRule))
+        },
+        onUpdateRule: (updatedRule) => {
+            dispatch(updateRule(updatedRule));
         }
     }
 }

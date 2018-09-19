@@ -24,6 +24,7 @@ const default_state = {
  */
 const reducer = (state = default_state, action) => {
     // console.log('reducer running', action);
+    // let tempRuleTable = [];
 
     switch (action.type) {
         case "HASH":
@@ -65,22 +66,30 @@ const reducer = (state = default_state, action) => {
 
         case "UPDATE_TAG_TABLE":
             return Object.assign({}, state, {tagTable: action["value"], message: "UPDATE_TAG_TABLE"});
+
         case "UPDATE_RULE_TABLE":
             return Object.assign({}, state, {ruleTable: action["value"], message: "UPDATE_RULE_TABLE"});
+
         case "UPDATE_RULE":
-            let tempRuleTable = [];
-            for (let cnt = 0; cnt < state.ruleTable.length; cnt++) {
-                if (state.ruleTable[cnt].index !== action["value"].index)
-                    tempRuleTable.push(state.ruleTable[cnt]);
-                else
-                    tempRuleTable.push(action["value"]);
-            }
+            // for (let cnt = 0; cnt < state.ruleTable.length; cnt++) {
+            //     if (state.ruleTable[cnt].index !== action["value"].index)
+            //         tempRuleTable.push(state.ruleTable[cnt]);
+            //     else
+            //         tempRuleTable.push(action["value"]);
+            // }
             return Object.assign({}, state, {
-                ruleTable: tempRuleTable,
+                // ruleTable: tempRuleTable,
                 message: "UPDATE_RULE"
             });
+
+        case "SUBMIT_NEW_RULE":
+            return Object.assign({}, state, {
+                message: "NEW_RULE"
+            });
+
         case "IGNORE_FILE":
             return Object.assign({}, state, {ignoreFile: action["value"], message: "IGNORE_FILE"});
+
         case "CLICKED_ON_FORWARD":
             return Object.assign({}, state, {
                 hashManager: {

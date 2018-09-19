@@ -95,26 +95,34 @@ class WebSocketManager extends Component {
                         tagTable.push(newTag);
                     else
                         tagTable.filter((d) => d.tagName === newTag['tagName'])[0].detail = newTag['detail'];
-                    window.location.hash ="#/tag/" + newTag['tagName'];
+                    window.location.hash = "#/tag/" + newTag['tagName'];
 
                     break;
 
                 // Followed after sending MODIFIED_RULE
                 // ruleIndex and rule
                 case "UPDATE_RULE":
-                    // let newRule = JSON.parse(message.data['rule']);
-                    window.location.hash ="#/rule/" + message.data['ruleIndex'];
+                    let updatedRule = JSON.parse(message.data['rule']);
+                    try {
+                        let ruleIndex = -1;
+                        ruleTable.forEach((d, i) => +d.index === +updatedRule.index ? ruleIndex = i : "");
+                        ruleTable[ruleIndex] = runRulesByTypes(xml, updatedRule);
+                        this.props.onUpdateRuleTable(ruleTable);
+                    }
+                    catch (e) {
+                        console.log(e);
+                    }
                     break;
 
                 // when the tagJson.txt changes, after TAG_TABLE
                 case "UPDATE_TAG_TABLE":
                     this.props.onUpdateTagTable(tagTable);
-                    window.location.hash ="#/tagJsonChanged";
+                    window.location.hash = "#/tagJsonChanged";
                     break;
 
                 // when the ruleJson.txt changes, after RULE_TABLE
                 case "UPDATE_RULE_TABLE":
-                    window.location.hash ="#/ruleJsonChanged";
+                    window.location.hash = "#/ruleJsonChanged";
                     break;
 
                 // after sending a piece of code EXPR_STMT
@@ -135,7 +143,7 @@ class WebSocketManager extends Component {
                 case "SHOW_RULES_FOR_FILE":
                     let focusedFilePath = message.data.replace('/Users/saharmehrpour/Documents/Workspace/', '');
                     this.props.onFilePathChange(focusedFilePath);
-                    window.location.hash ="#/rulesForFile/" + focusedFilePath.replace(/\//g, '%2F');
+                    window.location.hash = "#/rulesForFile/" + focusedFilePath.replace(/\//g, '%2F');
 
                     break;
 

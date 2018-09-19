@@ -31,6 +31,10 @@ body {
     padding: 2px;
 }
 
+.rulePanelDiv .submitButtons .btn {
+    padding: 2px 25px;
+}
+
 .rulePanelGeneralTab {
     color: darkblue !important;
 }
