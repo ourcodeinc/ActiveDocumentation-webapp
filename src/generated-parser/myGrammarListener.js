@@ -29,24 +29,6 @@ myGrammarListener.prototype.exitDesignRule = function(ctx) {
 };
 
 
-// Enter a parse tree produced by myGrammarParser#mustClause.
-myGrammarListener.prototype.enterMustClause = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#mustClause.
-myGrammarListener.prototype.exitMustClause = function(ctx) {
-};
-
-
-// Enter a parse tree produced by myGrammarParser#mustBeEqualToClause.
-myGrammarListener.prototype.enterMustBeEqualToClause = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#mustBeEqualToClause.
-myGrammarListener.prototype.exitMustBeEqualToClause = function(ctx) {
-};
-
-
 // Enter a parse tree produced by myGrammarParser#words.
 myGrammarListener.prototype.enterWords = function(ctx) {
 };

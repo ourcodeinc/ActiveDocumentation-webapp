@@ -5,14 +5,6 @@ inputSentence
     ;
 
 designRule
-    : mustClause | mustBeEqualToClause
-    ;
-
-//ifThen
-//    : if SPACE classes SPACE then (SPACE | words)* end?
-//    ;
-
-mustClause
     : functions SPACE must SPACE functionExpression
     | abstractFunctions SPACE must SPACE abstractFunctionExpression
     | constructors SPACE must SPACE constructorExpression
@@ -25,10 +17,8 @@ mustClause
     | arguments SPACE must SPACE argumentExpression
     | callers SPACE must SPACE callerExpression
     | classes SPACE must SPACE classExpression
-    ;
 
-mustBeEqualToClause
-    : functions SPACE mustBeEqualTo SPACE functions
+    | functions SPACE mustBeEqualTo SPACE functions
     | abstractFunctions SPACE mustBeEqualTo SPACE abstractFunctionExpression
     | constructors SPACE mustBeEqualTo SPACE constructorExpression
     | annotations SPACE mustBeEqualTo SPACE annotationExpression
@@ -42,11 +32,6 @@ mustBeEqualToClause
     | classes SPACE mustBeEqualTo SPACE classExpression
     ;
 
-//quantifier
-//    : functions | abstractFunctions | constructors | annotations | parameters
-//    | returnValues | declarationStatements | expressionStatements | initValues | arguments | callers | classes
-//    | names | extensions | values | calls | types | specifiers
-//    ;
 /*
     Constants
 */
@@ -552,27 +537,6 @@ callerOf
 callerCondition
     : SPACE where SPACE have SPACE NAME SPACE not? SPACE? equalsTo SPACE words Comma?
     ;
-
-
-/*
-    chain calls
-*/
-//
-//ChainCall
-//    : 'chain call'
-//    ;
-//
-//chainCalls
-//    : ChainCall chainCallCondition? chainCallOf?
-//    ;
-//
-//chainCallOf
-//    : SPACE of SPACE (arguments | returnValues | expressionStatements | initValues)
-//    ;
-//
-//chainCallCondition
-//    : SPACE where SPACE words Comma?
-//    ;
 
 
 /*
