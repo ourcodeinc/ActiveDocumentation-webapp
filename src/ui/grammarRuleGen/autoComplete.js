@@ -704,8 +704,10 @@ class AutoComplete extends Component {
             }
             intersection = [...intersection];
             if (intersection.length === 0) continue;
+            /* eslint-disable */
             results = constants.defined_phrases.filter((d, i) => intersection.includes(i))
                 .map(d => AutoComplete.createPhraseSuggestion(d["replaceWordWith"], cnt));
+            /* eslint-enable */
         }
         return results;
     }
