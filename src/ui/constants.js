@@ -753,210 +753,318 @@ export class constants {
         }
     };
 
-    static grammar_code_fragment = {
-        "Class": {
-            OF: ["Annotation", "Name", "Function", "Constructor", "AbstractFunction", "Declaration", "Subclass"],
-            WHERE: ["Specifier", "Annotation", "Name", "Extends", "Function", "Constructor", "AbstractFunction", "Declaration", "Subclass"]
-        },
-        "Function": {
-            OF: ["Specifier", "Annotation", "Name", "Expression", "Declaration", "Return Value", "Parameter"],
-            WHERE: ["Annotation", "Specifier", "Name", "Parameter", "Return Value", "Declaration", "Expression"],
-            restrictions: [
-                "WHERE"
-            ]
-        },
-        "Constructor": {
-            OF: ["Specifier", "Annotation", "Expression", "Declaration", "Parameter"],
-            WHERE: ["Specifier", "Annotation", "Parameter", "Return Value", "Declaration", "Expression"],
-            restrictions: [
-                "WHERE"
-            ]
-        },
-        "AbstractFunction": {
-            OF: ["Specifier", "Annotation", "Name", "Parameter"],
-            WHERE: ["Annotation", "Specifier", "Name", "Parameter"],
-            restrictions: [
-                "WHERE"
-            ]
-        },
-        "Specifier": {
-            OF: ["Name"],
-            WHERE: ["Name"],
-            restrictions: [
-                ["its Specifier", ["IS", "IS NOT"], "textbox"]
-            ]
-        },
-        "Annotation": {
-            OF: ["Name"],
-            WHERE: ["Name", "Argument"],
-            restrictions: [
-                [["HAS", "HAS NOT"], "Annotation", "textbox"],
-                "WHERE"
-            ]
-        },
-        "Declaration": {
-            OF: ["Name", "Type"],
-            WHERE: ["Name"],
-            restrictions: [
-                "WHERE"
-            ]
-        },
-        "Subclass": {
-            OF: ["Annotation", "Name", "Function", "Constructor", "AbstractFunction", "Declaration", "Subclass"],
-            WHERE: ["Specifier", "Annotation", "Name", "Extends", "Function", "Constructor", "AbstractFunction", "Declaration", "Subclass"],
-            restrictions: [
-                "WHERE"
-            ]
-        },
-        "Return Value": {
-            OF: ["Name", "Type"],
-            WHERE: [], // TODO
-            restrictions: [
-                ["its return Value", ["IS", "IS NOT"], "textbox"],
-                "WHERE"
-            ]
-        },
-        "Parameter": {
-            OF: [],
-            WHERE: [], // TODO
-            restrictions: [
-                ["its Number Of Parameter", ["IS", "IS Greater than", "IS Less than"], "textbox"],
-                "WHERE"
-            ]
-        },
-        "Expression": {
-            OF: ["Name", "Type"],
-            WHERE: [], // TODO
-            restrictions: [
-                "WHERE"
-            ]
-        },
-        "Type": {
-            OF: [],
-            WHERE: [],
-            restrictions: [
-                ["its Name", ["IS", "IS NOT", "INCLUDE", "NOT INCLUDE"], "textbox"]
-            ]
-        },
-        "Name": {
-            OF: [],
-            WHERE: [],
-            restrictions: [
-                ["its Name", ["IS", "IS NOT", "INCLUDE", "NOT INCLUDE"], "textbox"]
-            ]
-        },
-        "Extends": {
-            OF: [],
-            WHERE: [],
-            restrictions: [
-                ["textbox"]
-            ]
-        },
-        "Argument": {
-            OF: [],
-            WHERE: [],
-            restrictions: [
-                ["its Argument", ["IS", "IS NOT"], "textbox"]
-            ]
-        }
-    };
+    // static grammar_code_fragment = {
+    //     "Class": {
+    //         OF: ["Annotation", "Name", "Function", "Constructor", "AbstractFunction", "Declaration", "Subclass"],
+    //         WHERE: ["Specifier", "Annotation", "Name", "Extends", "Function", "Constructor", "AbstractFunction", "Declaration", "Subclass"]
+    //     },
+    //     "Function": {
+    //         OF: ["Specifier", "Annotation", "Name", "Expression", "Declaration", "Return Value", "Parameter"],
+    //         WHERE: ["Annotation", "Specifier", "Name", "Parameter", "Return Value", "Declaration", "Expression"],
+    //         restrictions: [
+    //             "WHERE"
+    //         ]
+    //     },
+    //     "Constructor": {
+    //         OF: ["Specifier", "Annotation", "Expression", "Declaration", "Parameter"],
+    //         WHERE: ["Specifier", "Annotation", "Parameter", "Return Value", "Declaration", "Expression"],
+    //         restrictions: [
+    //             "WHERE"
+    //         ]
+    //     },
+    //     "AbstractFunction": {
+    //         OF: ["Specifier", "Annotation", "Name", "Parameter"],
+    //         WHERE: ["Annotation", "Specifier", "Name", "Parameter"],
+    //         restrictions: [
+    //             "WHERE"
+    //         ]
+    //     },
+    //     "Specifier": {
+    //         OF: ["Name"],
+    //         WHERE: ["Name"],
+    //         restrictions: [
+    //             ["its Specifier", ["IS", "IS NOT"], "textbox"]
+    //         ]
+    //     },
+    //     "Annotation": {
+    //         OF: ["Name"],
+    //         WHERE: ["Name", "Argument"],
+    //         restrictions: [
+    //             [["HAS", "HAS NOT"], "Annotation", "textbox"],
+    //             "WHERE"
+    //         ]
+    //     },
+    //     "Declaration": {
+    //         OF: ["Name", "Type"],
+    //         WHERE: ["Name"],
+    //         restrictions: [
+    //             "WHERE"
+    //         ]
+    //     },
+    //     "Subclass": {
+    //         OF: ["Annotation", "Name", "Function", "Constructor", "AbstractFunction", "Declaration", "Subclass"],
+    //         WHERE: ["Specifier", "Annotation", "Name", "Extends", "Function", "Constructor", "AbstractFunction", "Declaration", "Subclass"],
+    //         restrictions: [
+    //             "WHERE"
+    //         ]
+    //     },
+    //     "Return Value": {
+    //         OF: ["Name", "Type"],
+    //         WHERE: [], // TODO
+    //         restrictions: [
+    //             ["its return Value", ["IS", "IS NOT"], "textbox"],
+    //             "WHERE"
+    //         ]
+    //     },
+    //     "Parameter": {
+    //         OF: [],
+    //         WHERE: [], // TODO
+    //         restrictions: [
+    //             ["its Number Of Parameter", ["IS", "IS Greater than", "IS Less than"], "textbox"],
+    //             "WHERE"
+    //         ]
+    //     },
+    //     "Expression": {
+    //         OF: ["Name", "Type"],
+    //         WHERE: [], // TODO
+    //         restrictions: [
+    //             "WHERE"
+    //         ]
+    //     },
+    //     "Type": {
+    //         OF: [],
+    //         WHERE: [],
+    //         restrictions: [
+    //             ["its Name", ["IS", "IS NOT", "INCLUDE", "NOT INCLUDE"], "textbox"]
+    //         ]
+    //     },
+    //     "Name": {
+    //         OF: [],
+    //         WHERE: [],
+    //         restrictions: [
+    //             ["its Name", ["IS", "IS NOT", "INCLUDE", "NOT INCLUDE"], "textbox"]
+    //         ]
+    //     },
+    //     "Extends": {
+    //         OF: [],
+    //         WHERE: [],
+    //         restrictions: [
+    //             ["textbox"]
+    //         ]
+    //     },
+    //     "Argument": {
+    //         OF: [],
+    //         WHERE: [],
+    //         restrictions: [
+    //             ["its Argument", ["IS", "IS NOT"], "textbox"]
+    //         ]
+    //     }
+    // };
 
     // autoComplete for rule generation
 
-    static replace_phrase = {
-        "function foo": "function where (has name where equals to \"foo\")",
-        "bar function": "function where has name where equals to \"bar\""
-    };
+    // static replace_phrase = {
+    //     "function foo": "function where (has name where equals to \"foo\")",
+    //     "bar function": "function where has name where equals to \"bar\""
+    // };
 
-    static grammar = {
-        "of": ["class", "function", "abstract function", "declaration statement",
-            "parameter", "annotation", "type", "constructor", "argument", "extension"],
-        "where": ["have", "equal to", "not", "include"],
-        "have": ["class", "function", "abstract function", "declaration statement",
-            "parameter", "annotation", "type", "constructor", "argument", "extension"],
-        "not": ["include", "contain"],
+    // static grammar = {
+    //     "of": ["class", "function", "abstract function", "declaration statement",
+    //         "parameter", "annotation", "type", "constructor", "argument", "extension"],
+    //     "where": ["have", "equal to", "not", "include"],
+    //     "have": ["class", "function", "abstract function", "declaration statement",
+    //         "parameter", "annotation", "type", "constructor", "argument", "extension"],
+    //     "not": ["include", "contain"],
+    //
+    //     "name": ["must", "must be equal to", "where [not] include/equal to", "of"],
+    //     "name of": ["class", "function", "abstract function", "type", "constructor", "argument", "extension"],
+    //
+    //     "annotation": ["must", "must be equal to", "where have", "of"],
+    //     "annotation where have": ["name", "argument"],
+    //     "annotation of": ["class", "function", "constructor", "abstract function", "declaration statement"],
+    //
+    //     "extension": ["must", "must be equal to", "where [not] equal to", "of class"],
+    //
+    //     "function": ["must", "must be equal to", "where have", "of class"],
+    //     "function where have": ["annotation", "specifier", "name", "parameter", "return value", "declaration statement", "expression statement"],
+    //     "function of": ["class"],
+    //
+    //     "abstract function": ["must", "must be equal to", "where have", "of class"],
+    //     "abstract function where have": ["annotation", "specifier", "name", "parameter"],
+    //
+    //     "constructor": ["must", "must be equal to", "where have", "of class"],
+    //     "constructor where have": ["annotation", "specifier", "parameter", "return value", "declaration statement", "expression statement"],
+    //
+    //     "parameter": ["must", "must be equal to", "where have", "of"],
+    //     "parameter where have": ["name", "type"],
+    //     "parameter of": ["function", "constructor", "abstract function"],
+    //
+    //     "type": ["must", "must be equal to", "where [not] equal to", "of"],
+    //     "type of": ["parameter", "declaration statement"],
+    //
+    //     "specifier": ["must", "must be equal to", "where [not] equal to", "of"],
+    //     "specifier of": ["function", "constructor", "abstract function", "declaration statement", "class"],
+    //
+    //     "return value": ["must", "must be equal to", "where have", "of function"],
+    //     "return value where have": ["calls", "name"],
+    //
+    //     "declaration statement": ["must", "must be equal to", "where have", "of"],
+    //     "declaration statement of": ["class", "function", "constructor"],
+    //     "declaration statement where have": ["annotation", "specifier", "types", "name", "initial value"],
+    //
+    //     "expression statement": ["must", "must be equal to", "where have", "of"],
+    //     "expression statement where have": ["calls", "name"],
+    //     "expression statement of": ["function", "constructor", "constructor"],
+    //
+    //     "initial value": ["must", "must be equal to", "where have", "of declaration statement"],
+    //     "initial value where have": ["calls", "name"],
+    //
+    //     "argument": ["must", "must be equal to", "where have", "of call"],
+    //     "argument where have": ["calls", "name"],
+    //
+    //     "call": ["must", "must be equal to", "where have", "of"],
+    //     "call where have": ["callers", "name"],
+    //     "call of": ["argument", "return value", "expression statement", "initValue"],
+    //
+    //     "caller": ["must", "must be equal to", "where have name [not] equal to", "of calls"],
+    //
+    //     "value": ["must", "must be equal to", "where [not] equal to", "of"],
+    //     "value of": ["argument", "return value", "expression statement", "initial value"],
+    //
+    //     "class": ["must", "must be equal to", "where have", "of class"],
+    //     "class where have": ["annotation", "specifier", "name", "extension", "function", "abstract function", "constructor", "declaration statement", "class", "return value"],
+    //
+    // };
 
-        "name": ["must", "must be equal to", "where [not] include/equal to", "of"],
-        "name of": ["class", "function", "abstract function", "type", "constructor", "argument", "extension"],
+    // /**
+    //  * phrase: {value: replace with, auto_complete: string ( what to add after the first word)}
+    //  */
+    // static phrases = {
+    //     "function foo": {
+    //         value: "function where (has name where equals to \"foo\")",
+    //         auto_complete: "foo"
+    //     },
+    //     "bar function": {
+    //         value: "function where has name where equals to \"bar\"",
+    //         auto_complete: "function"
+    //     },
+    //     "Command class": {
+    //         value: "class where has name where equals to \"Command\"",
+    //         auto_complete: "class"
+    //     }
+    // };
 
-        "annotation": ["must", "must be equal to", "where have", "of"],
-        "annotation where have": ["name", "argument"],
-        "annotation of": ["class", "function", "constructor", "abstract function", "declaration statement"],
+    static keywords = [
+        "name", "annotation", "extension", "function", "abstract function", "constructor", "parameter", "type",
+        "specifier", "return value", "declaration statement", "expression statement", "initial value", "argument",
+        "call", "caller", "value", "class"];
 
-        "extension": ["must", "must be equal to", "where [not] equal to", "of class"],
-
-        "function": ["must", "must be equal to", "where have", "of class"],
-        "function where have": ["annotation", "specifier", "name", "parameter", "return value", "declaration statement", "expression statement"],
-        "function of": ["class"],
-
-        "abstract function": ["must", "must be equal to", "where have", "of class"],
-        "abstract function where have": ["annotation", "specifier", "name", "parameter"],
-
-        "constructor": ["must", "must be equal to", "where have", "of class"],
-        "constructor where have": ["annotation", "specifier", "parameter", "return value", "declaration statement", "expression statement"],
-
-        "parameter": ["must", "must be equal to", "where have", "of"],
-        "parameter where have": ["name", "type"],
-        "parameter of": ["function", "constructor", "abstract function"],
-
-        "type": ["must", "must be equal to", "where [not] equal to", "of"],
-        "type of": ["parameter", "declaration statement"],
-
-        "specifier": ["must", "must be equal to", "where [not] equal to", "of"],
-        "specifier of": ["function", "constructor", "abstract function", "declaration statement", "class"],
-
-        "return value": ["must", "must be equal to", "where have", "of function"],
-        "return value where have": ["calls", "name"],
-
-        "declaration statement": ["must", "must be equal to", "where have", "of"],
-        "declaration statement of": ["class", "function", "constructor"],
-        "declaration statement where have": ["annotation", "specifier", "types", "name", "initial value"],
-
-        "expression statement": ["must", "must be equal to", "where have", "of"],
-        "expression statement where have": ["calls", "name"],
-        "expression statement of": ["function", "constructor", "constructor"],
-
-        "initial value": ["must", "must be equal to", "where have", "of declaration statement"],
-        "initial value where have": ["calls", "name"],
-
-        "argument": ["must", "must be equal to", "where have", "of call"],
-        "argument where have": ["calls", "name"],
-
-        "call": ["must", "must be equal to", "where have", "of"],
-        "call where have": ["callers", "name"],
-        "call of": ["argument", "return value", "expression statement", "initValue"],
-
-        "caller": ["must", "must be equal to", "where have name [not] equal to", "of calls"],
-
-        "value": ["must", "must be equal to", "where [not] equal to", "of"],
-        "value of": ["argument", "return value", "expression statement", "initial value"],
-
-        "class": ["must", "must be equal to", "where have", "of class"],
-        "class where have": ["annotation", "specifier", "name", "extension", "function", "abstract function", "constructor", "declaration statement", "class", "return value"],
-
-    };
-
-    /**
-     * phrase: {value: replace with, auto_complete: string ( what to add after the first word)}
-     */
-    static phrases = {
-        "function foo": {
-            value: "function where (has name where equals to \"foo\")",
-            auto_complete: "foo"
+    static autoComplete_suggestion = {
+        "name": {
+            whereClause: ["equal to", "not equal to", "include", "not include"],
+            ofClause: ["class", "function", "abstract function", "type", "constructor", "argument", "extension"]
         },
-        "bar function": {
-            value: "function where has name where equals to \"bar\"",
-            auto_complete: "function"
+        "annotation": {
+            whereHaveClause: ["name", "argument"],
+            ofClause: ["class", "function", "constructor", "abstract function", "declaration statement"]
         },
-        "Command class": {
-            value: "class where has name where equals to \"Command\"",
-            auto_complete: "class"
+        "extension": {
+            whereClause: ["equal to", "not equal to"],
+            ofClause: []
+        },
+        "function": {
+            whereHaveClause: ["annotation", "specifier", "name", "parameter", "return value", "declaration statement",
+                "expression statement"],
+            ofClause: ["class"]
+        },
+        "abstract function": {
+            whereHaveClause: ["annotation", "specifier", "name", "parameter"],
+            ofClause: ["class"]
+        },
+        "constructor": {
+            whereHaveClause: ["annotation", "specifier", "parameter", "return value", "declaration statement",
+                "expression statement"],
+            ofClause: ["class"]
+        },
+        "parameter": {
+            whereHaveClause: ["name", "type"],
+            ofClause: ["function", "constructor", "abstract function"]
+        },
+        "type": {
+            whereClause: ["equal to", "not equal to"],
+            ofClause: ["parameter", "declaration statement"]
+        },
+        "specifier": {
+            whereClause: ["equal to", "not equal to"],
+            ofClause: ["function", "constructor", "abstract function", "declaration statement", "class"]
+        },
+        "return value": {
+            whereHaveClause: ["calls", "name"],
+            ofClause: ["function"]
+        },
+        "declaration statement": {
+            whereHaveClause: ["annotation", "specifier", "types", "name", "initial value"],
+            ofClause: ["class", "function", "constructor"]
+        },
+        "expression statement": {
+            whereHaveClause: ["calls", "name"],
+            ofClause: ["function", "constructor", "constructor"]
+        },
+        "initial value": {
+            whereHaveClause: ["calls", "name"],
+            ofClause: ["declaration statement"]
+        },
+        "argument": {
+            whereHaveClause: [["calls", "name"]],
+            ofClause: ["call"]
+        },
+        "call": {
+            whereHaveClause: ["callers", "name"],
+            ofClause: ["argument", "return value", "expression statement", "initValue"]
+        },
+        "caller": {
+            whereHaveClause: ["name equal to", "name not equal to"],
+            ofClause: ["calls"]
+        },
+        "value": {
+            whereClause: ["equal to", "not equal to"],
+            ofClause: ["argument", "return value", "expression statement", "initial value"]
+        },
+        "class": {
+            whereHaveClause: ["annotation", "specifier", "name", "extension", "function", "abstract function",
+                "constructor", "declaration statement", "class", "return value"],
+            ofClause: ["class"]
         }
     };
 
+    /**
+     * for each word, there are suggestions
+     * @type [Array]
+     */
+    static defined_phrases = [
+        {
+            replaceWordWith: "function foo",
+            value: "function where (has name where equal to \"foo\")"
+        },
+        {
+            replaceWordWith: "bar function",
+            value: "function where (has name where equal to \"bar\")"
+        },
+        {
+            replaceWordWith: "Command class",
+            value: "class where has name where equal to \"Command\""
+        }
+    ];
+
+    static phrase_hash = {"function": [0, 1], "foo": [0], "bar": [1], "Command": [2], "class": [2]};
+
+
     static templates = [
-        "class where have function where have name where equal to <Name>",
-        "class where have entity where have name equal to <Name>"
+        "function must have ",
+        "abstract function must have ",
+        "constructor must have ",
+        "class must be equal to class",
+        "class where have annotation must have name"
     ]
 
 }
