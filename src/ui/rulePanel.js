@@ -35,6 +35,11 @@ class RulePanel extends Component {
         if (this.newRuleRequest && !props["cancelGeneratingNewRule"])
             return new Error(`'cancelGeneratingNewRule' is required in props when creating a new rule.`);
 
+        // should not be in state, it need to be changed after single use.
+        // the component is updated after changing this value because the state is also changing
+        // otherwise call this.forceUpdate()
+        this.autoCompleteCaretPosition = -1;
+
         this.state = {
             open: true,
             className: "rulePanelDiv" + (this.newRuleRequest ? " edit-bg" : ""),
@@ -42,7 +47,6 @@ class RulePanel extends Component {
             editMode: !!props["newRule"], // default must be false unless a new rule is being generated,
             showAlert: true,
             error: "",
-            autoCompleteCaretPosition: -1,
             // ruleI states
             title: "",
             description: "",
@@ -175,7 +179,12 @@ class RulePanel extends Component {
                                           .then((data) => this.setState(data))
                                           .catch((error) => this.processLanguageProcessingError(error))
                                       }
-                                      onUpdateText={(text) => this.setState({autoCompleteText: text})}/>
+                                      onUpdateText={(text) => this.setState({autoCompleteText: text})}
+                                      caretPosition={(() => {
+                                          let newFocus = this.autoCompleteCaretPosition;
+                                          this.autoCompleteCaretPosition = -1;
+                                          return newFocus;
+                                      })()}/>
                         <div>
                             <ButtonToolbar className={"submitButtons"}>
                                 <Button bsStyle="primary"
@@ -720,6 +729,7 @@ class RulePanel extends Component {
                 console.log(error);
                 if (error.grammarErrors) {
                     let grammarError = error.grammarErrors[0];
+                    this.autoCompleteCaretPosition = error.grammarErrors[0].col;
                     this.setState({
                         error: {
                             errorType: "Grammar Error",
@@ -727,8 +737,7 @@ class RulePanel extends Component {
                             + (grammarError.e.ctx.parentCtx !== null ? (" in " + grammarError.e.ctx.parentCtx.constructor.name) : "")
                             + ", character " + error.grammarErrors[0].col,
                             alertType: "danger"
-                        },
-                        autoCompleteCaretPosition: error.grammarErrors[0].col
+                        }
                     });
                 }
                 else

@@ -31,7 +31,7 @@ class GenerateRule extends Component {
         this.state.constraintXPath = "";
 
         this.state.error = "";
-        this.state.autoCompleteCaretPosition = -1;
+        this.autoCompleteCaretPosition = -1;
         this.state.showAlert = true;
 
     }
@@ -64,7 +64,11 @@ class GenerateRule extends Component {
                                       .catch((error) => this.processLanguageProcessingError(error))
                               }
                               onUpdateText={(text) => this.setState({autoCompleteText: text})}
-                              caretPosition={this.state.autoCompleteCaretPosition}/>
+                              caretPosition={(() => {
+                                  let newFocus = this.autoCompleteCaretPosition;
+                                  this.autoCompleteCaretPosition = -1;
+                                  return newFocus;
+                              })()}/>
                 <div style={{padding: "30px"}}>
                     {/*<Button bsStyle="primary" block onClick={() => this.verifyText()}>Verify</Button>*/}
                     <h4>Quantifier:</h4><span style={{wordWrap: "break-word"}}>{this.state.quantifierXPath}</span>
@@ -130,9 +134,9 @@ class GenerateRule extends Component {
              * {xpathTraverseErrors: errorMessage}
              */
             default:
-                console.log(error);
                 if (error.grammarErrors) {
                     let grammarError = error.grammarErrors[0];
+                    this.autoCompleteCaretPosition = error.grammarErrors[0].col;
                     this.setState({
                         error: {
                             errorType: "Grammar Error",
@@ -140,8 +144,7 @@ class GenerateRule extends Component {
                             + (grammarError.e.ctx.parentCtx !== null ? (" in " + grammarError.e.ctx.parentCtx.constructor.name) : "")
                             + ", character " + error.grammarErrors[0].col,
                             alertType: "danger"
-                        },
-                        autoCompleteCaretPosition: error.grammarErrors[0].col
+                        }
                     });
                 }
                 else
