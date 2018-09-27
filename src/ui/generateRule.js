@@ -6,7 +6,7 @@ import React, {Component} from 'react';
 import {connect} from "react-redux";
 import '../App.css';
 
-import {DropdownButton, MenuItem, HelpBlock} from 'react-bootstrap';
+import {DropdownButton, MenuItem, HelpBlock, Alert} from 'react-bootstrap';
 import {FormControl, Label, Button, FormGroup, ButtonToolbar} from 'react-bootstrap';
 import {Row, Col} from 'react-bootstrap';
 import TiDelete from 'react-icons/lib/ti/delete';
@@ -30,37 +30,130 @@ class GenerateRule extends Component {
         this.state.quantifierXPath = "";
         this.state.constraintXPath = "";
 
+        this.state.error = "";
+        this.state.autoCompleteCaretPosition = -1;
+        this.state.showAlert = true;
+
     }
 
     render() {
         return (
             <div>
-                {this.renderForm()}
+                {/*{this.renderForm()}*/}
                 {/*<XPathGenerator key={new Date()} state={this.state}/>*/}
+                {this.state.error === "" ? null : !this.state.showAlert ? null : (
+                    <Alert bsStyle={this.state.error.alertType}>
+                        <h4>{this.state.error.errorType}</h4>
+                        <h6>{this.state.error.message}</h6>
+                        <ButtonToolbar>
+                            <Button onClick={() => this.setState({error: ""})}>Got it!</Button>
+                            <Button onClick={() => this.setState({showAlert: false})}>Hide Alerts</Button>
+                        </ButtonToolbar>
+                    </Alert>
+                )}
+                {this.state.showAlert ? null : (
+                    <div style={{paddingBottom: "10px"}}>
+                        <Button onClick={() => this.setState({showAlert: true})}>Show Alerts</Button>
+                    </div>
+                )}
+
                 <AutoComplete ref={(autoComplete) => this.autoComplete = autoComplete}
                               onBlur={() =>
                                   verifyTextBasedOnGrammar(this.state.autoCompleteText)
-                                      .then((data) => {
-                                          this.setState(data)
-                                      })
+                                      .then((data) => this.processLanguageProcessingData(data))
+                                      .catch((error) => this.processLanguageProcessingError(error))
                               }
-                              onUpdateText={(text) => this.setState({autoCompleteText: text})}/>
+                              onUpdateText={(text) => this.setState({autoCompleteText: text})}
+                              caretPosition={this.state.autoCompleteCaretPosition}/>
                 <div style={{padding: "30px"}}>
                     {/*<Button bsStyle="primary" block onClick={() => this.verifyText()}>Verify</Button>*/}
                     <h4>Quantifier:</h4><span style={{wordWrap: "break-word"}}>{this.state.quantifierXPath}</span>
                     <h4>Constraint:</h4><span style={{wordWrap: "break-word"}}>{this.state.constraintXPath}</span>
                 </div>
 
-                <div>
-                    <div style={{width: 200, float: "left", paddingRight: "5px"}}>
-                        <Button bsStyle="primary" block onClick={() => this.onSubmitNewRule()}>Submit</Button>
-                    </div>
-                    <div style={{width: 200, float: "left"}}>
-                        <Button bsStyle="default" block onClick={() => this.clearForm()}>Clear Form</Button>
-                    </div>
-                </div>
+                {/*<div>*/}
+                    {/*<div style={{width: 200, float: "left", paddingRight: "5px"}}>*/}
+                        {/*<Button bsStyle="primary" block onClick={() => this.onSubmitNewRule()}>Submit</Button>*/}
+                    {/*</div>*/}
+                    {/*<div style={{width: 200, float: "left"}}>*/}
+                        {/*<Button bsStyle="default" block onClick={() => this.clearForm()}>Clear Form</Button>*/}
+                    {/*</div>*/}
+                {/*</div>*/}
             </div>
         );
+    }
+
+    /**
+     * process the data received by running verifyTextBasedOnGrammar on autoComplete text
+     * @param data
+     */
+    processLanguageProcessingData(data) {
+        this.setState(Object.assign({}, data, {error: ""}));
+    }
+
+    /**
+     * process the error received by running verifyTextBasedOnGrammar on autoComplete text
+     * @param error
+     */
+    processLanguageProcessingError(error) {
+        switch (error) {
+            case "EMPTY_FIELD":
+                this.setState({
+                    error: {
+                        errorType: "Empty Field",
+                        message: "The design rule input must not be empty",
+                        alertType: "warning"
+                    }
+                });
+                break;
+            case "NO_INPUT_AFTER_REPLACING_PHRASES":
+                this.setState({
+                    error: {
+                        errorType: "Incorrect Input",
+                        message: "The used phrases are incorrect. Try using different phrases.",
+                        alertType: "danger"
+                    }
+                });
+                break;
+            case "NO_INPUT_AFTER_LEMMATIZATION":
+                this.setState({
+                    error: {
+                        errorType: "Incorrect Input",
+                        message: "The words used in the design rule are not compatible with CoreNLP library.",
+                        alertType: "danger"
+                    }
+                });
+                break;
+            /**
+             * {grammarErrors: [{rec, sym, line, col, msg, e}]}
+             * or
+             * {xpathTraverseErrors: errorMessage}
+             */
+            default:
+                console.log(error);
+                if (error.grammarErrors) {
+                    let grammarError = error.grammarErrors[0];
+                    this.setState({
+                        error: {
+                            errorType: "Grammar Error",
+                            message: grammarError.e.ctx.constructor.name
+                            + (grammarError.e.ctx.parentCtx !== null ? (" in " + grammarError.e.ctx.parentCtx.constructor.name) : "")
+                            + ", character " + error.grammarErrors[0].col,
+                            alertType: "danger"
+                        },
+                        autoCompleteCaretPosition: error.grammarErrors[0].col
+                    });
+                }
+                else
+                    this.setState({
+                        error: {
+                            errorType: "error",
+                            message: "",
+                            alertType: "danger"
+                        }
+                    });
+                break;
+        }
     }
 
     //componentDidUpdate doesn't work

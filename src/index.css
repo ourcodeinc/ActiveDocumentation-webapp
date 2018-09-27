@@ -194,9 +194,9 @@ body {
 /*** Rule generating ***/
 
 
-#generateRule .btn {
-    padding: 2px;
-}
+/*#generateRule .btn {*/
+    /*padding: 2px;*/
+/*}*/
 
 /* override bootstrap */
 #generateRule .help-block {
