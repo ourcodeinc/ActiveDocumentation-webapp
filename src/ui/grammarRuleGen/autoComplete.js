@@ -138,6 +138,7 @@ class AutoComplete extends Component {
                     grammarSuggestion: data,
                     phraseSuggestion: this.phraseSuggestion(newText, start, end)
                 },
+                () => this.setCaretPosition("queryText", end),
                 () => this.onUpdateText(newText))
         );
     }
