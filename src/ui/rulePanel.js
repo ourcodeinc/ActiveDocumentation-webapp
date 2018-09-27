@@ -9,7 +9,7 @@ import ReactTooltip from 'react-tooltip'
 import Utilities from '../core/utilities';
 import {
     Tab, Tabs, Badge, FormGroup, ControlLabel, Label, Collapse, FormControl, DropdownButton,
-    MenuItem, Button, ButtonToolbar, Row, Col, HelpBlock
+    MenuItem, Button, ButtonToolbar, Row, Col, HelpBlock, Alert
 } from 'react-bootstrap';
 import FaCaretDown from 'react-icons/lib/fa/caret-down';
 import FaCaretUp from 'react-icons/lib/fa/caret-up';
@@ -39,7 +39,10 @@ class RulePanel extends Component {
             open: true,
             className: "rulePanelDiv" + (this.newRuleRequest ? " edit-bg" : ""),
             activeTab: 0,
-            editMode: !!props["newRule"], // default must be false unless a new rule is being generated
+            editMode: !!props["newRule"], // default must be false unless a new rule is being generated,
+            showAlert: true,
+            error: "",
+            autoCompleteCaretPosition: -1,
             // ruleI states
             title: "",
             description: "",
@@ -151,12 +154,27 @@ class RulePanel extends Component {
                             validationState={(this.state.folderConstraint === "" || (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0)) ? "error" : "success"}>
                             <div>{this.renderFileConstraints()}</div>
                         </FormGroup>
+                        {this.state.error === "" ? null : !this.state.showAlert ? null : (
+                            <Alert bsStyle={this.state.error.alertType}>
+                                <h4>{this.state.error.errorType}</h4>
+                                <h6>{this.state.error.message}</h6>
+                                <ButtonToolbar>
+                                    <Button onClick={() => this.setState({error: ""})}>Got it!</Button>
+                                    <Button onClick={() => this.setState({showAlert: false})}>Hide Alerts</Button>
+                                </ButtonToolbar>
+                            </Alert>
+                        )}
+                        {this.state.showAlert ? null : (
+                            <div style={{paddingBottom: "10px"}}>
+                                <Button onClick={() => this.setState({showAlert: true})}>Show Alerts</Button>
+                            </div>
+                        )}
                         <AutoComplete ref={(autoComplete) => this.autoComplete = autoComplete}
                                       defaultValue={this.state.autoCompleteText}
                                       onBlur={() => verifyTextBasedOnGrammar(this.state.autoCompleteText)
-                                          .then((data) => {
-                                              this.setState(data)
-                                          })}
+                                          .then((data) => this.setState(data))
+                                          .catch((error) => this.processLanguageProcessingError(error))
+                                      }
                                       onUpdateText={(text) => this.setState({autoCompleteText: text})}/>
                         <div>
                             <ButtonToolbar className={"submitButtons"}>
@@ -658,6 +676,71 @@ class RulePanel extends Component {
         this.props.onSubmitNewRule(rule);
         Utilities.sendToServer(this.props.ws, "NEW_RULE", rule);
         this.changeEditMode();
+    }
+
+    /**
+     * process the error received by running verifyTextBasedOnGrammar on autoComplete text
+     * @param error
+     */
+    processLanguageProcessingError(error) {
+        switch (error) {
+            case "EMPTY_FIELD":
+                this.setState({
+                    error: {
+                        errorType: "Empty Field",
+                        message: "The design rule input must not be empty.",
+                        alertType: "warning"
+                    }
+                });
+                break;
+            case "NO_INPUT_AFTER_REPLACING_PHRASES":
+                this.setState({
+                    error: {
+                        errorType: "Incorrect Input",
+                        message: "The used phrases are incorrect. Try using different phrases.",
+                        alertType: "danger"
+                    }
+                });
+                break;
+            case "NO_INPUT_AFTER_LEMMATIZATION":
+                this.setState({
+                    error: {
+                        errorType: "Incorrect Input",
+                        message: "The words used in the design rule are not compatible with CoreNLP library.",
+                        alertType: "danger"
+                    }
+                });
+                break;
+            /**
+             * {grammarErrors: [{rec, sym, line, col, msg, e}]}
+             * or
+             * {xpathTraverseErrors: errorMessage}
+             */
+            default:
+                console.log(error);
+                if (error.grammarErrors) {
+                    let grammarError = error.grammarErrors[0];
+                    this.setState({
+                        error: {
+                            errorType: "Grammar Error",
+                            message: grammarError.e.ctx.constructor.name
+                            + (grammarError.e.ctx.parentCtx !== null ? (" in " + grammarError.e.ctx.parentCtx.constructor.name) : "")
+                            + ", character " + error.grammarErrors[0].col,
+                            alertType: "danger"
+                        },
+                        autoCompleteCaretPosition: error.grammarErrors[0].col
+                    });
+                }
+                else
+                    this.setState({
+                        error: {
+                            errorType: "error",
+                            message: "",
+                            alertType: "danger"
+                        }
+                    });
+                break;
+        }
     }
 }
 
