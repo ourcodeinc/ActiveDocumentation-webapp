@@ -138,8 +138,10 @@ class AutoComplete extends Component {
                     grammarSuggestion: data,
                     phraseSuggestion: this.phraseSuggestion(newText, start, end)
                 },
-                () => this.setCaretPosition("queryText", end),
-                () => this.onUpdateText(newText))
+                () => {
+                    this.setCaretPosition("queryText", end);
+                    this.onUpdateText(newText)
+                })
         );
     }
 
@@ -660,8 +662,10 @@ class AutoComplete extends Component {
                     grammarSuggestion: data,
                     phraseSuggestion: this.phraseSuggestion(newText, -1, focus)
                 },
-                () => this.setCaretPosition("queryText", focus),
-                () => this.onUpdateText(newText)
+                () => {
+                    this.setCaretPosition("queryText", focus);
+                    this.onUpdateText(newText)
+                }
             )
         );
     }
@@ -746,8 +750,10 @@ class AutoComplete extends Component {
                     grammarSuggestion: data,
                     phraseSuggestion: this.phraseSuggestion(newText, -1, focus)
                 },
-                () => this.setCaretPosition("queryText", focus),
-                () => this.onUpdateText(newText)
+                () => {
+                    this.setCaretPosition("queryText", focus);
+                    this.onUpdateText(newText)
+                }
             )
         );
     }
