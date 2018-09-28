@@ -39,6 +39,7 @@ class RulePanel extends Component {
         // the component is updated after changing this value because the state is also changing
         // otherwise call this.forceUpdate()
         this.autoCompleteCaretPosition = -1;
+        this.shouldAlert = true;
 
         this.state = {
             open: true,
@@ -175,11 +176,18 @@ class RulePanel extends Component {
                         )}
                         <AutoComplete ref={(autoComplete) => this.autoComplete = autoComplete}
                                       defaultValue={this.state.autoCompleteText}
-                                      onBlur={() => verifyTextBasedOnGrammar(this.state.autoCompleteText)
-                                          .then((data) => this.setState(data))
-                                          .catch((error) => this.processLanguageProcessingError(error))
-                                      }
-                                      onUpdateText={(text) => this.setState({autoCompleteText: text})}
+                                      onBlur={() => {
+                                          if(this.shouldAlert) {
+                                              verifyTextBasedOnGrammar(this.state.autoCompleteText)
+                                                  .then((data) => this.setState(data))
+                                                  .catch((error) => this.processLanguageProcessingError(error));
+                                              this.shouldAlert = false;
+                                          }
+                                      }}
+                                      onUpdateText={(text) => {
+                                          this.shouldAlert = true;
+                                          this.setState({autoCompleteText: text})
+                                      }}
                                       caretPosition={(() => {
                                           let newFocus = this.autoCompleteCaretPosition;
                                           this.autoCompleteCaretPosition = -1;
