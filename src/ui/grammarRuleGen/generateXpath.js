@@ -1,4 +1,5 @@
 import {TerminalNodeImpl} from "antlr4/tree/Tree";
+import Utilities from "../../core/utilities";
 
 class GenerateXpath {
 
@@ -97,7 +98,7 @@ class GenerateXpath {
             for (let i = 0; i < node.children.length; i++) {
                 let nodeType = node.getChild(i).constructor.name;
                 if (nodeType.indexOf("OfContext") !== -1 && nodeType !== "OfContext") {
-                    nodeChildren.move(i, 0);
+                    nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
                     break;
                 }
             }
@@ -257,7 +258,7 @@ class GenerateXpath {
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = node.getChild(i).constructor.name;
             if (nodeType.indexOf("ClassOfContext") !== -1) {
-                nodeChildren.move(i, 0);
+                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
                 break;
             }
         }
@@ -290,7 +291,7 @@ class GenerateXpath {
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = node.getChild(i).constructor.name;
             if (nodeType.indexOf("NameOfContext") !== -1) {
-                nodeChildren.move(i, 0);
+                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
                 break;
             }
         }
@@ -338,7 +339,7 @@ class GenerateXpath {
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = node.getChild(i).constructor.name;
             if (nodeType.indexOf("AnnotationOfContext") !== -1) {
-                nodeChildren.move(i, 0);
+                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
                 break;
             }
         }
@@ -371,7 +372,7 @@ class GenerateXpath {
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = node.getChild(i).constructor.name;
             if (nodeType.indexOf("ExtensionOfContext") !== -1) {
-                nodeChildren.move(i, 0);
+                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
                 break;
             }
         }
@@ -418,7 +419,7 @@ class GenerateXpath {
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = node.getChild(i).constructor.name;
             if (nodeType.indexOf(kindOfFunction + "OfContext") !== -1) {
-                nodeChildren.move(i, 0);
+                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
                 break;
             }
         }
@@ -451,7 +452,7 @@ class GenerateXpath {
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = node.getChild(i).constructor.name;
             if (nodeType.indexOf("ParameterOfContext") !== -1) {
-                nodeChildren.move(i, 0);
+                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
                 break;
             }
         }
@@ -484,7 +485,7 @@ class GenerateXpath {
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = node.getChild(i).constructor.name;
             if (nodeType.indexOf("TypeOfContext") !== -1) {
-                nodeChildren.move(i, 0);
+                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
                 break;
             }
         }
@@ -526,7 +527,7 @@ class GenerateXpath {
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = node.getChild(i).constructor.name;
             if (nodeType.indexOf("SpecifierOfContext") !== -1) {
-                nodeChildren.move(i, 0);
+                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
                 break;
             }
         }
@@ -568,7 +569,7 @@ class GenerateXpath {
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = node.getChild(i).constructor.name;
             if (nodeType.indexOf("ReturnValueOfContext") !== -1) {
-                nodeChildren.move(i, 0);
+                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
                 break;
             }
         }
@@ -601,7 +602,7 @@ class GenerateXpath {
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = node.getChild(i).constructor.name;
             if (nodeType.indexOf("DeclarationStatementOfContext") !== -1) {
-                nodeChildren.move(i, 0);
+                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
                 break;
             }
         }
@@ -634,7 +635,7 @@ class GenerateXpath {
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = node.getChild(i).constructor.name;
             if (nodeType.indexOf("ExpressionStatementOfContext") !== -1) {
-                nodeChildren.move(i, 0);
+                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
                 break;
             }
         }
@@ -667,7 +668,7 @@ class GenerateXpath {
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = node.getChild(i).constructor.name;
             if (nodeType.indexOf("InitValueOfContext") !== -1) {
-                nodeChildren.move(i, 0);
+                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
                 break;
             }
         }
@@ -700,7 +701,7 @@ class GenerateXpath {
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = node.getChild(i).constructor.name;
             if (nodeType.indexOf("ArgumentOfContext") !== -1) {
-                nodeChildren.move(i, 0);
+                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
                 break;
             }
         }
@@ -733,7 +734,7 @@ class GenerateXpath {
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = node.getChild(i).constructor.name;
             if (nodeType.indexOf("CallOfContext") !== -1) {
-                nodeChildren.move(i, 0);
+                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
                 break;
             }
         }
@@ -766,7 +767,7 @@ class GenerateXpath {
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = node.getChild(i).constructor.name;
             if (nodeType.indexOf("CallerOfContext") !== -1) {
-                nodeChildren.move(i, 0);
+                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
                 break;
             }
         }
@@ -808,7 +809,7 @@ class GenerateXpath {
     //     for (let i = 0; i < node.children.length; i++) {
     //         let nodeType = node.getChild(i).constructor.name;
     //         if (nodeType.indexOf("ChainCallOfContext") !== -1) {
-    //             nodeChildren.move(i, 0);
+    //             nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
     //             break;
     //         }
     //     }
