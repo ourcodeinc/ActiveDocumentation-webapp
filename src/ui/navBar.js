@@ -38,7 +38,7 @@ export class NavBar extends Component {
                                 : (key === 3) ? "#/violatedRules" : (key === 4) ? "#/genRule" : "#/index"
                         }}>
                         <NavItem eventKey={1}>
-                            Table of Content
+                            Table of Contents
                         </NavItem>
                         <NavItem eventKey={2}>
                             All Rules
