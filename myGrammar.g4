@@ -19,17 +19,17 @@ designRule
     | classes SPACE must SPACE classExpression
 
     | functions SPACE mustBeEqualTo SPACE functions
-    | abstractFunctions SPACE mustBeEqualTo SPACE abstractFunctionExpression
-    | constructors SPACE mustBeEqualTo SPACE constructorExpression
-    | annotations SPACE mustBeEqualTo SPACE annotationExpression
-    | parameters SPACE mustBeEqualTo SPACE parameterExpression
-    | returnValues SPACE mustBeEqualTo SPACE returnValueExpression
-    | declarationStatements SPACE mustBeEqualTo SPACE declarationStatementExpression
-    | expressionStatements SPACE mustBeEqualTo SPACE expressionStatementExpression
-    | initValues SPACE mustBeEqualTo SPACE initValueExpression
-    | arguments SPACE mustBeEqualTo SPACE argumentExpression
-    | callers SPACE mustBeEqualTo SPACE callerExpression
-    | classes SPACE mustBeEqualTo SPACE classExpression
+    | abstractFunctions SPACE mustBeEqualTo SPACE abstractFunctions
+    | constructors SPACE mustBeEqualTo SPACE constructors
+    | annotations SPACE mustBeEqualTo SPACE annotations
+    | parameters SPACE mustBeEqualTo SPACE parameters
+    | returnValues SPACE mustBeEqualTo SPACE returnValues
+    | declarationStatements SPACE mustBeEqualTo SPACE declarationStatements
+    | expressionStatements SPACE mustBeEqualTo SPACE expressionStatements
+    | initValues SPACE mustBeEqualTo SPACE initValues
+    | arguments SPACE mustBeEqualTo SPACE arguments
+    | callers SPACE mustBeEqualTo SPACE callers
+    | classes SPACE mustBeEqualTo SPACE classes
     ;
 
 /*
