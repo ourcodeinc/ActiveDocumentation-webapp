@@ -44,14 +44,10 @@ class TableOfContent extends Component {
                     <table><tbody>
                     {this.props.rules.map((rule, i) =>
                         <tr key={i}>
-                            <td><a className={"list-group-item"} onClick={() =>
-                                window.location.hash = '#/rule/' + rule['index']
-                            }>
+                            <td><a className={"list-group-item"}>
                                 {rule.index}
                             </a></td>
-                            <td><a className={"list-group-item"} onClick={() =>
-                                window.location.hash = '#/rule/' + rule['index']
-                            }>
+                            <td><a className={"list-group-item"}>
                                 {rule['title']}
                             </a></td>
                         </tr>
