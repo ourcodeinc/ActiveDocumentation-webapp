@@ -443,7 +443,7 @@ class AutoComplete extends Component {
                     if (lastWordIndex < 4) return [];
                     // … [X] must be equal to [X]
                     if (wordsArray[lastWordIndex - 3] === "must" && wordsArray[lastWordIndex - 2] === "be") {
-                        xWord = wordsArray[lastWordIndex - 4];
+                        xWord = wordsArray[0];
 
                         suggText = (isConnectorWord && isMiddleOfWord) ? "to " + xWord : xWord;
                         infoText = (isConnectorWord && isMiddleOfWord) ? xWord + " must be equal" : xWord + " must be equal to";
@@ -578,24 +578,27 @@ class AutoComplete extends Component {
 
                             else {
                                 let hasWhereHaveClause = !!constants.autoComplete_suggestion[d].whereHaveClause;
-                                beforeSuggText = (isMiddleOfWord) ?
+                                suggText = (isMiddleOfWord) ?
                                     (isSecondWord ? "" : d + " ") + "where" + (hasWhereHaveClause ? " have" : "")
                                     : "where" + (hasWhereHaveClause ? " have" : "");
                                 infoText = (isMiddleOfWord) ? (!isSecondWord ? "" : d) : d;
-                                results = results.concat(this.whereSuggestionCreator(d, beforeSuggText, infoText, false));
+                                results.push(AutoComplete.createGrammarSuggestion(suggText, infoText));
+                                // results = results.concat(this.whereSuggestionCreator(d, beforeSuggText, infoText, false));
 
-                                beforeSuggText = (isMiddleOfWord) ? (isSecondWord ? "" : d + " ") + "of" : "of";
+                                suggText = (isMiddleOfWord) ? (isSecondWord ? "" : d + " ") + "of" : "of";
                                 infoText = (isMiddleOfWord) ? (!isSecondWord ? "" : d) : d;
-                                results = results.concat(this.ofSuggestionCreator(d, beforeSuggText, infoText, false));
+                                results.push(AutoComplete.createGrammarSuggestion(suggText, infoText));
+                                // results = results.concat(this.ofSuggestionCreator(d, beforeSuggText, infoText, false));
 
                                 if (!isSecondWord && wordsArray.indexOf("must") === -1) {
-                                    suggText = "must be equal to " + wordsArray[0];
-                                    infoText = wordsArray[0];
+                                    suggText = (!isMiddleOfWord ? "" : d + " ") + "must be equal to " + (!isMiddleOfWord ? "" : d + " ");
+                                    infoText = lastWordIndex !== 0 ? wordsArray[0] : (isMiddleOfWord ? "" : d);
                                     results.push(AutoComplete.createGrammarSuggestion(suggText, infoText));
 
-                                    beforeSuggText = "must have";
-                                    infoText = wordsArray[0];
-                                    results = results.concat(this.whereSuggestionCreator(wordsArray[0], beforeSuggText, infoText, false));
+                                    suggText = (!isMiddleOfWord ? "" : d + " ") + "must have";
+                                    infoText = lastWordIndex !== 0 ? wordsArray[0] : (isMiddleOfWord ? "" : d);
+                                    results.push(AutoComplete.createGrammarSuggestion(suggText, infoText));
+                                    // results = results.concat(this.whereSuggestionCreator(wordsArray[0], beforeSuggText, infoText, false));
                                 }
                             }
                         });
