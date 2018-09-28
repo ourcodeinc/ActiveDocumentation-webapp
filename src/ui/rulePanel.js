@@ -734,16 +734,48 @@ class RulePanel extends Component {
              * {xpathTraverseErrors: errorMessage}
              */
             default:
-                console.log(error);
                 if (error.grammarErrors) {
-                    let grammarError = error.grammarErrors[0];
                     this.autoCompleteCaretPosition = error.grammarErrors[0].col;
+                    let errorMessage = "";
+
+                    for (let i = 0; i < error.grammarErrors.length; i++) {
+                        let grammarError = error.grammarErrors[i];
+                        try {
+                            let contextName = grammarError.e.ctx.constructor.name;
+                            switch (contextName) {
+                                case "DesignRuleContext":
+                                    errorMessage += "Use AutoComplete suggestions. ";
+                                    break;
+                                default:
+                                    errorMessage += "For defining conditions, you need to follow formats like: "
+                                        + "\"class where have name\", \"class where (( have name and have annotation ) or have function)\". ";
+
+                            }
+                        }
+                        catch (e) {
+                            console.error("no contextName", e);
+                        }
+
+                        try {
+                            let offendingText = grammarError.e.offendingToken.text;
+                            switch (offendingText) {
+                                case "<EOF>":
+                                    errorMessage += "The design rule is incomplete. You can use suggestions in  AutoComplete. ";
+                                    break;
+
+                                default:
+                                    errorMessage += "The use of word \"" + offendingText + "\" is not correct. Possible causes are missed words or typos"
+                            }
+                        }
+                        catch (e) {
+                            console.error("no offendingText", e);
+                        }
+                    }
+
                     this.setState({
                         error: {
                             errorType: "Grammar Error",
-                            message: grammarError.e.ctx.constructor.name
-                            + (grammarError.e.ctx.parentCtx !== null ? (" in " + grammarError.e.ctx.parentCtx.constructor.name) : "")
-                            + ", character " + error.grammarErrors[0].col,
+                            message: errorMessage,
                             alertType: "danger"
                         }
                     });
