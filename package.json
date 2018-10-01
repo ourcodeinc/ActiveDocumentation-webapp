@@ -20,6 +20,11 @@
     "start": "PORT=3000 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "coreNLP": "cd node_modules/corenlp/corenlp/stanford-corenlp-full-2018-02-27;java -mx4g -cp \"*\" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 15000",
+    "dev": "concurrently --kill-others \"npm run start\" \"npm run coreNLP\""
+  },
+  "devDependencies": {
+    "concurrently": "^4.0.1"
   }
 }
