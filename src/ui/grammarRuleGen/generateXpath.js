@@ -308,6 +308,7 @@ class GenerateXpath {
             // console.log("name", node);
 
             if (nodeType === "TerminalNodeImpl") {
+                if(this.XPath === "") this.XPath += "/";
                 this.XPath += "src:name"; // todo: check parent or different name entities? descendant-or-self::
             }
 
@@ -354,6 +355,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
+                if(this.XPath === "") this.XPath += "/";
                 this.XPath += "src:annotation";
             }
 
@@ -387,6 +389,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
+                if(this.XPath === "") this.XPath += "/";
                 this.XPath += "src:super/src:extends";
             }
 
@@ -434,6 +437,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
+                if(this.XPath === "") this.XPath += "/";
                 this.XPath += "src:block/src:" + xPathTag;
             }
 
@@ -467,6 +471,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
+                if(this.XPath === "") this.XPath += "/";
                 this.XPath += "src:parameter_list/src:parameter/src:decl";
             }
 
@@ -500,6 +505,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
+                if(this.XPath === "") this.XPath += "/";
                 this.XPath += "src:type";
             }
 
@@ -542,6 +548,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
+                if(this.XPath === "") this.XPath += "/";
                 this.XPath += "src:specifier";
             }
 
@@ -584,6 +591,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
+                if(this.XPath === "") this.XPath += "/";
                 this.XPath += "src:block/descendant-or-self::src:return/src:expr";
             }
 
@@ -617,6 +625,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
+                if(this.XPath === "") this.XPath += "/";
                 this.XPath += "src:decl_stmt/src:decl";
             }
 
@@ -650,6 +659,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
+                if(this.XPath === "") this.XPath += "/";
                 this.XPath += "src:block/descendant-or-self::src:expr_stmt/src:expr";
             }
 
@@ -683,6 +693,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
+                if(this.XPath === "") this.XPath += "/";
                 this.XPath += "src:init/src:expr";
             }
 
@@ -716,6 +727,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
+                if(this.XPath === "") this.XPath += "/";
                 this.XPath += "src:argument_list/src:argument/src:expr";
             }
 
@@ -749,6 +761,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
+                if(this.XPath === "") this.XPath += "/";
                 this.XPath += "src:call";
             }
 
@@ -782,6 +795,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
+                if(this.XPath === "") this.XPath += "/";
                 this.XPath += "descendant-or-self::src:name";
             }
 
