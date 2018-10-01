@@ -5,6 +5,10 @@ inputSentence
     ;
 
 designRule
+    : mustClause | mustBeEqualToClause
+    ;
+
+mustClause
     : functions SPACE must SPACE functionExpression
     | abstractFunctions SPACE must SPACE abstractFunctionExpression
     | constructors SPACE must SPACE constructorExpression
@@ -16,9 +20,10 @@ designRule
     | initValues SPACE must SPACE initValueExpression
     | arguments SPACE must SPACE argumentExpression
     | callers SPACE must SPACE callerExpression
-    | classes SPACE must SPACE classExpression
+    | classes SPACE must SPACE classExpression;
 
-    | functions SPACE mustBeEqualTo SPACE functions
+mustBeEqualToClause
+    : functions SPACE mustBeEqualTo SPACE functions
     | abstractFunctions SPACE mustBeEqualTo SPACE abstractFunctions
     | constructors SPACE mustBeEqualTo SPACE constructors
     | annotations SPACE mustBeEqualTo SPACE annotations
