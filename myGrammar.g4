@@ -148,7 +148,7 @@ names
 nameOf
     : SPACE of SPACE (classes | functions | abstractFunctions
     | declarationStatements | parameters | annotations
-    | types | constructors | arguments | extensions)
+    | types | constructors | arguments | extensions | implementations)
     ;
 
 nameCondition
@@ -205,6 +205,28 @@ extensionOf
 extensionCondition
     : SPACE where SPACE not? SPACE? equalsTo SPACE words Comma?
     ;
+
+
+/*
+    implements
+*/
+
+IMPLEMENTATION
+    : 'implementation'
+    ;
+
+implementations
+    : IMPLEMENTATION implementationCondition? implementationOf?
+    ;
+
+implementationOf
+    : SPACE of SPACE classes
+    ;
+
+implementationCondition
+    : SPACE where SPACE not? SPACE? equalsTo SPACE words Comma?
+    ;
+
 
 /*
     functions
@@ -589,7 +611,7 @@ classExpression
     : LPAREN classExpression RPAREN
     | left=classExpression SPACE op=binary SPACE right=classExpression
     | SPACE? have SPACE (
-              annotations | specifiers | names | extensions | functions
+              annotations | specifiers | names | extensions | implementations | functions
               | abstractFunctions | constructors | declarationStatements | classes | returnValues
               ) SPACE?
     ;

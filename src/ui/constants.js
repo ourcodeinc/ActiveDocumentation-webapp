@@ -955,7 +955,7 @@ export class constants {
     // };
 
     static keywords = [
-        "name", "annotation", "extension", "function", "abstract function", "constructor", "parameter", "type",
+        "name", "annotation", "extension", "implementation", "function", "abstract function", "constructor", "parameter", "type",
         "specifier", "return value", "declaration statement", "expression statement", "initial value", "argument",
         "call", "caller", "value", "class"];
 
@@ -969,6 +969,10 @@ export class constants {
             ofClause: ["class", "function", "constructor", "abstract function", "declaration statement"]
         },
         "extension": {
+            whereClause: ["equal to", "not equal to"],
+            ofClause: []
+        },
+        "implementation": {
             whereClause: ["equal to", "not equal to"],
             ofClause: []
         },
@@ -1032,7 +1036,7 @@ export class constants {
         },
         "class": {
             whereHaveClause: ["annotation", "specifier", "name", "extension", "function", "abstract function",
-                "constructor", "declaration statement", "class", "return value"],
+                "constructor", "declaration statement", "class", "return value", "implementation"],
             ofClause: ["class"]
         }
     };

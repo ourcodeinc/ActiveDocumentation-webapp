@@ -126,6 +126,10 @@ class GenerateXpath {
                     this.extensionsContextTraversal(node);
                     break;
 
+                case "ImplementationsContext":
+                    this.implementationsContextTraversal(node);
+                    break;
+
                 case "FunctionsContext":
                     this.allFunctionsContextTraversal(node, "Function", "function");
                     break;
@@ -394,6 +398,49 @@ class GenerateXpath {
             }
 
             if (nodeType === "ExtensionConditionContext") {
+                this.XPath += "[src:name/text()";
+                for (let j = 0; j < nodeChildren[i].children.length; j++) {
+                    if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
+                        this.XPath += "!";
+                    if (nodeChildren[i].getChild(j).constructor.name === "EqualsToContext")
+                        this.XPath += "=\"";
+                    if (nodeChildren[i].getChild(j).constructor.name === "WordsContext")
+                        for (let k = 0; k < nodeChildren[i].getChild(j).children.length; k++)
+                            this.XPath += nodeChildren[i].getChild(j).getChild(k).getSymbol().text;
+                }
+                this.XPath += "\"";
+                this.XPath += "]";
+            }
+        }
+    }
+
+    implementationsContextTraversal (node) {
+        let nodeChildren = node.children.slice(0);
+
+        // move Of children to first
+        for (let i = 0; i < node.children.length; i++) {
+            let nodeType = node.getChild(i).constructor.name;
+            if (nodeType.indexOf("ImplementationOfContext") !== -1) {
+                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
+                break;
+            }
+        }
+
+        for (let i = 0; i < node.children.length; i++) {
+            let nodeType = nodeChildren[i].constructor.name;
+
+            // process ofContext
+            if (nodeType === "ImplementationOfContext") {
+                this.traverseNode(nodeChildren[i]);
+                this.XPath += "/";
+            }
+
+            if (nodeType === "TerminalNodeImpl") {
+                if(this.XPath === "") this.XPath += "/";
+                this.XPath += "src:super/src:implements";
+            }
+
+            if (nodeType === "ImplementationConditionContext") {
                 this.XPath += "[src:name/text()";
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
                     if (nodeChildren[i].getChild(j).constructor.name === "NotContext")

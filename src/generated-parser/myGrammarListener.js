@@ -272,6 +272,33 @@ myGrammarListener.prototype.exitExtensionCondition = function(ctx) {
 };
 
 
+// Enter a parse tree produced by myGrammarParser#implementations.
+myGrammarListener.prototype.enterImplementations = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#implementations.
+myGrammarListener.prototype.exitImplementations = function(ctx) {
+};
+
+
+// Enter a parse tree produced by myGrammarParser#implementationOf.
+myGrammarListener.prototype.enterImplementationOf = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#implementationOf.
+myGrammarListener.prototype.exitImplementationOf = function(ctx) {
+};
+
+
+// Enter a parse tree produced by myGrammarParser#implementationCondition.
+myGrammarListener.prototype.enterImplementationCondition = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#implementationCondition.
+myGrammarListener.prototype.exitImplementationCondition = function(ctx) {
+};
+
+
 // Enter a parse tree produced by myGrammarParser#functions.
 myGrammarListener.prototype.enterFunctions = function(ctx) {
 };
