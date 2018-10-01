@@ -689,8 +689,7 @@ class AutoComplete extends Component {
         let results = [];
 
         let wordsArray = myText.slice(selectionStart === -1 ? 0 : selectionStart, selectionEnd).trim().split(" ");
-        let phraseIndexArrays = wordsArray.map(d => constants.phrase_hash[d] ? constants.phrase_hash[d] : []);
-
+        let phraseIndexArrays = wordsArray.map(d => constants.phrase_hash.hasOwnProperty(d) ? constants.phrase_hash[d] : []);
         // trying to find the non-empty intersection of phrase indices for each word
         let intersection = [];
 
