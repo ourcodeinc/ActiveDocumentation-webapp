@@ -113,6 +113,7 @@ const reducer = (state = default_state, action) => {
             });
 
         case "FILE_PATH":
+            if (state.ignoreFile) return Object.assign({}, state, {message: "FILE_PATH_UPDATED"});
             return Object.assign({}, state, {filePath: action["value"], message: "FILE_PATH_UPDATED"});
 
         default:

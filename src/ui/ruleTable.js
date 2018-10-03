@@ -63,7 +63,6 @@ function mapStateToProps(state) {
         codeChanged: false,
         filePath: "none",
         ws: state.ws,
-        ignoreFile: state.ignoreFile,
         rulesToDisplay: [],
         hash0: state.hash[0],
         message: state.message

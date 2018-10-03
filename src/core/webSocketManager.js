@@ -5,7 +5,7 @@
 import {Component} from 'react';
 import {connect} from "react-redux";
 
-import {updateFilePath, updateRuleTable, updateTagTable, updateWS} from "../actions";
+import {ignoreFile, updateFilePath, updateRuleTable, updateTagTable, updateWS} from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from './ruleExecutor';
 
 class WebSocketManager extends Component {
@@ -142,8 +142,12 @@ class WebSocketManager extends Component {
                 // after sending a piece of code DECL_STMT
                 case "SHOW_RULES_FOR_FILE":
                     let focusedFilePath = message.data.replace('/Users/saharmehrpour/Documents/Workspace/', '');
-                    this.props.onFilePathChange(focusedFilePath);
-                    window.location.hash = "#/rulesForFile/" + focusedFilePath.replace(/\//g, '%2F');
+                    if (!this.props.ignoreFile) {
+                        this.props.onFilePathChange(focusedFilePath);
+                        window.location.hash = "#/rulesForFile/" + focusedFilePath.replace(/\//g, '%2F');
+                    }
+                    else
+                        this.props.onFalsifyIgnoreFile();
 
                     break;
 
@@ -166,6 +170,15 @@ class WebSocketManager extends Component {
 
 }
 
+
+// map state to props
+function mapStateToProps(state) {
+    return {
+        ignoreFile: state.ignoreFile,
+        message: state.message
+    };
+}
+
 function mapDispatchToProps(dispatch) {
     return {
         onUpdateWS: (ws) => {
@@ -182,6 +195,9 @@ function mapDispatchToProps(dispatch) {
         },
         onFilePathChange: (filePath) => {
             dispatch(updateFilePath(filePath));
+        },
+        onFalsifyIgnoreFile: () => {
+            dispatch(ignoreFile(false))
         }
     }
 }
@@ -190,4 +206,4 @@ function mapDispatchToProps(dispatch) {
  * Factory method to create a new WebSocketManager instance
  * @returns {WebSocketManager}
  */
-export default connect(null, mapDispatchToProps)(WebSocketManager);
+export default connect(mapStateToProps, mapDispatchToProps)(WebSocketManager);
