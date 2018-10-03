@@ -71,12 +71,6 @@ const reducer = (state = default_state, action) => {
             return Object.assign({}, state, {ruleTable: action["value"], message: "UPDATE_RULE_TABLE"});
 
         case "UPDATE_RULE":
-            // for (let cnt = 0; cnt < state.ruleTable.length; cnt++) {
-            //     if (state.ruleTable[cnt].index !== action["value"].index)
-            //         tempRuleTable.push(state.ruleTable[cnt]);
-            //     else
-            //         tempRuleTable.push(action["value"]);
-            // }
             return Object.assign({}, state, {
                 // ruleTable: tempRuleTable,
                 message: "UPDATE_RULE"
@@ -85,6 +79,11 @@ const reducer = (state = default_state, action) => {
         case "SUBMIT_NEW_RULE":
             return Object.assign({}, state, {
                 message: "NEW_RULE"
+            });
+
+        case "SUBMIT_NEW_TAG":
+            return Object.assign({}, state, {
+                message: "NEW_TAG"
             });
 
         case "IGNORE_FILE":

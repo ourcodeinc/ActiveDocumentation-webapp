@@ -45,6 +45,12 @@ class Utilities {
                         "ruleText": data
                     };
                     break;
+                case 'NEW_TAG':
+                    messageJson['data'] = {
+                        "tagName": data.tagName,
+                        "tagText": data
+                    };
+                    break;
 
                 default:
                     break;

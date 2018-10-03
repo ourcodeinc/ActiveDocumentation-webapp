@@ -39,3 +39,7 @@ export const updateFilePath = (filePath) => {
 export const submitNewRule = (newRuleProps) => {
     return {type: "SUBMIT_NEW_RULE", value: newRuleProps}
 };
+
+export const submitNewTag = (newTagProps) => {
+    return {type: "SUBMIT_NEW_TAG", value: newTagProps}
+};

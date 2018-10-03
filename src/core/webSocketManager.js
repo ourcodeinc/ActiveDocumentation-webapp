@@ -130,13 +130,19 @@ class WebSocketManager extends Component {
                     // PubSub.publish('EXPR_STMT_XML', [message.data]);
                     break;
 
-                // after sending a piece of code DECL_STMT
                 case "NEW_RULE":
                     let newAddedRule = JSON.parse(message.data['rule']);
                     ruleTable.push(newAddedRule);
                     // received by RuleExecutor
                     ruleTable[ruleTable.length - 1] = runRulesByTypes(xml, newAddedRule);
                     this.props.onUpdateRuleTable(ruleTable);
+                    break;
+
+
+                case "NEW_TAG":
+                    let newAddedTag = JSON.parse(message.data['tag']);
+                    tagTable.push(newAddedTag);
+                    this.props.onUpdateTagTable(tagTable);
                     break;
 
                 // after sending a piece of code DECL_STMT

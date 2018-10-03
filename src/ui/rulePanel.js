@@ -9,7 +9,7 @@ import ReactTooltip from 'react-tooltip'
 import Utilities from '../core/utilities';
 import {
     Tab, Tabs, Badge, FormGroup, ControlLabel, Label, Collapse, FormControl, DropdownButton,
-    MenuItem, Button, ButtonToolbar, Row, Col, HelpBlock, Alert
+    MenuItem, Button, ButtonToolbar, Row, Col, HelpBlock, Alert, Modal
 } from 'react-bootstrap';
 import FaCaretDown from 'react-icons/lib/fa/caret-down';
 import FaCaretUp from 'react-icons/lib/fa/caret-up';
@@ -17,7 +17,7 @@ import MdEdit from 'react-icons/lib/md/edit';
 import TiDelete from "react-icons/lib/ti/delete";
 import {FaQuestionCircle} from "react-icons/lib/fa/index";
 
-import {ignoreFile, submitNewRule, updateRule} from "../actions";
+import {ignoreFile, submitNewRule, submitNewTag, updateRule} from "../actions";
 import AutoComplete from "./grammarRuleGen/autoComplete";
 import verifyTextBasedOnGrammar from "./grammarRuleGen/languageProcessing";
 
@@ -48,6 +48,7 @@ class RulePanel extends Component {
             editMode: !!props["newRule"], // default must be false unless a new rule is being generated,
             showAlert: true,
             error: "",
+            showNewTagModal: false,
             // ruleI states
             title: "",
             description: "",
@@ -57,7 +58,10 @@ class RulePanel extends Component {
             filesFolders: [],
             autoCompleteText: "",
             quantifierXPath: "",
-            constraintXPath: ""
+            constraintXPath: "",
+            // new tag states
+            tagName: "",
+            tagDetail: ""
         };
 
         this.caretClass = {
@@ -203,6 +207,7 @@ class RulePanel extends Component {
                         </div>
                     </div>
                 ) : null}
+                {this.renderNewTagModalDialog()}
             </div>
         );
     }
@@ -372,11 +377,16 @@ class RulePanel extends Component {
                     })}
                     {this.props.tags.length !== this.state.ruleTags.length ? (
                         <CustomDropdown
-                            menuItems={this.props.tags.map(d => d.tagName).filter(d => this.state.ruleTags.indexOf(d) === -1)}
+                            menuItems={this.props.tags.map(d => d.tagName).filter(d => this.state.ruleTags.indexOf(d) === -1).concat(["New Tag"])}
                             onSelectFunction={(evt) => {
-                                const tags = this.state.ruleTags;
-                                tags.push(evt);
-                                this.setState({tags})
+                                if (evt === "New Tag") {
+                                    this.setState({showNewTagModal: true})
+                                }
+                                else {
+                                    const tags = this.state.ruleTags;
+                                    tags.push(evt);
+                                    this.setState({tags})
+                                }
                             }}/>
                     ) : null}
                     <FaQuestionCircle size={20} style={{color: "#9b9b9b"}}
@@ -791,6 +801,64 @@ class RulePanel extends Component {
                 break;
         }
     }
+
+
+    /**
+     * render the dialog for adding a new tag
+     * it is displayed when the 'New Tag' is clicked on
+     * @returns {XML}
+     */
+    renderNewTagModalDialog() {
+        return (
+            <Modal show={this.state.showNewTagModal} onHide={()=>this.setState({showNewTagModal: false})}
+                   backdrop={"static"} keyboard={true}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Modal heading</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <h4>Add a new tag:</h4>
+                    <FormGroup validationState={(this.state.tagName === "") ? "error" : "success"}>
+                        <FormControl type="text" placeholder="Tag name. (Required)"
+                                     style={{fontWeight: "bold"}}
+                                     value={this.state.tagName}
+                                     onChange={(e) => {
+                                         this.setState({tagName: e.target.value})
+                                     }}
+                                     onKeyUp={(e) => {
+                                         e.target.style.cssText = 'height:auto; padding:0';
+                                         e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
+                                     }}/>
+                    </FormGroup>
+                    <FormGroup validationState={(this.state.tagDetail === "") ? "error" : "success"}>
+                        <FormControl componentClass="textarea"
+                                     placeholder="Details about the tag, high level details about the tag. (Required)"
+                                     value={this.state.tagDetail}
+                                     onChange={(e) => {
+                                         this.setState({tagDetail: e.target.value})
+                                     }}
+                                     onKeyUp={(e) => {
+                                         e.target.style.cssText = 'height:auto; padding:0';
+                                         e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
+                                     }}/>
+                    </FormGroup>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button bsStyle="primary" onClick={() => this.onSubmitNewTag()}>Save</Button>
+                    <Button onClick={()=>this.setState({showNewTagModal: false})}>Close</Button>
+                </Modal.Footer>
+            </Modal>
+        )
+    }
+
+    /**
+     * adding a new tag
+     * In tagJson, the property is 'detail'
+     */
+    onSubmitNewTag () {
+        let tag = {tagName: this.state.tagName, detail: this.state.tagDetail};
+        this.props.onSubmitNewTag(tag);
+        Utilities.sendToServer(this.props.ws, "NEW_TAG", tag);
+    }
 }
 
 // map state to props
@@ -815,6 +883,9 @@ function mapDispatchToProps(dispatch) {
         },
         onUpdateRule: (updatedRule) => {
             dispatch(updateRule(updatedRule));
+        },
+        onSubmitNewTag: (newTag) => {
+            dispatch(submitNewTag(newTag))
         }
     }
 }
