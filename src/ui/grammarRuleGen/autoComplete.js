@@ -591,7 +591,7 @@ class AutoComplete extends Component {
                                 // results = results.concat(this.ofSuggestionCreator(d, beforeSuggText, infoText, false));
 
                                 if (!isSecondWord && wordsArray.indexOf("must") === -1) {
-                                    suggText = (!isMiddleOfWord ? "" : d + " ") + "must be equal to " + (!isMiddleOfWord ? "" : d + " ");
+                                    suggText = (!isMiddleOfWord ? "" : d + " ") + "must be equal to" + (!isMiddleOfWord ? "" : d + " ");
                                     infoText = lastWordIndex !== 0 ? wordsArray[0] : (isMiddleOfWord ? "" : d);
                                     results.push(AutoComplete.createGrammarSuggestion(suggText, infoText));
 
