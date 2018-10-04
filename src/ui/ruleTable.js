@@ -8,6 +8,7 @@ import '../App.css';
 import RulePanel from './rulePanel';
 import {connect} from "react-redux";
 import {Button} from "react-bootstrap";
+import {MdPlaylistAdd} from "react-icons/lib/md/index";
 
 class RuleTable extends Component {
 
@@ -22,7 +23,10 @@ class RuleTable extends Component {
                 {this.props.hash0 === "rules" ?
                     (!this.state.newRule ? (
                         <div style={{paddingBottom: '10px', clear: 'both'}}>
-                            <Button onClick={() => this.setState({newRule: true})}>Add a New Rule</Button>
+                            <Button onClick={() => this.setState({newRule: true})} style={{padding: "0 5px"}}>
+                                <MdPlaylistAdd size={35}/>
+                                Add a New Rule
+                            </Button>
                         </div>
                     ) : (
                         <div style={{paddingBottom: "5px"}}>

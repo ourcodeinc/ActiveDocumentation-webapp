@@ -2,11 +2,12 @@
  * Created by saharmehrpour on 9/17/18.
  */
 
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 
 import {MenuItem, Dropdown} from 'react-bootstrap';
 import MdAddBox from 'react-icons/lib/md/add-box';
 import {RootCloseWrapper} from "react-overlays";
+import {FaTag} from "react-icons/lib/fa/index";
 
 class CustomDropdown extends Component {
     constructor(props) {
@@ -29,13 +30,14 @@ class CustomDropdown extends Component {
                 <Dropdown id={this.state.id} open={this.state.open}
                           onToggle={() => this.setState({open: !this.state.open})}>
                     <CustomToggle bsRole="toggle">
-                        <MdAddBox size={25} className={"mdAddBox"}/>
+                        <FaTag size={25} className={"faTag"}/>
                     </CustomToggle>
                     <CustomMenu bsRole="menu">
                         {this.state.menuItems.map((el, i) =>
                             (<MenuItem eventKey={el} key={i}
                                        onSelect={this.state.onSelectFunction}
-                            >{el}
+                            >{(() => el !== "New Tag" ? el :
+                                <Fragment><MdAddBox size={20} className={"mdAddBox"}/> {el}</Fragment>)()}
                             </MenuItem>)
                         )}
                     </CustomMenu>

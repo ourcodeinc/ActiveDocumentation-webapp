@@ -52,6 +52,25 @@ body {
     color: #9b9b9b
 }
 
+.faTag {
+    cursor: pointer;
+    color: #bcbcbc
+}
+
+.faTag:hover {
+    color: #9b9b9b;
+}
+
+.faQuestionCircle {
+    cursor: pointer;
+    color: #337ab7
+}
+
+.faQuestionCircle:hover {
+    color: #265a88;
+}
+
+
 /*** Rule Result */
 
 .blue-bg {

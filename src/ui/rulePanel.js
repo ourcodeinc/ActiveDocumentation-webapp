@@ -375,21 +375,19 @@ class RulePanel extends Component {
                                 </Label>
                             </div>)
                     })}
-                    {this.props.tags.length !== this.state.ruleTags.length ? (
-                        <CustomDropdown
-                            menuItems={this.props.tags.map(d => d.tagName).filter(d => this.state.ruleTags.indexOf(d) === -1).concat(["New Tag"])}
-                            onSelectFunction={(evt) => {
-                                if (evt === "New Tag") {
-                                    this.setState({showNewTagModal: true})
-                                }
-                                else {
-                                    const tags = this.state.ruleTags;
-                                    tags.push(evt);
-                                    this.setState({tags})
-                                }
-                            }}/>
-                    ) : null}
-                    <FaQuestionCircle size={20} style={{color: "#9b9b9b"}}
+                    <CustomDropdown
+                        menuItems={this.props.tags.map(d => d.tagName).filter(d => this.state.ruleTags.indexOf(d) === -1).concat(["New Tag"])}
+                        onSelectFunction={(evt) => {
+                            if (evt === "New Tag") {
+                                this.setState({showNewTagModal: true})
+                            }
+                            else {
+                                const tags = this.state.ruleTags;
+                                tags.push(evt);
+                                this.setState({tags})
+                            }
+                        }}/>
+                    <FaQuestionCircle size={20} className={"faQuestionCircle"}
                                       data-class={"customTheme"}
                                       data-tip={"<h5>Select tags associated with the rule.</h5>"}/>
                     <ReactTooltip html={true} effect={"solid"} place={"right"}/>
@@ -544,7 +542,7 @@ class RulePanel extends Component {
             <div>
                 <div style={{paddingBottom: "10px"}}>
                     <HelpBlock><em>{"Restriction:   "}</em>
-                        <FaQuestionCircle size={20} style={{color: "#9b9b9b"}}
+                        <FaQuestionCircle size={20} className={"faQuestionCircle"}
                                           data-class={"customTheme"}
                                           data-tip={"<h4>Select how the rules are verified.</h4> " +
                                           "<p><span>\"No Restriction\"</span> " +
@@ -552,7 +550,9 @@ class RulePanel extends Component {
                                           "<p><span>\"Specific Files/Folders\"</span> " +
                                           "if the rule is checked on <em>specific</em> files/folders.<br/>" +
                                           "If the restriction is set to \"Specific Files/Folders\", " +
-                                          "at least one folder/file must be specified.</p>"}/>
+                                          "at least one folder/file must be specified.</p>" +
+                                          "<p>Folder and file paths are determined respective to the project directory. " +
+                                          "For example in project \"myProject\", for file path \"Users/Documents/myProject/src/someFile.java\", it suffices to list \"src/someFile.java\"</p>"}/>
                         <ReactTooltip html={true} effect={"solid"} place={"right"}/>
                     </HelpBlock>
                     <ButtonToolbar>
@@ -831,7 +831,7 @@ class RulePanel extends Component {
                     </FormGroup>
                     <FormGroup validationState={(this.state.tagDetail === "") ? "error" : "success"}>
                         <FormControl componentClass="textarea"
-                                     placeholder="Details about the tag, high level details about the tag. (Required)"
+                                     placeholder="Description, high level details about the tag. (Required)"
                                      value={this.state.tagDetail}
                                      onChange={(e) => {
                                          this.setState({tagDetail: e.target.value})
