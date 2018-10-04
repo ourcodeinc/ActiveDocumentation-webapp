@@ -113,26 +113,27 @@ class RulePanel extends Component {
                         <Fragment>
                             <FormGroup validationState={(this.state.title === "") ? "error" : "success"}>
                                 <FormControl componentClass="textarea" placeholder="Rule title. (Required)"
-                                             style={{fontWeight: "bold"}}
+                                             style={{fontWeight: "bold",resize: "vertical"}}
                                              value={this.state.title}
                                              onChange={(e) => {
-                                                 this.setState({title: e.target.value})
+                                                 this.setState({title: e.target.value});
                                              }}
                                              onKeyUp={(e) => {
-                                                 e.target.style.cssText = 'height:auto; padding:0';
-                                                 e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
+                                                 e.target.style.cssText = 'height:0';
+                                                 e.target.style.cssText = 'overflow:hidden;height:' + e.target.scrollHeight + 'px';
                                              }}/>
                             </FormGroup>
                             <FormGroup validationState={(this.state.description === "") ? "error" : "success"}>
                                 <FormControl componentClass="textarea"
+                                             style={{resize: "vertical"}}
                                              placeholder="Description, high level details about the rule. (Required)"
                                              value={this.state.description}
                                              onChange={(e) => {
                                                  this.setState({description: e.target.value})
                                              }}
                                              onKeyUp={(e) => {
-                                                 e.target.style.cssText = 'height:auto; padding:0';
-                                                 e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
+                                                 e.target.style.cssText = 'height:0';
+                                                 e.target.style.cssText = 'overflow:hidden;height:' + e.target.scrollHeight + 'px';
                                              }}/>
                             </FormGroup>
                         </Fragment>

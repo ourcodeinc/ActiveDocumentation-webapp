@@ -37,6 +37,8 @@ class AutoComplete extends Component {
                 <form>
                     <FormGroup>
                         <FormControl componentClass="textarea" placeholder="Design Rule"
+                                     style={{resize: "none"}}
+                                     rows={1}
                                      id={"queryText"}
                                      onClick={this.onClickTextArea}
                                      onChange={this.handleChange}

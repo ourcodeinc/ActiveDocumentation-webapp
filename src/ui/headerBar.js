@@ -32,9 +32,13 @@ export class HeaderBar extends Component {
                     <div>
                         <span className="text-16 primary">Rules related to tag: </span><br/>
                         <span className="text-24 important">{this.props.title}</span>
-                        <FormControl componentClass="textarea" defaultValue={this.props.content}
+                        <FormControl componentClass="textarea" defaultValue={this.props.content} style={{resize: "vertical"}}
                                      onBlur={(e) => this.props.onUpdateTag(this.props, e.target.value)} key={new Date()}
-                                     placeholder="Information about tag"/>
+                                     placeholder="Information about tag"
+                                     onClick={(e) => {
+                                         e.target.style.cssText = 'height:0';
+                                         e.target.style.cssText = 'overflow:hidden;height:' + e.target.scrollHeight + 'px';
+                                     }}/>
                     </div>
                 );
             case 'rule':
