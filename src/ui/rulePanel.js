@@ -813,10 +813,9 @@ class RulePanel extends Component {
             <Modal show={this.state.showNewTagModal} onHide={()=>this.setState({showNewTagModal: false})}
                    backdrop={"static"} keyboard={true}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal heading</Modal.Title>
+                    <Modal.Title>New Tag</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <h4>Add a new tag:</h4>
                     <FormGroup validationState={(this.state.tagName === "") ? "error" : "success"}>
                         <FormControl type="text" placeholder="Tag name. (Required)"
                                      style={{fontWeight: "bold"}}
