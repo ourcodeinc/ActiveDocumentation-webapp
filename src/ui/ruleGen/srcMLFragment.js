@@ -16,8 +16,8 @@ import {constants} from '../constants';
 // import CustomToggle from "./customToggle";
 // import CustomMenu from "./customMenu";
 
-import * as d3 from "d3";
-import PubSub from 'pubsub-js';
+// import * as d3 from "d3";
+// import PubSub from 'pubsub-js';
 
 
 class SrcMLFragment extends React.Component {
@@ -78,14 +78,14 @@ class SrcMLFragment extends React.Component {
      */
     attachListener() {
 
-        // [expr xml]
-        PubSub.subscribe('EXPR_STMT_XML', (msg, data) => {
-            if (this.waiting) {
-                this.xml = data[0];
-                this.prepareXpath();
-                this.waiting = false;
-            }
-        });
+        // // [expr xml]
+        // PubSub.subscribe('EXPR_STMT_XML', (msg, data) => {
+        //     if (this.waiting) {
+        //         this.xml = data[0];
+        //         this.prepareXpath();
+        //         this.waiting = false;
+        //     }
+        // });
     }
 
 
@@ -94,7 +94,8 @@ class SrcMLFragment extends React.Component {
      */
     requestXML() {
 
-        let node = d3.select(`#${this.props["assignedId"]}`).select("input").node();
+        let node = //d3.select(`#${this.props["assignedId"]}`).select("input").node();
+        document.getElementById(this.props["assignedId"]).getElementsByTagName("input")[0];
         if (node !== null && node.value !== "") {
             Utilities.sendToServer(this.ws, "EXPR_STMT", node.value);
             this.waiting = true;
