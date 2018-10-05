@@ -153,6 +153,7 @@ body {
 
 .headerDiv {
     padding-bottom: 10px;
+    padding-top: 20px;
     border-bottom: 3px double #bdbdbd
 }
 
@@ -238,7 +239,9 @@ body {
     justify-content:    center;
 }
 
-
+.navbar {
+    margin-bottom: 0;
+}
 
 /*!*** Xpath Generator Old UI ***!*/
 

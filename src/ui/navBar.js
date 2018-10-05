@@ -19,17 +19,15 @@ export class NavBar extends Component {
             <Navbar inverse collapseOnSelect
                     style={{backgroundColor: "transparent", backgroundImage: "none", border: "none"}}>
                 <Navbar.Header>
+                    <Navbar.Toggle/>
                     <Nav>
-                        <NavItem eventKey={1} className={this.props.backDisable} id="back_button"
-                                 onClick={() => this.props.backClick(this.props)}>
+                        <NavItem eventKey={1} className={this.props.backDisable} onClick={() => this.props.backClick(this.props)}>
                             <FaArrowLeft size={20}/>
                         </NavItem>
-                        <NavItem eventKey={2} className={this.props.forwardDisable} id="forward_button"
-                                 onClick={() => this.props.forwardClick(this.props)}>
+                        <NavItem eventKey={2} className={this.props.forwardDisable} onClick={() => this.props.forwardClick(this.props)}>
                             <FaArrowRight size={20}/>
                         </NavItem>
                     </Nav>
-                    <Navbar.Toggle/>
                 </Navbar.Header>
                 <Navbar.Collapse>
                     <Nav
