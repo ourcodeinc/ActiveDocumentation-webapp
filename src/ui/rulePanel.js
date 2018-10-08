@@ -73,8 +73,6 @@ class RulePanel extends Component {
             true: {color: "#337ab7", cursor: "pointer"},
             false: {color: "black", cursor: "pointer"}
         };
-
-        this.handleToggleTabs = this.handleToggleTabs.bind(this);
     }
 
     render() {
@@ -144,23 +142,28 @@ class RulePanel extends Component {
                 <Collapse in={this.state.open}>
                     <div>
                         <div style={{paddingTop: '10px', clear: 'both'}}>
-                            {this.tagRender()}
+                            {this.renderTags()}
                         </div>
                         {!this.state.editMode ? (
                             <div style={{paddingTop: '10px', clear: 'both'}}>
                                 <Tabs animation={true} id={"rules_" + this.ruleIndex} activeKey={this.state.activeTab}
-                                      onSelect={this.handleToggleTabs}>
+                                      onSelect={(key) => {
+                                          if (this.state.activeTab === key)
+                                              this.setState({activeTab: 0});
+                                          else
+                                              this.setState({activeTab: key});
+                                      }}>
                                     <Tab eventKey={0} disabled>{}</Tab>
                                     <Tab eventKey={'satisfied'}
-                                         title={this.tabHeaderRender('satisfied')}>{this.listRender('satisfied')}</Tab>
+                                         title={this.renderTabHeader('satisfied')}>{this.renderListOfSnippets('satisfied')}</Tab>
                                     <Tab eventKey={'violated'}
-                                         title={this.tabHeaderRender('violated')}>{this.listRender('violated')}</Tab>
+                                         title={this.renderTabHeader('violated')}>{this.renderListOfSnippets('violated')}</Tab>
                                 </Tabs>
                             </div>
                         ) : null}
                     </div>
                 </Collapse>
-                {this.state.editMode ? (
+                {!this.state.editMode ? null : (
                     <div style={{paddingTop: '10px', clear: 'both'}}>
                         {this.renderFileConstraints()}
                         {this.state.error === "" ? null : !this.state.showAlert ? null : (
@@ -213,7 +216,7 @@ class RulePanel extends Component {
                             </ButtonToolbar>
                         </div>
                     </div>
-                ) : null}
+                )}
                 {this.renderNewTagModalDialog()}
             </div>
         );
@@ -309,7 +312,7 @@ class RulePanel extends Component {
      * render the tab headers
      * @param group
      */
-    tabHeaderRender(group) {
+    renderTabHeader(group) {
         // sum up the number of satisfied and violated
         let totalSatisfied = 0, totalViolated = 0;
         for (let i = 0; i < this.ruleI['xPathQueryResult'].length; i++) {
@@ -375,7 +378,7 @@ class RulePanel extends Component {
     /**
      * render tag badges
      */
-    tagRender() {
+    renderTags() {
         if (this.state.editMode)
             return (
                 <div>
@@ -424,7 +427,7 @@ class RulePanel extends Component {
      * @param group
      * @returns {XML}
      */
-    listRender(group) {
+    renderListOfSnippets(group) {
 
         let otherFilesList = [], fileList = [];
         let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.props.filePath);
@@ -497,61 +500,6 @@ class RulePanel extends Component {
             </div>
         )
     }
-
-
-    /**
-     * update the rule and send to server
-     */
-    updateRules() {
-
-        let newObj = Utilities.cloneJSON(this.ruleI);
-        delete newObj['xPathQueryResult'];
-
-        newObj['title'] = this.state.title;
-        newObj['description'] = this.state.description;
-
-        if (this.state.title !== this.ruleI['title'] || this.state.description !== this.ruleI['description'])
-            Utilities.sendToServer(this.props.ws, "MODIFIED_RULE", newObj);
-    };
-
-
-    /**
-     * toggle tabs
-     * @param key
-     */
-    handleToggleTabs(key) {
-        if (this.state.activeTab === key)
-            this.setState({activeTab: 0});
-        else
-            this.setState({activeTab: key});
-    }
-
-
-    /**
-     * change edit mode, set the states
-     */
-    changeEditMode() {
-        if (this.ruleI)
-            this.setState({
-                className: "rulePanelDiv" + (!this.state.editMode ? " edit-bg" : ""),
-                open: true,
-                editMode: !this.state.editMode,
-                title: this.ruleI.title,
-                description: this.ruleI.description,
-                ruleTags: this.ruleI.tags,
-                folderConstraint: this.ruleI.ruleType.constraint,
-                filesFolders: this.ruleI.ruleType.checkFor,
-                autoCompleteText: this.ruleI.grammar ? this.ruleI.grammar : "",
-                quantifierXPath: this.ruleI.quantifier.command,
-                constraintXPath: this.ruleI.constraint.command
-            });
-        // generating newRule
-        else {
-            this.props["cancelGeneratingNewRule"]();
-            this.onEditNewRuleForm();
-        }
-    }
-
 
     /**
      * render the drop down for the file/folder constraint
@@ -636,100 +584,75 @@ class RulePanel extends Component {
     }
 
     /**
-     * submit the updated rule (with the given Index)
+     * render the dialog for adding a new tag
+     * it is displayed when the 'New Tag' is clicked on
+     * @returns {XML}
      */
-    onSubmitUpdatedRule() {
-
-        let rule = {
-            index: this.ruleIndex,
-            title: this.state.title,
-            description: this.state.description,
-            tags: this.state.ruleTags,
-            ruleType: {
-                constraint: this.state.folderConstraint,
-                checkFor: this.state.filesFolders.filter((d) => d !== ""),
-                type: "WITHIN"
-            },
-            quantifier: {},
-            constraint: {},
-            grammar: this.state.autoCompleteText
-        };
-
-        rule.quantifier = {detail: this.ruleI.quantifier.detail, command: "src:unit/" + this.state.quantifierXPath};
-        rule.constraint = {detail: this.ruleI.constraint.detail, command: "src:unit/" + this.state.constraintXPath};
-
-        if (rule.index === "" || rule.title === "" || rule.description === "") {
-            console.log("empty fields");
-            return;
-        }
-
-        if (rule.ruleType.constraint === "" || (rule.ruleType.constraint === "FOLDER" && rule.ruleType.checkFor.length === 0)) {
-            console.log("folder constraints are not specified");
-            return;
-        }
-
-        if (this.state.quantifierXPath === "" || this.state.constraintXPath === "") {
-            console.log("XPaths are not specified");
-            return;
-        }
-
-        let isChanged = (rule.title !== this.ruleI.title) ||
-            (rule.description !== this.ruleI.description) ||
-            (JSON.stringify(rule.tags) !== JSON.stringify(this.ruleI.tags)) ||
-            (rule.ruleType.constraint !== this.ruleI.ruleType.constraint) ||
-            (JSON.stringify(rule.ruleType.checkFor) !== JSON.stringify(this.ruleI.ruleType.checkFor)) ||
-            (rule.grammar !== this.ruleI.grammar) ||
-            (rule.constraint.command !== this.ruleI.constraint.command) ||
-            (rule.quantifier.command !== this.ruleI.quantifier.command);
-
-        if (isChanged) {
-            this.props.onUpdateRule(rule);
-            Utilities.sendToServer(this.props.ws, "MODIFIED_RULE", rule);
-        }
-        this.changeEditMode();
+    renderNewTagModalDialog() {
+        return (
+            <Modal show={this.state.showNewTagModal} onHide={()=>this.setState({showNewTagModal: false})}
+                   backdrop={"static"} keyboard={true}>
+                <Modal.Header closeButton>
+                    <Modal.Title>New Tag</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <FormGroup validationState={(this.state.tagName === "") ? "error" : "success"}>
+                        <FormControl type="text" placeholder="Tag name. (Required)"
+                                     style={{fontWeight: "bold"}}
+                                     value={this.state.tagName}
+                                     onChange={(e) => {
+                                         this.setState({tagName: e.target.value})
+                                     }}
+                                     onKeyUp={(e) => {
+                                         e.target.style.cssText = 'height:auto; padding:0';
+                                         e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
+                                     }}/>
+                    </FormGroup>
+                    <FormGroup validationState={(this.state.tagDetail === "") ? "error" : "success"}>
+                        <FormControl componentClass="textarea"
+                                     placeholder="Description, high level details about the tag. (Required)"
+                                     value={this.state.tagDetail}
+                                     onChange={(e) => {
+                                         this.setState({tagDetail: e.target.value})
+                                     }}
+                                     onKeyUp={(e) => {
+                                         e.target.style.cssText = 'height:auto; padding:0';
+                                         e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
+                                     }}/>
+                    </FormGroup>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button bsStyle="primary" onClick={() => this.onSubmitNewTag()}>Save</Button>
+                    <Button onClick={()=>this.setState({showNewTagModal: false})}>Close</Button>
+                </Modal.Footer>
+            </Modal>
+        )
     }
 
+
     /**
-     * submit a new rule
+     * change edit mode, set the states
      */
-    onSubmitNewRule() {
-        let rule = {
-            index: Math.floor(new Date().getTime() / 1000),
-            title: this.state.title,
-            description: this.state.description,
-            tags: this.state.ruleTags,
-            ruleType: {
-                constraint: this.state.folderConstraint,
-                checkFor: this.state.filesFolders.filter((d) => d !== ""),
-                type: "WITHIN"
-            },
-            quantifier: {},
-            constraint: {},
-            grammar: this.state.autoCompleteText
-        };
-
-        rule.quantifier = {detail: "", command: "src:unit/" + this.state.quantifierXPath};
-        rule.constraint = {detail: "", command: "src:unit/" + this.state.constraintXPath};
-
-
-        if (rule.index === "" || rule.title === "" || rule.description === "") {
-            console.log("empty fields");
-            return;
+    changeEditMode() {
+        if (this.ruleI)
+            this.setState({
+                className: "rulePanelDiv" + (!this.state.editMode ? " edit-bg" : ""),
+                open: true,
+                editMode: !this.state.editMode,
+                title: this.ruleI.title,
+                description: this.ruleI.description,
+                ruleTags: this.ruleI.tags,
+                folderConstraint: this.ruleI.ruleType.constraint,
+                filesFolders: this.ruleI.ruleType.checkFor,
+                autoCompleteText: this.ruleI.grammar ? this.ruleI.grammar : "",
+                quantifierXPath: this.ruleI.quantifier.command,
+                constraintXPath: this.ruleI.constraint.command
+            });
+        // generating newRule
+        else {
+            this.props["cancelGeneratingNewRule"]();
+            this.onEditNewRuleForm();
         }
-
-        if (rule.ruleType.constraint === "" || (rule.ruleType.constraint === "FOLDER" && rule.ruleType.checkFor.length === 0)) {
-            console.log("folder constraints are not specified");
-            return;
-        }
-
-        if (this.state.quantifierXPath === "" || this.state.constraintXPath === "") {
-            console.log("XPaths are not specified");
-            return;
-        }
-
-        this.props.onSubmitNewRule(rule);
-        Utilities.sendToServer(this.props.ws, "NEW_RULE", rule);
-        this.changeEditMode();
     }
 
     /**
@@ -829,51 +752,101 @@ class RulePanel extends Component {
         }
     }
 
+    /**
+     * submit the updated rule (with the given Index)
+     */
+    onSubmitUpdatedRule() {
+
+        let rule = {
+            index: this.ruleIndex,
+            title: this.state.title,
+            description: this.state.description,
+            tags: this.state.ruleTags,
+            ruleType: {
+                constraint: this.state.folderConstraint,
+                checkFor: this.state.filesFolders.filter((d) => d !== ""),
+                type: "WITHIN"
+            },
+            quantifier: {},
+            constraint: {},
+            grammar: this.state.autoCompleteText
+        };
+
+        rule.quantifier = {detail: this.ruleI.quantifier.detail, command: "src:unit/" + this.state.quantifierXPath};
+        rule.constraint = {detail: this.ruleI.constraint.detail, command: "src:unit/" + this.state.constraintXPath};
+
+        if (rule.index === "" || rule.title === "" || rule.description === "") {
+            console.log("empty fields");
+            return;
+        }
+
+        if (rule.ruleType.constraint === "" || (rule.ruleType.constraint === "FOLDER" && rule.ruleType.checkFor.length === 0)) {
+            console.log("folder constraints are not specified");
+            return;
+        }
+
+        if (this.state.quantifierXPath === "" || this.state.constraintXPath === "") {
+            console.log("XPaths are not specified");
+            return;
+        }
+
+        let isChanged = (rule.title !== this.ruleI.title) ||
+            (rule.description !== this.ruleI.description) ||
+            (JSON.stringify(rule.tags) !== JSON.stringify(this.ruleI.tags)) ||
+            (rule.ruleType.constraint !== this.ruleI.ruleType.constraint) ||
+            (JSON.stringify(rule.ruleType.checkFor) !== JSON.stringify(this.ruleI.ruleType.checkFor)) ||
+            (rule.grammar !== this.ruleI.grammar) ||
+            (rule.constraint.command !== this.ruleI.constraint.command) ||
+            (rule.quantifier.command !== this.ruleI.quantifier.command);
+
+        if (isChanged) {
+            this.props.onUpdateRule(rule);
+            Utilities.sendToServer(this.props.ws, "MODIFIED_RULE", rule);
+        }
+        this.changeEditMode();
+    }
 
     /**
-     * render the dialog for adding a new tag
-     * it is displayed when the 'New Tag' is clicked on
-     * @returns {XML}
+     * submit a new rule
      */
-    renderNewTagModalDialog() {
-        return (
-            <Modal show={this.state.showNewTagModal} onHide={()=>this.setState({showNewTagModal: false})}
-                   backdrop={"static"} keyboard={true}>
-                <Modal.Header closeButton>
-                    <Modal.Title>New Tag</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <FormGroup validationState={(this.state.tagName === "") ? "error" : "success"}>
-                        <FormControl type="text" placeholder="Tag name. (Required)"
-                                     style={{fontWeight: "bold"}}
-                                     value={this.state.tagName}
-                                     onChange={(e) => {
-                                         this.setState({tagName: e.target.value})
-                                     }}
-                                     onKeyUp={(e) => {
-                                         e.target.style.cssText = 'height:auto; padding:0';
-                                         e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
-                                     }}/>
-                    </FormGroup>
-                    <FormGroup validationState={(this.state.tagDetail === "") ? "error" : "success"}>
-                        <FormControl componentClass="textarea"
-                                     placeholder="Description, high level details about the tag. (Required)"
-                                     value={this.state.tagDetail}
-                                     onChange={(e) => {
-                                         this.setState({tagDetail: e.target.value})
-                                     }}
-                                     onKeyUp={(e) => {
-                                         e.target.style.cssText = 'height:auto; padding:0';
-                                         e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
-                                     }}/>
-                    </FormGroup>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button bsStyle="primary" onClick={() => this.onSubmitNewTag()}>Save</Button>
-                    <Button onClick={()=>this.setState({showNewTagModal: false})}>Close</Button>
-                </Modal.Footer>
-            </Modal>
-        )
+    onSubmitNewRule() {
+        let rule = {
+            index: Math.floor(new Date().getTime() / 1000),
+            title: this.state.title,
+            description: this.state.description,
+            tags: this.state.ruleTags,
+            ruleType: {
+                constraint: this.state.folderConstraint,
+                checkFor: this.state.filesFolders.filter((d) => d !== ""),
+                type: "WITHIN"
+            },
+            quantifier: {},
+            constraint: {},
+            grammar: this.state.autoCompleteText
+        };
+
+        rule.quantifier = {detail: "", command: "src:unit/" + this.state.quantifierXPath};
+        rule.constraint = {detail: "", command: "src:unit/" + this.state.constraintXPath};
+
+
+        if (rule.index === "" || rule.title === "" || rule.description === "") {
+            console.log("empty fields");
+            return;
+        }
+
+        if (rule.ruleType.constraint === "" || (rule.ruleType.constraint === "FOLDER" && rule.ruleType.checkFor.length === 0)) {
+            console.log("folder constraints are not specified");
+            return;
+        }
+
+        if (this.state.quantifierXPath === "" || this.state.constraintXPath === "") {
+            console.log("XPaths are not specified");
+            return;
+        }
+
+        this.props.onSubmitNewRule(rule);
+        Utilities.sendToServer(this.props.ws, "NEW_RULE", rule);
+        this.changeEditMode();
     }
 
     /**
