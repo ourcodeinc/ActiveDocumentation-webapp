@@ -13,6 +13,16 @@ const default_state = {
         activeHash: 0,
         forwardDisable: "disabled",
         backDisable: "disabled"
+    },
+    newOrEditRule: {
+        title: "",
+        description: "",
+        ruleTags: [],
+        folderConstraint: "",
+        filesFolders: [],
+        autoCompleteText: "",
+        quantifierXPath: "",
+        constraintXPath: ""
     }
 };
 
@@ -114,6 +124,22 @@ const reducer = (state = default_state, action) => {
         case "FILE_PATH":
             if (state.ignoreFile) return Object.assign({}, state, {message: "FILE_PATH_UPDATED"});
             return Object.assign({}, state, {filePath: action["value"], message: "FILE_PATH_UPDATED"});
+
+        case "CLEAR_NEW_RULE_FORM":
+            return Object.assign({}, state, {
+                newOrEditRule: {
+                    title: "",
+                    description: "",
+                    ruleTags: [],
+                    folderConstraint: "",
+                    filesFolders: [],
+                    autoCompleteText: "",
+                    quantifierXPath: "",
+                    constraintXPath: ""
+                }});
+
+        case "EDIT_NEW_RULE_FORM":
+            return Object.assign({}, state, {newOrEditRule: action["value"]});
 
         default:
             return state;

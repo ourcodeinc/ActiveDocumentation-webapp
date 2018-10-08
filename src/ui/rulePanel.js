@@ -17,7 +17,7 @@ import MdEdit from 'react-icons/lib/md/edit';
 import TiDelete from "react-icons/lib/ti/delete";
 import {FaQuestionCircle} from "react-icons/lib/fa/index";
 
-import {ignoreFile, submitNewRule, submitNewTag, updateRule} from "../actions";
+import {clearNewRuleForm, editNewRuleForm, ignoreFile, submitNewRule, submitNewTag, updateRule} from "../actions";
 import AutoComplete from "./grammarRuleGen/autoComplete";
 import verifyTextBasedOnGrammar from "./grammarRuleGen/languageProcessing";
 
@@ -50,15 +50,15 @@ class RulePanel extends Component {
             error: "",
             showNewTagModal: false,
             // ruleI states
-            title: "",
-            description: "",
-            ruleTags: [],
-            tags: [],
-            folderConstraint: "",
-            filesFolders: [],
-            autoCompleteText: "",
-            quantifierXPath: "",
-            constraintXPath: "",
+            title: props.title,
+            description: props.description,
+            ruleTags: props.ruleTags,
+            tags: props.tags,
+            folderConstraint: props.folderConstraint,
+            filesFolders: props.filesFolders,
+            autoCompleteText: props.autoCompleteText,
+            quantifierXPath: props.quantifierXPath,
+            constraintXPath: props.constraintXPath,
             // new tag states
             tagName: "",
             tagDetail: ""
@@ -121,7 +121,8 @@ class RulePanel extends Component {
                                              onKeyUp={(e) => {
                                                  e.target.style.cssText = 'height:0';
                                                  e.target.style.cssText = 'overflow:hidden;height:' + e.target.scrollHeight + 'px';
-                                             }}/>
+                                             }}
+                                             onBlur={() => this.onEditNewRuleForm()}/>
                             </FormGroup>
                             <FormGroup validationState={(this.state.description === "") ? "error" : "success"}>
                                 <FormControl componentClass="textarea"
@@ -134,7 +135,8 @@ class RulePanel extends Component {
                                              onKeyUp={(e) => {
                                                  e.target.style.cssText = 'height:0';
                                                  e.target.style.cssText = 'overflow:hidden;height:' + e.target.scrollHeight + 'px';
-                                             }}/>
+                                             }}
+                                             onBlur={() => this.onEditNewRuleForm()}/>
                             </FormGroup>
                         </Fragment>
                     )}
@@ -160,10 +162,7 @@ class RulePanel extends Component {
                 </Collapse>
                 {this.state.editMode ? (
                     <div style={{paddingTop: '10px', clear: 'both'}}>
-                        <FormGroup
-                            validationState={(this.state.folderConstraint === "" || (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0)) ? "error" : "success"}>
-                            <div>{this.renderFileConstraints()}</div>
-                        </FormGroup>
+                        {this.renderFileConstraints()}
                         {this.state.error === "" ? null : !this.state.showAlert ? null : (
                             <Alert bsStyle={this.state.error.alertType}>
                                 <h4>{this.state.error.errorType}</h4>
@@ -191,7 +190,8 @@ class RulePanel extends Component {
                                       }}
                                       onUpdateText={(text) => {
                                           this.shouldAlert = true;
-                                          this.setState({autoCompleteText: text})
+                                          this.setState({autoCompleteText: text});
+                                          this.onEditNewRuleForm()
                                       }}
                                       caretPosition={(() => {
                                           let newFocus = this.autoCompleteCaretPosition;
@@ -204,6 +204,12 @@ class RulePanel extends Component {
                                         onClick={() => this.newRuleRequest ? this.onSubmitNewRule() : this.onSubmitUpdatedRule()}>
                                     Submit</Button>
                                 <Button bsStyle="default" onClick={() => this.changeEditMode()}>Cancel</Button>
+                                {!this.newRuleRequest ? null :
+                                    <Button bsStyle="default"
+                                            onClick={() => {
+                                                this.props.onClearForm();
+                                                this.autoComplete.setState({myText: ""});
+                                            }}>Clear Form</Button>}
                             </ButtonToolbar>
                         </div>
                     </div>
@@ -227,7 +233,18 @@ class RulePanel extends Component {
                 quantifierXPath: this.ruleI.quantifier.command,
                 constraintXPath: this.ruleI.constraint.command
             });
-        this.setState({tags: nextProps.tags});
+        else
+            this.setState({
+                title: nextProps.title,
+                description: nextProps.description,
+                tags: nextProps.tags,
+                ruleTags: nextProps.ruleTags,
+                folderConstraint: nextProps.folderConstraint,
+                filesFolders: nextProps.filesFolders,
+                autoCompleteText: nextProps.autoCompleteText,
+                quantifierXPath: nextProps.quantifierXPath,
+                constraintXPath: nextProps.quantifierXPath,
+            });
 
     }
 
@@ -531,6 +548,7 @@ class RulePanel extends Component {
         // generating newRule
         else {
             this.props["cancelGeneratingNewRule"]();
+            this.onEditNewRuleForm();
         }
     }
 
@@ -541,56 +559,64 @@ class RulePanel extends Component {
     renderFileConstraints() {
         return (
             <div>
-                <div style={{paddingBottom: "10px"}}>
-                    <HelpBlock><em>{"Restriction:   "}</em>
-                        <FaQuestionCircle size={20} className={"faQuestionCircle"}
-                                          data-class={"customTheme"}
-                                          data-tip={"<h4>Select how the rules are verified.</h4> " +
-                                          "<p><span>\"No Restriction\"</span> " +
-                                          "if the rule must be verified on <em>all</em> files and folders.</p>" +
-                                          "<p><span>\"Specific Files/Folders\"</span> " +
-                                          "if the rule is checked on <em>specific</em> files/folders.<br/>" +
-                                          "If the restriction is set to \"Specific Files/Folders\", " +
-                                          "at least one folder/file must be specified.</p>" +
-                                          "<p>Folder and file paths are determined respective to the project directory. " +
-                                          "For example in project \"myProject\", for file path \"Users/Documents/myProject/src/someFile.java\", it suffices to list \"src/someFile.java\"</p>"}/>
-                        <ReactTooltip html={true} effect={"solid"} place={"right"}/>
-                    </HelpBlock>
-                    <ButtonToolbar>
-                        <DropdownButton
-                            title={this.state.folderConstraint === "" ? "Select" : this.state.folderConstraint === "NONE" ? "No Restriction" : "Specific Files/Folders"}
-                            className={this.state.target} id={"drop_down"}>
-                            <MenuItem eventKey={"FOLDER"} onSelect={(evt) => {
-                                this.setState({folderConstraint: evt})
-                            }}>Specific Files/Folders
-                            </MenuItem>
-                            <MenuItem eventKey={"NONE"} onSelect={(evt) => {
-                                this.setState({folderConstraint: evt, filesFolders: []})
-                            }}>No Restriction
-                            </MenuItem>
-                        </DropdownButton>
-                        <Button disabled={this.state.folderConstraint === "NONE"}
-                                onClick={() => {
-                                    const filesFolders = this.state.filesFolders;
-                                    filesFolders.push("");
-                                    this.setState({filesFolders});
-                                }}
-                        >Add files/folders
-                        </Button>
-                    </ButtonToolbar>
-                </div>
+                <FormGroup
+                    validationState={(this.state.folderConstraint === "" || (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0)) ? "error" : "success"}>
+                    <div style={{paddingBottom: "10px"}}>
+                        <HelpBlock><em>{"Restriction:   "}</em>
+                            <FaQuestionCircle size={20} className={"faQuestionCircle"}
+                                              data-class={"customTheme"}
+                                              data-tip={"<h4>Select how the rules are verified.</h4> " +
+                                              "<p><span>\"No Restriction\"</span> " +
+                                              "if the rule must be verified on <em>all</em> files and folders.</p>" +
+                                              "<p><span>\"Specific Files/Folders\"</span> " +
+                                              "if the rule is checked on <em>specific</em> files/folders.<br/>" +
+                                              "If the restriction is set to \"Specific Files/Folders\", " +
+                                              "at least one folder/file must be specified.</p>" +
+                                              "<p>Folder and file paths are determined respective to the project directory. " +
+                                              "For example in project \"myProject\", for file path \"Users/Documents/myProject/src/someFile.java\", it suffices to list \"src/someFile.java\"</p>"}/>
+                            <ReactTooltip html={true} effect={"solid"} place={"right"}/>
+                        </HelpBlock>
+                        <ButtonToolbar>
+                            <DropdownButton
+                                title={this.state.folderConstraint === "" ? "Select" : this.state.folderConstraint === "NONE" ? "No Restriction" : "Specific Files/Folders"}
+                                className={this.state.target} id={"drop_down"}>
+                                <MenuItem eventKey={"FOLDER"} onSelect={(evt) => {
+                                    this.setState({folderConstraint: evt});
+                                    this.onEditNewRuleForm()
+                                }}>Specific Files/Folders
+                                </MenuItem>
+                                <MenuItem eventKey={"NONE"} onSelect={(evt) => {
+                                    this.setState({folderConstraint: evt, filesFolders: []})
+                                }}>No Restriction
+                                </MenuItem>
+                            </DropdownButton>
+                            <Button disabled={this.state.folderConstraint !== "FOLDER"}
+                                    onClick={() => {
+                                        const filesFolders = this.state.filesFolders;
+                                        filesFolders.push("");
+                                        this.setState({filesFolders});
+                                        this.onEditNewRuleForm()
+                                    }}
+                            >Add files/folders
+                            </Button>
+                        </ButtonToolbar>
+                    </div>
+                </FormGroup>
                 <div>
                     {this.state.filesFolders.map((d, i) => {
                         return (
                             <Row key={i} style={{paddingBottom: "5px"}}>
                                 <Col sm={11} md={10}>
-                                    <FormControl id={"filesFolders_textarea_" + i} type="text" defaultValue={d}
-                                                 placeholder="relative File/Folder path"
-                                                 onBlur={(e) => {
-                                                     const filesFolders = this.state.filesFolders;
-                                                     filesFolders[i] = e.target.value;
-                                                     this.setState({filesFolders});
-                                                 }}/>
+                                    <FormGroup validationState={this.state.filesFolders[i] === "" ? "error" : "success"}>
+                                        <FormControl id={"filesFolders_textarea_" + i} type="text"
+                                                     placeholder="relative File/Folder path"
+                                                     value={this.state.filesFolders[i]}
+                                                     onChange={(e) => {
+                                                         const filesFolders = this.state.filesFolders;
+                                                         filesFolders[i] = e.target.value;
+                                                         this.setState({filesFolders});
+                                                     }}/>
+                                    </FormGroup>
                                 </Col>
                                 <Col sm={1} md={1} style={{paddingTop: "5px"}}>
                                     <TiDelete size={25}
@@ -859,6 +885,23 @@ class RulePanel extends Component {
         this.props.onSubmitNewTag(tag);
         Utilities.sendToServer(this.props.ws, "NEW_TAG", tag);
     }
+
+    /***
+     * This function calls a dispatcher for redux
+     * to update the content of the form in the main state
+     */
+    onEditNewRuleForm() {
+        this.props.onEditForm({
+            title: this.state.title,
+            description: this.state.description,
+            ruleTags: this.state.ruleTags,
+            folderConstraint: this.state.folderConstraint,
+            filesFolders: this.state.filesFolders,
+            autoCompleteText: this.state.autoCompleteText,
+            quantifierXPath: this.state.quantifierXPath,
+            constraintXPath: this.state.quantifierXPath
+        });
+    }
 }
 
 // map state to props
@@ -869,7 +912,16 @@ function mapStateToProps(state) {
         codeChanged: state.hash[0] === "codeChanged",
         filePath: ["rulesForFile", "codeChanged"].indexOf(state.hash[0]) !== -1 ?
             ('/Users/saharmehrpour/Documents/Workspace/' + state.filePath) : "none",
-        ws: state.ws
+        ws: state.ws,
+
+        title: state.newOrEditRule.title,
+        description: state.newOrEditRule.description,
+        ruleTags: state.newOrEditRule.ruleTags,
+        folderConstraint: state.newOrEditRule.folderConstraint,
+        filesFolders: state.newOrEditRule.filesFolders,
+        autoCompleteText: state.newOrEditRule.autoCompleteText,
+        quantifierXPath: state.newOrEditRule.quantifierXPath,
+        constraintXPath: state.newOrEditRule.quantifierXPath
     };
 }
 
@@ -886,6 +938,12 @@ function mapDispatchToProps(dispatch) {
         },
         onSubmitNewTag: (newTag) => {
             dispatch(submitNewTag(newTag))
+        },
+        onClearForm: () => {
+            dispatch(clearNewRuleForm())
+        },
+        onEditForm: (formContents) => {
+            dispatch(editNewRuleForm(formContents))
         }
     }
 }

@@ -43,3 +43,11 @@ export const submitNewRule = (newRuleProps) => {
 export const submitNewTag = (newTagProps) => {
     return {type: "SUBMIT_NEW_TAG", value: newTagProps}
 };
+
+export const clearNewRuleForm = () => {
+    return {type: "CLEAR_NEW_RULE_FORM"}
+};
+
+export const editNewRuleForm = (formContents) => {
+    return {type: "EDIT_NEW_RULE_FORM", value: formContents}
+};
