@@ -38,7 +38,6 @@ class AutoComplete extends Component {
                     <FormGroup>
                         <FormControl componentClass="textarea" placeholder="Design Rule"
                                      style={{resize: "none"}}
-                                     rows={1}
                                      id={"queryText"}
                                      onClick={this.onClickTextArea}
                                      onChange={this.handleChange}
@@ -330,7 +329,10 @@ class AutoComplete extends Component {
                     if (lastWordIndex < 1) return [];
                     xWord = wordsArray[lastWordIndex - 1];
 
-                    let hasWhereHaveClause = !!constants.autoComplete_suggestion[xWord].whereHaveClause;
+                    let hasWhereHaveClause = false;
+                    try {
+                        hasWhereHaveClause = !!constants.autoComplete_suggestion[xWord].whereHaveClause;
+                    } catch (e){}
                     if (isSecondWord) {
                         beforeSuggText = hasWhereHaveClause ? "have" : "";
                         infoText = xWord + " where";
