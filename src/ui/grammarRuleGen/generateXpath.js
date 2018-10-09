@@ -238,20 +238,26 @@ class GenerateXpath {
             && node.children[0].children.length >= 2
             && node.children[0].children[1].constructor.name.indexOf("ConditionContext") !== -1) {
 
-            let oldCondition = node.children[0].children[1].children[3];
+            // clone the children of 'where' for first token
+            let oldCondition = node.children[0].children[1].children[1];
             let clonedNode = Object.assign( Object.create( Object.getPrototypeOf(oldCondition)), oldCondition);
-            node.children[0].children[1].children[3].children = [
+            // update the children of the first token
+            node.children[0].children[1].children[1].children = [
                 new TerminalNodeImpl({text: "(("}),
                 clonedNode,
                 new TerminalNodeImpl({text: ") and ("}),
-                node.children[4],
+                node.children[2],
                 new TerminalNodeImpl({text: "))"})
             ];
-            node.children.splice(1, 4);
+            // remove the node after must
+            node.children.splice(2, 1);
         }
         else {
-            node.children[0].children.splice(1, 0, node.children[4]);
-            node.children.splice(1, 4);
+            // copy the node after must to the children of the first token
+            node.children[0].children.splice(1, 0, node.children[2]);
+            // remove the node after must
+            node.children.splice(2, 1);
+            console.log("re-organize (else)", node);
         }
     }
 
@@ -323,16 +329,27 @@ class GenerateXpath {
                     if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
                         not = true;
                     if (nodeChildren[i].getChild(j).constructor.name === "EqualsToContext")
-                        this.XPath += not ? "[text()!=\"" : "[text()=\"";
+                        this.XPath += not ? "[text()!=" : "[text()=";
                     if (nodeChildren[i].getChild(j).constructor.name === "IncludesContext") {
-                        this.XPath += not ? "[not(contains(text(),\"" : "[contains(text(),\"";
+                        this.XPath += not ? "[not(contains(text()," : "[contains(text(),";
                         includes = true;
                     }
-                    if (nodeChildren[i].getChild(j).constructor.name === "WordsContext")
+                    if (nodeChildren[i].getChild(j).constructor.name === "StartsWithContext") {
+                        this.XPath += not ? "[not(starts-with(text()," : "[starts-with(text(),";
+                        includes = true;
+                    }
+                    if (nodeChildren[i].getChild(j).constructor.name === "IncludesContext") {
+                        this.XPath += not ? "[not(ends-with(text()," : "[ends-with(text(),";
+                        includes = true;
+                    }
+                    let tempText = "";
+                    if (nodeChildren[i].getChild(j).constructor.name === "WordsContext") {
                         for (let k = 0; k < nodeChildren[i].getChild(j).children.length; k++)
-                            this.XPath += nodeChildren[i].getChild(j).getChild(k).getSymbol().text;
+                            tempText += nodeChildren[i].getChild(j).getChild(k).getSymbol().text;
+                        this.XPath += (tempText.startsWith("\"") ? "" : "\"") + tempText + (tempText.endsWith("\"") ? "" : "\"");
+                    }
                 }
-                this.XPath += !includes ? "\"]" : not ? "\"))]" : "\")]";
+                this.XPath += !includes ? "]" : not ? "))]" : ")]";
             }
         }
     }

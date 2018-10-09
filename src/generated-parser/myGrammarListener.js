@@ -74,15 +74,6 @@ myGrammarListener.prototype.exitEmptyLine = function(ctx) {
 };
 
 
-// Enter a parse tree produced by myGrammarParser#be.
-myGrammarListener.prototype.enterBe = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#be.
-myGrammarListener.prototype.exitBe = function(ctx) {
-};
-
-
 // Enter a parse tree produced by myGrammarParser#must.
 myGrammarListener.prototype.enterMust = function(ctx) {
 };
@@ -161,6 +152,24 @@ myGrammarListener.prototype.enterIncludes = function(ctx) {
 
 // Exit a parse tree produced by myGrammarParser#includes.
 myGrammarListener.prototype.exitIncludes = function(ctx) {
+};
+
+
+// Enter a parse tree produced by myGrammarParser#startsWith.
+myGrammarListener.prototype.enterStartsWith = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#startsWith.
+myGrammarListener.prototype.exitStartsWith = function(ctx) {
+};
+
+
+// Enter a parse tree produced by myGrammarParser#endsWith.
+myGrammarListener.prototype.enterEndsWith = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#endsWith.
+myGrammarListener.prototype.exitEndsWith = function(ctx) {
 };
 
 

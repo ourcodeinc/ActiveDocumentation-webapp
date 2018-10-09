@@ -9,32 +9,32 @@ designRule
     ;
 
 mustClause
-    : functions SPACE must SPACE functionExpression
-    | abstractFunctions SPACE must SPACE abstractFunctionExpression
-    | constructors SPACE must SPACE constructorExpression
-    | annotations SPACE must SPACE annotationExpression
-    | parameters SPACE must SPACE parameterExpression
-    | returnValues SPACE must SPACE returnValueExpression
-    | declarationStatements SPACE must SPACE declarationStatementExpression
-    | expressionStatements SPACE must SPACE expressionStatementExpression
-    | initValues SPACE must SPACE initValueExpression
-    | arguments SPACE must SPACE argumentExpression
-    | callers SPACE must SPACE callerExpression
-    | classes SPACE must SPACE classExpression;
+    : functions must functionExpression
+    | abstractFunctions must abstractFunctionExpression
+    | constructors must constructorExpression
+    | annotations must annotationExpression
+    | parameters must parameterExpression
+    | returnValues must returnValueExpression
+    | declarationStatements must declarationStatementExpression
+    | expressionStatements must expressionStatementExpression
+    | initValues must initValueExpression
+    | arguments must argumentExpression
+    | callers must callerExpression
+    | classes must classExpression;
 
 mustBeEqualToClause
-    : functions SPACE mustBeEqualTo SPACE functions
-    | abstractFunctions SPACE mustBeEqualTo SPACE abstractFunctions
-    | constructors SPACE mustBeEqualTo SPACE constructors
-    | annotations SPACE mustBeEqualTo SPACE annotations
-    | parameters SPACE mustBeEqualTo SPACE parameters
-    | returnValues SPACE mustBeEqualTo SPACE returnValues
-    | declarationStatements SPACE mustBeEqualTo SPACE declarationStatements
-    | expressionStatements SPACE mustBeEqualTo SPACE expressionStatements
-    | initValues SPACE mustBeEqualTo SPACE initValues
-    | arguments SPACE mustBeEqualTo SPACE arguments
-    | callers SPACE mustBeEqualTo SPACE callers
-    | classes SPACE mustBeEqualTo SPACE classes
+    : functions mustBeEqualTo functions
+    | abstractFunctions mustBeEqualTo abstractFunctions
+    | constructors mustBeEqualTo constructors
+    | annotations mustBeEqualTo annotations
+    | parameters mustBeEqualTo parameters
+    | returnValues mustBeEqualTo returnValues
+    | declarationStatements mustBeEqualTo declarationStatements
+    | expressionStatements mustBeEqualTo expressionStatements
+    | initValues mustBeEqualTo initValues
+    | arguments mustBeEqualTo arguments
+    | callers mustBeEqualTo callers
+    | classes mustBeEqualTo classes
     ;
 
 /*
@@ -45,11 +45,11 @@ SPACE
     ;
 
 words
-    : Alphabet+
+    : '"' Alphabet+ '"'
     ;
 
 Alphabet
-    : [a-zA-Z0-9]
+    : [a-zA-Z0-9_-]
     ;
 end
     : '.'
@@ -71,49 +71,53 @@ Comma
     Keywords
 */
 
-be
-    : 'be'
-    ;
-
 must
-    : 'must'
+    : 'must '
     ;
 
 mustBeEqualTo
-    : 'must be equal to'
+    : 'must be equal to '
     ;
 
 where
-    : 'where'
+    : 'where '
     ;
 
 of
-    : 'of'
+    : 'of '
     ;
 
 
 and
-    :  'and'
+    :  ' and '
     ;
 
 or
-    :  'or'
+    :  ' or '
     ;
 
 have
-    : 'have'
+    : 'have '
     ;
 
 equalsTo
-    : 'equal to'
+    : 'equal to '
     ;
 
 includes
-    : 'include'
+    : 'include '
+    ;
+
+startsWith
+    : 'start with '
+    ;
+
+endsWith
+    : 'end with '
     ;
 
 not
-    : 'not'
+    : 'not '
     ;
 
 
@@ -138,7 +142,7 @@ RPAREN
 */
 
 NAME
-    : 'name'
+    : 'name '
     ;
 
 names
@@ -146,13 +150,13 @@ names
     ;
 
 nameOf
-    : SPACE of SPACE (classes | functions | abstractFunctions
+    : of (classes | functions | abstractFunctions
     | declarationStatements | parameters | annotations
     | types | constructors | arguments | extensions | implementations)
     ;
 
 nameCondition
-    : SPACE where SPACE not? SPACE? (equalsTo | includes) SPACE words Comma?
+    : where not? (equalsTo | includes | startsWith | endsWith) words Comma?
     ;
 
 
@@ -161,7 +165,7 @@ nameCondition
 */
 
 ANNOTATION
-    : 'annotation'
+    : 'annotation '
     ;
 
 annotations
@@ -169,17 +173,17 @@ annotations
     ;
 
 annotationOf
-    : SPACE of SPACE (classes | functions | constructors | abstractFunctions | declarationStatements)
+    : of (classes | functions | constructors | abstractFunctions | declarationStatements)
     ;
 
 annotationCondition
-    : SPACE where SPACE annotationExpression Comma?
+    : where annotationExpression Comma?
     ;
 
 annotationExpression
     : LPAREN annotationExpression RPAREN
-    | left=annotationExpression SPACE op=binary SPACE right=annotationExpression
-    | SPACE? have SPACE (names | arguments) SPACE?
+    | left=annotationExpression op=binary right=annotationExpression
+    | have (names | arguments) SPACE?
     ;
 
 /*
@@ -187,11 +191,11 @@ annotationExpression
 */
 
 EXTEND
-    : 'extend'
+    : 'extend '
     ;
 
 EXTENSION
-    : 'extension'
+    : 'extension '
     ;
 
 extensions
@@ -199,11 +203,11 @@ extensions
     ;
 
 extensionOf
-    : SPACE of SPACE classes
+    : of classes
     ;
 
 extensionCondition
-    : SPACE where SPACE not? SPACE? equalsTo SPACE words Comma?
+    : where not? equalsTo words Comma?
     ;
 
 
@@ -212,7 +216,7 @@ extensionCondition
 */
 
 IMPLEMENTATION
-    : 'implementation'
+    : 'implementation '
     ;
 
 implementations
@@ -220,11 +224,11 @@ implementations
     ;
 
 implementationOf
-    : SPACE of SPACE classes
+    : of classes
     ;
 
 implementationCondition
-    : SPACE where SPACE not? SPACE? equalsTo SPACE words Comma?
+    : where not? equalsTo words Comma?
     ;
 
 
@@ -233,7 +237,7 @@ implementationCondition
 */
 
 FUNCTION
-    : 'function'
+    : 'function '
     ;
 
 functions
@@ -241,17 +245,17 @@ functions
     ;
 
 functionOf
-    : SPACE of SPACE classes
+    : of classes
     ;
 
 functionCondition
-    : SPACE where SPACE functionExpression Comma?
+    : where functionExpression Comma?
     ;
 
 functionExpression
     : LPAREN functionExpression RPAREN
-    | left=functionExpression SPACE op=binary SPACE right=functionExpression
-    | SPACE? have SPACE (
+    | left=functionExpression op=binary right=functionExpression
+    | have (
               annotations | specifiers | names | parameters | returnValues
               | declarationStatements | expressionStatements
               ) SPACE?
@@ -262,7 +266,7 @@ functionExpression
 */
 
 AbstractFunctions
-    : 'abstract function'
+    : 'abstract function '
     ;
 
 abstractFunctions
@@ -270,17 +274,17 @@ abstractFunctions
     ;
 
 abstractFunctionOf
-    : SPACE of SPACE classes
+    : of classes
     ;
 
 abstractFunctionCondition
-    : SPACE where SPACE abstractFunctionExpression Comma?
+    : where abstractFunctionExpression Comma?
     ;
 
 abstractFunctionExpression
     : LPAREN abstractFunctionExpression RPAREN
-    | left=abstractFunctionExpression SPACE op=binary SPACE right=abstractFunctionExpression
-    | SPACE? have SPACE (
+    | left=abstractFunctionExpression op=binary right=abstractFunctionExpression
+    | have (
               annotations | specifiers | names | parameters
               ) SPACE?
     ;
@@ -291,7 +295,7 @@ abstractFunctionExpression
 */
 
 CONSTRUCTOR
-    : 'constructor'
+    : 'constructor '
     ;
 
 constructors
@@ -299,17 +303,17 @@ constructors
     ;
 
 constructorOf
-    : SPACE of SPACE classes
+    : of classes
     ;
 
 constructorCondition
-    : SPACE where SPACE constructorExpression Comma?
+    : where constructorExpression Comma?
     ;
 
 constructorExpression
     : LPAREN constructorExpression RPAREN
-    | left=constructorExpression SPACE op=binary SPACE right=constructorExpression
-    | SPACE? have SPACE (
+    | left=constructorExpression op=binary right=constructorExpression
+    | have (
               annotations | specifiers | parameters | returnValues
               | declarationStatements | expressionStatements
               ) SPACE?
@@ -320,7 +324,7 @@ constructorExpression
 */
 
 PARAMETER
-    :  'parameter'
+    :  'parameter '
     ;
 
 parameters
@@ -328,17 +332,17 @@ parameters
     ;
 
 parameterOf
-    : SPACE of SPACE (functions | constructors | abstractFunctions)
+    : of (functions | constructors | abstractFunctions)
     ;
 
 parameterCondition
-    : SPACE where SPACE parameterExpression Comma?
+    : where parameterExpression Comma?
     ;
 
 parameterExpression
     : LPAREN parameterExpression RPAREN
-    | left=parameterExpression SPACE op=binary SPACE right=parameterExpression
-    | SPACE? have SPACE (names | types) SPACE?
+    | left=parameterExpression op=binary right=parameterExpression
+    | have (names | types) SPACE?
     ;
 
 /*
@@ -346,7 +350,7 @@ parameterExpression
 */
 
 TYPES
-    : 'type'
+    : 'type '
     ;
 
 types
@@ -354,11 +358,11 @@ types
     ;
 
 typeOf
-    : SPACE of SPACE (parameters | declarationStatements)
+    : of (parameters | declarationStatements)
     ;
 
 typeCondition
-    : SPACE where SPACE not? SPACE? equalsTo SPACE words Comma?
+    : where not? equalsTo words Comma?
     ;
 
 
@@ -367,7 +371,7 @@ typeCondition
 */
 
 SPECIFIER
-    :  'specifier'
+    :  'specifier '
     ;
 
 specifiers
@@ -375,11 +379,11 @@ specifiers
     ;
 
 specifierOf
-    : SPACE of SPACE (functions | constructors | abstractFunctions | declarationStatements | classes)
+    : of (functions | constructors | abstractFunctions | declarationStatements | classes)
     ;
 
 specifierCondition
-    : SPACE where SPACE not? SPACE? equalsTo SPACE words Comma?
+    : where not? equalsTo words Comma?
     ;
 
 
@@ -389,7 +393,7 @@ specifierCondition
 */
 
 ReturnValue
-    :  'return value'
+    :  'return value '
     ;
 
 returnValues
@@ -397,17 +401,17 @@ returnValues
     ;
 
 returnValueOf
-    : SPACE of SPACE functions
+    : of functions
     ;
 
 returnValueCondition
-    : SPACE where SPACE returnValueExpression Comma?
+    : where returnValueExpression Comma?
     ;
 
 returnValueExpression
     : LPAREN returnValueExpression RPAREN
-    | left=returnValueExpression SPACE op=binary SPACE right=returnValueExpression
-    | SPACE? have SPACE (calls | names) SPACE?
+    | left=returnValueExpression op=binary right=returnValueExpression
+    | have (calls | names) SPACE?
     ;
 
 
@@ -416,7 +420,7 @@ returnValueExpression
 */
 
 DeclarationStatement
-    : 'declaration statement'
+    : 'declaration statement '
     ;
 
 declarationStatements
@@ -424,17 +428,17 @@ declarationStatements
     ;
 
 declarationStatementOf
-    : SPACE of SPACE (classes | functions | constructors)
+    : of (classes | functions | constructors)
     ;
 
 declarationStatementCondition
-    : SPACE where SPACE declarationStatementExpression Comma?
+    : where declarationStatementExpression Comma?
     ;
 
 declarationStatementExpression
     : LPAREN declarationStatementExpression RPAREN
-    | left=declarationStatementExpression SPACE op=binary SPACE right=declarationStatementExpression
-    | SPACE? have SPACE (
+    | left=declarationStatementExpression op=binary right=declarationStatementExpression
+    | have (
               annotations | specifiers | types | names | initValues
               ) SPACE?
     ;
@@ -445,7 +449,7 @@ declarationStatementExpression
 */
 
 ExpressionStatement
-    :  'expression statement'
+    :  'expression statement '
     ;
 
 expressionStatements
@@ -453,17 +457,17 @@ expressionStatements
     ;
 
 expressionStatementOf
-    : SPACE of SPACE (functions | constructors | constructors)
+    : of (functions | constructors | constructors)
     ;
 
 expressionStatementCondition
-    : SPACE where SPACE expressionStatementExpression Comma?
+    : where expressionStatementExpression Comma?
     ;
 
 expressionStatementExpression
     : LPAREN expressionStatementExpression RPAREN
-    | left=expressionStatementExpression SPACE op=binary SPACE right=expressionStatementExpression
-    | SPACE? have SPACE (calls | names) SPACE?
+    | left=expressionStatementExpression op=binary right=expressionStatementExpression
+    | have (calls | names) SPACE?
     ;
 
 /*
@@ -471,7 +475,7 @@ expressionStatementExpression
 */
 
 InitValue
-    :  'initial value'
+    :  'initial value '
     ;
 
 initValues
@@ -479,17 +483,17 @@ initValues
     ;
 
 initValueOf
-    : SPACE of SPACE declarationStatements
+    : of declarationStatements
     ;
 
 initValueCondition
-    : SPACE where SPACE initValueExpression Comma?
+    : where initValueExpression Comma?
     ;
 
 initValueExpression
     : LPAREN initValueExpression RPAREN
-    | left=initValueExpression SPACE op=binary SPACE right=initValueExpression
-    | SPACE? have SPACE (calls | names) SPACE?
+    | left=initValueExpression op=binary right=initValueExpression
+    | have (calls | names) SPACE?
     ;
 
 /*
@@ -497,7 +501,7 @@ initValueExpression
 */
 
 ARGUMENT
-    :  'argument'
+    :  'argument '
     ;
 
 arguments
@@ -505,17 +509,17 @@ arguments
     ;
 
 argumentOf
-    : SPACE of SPACE calls
+    : of calls
     ;
 
 argumentCondition
-    : SPACE where SPACE argumentExpression Comma?
+    : where argumentExpression Comma?
     ;
 
 argumentExpression
     : LPAREN argumentExpression RPAREN
-    | left=argumentExpression SPACE op=binary SPACE right=argumentExpression
-    | SPACE? have SPACE (calls | names) SPACE?
+    | left=argumentExpression op=binary right=argumentExpression
+    | have (calls | names) SPACE?
     ;
 
 /*
@@ -523,7 +527,7 @@ argumentExpression
 */
 
 CALL
-    : 'call'
+    : 'call '
     ;
 
 calls
@@ -531,17 +535,17 @@ calls
     ;
 
 callOf
-    : SPACE of SPACE (arguments | returnValues | expressionStatements | initValues)
+    : of (arguments | returnValues | expressionStatements | initValues)
     ;
 
 callCondition
-    : SPACE where SPACE callerExpression Comma?
+    : where callerExpression Comma?
     ;
 
 callerExpression
     : LPAREN callerExpression RPAREN
-    | left=callerExpression SPACE op=binary SPACE right=callerExpression
-    | SPACE? have SPACE (callers | names) SPACE?
+    | left=callerExpression op=binary right=callerExpression
+    | have (callers | names) SPACE?
     ;
 
 
@@ -550,7 +554,7 @@ callerExpression
 */
 
 CALLER
-    : 'caller'
+    : 'caller '
     ;
 
 callers
@@ -558,11 +562,11 @@ callers
     ;
 
 callerOf
-    : SPACE of SPACE calls
+    : of calls
     ;
 
 callerCondition
-    : SPACE where SPACE have SPACE NAME SPACE not? SPACE? equalsTo SPACE words Comma?
+    : where have NAME not? equalsTo words Comma?
     ;
 
 
@@ -571,7 +575,7 @@ callerCondition
 */
 
 VALUE
-    : 'value'
+    : 'value '
     ;
 
 values
@@ -579,11 +583,11 @@ values
     ;
 
 valueOf
-    : SPACE of SPACE (arguments | returnValues | expressionStatements | initValues)
+    : of (arguments | returnValues | expressionStatements | initValues)
     ;
 
 valueCondition
-    : SPACE where SPACE not? SPACE? equalsTo words Comma?
+    : where not? equalsTo words Comma?
     ;
 
 
@@ -592,7 +596,7 @@ valueCondition
 */
 
 CLASSES
-    : 'class' | 'subclass'
+    : 'class ' | 'subclass '
     ;
 
 classes
@@ -600,17 +604,17 @@ classes
     ;
 
 classOf
-    : SPACE of SPACE classes
+    : of classes
     ;
 
 classCondition
-    : SPACE where SPACE classExpression Comma?
+    : where classExpression Comma?
     ;
 
 classExpression
     : LPAREN classExpression RPAREN
-    | left=classExpression SPACE op=binary SPACE right=classExpression
-    | SPACE? have SPACE (
+    | left=classExpression op=binary right=classExpression
+    | have (
               annotations | specifiers | names | extensions | implementations | functions
               | abstractFunctions | constructors | declarationStatements | classes | returnValues
               ) SPACE?

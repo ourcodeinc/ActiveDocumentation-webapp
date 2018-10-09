@@ -2,8 +2,6 @@ import antlr4 from 'antlr4/index';
 import CoreNLP, {Properties, Pipeline, ConnectorServer} from 'corenlp';
 import Traverse from '../grammarRuleGen/generateXpath';
 
-import Utilities from "../../core/utilities";
-
 /**
  * verify the text entered in AutoComplete based on Grammar
  */
@@ -13,7 +11,7 @@ export default async function verifyTextBasedOnGrammar(autoCompleteText) {
     if (replacedPhrases === "") return Promise.reject("NO_INPUT_AFTER_REPLACING_PHRASES");
     let lemmatized = await lemmatize(replacedPhrases);
     if (lemmatized === "") return Promise.reject("NO_INPUT_AFTER_LEMMATIZATION");
-    let returnedObj = antlr(lemmatized);
+    let returnedObj = antlr(lemmatized + " ");
     if (returnedObj.hasOwnProperty("grammarErrors") || returnedObj.hasOwnProperty("xpathTraverseErrors"))
         return Promise.reject(returnedObj);
     return {quantifierXPath: returnedObj.quantifier, constraintXPath: returnedObj.constraint};
@@ -57,30 +55,17 @@ const lemmatize = (input) => {
                     lemmatized.push(
                         node.token().index() > 2 && sent.word(node.token().index() - 2) === '``' ?
                             node.word() : node.token().lemma());
-                // console.log(
-                //     node.token().index() > 2 && sent.word(node.token().index() - 2) === '``' ? node.word() :
-                //         //node.word(), node.pos(),
-                //         // node.token().before() === '"' ? node.word() :
-                //         node.token().lemma()
-                //     // , node.token().index()
-                //     //, node.token().ner()
-                //     // , node.token().characterOffsetBegin(),node.token().characterOffsetEnd()
-                //     // , sent.word(node.token().index()-1)
-                //     // , sent.word(node.token().index()-2)
-                // )
             });
 
-            let index = lemmatized.indexOf("``");
-            while (index !== -1) {
-                if (index !== -1) lemmatized.splice(index, 1);
-                index = lemmatized.indexOf("``");
-            }
-            index = lemmatized.indexOf("''");
-            while (index !== -1) {
-                if (index !== -1) lemmatized.splice(index, 1);
-                index = lemmatized.indexOf("''");
-            }
-            return Promise.resolve(Utilities.stringReplaceAll(Utilities.stringReplaceAll(lemmatized.join(" "), "-lrb-", "("), "-rrb-", ")"));
+            let str = lemmatized.join(" ");
+            str = stringReplaceAll(str, " ''", "\"");
+            str = stringReplaceAll(str, " and ", "  and "); // for extra spaces around and
+            str = stringReplaceAll(str, " or ", "  or "); // for extra spaces around or
+            str = stringReplaceAll(str, "`` ","\"" );
+            str = stringReplaceAll(str, "-lrb-","(" );
+            str = stringReplaceAll(str, "-rrb-",")" );
+
+            return Promise.resolve(str);
         })
         .catch(err => {
             console.log('err', err);
@@ -88,6 +73,17 @@ const lemmatize = (input) => {
         });
 };
 
+
+/**
+ *  same as Utilities.stringReplaceAll
+ * @param str
+ * @param search
+ * @param replacement
+ * @returns {string|XML|*|void}
+ */
+const stringReplaceAll = (str, search, replacement) => {
+    return str.replace(new RegExp(search, 'g'), replacement);
+};
 
 /**
  * check the text against grammar and returns the XPaths for quantifier and constraint

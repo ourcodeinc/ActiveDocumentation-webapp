@@ -500,6 +500,7 @@ class AutoComplete extends Component {
                         suggText = (isConnectorWord && isMiddleOfWord) ? "to " + xWord : xWord;
                         infoText = (isConnectorWord && isMiddleOfWord) ? xWord + " must be equal" : xWord + " must be equal to";
                         results.push(AutoComplete.createGrammarSuggestion(suggText, infoText));
+                        break;
                     }
                     // … [X] where not equal to
                     if (wordsArray[lastWordIndex - 3] === "where" && wordsArray[lastWordIndex - 2] === "not") {
@@ -551,6 +552,39 @@ class AutoComplete extends Component {
                     suggText = (isConnectorWord && isMiddleOfWord) ? "include" : "";
                     infoText = (isConnectorWord && isMiddleOfWord) ? "where " + xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not": "")
                         : "where " + xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not": "") + " include";
+                    results.push(AutoComplete.createGrammarSuggestion(suggText, infoText));
+                    break;
+
+                case "start":
+                    if (lastWordIndex < 2) return [];
+                    // … [X] not? start with
+                    xWord = wordsArray[lastWordIndex - 1] === "not" ? selectXWord(lastWordIndex - 2) : selectXWord(lastWordIndex - 1);
+
+                    suggText = (isConnectorWord && isMiddleOfWord) ? "start with" : "with";
+                    infoText = (isConnectorWord && isMiddleOfWord) ? "where " + xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not": "")
+                        : "where " + xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not": "") + " start with";
+                    results.push(AutoComplete.createGrammarSuggestion(suggText, infoText));
+                    break;
+
+                case "end":
+                    if (lastWordIndex < 2) return [];
+                    // … [X] not? end with
+                    xWord = wordsArray[lastWordIndex - 1] === "not" ? selectXWord(lastWordIndex - 2) : selectXWord(lastWordIndex - 1);
+
+                    suggText = (isConnectorWord && isMiddleOfWord) ? "end with" : "with";
+                    infoText = (isConnectorWord && isMiddleOfWord) ? "where " + xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not": "")
+                        : "where " + xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not": "") + " end with";
+                    results.push(AutoComplete.createGrammarSuggestion(suggText, infoText));
+                    break;
+
+                case "with":
+                    if (lastWordIndex < 3) return [];
+                    // … [X] not? end with
+                    xWord = wordsArray[lastWordIndex - 2] === "not" ? selectXWord(lastWordIndex - 3) : selectXWord(lastWordIndex - 2);
+
+                    suggText = (isConnectorWord && isMiddleOfWord) ? "with" : "";
+                    infoText = (isConnectorWord && isMiddleOfWord) ? "where " + xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not": "") + wordsArray[lastWordIndex - 1]
+                        : "where " + xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not ": "") + wordsArray[lastWordIndex - 1] + " with";
                     results.push(AutoComplete.createGrammarSuggestion(suggText, infoText));
                     break;
 
