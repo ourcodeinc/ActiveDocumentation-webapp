@@ -323,32 +323,70 @@ class AutoComplete extends Component {
             let lastWhereIndex = wordsArray.lastIndexOf("where");
             let beforeSuggText = "", suggText = "",  infoText = "";
 
+            /**
+             * try to find 2-part keywords
+             * @param index
+             * @returns {*} keyword string
+             */
+            function selectXWord(index) {
+                if (wordsArray.length < index + 1) return "";
+                if (index > 0) {
+                    if (wordsArray[index - 1] === "abstract" && wordsArray[index] === "function") return "abstract function";
+                    if (wordsArray[index - 1] === "return" && wordsArray[index] === "value") return "return value";
+                    if (wordsArray[index - 1] === "declaration" && wordsArray[index] === "statement") return "declaration statement";
+                    if (wordsArray[index - 1] === "expression" && wordsArray[index] === "statement") return "expression statement";
+                    if (wordsArray[index - 1] === "initial" && wordsArray[index] === "value") return "initial value";
+                }
+                if (wordsArray.length < index + 2) {
+                    if (wordsArray[index] === "abstract" && wordsArray[index + 1] === "function") return "abstract function";
+                    if (wordsArray[index] === "return" && wordsArray[index + 1] === "value") return "return value";
+                    if (wordsArray[index] === "declaration" && wordsArray[index + 1] === "statement") return "declaration statement";
+                    if (wordsArray[index] === "expression" && wordsArray[index + 1] === "statement") return "expression statement";
+                    if (wordsArray[index] === "initial" && wordsArray[index + 1] === "value") return "initial value";
+                }
+                if (constants.keywords.indexOf(wordsArray[index])!== -1) return wordsArray[index];
+                return "";
+            }
+
             switch (lastWord) {
                 case "where":
                     // … [X] where [based on X]
                     if (lastWordIndex < 1) return [];
-                    xWord = wordsArray[lastWordIndex - 1];
+                    xWord = selectXWord(lastWordIndex - 1);
+                    if (xWord === "") return [];
 
-                    let hasWhereHaveClause = false;
-                    try {
-                        hasWhereHaveClause = !!constants.autoComplete_suggestion[xWord].whereHaveClause;
-                    } catch (e){}
-                    if (isSecondWord) {
-                        beforeSuggText = hasWhereHaveClause ? "have" : "";
-                        infoText = xWord + " where";
+                    let hasWhereHaveClause = !!constants.autoComplete_suggestion[xWord].whereHaveClause;
+
+                    if(hasWhereHaveClause) {
+                        if (isSecondWord) {
+                            suggText = "have";
+                            infoText = xWord + " where ";
+                        }
+                        else {
+                            suggText = (isMiddleOfWord ? "where" : "") + " have";
+                            infoText = xWord + (!isMiddleOfWord ? " where " : "");
+                        }
+                        results.push(AutoComplete.createGrammarSuggestion(suggText, infoText));
                     }
                     else {
-                        beforeSuggText = (isMiddleOfWord ? "where" : "") + (hasWhereHaveClause ? " have" : "");
-                        infoText = xWord + (!isMiddleOfWord ? " where " : "");
+                        if (isSecondWord) {
+                            beforeSuggText = "";
+                            infoText = xWord + " where";
+                        }
+                        else {
+                            beforeSuggText = isMiddleOfWord ? "where" : "";
+                            infoText = xWord + (!isMiddleOfWord ? " where " : "");
+                        }
+                        results = results.concat(this.whereSuggestionCreator(xWord, beforeSuggText, infoText, isSecondWord, isSecondWord ? wordsArray[wordsArray.length - 1] : ""));
                     }
-                    results = results.concat(this.whereSuggestionCreator(xWord, beforeSuggText, infoText, isSecondWord, isSecondWord && !hasWhereHaveClause ? wordsArray[wordsArray.length - 1] : ""));
                     break;
 
                 case "have":
                     if (lastWordIndex < 2) return [];
                     // [X] … must have [based on X]
                     if (wordsArray[lastWordIndex - 1] === "must") {
-                        xWord = wordsArray[0];
+                        xWord = selectXWord(0);
+                        if (xWord === "") return [];
 
                         if (isSecondWord) {
                             beforeSuggText = "";
@@ -363,7 +401,10 @@ class AutoComplete extends Component {
                     // … [X] where ( … and have [based on X]
                     else {
                         if (lastWhereIndex < 1) return [];
-                        xWord = wordsArray[lastWhereIndex - 1];
+                        xWord = selectXWord(lastWhereIndex - 1);
+                        if (xWord === "") return [];
+
+                        if (!constants.autoComplete_suggestion[xWord].whereHaveClause) return [];
 
                         if (isSecondWord) {
                             beforeSuggText = "";
@@ -380,7 +421,8 @@ class AutoComplete extends Component {
 
                 case "must":
                     if (lastWordIndex < 1) return [];
-                    xWord = wordsArray[0];
+                    xWord = selectXWord(0);
+                    if (xWord === "") return [];
 
                     // [X] … must have [based on X]
                     if (isSecondWord) {
@@ -403,7 +445,8 @@ class AutoComplete extends Component {
                     if (lastWordIndex < 2) return [];
                     //[X] … must be equal to [X]
                     if (wordsArray[lastWordIndex - 1] !== "must") return [];
-                    xWord = wordsArray[0];
+                    xWord = selectXWord(0);
+                    if (xWord === "") return [];
 
                     suggText = (isConnectorWord && isMiddleOfWord) ? "be equal to" : "equal to";
                     infoText = (isConnectorWord && isMiddleOfWord) ? xWord + " must" : xWord + " must be";
@@ -415,7 +458,8 @@ class AutoComplete extends Component {
 
                     // [X] … must be equal to
                     if (wordsArray[lastWordIndex - 1] === "be") {
-                        xWord = wordsArray[0];
+                        xWord = selectXWord(0);
+                        if (xWord === "") return [];
 
                         suggText = (isConnectorWord && isMiddleOfWord) ? "equal to" : "to";
                         infoText = (isConnectorWord && isMiddleOfWord) ? xWord + " must be" : xWord + " must be equal";
@@ -424,7 +468,8 @@ class AutoComplete extends Component {
 
                     // … where … [X] not? equal to
                     else {
-                        xWord = wordsArray[lastWordIndex - 1] === "not" ? wordsArray[lastWordIndex - 2] : wordsArray[lastWordIndex - 1];
+                        xWord = wordsArray[lastWordIndex - 1] === "not" ? selectXWord(lastWordIndex - 2) : selectXWord(lastWordIndex - 1);
+                        if (xWord === "") return [];
 
                         results.push(AutoComplete.createGrammarSuggestion(((isConnectorWord && isMiddleOfWord) ? "equal " : "") + "to"
                             , xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not" : "")));
@@ -441,29 +486,36 @@ class AutoComplete extends Component {
 
                     if (lastWordIndex < 3) return [];
                     // … [X] where equal to
-                    if (wordsArray[lastWordIndex - 2] === "where")
-                        xWord = wordsArray[lastWordIndex - 3];
+                    if (wordsArray[lastWordIndex - 2] === "where") {
+                        xWord = selectXWord(lastWordIndex - 3);
+                        if (xWord === "") return [];
+                    }
 
                     if (lastWordIndex < 4) return [];
                     // … [X] must be equal to [X]
                     if (wordsArray[lastWordIndex - 3] === "must" && wordsArray[lastWordIndex - 2] === "be") {
-                        xWord = wordsArray[0];
+                        xWord = selectXWord(0);
+                        if (xWord === "") return [];
 
                         suggText = (isConnectorWord && isMiddleOfWord) ? "to " + xWord : xWord;
                         infoText = (isConnectorWord && isMiddleOfWord) ? xWord + " must be equal" : xWord + " must be equal to";
                         results.push(AutoComplete.createGrammarSuggestion(suggText, infoText));
                     }
                     // … [X] where not equal to
-                    if (wordsArray[lastWordIndex - 3] === "where" && wordsArray[lastWordIndex - 2] === "not")
-                        xWord = wordsArray[lastWordIndex - 4];
+                    if (wordsArray[lastWordIndex - 3] === "where" && wordsArray[lastWordIndex - 2] === "not") {
+                        xWord = selectXWord(lastWordIndex - 4);
+                        if (xWord === "") return [];
+                    }
                     // … [X] equal to
-                    else
-                        xWord = wordsArray[lastWordIndex - 2];
+                    else {
+                        xWord = selectXWord(lastWordIndex - 2);
+                        if (xWord === "") return [];
+                    }
                     break;
 
                 case "not":
                     if (lastWordIndex < 1) return [];
-                    xWord = constants.keywords.includes(wordsArray[lastWordIndex - 1]) ? wordsArray[lastWordIndex - 1] + " " : "";
+                    xWord = constants.keywords.includes(selectXWord(lastWordIndex - 1)) ? selectXWord(lastWordIndex - 1) + " " : "";
                     suggText = (isConnectorWord && isMiddleOfWord) ? "not include" : "include";
                     infoText = (isConnectorWord && isMiddleOfWord) ? xWord : xWord + "not";
                     results.push(AutoComplete.createGrammarSuggestion(suggText, infoText));
@@ -477,11 +529,13 @@ class AutoComplete extends Component {
 
                     // … [X] where ( … and [based on X]
                     if (openParanIndex > 0) {
-                        xWord = wordsArray[openParanIndex - 2];
+                        xWord = selectXWord(openParanIndex - 2);
+                        if (xWord === "") return [];
                     }
                     // … [X] where … and [based on X]
                     else if (lastWhereIndex > 0) {
-                        xWord = wordsArray[lastWhereIndex - 1];
+                        xWord = selectXWord(lastWordIndex - 1);
+                        if (xWord === "") return [];
                     }
 
                     beforeSuggText = (isConnectorWord && isMiddleOfWord) ? lastWord : "";
@@ -492,7 +546,7 @@ class AutoComplete extends Component {
                 case "include":
                     if (lastWordIndex < 2) return [];
                     // … [X] not? include
-                    xWord = wordsArray[lastWordIndex - 1] === "not" ? wordsArray[lastWordIndex - 2] : wordsArray[lastWordIndex - 1];
+                    xWord = wordsArray[lastWordIndex - 1] === "not" ? selectXWord(lastWordIndex - 2) : selectXWord(lastWordIndex - 1);
 
                     suggText = (isConnectorWord && isMiddleOfWord) ? "include" : "";
                     infoText = (isConnectorWord && isMiddleOfWord) ? "where " + xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not": "")
@@ -504,7 +558,8 @@ class AutoComplete extends Component {
                     if (lastWordIndex < 2) return [];
                     if (lastWhereIndex < 1) return [];
                     // … [X] where ( [based on X]
-                    xWord = wordsArray[lastWhereIndex - 1];
+                    xWord = selectXWord(lastWordIndex - 1);
+                    if (xWord === "") return [];
 
                     beforeSuggText = "(";
                     infoText = xWord + " where";
@@ -517,7 +572,8 @@ class AutoComplete extends Component {
                     // … [X] where ( … ) of [based on X]
                     let corrOpenParanIndex =  this.findCorrespondingOpenParanIndex(wordsArray);
                     if (corrOpenParanIndex < 1) return [];
-                    xWord = wordsArray[corrOpenParanIndex - 1];
+                    xWord = selectXWord(corrOpenParanIndex - 1);
+                    if (xWord === "") return [];
 
                     beforeSuggText = ")";
                     infoText = xWord + " where ( ... " ;
@@ -526,7 +582,8 @@ class AutoComplete extends Component {
                     // [X]… <no must> … where ( … ) must have [based on X]
                     // [X]… <no must> … where ( … ) must be equal to [X]
                     if(!wordsArray.includes("must")) {
-                        xWord = wordsArray[0];
+                        xWord = selectXWord(0);
+                        if (xWord === "") return [];
 
                         beforeSuggText = ") must have";
                         infoText = xWord + " where ( ..." ;
@@ -546,7 +603,8 @@ class AutoComplete extends Component {
                         let corrOpenParanIndex =  this.findCorrespondingOpenParanIndex(wordsArray);
                         if (corrOpenParanIndex < 2) return [];
                         if (wordsArray[corrOpenParanIndex - 1] !== "where") return [];
-                        xWord = wordsArray[corrOpenParanIndex - 2];
+                        xWord = selectXWord(corrOpenParanIndex - 2);
+                        if (xWord === "") return [];
 
                         suggText = (isConnectorWord && isMiddleOfWord) ? "of" : "";
                         infoText = (isConnectorWord && isMiddleOfWord) ? xWord + " where ( ... )" : xWord + " where ( ... ) of";
@@ -574,8 +632,9 @@ class AutoComplete extends Component {
                     break;
 
                 default:
+                    xWord = selectXWord(lastWordIndex) === "" ? lastWord : selectXWord(lastWordIndex);
                     constants.keywords
-                        .filter(d => d.indexOf(lastWord) !== -1)
+                        .filter(d => d.indexOf(xWord) !== -1)
                         .forEach(d => {
                             if(isMiddleOfWord && !isSecondWord) // still typing the keyword
                                 results.push(AutoComplete.createGrammarSuggestion(d, ""));
@@ -596,11 +655,11 @@ class AutoComplete extends Component {
 
                                 if (!isSecondWord && wordsArray.indexOf("must") === -1) {
                                     suggText = (!isMiddleOfWord ? "" : d + " ") + "must be equal to" + (!isMiddleOfWord ? "" : d + " ");
-                                    infoText = lastWordIndex !== 0 ? wordsArray[0] : (isMiddleOfWord ? "" : d);
+                                    infoText = lastWordIndex !== 0 ? xWord : (isMiddleOfWord ? "" : d);
                                     results.push(AutoComplete.createGrammarSuggestion(suggText, infoText));
 
                                     suggText = (!isMiddleOfWord ? "" : d + " ") + "must have";
-                                    infoText = lastWordIndex !== 0 ? wordsArray[0] : (isMiddleOfWord ? "" : d);
+                                    infoText = lastWordIndex !== 0 ? xWord : (isMiddleOfWord ? "" : d);
                                     results.push(AutoComplete.createGrammarSuggestion(suggText, infoText));
                                     // results = results.concat(this.whereSuggestionCreator(wordsArray[0], beforeSuggText, infoText, false));
                                 }
@@ -656,7 +715,7 @@ class AutoComplete extends Component {
 
             // -> add suggestion + space at caret
             else if (beforeCaret === " " || !afterCaret) {
-                newText = myText.slice(0, caretPosition) + suggestion + " ";
+                newText = myText.slice(0, caretPosition) + suggestion + " " + myText.slice(caretPosition);
                 focus = newText.length;
             }
         }
@@ -828,16 +887,17 @@ class AutoComplete extends Component {
      * @returns {Array}
      */
     whereSuggestionCreator(word, beforeSugText, infoText, doFilter, filterLetters) {
+        let result = [];
         if (constants.keywords.includes(word)) {
             if (constants.autoComplete_suggestion[word].whereHaveClause)
-                return constants.autoComplete_suggestion[word].whereHaveClause
-                    .filter(d => !doFilter ? true : d.startsWith(filterLetters))
-                    .map(d => AutoComplete.createGrammarSuggestion(beforeSugText + (beforeSugText !== "" ? " " : "") + d, infoText));
+                result = constants.autoComplete_suggestion[word].whereHaveClause;
             else
-                return constants.autoComplete_suggestion[word].whereClause
-                    .filter(d => !doFilter ? true : d.startsWith(filterLetters))
-                    .map(d => AutoComplete.createGrammarSuggestion(beforeSugText + (beforeSugText !== "" ? " " : "") + d, infoText));
+                result = constants.autoComplete_suggestion[word].whereClause;
 
+            // check if filtering makes no result, ignore it
+            if (result.filter(d => !doFilter ? true : d.startsWith(filterLetters)).length !== 0)
+                result = result.filter(d => !doFilter ? true : d.startsWith(filterLetters));
+            return result.map(d => AutoComplete.createGrammarSuggestion(beforeSugText + (beforeSugText !== "" ? " " : "") + d, infoText));
         }
         return [];
     };
