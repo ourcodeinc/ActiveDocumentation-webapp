@@ -49,6 +49,7 @@ class RulePanel extends Component {
             showAlert: true,
             error: "",
             showNewTagModal: false,
+            autoCompleteValidationState: null, // error, success, warning, null
             // ruleI states
             title: props.title,
             description: props.description,
@@ -181,12 +182,13 @@ class RulePanel extends Component {
                                 <Button onClick={() => this.setState({showAlert: true})}>Show Alerts</Button>
                             </div>
                         )}
+                        <FormGroup validationState={this.state.autoCompleteValidationState}>
                         <AutoComplete ref={(autoComplete) => this.autoComplete = autoComplete}
                                       defaultValue={this.state.autoCompleteText}
                                       onBlur={() => {
                                           if(this.shouldAlert) {
                                               verifyTextBasedOnGrammar(this.state.autoCompleteText)
-                                                  .then((data) => this.setState(data))
+                                                  .then((data) => this.setState({...data, ...{autoCompleteValidationState: null}}))
                                                   .catch((error) => this.processLanguageProcessingError(error));
                                               this.shouldAlert = false;
                                           }
@@ -201,6 +203,7 @@ class RulePanel extends Component {
                                           this.autoCompleteCaretPosition = -1;
                                           return newFocus;
                                       })()}/>
+                        </FormGroup>
                         <div>
                             <ButtonToolbar className={"submitButtons"}>
                                 <Button bsStyle="primary"
@@ -667,7 +670,8 @@ class RulePanel extends Component {
                         errorType: "Empty Field",
                         message: "The design rule input must not be empty.",
                         alertType: "warning"
-                    }
+                    },
+                    autoCompleteValidationState: "warning"
                 });
                 break;
             case "NO_INPUT_AFTER_REPLACING_PHRASES":
@@ -675,8 +679,9 @@ class RulePanel extends Component {
                     error: {
                         errorType: "Incorrect Input",
                         message: "The used phrases are incorrect. Try using different phrases.",
-                        alertType: "danger"
-                    }
+                        alertType: "danger",
+                    },
+                    autoCompleteValidationState: "error"
                 });
                 break;
             case "NO_INPUT_AFTER_LEMMATIZATION":
@@ -685,7 +690,8 @@ class RulePanel extends Component {
                         errorType: "Incorrect Input",
                         message: "The words used in the design rule are not compatible with CoreNLP library.",
                         alertType: "danger"
-                    }
+                    },
+                    autoCompleteValidationState: "error"
                 });
                 break;
             /**
@@ -737,7 +743,8 @@ class RulePanel extends Component {
                             errorType: "Grammar Error",
                             message: errorMessage,
                             alertType: "danger"
-                        }
+                        },
+                        autoCompleteValidationState: "error"
                     });
                 }
                 else
@@ -746,7 +753,8 @@ class RulePanel extends Component {
                             errorType: "error",
                             message: "",
                             alertType: "danger"
-                        }
+                        },
+                        autoCompleteValidationState: "error"
                     });
                 break;
         }
