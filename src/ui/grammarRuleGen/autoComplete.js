@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react';
-import CoreNLP, {Properties, Pipeline, ConnectorServer} from 'corenlp';
 import {constants} from "../constants";
 import {FormControl, FormGroup, ListGroup, ListGroupItem, Panel} from "react-bootstrap";
+import posTagger from 'wink-pos-tagger';
 
 class AutoComplete extends Component {
     constructor(props) {
@@ -957,43 +957,25 @@ class AutoComplete extends Component {
     /**
      * lemmatize the words in the input string
      * @param input
-     * @returns {Promise.<String>}
+     * @returns
      */
     lemmatizeWords(input) {
+        let tagger = posTagger();
+        let pos = tagger.tagSentence(input);
         let lemmatized = [];
-        const connector = new ConnectorServer({dsn: 'http://localhost:9000'});
-        const props = new Properties({
-            annotators: 'tokenize,ssplit,pos,lemma,ner,parse',
+        pos.forEach(node => {
+            if (node.pos !== "DT") {
+                if (node.tag === "quoted_phrase" || !node.lemma)
+                    lemmatized.push(node.value);
+                else
+                    lemmatized.push(node.lemma);
+            }
         });
-        const pipeline = new Pipeline(props, 'English', connector);
-        const sent = new CoreNLP.simple.Sentence(input);
-        return pipeline.annotate(sent)
-            .then(sent => {
-                const tree = CoreNLP.util.Tree.fromSentence(sent);
-                tree.visitLeaves(node => {
-                    if (node.pos() !== "DT")
-                        lemmatized.push(
-                            node.token().index() > 2 && sent.word(node.token().index() - 2) === '``' ?
-                                node.word() : node.token().lemma());
-                });
 
-                let index = lemmatized.indexOf("``");
-                while (index !== -1) {
-                    if (index !== -1) lemmatized.splice(index, 1);
-                    index = lemmatized.indexOf("``");
-                }
-                index = lemmatized.indexOf("''");
-                while (index !== -1) {
-                    if (index !== -1) lemmatized.splice(index, 1);
-                    index = lemmatized.indexOf("''");
-                }
-                let str = AutoComplete.stringReplaceAll(AutoComplete.stringReplaceAll(lemmatized.join(" "),"-lrb-", "("),"-rrb-", ")");
-                return Promise.resolve(str);
-            })
-            .catch(err => {
-                console.log('err', err);
-                return Promise.reject("");
-            });
+        let str = lemmatized.join(" ");
+        str = AutoComplete.stringReplaceAll(str, "''", "");
+        str = AutoComplete.stringReplaceAll(str, "`` ","" );
+        return str;
     }
 
     /**

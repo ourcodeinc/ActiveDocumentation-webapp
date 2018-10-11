@@ -1,6 +1,6 @@
 import antlr4 from 'antlr4/index';
-import CoreNLP, {Properties, Pipeline, ConnectorServer} from 'corenlp';
 import Traverse from '../grammarRuleGen/generateXpath';
+import posTagger from 'wink-pos-tagger';
 
 /**
  * verify the text entered in AutoComplete based on Grammar
@@ -33,44 +33,31 @@ const replacePhrase = (input) => {
  * lemmatization returns base form of the verbs, make letters lower case, and singular form of nouns
  * it takes some time in the first run due to loading libraries
  * @param input
- * @returns Promise
+ * @return
  */
 const lemmatize = (input) => {
 
+    let tagger = posTagger();
+    let pos = tagger.tagSentence(input);
     let lemmatized = [];
-
-    const connector = new ConnectorServer({dsn: 'http://localhost:9000'});
-    const props = new Properties({
-        annotators: 'tokenize,ssplit,pos,lemma,ner,parse',
+    pos.forEach(node => {
+        if (node.pos !== "DT") {
+            if (node.tag === "quoted_phrase" || !node.lemma)
+                lemmatized.push(node.value);
+            else
+                lemmatized.push(node.lemma);
+        }
     });
-    const pipeline = new Pipeline(props, 'English', connector);
-    const sent = new CoreNLP.simple.Sentence(input);
-    return pipeline.annotate(sent)
-        .then(sent => {
-            // console.log('parse', sent.parse()); // constituency parsing string representation
-            const tree = CoreNLP.util.Tree.fromSentence(sent);
-            // console.log(JSON.parse(tree.dump()));
-            tree.visitLeaves(node => {
-                if (node.pos() !== "DT")
-                    lemmatized.push(
-                        node.token().index() > 2 && sent.word(node.token().index() - 2) === '``' ?
-                            node.word() : node.token().lemma());
-            });
 
-            let str = lemmatized.join(" ");
-            str = stringReplaceAll(str, " ''", "\"");
-            str = stringReplaceAll(str, " and ", "  and "); // for extra spaces around and
-            str = stringReplaceAll(str, " or ", "  or "); // for extra spaces around or
-            str = stringReplaceAll(str, "`` ","\"" );
-            str = stringReplaceAll(str, "-lrb-","(" );
-            str = stringReplaceAll(str, "-rrb-",")" );
+    let str = lemmatized.join(" ");
+    str = stringReplaceAll(str, " ''", "\"");
+    str = stringReplaceAll(str, " and ", "  and "); // for extra spaces around and
+    str = stringReplaceAll(str, " or ", "  or "); // for extra spaces around or
+    str = stringReplaceAll(str, "`` ","\"" );
+    str = str.replace(/\( /g,"(" );
+    str = str.replace(/ \) /g,")" );
 
-            return Promise.resolve(str);
-        })
-        .catch(err => {
-            console.log('err', err);
-            return Promise.reject("")
-        });
+    return str
 };
 
 

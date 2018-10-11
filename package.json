@@ -14,7 +14,8 @@
     "react-scripts": "^1.1.4",
     "react-tooltip": "^3.8.4",
     "redux": "^4.0.0",
-    "react-overlays": "^0.8.3"
+    "react-overlays": "^0.8.3",
+    "wink-pos-tagger": "^1.5.0"
   },
   "scripts": {
     "start": "PORT=3000 react-scripts start",
