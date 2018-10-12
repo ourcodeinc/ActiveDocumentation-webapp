@@ -3,19 +3,14 @@
  */
 
 import React from 'react';
-import '../../App.css';
 
-import {Dropdown, MenuItem} from 'react-bootstrap';
-import MdAddBox from 'react-icons/lib/md/add-box';
 import TiDelete from 'react-icons/lib/ti/delete';
 
-import {constants} from '../constants';
-
+import {GuiConstants} from './guiConstants';
 import ExpressionFragment from "./expressionFragment";
 import SrcMLFragment from "./srcMLFragment";
-import CustomToggle from "./customToggle";
-import CustomMenu from "./customMenu";
 import ChainCallFragment from "./chainCallFragment";
+import {CustomAddDropDown} from "./customAddDropdown";
 
 class CallFragment extends React.Component {
 
@@ -61,18 +56,18 @@ class CallFragment extends React.Component {
                 {this.state.children[group].map((cons, i) => {
                     return (
                         <div className={"rowItem"} key={i}>
-                            {(constants.code_fragment["call"][group][cons["key"]]["pre"] === "") ? "" :
+                            {(GuiConstants.code_fragment["call"][group][cons["key"]]["pre"] === "") ? "" :
                                 <div className={"rowItem inlineText"}>
-                                    <b>{constants.code_fragment["call"][group][cons["key"]]["pre"]}</b>
+                                    <b>{GuiConstants.code_fragment["call"][group][cons["key"]]["pre"]}</b>
                                 </div>
                             }
                             <div className={group === "within" ? "" : "rowItem"}
                                  style={(this.state.children[group][i].value.type === 'text') ? {paddingTop: "5px"} : {}}>
                                 {this.switchMethod(group, i, cons)}
                             </div>
-                            {(constants.code_fragment["call"][group][cons["key"]]["post"] === "") ? "" :
+                            {(GuiConstants.code_fragment["call"][group][cons["key"]]["post"] === "") ? "" :
                                 <div className={group === "within" ? "inlineText" : "rowItem inlineText"}>
-                                    <b>{constants.code_fragment["call"][group][cons["key"]]["post"]}</b>
+                                    <b>{GuiConstants.code_fragment["call"][group][cons["key"]]["post"]}</b>
                                 </div>
                             }
                         </div>
@@ -80,32 +75,21 @@ class CallFragment extends React.Component {
                 })}
 
                 {(group !== "before" || this.state.children["before"].length === 0) ?
-                    <Dropdown id="dropdown-size-medium">
-                        <CustomToggle bsRole="toggle">
-                            <MdAddBox size={25} className={"mdAddBox"}/>
-                        </CustomToggle>
-                        <CustomMenu bsRole="menu">
-                            {Object.keys(constants.code_fragment["call"][group]).map((key, i) => {
-                                return (
-                                    <MenuItem eventKey={key} key={i}
-                                              onSelect={(evt) => {
-                                                  this.state.children[group].push({
-                                                      key: evt,
-                                                      value: constants.code_fragment["call"][group][evt],
-                                                      target: "",
-                                                      children: JSON.parse(JSON.stringify(constants.state_children)),
-                                                      xpath: constants.code_fragment["call"][group][evt]["xpath"]
-                                                  });
-                                                  this.sendDataBack();
-                                                  this.forceUpdate();
-                                              }}
-                                    >{constants.code_fragment["call"][group][key].name}
-                                    </MenuItem>);
-                            })}
-                        </CustomMenu>
-                    </Dropdown>
+                    <CustomAddDropDown
+                        menuItemsText={Object.keys(GuiConstants.code_fragment["call"][group]).map(key => GuiConstants.code_fragment["call"][group][key].name)}
+                        menuItemsEvent={Object.keys(GuiConstants.code_fragment["call"][group]).map(key => key)}
+                        onSelectFunction={(evt) => {
+                            this.state.children[group].push({
+                                key: evt,
+                                value: GuiConstants.code_fragment["call"][group][evt],
+                                target: "",
+                                children: JSON.parse(JSON.stringify(GuiConstants.state_children)),
+                                xpath: GuiConstants.code_fragment["call"][group][evt]["xpath"]
+                            });
+                            this.sendDataBack();
+                            this.forceUpdate();
+                        }}/>
                     : ""}
-
             </div>
         )
     }

@@ -11,12 +11,12 @@ import {FormControl, Label, Button, FormGroup, ButtonToolbar} from 'react-bootst
 import {Row, Col} from 'react-bootstrap';
 import TiDelete from 'react-icons/lib/ti/delete';
 
-// import XPathGenerator from './ruleGen/xPathGenerator';
+//import RuleGeneratorGui from './ruleGenerationGUI/ruleGeneratorGui';
 import Utilities from "../core/utilities";
 import {constants} from "./constants";
-import AutoComplete from "./grammarRuleGen/autoComplete";
+import AutoComplete from "./ruleGenerationText/autoComplete";
 import {submitNewRule} from "../actions";
-import verifyTextBasedOnGrammar from "./grammarRuleGen/languageProcessing";
+import verifyTextBasedOnGrammar from "./ruleGenerationText/languageProcessing";
 
 
 class GenerateRule extends Component {
@@ -40,7 +40,7 @@ class GenerateRule extends Component {
         return (
             <div>
                 {/*{this.renderForm()}*/}
-                {/*<XPathGenerator key={new Date()} state={this.state}/>*/}
+                {/*<RuleGeneratorGui key={new Date()} state={this.state}/>*/}
                 {this.state.error === "" ? null : !this.state.showAlert ? null : (
                     <Alert bsStyle={this.state.error.alertType}>
                         <h4>{this.state.error.errorType}</h4>

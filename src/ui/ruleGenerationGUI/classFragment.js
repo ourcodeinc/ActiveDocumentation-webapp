@@ -3,20 +3,14 @@
  */
 
 import React from 'react';
-import '../../App.css';
 
-import {Dropdown, DropdownButton, MenuItem} from 'react-bootstrap';
-// import MdAddCircleOutline from 'react-icons/lib/md/add-circle-outline';
-// import MdAddCircle from 'react-icons/lib/md/add-circle';
-import MdAddBox from 'react-icons/lib/md/add-box';
 import TiDelete from 'react-icons/lib/ti/delete';
 
-import {constants} from '../constants';
+import {GuiConstants} from './guiConstants';
 import FunctionFragment from './functionFragment'
 import DeclarationFragment from "./declarationFragment";
 import AnnotationFragment from "./annotationFragment";
-import CustomToggle from "./customToggle";
-import CustomMenu from "./customMenu";
+import {CustomAddDropDown, CustomFollowDropDown} from "./customAddDropdown";
 
 
 class ClassFragment extends React.Component {
@@ -66,26 +60,23 @@ class ClassFragment extends React.Component {
         if (!this.state.children["follows"].hasOwnProperty("key"))
             return (
                 <div>
-                    <DropdownButton title={`follows`} className={this.state.target} id={"drop_down"}>
-                        {Object.keys(constants.code_fragment["class"]["follows"]).map((key, i) => {
-                            return (
-                                <MenuItem eventKey={key} key={i}
-                                          onSelect={(evt) => {
-                                              const children = this.state.children;
-                                              children.follows = {
-                                                  key: evt,
-                                                  value: constants.code_fragment["class"]["follows"][evt],
-                                                  target: this.state.target !== "" ? this.state.target : "default",
-                                                  children: JSON.parse(JSON.stringify(constants.state_children)),
-                                                  xpath: constants.code_fragment["class"]["follows"][evt].xpath
-                                              };
-                                              this.setState({children});
-                                              this.sendDataBack();
-                                          }}
-                                >{constants.code_fragment["class"]["follows"][key].name}
-                                </MenuItem>);
-                        })}
-                    </DropdownButton>
+                    <CustomFollowDropDown
+                        menuItemsText={Object.keys(GuiConstants.code_fragment["class"]["follows"]).map(key => GuiConstants.code_fragment["class"]["follows"][key].name)}
+                        menuItemsEvent={Object.keys(GuiConstants.code_fragment["class"]["follows"]).map(key => key)}
+                        onSelectFunction={(evt) => {
+                            const children = this.state.children;
+                            children.follows = {
+                                key: evt,
+                                value: GuiConstants.code_fragment["class"]["follows"][evt],
+                                target: this.state.target !== "" ? this.state.target : "default",
+                                children: JSON.parse(JSON.stringify(GuiConstants.state_children)),
+                                xpath: GuiConstants.code_fragment["class"]["follows"][evt].xpath
+                            };
+                            this.setState({children});
+                            this.sendDataBack();
+                        }}
+                    />
+
                 </div>
             );
 
@@ -167,50 +158,38 @@ class ClassFragment extends React.Component {
                 {this.state.children[group].map((cons, i) => {
                     return (
                         <div className={group === "within" ? "" : "rowItem"} key={i}>
-                            {(constants.code_fragment["class"][group][cons["key"]]["pre"] === "") ? "" :
+                            {(GuiConstants.code_fragment["class"][group][cons["key"]]["pre"] === "") ? "" :
                                 <div className={"rowItem inlineText"}>
-                                    <b>{constants.code_fragment["class"][group][cons["key"]]["pre"]}</b>
+                                    <b>{GuiConstants.code_fragment["class"][group][cons["key"]]["pre"]}</b>
                                 </div>
                             }
                             <div
                                 className={group === "within" || group === "top" ? "" : "rowItem"}>
                                 {this.switchMethod(group, i, cons)}
                             </div>
-                            {(constants.code_fragment["class"][group][cons["key"]]["post"] === "") ? "" :
+                            {(GuiConstants.code_fragment["class"][group][cons["key"]]["post"] === "") ? "" :
                                 <div className={group === "within" ? "inlineText" : "rowItem inlineText"}>
-                                    <b>{constants.code_fragment["class"][group][cons["key"]]["post"]}</b>
+                                    <b>{GuiConstants.code_fragment["class"][group][cons["key"]]["post"]}</b>
                                 </div>
                             }
                         </div>
                     )
                 })}
 
-
-                <Dropdown id="dropdown-custom-menu">
-                    <CustomToggle bsRole="toggle">
-                        <MdAddBox size={25} className={"mdAddBox"}/>
-                    </CustomToggle>
-
-                    <CustomMenu bsRole="menu">
-                        {Object.keys(constants.code_fragment["class"][group]).map((key, i) => {
-                            return (
-                                <MenuItem eventKey={key} key={i}
-                                          onSelect={(evt) => {
-                                              this.state.children[group].push({
-                                                  key: evt,
-                                                  value: constants.code_fragment["class"][group][evt],
-                                                  target: "",//evt !== "HAS_ANNOTATION" ? "default" : "",
-                                                  children: JSON.parse(JSON.stringify(constants.state_children)),
-                                                  xpath: constants.code_fragment["class"][group][evt]["xpath"]
-                                              });
-                                              this.sendDataBack();
-                                              this.forceUpdate();
-                                          }}
-                                >{constants.code_fragment["class"][group][key].name}
-                                </MenuItem>);
-                        })}
-                    </CustomMenu>
-                </Dropdown>
+                <CustomAddDropDown
+                    menuItemsText={Object.keys(GuiConstants.code_fragment["class"][group]).map(key => GuiConstants.code_fragment["class"][group][key].name)}
+                    menuItemsEvent={Object.keys(GuiConstants.code_fragment["class"][group]).map(key => key)}
+                    onSelectFunction={(evt) => {
+                        this.state.children[group].push({
+                            key: evt,
+                            value: GuiConstants.code_fragment["class"][group][evt],
+                            target: "",//evt !== "HAS_ANNOTATION" ? "default" : "",
+                            children: JSON.parse(JSON.stringify(GuiConstants.state_children)),
+                            xpath: GuiConstants.code_fragment["class"][group][evt]["xpath"]
+                        });
+                        this.sendDataBack();
+                        this.forceUpdate();
+                    }}/>
             </div>
         )
     }

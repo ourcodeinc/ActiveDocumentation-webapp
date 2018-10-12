@@ -122,7 +122,7 @@ This system is using ANTLR4 and Simple CoreNLP.
 * Run `gradle generateParser`
 
 
-### CoreNLP
+### CoreNLP (replaced with `wink-pos-tagger` package)
 * The CoreNLP package is a node package: [https://github.com/gerardobort/node-corenlp](https://github.com/gerardobort/node-corenlp)
 * There might be an error for `request-promise-native` in `node_modules/corenlp/dist/connector/connector-server.js`. change the line for `require('request-promise-native')` to `require('<full path>/node_modules/request-promise-native/lib/rp.js')`
 * Download the CoreNLP Java sourcecode from the original website: [https://stanfordnlp.github.io/CoreNLP/download.html](https://stanfordnlp.github.io/CoreNLP/download.html)
@@ -147,4 +147,4 @@ the script should also be changed accordingly.
 Three ports are used for this application:
 * 8887 for websocket
 * 3000 for application server
-* 9000 for CoreNLP
+* 9000 for CoreNLP (not used currently)

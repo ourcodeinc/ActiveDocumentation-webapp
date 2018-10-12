@@ -3,18 +3,14 @@
  */
 
 import React from 'react';
-import '../../App.css';
 
-import {Dropdown, MenuItem, Row} from 'react-bootstrap';
-import MdAddBox from 'react-icons/lib/md/add-box';
+import {Row} from 'react-bootstrap';
 import TiDelete from 'react-icons/lib/ti/delete';
 
-import {constants} from '../constants';
-
+import {GuiConstants} from './guiConstants';
 import SrcMLFragment from "./srcMLFragment";
 import CallFragment from "./chainCallFragment";
-import CustomToggle from "./customToggle";
-import CustomMenu from "./customMenu";
+import {CustomAddDropDown} from "./customAddDropdown";
 
 class ExpressionFragment extends React.Component {
 
@@ -65,17 +61,17 @@ class ExpressionFragment extends React.Component {
                 {this.state.children[group].map((cons, i) => {
                     return (
                         <div className={"rowItem"} key={i}>
-                            {(constants.code_fragment["expression"][group][cons["key"]]["pre"] === "") ? "" :
+                            {(GuiConstants.code_fragment["expression"][group][cons["key"]]["pre"] === "") ? "" :
                                 <div className={"rowItem inlineText"}>
-                                    <b>{constants.code_fragment["expression"][group][cons["key"]]["pre"]}</b>
+                                    <b>{GuiConstants.code_fragment["expression"][group][cons["key"]]["pre"]}</b>
                                 </div>
                             }
                             <div className={group === "within" ? "" : "rowItem"}>
                                 {this.switchMethod(group, i, cons)}
                             </div>
-                            {(constants.code_fragment["expression"][group][cons["key"]]["post"] === "") ? "" :
+                            {(GuiConstants.code_fragment["expression"][group][cons["key"]]["post"] === "") ? "" :
                                 <div className={group === "within" ? "inlineText" : "rowItem inlineText"}>
-                                    <b>{constants.code_fragment["expression"][group][cons["key"]]["post"]}</b>
+                                    <b>{GuiConstants.code_fragment["expression"][group][cons["key"]]["post"]}</b>
                                 </div>
                             }
                         </div>
@@ -84,31 +80,20 @@ class ExpressionFragment extends React.Component {
 
                 {(() => {
                     if (this.state.children[group].length === 0) return (
-                        <Dropdown id="dropdown-size-medium">
-                            <CustomToggle bsRole="toggle">
-                                <MdAddBox size={25} className={"mdAddBox"}/>
-                            </CustomToggle>
-                            <CustomMenu bsRole="menu">
-                                {Object.keys(constants.code_fragment["expression"][group]).map((key, i) => {
-                                    return (
-                                        <MenuItem eventKey={key} key={i}
-                                                  onSelect={(evt) => {
-                                                      this.state.children[group].push({
-                                                          key: evt,
-                                                          value: constants.code_fragment["expression"][group][evt],
-                                                          target: "",
-                                                          children: JSON.parse(JSON.stringify(constants.state_children)),
-                                                          xpath: constants.code_fragment["expression"][group][evt]["xpath"]
-                                                      });
-                                                      this.sendDataBack();
-                                                      this.forceUpdate();
-                                                  }}
-                                        >{constants.code_fragment["expression"][group][key].name}
-                                        </MenuItem>);
-                                })}
-                            </CustomMenu>
-                        </Dropdown>)
-
+                        <CustomAddDropDown
+                            menuItemsText={Object.keys(GuiConstants.code_fragment["expression"][group]).map(key => GuiConstants.code_fragment["expression"][group][key].name)}
+                            menuItemsEvent={Object.keys(GuiConstants.code_fragment["expression"][group]).map(key => key)}
+                            onSelectFunction={(evt) => {
+                                this.state.children[group].push({
+                                    key: evt,
+                                    value: GuiConstants.code_fragment["expression"][group][evt],
+                                    target: "",
+                                    children: JSON.parse(JSON.stringify(GuiConstants.state_children)),
+                                    xpath: GuiConstants.code_fragment["expression"][group][evt]["xpath"]
+                                });
+                                this.sendDataBack();
+                                this.forceUpdate();
+                            }}/>)
                 })()}
             </div>
         )

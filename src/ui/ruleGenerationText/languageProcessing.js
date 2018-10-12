@@ -1,6 +1,8 @@
 import antlr4 from 'antlr4/index';
-import Traverse from '../grammarRuleGen/generateXpath';
 import posTagger from 'wink-pos-tagger';
+
+import Traverse from './generateXpath';
+
 
 /**
  * verify the text entered in AutoComplete based on Grammar
@@ -33,7 +35,7 @@ const replacePhrase = (input) => {
  * lemmatization returns base form of the verbs, make letters lower case, and singular form of nouns
  * it takes some time in the first run due to loading libraries
  * @param input
- * @return
+ * @returns
  */
 const lemmatize = (input) => {
 
@@ -79,8 +81,8 @@ const stringReplaceAll = (str, search, replacement) => {
  */
 const antlr = (input) => {
 
-    let MyGrammarLexerModule = require('../../generated-parser/myGrammarLexer');
-    let MyGrammarParserModule = require('../../generated-parser/myGrammarParser');
+    let MyGrammarLexerModule = require('../generated-parser/myGrammarLexer');
+    let MyGrammarParserModule = require('../generated-parser/myGrammarParser');
 
     let ErrorListener = function(errors) {
         antlr4.error.ErrorListener.call(this);

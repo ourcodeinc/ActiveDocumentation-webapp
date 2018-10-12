@@ -1,5 +1,6 @@
 import React, {Component, Fragment} from 'react';
-import {constants} from "../constants";
+import CoreNLP, {Properties, Pipeline, ConnectorServer} from 'corenlp';
+import {TextConstants} from "./textConstant";
 import {FormControl, FormGroup, ListGroup, ListGroupItem, Panel} from "react-bootstrap";
 import posTagger from 'wink-pos-tagger';
 
@@ -58,7 +59,7 @@ class AutoComplete extends Component {
                                             <Panel.Title componentClass="h3">Templates</Panel.Title>
                                         </Panel.Heading>
                                         <ListGroup>
-                                            {constants.templates.map((word, i) =>
+                                            {TextConstants.templates.map((word, i) =>
                                                 (<ListGroupItem key={i}>{word}</ListGroupItem>)
                                             )}
                                         </ListGroup>
@@ -112,6 +113,7 @@ class AutoComplete extends Component {
             let focus = nextProps["caretPosition"];
             this.grammarSuggestion(this.state.myText, -1, focus).then(data =>
                 this.setState({
+                        myText: nextProps.defaultValue === "" ? "" : this.state.myText,
                         selectionStart: -1,
                         selectionEnd: focus,
                         grammarSuggestion: data,
@@ -121,6 +123,8 @@ class AutoComplete extends Component {
                 )
             );
         }
+        else
+            this.setState({myText: nextProps.defaultValue === "" ? "" : this.state.myText})
     }
 
     /**
@@ -265,7 +269,7 @@ class AutoComplete extends Component {
         if (myText === "")
             return [];
 
-        // let grammarWords = constants.keywords;
+        // let grammarWords = TextConstants.keywords;
         let results = [];
 
         // selection
@@ -311,7 +315,7 @@ class AutoComplete extends Component {
                 lastWord = "include";
 
             let isConnectorWord = ["where", "have", "must", "be", "equal", "to", "not", "and", "or", "include", "of", "(", ")"].indexOf(lastWord) !== -1;
-            let isKeyword = constants.keywords.indexOf(lastWord) !== -1;
+            let isKeyword = TextConstants.keywords.indexOf(lastWord) !== -1;
 
             // if the last word is random letters!
             if (!isConnectorWord && !isKeyword) lastWord = wordsArray.length >= 2 ? wordsArray[wordsArray.length - 2] : lastWord;
@@ -319,7 +323,7 @@ class AutoComplete extends Component {
             let isSecondWord = lastWordIndex !== (wordsArray.length - 1);
 
 
-            let xWord; // must be in constants.keywords
+            let xWord; // must be in TextConstants.keywords
             let lastWhereIndex = wordsArray.lastIndexOf("where");
             let beforeSuggText = "", suggText = "",  infoText = "";
 
@@ -344,7 +348,7 @@ class AutoComplete extends Component {
                     if (wordsArray[index] === "expression" && wordsArray[index + 1] === "statement") return "expression statement";
                     if (wordsArray[index] === "initial" && wordsArray[index + 1] === "value") return "initial value";
                 }
-                if (constants.keywords.indexOf(wordsArray[index])!== -1) return wordsArray[index];
+                if (TextConstants.keywords.indexOf(wordsArray[index])!== -1) return wordsArray[index];
                 return "";
             }
 
@@ -355,7 +359,7 @@ class AutoComplete extends Component {
                     xWord = selectXWord(lastWordIndex - 1);
                     if (xWord === "") return [];
 
-                    let hasWhereHaveClause = !!constants.autoComplete_suggestion[xWord].whereHaveClause;
+                    let hasWhereHaveClause = !!TextConstants.autoComplete_suggestion[xWord].whereHaveClause;
 
                     if(hasWhereHaveClause) {
                         if (isSecondWord) {
@@ -404,7 +408,7 @@ class AutoComplete extends Component {
                         xWord = selectXWord(lastWhereIndex - 1);
                         if (xWord === "") return [];
 
-                        if (!constants.autoComplete_suggestion[xWord].whereHaveClause) return [];
+                        if (!TextConstants.autoComplete_suggestion[xWord].whereHaveClause) return [];
 
                         if (isSecondWord) {
                             beforeSuggText = "";
@@ -516,7 +520,7 @@ class AutoComplete extends Component {
 
                 case "not":
                     if (lastWordIndex < 1) return [];
-                    xWord = constants.keywords.includes(selectXWord(lastWordIndex - 1)) ? selectXWord(lastWordIndex - 1) + " " : "";
+                    xWord = TextConstants.keywords.includes(selectXWord(lastWordIndex - 1)) ? selectXWord(lastWordIndex - 1) + " " : "";
                     suggText = (isConnectorWord && isMiddleOfWord) ? "not include" : "include";
                     infoText = (isConnectorWord && isMiddleOfWord) ? xWord : xWord + "not";
                     results.push(AutoComplete.createGrammarSuggestion(suggText, infoText));
@@ -661,20 +665,20 @@ class AutoComplete extends Component {
                     break;
 
                 case "":
-                    results = results.concat(constants.keywords
+                    results = results.concat(TextConstants.keywords
                         .map(d => AutoComplete.createGrammarSuggestion(d, "")));
                     break;
 
                 default:
                     xWord = selectXWord(lastWordIndex) === "" ? lastWord : selectXWord(lastWordIndex);
-                    constants.keywords
+                    TextConstants.keywords
                         .filter(d => d.indexOf(xWord) !== -1)
                         .forEach(d => {
                             if(isMiddleOfWord && !isSecondWord) // still typing the keyword
                                 results.push(AutoComplete.createGrammarSuggestion(d, ""));
 
                             else {
-                                let hasWhereHaveClause = !!constants.autoComplete_suggestion[d].whereHaveClause;
+                                let hasWhereHaveClause = !!TextConstants.autoComplete_suggestion[d].whereHaveClause;
                                 suggText = (isMiddleOfWord) ?
                                     (isSecondWord ? "" : d + " ") + "where" + (hasWhereHaveClause ? " have" : "")
                                     : "where" + (hasWhereHaveClause ? " have" : "");
@@ -786,7 +790,7 @@ class AutoComplete extends Component {
         let results = [];
 
         let wordsArray = myText.slice(selectionStart === -1 ? 0 : selectionStart, selectionEnd).trim().split(" ");
-        let phraseIndexArrays = wordsArray.map(d => constants.phrase_hash.hasOwnProperty(d) ? constants.phrase_hash[d] : []);
+        let phraseIndexArrays = wordsArray.map(d => TextConstants.phrase_hash.hasOwnProperty(d) ? TextConstants.phrase_hash[d] : []);
         // trying to find the non-empty intersection of phrase indices for each word
         let intersection = [];
 
@@ -804,7 +808,7 @@ class AutoComplete extends Component {
             intersection = [...intersection];
             if (intersection.length === 0) continue;
             /* eslint-disable */
-            results = constants.defined_phrases.filter((d, i) => intersection.includes(i))
+            results = TextConstants.defined_phrases.filter((d, i) => intersection.includes(i))
                 .map(d => AutoComplete.createPhraseSuggestion(d["replaceWordWith"], cnt));
             /* eslint-enable */
         }
@@ -922,11 +926,11 @@ class AutoComplete extends Component {
      */
     whereSuggestionCreator(word, beforeSugText, infoText, doFilter, filterLetters) {
         let result = [];
-        if (constants.keywords.includes(word)) {
-            if (constants.autoComplete_suggestion[word].whereHaveClause)
-                result = constants.autoComplete_suggestion[word].whereHaveClause;
+        if (TextConstants.keywords.includes(word)) {
+            if (TextConstants.autoComplete_suggestion[word].whereHaveClause)
+                result = TextConstants.autoComplete_suggestion[word].whereHaveClause;
             else
-                result = constants.autoComplete_suggestion[word].whereClause;
+                result = TextConstants.autoComplete_suggestion[word].whereClause;
 
             // check if filtering makes no result, ignore it
             if (result.filter(d => !doFilter ? true : d.startsWith(filterLetters)).length !== 0)
@@ -946,8 +950,8 @@ class AutoComplete extends Component {
      * @returns {Array}
      */
     ofSuggestionCreator(word, beforeSugText, infoText, doFilter, filterLetters) {
-        if (constants.keywords.includes(word)) {
-            return constants.autoComplete_suggestion[word].ofClause
+        if (TextConstants.keywords.includes(word)) {
+            return TextConstants.autoComplete_suggestion[word].ofClause
                 .filter(d => !doFilter ? true : d.startsWith(filterLetters))
                 .map(d => AutoComplete.createGrammarSuggestion(beforeSugText + (beforeSugText !== "" ? " " : "") + d, infoText));
         }
@@ -957,8 +961,45 @@ class AutoComplete extends Component {
     /**
      * lemmatize the words in the input string
      * @param input
-     * @returns
+     * @returns {Promise.<String>}
      */
+    lemmatizeWords2(input) {
+        let lemmatized = [];
+        const connector = new ConnectorServer({dsn: 'http://localhost:9000'});
+        const props = new Properties({
+            annotators: 'tokenize,ssplit,pos,lemma,ner,parse',
+        });
+        const pipeline = new Pipeline(props, 'English', connector);
+        const sent = new CoreNLP.simple.Sentence(input);
+        return pipeline.annotate(sent)
+            .then(sent => {
+                const tree = CoreNLP.util.Tree.fromSentence(sent);
+                tree.visitLeaves(node => {
+                    if (node.pos() !== "DT")
+                        lemmatized.push(
+                            node.token().index() > 2 && sent.word(node.token().index() - 2) === '``' ?
+                                node.word() : node.token().lemma());
+                });
+
+                let index = lemmatized.indexOf("``");
+                while (index !== -1) {
+                    if (index !== -1) lemmatized.splice(index, 1);
+                    index = lemmatized.indexOf("``");
+                }
+                index = lemmatized.indexOf("''");
+                while (index !== -1) {
+                    if (index !== -1) lemmatized.splice(index, 1);
+                    index = lemmatized.indexOf("''");
+                }
+                let str = AutoComplete.stringReplaceAll(AutoComplete.stringReplaceAll(lemmatized.join(" "),"-lrb-", "("),"-rrb-", ")");
+                return Promise.resolve(str);
+            })
+            .catch(err => {
+                console.log('err', err);
+                return Promise.reject("");
+            });
+    }
+
     lemmatizeWords(input) {
         let tagger = posTagger();
         let pos = tagger.tagSentence(input);

@@ -3,20 +3,16 @@
  */
 
 import React from 'react';
-import '../../App.css';
 
-import {Dropdown, DropdownButton, MenuItem} from 'react-bootstrap';
 import TiDelete from 'react-icons/lib/ti/delete'
-import MdAddBox from 'react-icons/lib/md/add-box';
 
-import {constants} from '../constants';
+import {GuiConstants} from './guiConstants';
 import ExpressionFragment from "./expressionFragment";
 import DeclarationFragment from "./declarationFragment";
 import AnnotationFragment from "./annotationFragment";
 import CallFragment from "./chainCallFragment";
 import SrcMLFragment from "./srcMLFragment";
-import CustomToggle from "./customToggle";
-import CustomMenu from "./customMenu";
+import {CustomAddDropDown, CustomFollowDropDown} from "./customAddDropdown";
 
 
 class FunctionFragment extends React.Component {
@@ -86,26 +82,22 @@ class FunctionFragment extends React.Component {
         if (!this.state.children["follows"].hasOwnProperty("key"))
             return (
                 <div>
-                    <DropdownButton title={`follows`} id={"drop_down"} className={this.state.target}>
-                        {Object.keys(constants.code_fragment[this.props["category"]]["follows"]).map((key, i) => {
-                            return (
-                                <MenuItem eventKey={key} key={i}
-                                          onSelect={(evt) => {
-                                              const children = this.state.children;
-                                              children.follows = {
-                                                  key: evt,
-                                                  value: constants.code_fragment[this.props["category"]]["follows"][evt],
-                                                  target: this.state.target !== "" ? this.state.target : "default",
-                                                  children: JSON.parse(JSON.stringify(constants.state_children)),
-                                                  xpath: constants.code_fragment[this.props["category"]]["follows"][evt].xpath
-                                              };
-                                              this.setState({children});
-                                              this.sendDataBack();
-                                          }}
-                                >{constants.code_fragment[this.props["category"]]["follows"][key].name}
-                                </MenuItem>);
-                        })}
-                    </DropdownButton>
+                    <CustomFollowDropDown
+                        menuItemsText={Object.keys(GuiConstants.code_fragment[this.props["category"]]["follows"]).map(key => GuiConstants.code_fragment[this.props["category"]]["follows"][key].name)}
+                        menuItemsEvent={Object.keys(GuiConstants.code_fragment[this.props["category"]]["follows"]).map(key => key)}
+                        onSelectFunction={(evt) => {
+                            const children = this.state.children;
+                            children.follows = {
+                                key: evt,
+                                value: GuiConstants.code_fragment[this.props["category"]]["follows"][evt],
+                                target: this.state.target !== "" ? this.state.target : "default",
+                                children: JSON.parse(JSON.stringify(GuiConstants.state_children)),
+                                xpath: GuiConstants.code_fragment[this.props["category"]]["follows"][evt].xpath
+                            };
+                            this.setState({children});
+                            this.sendDataBack();
+                        }}
+                    />
                 </div>
             );
 
@@ -207,48 +199,37 @@ class FunctionFragment extends React.Component {
                 {this.state.children[group].map((cons, i) => {
                     return (
                         <div className={group === "within" ? "row" : "rowItem"} style={{margin: "0"}} key={i}>
-                            {(constants.code_fragment[this.props["category"]][group][cons["key"]]["pre"] === "") ? "" :
+                            {(GuiConstants.code_fragment[this.props["category"]][group][cons["key"]]["pre"] === "") ? "" :
                                 <div className={"rowItem inlineText"}>
-                                    <b>{constants.code_fragment[this.props["category"]][group][cons["key"]]["pre"]}</b>
+                                    <b>{GuiConstants.code_fragment[this.props["category"]][group][cons["key"]]["pre"]}</b>
                                 </div>
                             }
                             <div className={group === "within" ? "" : "rowItem"}>
                                 {this.switchMethod(group, i, cons)}
                             </div>
-                            {(constants.code_fragment[this.props["category"]][group][cons["key"]]["post"] === "") ? "" :
+                            {(GuiConstants.code_fragment[this.props["category"]][group][cons["key"]]["post"] === "") ? "" :
                                 <div className={group === "within" ? "inlineText" : "rowItem inlineText"}>
-                                    <b>{constants.code_fragment[this.props["category"]][group][cons["key"]]["post"]}</b>
+                                    <b>{GuiConstants.code_fragment[this.props["category"]][group][cons["key"]]["post"]}</b>
                                 </div>
                             }
                         </div>
                     )
                 })}
 
-                <Dropdown id="dropdown-custom-menu">
-                    <CustomToggle bsRole="toggle">
-                        <MdAddBox size={25} className={"mdAddBox"}/>
-                    </CustomToggle>
-
-                    <CustomMenu bsRole="menu">
-                        {Object.keys(constants.code_fragment[this.props["category"]][group]).map((key, i) => {
-                            return (
-                                <MenuItem eventKey={key} key={i}
-                                          onSelect={(evt) => {
-                                              this.state.children[group].push({
-                                                  key: evt,
-                                                  value: constants.code_fragment[this.props["category"]][group][evt],
-                                                  target: "",//"default",
-                                                  children: JSON.parse(JSON.stringify(constants.state_children)),
-                                                  xpath: constants.code_fragment[this.props["category"]][group][evt]["xpath"]
-                                              });
-                                              this.sendDataBack();
-                                              this.forceUpdate();
-                                          }}
-                                >{constants.code_fragment[this.props["category"]][group][key].name}
-                                </MenuItem>);
-                        })}
-                    </CustomMenu>
-                </Dropdown>
+                <CustomAddDropDown
+                    menuItemsText={Object.keys(GuiConstants.code_fragment[this.props["category"]][group]).map(key => GuiConstants.code_fragment[this.props["category"]][group][key].name)}
+                    menuItemsEvent={Object.keys(GuiConstants.code_fragment[this.props["category"]][group]).map(key => key)}
+                    onSelectFunction={(evt) => {
+                        this.state.children[group].push({
+                            key: evt,
+                            value: GuiConstants.code_fragment[this.props["category"]][group][evt],
+                            target: "",//"default",
+                            children: JSON.parse(JSON.stringify(GuiConstants.state_children)),
+                            xpath: GuiConstants.code_fragment[this.props["category"]][group][evt]["xpath"]
+                        });
+                        this.sendDataBack();
+                        this.forceUpdate();
+                    }}/>
             </div>
         )
     }

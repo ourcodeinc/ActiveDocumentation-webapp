@@ -3,21 +3,13 @@
  */
 
 import React from 'react';
-import '../../App.css';
 
 import {Button, DropdownButton, MenuItem} from 'react-bootstrap';
 import MdDelete from 'react-icons/lib/md/delete';
-// import MdAddBox from 'react-icons/lib/md/add-box';
 import TiDelete from 'react-icons/lib/ti/delete';
 
 import Utilities from "../../core/utilities";
-import {constants} from '../constants';
-
-// import CustomToggle from "./customToggle";
-// import CustomMenu from "./customMenu";
-
-// import * as d3 from "d3";
-// import PubSub from 'pubsub-js';
+import {GuiConstants} from './guiConstants';
 
 
 class SrcMLFragment extends React.Component {
@@ -52,7 +44,7 @@ class SrcMLFragment extends React.Component {
                                                  key: "expr",
                                                  value: "",
                                                  target: this.state.target,
-                                                 children: JSON.parse(JSON.stringify(constants.state_children)),
+                                                 children: JSON.parse(JSON.stringify(GuiConstants.state_children)),
                                                  xpath: ""
                                              });
                                          children["within"][0].value = e.target.value;
@@ -184,22 +176,22 @@ class SrcMLFragment extends React.Component {
             return (
                 <div>
                     <DropdownButton title={`follows`} id={"drop_down"} className={this.state.target}>
-                        {Object.keys(constants.code_fragment["expression"]["follows"]).map((key, i) => {
+                        {Object.keys(GuiConstants.code_fragment["expression"]["follows"]).map((key, i) => {
                             return (
                                 <MenuItem eventKey={key} key={i}
                                           onSelect={(evt) => {
                                               const children = this.state.children;
                                               children.follows = {
                                                   key: evt,
-                                                  value: constants.code_fragment["expression"]["follows"][evt],
+                                                  value: GuiConstants.code_fragment["expression"]["follows"][evt],
                                                   target: this.state.target,
-                                                  children: JSON.parse(JSON.stringify(constants.state_children)),
-                                                  xpath: constants.code_fragment["expression"]["follows"][evt].xpath
+                                                  children: JSON.parse(JSON.stringify(GuiConstants.state_children)),
+                                                  xpath: GuiConstants.code_fragment["expression"]["follows"][evt].xpath
                                               };
                                               this.setState({children});
                                               this.sendDataBack();
                                           }}
-                                >{constants.code_fragment["expression"]["follows"][key].name}
+                                >{GuiConstants.code_fragment["expression"]["follows"][key].name}
                                 </MenuItem>);
                         })}
                     </DropdownButton>

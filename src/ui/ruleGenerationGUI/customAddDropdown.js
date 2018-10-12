@@ -2,22 +2,23 @@
  * Created by saharmehrpour on 9/17/18.
  */
 
-import React, {Component, Fragment} from 'react';
+import React, {Component} from 'react';
 
-import {MenuItem, Dropdown} from 'react-bootstrap';
+import {MenuItem, Dropdown, DropdownButton} from 'react-bootstrap';
 import MdAddBox from 'react-icons/lib/md/add-box';
 import {RootCloseWrapper} from "react-overlays";
-import {FaTag} from "react-icons/lib/fa/index";
 
-class CustomDropdown extends Component {
+
+export class CustomAddDropDown extends Component {
     constructor(props) {
         super(props);
 
-        if (!props.menuItems || !props.onSelectFunction)
-            return new Error(`'menuItems' and 'onSelectFunction' are required in props`);
+        if (!props.menuItemsText || !props.onSelectFunction || !props.menuItemsEvent)
+            console.error(`'menuItemsEvent', 'menuItemsText' and 'onSelectFunction' are required in props`);
 
         this.state = {
-            menuItems: props.menuItems,
+            menuItemsText: props.menuItemsText,
+            menuItemsEvent: props.menuItemsEvent,
             onSelectFunction: props.onSelectFunction,
             id: props.id ? props.id : "dropdown-custom-menu",
             open: false
@@ -30,14 +31,13 @@ class CustomDropdown extends Component {
                 <Dropdown id={this.state.id} open={this.state.open}
                           onToggle={() => this.setState({open: !this.state.open})}>
                     <CustomToggle bsRole="toggle">
-                        <FaTag size={25} className={"faTag"}/>
+                        <MdAddBox size={25} className={"mdAddBox"}/>
                     </CustomToggle>
                     <CustomMenu bsRole="menu">
-                        {this.state.menuItems.map((el, i) =>
+                        {this.state.menuItemsEvent.map((el, i) =>
                             (<MenuItem eventKey={el} key={i}
                                        onSelect={this.state.onSelectFunction}
-                            >{(() => el !== "New Tag" ? el :
-                                <Fragment><MdAddBox size={20} className={"mdAddBox"}/> {el}</Fragment>)()}
+                            > {this.state.menuItemsText[i]}
                             </MenuItem>)
                         )}
                     </CustomMenu>
@@ -48,7 +48,8 @@ class CustomDropdown extends Component {
 
     componentWillReceiveProps(nextProps) {
         this.setState({
-            menuItems: nextProps.menuItems,
+            menuItemsText: nextProps.menuItemsText,
+            menuItemsEvent: nextProps.menuItemsEvent,
             onSelectFunction: nextProps.onSelectFunction,
             id: nextProps.id ? nextProps.id : "dropdown-custom-menu"
         });
@@ -90,4 +91,33 @@ class CustomToggle extends Component {
     }
 }
 
-export default CustomDropdown;
+export class CustomFollowDropDown extends Component {
+
+    constructor(props) {
+        super(props);
+
+        if (!props.menuItemsText || !props.onSelectFunction || !props.menuItemsEvent)
+            console.error(`'menuItemsEvent', 'menuItemsText' and 'onSelectFunction' are required in props`);
+
+        this.state = {
+            menuItemsText: props.menuItemsText,
+            menuItemsEvent: props.menuItemsEvent,
+            onSelectFunction: props.onSelectFunction,
+            id: props.id ? props.id : "dropdown-follow",
+            open: false
+        }
+    }
+
+    render() {
+        return (<DropdownButton title={`follows`} className={this.state.target} id={this.state.id}>
+                {this.state.menuItemsEvent.map((el, i) => {
+                    return (
+                        <MenuItem eventKey={el} key={i}
+                                  onSelect={this.state.onSelectFunction}
+                        >{this.state.menuItemsText[i]}
+                        </MenuItem>);
+                })}
+            </DropdownButton>
+        )
+    }
+}

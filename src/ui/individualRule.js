@@ -14,7 +14,7 @@ import IndividualRuleList from './individualRuleList';
 // import Utilities from '../core/utilities';
 import {connect} from "react-redux";
 // import {updateRule} from "../actions";
-import AutoComplete from "./grammarRuleGen/autoComplete";
+import AutoComplete from "./ruleGenerationText/autoComplete";
 
 
 class IndividualRule extends Component {

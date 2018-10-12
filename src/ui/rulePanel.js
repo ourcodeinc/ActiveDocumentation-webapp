@@ -9,7 +9,7 @@ import ReactTooltip from 'react-tooltip'
 import Utilities from '../core/utilities';
 import {
     Tab, Tabs, Badge, FormGroup, ControlLabel, Label, Collapse, FormControl, DropdownButton,
-    MenuItem, Button, ButtonToolbar, Row, Col, HelpBlock, Alert, Modal
+    MenuItem, Button, ButtonToolbar, Row, Col, HelpBlock, Modal
 } from 'react-bootstrap';
 import FaCaretDown from 'react-icons/lib/fa/caret-down';
 import FaCaretUp from 'react-icons/lib/fa/caret-up';
@@ -18,11 +18,10 @@ import TiDelete from "react-icons/lib/ti/delete";
 import {FaQuestionCircle} from "react-icons/lib/fa/index";
 
 import {clearNewRuleForm, editNewRuleForm, ignoreFile, submitNewRule, submitNewTag, updateRule} from "../actions";
-import AutoComplete from "./grammarRuleGen/autoComplete";
-import verifyTextBasedOnGrammar from "./grammarRuleGen/languageProcessing";
+import RuleGenerationComponent from './ruleGenerationComponent';
 
 import {connect} from "react-redux";
-import CustomDropdown from "./customDropdown";
+import CustomDropDown from "./customDropdown";
 
 class RulePanel extends Component {
 
@@ -46,10 +45,7 @@ class RulePanel extends Component {
             className: "rulePanelDiv" + (this.newRuleRequest ? " edit-bg" : ""),
             activeTab: 0,
             editMode: !!props["newRule"], // default must be false unless a new rule is being generated,
-            showAlert: true,
-            error: "",
             showNewTagModal: false,
-            autoCompleteValidationState: null, // error, success, warning, null
             // ruleI states
             title: props.title,
             description: props.description,
@@ -167,43 +163,7 @@ class RulePanel extends Component {
                 {!this.state.editMode ? null : (
                     <div style={{paddingTop: '10px', clear: 'both'}}>
                         {this.renderFileConstraints()}
-                        {this.state.error === "" ? null : !this.state.showAlert ? null : (
-                            <Alert bsStyle={this.state.error.alertType}>
-                                <h4>{this.state.error.errorType}</h4>
-                                <h6>{this.state.error.message}</h6>
-                                <ButtonToolbar>
-                                    <Button onClick={() => this.setState({error: ""})}>Got it!</Button>
-                                    <Button onClick={() => this.setState({showAlert: false})}>Hide Alerts</Button>
-                                </ButtonToolbar>
-                            </Alert>
-                        )}
-                        {this.state.showAlert ? null : (
-                            <div style={{paddingBottom: "10px"}}>
-                                <Button onClick={() => this.setState({showAlert: true})}>Show Alerts</Button>
-                            </div>
-                        )}
-                        <FormGroup validationState={this.state.autoCompleteValidationState}>
-                        <AutoComplete ref={(autoComplete) => this.autoComplete = autoComplete}
-                                      defaultValue={this.state.autoCompleteText}
-                                      onBlur={() => {
-                                          if(this.shouldAlert) {
-                                              verifyTextBasedOnGrammar(this.state.autoCompleteText)
-                                                  .then((data) => this.setState({...data, ...{autoCompleteValidationState: null}}))
-                                                  .catch((error) => this.processLanguageProcessingError(error));
-                                              this.shouldAlert = false;
-                                          }
-                                      }}
-                                      onUpdateText={(text) => {
-                                          this.shouldAlert = true;
-                                          this.setState({autoCompleteText: text});
-                                          this.onEditNewRuleForm()
-                                      }}
-                                      caretPosition={(() => {
-                                          let newFocus = this.autoCompleteCaretPosition;
-                                          this.autoCompleteCaretPosition = -1;
-                                          return newFocus;
-                                      })()}/>
-                        </FormGroup>
+                        <RuleGenerationComponent/>
                         <div>
                             <ButtonToolbar className={"submitButtons"}>
                                 <Button bsStyle="primary"
@@ -214,7 +174,6 @@ class RulePanel extends Component {
                                     <Button bsStyle="default"
                                             onClick={() => {
                                                 this.props.onClearForm();
-                                                this.autoComplete.setState({myText: ""});
                                             }}>Clear Form</Button>}
                             </ButtonToolbar>
                         </div>
@@ -399,7 +358,7 @@ class RulePanel extends Component {
                                 </Label>
                             </div>)
                     })}
-                    <CustomDropdown
+                    <CustomDropDown
                         menuItems={this.props.tags.map(d => d.tagName).filter(d => this.state.ruleTags.indexOf(d) === -1).concat(["New Tag"])}
                         onSelectFunction={(evt) => {
                             if (evt === "New Tag") {
@@ -655,108 +614,6 @@ class RulePanel extends Component {
         else {
             this.props["cancelGeneratingNewRule"]();
             this.onEditNewRuleForm();
-        }
-    }
-
-    /**
-     * process the error received by running verifyTextBasedOnGrammar on autoComplete text
-     * @param error
-     */
-    processLanguageProcessingError(error) {
-        switch (error) {
-            case "EMPTY_FIELD":
-                this.setState({
-                    error: {
-                        errorType: "Empty Field",
-                        message: "The design rule input must not be empty.",
-                        alertType: "warning"
-                    },
-                    autoCompleteValidationState: "warning"
-                });
-                break;
-            case "NO_INPUT_AFTER_REPLACING_PHRASES":
-                this.setState({
-                    error: {
-                        errorType: "Incorrect Input",
-                        message: "The used phrases are incorrect. Try using different phrases.",
-                        alertType: "danger",
-                    },
-                    autoCompleteValidationState: "error"
-                });
-                break;
-            case "NO_INPUT_AFTER_LEMMATIZATION":
-                this.setState({
-                    error: {
-                        errorType: "Incorrect Input",
-                        message: "The words used in the design rule are not compatible with CoreNLP library.",
-                        alertType: "danger"
-                    },
-                    autoCompleteValidationState: "error"
-                });
-                break;
-            /**
-             * {grammarErrors: [{rec, sym, line, col, msg, e}]}
-             * or
-             * {xpathTraverseErrors: errorMessage}
-             */
-            default:
-                if (error.grammarErrors) {
-                    this.autoCompleteCaretPosition = error.grammarErrors[0].col;
-                    let errorMessage = "";
-
-                    for (let i = 0; i < error.grammarErrors.length; i++) {
-                        let grammarError = error.grammarErrors[i];
-                        try {
-                            let contextName = grammarError.e.ctx.constructor.name;
-                            switch (contextName) {
-                                case "DesignRuleContext":
-                                    errorMessage += "Use AutoComplete suggestions. ";
-                                    break;
-                                default:
-                                    errorMessage += "For defining conditions, you need to follow formats like: "
-                                        + "\"class where have name\", \"class where (( have name and have annotation ) or have function)\". ";
-
-                            }
-                        }
-                        catch (e) {
-                            console.error("no contextName", e);
-                        }
-
-                        try {
-                            let offendingText = grammarError.e.offendingToken.text;
-                            switch (offendingText) {
-                                case "<EOF>":
-                                    errorMessage += "The design rule is incomplete. You can use suggestions in  AutoComplete. ";
-                                    break;
-
-                                default:
-                                    errorMessage += "The use of word \"" + offendingText + "\" is not correct. Possible causes are missed words or typos"
-                            }
-                        }
-                        catch (e) {
-                            console.error("no offendingText", e);
-                        }
-                    }
-
-                    this.setState({
-                        error: {
-                            errorType: "Grammar Error",
-                            message: errorMessage,
-                            alertType: "danger"
-                        },
-                        autoCompleteValidationState: "error"
-                    });
-                }
-                else
-                    this.setState({
-                        error: {
-                            errorType: "error",
-                            message: "",
-                            alertType: "danger"
-                        },
-                        autoCompleteValidationState: "error"
-                    });
-                break;
         }
     }
 
