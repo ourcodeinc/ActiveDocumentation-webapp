@@ -4,12 +4,13 @@
 
 import React from 'react';
 
-import {Button, DropdownButton, MenuItem} from 'react-bootstrap';
+import {Button} from 'react-bootstrap';
 import MdDelete from 'react-icons/lib/md/delete';
 import TiDelete from 'react-icons/lib/ti/delete';
 
 import Utilities from "../../core/utilities";
 import {GuiConstants} from './guiConstants';
+import {CustomFollowDropDown} from "./customAddFollowDropDown";
 
 
 class SrcMLFragment extends React.Component {
@@ -25,13 +26,11 @@ class SrcMLFragment extends React.Component {
         this.state.text = "";
 
         this.waiting = false; // substitute for one-to-one send and receive
-        this.attachListener();
     }
 
     render() {
         return (
-            <div id={this.props["assignedId"]}
-                 className={(this.state.target === "") ? "divBorder rowItem" : "rowItem divBorder " + this.state.target}>
+            <div className={(this.state.target === "") ? "divBorder rowItem" : "rowItem divBorder " + this.state.target}>
                 <div className={"rowGroup"}>
                     <div className={"rowItem"} style={{marginTop: "2px"}}>
                         <input type={"text"} className={"inputText"}
@@ -56,28 +55,13 @@ class SrcMLFragment extends React.Component {
                     </div>
                     {(this.props["removeFunction"]) ?
                         <div className={"removeIcon"}>
-                            <TiDelete size={25}
+                            <TiDelete size={20}
                                       className={"tiDelete"}
                                       onClick={() => this.props["removeFunction"]()}/>
                         </div> : ""}
                 </div>
             </div>
         )
-    }
-
-    /**
-     * subscribe for events
-     */
-    attachListener() {
-
-        // // [expr xml]
-        // PubSub.subscribe('EXPR_STMT_XML', (msg, data) => {
-        //     if (this.waiting) {
-        //         this.xml = data[0];
-        //         this.prepareXpath();
-        //         this.waiting = false;
-        //     }
-        // });
     }
 
 
@@ -170,31 +154,32 @@ class SrcMLFragment extends React.Component {
 
     /**
      * render the 'follows' elements and constraints, drop down or a component
+     * @deprecated
      */
     renderFollows() {
         if (!this.state.children["follows"].hasOwnProperty("key"))
             return (
                 <div>
-                    <DropdownButton title={`follows`} id={"drop_down"} className={this.state.target}>
-                        {Object.keys(GuiConstants.code_fragment["expression"]["follows"]).map((key, i) => {
-                            return (
-                                <MenuItem eventKey={key} key={i}
-                                          onSelect={(evt) => {
-                                              const children = this.state.children;
-                                              children.follows = {
-                                                  key: evt,
-                                                  value: GuiConstants.code_fragment["expression"]["follows"][evt],
-                                                  target: this.state.target,
-                                                  children: JSON.parse(JSON.stringify(GuiConstants.state_children)),
-                                                  xpath: GuiConstants.code_fragment["expression"]["follows"][evt].xpath
-                                              };
-                                              this.setState({children});
-                                              this.sendDataBack();
-                                          }}
-                                >{GuiConstants.code_fragment["expression"]["follows"][key].name}
-                                </MenuItem>);
-                        })}
-                    </DropdownButton>
+                    <CustomFollowDropDown
+                        menuItemsText={Object.keys(GuiConstants.code_fragment["expression"]["follows"])
+                            .map(key => GuiConstants.code_fragment["expression"]["follows"][key]["buttonName"])}
+                        menuItemsEvent={Object.keys(GuiConstants.code_fragment["expression"]["follows"])
+                            .map(key => key)}
+                        target={this.state.target}
+                        onSelectFunction={(evt) => {
+                            const children = this.state.children;
+                            children.follows = {
+                                key: evt,
+                                value: GuiConstants.code_fragment["expression"]["follows"][evt],
+                                target: this.state.target !== "" ? this.state.target : "default",
+                                children: JSON.parse(JSON.stringify(GuiConstants.state_children)),
+                                xpath: GuiConstants.code_fragment["expression"]["follows"][evt]["xpath"],
+                                grammar: GuiConstants.code_fragment["expression"]["follows"][evt]["grammar"]
+                            };
+                            this.setState({children});
+                            this.sendDataBack();
+                        }}
+                    />
                 </div>
             );
 
@@ -202,7 +187,7 @@ class SrcMLFragment extends React.Component {
             return (
                 <div className={(this.state.target === "") ? "" : "ruleGroupDiv " + this.state.target + " exprDiv"}>
                     <div style={{float: 'right'}}>
-                        <MdDelete size={25}
+                        <MdDelete size={20}
                                   style={{cursor: "pointer", marginTop: "8px", color: "grey"}}
                                   onClick={() => {
                                       const children = this.state.children;

@@ -19,7 +19,7 @@ mustClause
     | expressionStatements must expressionStatementExpression
     | initValues must initValueExpression
     | arguments must argumentExpression
-    | callers must callerExpression
+    | calls must callExpression
     | classes must classExpression;
 
 mustBeEqualToClause
@@ -33,7 +33,7 @@ mustBeEqualToClause
     | expressionStatements mustBeEqualTo expressionStatements
     | initValues mustBeEqualTo initValues
     | arguments mustBeEqualTo arguments
-    | callers mustBeEqualTo callers
+    | calls mustBeEqualTo calls
     | classes mustBeEqualTo classes
     ;
 
@@ -539,13 +539,13 @@ callOf
     ;
 
 callCondition
-    : where callerExpression Comma?
+    : where callExpression Comma?
     ;
 
-callerExpression
-    : LPAREN callerExpression RPAREN
-    | left=callerExpression op=binary right=callerExpression
-    | have (callers | names) SPACE?
+callExpression
+    : LPAREN callExpression RPAREN
+    | left=callExpression op=binary right=callExpression
+    | have (callers | arguments) SPACE?
     ;
 
 
@@ -567,27 +567,6 @@ callerOf
 
 callerCondition
     : where have NAME not? equalsTo words Comma?
-    ;
-
-
-/*
-    values = expr
-*/
-
-VALUE
-    : 'value '
-    ;
-
-values
-    : VALUE valueCondition? valueOf?
-    ;
-
-valueOf
-    : of (arguments | returnValues | expressionStatements | initValues)
-    ;
-
-valueCondition
-    : where not? equalsTo words Comma?
     ;
 
 

@@ -100,6 +100,7 @@ export class CustomFollowDropDown extends Component {
             console.error(`'menuItemsEvent', 'menuItemsText' and 'onSelectFunction' are required in props`);
 
         this.state = {
+            target: props.target ? props.target : "unknown",
             menuItemsText: props.menuItemsText,
             menuItemsEvent: props.menuItemsEvent,
             onSelectFunction: props.onSelectFunction,
@@ -109,7 +110,7 @@ export class CustomFollowDropDown extends Component {
     }
 
     render() {
-        return (<DropdownButton title={`follows`} className={this.state.target} id={this.state.id}>
+        return (<DropdownButton title={`child`} className={this.state.target} id={this.state.id}>
                 {this.state.menuItemsEvent.map((el, i) => {
                     return (
                         <MenuItem eventKey={el} key={i}

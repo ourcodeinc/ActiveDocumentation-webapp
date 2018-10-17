@@ -21,7 +21,7 @@ import {clearNewRuleForm, editNewRuleForm, ignoreFile, submitNewRule, submitNewT
 import RuleGenerationComponent from './ruleGenerationComponent';
 
 import {connect} from "react-redux";
-import CustomDropDown from "./customDropdown";
+import CustomDropDown from "./customDropDown";
 
 class RulePanel extends Component {
 

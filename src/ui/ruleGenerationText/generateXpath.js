@@ -182,10 +182,6 @@ class GenerateXpath {
                     this.callersContextTraversal(node);
                     break;
 
-                case "ValuesContext":
-                    // todo
-                    break;
-
                 // WordsContext
                 case "WordsContext":
                     for (let i = 0; i < node.children.length; i++) {
@@ -879,39 +875,6 @@ class GenerateXpath {
             }
         }
     }
-
-    // chainCallsContextTraversal(node) {
-    //     let nodeChildren = node.children.slice(0);
-    //
-    //     // move Of children to first
-    //     for (let i = 0; i < node.children.length; i++) {
-    //         let nodeType = node.getChild(i).constructor.name;
-    //         if (nodeType.indexOf("ChainCallOfContext") !== -1) {
-    //             nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-    //             break;
-    //         }
-    //     }
-    //
-    //     for (let i = 0; i < node.children.length; i++) {
-    //         let nodeType = nodeChildren[i].constructor.name;
-    //
-    //         // process ofContext
-    //         if (nodeType === "ChainCallOfContext") {
-    //             this.traverseNode(nodeChildren[i]);
-    //             this.XPath += "/";
-    //         }
-    //
-    //         if (nodeType === "TerminalNodeImpl") {
-    //             this.XPath += "";
-    //         }
-    //
-    //         if (nodeType === "ChainCallConditionContext") {
-    //             this.XPath += "[";
-    //             this.traverseNode(nodeChildren[i]);
-    //             this.XPath += "]";
-    //         }
-    //     }
-    // }
 
 }
 

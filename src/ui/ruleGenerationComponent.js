@@ -13,7 +13,6 @@ import RuleGeneratorGui from './ruleGenerationGUI/ruleGeneratorGui';
 import Utilities from "../core/utilities";
 import {constants} from "./constants";
 import AutoComplete from "./ruleGenerationText/autoComplete";
-// import {submitNewRule} from "../actions";
 import verifyTextBasedOnGrammar from "./ruleGenerationText/languageProcessing";
 import {editNewRuleForm} from "../actions";
 
@@ -23,23 +22,20 @@ class RuleGenerationComponent extends Component {
     constructor(props) {
         super(props);
 
-        this.state = Utilities.cloneJSON(constants.initial_state);
-        this.state.autoCompleteText = "";
-        this.state.quantifierXPath = "";
-        this.state.constraintXPath = "";
-
-        this.state.error = "";
-
+        this.state = {
+            xPathState: Utilities.cloneJSON(constants.guiXPathState),
+            quantifierXPath: "",
+            constraintXPath: "",
+            error: "",
+            autoCompleteText: props.autoCompleteText,
+            showAlert: true,
+            autoCompleteValidationState: null // error, success, warning, null
+        };
 
         // should not be in state, it need to be changed after single use.
         // the component is updated after changing this value because the state is also changing
         // otherwise call this.forceUpdate()
         this.autoCompleteCaretPosition = -1;
-        this.state.autoCompleteText = props.autoCompleteText;
-        this.state.showAlert = true;
-
-        this.state.autoCompleteValidationState = null; // error, success, warning, null
-
     }
 
     render() {
@@ -81,8 +77,9 @@ class RuleGenerationComponent extends Component {
                                       this.autoCompleteCaretPosition = -1;
                                       return newFocus;
                                   })()}/>
-                    <RuleGeneratorGui key={new Date()} state={this.state} className={"generateRuleGui"}/>
+                    <RuleGeneratorGui key={new Date()} state={this.state["xPathState"]} className={"generateRuleGui"}/>
                 </FormGroup>
+                quantifierGrammar: {this.state["xPathState"].quantifierGrammar}
             </div>
         );
     }

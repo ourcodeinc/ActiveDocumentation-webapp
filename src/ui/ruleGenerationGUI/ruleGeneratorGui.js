@@ -6,8 +6,9 @@ import React, {Component} from 'react';
 import '../../App.css';
 
 import {Tabs, Tab} from 'react-bootstrap';
+import {RootCloseWrapper} from "react-overlays";
 
-import ClassFragment from './classFragment';
+import GuiComponent from './guiComponent';
 
 
 class RuleGeneratorGui extends Component {
@@ -15,26 +16,26 @@ class RuleGeneratorGui extends Component {
     constructor(props) {
         super(props);
 
-        this.state = props["state"]['xPathState'];
+        this.state = props["state"];
         this.class = props["className"] ? props["className"] : "generateRuleGui"
-
 
     }
 
     render() {
         return (
             <div style={{clear: "both", marginTop: "20px"}} className={this.class}>
-                <Tabs animation={true} id={"gen_rule_quantifier_constraint"} activeKey={this.state.activeTab}
+                <p>function where ( have annotation and have specifier ) of class where have function where have name where equal to "foo" must have name</p>
+                <button onClick={()=>console.log(this.state.quantifier, this.state.quantifierGrammar)}>Click</button>
+                <Tabs animation={true} id={"rule_generator_gui_tabs"} activeKey={this.state.activeTab}
                       onSelect={(key) => this.setState({activeTab: key})}>
                     <Tab eventKey={"quantifier"} title={"Quantifier Query"} animation={true}>
                         <div style={{marginTop: "10px"}}>
                             <div>
-                                <ClassFragment assignedId={"class_0"} ws={this.state.ws}
-                                                     key={new Date()} state={this.state.quantifier.q0}
-                                                     callbackFromParent={this.receiveQuantifierStateData}/>
-                                <div className={"generatedXpath"}>
-                                    <code id={"generated_xpath_quant_0"}>{this.state.q0}</code>
-                                </div>
+                                <RootCloseWrapper onRootClose={() => {}}>
+                                    <GuiComponent ws={this.state.ws} element={"class"}
+                                              key={new Date()} state={this.state.quantifier}
+                                              callbackFromParent={this.receiveQuantifierStateData}/>
+                                </RootCloseWrapper>
                             </div>
                         </div>
 
@@ -42,16 +43,14 @@ class RuleGeneratorGui extends Component {
                     <Tab eventKey={"constraint"} title={"Constraint Query"} animation={true}>
                         <div style={{marginTop: "10px"}}>
                             <div>
-                                <ClassFragment assignedId={"c_class_0"} ws={this.state.ws}
-                                                     key={new Date()} state={this.state.constraint.q0}
-                                                     callbackFromParent={this.receiveConstraintStateData0}/>
-                                <div className={"generatedXpath"}>
-                                    <code id={"generated_xpath_constr_0"}>{this.state.c0}</code>
-                                </div>
+                                <GuiComponent ws={this.state.ws} element={"class"}
+                                              key={new Date()} state={this.state.constraint}
+                                              callbackFromParent={this.receiveConstraintStateData0}/>
                             </div>
                         </div>
                     </Tab>
                 </Tabs>
+                {this.state.quantifierGrammar}
             </div>
         );
     }
@@ -60,14 +59,15 @@ class RuleGeneratorGui extends Component {
     /**
      * receive state data from the child nodes
      */
-    receiveQuantifierStateData = () => {console.log(this.state.quantifier.q0);
-        let xpathRes = "src:unit/" + this.traverseChildren(this.state.quantifier.q0);
-        const constraint = JSON.parse(JSON.stringify(this.state.constraint));
-        constraint.q0 = JSON.parse(JSON.stringify(this.state.quantifier.q0));
+    receiveQuantifierStateData = () => {
+        //let xpathText = "src:unit/" + this.traverseChildrenXpath(this.state.quantifier);
+        const constraint = JSON.parse(JSON.stringify(this.state.quantifier));
+        let grammarText = this.traverseChildrenGrammar(this.state.quantifier);
         this.setState({
             constraint,
-            q0: xpathRes,
-            c0: xpathRes
+            // quantifierXpath: xpathText,
+            // constraintXpath: xpathText,
+            quantifierGrammar: grammarText
         });
     };
 
@@ -75,8 +75,9 @@ class RuleGeneratorGui extends Component {
      * receive state data from the child nodes
      */
     receiveConstraintStateData0 = () => {
-        let xpathRes = "src:unit/" + this.traverseChildren(this.state.constraint.q0);
-        this.setState({c0: xpathRes});
+        //let xpathText = "src:unit/" + this.traverseChildrenXpath(this.state.constraint);
+        let grammarText = this.traverseChildrenGrammar(this.state.constraint);
+        this.setState({ constraintGrammar: grammarText}); //constraintXpath: xpathText
     };
 
 
@@ -85,15 +86,13 @@ class RuleGeneratorGui extends Component {
      * @param parentNode
      * @returns {string} xpath
      */
-    traverseChildren(parentNode) {
+    traverseChildrenXpath(parentNode) {
 
         let res = parentNode.xpath;
         let children =
             parentNode.children["top"]
-                .concat(parentNode.children["after"])
                 .concat(parentNode.children["after_1"])
                 .concat(parentNode.children["after_2"])
-                .concat(parentNode.children["before"])
                 .concat(parentNode.children["before_1"])
                 .concat(parentNode.children["before_2"])
                 .concat(parentNode.children["within"]);
@@ -101,13 +100,51 @@ class RuleGeneratorGui extends Component {
         let resChildren = [];
 
         for (let i = 0; i < children.length; i++)
-            resChildren.push(this.traverseChildren(children[i]));
+            resChildren.push(this.traverseChildrenXpath(children[i]));
 
         res = (children.length !== 0) ? res + ((res !== "") ? "[" : "") + resChildren.join(' and ') + ((res !== "") ? "]" : "") : res;
         res = (parentNode.children["follows"].hasOwnProperty('key')) ?
-            res + '/' + this.traverseChildren(parentNode.children["follows"]) : res;
+            res + '/' + this.traverseChildrenXpath(parentNode.children["follows"]) : res;
 
         return res;
+    }
+
+    /**
+     * traverse the state_children of a parent node to generate xpath query conditions
+     * @param parentNode
+     * @returns {string} xpath
+     */
+    traverseChildrenGrammar(parentNode) {
+
+        let grText = "";
+        if(parentNode.children["follows"].hasOwnProperty('key')) {
+            grText += this.traverseChildrenGrammar(parentNode.children["follows"]);
+            grText += " of ";
+        }
+
+        grText += parentNode.grammar ? parentNode.grammar + " " : parentNode.key ? parentNode.key + " " : "(class) ";
+        grText +=  typeof parentNode.text === "string" ? parentNode.text : "";
+
+        let children =
+            parentNode.children["top"]
+                .concat(parentNode.children["after_1"])
+                .concat(parentNode.children["after_2"])
+                .concat(parentNode.children["before_1"])
+                .concat(parentNode.children["before_2"])
+                .concat(parentNode.children["within"]);
+
+
+        if(children.length > 0) grText += "where (";
+
+        for (let i = 0; i < children.length; i++) {
+            grText += "have ";
+            grText += this.traverseChildrenGrammar(children[i]);
+            if (i < children.length - 1) grText += " and ";
+        }
+
+        if(children.length > 0) grText += ") ";
+
+        return grText;
     }
 }
 

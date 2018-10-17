@@ -1,631 +1,1204 @@
+
+// xpath property is not used
+
 export class GuiConstants {
 
     static code_fragment = {
         "class": {
             "top": {
-                "HAS_ANNOTATION": {
-                    name: "Has annotation",
+                "ANNOTATION": {
+                    buttonName: "Has annotation",
                     xpath: "src:annotation",
                     type: "annotation",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "annotation"
                 }
             },
-            "before": {},
+            "before_1": {
+                "SPECIFIER_EQUALS_TO": {
+                    buttonName: "Specifier is ...",
+                    xpath: "src:specifier/text()=\"<NAME>\"",
+                    placeholder: "specifier",
+                    type: "text",
+                    pre: "",
+                    post: "",
+                    grammar: "specifier where equal to"
+                },
+                "SPECIFIER_NOT_EQUALS_TO": {
+                    buttonName: "Specifier is not ...",
+                    xpath: "src:specifier/text()!=\"<NAME>\"",
+                    placeholder: "specifier",
+                    type: "text",
+                    pre: "",
+                    post: "",
+                    grammar: "specifier where not equal to"
+                }
+            },
+            "before_2": {},
             "after_1": {
                 "NAME_EQUALS_TO": {
-                    name: "Name equals to ...",
+                    buttonName: "Name equals to ...",
                     xpath: "src:name/text()=\"<NAME>\"",
                     type: "text",
-                    placeholder: "className",
+                    placeholder: "class name",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "name where equal to"
                 },
                 "NAME_NOT_EQUALS_TO": {
-                    name: "Name not equals to ...",
+                    buttonName: "Name not equals to ...",
                     xpath: "src:name/text()!=\"<NAME>\"",
                     type: "text",
-                    placeholder: "className",
+                    placeholder: "class name",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "name where not equal to"
+                },
+                "NAME_INCLUDES": {
+                    buttonName: "Name include ...",
+                    xpath: "src:name[contains(text(),\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "class name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where include"
+                },
+                "NAME_NOT_INCLUDES": {
+                    buttonName: "Name not include ...",
+                    xpath: "src:name[not(contains(text(),\"<NAME>\")]",
+                    type: "text",
+                    placeholder: "class name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not include"
+                },
+                "NAME_STARTS_WITH": {
+                    buttonName: "Name starts with ...",
+                    xpath: "src:name[starts-with(text(),\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "class name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not start with"
+                },
+                "NAME_NOT_STARTS_WITH": {
+                    buttonName: "Name not starts with ...",
+                    xpath: "src:name[not(starts-with(text(),\"<NAME>\")]",
+                    type: "text",
+                    placeholder: "class name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not start with"
+                },
+                "NAME_ENDS_WITH": {
+                    buttonName: "Name ends with ...",
+                    xpath: "src:name[ends-with(text(),\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "class name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where end with"
+                },
+                "NAME_NOT_ENDS_WITH": {
+                    buttonName: "Name not ends with ...",
+                    xpath: "src:name[not(ends-with(text(),\"<NAME>\")]",
+                    type: "text",
+                    placeholder: "class name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not end with"
                 }
             },
             "after_2": {
-                "HAS_SUPERCLASS_NAMED": {
-                    name: "Extends class named ...",
+                "SUPERCLASS_NAMED": {
+                    buttonName: "Extends class named ...",
                     xpath: "src:super/src:extends/src:name/text()=\"<NAME>\"",
                     type: "text",
                     pre: "extends",
-                    post: ""
+                    post: "",
+                    grammar: "extension where equal to"
                 },
-                "HAS_INTERFACE_NAMED": {
-                    name: "Implements class named ...",
+                "SUPERCLASS_NOT_NAMED": {
+                    buttonName: "Extends class not named ...",
+                    xpath: "src:super/src:extends/src:name/text()!=\"<NAME>\"",
+                    type: "text",
+                    pre: "extends",
+                    post: "",
+                    grammar: "extension where not equal to"
+                },
+                "INTERFACE_NAMED": {
+                    buttonName: "Implements class named ...",
                     xpath: "src:super/src:implements/src:name/text()=\"<NAME>\"",
                     type: "text",
                     pre: "implements",
-                    post: ""
+                    post: "",
+                    grammar: "implementation where equal to"
+                },
+                "INTERFACE_NOT_NAMED": {
+                    buttonName: "Implements class not named ...",
+                    xpath: "src:super/src:implements/src:name/text()!=\"<NAME>\"",
+                    type: "text",
+                    pre: "implements",
+                    post: "",
+                    grammar: "implementation where not equal to"
                 }
             },
             "within": {
-                "HAS_FUNCTION": {
-                    name: "Has function ...",
+                "FUNCTION": {
+                    buttonName: "Has function ...",
                     xpath: "src:block/src:function",
                     type: "function",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "function"
                 },
-                "HAS_FUNCTION_DECL": {
-                    name: "Has abstract function ...",
+                "FUNCTION_DECL": {
+                    buttonName: "Has abstractFunction ...",
                     xpath: "src:block/src:function_decl",
                     type: "abstractFunction",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "abstractFunction"
                 },
-                "HAS_CONSTRUCTOR": {
-                    name: "Has constructor ...",
+                "CONSTRUCTOR": {
+                    buttonName: "Has constructor ...",
                     xpath: "src:block/src:constructor",
                     type: "constructor",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "constructor"
                 },
-                "HAS_DECLARATION_STMT": {
-                    name: "Has declaration statement ...",
+                "DECLARATION_STMT": {
+                    buttonName: "Has declarationStatement ...",
                     xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
                     type: "declarationStatement",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "declarationStatement"
                 },
-                "HAS_SUBCLASS": {
-                    name: "Has subclass ...",
+                "SUBCLASS": {
+                    buttonName: "Has subclass ...",
                     xpath: "src:block/src:class",
                     type: "class",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "class"
                 }
             },
             "follows": {
-                "name": {name: "name", xpath: "src:name/text()", follows: ""},
-                "subclass": {name: "subclass", xpath: "src:block/src:class", follows: "class"},
-                "function": {name: "function", xpath: "src:block/src:function", follows: "function"},
-                "constructor": {name: "constructor", xpath: "src:block/src:constructor", follows: "constructor"},
+                "annotation": {
+                    buttonName: "annotation", xpath: "src:annotation",
+                    follows: "annotation", grammar: "annotation"
+                },
+                "specifier": {
+                    buttonName: "specifier", xpath: "src:specifier/text()",
+                    follows: "", grammar: "specifier"
+                },
+                "name": {
+                    buttonName: "name", xpath: "src:name/text()",
+                    follows: "", grammar: "name"
+                },
+                "extend": {
+                    buttonName: "extension", xpath: "src:super/src:extends/src:name/text()",
+                    follows: "", grammar: "extension"
+                },
+                "implement": {
+                    buttonName: "implementation", xpath: "src:super/src:implements/src:name/text()",
+                    follows: "", grammar: "implementation"
+                },
+                "class": {
+                    buttonName: "subclass", xpath: "src:block/src:class",
+                    follows: "class", grammar: "class"
+                },
+                "function": {
+                    buttonName: "function", xpath: "src:block/src:function",
+                    follows: "function", grammar: "function"
+                },
+                "constructor": {
+                    buttonName: "constructor", xpath: "src:block/src:constructor",
+                    follows: "constructor", grammar: "constructor"
+                },
                 "abstractFunction": {
-                    name: "abstractFunction",
+                    buttonName: "abstractFunction",
                     xpath: "src:block/src:function_decl",
-                    follows: "abstractFunction"
+                    follows: "abstractFunction",
+                    grammar: "abstractFunction"
                 },
                 "declarationStatement": {
-                    name: "declaration statement",
+                    buttonName: "declarationStatement",
                     xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
-                    follows: "declarationStatement"
+                    follows: "declarationStatement",
+                    grammar: "declarationStatement"
                 }
             }
         },
         "function": {
             "top": {
-                "HAS_ANNOTATION": {
-                    name: "Has annotation",
+                "ANNOTATION": {
+                    buttonName: "Has annotation",
                     xpath: "src:annotation",
                     type: "annotation",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "annotation"
                 }
             },
             "before_1": {
-                "SPECIFIER": {
-                    name: "Specifier is ...",
+                "SPECIFIER_EQUALS_TO": {
+                    buttonName: "Specifier is ...",
                     xpath: "src:specifier/text()=\"<NAME>\"",
                     placeholder: "specifier",
                     type: "text",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "specifier where equal to"
+                },
+                "SPECIFIER_NOT_EQUALS_TO": {
+                    buttonName: "Specifier is not ...",
+                    xpath: "src:specifier/text()!=\"<NAME>\"",
+                    placeholder: "specifier",
+                    type: "text",
+                    pre: "",
+                    post: "",
+                    grammar: "specifier where not equal to"
                 }
             },
             "before_2": {
                 "NAME_EQUALS_TO": {
-                    name: "Name equals to ...",
+                    buttonName: "Name equals to ...",
                     xpath: "src:name/text()=\"<NAME>\"",
                     type: "text",
-                    placeholder: "functionName",
+                    placeholder: "function name",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "name where equal to"
                 },
                 "NAME_NOT_EQUALS_TO": {
-                    name: "Name not equals to ...",
+                    buttonName: "Name not equals to ...",
                     xpath: "src:name/text()!=\"<NAME>\"",
                     type: "text",
-                    placeholder: "functionName",
+                    placeholder: "function name",
                     pre: "",
-                    post: ""
-                }
-
-            },
-            "after": {
-                "NUMBER_OF_PARAMETERS": {
-                    name: "Its number of parameter is ...",
-                    xpath: "count(src:parameter_list/src:parameter)=<COUNT>",
-                    type: "number",
-                    placeholder: "0",
-                    pre: "#Parameters=",
-                    post: ""
+                    post: "",
+                    grammar: "name where not equal to"
                 },
-                "HAS_PARAMETER": {
-                    name: "One of its parameter is ...",
+                "NAME_INCLUDES": {
+                    buttonName: "Name include ...",
+                    xpath: "src:name[contains(text(),\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "function name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where include"
+                },
+                "NAME_NOT_INCLUDES": {
+                    buttonName: "Name not include ...",
+                    xpath: "src:name[not(contains(text(),\"<NAME>\")]",
+                    type: "text",
+                    placeholder: "function name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not include"
+                },
+                "NAME_STARTS_WITH": {
+                    buttonName: "Name starts with ...",
+                    xpath: "src:name[starts-with(text(),\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "function name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not start with"
+                },
+                "NAME_NOT_STARTS_WITH": {
+                    buttonName: "Name not starts with ...",
+                    xpath: "src:name[not(starts-with(text(),\"<NAME>\")]",
+                    type: "text",
+                    placeholder: "function name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not start with"
+                },
+                "NAME_ENDS_WITH": {
+                    buttonName: "Name ends with ...",
+                    xpath: "src:name[ends-with(text(),\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "function name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where end with"
+                },
+                "NAME_NOT_ENDS_WITH": {
+                    buttonName: "Name not ends with ...",
+                    xpath: "src:name[not(ends-with(text(),\"<NAME>\")]",
+                    type: "text",
+                    placeholder: "function name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not end with"
+                }
+            },
+            "after_1": {
+                "PARAMETER": {
+                    buttonName: "One of its parameter is ...",
                     xpath: "src:parameter_list/src:parameter/src:decl",
                     type: "declaration",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "parameter"
                 }
             },
+            "after_2": {},
             "within": {
-                "RETURN_VALUE_IS_VARIABLE": {
-                    name: "Return value/variable is ...",
+                "RETURN_VALUE": {
+                    buttonName: "Return value/variable is ...",
                     xpath: "src:block/descendant-or-self::src:return/src:expr",
-                    type: "srcml",
-                    pre: "return",
-                    post: ""
-                },
-                "RETURN_VALUE_IS_METHOD_CALL": {
-                    name: "Return expression is a method chainCall ...",
-                    xpath: "src:block/descendant-or-self::src:return/src:expr",
-                    type: "chainCall",
-                    pre: "return",
-                    post: ""
-                },
-                "HAS_ASSIGN_EXPRESSION": {
-                    name: "Has assignment expression ...",
-                    xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                    type: "expression",
+                    type: "returnValue",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "return value where have expression statement"
                 },
-                "HAS_INVOKE_EXPRESSION": {
-                    name: "Has method invoke expression ...",
+                "EXPRESSION_STATEMENT": {
+                    buttonName: "Has expression statement ...",
                     xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                    type: "chainCall",
+                    type: "expressionStatement",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "expression statement"
                 },
-                "HAS_DECLARATION": {
-                    name: "Has declaration statement ...",
+                "DECLARATION_STATEMENT": {
+                    buttonName: "Has declarationStatement ...",
                     xpath: "src:block/descendant-or-self::src:decl_stmt",
                     type: "declarationStatement",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "declarationStatement"
                 }
             },
             "follows": {
-                "name": {name: "name", xpath: "src:name/text()", follows: "name"},
-                "expression": {
-                    name: "assignment expression",
-                    xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                    follows: "expression"
+                "annotation": {
+                    buttonName: "annotation", xpath: "src:annotation",
+                    follows: "annotation", grammar: "annotation"
                 },
-                "chainCall": {
-                    name: "method chainCall expression",
-                    xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                    follows: "chainCall"
+                "specifier": {
+                    buttonName: "specifier", xpath: "src:specifier/text()",
+                    follows: "", grammar: "specifier"
                 },
-                "declarationStatement": {
-                    name: "declaration statement",
-                    xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
-                    follows: "declarationStatement"
-                },
-                "return_value": {
-                    name: "return value/variable",
-                    xpath: "src:block/descendant-or-self::src:return/src:expr",
-                    follows: "srcml"
-                },
-                "return_method_call": {
-                    name: "return method chainCall",
-                    xpath: "src:block/descendant-or-self::src:return/src:expr",
-                    follows: "chainCall"
+                "name": {
+                    buttonName: "name", xpath: "src:name/text()",
+                    follows: "", grammar: "name"
                 },
                 "parameter": {
-                    name: "function parameter",
+                    buttonName: "function parameter",
                     xpath: "src:parameter_list/src:parameter/src:decl",
-                    follows: "parameter"
+                    follows: "parameter",
+                    grammar: "parameter"
+                },
+                "expressionStatement": {
+                    buttonName: "assignment expression",
+                    xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
+                    follows: "expressionStatement",
+                    grammar: "expression statement",
+                },
+                "declarationStatement": {
+                    buttonName: "declaration statement",
+                    xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
+                    follows: "declarationStatement",
+                    grammar: "declarationStatement"
+                },
+                "returnValue": {
+                    buttonName: "return value",
+                    xpath: "src:block/descendant-or-self::src:return/src:expr",
+                    follows: "returnValue",
+                    grammar: "return value"
                 }
             }
         },
         "constructor": {
             "top": {
-                "HAS_ANNOTATION": {
-                    name: "Has annotation",
+                "ANNOTATION": {
+                    buttonName: "Has annotation",
                     xpath: "src:annotation",
                     type: "annotation",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "annotation"
                 }
             },
             "before_1": {
-                "SPECIFIER": {
-                    name: "Specifier is ...",
+                "SPECIFIER_EQUALS_TO": {
+                    buttonName: "Specifier is ...",
                     xpath: "src:specifier/text()=\"<NAME>\"",
-                    type: "text",
                     placeholder: "specifier",
+                    type: "text",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "specifier where equal to"
+                },
+                "SPECIFIER_NOT_EQUALS_TO": {
+                    buttonName: "Specifier is not ...",
+                    xpath: "src:specifier/text()!=\"<NAME>\"",
+                    placeholder: "specifier",
+                    type: "text",
+                    pre: "",
+                    post: "",
+                    grammar: "specifier where not equal to"
                 }
             },
             "before_2": {},
-            "after": {
-                "NUMBER_OF_PARAMETERS": {
-                    name: "Its number of parameter is ...",
-                    xpath: "count(src:parameter_list/src:parameter)=<COUNT>",
-                    placeholder: "0",
-                    type: "number",
-                    pre: "",
-                    post: ""
-                },
-                "HAS_PARAMETER": {
-                    name: "One of its parameter is ...",
+            "after_1": {
+                "PARAMETER": {
+                    buttonName: "One of its parameter is ...",
                     xpath: "src:parameter_list/src:parameter/src:decl",
                     type: "declaration",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "parameter"
                 }
             },
+            "after_2": {},
             "within": {
-                "HAS_ASSIGN_EXPRESSION": {
-                    name: "Has assignment expression ...",
+                "EXPRESSION_STATEMENT": {
+                    buttonName: "Has assignment expression ...",
                     xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                    type: "expression",
+                    type: "expressionStatement",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "expression statement"
                 },
-                "HAS_INVOKE_EXPRESSION": {
-                    name: "Has method invoke expression ...",
-                    xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                    type: "chainCall",
-                    pre: "",
-                    post: ""
-                },
-                "HAS_DECLARATION": {
-                    name: "Has declaration ...",
+                "DECLARATION_STATEMENT": {
+                    buttonName: "Has declaration ...",
                     xpath: "src:block/descendant-or-self::src:decl_stmt",
                     type: "declarationStatement",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "declarationStatement"
                 }
             },
             "follows": {
-                "expression": {
-                    name: "assignment expression",
-                    xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                    follows: "expression"
+                "annotation": {
+                    buttonName: "annotation", xpath: "src:annotation",
+                    follows: "annotation", grammar: "annotation"
                 },
-                "chainCall": {
-                    name: "method chainCall expression",
-                    xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                    follows: "chainCall"
+                "specifier": {
+                    buttonName: "specifier", xpath: "src:specifier/text()",
+                    follows: "", grammar: "specifier"
                 },
-                "declarationStatement": {
-                    name: "declaration statement",
-                    xpath: "src:block/descendant-or-self::src:decl_stmt",
-                    follows: "declarationStatement"
+                "name": {
+                    buttonName: "name", xpath: "src:name/text()",
+                    follows: "", grammar: "name"
                 },
                 "parameter": {
-                    name: "function parameter",
+                    buttonName: "function parameter",
                     xpath: "src:parameter_list/src:parameter/src:decl",
-                    follows: "parameter"
+                    follows: "parameter",
+                    grammar: "parameter"
+                },
+                "expressionStatement": {
+                    buttonName: "assignment expression",
+                    xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
+                    follows: "expressionStatement",
+                    grammar: "expression statement",
+                },
+                "declarationStatement": {
+                    buttonName: "declarationStatement",
+                    xpath: "src:block/descendant-or-self::src:decl_stmt",
+                    follows: "declarationStatement",
+                    grammar: "annotation"
                 }
             }
         },
         "abstractFunction": {
             "top": {
-                "HAS_ANNOTATION": {
-                    name: "Has annotation",
+                "ANNOTATION": {
+                    buttonName: "Has annotation",
                     xpath: "src:annotation",
                     type: "annotation",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "annotation"
                 }
             },
             "before_1": {
-                "SPECIFIER": {
-                    name: "Its specifier is",
+                "SPECIFIER_EQUALS_TO": {
+                    buttonName: "Specifier is ...",
                     xpath: "src:specifier/text()=\"<NAME>\"",
-                    type: "text",
                     placeholder: "specifier",
-                    pre: "", post: ""
+                    type: "text",
+                    pre: "",
+                    post: "",
+                    grammar: "specifier where equal to"
                 },
-
+                "SPECIFIER_NOT_EQUALS_TO": {
+                    buttonName: "Specifier is not ...",
+                    xpath: "src:specifier/text()!=\"<NAME>\"",
+                    placeholder: "specifier",
+                    type: "text",
+                    pre: "",
+                    post: "",
+                    grammar: "specifier where not equal to"
+                }
             },
             "before_2": {
                 "NAME_EQUALS_TO": {
-                    name: "Name equals to ...",
+                    buttonName: "Name equals to ...",
                     xpath: "src:name/text()=\"<NAME>\"",
                     type: "text",
-                    placeholder: "functionName",
-                    pre: "", post: ""
+                    placeholder: "function name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where equal to"
                 },
                 "NAME_NOT_EQUALS_TO": {
-                    name: "Name not equals to ...",
+                    buttonName: "Name not equals to ...",
                     xpath: "src:name/text()!=\"<NAME>\"",
                     type: "text",
-                    placeholder: "functionName",
-                    pre: "", post: ""
+                    placeholder: "function name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not equal to"
+                },
+                "NAME_INCLUDES": {
+                    buttonName: "Name include ...",
+                    xpath: "src:name[contains(text(),\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "function name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where include"
+                },
+                "NAME_NOT_INCLUDES": {
+                    buttonName: "Name not include ...",
+                    xpath: "src:name[not(contains(text(),\"<NAME>\")]",
+                    type: "text",
+                    placeholder: "function name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not include"
+                },
+                "NAME_STARTS_WITH": {
+                    buttonName: "Name starts with ...",
+                    xpath: "src:name[starts-with(text(),\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "function name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not start with"
+                },
+                "NAME_NOT_STARTS_WITH": {
+                    buttonName: "Name not starts with ...",
+                    xpath: "src:name[not(starts-with(text(),\"<NAME>\")]",
+                    type: "text",
+                    placeholder: "function name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not start with"
+                },
+                "NAME_ENDS_WITH": {
+                    buttonName: "Name ends with ...",
+                    xpath: "src:name[ends-with(text(),\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "function name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where end with"
+                },
+                "NAME_NOT_ENDS_WITH": {
+                    buttonName: "Name not ends with ...",
+                    xpath: "src:name[not(ends-with(text(),\"<NAME>\")]",
+                    type: "text",
+                    placeholder: "function name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not end with"
                 }
             },
-            "after": {
-                "NUMBER_OF_PARAMETERS": {
-                    name: "Its number of parameter is ...",
-                    xpath: "count(src:parameter_list/src:parameter)=<COUNT>",
-                    type: "number",
-                    placeholder: "0",
-                    pre: "",
-                    post: ""
-                },
-                "HAS_PARAMETER": {
-                    name: "One of its parameter is ...",
+            "after_1": {
+                "PARAMETER": {
+                    buttonName: "One of its parameter is ...",
                     xpath: "src:parameter_list/src:parameter/src:decl",
                     type: "declaration",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "parameter"
                 }
             },
+            "after_2": {},
             "within": {},
             "follows": {
-                "name": {name: "name", xpath: "src:name/text()", follows: "name"},
-                "parameter": {
-                    name: "parameter",
-                    xpath: "src:parameter_list/src:parameter/src:decl",
-                    follows: "parameter"
-                }
-            }
-
-        },
-        "expression": {
-            "top": {},
-            "before": {
-                "NAME": {
-                    name: "name", xpath: "", type: "srcml",
-                    pre: "",
-                    post: ""
-                }
-            },
-            "after": {
-                "CALL": {
-                    name: "method invoke", xpath: "src:chainCall", type: "chainCall",
-                    pre: "",
-                    post: ""
+                "annotation": {
+                    buttonName: "annotation", xpath: "src:annotation",
+                    follows: "annotation", grammar: "annotation"
                 },
-                "NAME/LITERAL": {
-                    name: "value/variable", xpath: "", type: "srcml",
-                    pre: "",
-                    post: ""
+                "specifier": {
+                    buttonName: "specifier", xpath: "src:specifier/text()",
+                    follows: "", grammar: "specifier"
+                },
+                "name": {
+                    buttonName: "name",
+                    xpath: "src:name/text()",
+                    follows: "name",
+                    grammar: "name"
+                },
+                "parameter": {
+                    buttonName: "parameter",
+                    xpath: "src:parameter_list/src:parameter/src:decl",
+                    follows: "parameter",
+                    grammar: "parameter"
                 }
-            },
-            "within": {},
-            "follows": {
-                "name": {name: "name", xpath: "src:name/text()", follows: ""},
-                "name/name": {name: "name/name", xpath: "src:name/src:name/text()", follows: ""},
-                "chainCall": {name: "chainCall", xpath: "src:chainCall", follows: "chainCall"}
             }
         },
-        "call": {
+        "expressionStatement": {
             "top": {},
-            "before": {
-                "CALLER_IS": {
-                    name: "The caller is",
+            "before_1": {
+                "NAME": {
+                    buttonName: "name",
                     xpath: "",
                     type: "srcml",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "name"
                 }
             },
-            "after": {
-                "NUMBER_OF_ARGUMENTS": {
-                    name: "Its number of arguments is ...",
-                    xpath: "count(src:argument_list/src:argument)=<COUNT>",
-                    type: "number",
-                    placeholder: "0",
-                    pre: "#arguments=",
-                    post: ""
-                },
-                "HAS_CALL_ARGUMENT": {
-                    name: "One of its argument calls ...",
-                    xpath: "src:argument_list/src:argument/src:expr/src:chainCall",
-                    type: "chainCall",
-                    placeholder: "argument",
-                    pre: "",
-                    post: ","
-                },
-                "HAS_NAME_ARGUMENT": {
-                    name: "One of its argument is variable or name ...",
-                    xpath: "src:argument_list/src:argument/src:expr",
-                    type: "srcml",
-                    placeholder: "argument",
-                    pre: "",
-                    post: ","
-                }
-            },
-            "within": {},
-            "follows": {
-                "name": {name: "name", xpath: "src:name/text()", follows: ""},
-                "name/name": {name: "name/name", xpath: "src:name/src:name/text()", follows: ""},
-                "argument": {name: "argument", xpath: "src:argument_list/src:argument/src:expr", follows: "expression"}
-            }
-
-        },
-        "chainCall": {
-            "top": {},
-            "before": {
+            "before_2": {},
+            "after_1": {
                 "CALL": {
-                    name: "The called method is ...",
+                    buttonName: "method invoke",
                     xpath: "src:call",
                     type: "call",
                     pre: "",
-                    post: "."
+                    post: "",
+                    grammar: "call"
+                },
+                // "NAME/LITERAL": {
+                //     buttonName: "value/variable",
+                //     xpath: "",
+                //     type: "srcml",
+                //     pre: "",
+                //     post: "",
+                //     grammar: "NOT IN GRAMMAR"
+                // }
+            },
+            "after_2": {},
+            "within": {},
+            "follows": {
+                "call": {
+                    buttonName: "method invoke",
+                    xpath: "src:call",
+                    follows: "call",
+                    grammar: "call"
+                },
+                "name": {
+                    buttonName: "name", xpath: "src:name/text()", follows: "",
+                    grammar: "name"
+                }
+            }
+        },
+        "expression": {
+            "top": {},
+            "before_1": {
+                "NAME": {
+                    buttonName: "name",
+                    xpath: "",
+                    type: "srcml",
+                    pre: "",
+                    post: "",
+                    grammar: "name"
+                },
+                "CALL": {
+                    buttonName: "method invoke",
+                    xpath: "src:call",
+                    type: "call",
+                    pre: "",
+                    post: "",
+                    grammar: "call"
                 }
             },
+            "before_2": {},
+            "after_1": {},
+            "after_2": {},
             "within": {},
-            "follows": {}
-
+            "follows": {
+                "call": {
+                    buttonName: "method invoke",
+                    xpath: "src:call",
+                    follows: "call",
+                    grammar: "call"
+                },
+                "name": {
+                    buttonName: "name", xpath: "src:name/text()", follows: "",
+                    grammar: "name"
+                }
+            }
+        },
+        "returnValue": {
+            "top": {},
+            "before_1": {
+                "NAME": {
+                    buttonName: "name",
+                    xpath: "",
+                    type: "srcml",
+                    pre: "",
+                    post: "",
+                    grammar: "name"
+                },
+                "CALL": {
+                    buttonName: "method invoke",
+                    xpath: "src:call",
+                    type: "call",
+                    pre: "",
+                    post: "",
+                    grammar: "call"
+                }
+            },
+            "before_2": {},
+            "after_1": {},
+            "after_2": {},
+            "within": {},
+            "follows": {
+                "call": {
+                    buttonName: "method invoke",
+                    xpath: "src:call",
+                    follows: "call",
+                    grammar: "call"
+                },
+                "name": {
+                    buttonName: "name",
+                    xpath: "src:name/text()",
+                    follows: "",
+                    grammar: "name"
+                }
+            }
         },
         "declarationStatement": {
             "top": {
-                "HAS_ANNOTATION": {
-                    name: "Has annotation",
+                "ANNOTATION": {
+                    buttonName: "Has annotation",
                     xpath: "src:annotation",
                     type: "annotation",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "annotation"
                 }
             },
             "before_1": {
-                "SPECIFIER": {
-                    name: "Specifier is ...",
-                    xpath: "src:type/src:specifier/text()=\"<NAME>\"",
+                "SPECIFIER_EQUALS_TO": {
+                    buttonName: "Specifier is ...",
+                    xpath: "src:specifier/text()=\"<NAME>\"",
                     placeholder: "specifier",
                     type: "text",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "specifier where equal to"
+                },
+                "SPECIFIER_NOT_EQUALS_TO": {
+                    buttonName: "Specifier is not ...",
+                    xpath: "src:specifier/text()!=\"<NAME>\"",
+                    placeholder: "specifier",
+                    type: "text",
+                    pre: "",
+                    post: "",
+                    grammar: "specifier where not equal to"
                 }
             },
             "before_2": {
-                "TYPE_NAME": {
-                    name: "Type 'name' is ...",
-                    xpath: "src:type/src:name/text()=\"<NAME>\"",
+                "TYPE_NAMED": {
+                    buttonName: "Type 'name' is ...",
+                    xpath: "src:type//src:name/text()=\"<NAME>\"",
                     type: "text",
                     placeholder: "type name",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "type where equal to"
                 },
-                "TYPE_NAME_NAME": {
-                    name: "Type 'name'< > is ...",
-                    xpath: "src:type/src:name/src:name/text()=\"<NAME>\"",
+                "TYPE_NOT_NAMED": {
+                    buttonName: "Type 'name' is not ...",
+                    xpath: "src:type//src:name/text()!=\"<NAME>\"",
                     type: "text",
-                    placeholder: "type name< >",
+                    placeholder: "type not named",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "type where not equal to"
                 }
+                // "TYPE_NAME_NAME": {
+                //     buttonName: "Type 'name'< > is ...",
+                //     xpath: "src:type/src:name/src:name/text()=\"<NAME>\"",
+                //     type: "text",
+                //     placeholder: "type name< >",
+                //     pre: "",
+                //     post: "",
+                //     grammar: "type where have name where equal to"
+                // }
             },
-            "after": {
+            "after_1": {
                 "NAME_EQUALS_TO": {
-                    name: "Name equals to ...",
+                    buttonName: "Name equals to ...",
                     xpath: "src:name/text()=\"<NAME>\"",
                     type: "text",
                     placeholder: "name",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "name where equal to"
                 },
                 "NAME_NOT_EQUALS_TO": {
-                    name: "Name not equals to ...",
+                    buttonName: "Name not equals to ...",
                     xpath: "src:name/text()!=\"<NAME>\"",
                     type: "text",
                     placeholder: "name",
                     pre: "",
-                    post: ""
-                }
-            },
-            "within": {
-                "HAS_INIT_NAME_LITERAL": {
-                    name: "Has initialization by value or name ...",
-                    xpath: "src:init",
-                    type: "srcml",
-                    pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "name where not equal to"
                 },
-                "HAS_INIT_CALL": {
-                    name: "Has initialization by method chainCall ...",
-                    xpath: "src:init",
-                    type: "chainCall",
+                "NAME_INCLUDES": {
+                    buttonName: "Name include ...",
+                    xpath: "src:name[contains(text(),\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "name",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "name where include"
+                },
+                "NAME_NOT_INCLUDES": {
+                    buttonName: "Name not include ...",
+                    xpath: "src:name[not(contains(text(),\"<NAME>\")]",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not include"
+                },
+                "NAME_STARTS_WITH": {
+                    buttonName: "Name starts with ...",
+                    xpath: "src:name[starts-with(text(),\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not start with"
+                },
+                "NAME_NOT_STARTS_WITH": {
+                    buttonName: "Name not starts with ...",
+                    xpath: "src:name[not(starts-with(text(),\"<NAME>\")]",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not start with"
+                },
+                "NAME_ENDS_WITH": {
+                    buttonName: "Name ends with ...",
+                    xpath: "src:name[ends-with(text(),\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where end with"
+                },
+                "NAME_NOT_ENDS_WITH": {
+                    buttonName: "Name not ends with ...",
+                    xpath: "src:name[not(ends-with(text(),\"<NAME>\")]",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not end with"
                 }
             },
+            "after_2": {
+                "INIT_VALUE": {
+                    buttonName: "Has initialization ...",
+                    xpath: "src:init",
+                    type: "expression",
+                    pre: "",
+                    post: "",
+                    grammar: "initial value"
+                }
+            },
+            "within": {},
             "follows": {
-                "type": {name: "type", xpath: "src:type/src:name/text()", follows: ""},
-                "name": {name: "name", xpath: "src:name/text()", follows: ""},
-                "initialization expression": {
-                    name: "initialization expression",
+                "annotation": {
+                    buttonName: "annotation", xpath: "src:annotation",
+                    follows: "annotation", grammar: "annotation"
+                },
+                "specifier": {
+                    buttonName: "specifier", xpath: "src:specifier/text()",
+                    follows: "", grammar: "specifier"
+                },
+
+                "type": {name: "type",
+                    xpath: "src:type/src:name/text()", follows: "",
+                    grammar: "type"
+                },
+                "name": {
+                    buttonName: "name", xpath: "src:name/text()", follows: "",
+                    grammar: "name"
+                },
+                "expression": {
+                    buttonName: "initialization expression",
                     xpath: "src:init/src:expr",
-                    follows: "expression"
+                    follows: "expression",
+                    grammar: "initial value"
                 }
             }
-
         },
+        // used for parameter in functions
         "declaration": {
             "top": {},
             "before_1": {},
             "before_2": {
-                "TYPE_EQUALS_TO": {
-                    name: "Type equals to ...",
-                    xpath: "src:type/src:name/text()=\"<NAME>\"",
+                "TYPE_NAMED": {
+                    buttonName: "Type 'name' is ...",
+                    xpath: "src:type//src:name/text()=\"<NAME>\"",
                     type: "text",
-                    placeholder: "type",
+                    placeholder: "type name",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "type where equal to"
+                },
+                "TYPE_NOT_NAMED": {
+                    buttonName: "Type 'name' is not ...",
+                    xpath: "src:type//src:name/text()!=\"<NAME>\"",
+                    type: "text",
+                    placeholder: "type not named",
+                    pre: "",
+                    post: "",
+                    grammar: "type where not equal to"
                 }
             },
-            "after": {
+            "after_1": {
                 "NAME_EQUALS_TO": {
-                    name: "Name equals to ...",
+                    buttonName: "Name equals to ...",
                     xpath: "src:name/text()=\"<NAME>\"",
                     type: "text",
-                    placeholder: "parameterName",
+                    placeholder: "name",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "name where equal to"
                 },
                 "NAME_NOT_EQUALS_TO": {
-                    name: "Name not equals to ...",
+                    buttonName: "Name not equals to ...",
                     xpath: "src:name/text()!=\"<NAME>\"",
                     type: "text",
-                    placeholder: "parameterName",
+                    placeholder: "name",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "name where not equal to"
+                },
+                "NAME_INCLUDES": {
+                    buttonName: "Name include ...",
+                    xpath: "src:name[contains(text(),\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where include"
+                },
+                "NAME_NOT_INCLUDES": {
+                    buttonName: "Name not include ...",
+                    xpath: "src:name[not(contains(text(),\"<NAME>\")]",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not include"
+                },
+                "NAME_STARTS_WITH": {
+                    buttonName: "Name starts with ...",
+                    xpath: "src:name[starts-with(text(),\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not start with"
+                },
+                "NAME_NOT_STARTS_WITH": {
+                    buttonName: "Name not starts with ...",
+                    xpath: "src:name[not(starts-with(text(),\"<NAME>\")]",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not start with"
+                },
+                "NAME_ENDS_WITH": {
+                    buttonName: "Name ends with ...",
+                    xpath: "src:name[ends-with(text(),\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where end with"
+                },
+                "NAME_NOT_ENDS_WITH": {
+                    buttonName: "Name not ends with ...",
+                    xpath: "src:name[not(ends-with(text(),\"<NAME>\")]",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not end with"
                 }
             },
+            "after_2": {},
             "within": {},
             "follows": {
-                "type": {name: "type", xpath: "src:type/src:name/text()", follows: ""},
-                "name": {name: "name", xpath: "src:name/text()", follows: ""}
+                "type": {
+                    buttonName: "type",
+                    xpath: "src:type/src:name/text()",
+                    follows: "",
+                    grammar: "type"
+                },
+                "name": {
+                    buttonName: "name",
+                    xpath: "src:name/text()",
+                    follows: "",
+                    grammar: "name"
+                }
             }
-
+        },
+        "call": {
+            "top": {},
+            "before_1": {
+                "CALLER_IS": {
+                    buttonName: "The caller is",
+                    xpath: "src:name/text()=\"<NAME>\"",
+                    type: "text",
+                    pre: "",
+                    post: "",
+                    grammar: "caller where equals to"
+                }
+            },
+            "before_2": {},
+            "after_1": {
+                "ARGUMENT": {
+                    buttonName: "One of its argument is ...",
+                    xpath: "src:argument_list/src:argument/src:expr",
+                    type: "expression",
+                    pre: "",
+                    post: ",",
+                    grammar: "argument"
+                }
+            },
+            "after_2": {},
+            "within": {},
+            "follows": {
+                "expression": {
+                    buttonName: "argument",
+                    xpath: "src:argument_list/src:argument/src:expr",
+                    follows: "expression",
+                    grammar: "argument"
+                },
+                "name": {
+                    buttonName: "caller",
+                    xpath: "src:name/text()",
+                    follows: "",
+                    grammar: "caller"
+                }
+            }
         },
         "annotation": {
             "top": {},
-            "before": {
+            "before_1": {
                 "NAME_EQUALS_TO": {
-                    name: "Name equals to ...",
+                    buttonName: "Name equals to ...",
                     xpath: "src:name/text()=\"<NAME>\"",
                     type: "text",
-                    placeholder: "annotationName",
+                    placeholder: "name",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "name where equal to"
                 },
                 "NAME_NOT_EQUALS_TO": {
-                    name: "Name not equals to ...",
+                    buttonName: "Name not equals to ...",
                     xpath: "src:name/text()!=\"<NAME>\"",
                     type: "text",
-                    placeholder: "annotationName",
+                    placeholder: "name",
                     pre: "",
-                    post: ""
+                    post: "",
+                    grammar: "name where not equal to"
+                },
+                "NAME_INCLUDES": {
+                    buttonName: "Name include ...",
+                    xpath: "src:name[contains(text(),\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where include"
+                },
+                "NAME_NOT_INCLUDES": {
+                    buttonName: "Name not include ...",
+                    xpath: "src:name[not(contains(text(),\"<NAME>\")]",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not include"
+                },
+                "NAME_STARTS_WITH": {
+                    buttonName: "Name starts with ...",
+                    xpath: "src:name[starts-with(text(),\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not start with"
+                },
+                "NAME_NOT_STARTS_WITH": {
+                    buttonName: "Name not starts with ...",
+                    xpath: "src:name[not(starts-with(text(),\"<NAME>\")]",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not start with"
+                },
+                "NAME_ENDS_WITH": {
+                    buttonName: "Name ends with ...",
+                    xpath: "src:name[ends-with(text(),\"<NAME>\"]",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where end with"
+                },
+                "NAME_NOT_ENDS_WITH": {
+                    buttonName: "Name not ends with ...",
+                    xpath: "src:name[not(ends-with(text(),\"<NAME>\")]",
+                    type: "text",
+                    placeholder: "name",
+                    pre: "",
+                    post: "",
+                    grammar: "name where not end with"
                 }
             },
-            "after": {
-                "HAS_ARGUMENT": {
-                    name: "It has argument ...",
+            "before_2": {},
+            "after_1": {
+                "ARGUMENT": {
+                    buttonName: "It has argument ...",
                     xpath: "src:argument_list/src:argument/src:expr",
-                    type: "expression", // TODO change to srcml
+                    type: "expression",
                     pre: "",
-                    post: ","
+                    post: ",",
+                    grammar: "argument"
                 }
 
             },
+            "after_2": {},
             "within": {},
-            "follows": {}
-
+            "follows": {
+                "name": {
+                    buttonName: "name", xpath: "src:name/text()",
+                    follows: "", grammar: "name"
+                }
+            }
         }
     };
 
     static state_children = {
         "top": [],
-        "before": [],
         "before_1": [],
         "before_2": [],
-        "after": [],
         "after_1": [],
         "after_2": [],
         "within": [],

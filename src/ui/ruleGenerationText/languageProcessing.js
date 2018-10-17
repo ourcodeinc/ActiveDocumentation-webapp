@@ -55,9 +55,9 @@ const lemmatize = (input) => {
     str = stringReplaceAll(str, " ''", "\"");
     str = stringReplaceAll(str, " and ", "  and "); // for extra spaces around and
     str = stringReplaceAll(str, " or ", "  or "); // for extra spaces around or
-    str = stringReplaceAll(str, "`` ","\"" );
-    str = str.replace(/\( /g,"(" );
-    str = str.replace(/ \) /g,")" );
+    str = stringReplaceAll(str, "`` ", "\"");
+    str = str.replace(/\( /g, "(");
+    str = str.replace(/ \) /g, " )"); // no change!
 
     return str
 };
@@ -84,7 +84,7 @@ const antlr = (input) => {
     let MyGrammarLexerModule = require('../generated-parser/myGrammarLexer');
     let MyGrammarParserModule = require('../generated-parser/myGrammarParser');
 
-    let ErrorListener = function(errors) {
+    let ErrorListener = function (errors) {
         antlr4.error.ErrorListener.call(this);
         this.errors = errors;
         return this;
@@ -92,8 +92,8 @@ const antlr = (input) => {
 
     ErrorListener.prototype = Object.create(antlr4.error.ErrorListener.prototype);
     ErrorListener.prototype.constructor = ErrorListener;
-    ErrorListener.prototype.syntaxError = function(rec, sym, line, col, msg, e) {
-        this.errors.push({rec:rec, sym:sym, line:line, col:col, msg:msg, e:e});
+    ErrorListener.prototype.syntaxError = function (rec, sym, line, col, msg, e) {
+        this.errors.push({rec: rec, sym: sym, line: line, col: col, msg: msg, e: e});
     };
 
     let errors = [];
