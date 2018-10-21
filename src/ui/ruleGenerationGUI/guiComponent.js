@@ -21,8 +21,9 @@ class GuiComponent extends React.Component {
         this.state = props["state"];
 
         /*
-        string : the value of text box
-        object : copy? of the element object
+            since the element might keep many text values, each for
+            one child, it needs to store a copy of the children
+            It can't be replaced with a simple text variable
          */
         this.state.text = JSON.parse(JSON.stringify(this.state.children));
 
@@ -45,14 +46,14 @@ class GuiComponent extends React.Component {
                     {this.renderGroup("after_2")}
                     <div className={"rowItem inlineText"}>{this.renderElementMainAfter()}</div>
                     <div
-                        className={"rowItem"}>{["annotation", "declaration", "expression", "returnValue", "call"].indexOf(this.element) !== -1 ? this.renderFollows() : null}</div>
+                        className={"rowItem"}>{["annotation", "declaration", "expression", "returnValue", "call"].indexOf(this.element) !== -1 ? this.renderChild() : null}</div>
                     {["annotation", "declaration", "expression", "returnValue", "call"].indexOf(this.element) !== -1 ? this.renderRemoveElement("removeIcon") : null}
                 </div>
                 <div className={"rowGroup"}>{this.renderElementBodyBegin()}</div>
                 <div className={"rowGroup"}>{this.renderGroup("within")}</div>
-                <div className={"rowGroup"}>{this.renderElementBodyEnd()}</div>
                 <div
-                    className={"rowGroup"}>{["annotation", "declaration", "expression", "returnValue", "call"].indexOf(this.element) === -1 ? this.renderFollows() : null}</div>
+                    className={"rowGroup"}>{["annotation", "declaration", "expression", "returnValue", "call"].indexOf(this.element) === -1 ? this.renderChild() : null}</div>
+                <div className={"rowGroup"}>{this.renderElementBodyEnd()}</div>
             </div>
         )
     }
@@ -161,27 +162,27 @@ class GuiComponent extends React.Component {
 
 
     /**
-     * render the 'follows' elements and constraints, drop down or a component
+     * render the 'child' elements and constraints, drop down or a component
      */
-    renderFollows() {
-        if (!this.state.children["follows"].hasOwnProperty("key"))
+    renderChild() {
+        if (!this.state.children["child"].hasOwnProperty("key"))
             return (
                 <div>
                     <CustomFollowDropDown
-                        menuItemsText={Object.keys(GuiConstants.code_fragment[this.element]["follows"])
-                            .map(key => GuiConstants.code_fragment[this.element]["follows"][key]["buttonName"])}
-                        menuItemsEvent={Object.keys(GuiConstants.code_fragment[this.element]["follows"])
+                        menuItemsText={Object.keys(GuiConstants.code_fragment[this.element]["child"])
+                            .map(key => GuiConstants.code_fragment[this.element]["child"][key]["buttonName"])}
+                        menuItemsEvent={Object.keys(GuiConstants.code_fragment[this.element]["child"])
                             .map(key => key)}
                         target={this.state.target}
                         onSelectFunction={(evt) => {
                             const children = this.state.children;
-                            children.follows = {
+                            children.child = {
                                 key: evt,
-                                value: GuiConstants.code_fragment[this.element]["follows"][evt],
+                                value: GuiConstants.code_fragment[this.element]["child"][evt],
                                 target: this.state.target !== "" ? this.state.target : "default",
                                 children: JSON.parse(JSON.stringify(GuiConstants.state_children)),
-                                // xpath: GuiConstants.code_fragment[this.element]["follows"][evt]["xpath"],
-                                grammar: GuiConstants.code_fragment[this.element]["follows"][evt]["grammar"]
+                                // xpath: GuiConstants.code_fragment[this.element]["child"][evt]["xpath"],
+                                grammar: GuiConstants.code_fragment[this.element]["child"][evt]["grammar"]
                             };
                             this.setState({children});
                             this.sendDataBack();
@@ -191,7 +192,7 @@ class GuiComponent extends React.Component {
             );
 
         else {
-            switch (this.state.children["follows"].key) {
+            switch (this.state.children["child"].key) {
                 // elements that don't need to be rendered
                 case "expression":
                 case "annotation":
@@ -206,17 +207,17 @@ class GuiComponent extends React.Component {
                                       style={{color: "#2babd2"}}
                                       onClick={() => {
                                           const children = this.state.children;
-                                          children["follows"] = {};
+                                          children["child"] = {};
                                           this.setState({children});
                                           this.sendDataBack();
                                       }}/>);
                 default:
-                    return (<GuiComponent ws={this.ws} state={this.state.children["follows"]}
-                                          element={this.state.children["follows"].key}
+                    return (<GuiComponent ws={this.ws} state={this.state.children["child"]}
+                                          element={this.state.children["child"].key}
                                           callbackFromParent={this.sendDataBack}
                                           removeFunction={() => {
                                               const children = this.state.children;
-                                              children["follows"] = {};
+                                              children["child"] = {};
                                               this.setState({children});
                                               this.sendDataBack();
                                           }}/>)
@@ -377,8 +378,8 @@ class GuiComponent extends React.Component {
             return "";
 
         let isTarget = false;
-        if (this.state.children["follows"].hasOwnProperty("key")) {
-            let targetKey = this.state.children["follows"].key;
+        if (this.state.children["child"].hasOwnProperty("key")) {
+            let targetKey = this.state.children["child"].key;
 
             if(group === "top") {
                 if (targetKey === "annotation") isTarget = true;

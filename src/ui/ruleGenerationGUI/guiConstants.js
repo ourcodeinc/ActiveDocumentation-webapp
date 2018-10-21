@@ -186,49 +186,49 @@ export class GuiConstants {
                     grammar: "class"
                 }
             },
-            "follows": {
+            "child": {
                 "annotation": {
                     buttonName: "annotation", xpath: "src:annotation",
-                    follows: "annotation", grammar: "annotation"
+                    child: "annotation", grammar: "annotation"
                 },
                 "specifier": {
                     buttonName: "specifier", xpath: "src:specifier/text()",
-                    follows: "", grammar: "specifier"
+                    child: "", grammar: "specifier"
                 },
                 "name": {
                     buttonName: "name", xpath: "src:name/text()",
-                    follows: "", grammar: "name"
+                    child: "", grammar: "name"
                 },
                 "extend": {
                     buttonName: "extension", xpath: "src:super/src:extends/src:name/text()",
-                    follows: "", grammar: "extension"
+                    child: "", grammar: "extension"
                 },
                 "implement": {
                     buttonName: "implementation", xpath: "src:super/src:implements/src:name/text()",
-                    follows: "", grammar: "implementation"
+                    child: "", grammar: "implementation"
                 },
                 "class": {
                     buttonName: "subclass", xpath: "src:block/src:class",
-                    follows: "class", grammar: "class"
+                    child: "class", grammar: "class"
                 },
                 "function": {
                     buttonName: "function", xpath: "src:block/src:function",
-                    follows: "function", grammar: "function"
+                    child: "function", grammar: "function"
                 },
                 "constructor": {
                     buttonName: "constructor", xpath: "src:block/src:constructor",
-                    follows: "constructor", grammar: "constructor"
+                    child: "constructor", grammar: "constructor"
                 },
                 "abstractFunction": {
                     buttonName: "abstractFunction",
                     xpath: "src:block/src:function_decl",
-                    follows: "abstractFunction",
+                    child: "abstractFunction",
                     grammar: "abstractFunction"
                 },
                 "declarationStatement": {
                     buttonName: "declarationStatement",
                     xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
-                    follows: "declarationStatement",
+                    child: "declarationStatement",
                     grammar: "declarationStatement"
                 }
             }
@@ -375,41 +375,41 @@ export class GuiConstants {
                     grammar: "declarationStatement"
                 }
             },
-            "follows": {
+            "child": {
                 "annotation": {
                     buttonName: "annotation", xpath: "src:annotation",
-                    follows: "annotation", grammar: "annotation"
+                    child: "annotation", grammar: "annotation"
                 },
                 "specifier": {
                     buttonName: "specifier", xpath: "src:specifier/text()",
-                    follows: "", grammar: "specifier"
+                    child: "", grammar: "specifier"
                 },
                 "name": {
                     buttonName: "name", xpath: "src:name/text()",
-                    follows: "", grammar: "name"
+                    child: "", grammar: "name"
                 },
                 "parameter": {
                     buttonName: "function parameter",
                     xpath: "src:parameter_list/src:parameter/src:decl",
-                    follows: "parameter",
+                    child: "parameter",
                     grammar: "parameter"
                 },
                 "expressionStatement": {
                     buttonName: "assignment expression",
                     xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                    follows: "expressionStatement",
+                    child: "expressionStatement",
                     grammar: "expression statement",
                 },
                 "declarationStatement": {
                     buttonName: "declaration statement",
                     xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
-                    follows: "declarationStatement",
+                    child: "declarationStatement",
                     grammar: "declarationStatement"
                 },
                 "returnValue": {
                     buttonName: "return value",
                     xpath: "src:block/descendant-or-self::src:return/src:expr",
-                    follows: "returnValue",
+                    child: "returnValue",
                     grammar: "return value"
                 }
             }
@@ -475,35 +475,35 @@ export class GuiConstants {
                     grammar: "declarationStatement"
                 }
             },
-            "follows": {
+            "child": {
                 "annotation": {
                     buttonName: "annotation", xpath: "src:annotation",
-                    follows: "annotation", grammar: "annotation"
+                    child: "annotation", grammar: "annotation"
                 },
                 "specifier": {
                     buttonName: "specifier", xpath: "src:specifier/text()",
-                    follows: "", grammar: "specifier"
+                    child: "", grammar: "specifier"
                 },
                 "name": {
                     buttonName: "name", xpath: "src:name/text()",
-                    follows: "", grammar: "name"
+                    child: "", grammar: "name"
                 },
                 "parameter": {
                     buttonName: "function parameter",
                     xpath: "src:parameter_list/src:parameter/src:decl",
-                    follows: "parameter",
+                    child: "parameter",
                     grammar: "parameter"
                 },
                 "expressionStatement": {
                     buttonName: "assignment expression",
                     xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                    follows: "expressionStatement",
+                    child: "expressionStatement",
                     grammar: "expression statement",
                 },
                 "declarationStatement": {
                     buttonName: "declarationStatement",
                     xpath: "src:block/descendant-or-self::src:decl_stmt",
-                    follows: "declarationStatement",
+                    child: "declarationStatement",
                     grammar: "annotation"
                 }
             }
@@ -625,25 +625,25 @@ export class GuiConstants {
             },
             "after_2": {},
             "within": {},
-            "follows": {
+            "child": {
                 "annotation": {
                     buttonName: "annotation", xpath: "src:annotation",
-                    follows: "annotation", grammar: "annotation"
+                    child: "annotation", grammar: "annotation"
                 },
                 "specifier": {
                     buttonName: "specifier", xpath: "src:specifier/text()",
-                    follows: "", grammar: "specifier"
+                    child: "", grammar: "specifier"
                 },
                 "name": {
                     buttonName: "name",
                     xpath: "src:name/text()",
-                    follows: "name",
+                    child: "name",
                     grammar: "name"
                 },
                 "parameter": {
                     buttonName: "parameter",
                     xpath: "src:parameter_list/src:parameter/src:decl",
-                    follows: "parameter",
+                    child: "parameter",
                     grammar: "parameter"
                 }
             }
@@ -681,15 +681,15 @@ export class GuiConstants {
             },
             "after_2": {},
             "within": {},
-            "follows": {
+            "child": {
                 "call": {
                     buttonName: "method invoke",
                     xpath: "src:call",
-                    follows: "call",
+                    child: "call",
                     grammar: "call"
                 },
                 "name": {
-                    buttonName: "name", xpath: "src:name/text()", follows: "",
+                    buttonName: "name", xpath: "src:name/text()", child: "",
                     grammar: "name"
                 }
             }
@@ -718,15 +718,15 @@ export class GuiConstants {
             "after_1": {},
             "after_2": {},
             "within": {},
-            "follows": {
+            "child": {
                 "call": {
                     buttonName: "method invoke",
                     xpath: "src:call",
-                    follows: "call",
+                    child: "call",
                     grammar: "call"
                 },
                 "name": {
-                    buttonName: "name", xpath: "src:name/text()", follows: "",
+                    buttonName: "name", xpath: "src:name/text()", child: "",
                     grammar: "name"
                 }
             }
@@ -755,17 +755,17 @@ export class GuiConstants {
             "after_1": {},
             "after_2": {},
             "within": {},
-            "follows": {
+            "child": {
                 "call": {
                     buttonName: "method invoke",
                     xpath: "src:call",
-                    follows: "call",
+                    child: "call",
                     grammar: "call"
                 },
                 "name": {
                     buttonName: "name",
                     xpath: "src:name/text()",
-                    follows: "",
+                    child: "",
                     grammar: "name"
                 }
             }
@@ -915,28 +915,28 @@ export class GuiConstants {
                 }
             },
             "within": {},
-            "follows": {
+            "child": {
                 "annotation": {
                     buttonName: "annotation", xpath: "src:annotation",
-                    follows: "annotation", grammar: "annotation"
+                    child: "annotation", grammar: "annotation"
                 },
                 "specifier": {
                     buttonName: "specifier", xpath: "src:specifier/text()",
-                    follows: "", grammar: "specifier"
+                    child: "", grammar: "specifier"
                 },
 
                 "type": {name: "type",
-                    xpath: "src:type/src:name/text()", follows: "",
+                    xpath: "src:type/src:name/text()", child: "",
                     grammar: "type"
                 },
                 "name": {
-                    buttonName: "name", xpath: "src:name/text()", follows: "",
+                    buttonName: "name", xpath: "src:name/text()", child: "",
                     grammar: "name"
                 },
                 "expression": {
                     buttonName: "initialization expression",
                     xpath: "src:init/src:expr",
-                    follows: "expression",
+                    child: "expression",
                     grammar: "initial value"
                 }
             }
@@ -1041,17 +1041,17 @@ export class GuiConstants {
             },
             "after_2": {},
             "within": {},
-            "follows": {
+            "child": {
                 "type": {
                     buttonName: "type",
                     xpath: "src:type/src:name/text()",
-                    follows: "",
+                    child: "",
                     grammar: "type"
                 },
                 "name": {
                     buttonName: "name",
                     xpath: "src:name/text()",
-                    follows: "",
+                    child: "",
                     grammar: "name"
                 }
             }
@@ -1081,17 +1081,17 @@ export class GuiConstants {
             },
             "after_2": {},
             "within": {},
-            "follows": {
+            "child": {
                 "expression": {
                     buttonName: "argument",
                     xpath: "src:argument_list/src:argument/src:expr",
-                    follows: "expression",
+                    child: "expression",
                     grammar: "argument"
                 },
                 "name": {
                     buttonName: "caller",
                     xpath: "src:name/text()",
-                    follows: "",
+                    child: "",
                     grammar: "caller"
                 }
             }
@@ -1186,10 +1186,10 @@ export class GuiConstants {
             },
             "after_2": {},
             "within": {},
-            "follows": {
+            "child": {
                 "name": {
                     buttonName: "name", xpath: "src:name/text()",
-                    follows: "", grammar: "name"
+                    child: "", grammar: "name"
                 }
             }
         }
@@ -1202,7 +1202,7 @@ export class GuiConstants {
         "after_1": [],
         "after_2": [],
         "within": [],
-        "follows": {}
+        "child": {}
     };
 
 }

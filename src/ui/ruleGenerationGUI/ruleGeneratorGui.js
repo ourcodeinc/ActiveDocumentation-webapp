@@ -24,8 +24,7 @@ class RuleGeneratorGui extends Component {
     render() {
         return (
             <div style={{clear: "both", marginTop: "20px"}} className={this.class}>
-                <p>function where ( have annotation and have specifier ) of class where have function where have name where equal to "foo" must have name</p>
-                <button onClick={()=>console.log(this.state.quantifier, this.state.quantifierGrammar)}>Click</button>
+                <button onClick={()=>console.log(this.state.quantifier, JSON.stringify(this.state.quantifier))}>Click</button>
                 <Tabs animation={true} id={"rule_generator_gui_tabs"} activeKey={this.state.activeTab}
                       onSelect={(key) => this.setState({activeTab: key})}>
                     <Tab eventKey={"quantifier"} title={"Quantifier Query"} animation={true}>
