@@ -145,7 +145,7 @@ export class constants {
                     "after_1": [],
                     "after_2": [],
                     "within": [],
-                    "follows": {}
+                    "child": {}
                 }
             },
             constraint: {
@@ -162,7 +162,7 @@ export class constants {
                     "after_1": [],
                     "after_2": [],
                     "within": [],
-                    "follows": {}
+                    "child": {}
                 }
             },
             // quantifierXpath: "src:unit/src:class",

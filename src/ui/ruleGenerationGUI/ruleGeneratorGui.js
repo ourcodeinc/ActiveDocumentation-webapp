@@ -102,8 +102,8 @@ class RuleGeneratorGui extends Component {
             resChildren.push(this.traverseChildrenXpath(children[i]));
 
         res = (children.length !== 0) ? res + ((res !== "") ? "[" : "") + resChildren.join(' and ') + ((res !== "") ? "]" : "") : res;
-        res = (parentNode.children["follows"].hasOwnProperty('key')) ?
-            res + '/' + this.traverseChildrenXpath(parentNode.children["follows"]) : res;
+        res = (parentNode.children["child"].hasOwnProperty('key')) ?
+            res + '/' + this.traverseChildrenXpath(parentNode.children["child"]) : res;
 
         return res;
     }
@@ -116,8 +116,8 @@ class RuleGeneratorGui extends Component {
     traverseChildrenGrammar(parentNode) {
 
         let grText = "";
-        if(parentNode.children["follows"].hasOwnProperty('key')) {
-            grText += this.traverseChildrenGrammar(parentNode.children["follows"]);
+        if(parentNode.children["child"].hasOwnProperty('key')) {
+            grText += this.traverseChildrenGrammar(parentNode.children["child"]);
             grText += " of ";
         }
 
