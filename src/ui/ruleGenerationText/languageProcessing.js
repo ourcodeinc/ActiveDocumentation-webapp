@@ -2,6 +2,7 @@ import antlr4 from 'antlr4/index';
 import posTagger from 'wink-pos-tagger';
 
 import Traverse from './generateXpath';
+import {generateGuiTree} from "./generateGuiTree";
 
 
 /**
@@ -16,7 +17,9 @@ export default async function verifyTextBasedOnGrammar(autoCompleteText) {
     let returnedObj = antlr(lemmatized + " ");
     if (returnedObj.hasOwnProperty("grammarErrors") || returnedObj.hasOwnProperty("xpathTraverseErrors"))
         return Promise.reject(returnedObj);
-    return {quantifierXPath: returnedObj.quantifier, constraintXPath: returnedObj.constraint};
+    let guiTree = generateGuiTree(returnedObj.grammarTree);
+    console.log(guiTree, JSON.stringify(guiTree));
+    return {quantifierXPath: returnedObj.results.quantifier, constraintXPath: returnedObj.results.constraint};
 }
 
 /**
@@ -108,7 +111,6 @@ const antlr = (input) => {
 
     parser.removeErrorListeners();
     parser.addErrorListener(listener);
-
     let tree = parser.inputSentence();
 
     if (errors.length !== 0)
@@ -135,10 +137,10 @@ const antlr = (input) => {
             constr = traverse2.getQuantifierXPath();
         }
 
-        return {"quantifier": quant, "constraint": constr};
+        return {results: {quantifier: quant, constraint: constr}, grammarTree: tree};
 
     }
-    catch (error) {
+    catch (error) {console.log(error);
         return {xpathTraverseErrors: error};
     }
 };

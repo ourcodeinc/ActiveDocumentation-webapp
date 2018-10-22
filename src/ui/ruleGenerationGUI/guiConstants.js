@@ -6,7 +6,7 @@ export class GuiConstants {
     static code_fragment = {
         "class": {
             "top": {
-                "ANNOTATION": {
+                "annotation": {
                     buttonName: "Has annotation",
                     xpath: "src:annotation",
                     type: "annotation",
@@ -16,7 +16,7 @@ export class GuiConstants {
                 }
             },
             "before_1": {
-                "SPECIFIER_EQUALS_TO": {
+                "specifier": {
                     buttonName: "Specifier is ...",
                     xpath: "src:specifier/text()=\"<NAME>\"",
                     placeholder: "specifier",
@@ -25,7 +25,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "specifier where equal to"
                 },
-                "SPECIFIER_NOT_EQUALS_TO": {
+                "specifier not": {
                     buttonName: "Specifier is not ...",
                     xpath: "src:specifier/text()!=\"<NAME>\"",
                     placeholder: "specifier",
@@ -37,7 +37,7 @@ export class GuiConstants {
             },
             "before_2": {},
             "after_1": {
-                "NAME_EQUALS_TO": {
+                "name equal to": {
                     buttonName: "Name equals to ...",
                     xpath: "src:name/text()=\"<NAME>\"",
                     type: "text",
@@ -46,7 +46,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where equal to"
                 },
-                "NAME_NOT_EQUALS_TO": {
+                "name not equal to": {
                     buttonName: "Name not equals to ...",
                     xpath: "src:name/text()!=\"<NAME>\"",
                     type: "text",
@@ -55,7 +55,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not equal to"
                 },
-                "NAME_INCLUDES": {
+                "name include": {
                     buttonName: "Name include ...",
                     xpath: "src:name[contains(text(),\"<NAME>\"]",
                     type: "text",
@@ -64,7 +64,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where include"
                 },
-                "NAME_NOT_INCLUDES": {
+                "name not include": {
                     buttonName: "Name not include ...",
                     xpath: "src:name[not(contains(text(),\"<NAME>\")]",
                     type: "text",
@@ -73,7 +73,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not include"
                 },
-                "NAME_STARTS_WITH": {
+                "name start with": {
                     buttonName: "Name starts with ...",
                     xpath: "src:name[starts-with(text(),\"<NAME>\"]",
                     type: "text",
@@ -82,7 +82,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not start with"
                 },
-                "NAME_NOT_STARTS_WITH": {
+                "name not start with": {
                     buttonName: "Name not starts with ...",
                     xpath: "src:name[not(starts-with(text(),\"<NAME>\")]",
                     type: "text",
@@ -91,7 +91,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not start with"
                 },
-                "NAME_ENDS_WITH": {
+                "name end with": {
                     buttonName: "Name ends with ...",
                     xpath: "src:name[ends-with(text(),\"<NAME>\"]",
                     type: "text",
@@ -100,7 +100,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where end with"
                 },
-                "NAME_NOT_ENDS_WITH": {
+                "name not end with": {
                     buttonName: "Name not ends with ...",
                     xpath: "src:name[not(ends-with(text(),\"<NAME>\")]",
                     type: "text",
@@ -111,7 +111,7 @@ export class GuiConstants {
                 }
             },
             "after_2": {
-                "SUPERCLASS_NAMED": {
+                "extend": {
                     buttonName: "Extends class named ...",
                     xpath: "src:super/src:extends/src:name/text()=\"<NAME>\"",
                     type: "text",
@@ -119,7 +119,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "extension where equal to"
                 },
-                "SUPERCLASS_NOT_NAMED": {
+                "extend not": {
                     buttonName: "Extends class not named ...",
                     xpath: "src:super/src:extends/src:name/text()!=\"<NAME>\"",
                     type: "text",
@@ -127,7 +127,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "extension where not equal to"
                 },
-                "INTERFACE_NAMED": {
+                "implement": {
                     buttonName: "Implements class named ...",
                     xpath: "src:super/src:implements/src:name/text()=\"<NAME>\"",
                     type: "text",
@@ -135,7 +135,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "implementation where equal to"
                 },
-                "INTERFACE_NOT_NAMED": {
+                "implement not": {
                     buttonName: "Implements class not named ...",
                     xpath: "src:super/src:implements/src:name/text()!=\"<NAME>\"",
                     type: "text",
@@ -145,7 +145,7 @@ export class GuiConstants {
                 }
             },
             "within": {
-                "FUNCTION": {
+                "function": {
                     buttonName: "Has function ...",
                     xpath: "src:block/src:function",
                     type: "function",
@@ -153,15 +153,15 @@ export class GuiConstants {
                     post: "",
                     grammar: "function"
                 },
-                "FUNCTION_DECL": {
+                "abstract function": {
                     buttonName: "Has abstractFunction ...",
                     xpath: "src:block/src:function_decl",
-                    type: "abstractFunction",
+                    type: "abstract function",
                     pre: "",
                     post: "",
-                    grammar: "abstractFunction"
+                    grammar: "abstract function"
                 },
-                "CONSTRUCTOR": {
+                "constructor": {
                     buttonName: "Has constructor ...",
                     xpath: "src:block/src:constructor",
                     type: "constructor",
@@ -169,15 +169,15 @@ export class GuiConstants {
                     post: "",
                     grammar: "constructor"
                 },
-                "DECLARATION_STMT": {
+                "declaration statement": {
                     buttonName: "Has declarationStatement ...",
                     xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
-                    type: "declarationStatement",
+                    type: "declaration statement",
                     pre: "",
                     post: "",
-                    grammar: "declarationStatement"
+                    grammar: "declaration statement"
                 },
-                "SUBCLASS": {
+                "class": {
                     buttonName: "Has subclass ...",
                     xpath: "src:block/src:class",
                     type: "class",
@@ -219,23 +219,23 @@ export class GuiConstants {
                     buttonName: "constructor", xpath: "src:block/src:constructor",
                     child: "constructor", grammar: "constructor"
                 },
-                "abstractFunction": {
-                    buttonName: "abstractFunction",
+                "abstract function": {
+                    buttonName: "abstract function",
                     xpath: "src:block/src:function_decl",
-                    child: "abstractFunction",
-                    grammar: "abstractFunction"
+                    child: "abstract function",
+                    grammar: "abstract function"
                 },
-                "declarationStatement": {
-                    buttonName: "declarationStatement",
+                "declaration statement": {
+                    buttonName: "declaration statement",
                     xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
-                    child: "declarationStatement",
-                    grammar: "declarationStatement"
+                    child: "declaration statement",
+                    grammar: "declaration statement"
                 }
             }
         },
         "function": {
             "top": {
-                "ANNOTATION": {
+                "annotation": {
                     buttonName: "Has annotation",
                     xpath: "src:annotation",
                     type: "annotation",
@@ -245,7 +245,7 @@ export class GuiConstants {
                 }
             },
             "before_1": {
-                "SPECIFIER_EQUALS_TO": {
+                "specifier": {
                     buttonName: "Specifier is ...",
                     xpath: "src:specifier/text()=\"<NAME>\"",
                     placeholder: "specifier",
@@ -254,7 +254,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "specifier where equal to"
                 },
-                "SPECIFIER_NOT_EQUALS_TO": {
+                "specifier not": {
                     buttonName: "Specifier is not ...",
                     xpath: "src:specifier/text()!=\"<NAME>\"",
                     placeholder: "specifier",
@@ -265,7 +265,7 @@ export class GuiConstants {
                 }
             },
             "before_2": {
-                "NAME_EQUALS_TO": {
+                "name equal to": {
                     buttonName: "Name equals to ...",
                     xpath: "src:name/text()=\"<NAME>\"",
                     type: "text",
@@ -274,7 +274,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where equal to"
                 },
-                "NAME_NOT_EQUALS_TO": {
+                "name not equal to": {
                     buttonName: "Name not equals to ...",
                     xpath: "src:name/text()!=\"<NAME>\"",
                     type: "text",
@@ -283,7 +283,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not equal to"
                 },
-                "NAME_INCLUDES": {
+                "name include": {
                     buttonName: "Name include ...",
                     xpath: "src:name[contains(text(),\"<NAME>\"]",
                     type: "text",
@@ -292,7 +292,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where include"
                 },
-                "NAME_NOT_INCLUDES": {
+                "name not include": {
                     buttonName: "Name not include ...",
                     xpath: "src:name[not(contains(text(),\"<NAME>\")]",
                     type: "text",
@@ -301,7 +301,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not include"
                 },
-                "NAME_STARTS_WITH": {
+                "name start with": {
                     buttonName: "Name starts with ...",
                     xpath: "src:name[starts-with(text(),\"<NAME>\"]",
                     type: "text",
@@ -310,7 +310,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not start with"
                 },
-                "NAME_NOT_STARTS_WITH": {
+                "name not start with": {
                     buttonName: "Name not starts with ...",
                     xpath: "src:name[not(starts-with(text(),\"<NAME>\")]",
                     type: "text",
@@ -319,7 +319,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not start with"
                 },
-                "NAME_ENDS_WITH": {
+                "name end with": {
                     buttonName: "Name ends with ...",
                     xpath: "src:name[ends-with(text(),\"<NAME>\"]",
                     type: "text",
@@ -328,7 +328,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where end with"
                 },
-                "NAME_NOT_ENDS_WITH": {
+                "name not end with": {
                     buttonName: "Name not ends with ...",
                     xpath: "src:name[not(ends-with(text(),\"<NAME>\")]",
                     type: "text",
@@ -339,7 +339,7 @@ export class GuiConstants {
                 }
             },
             "after_1": {
-                "PARAMETER": {
+                "parameter": {
                     buttonName: "One of its parameter is ...",
                     xpath: "src:parameter_list/src:parameter/src:decl",
                     type: "declaration",
@@ -350,29 +350,29 @@ export class GuiConstants {
             },
             "after_2": {},
             "within": {
-                "RETURN_VALUE": {
+                "return value": {
                     buttonName: "Return value/variable is ...",
                     xpath: "src:block/descendant-or-self::src:return/src:expr",
-                    type: "returnValue",
+                    type: "return value",
                     pre: "",
                     post: "",
                     grammar: "return value where have expression statement"
                 },
-                "EXPRESSION_STATEMENT": {
+                "expression statement": {
                     buttonName: "Has expression statement ...",
                     xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                    type: "expressionStatement",
+                    type: "expression statement",
                     pre: "",
                     post: "",
                     grammar: "expression statement"
                 },
-                "DECLARATION_STATEMENT": {
+                "declaration statement": {
                     buttonName: "Has declarationStatement ...",
                     xpath: "src:block/descendant-or-self::src:decl_stmt",
-                    type: "declarationStatement",
+                    type: "declaration statement",
                     pre: "",
                     post: "",
-                    grammar: "declarationStatement"
+                    grammar: "declaration statement"
                 }
             },
             "child": {
@@ -394,29 +394,29 @@ export class GuiConstants {
                     child: "parameter",
                     grammar: "parameter"
                 },
-                "expressionStatement": {
+                "expression statement": {
                     buttonName: "assignment expression",
                     xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                    child: "expressionStatement",
+                    child: "expression statement",
                     grammar: "expression statement",
                 },
-                "declarationStatement": {
+                "declaration statement": {
                     buttonName: "declaration statement",
                     xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
-                    child: "declarationStatement",
-                    grammar: "declarationStatement"
+                    child: "declaration statement",
+                    grammar: "declaration statement"
                 },
-                "returnValue": {
+                "return value": {
                     buttonName: "return value",
                     xpath: "src:block/descendant-or-self::src:return/src:expr",
-                    child: "returnValue",
+                    child: "return value",
                     grammar: "return value"
                 }
             }
         },
         "constructor": {
             "top": {
-                "ANNOTATION": {
+                "annotation": {
                     buttonName: "Has annotation",
                     xpath: "src:annotation",
                     type: "annotation",
@@ -426,7 +426,7 @@ export class GuiConstants {
                 }
             },
             "before_1": {
-                "SPECIFIER_EQUALS_TO": {
+                "specifier": {
                     buttonName: "Specifier is ...",
                     xpath: "src:specifier/text()=\"<NAME>\"",
                     placeholder: "specifier",
@@ -435,7 +435,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "specifier where equal to"
                 },
-                "SPECIFIER_NOT_EQUALS_TO": {
+                "specifier not": {
                     buttonName: "Specifier is not ...",
                     xpath: "src:specifier/text()!=\"<NAME>\"",
                     placeholder: "specifier",
@@ -447,7 +447,7 @@ export class GuiConstants {
             },
             "before_2": {},
             "after_1": {
-                "PARAMETER": {
+                "parameter": {
                     buttonName: "One of its parameter is ...",
                     xpath: "src:parameter_list/src:parameter/src:decl",
                     type: "declaration",
@@ -458,21 +458,21 @@ export class GuiConstants {
             },
             "after_2": {},
             "within": {
-                "EXPRESSION_STATEMENT": {
+                "expression statement": {
                     buttonName: "Has assignment expression ...",
                     xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                    type: "expressionStatement",
+                    type: "expression statement",
                     pre: "",
                     post: "",
                     grammar: "expression statement"
                 },
-                "DECLARATION_STATEMENT": {
+                "declaration statement": {
                     buttonName: "Has declaration ...",
                     xpath: "src:block/descendant-or-self::src:decl_stmt",
-                    type: "declarationStatement",
+                    type: "declaration statement",
                     pre: "",
                     post: "",
-                    grammar: "declarationStatement"
+                    grammar: "declaration statement"
                 }
             },
             "child": {
@@ -494,23 +494,23 @@ export class GuiConstants {
                     child: "parameter",
                     grammar: "parameter"
                 },
-                "expressionStatement": {
+                "expression statement": {
                     buttonName: "assignment expression",
                     xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-                    child: "expressionStatement",
+                    child: "expression statement",
                     grammar: "expression statement",
                 },
-                "declarationStatement": {
-                    buttonName: "declarationStatement",
+                "declaration statement": {
+                    buttonName: "declaration statement",
                     xpath: "src:block/descendant-or-self::src:decl_stmt",
-                    child: "declarationStatement",
-                    grammar: "annotation"
+                    child: "declaration statement",
+                    grammar: "declaration statement"
                 }
             }
         },
-        "abstractFunction": {
+        "abstract function": {
             "top": {
-                "ANNOTATION": {
+                "annotation": {
                     buttonName: "Has annotation",
                     xpath: "src:annotation",
                     type: "annotation",
@@ -520,7 +520,7 @@ export class GuiConstants {
                 }
             },
             "before_1": {
-                "SPECIFIER_EQUALS_TO": {
+                "specifier": {
                     buttonName: "Specifier is ...",
                     xpath: "src:specifier/text()=\"<NAME>\"",
                     placeholder: "specifier",
@@ -529,7 +529,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "specifier where equal to"
                 },
-                "SPECIFIER_NOT_EQUALS_TO": {
+                "specifier not": {
                     buttonName: "Specifier is not ...",
                     xpath: "src:specifier/text()!=\"<NAME>\"",
                     placeholder: "specifier",
@@ -540,7 +540,7 @@ export class GuiConstants {
                 }
             },
             "before_2": {
-                "NAME_EQUALS_TO": {
+                "name equal to": {
                     buttonName: "Name equals to ...",
                     xpath: "src:name/text()=\"<NAME>\"",
                     type: "text",
@@ -549,7 +549,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where equal to"
                 },
-                "NAME_NOT_EQUALS_TO": {
+                "name not equal to": {
                     buttonName: "Name not equals to ...",
                     xpath: "src:name/text()!=\"<NAME>\"",
                     type: "text",
@@ -558,7 +558,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not equal to"
                 },
-                "NAME_INCLUDES": {
+                "name include": {
                     buttonName: "Name include ...",
                     xpath: "src:name[contains(text(),\"<NAME>\"]",
                     type: "text",
@@ -567,7 +567,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where include"
                 },
-                "NAME_NOT_INCLUDES": {
+                "name not include": {
                     buttonName: "Name not include ...",
                     xpath: "src:name[not(contains(text(),\"<NAME>\")]",
                     type: "text",
@@ -576,7 +576,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not include"
                 },
-                "NAME_STARTS_WITH": {
+                "name start with": {
                     buttonName: "Name starts with ...",
                     xpath: "src:name[starts-with(text(),\"<NAME>\"]",
                     type: "text",
@@ -585,7 +585,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not start with"
                 },
-                "NAME_NOT_STARTS_WITH": {
+                "name not start with": {
                     buttonName: "Name not starts with ...",
                     xpath: "src:name[not(starts-with(text(),\"<NAME>\")]",
                     type: "text",
@@ -594,7 +594,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not start with"
                 },
-                "NAME_ENDS_WITH": {
+                "name end with": {
                     buttonName: "Name ends with ...",
                     xpath: "src:name[ends-with(text(),\"<NAME>\"]",
                     type: "text",
@@ -603,7 +603,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where end with"
                 },
-                "NAME_NOT_ENDS_WITH": {
+                "name not end with": {
                     buttonName: "Name not ends with ...",
                     xpath: "src:name[not(ends-with(text(),\"<NAME>\")]",
                     type: "text",
@@ -614,7 +614,7 @@ export class GuiConstants {
                 }
             },
             "after_1": {
-                "PARAMETER": {
+                "parameter": {
                     buttonName: "One of its parameter is ...",
                     xpath: "src:parameter_list/src:parameter/src:decl",
                     type: "declaration",
@@ -648,10 +648,10 @@ export class GuiConstants {
                 }
             }
         },
-        "expressionStatement": {
+        "expression statement": {
             "top": {},
             "before_1": {
-                "NAME": {
+                "name": {
                     buttonName: "name",
                     xpath: "",
                     type: "srcml",
@@ -662,22 +662,14 @@ export class GuiConstants {
             },
             "before_2": {},
             "after_1": {
-                "CALL": {
+                "call": {
                     buttonName: "method invoke",
                     xpath: "src:call",
                     type: "call",
                     pre: "",
                     post: "",
                     grammar: "call"
-                },
-                // "NAME/LITERAL": {
-                //     buttonName: "value/variable",
-                //     xpath: "",
-                //     type: "srcml",
-                //     pre: "",
-                //     post: "",
-                //     grammar: "NOT IN GRAMMAR"
-                // }
+                }
             },
             "after_2": {},
             "within": {},
@@ -697,7 +689,7 @@ export class GuiConstants {
         "expression": {
             "top": {},
             "before_1": {
-                "NAME": {
+                "name": {
                     buttonName: "name",
                     xpath: "",
                     type: "srcml",
@@ -705,7 +697,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name"
                 },
-                "CALL": {
+                "call": {
                     buttonName: "method invoke",
                     xpath: "src:call",
                     type: "call",
@@ -731,10 +723,10 @@ export class GuiConstants {
                 }
             }
         },
-        "returnValue": {
+        "return value": {
             "top": {},
             "before_1": {
-                "NAME": {
+                "name": {
                     buttonName: "name",
                     xpath: "",
                     type: "srcml",
@@ -742,7 +734,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name"
                 },
-                "CALL": {
+                "call": {
                     buttonName: "method invoke",
                     xpath: "src:call",
                     type: "call",
@@ -770,9 +762,9 @@ export class GuiConstants {
                 }
             }
         },
-        "declarationStatement": {
+        "declaration statement": {
             "top": {
-                "ANNOTATION": {
+                "annotation": {
                     buttonName: "Has annotation",
                     xpath: "src:annotation",
                     type: "annotation",
@@ -782,7 +774,7 @@ export class GuiConstants {
                 }
             },
             "before_1": {
-                "SPECIFIER_EQUALS_TO": {
+                "specifier": {
                     buttonName: "Specifier is ...",
                     xpath: "src:specifier/text()=\"<NAME>\"",
                     placeholder: "specifier",
@@ -791,7 +783,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "specifier where equal to"
                 },
-                "SPECIFIER_NOT_EQUALS_TO": {
+                "specifier not": {
                     buttonName: "Specifier is not ...",
                     xpath: "src:specifier/text()!=\"<NAME>\"",
                     placeholder: "specifier",
@@ -802,7 +794,7 @@ export class GuiConstants {
                 }
             },
             "before_2": {
-                "TYPE_NAMED": {
+                "type name": {
                     buttonName: "Type 'name' is ...",
                     xpath: "src:type//src:name/text()=\"<NAME>\"",
                     type: "text",
@@ -811,7 +803,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "type where equal to"
                 },
-                "TYPE_NOT_NAMED": {
+                "type not name": {
                     buttonName: "Type 'name' is not ...",
                     xpath: "src:type//src:name/text()!=\"<NAME>\"",
                     type: "text",
@@ -820,18 +812,9 @@ export class GuiConstants {
                     post: "",
                     grammar: "type where not equal to"
                 }
-                // "TYPE_NAME_NAME": {
-                //     buttonName: "Type 'name'< > is ...",
-                //     xpath: "src:type/src:name/src:name/text()=\"<NAME>\"",
-                //     type: "text",
-                //     placeholder: "type name< >",
-                //     pre: "",
-                //     post: "",
-                //     grammar: "type where have name where equal to"
-                // }
             },
             "after_1": {
-                "NAME_EQUALS_TO": {
+                "name equal to": {
                     buttonName: "Name equals to ...",
                     xpath: "src:name/text()=\"<NAME>\"",
                     type: "text",
@@ -840,7 +823,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where equal to"
                 },
-                "NAME_NOT_EQUALS_TO": {
+                "name not equal to": {
                     buttonName: "Name not equals to ...",
                     xpath: "src:name/text()!=\"<NAME>\"",
                     type: "text",
@@ -849,7 +832,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not equal to"
                 },
-                "NAME_INCLUDES": {
+                "name include": {
                     buttonName: "Name include ...",
                     xpath: "src:name[contains(text(),\"<NAME>\"]",
                     type: "text",
@@ -858,7 +841,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where include"
                 },
-                "NAME_NOT_INCLUDES": {
+                "name not include": {
                     buttonName: "Name not include ...",
                     xpath: "src:name[not(contains(text(),\"<NAME>\")]",
                     type: "text",
@@ -867,7 +850,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not include"
                 },
-                "NAME_STARTS_WITH": {
+                "name start with": {
                     buttonName: "Name starts with ...",
                     xpath: "src:name[starts-with(text(),\"<NAME>\"]",
                     type: "text",
@@ -876,7 +859,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not start with"
                 },
-                "NAME_NOT_STARTS_WITH": {
+                "name not start with": {
                     buttonName: "Name not starts with ...",
                     xpath: "src:name[not(starts-with(text(),\"<NAME>\")]",
                     type: "text",
@@ -885,7 +868,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not start with"
                 },
-                "NAME_ENDS_WITH": {
+                "name end with": {
                     buttonName: "Name ends with ...",
                     xpath: "src:name[ends-with(text(),\"<NAME>\"]",
                     type: "text",
@@ -894,7 +877,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where end with"
                 },
-                "NAME_NOT_ENDS_WITH": {
+                "name not end with": {
                     buttonName: "Name not ends with ...",
                     xpath: "src:name[not(ends-with(text(),\"<NAME>\")]",
                     type: "text",
@@ -905,7 +888,7 @@ export class GuiConstants {
                 }
             },
             "after_2": {
-                "INIT_VALUE": {
+                "init value": {
                     buttonName: "Has initialization ...",
                     xpath: "src:init",
                     type: "expression",
@@ -946,7 +929,7 @@ export class GuiConstants {
             "top": {},
             "before_1": {},
             "before_2": {
-                "TYPE_NAMED": {
+                "type name": {
                     buttonName: "Type 'name' is ...",
                     xpath: "src:type//src:name/text()=\"<NAME>\"",
                     type: "text",
@@ -955,7 +938,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "type where equal to"
                 },
-                "TYPE_NOT_NAMED": {
+                "type not name": {
                     buttonName: "Type 'name' is not ...",
                     xpath: "src:type//src:name/text()!=\"<NAME>\"",
                     type: "text",
@@ -966,7 +949,7 @@ export class GuiConstants {
                 }
             },
             "after_1": {
-                "NAME_EQUALS_TO": {
+                "name equal to": {
                     buttonName: "Name equals to ...",
                     xpath: "src:name/text()=\"<NAME>\"",
                     type: "text",
@@ -975,7 +958,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where equal to"
                 },
-                "NAME_NOT_EQUALS_TO": {
+                "name not equal to": {
                     buttonName: "Name not equals to ...",
                     xpath: "src:name/text()!=\"<NAME>\"",
                     type: "text",
@@ -984,7 +967,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not equal to"
                 },
-                "NAME_INCLUDES": {
+                "name include": {
                     buttonName: "Name include ...",
                     xpath: "src:name[contains(text(),\"<NAME>\"]",
                     type: "text",
@@ -993,7 +976,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where include"
                 },
-                "NAME_NOT_INCLUDES": {
+                "name not include": {
                     buttonName: "Name not include ...",
                     xpath: "src:name[not(contains(text(),\"<NAME>\")]",
                     type: "text",
@@ -1002,7 +985,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not include"
                 },
-                "NAME_STARTS_WITH": {
+                "name start with": {
                     buttonName: "Name starts with ...",
                     xpath: "src:name[starts-with(text(),\"<NAME>\"]",
                     type: "text",
@@ -1011,7 +994,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not start with"
                 },
-                "NAME_NOT_STARTS_WITH": {
+                "name not start with": {
                     buttonName: "Name not starts with ...",
                     xpath: "src:name[not(starts-with(text(),\"<NAME>\")]",
                     type: "text",
@@ -1020,7 +1003,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not start with"
                 },
-                "NAME_ENDS_WITH": {
+                "name end with": {
                     buttonName: "Name ends with ...",
                     xpath: "src:name[ends-with(text(),\"<NAME>\"]",
                     type: "text",
@@ -1029,7 +1012,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where end with"
                 },
-                "NAME_NOT_ENDS_WITH": {
+                "name not end with": {
                     buttonName: "Name not ends with ...",
                     xpath: "src:name[not(ends-with(text(),\"<NAME>\")]",
                     type: "text",
@@ -1059,7 +1042,7 @@ export class GuiConstants {
         "call": {
             "top": {},
             "before_1": {
-                "CALLER_IS": {
+                "caller": {
                     buttonName: "The caller is",
                     xpath: "src:name/text()=\"<NAME>\"",
                     type: "text",
@@ -1070,7 +1053,7 @@ export class GuiConstants {
             },
             "before_2": {},
             "after_1": {
-                "ARGUMENT": {
+                "argument": {
                     buttonName: "One of its argument is ...",
                     xpath: "src:argument_list/src:argument/src:expr",
                     type: "expression",
@@ -1099,7 +1082,7 @@ export class GuiConstants {
         "annotation": {
             "top": {},
             "before_1": {
-                "NAME_EQUALS_TO": {
+                "name equal to": {
                     buttonName: "Name equals to ...",
                     xpath: "src:name/text()=\"<NAME>\"",
                     type: "text",
@@ -1108,7 +1091,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where equal to"
                 },
-                "NAME_NOT_EQUALS_TO": {
+                "name not equal to": {
                     buttonName: "Name not equals to ...",
                     xpath: "src:name/text()!=\"<NAME>\"",
                     type: "text",
@@ -1117,7 +1100,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not equal to"
                 },
-                "NAME_INCLUDES": {
+                "name include": {
                     buttonName: "Name include ...",
                     xpath: "src:name[contains(text(),\"<NAME>\"]",
                     type: "text",
@@ -1126,7 +1109,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where include"
                 },
-                "NAME_NOT_INCLUDES": {
+                "name not include": {
                     buttonName: "Name not include ...",
                     xpath: "src:name[not(contains(text(),\"<NAME>\")]",
                     type: "text",
@@ -1135,7 +1118,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not include"
                 },
-                "NAME_STARTS_WITH": {
+                "name start with": {
                     buttonName: "Name starts with ...",
                     xpath: "src:name[starts-with(text(),\"<NAME>\"]",
                     type: "text",
@@ -1144,7 +1127,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not start with"
                 },
-                "NAME_NOT_STARTS_WITH": {
+                "name not start with": {
                     buttonName: "Name not starts with ...",
                     xpath: "src:name[not(starts-with(text(),\"<NAME>\")]",
                     type: "text",
@@ -1153,7 +1136,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where not start with"
                 },
-                "NAME_ENDS_WITH": {
+                "name end with": {
                     buttonName: "Name ends with ...",
                     xpath: "src:name[ends-with(text(),\"<NAME>\"]",
                     type: "text",
@@ -1162,7 +1145,7 @@ export class GuiConstants {
                     post: "",
                     grammar: "name where end with"
                 },
-                "NAME_NOT_ENDS_WITH": {
+                "name not end with": {
                     buttonName: "Name not ends with ...",
                     xpath: "src:name[not(ends-with(text(),\"<NAME>\")]",
                     type: "text",
@@ -1174,7 +1157,7 @@ export class GuiConstants {
             },
             "before_2": {},
             "after_1": {
-                "ARGUMENT": {
+                "argument": {
                     buttonName: "It has argument ...",
                     xpath: "src:argument_list/src:argument/src:expr",
                     type: "expression",

@@ -10,11 +10,12 @@
     "react-bootstrap": "^0.32.0",
     "react-dom": "^16.5.2",
     "react-icons": "^2.2.5",
+    "react-overlays": "^0.8.3",
     "react-redux": "^5.0.7",
     "react-scripts": "^1.1.4",
-    "react-tooltip": "^3.8.4",
-    "redux": "^4.0.0",
-    "react-overlays": "^0.8.3",
+    "react-tooltip": "^3.9.0",
+    "redux": "^4.0.1",
+    "wink-lemmatizer": "^2.0.0",
     "wink-pos-tagger": "^1.5.0"
   },
   "scripts": {
