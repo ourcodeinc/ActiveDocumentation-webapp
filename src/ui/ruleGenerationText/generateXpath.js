@@ -1,3 +1,7 @@
+/**
+ * Heavily dependant on Grammar
+ */
+
 import {TerminalNodeImpl} from "antlr4/tree/Tree";
 import Utilities from "../../core/utilities";
 
@@ -166,8 +170,8 @@ class GenerateXpath {
                     this.expressionStatementsContextTraversal(node);
                     break;
 
-                case "InitValuesContext":
-                    this.initValuesContextTraversal(node);
+                case "InitialValuesContext":
+                    this.initialValuesContextTraversal(node);
                     break;
 
                 case "ArgumentsContext":
@@ -731,13 +735,13 @@ class GenerateXpath {
         }
     }
 
-    initValuesContextTraversal(node) {
+    initialValuesContextTraversal(node) {
         let nodeChildren = node.children.slice(0);
 
         // move Of children to first
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf("InitValueOfContext") !== -1) {
+            if (nodeType.indexOf("InitialValueOfContext") !== -1) {
                 nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
                 break;
             }
@@ -747,7 +751,7 @@ class GenerateXpath {
             let nodeType = nodeChildren[i].constructor.name;
 
             // process ofContext
-            if (nodeType === "InitValueOfContext") {
+            if (nodeType === "InitialValueOfContext") {
                 this.traverseNode(nodeChildren[i]);
                 this.XPath += "/";
             }
@@ -757,7 +761,7 @@ class GenerateXpath {
                 this.XPath += "src:init/src:expr";
             }
 
-            if (nodeType === "InitValueConditionContext" || nodeType === "InitExpressionContext") {
+            if (nodeType === "InitialValueConditionContext" || nodeType === "InitExpressionContext") {
                 this.XPath += "[";
                 this.traverseNode(nodeChildren[i]);
                 this.XPath += "]";

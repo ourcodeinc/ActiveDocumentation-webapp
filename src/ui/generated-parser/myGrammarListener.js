@@ -614,39 +614,39 @@ myGrammarListener.prototype.exitExpressionStatementExpression = function(ctx) {
 };
 
 
-// Enter a parse tree produced by myGrammarParser#initValues.
-myGrammarListener.prototype.enterInitValues = function(ctx) {
+// Enter a parse tree produced by myGrammarParser#initialValues.
+myGrammarListener.prototype.enterInitialValues = function(ctx) {
 };
 
-// Exit a parse tree produced by myGrammarParser#initValues.
-myGrammarListener.prototype.exitInitValues = function(ctx) {
-};
-
-
-// Enter a parse tree produced by myGrammarParser#initValueOf.
-myGrammarListener.prototype.enterInitValueOf = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#initValueOf.
-myGrammarListener.prototype.exitInitValueOf = function(ctx) {
+// Exit a parse tree produced by myGrammarParser#initialValues.
+myGrammarListener.prototype.exitInitialValues = function(ctx) {
 };
 
 
-// Enter a parse tree produced by myGrammarParser#initValueCondition.
-myGrammarListener.prototype.enterInitValueCondition = function(ctx) {
+// Enter a parse tree produced by myGrammarParser#initialValueOf.
+myGrammarListener.prototype.enterInitialValueOf = function(ctx) {
 };
 
-// Exit a parse tree produced by myGrammarParser#initValueCondition.
-myGrammarListener.prototype.exitInitValueCondition = function(ctx) {
+// Exit a parse tree produced by myGrammarParser#initialValueOf.
+myGrammarListener.prototype.exitInitialValueOf = function(ctx) {
 };
 
 
-// Enter a parse tree produced by myGrammarParser#initValueExpression.
-myGrammarListener.prototype.enterInitValueExpression = function(ctx) {
+// Enter a parse tree produced by myGrammarParser#initialValueCondition.
+myGrammarListener.prototype.enterInitialValueCondition = function(ctx) {
 };
 
-// Exit a parse tree produced by myGrammarParser#initValueExpression.
-myGrammarListener.prototype.exitInitValueExpression = function(ctx) {
+// Exit a parse tree produced by myGrammarParser#initialValueCondition.
+myGrammarListener.prototype.exitInitialValueCondition = function(ctx) {
+};
+
+
+// Enter a parse tree produced by myGrammarParser#initialValueExpression.
+myGrammarListener.prototype.enterInitialValueExpression = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#initialValueExpression.
+myGrammarListener.prototype.exitInitialValueExpression = function(ctx) {
 };
 
 

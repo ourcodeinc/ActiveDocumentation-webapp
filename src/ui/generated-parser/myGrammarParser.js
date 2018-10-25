@@ -691,8 +691,8 @@ var symbolicNames = [ null, null, null, null, null, null, null, null, null,
                       "EXTEND", "EXTENSION", "IMPLEMENTATION", "FUNCTION", 
                       "AbstractFunctions", "CONSTRUCTOR", "PARAMETER", "TYPES", 
                       "SPECIFIER", "ReturnValue", "DeclarationStatement", 
-                      "ExpressionStatement", "InitValue", "ARGUMENT", "CALL", 
-                      "CALLER", "CLASSES" ];
+                      "ExpressionStatement", "InitialValue", "ARGUMENT", 
+                      "CALL", "CALLER", "CLASSES" ];
 
 var ruleNames =  [ "inputSentence", "designRule", "mustClause", "mustBeEqualToClause", 
                    "words", "end", "emptyLine", "must", "mustBeEqualTo", 
@@ -713,8 +713,8 @@ var ruleNames =  [ "inputSentence", "designRule", "mustClause", "mustBeEqualToCl
                    "declarationStatementOf", "declarationStatementCondition", 
                    "declarationStatementExpression", "expressionStatements", 
                    "expressionStatementOf", "expressionStatementCondition", 
-                   "expressionStatementExpression", "initValues", "initValueOf", 
-                   "initValueCondition", "initValueExpression", "arguments", 
+                   "expressionStatementExpression", "initialValues", "initialValueOf", 
+                   "initialValueCondition", "initialValueExpression", "arguments", 
                    "argumentOf", "argumentCondition", "argumentExpression", 
                    "calls", "callOf", "callCondition", "callExpression", 
                    "callers", "callerOf", "callerCondition", "classes", 
@@ -773,7 +773,7 @@ myGrammarParser.SPECIFIER = 31;
 myGrammarParser.ReturnValue = 32;
 myGrammarParser.DeclarationStatement = 33;
 myGrammarParser.ExpressionStatement = 34;
-myGrammarParser.InitValue = 35;
+myGrammarParser.InitialValue = 35;
 myGrammarParser.ARGUMENT = 36;
 myGrammarParser.CALL = 37;
 myGrammarParser.CALLER = 38;
@@ -846,10 +846,10 @@ myGrammarParser.RULE_expressionStatements = 63;
 myGrammarParser.RULE_expressionStatementOf = 64;
 myGrammarParser.RULE_expressionStatementCondition = 65;
 myGrammarParser.RULE_expressionStatementExpression = 66;
-myGrammarParser.RULE_initValues = 67;
-myGrammarParser.RULE_initValueOf = 68;
-myGrammarParser.RULE_initValueCondition = 69;
-myGrammarParser.RULE_initValueExpression = 70;
+myGrammarParser.RULE_initialValues = 67;
+myGrammarParser.RULE_initialValueOf = 68;
+myGrammarParser.RULE_initialValueCondition = 69;
+myGrammarParser.RULE_initialValueExpression = 70;
 myGrammarParser.RULE_arguments = 71;
 myGrammarParser.RULE_argumentOf = 72;
 myGrammarParser.RULE_argumentCondition = 73;
@@ -969,7 +969,7 @@ myGrammarParser.prototype.inputSentence = function() {
         case myGrammarParser.ReturnValue:
         case myGrammarParser.DeclarationStatement:
         case myGrammarParser.ExpressionStatement:
-        case myGrammarParser.InitValue:
+        case myGrammarParser.InitialValue:
         case myGrammarParser.ARGUMENT:
         case myGrammarParser.CALL:
         case myGrammarParser.CLASSES:
@@ -1174,12 +1174,12 @@ MustClauseContext.prototype.expressionStatementExpression = function() {
     return this.getTypedRuleContext(ExpressionStatementExpressionContext,0);
 };
 
-MustClauseContext.prototype.initValues = function() {
-    return this.getTypedRuleContext(InitValuesContext,0);
+MustClauseContext.prototype.initialValues = function() {
+    return this.getTypedRuleContext(InitialValuesContext,0);
 };
 
-MustClauseContext.prototype.initValueExpression = function() {
-    return this.getTypedRuleContext(InitValueExpressionContext,0);
+MustClauseContext.prototype.initialValueExpression = function() {
+    return this.getTypedRuleContext(InitialValueExpressionContext,0);
 };
 
 MustClauseContext.prototype.arguments = function() {
@@ -1303,14 +1303,14 @@ myGrammarParser.prototype.mustClause = function() {
             this.state = 226;
             this.expressionStatementExpression(0);
             break;
-        case myGrammarParser.InitValue:
+        case myGrammarParser.InitialValue:
             this.enterOuterAlt(localctx, 9);
             this.state = 228;
-            this.initValues();
+            this.initialValues();
             this.state = 229;
             this.must();
             this.state = 230;
-            this.initValueExpression(0);
+            this.initialValueExpression(0);
             break;
         case myGrammarParser.ARGUMENT:
             this.enterOuterAlt(localctx, 10);
@@ -1464,14 +1464,14 @@ MustBeEqualToClauseContext.prototype.expressionStatements = function(i) {
     }
 };
 
-MustBeEqualToClauseContext.prototype.initValues = function(i) {
+MustBeEqualToClauseContext.prototype.initialValues = function(i) {
     if(i===undefined) {
         i = null;
     }
     if(i===null) {
-        return this.getTypedRuleContexts(InitValuesContext);
+        return this.getTypedRuleContexts(InitialValuesContext);
     } else {
-        return this.getTypedRuleContext(InitValuesContext,i);
+        return this.getTypedRuleContext(InitialValuesContext,i);
     }
 };
 
@@ -1605,14 +1605,14 @@ myGrammarParser.prototype.mustBeEqualToClause = function() {
             this.state = 276;
             this.expressionStatements();
             break;
-        case myGrammarParser.InitValue:
+        case myGrammarParser.InitialValue:
             this.enterOuterAlt(localctx, 9);
             this.state = 278;
-            this.initValues();
+            this.initialValues();
             this.state = 279;
             this.mustBeEqualTo();
             this.state = 280;
-            this.initValues();
+            this.initialValues();
             break;
         case myGrammarParser.ARGUMENT:
             this.enterOuterAlt(localctx, 10);
@@ -6796,8 +6796,8 @@ DeclarationStatementExpressionContext.prototype.names = function() {
     return this.getTypedRuleContext(NamesContext,0);
 };
 
-DeclarationStatementExpressionContext.prototype.initValues = function() {
-    return this.getTypedRuleContext(InitValuesContext,0);
+DeclarationStatementExpressionContext.prototype.initialValues = function() {
+    return this.getTypedRuleContext(InitialValuesContext,0);
 };
 
 DeclarationStatementExpressionContext.prototype.SPACE = function() {
@@ -6867,9 +6867,9 @@ myGrammarParser.prototype.declarationStatementExpression = function(_p) {
                 this.state = 734;
                 this.names();
                 break;
-            case myGrammarParser.InitValue:
+            case myGrammarParser.InitialValue:
                 this.state = 735;
-                this.initValues();
+                this.initialValues();
                 break;
             default:
                 throw new antlr4.error.NoViableAltException(this);
@@ -7339,7 +7339,7 @@ myGrammarParser.prototype.expressionStatementExpression = function(_p) {
     return localctx;
 };
 
-function InitValuesContext(parser, parent, invokingState) {
+function InitialValuesContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
 	}
@@ -7348,56 +7348,56 @@ function InitValuesContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_initValues;
+    this.ruleIndex = myGrammarParser.RULE_initialValues;
     return this;
 }
 
-InitValuesContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
-InitValuesContext.prototype.constructor = InitValuesContext;
+InitialValuesContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
+InitialValuesContext.prototype.constructor = InitialValuesContext;
 
-InitValuesContext.prototype.InitValue = function() {
-    return this.getToken(myGrammarParser.InitValue, 0);
+InitialValuesContext.prototype.InitialValue = function() {
+    return this.getToken(myGrammarParser.InitialValue, 0);
 };
 
-InitValuesContext.prototype.initValueCondition = function() {
-    return this.getTypedRuleContext(InitValueConditionContext,0);
+InitialValuesContext.prototype.initialValueCondition = function() {
+    return this.getTypedRuleContext(InitialValueConditionContext,0);
 };
 
-InitValuesContext.prototype.initValueOf = function() {
-    return this.getTypedRuleContext(InitValueOfContext,0);
+InitialValuesContext.prototype.initialValueOf = function() {
+    return this.getTypedRuleContext(InitialValueOfContext,0);
 };
 
-InitValuesContext.prototype.enterRule = function(listener) {
+InitialValuesContext.prototype.enterRule = function(listener) {
     if(listener instanceof myGrammarListener ) {
-        listener.enterInitValues(this);
+        listener.enterInitialValues(this);
 	}
 };
 
-InitValuesContext.prototype.exitRule = function(listener) {
+InitialValuesContext.prototype.exitRule = function(listener) {
     if(listener instanceof myGrammarListener ) {
-        listener.exitInitValues(this);
+        listener.exitInitialValues(this);
 	}
 };
 
 
 
 
-myGrammarParser.InitValuesContext = InitValuesContext;
+myGrammarParser.InitialValuesContext = InitialValuesContext;
 
-myGrammarParser.prototype.initValues = function() {
+myGrammarParser.prototype.initialValues = function() {
 
-    var localctx = new InitValuesContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 134, myGrammarParser.RULE_initValues);
+    var localctx = new InitialValuesContext(this, this._ctx, this.state);
+    this.enterRule(localctx, 134, myGrammarParser.RULE_initialValues);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 794;
-        this.match(myGrammarParser.InitValue);
+        this.match(myGrammarParser.InitialValue);
         this.state = 796;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,93,this._ctx);
         if(la_===1) {
             this.state = 795;
-            this.initValueCondition();
+            this.initialValueCondition();
 
         }
         this.state = 799;
@@ -7405,7 +7405,7 @@ myGrammarParser.prototype.initValues = function() {
         var la_ = this._interp.adaptivePredict(this._input,94,this._ctx);
         if(la_===1) {
             this.state = 798;
-            this.initValueOf();
+            this.initialValueOf();
 
         }
     } catch (re) {
@@ -7422,7 +7422,7 @@ myGrammarParser.prototype.initValues = function() {
     return localctx;
 };
 
-function InitValueOfContext(parser, parent, invokingState) {
+function InitialValueOfContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
 	}
@@ -7431,42 +7431,42 @@ function InitValueOfContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_initValueOf;
+    this.ruleIndex = myGrammarParser.RULE_initialValueOf;
     return this;
 }
 
-InitValueOfContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
-InitValueOfContext.prototype.constructor = InitValueOfContext;
+InitialValueOfContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
+InitialValueOfContext.prototype.constructor = InitialValueOfContext;
 
-InitValueOfContext.prototype.of = function() {
+InitialValueOfContext.prototype.of = function() {
     return this.getTypedRuleContext(OfContext,0);
 };
 
-InitValueOfContext.prototype.declarationStatements = function() {
+InitialValueOfContext.prototype.declarationStatements = function() {
     return this.getTypedRuleContext(DeclarationStatementsContext,0);
 };
 
-InitValueOfContext.prototype.enterRule = function(listener) {
+InitialValueOfContext.prototype.enterRule = function(listener) {
     if(listener instanceof myGrammarListener ) {
-        listener.enterInitValueOf(this);
+        listener.enterInitialValueOf(this);
 	}
 };
 
-InitValueOfContext.prototype.exitRule = function(listener) {
+InitialValueOfContext.prototype.exitRule = function(listener) {
     if(listener instanceof myGrammarListener ) {
-        listener.exitInitValueOf(this);
+        listener.exitInitialValueOf(this);
 	}
 };
 
 
 
 
-myGrammarParser.InitValueOfContext = InitValueOfContext;
+myGrammarParser.InitialValueOfContext = InitialValueOfContext;
 
-myGrammarParser.prototype.initValueOf = function() {
+myGrammarParser.prototype.initialValueOf = function() {
 
-    var localctx = new InitValueOfContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 136, myGrammarParser.RULE_initValueOf);
+    var localctx = new InitialValueOfContext(this, this._ctx, this.state);
+    this.enterRule(localctx, 136, myGrammarParser.RULE_initialValueOf);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 801;
@@ -7487,7 +7487,7 @@ myGrammarParser.prototype.initValueOf = function() {
     return localctx;
 };
 
-function InitValueConditionContext(parser, parent, invokingState) {
+function InitialValueConditionContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
 	}
@@ -7496,52 +7496,52 @@ function InitValueConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_initValueCondition;
+    this.ruleIndex = myGrammarParser.RULE_initialValueCondition;
     return this;
 }
 
-InitValueConditionContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
-InitValueConditionContext.prototype.constructor = InitValueConditionContext;
+InitialValueConditionContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
+InitialValueConditionContext.prototype.constructor = InitialValueConditionContext;
 
-InitValueConditionContext.prototype.where = function() {
+InitialValueConditionContext.prototype.where = function() {
     return this.getTypedRuleContext(WhereContext,0);
 };
 
-InitValueConditionContext.prototype.initValueExpression = function() {
-    return this.getTypedRuleContext(InitValueExpressionContext,0);
+InitialValueConditionContext.prototype.initialValueExpression = function() {
+    return this.getTypedRuleContext(InitialValueExpressionContext,0);
 };
 
-InitValueConditionContext.prototype.Comma = function() {
+InitialValueConditionContext.prototype.Comma = function() {
     return this.getToken(myGrammarParser.Comma, 0);
 };
 
-InitValueConditionContext.prototype.enterRule = function(listener) {
+InitialValueConditionContext.prototype.enterRule = function(listener) {
     if(listener instanceof myGrammarListener ) {
-        listener.enterInitValueCondition(this);
+        listener.enterInitialValueCondition(this);
 	}
 };
 
-InitValueConditionContext.prototype.exitRule = function(listener) {
+InitialValueConditionContext.prototype.exitRule = function(listener) {
     if(listener instanceof myGrammarListener ) {
-        listener.exitInitValueCondition(this);
+        listener.exitInitialValueCondition(this);
 	}
 };
 
 
 
 
-myGrammarParser.InitValueConditionContext = InitValueConditionContext;
+myGrammarParser.InitialValueConditionContext = InitialValueConditionContext;
 
-myGrammarParser.prototype.initValueCondition = function() {
+myGrammarParser.prototype.initialValueCondition = function() {
 
-    var localctx = new InitValueConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 138, myGrammarParser.RULE_initValueCondition);
+    var localctx = new InitialValueConditionContext(this, this._ctx, this.state);
+    this.enterRule(localctx, 138, myGrammarParser.RULE_initialValueCondition);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 804;
         this.where();
         this.state = 805;
-        this.initValueExpression(0);
+        this.initialValueExpression(0);
         this.state = 807;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,95,this._ctx);
@@ -7564,7 +7564,7 @@ myGrammarParser.prototype.initValueCondition = function() {
     return localctx;
 };
 
-function InitValueExpressionContext(parser, parent, invokingState) {
+function InitialValueExpressionContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
 	}
@@ -7573,79 +7573,79 @@ function InitValueExpressionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_initValueExpression;
-    this.left = null; // InitValueExpressionContext
+    this.ruleIndex = myGrammarParser.RULE_initialValueExpression;
+    this.left = null; // InitialValueExpressionContext
     this.op = null; // BinaryContext
-    this.right = null; // InitValueExpressionContext
+    this.right = null; // InitialValueExpressionContext
     return this;
 }
 
-InitValueExpressionContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
-InitValueExpressionContext.prototype.constructor = InitValueExpressionContext;
+InitialValueExpressionContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
+InitialValueExpressionContext.prototype.constructor = InitialValueExpressionContext;
 
-InitValueExpressionContext.prototype.LPAREN = function() {
+InitialValueExpressionContext.prototype.LPAREN = function() {
     return this.getToken(myGrammarParser.LPAREN, 0);
 };
 
-InitValueExpressionContext.prototype.initValueExpression = function(i) {
+InitialValueExpressionContext.prototype.initialValueExpression = function(i) {
     if(i===undefined) {
         i = null;
     }
     if(i===null) {
-        return this.getTypedRuleContexts(InitValueExpressionContext);
+        return this.getTypedRuleContexts(InitialValueExpressionContext);
     } else {
-        return this.getTypedRuleContext(InitValueExpressionContext,i);
+        return this.getTypedRuleContext(InitialValueExpressionContext,i);
     }
 };
 
-InitValueExpressionContext.prototype.RPAREN = function() {
+InitialValueExpressionContext.prototype.RPAREN = function() {
     return this.getToken(myGrammarParser.RPAREN, 0);
 };
 
-InitValueExpressionContext.prototype.have = function() {
+InitialValueExpressionContext.prototype.have = function() {
     return this.getTypedRuleContext(HaveContext,0);
 };
 
-InitValueExpressionContext.prototype.calls = function() {
+InitialValueExpressionContext.prototype.calls = function() {
     return this.getTypedRuleContext(CallsContext,0);
 };
 
-InitValueExpressionContext.prototype.names = function() {
+InitialValueExpressionContext.prototype.names = function() {
     return this.getTypedRuleContext(NamesContext,0);
 };
 
-InitValueExpressionContext.prototype.SPACE = function() {
+InitialValueExpressionContext.prototype.SPACE = function() {
     return this.getToken(myGrammarParser.SPACE, 0);
 };
 
-InitValueExpressionContext.prototype.binary = function() {
+InitialValueExpressionContext.prototype.binary = function() {
     return this.getTypedRuleContext(BinaryContext,0);
 };
 
-InitValueExpressionContext.prototype.enterRule = function(listener) {
+InitialValueExpressionContext.prototype.enterRule = function(listener) {
     if(listener instanceof myGrammarListener ) {
-        listener.enterInitValueExpression(this);
+        listener.enterInitialValueExpression(this);
 	}
 };
 
-InitValueExpressionContext.prototype.exitRule = function(listener) {
+InitialValueExpressionContext.prototype.exitRule = function(listener) {
     if(listener instanceof myGrammarListener ) {
-        listener.exitInitValueExpression(this);
+        listener.exitInitialValueExpression(this);
 	}
 };
 
 
 
-myGrammarParser.prototype.initValueExpression = function(_p) {
+myGrammarParser.prototype.initialValueExpression = function(_p) {
 	if(_p===undefined) {
 	    _p = 0;
 	}
     var _parentctx = this._ctx;
     var _parentState = this.state;
-    var localctx = new InitValueExpressionContext(this, this._ctx, _parentState);
+    var localctx = new InitialValueExpressionContext(this, this._ctx, _parentState);
     var _prevctx = localctx;
     var _startState = 140;
-    this.enterRecursionRule(localctx, 140, myGrammarParser.RULE_initValueExpression, _p);
+    this.enterRecursionRule(localctx, 140, myGrammarParser.RULE_initialValueExpression, _p);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 822;
@@ -7655,7 +7655,7 @@ myGrammarParser.prototype.initValueExpression = function(_p) {
             this.state = 810;
             this.match(myGrammarParser.LPAREN);
             this.state = 811;
-            this.initValueExpression(0);
+            this.initialValueExpression(0);
             this.state = 812;
             this.match(myGrammarParser.RPAREN);
             break;
@@ -7698,9 +7698,9 @@ myGrammarParser.prototype.initValueExpression = function(_p) {
                     this.triggerExitRuleEvent();
                 }
                 _prevctx = localctx;
-                localctx = new InitValueExpressionContext(this, _parentctx, _parentState);
+                localctx = new InitialValueExpressionContext(this, _parentctx, _parentState);
                 localctx.left = _prevctx;
-                this.pushNewRecursionContext(localctx, _startState, myGrammarParser.RULE_initValueExpression);
+                this.pushNewRecursionContext(localctx, _startState, myGrammarParser.RULE_initialValueExpression);
                 this.state = 824;
                 if (!( this.precpred(this._ctx, 2))) {
                     throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 2)");
@@ -7708,7 +7708,7 @@ myGrammarParser.prototype.initValueExpression = function(_p) {
                 this.state = 825;
                 localctx.op = this.binary();
                 this.state = 826;
-                localctx.right = this.initValueExpression(3); 
+                localctx.right = this.initialValueExpression(3); 
             }
             this.state = 832;
             this._errHandler.sync(this);
@@ -8234,8 +8234,8 @@ CallOfContext.prototype.expressionStatements = function() {
     return this.getTypedRuleContext(ExpressionStatementsContext,0);
 };
 
-CallOfContext.prototype.initValues = function() {
-    return this.getTypedRuleContext(InitValuesContext,0);
+CallOfContext.prototype.initialValues = function() {
+    return this.getTypedRuleContext(InitialValuesContext,0);
 };
 
 CallOfContext.prototype.enterRule = function(listener) {
@@ -8278,9 +8278,9 @@ myGrammarParser.prototype.callOf = function() {
             this.state = 882;
             this.expressionStatements();
             break;
-        case myGrammarParser.InitValue:
+        case myGrammarParser.InitialValue:
             this.state = 883;
-            this.initValues();
+            this.initialValues();
             break;
         default:
             throw new antlr4.error.NoViableAltException(this);
@@ -9279,7 +9279,7 @@ myGrammarParser.prototype.sempred = function(localctx, ruleIndex, predIndex) {
 	case 66:
 			return this.expressionStatementExpression_sempred(localctx, predIndex);
 	case 70:
-			return this.initValueExpression_sempred(localctx, predIndex);
+			return this.initialValueExpression_sempred(localctx, predIndex);
 	case 74:
 			return this.argumentExpression_sempred(localctx, predIndex);
 	case 78:
@@ -9363,7 +9363,7 @@ myGrammarParser.prototype.expressionStatementExpression_sempred = function(local
 	}
 };
 
-myGrammarParser.prototype.initValueExpression_sempred = function(localctx, predIndex) {
+myGrammarParser.prototype.initialValueExpression_sempred = function(localctx, predIndex) {
 	switch(predIndex) {
 		case 8:
 			return this.precpred(this._ctx, 2);

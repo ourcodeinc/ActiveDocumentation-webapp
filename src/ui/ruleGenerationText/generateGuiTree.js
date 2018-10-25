@@ -1,3 +1,7 @@
+/**
+ * Heavily dependant on Grammar
+ */
+
 import lemmatize from 'wink-lemmatizer';
 import pluralize from 'pluralize';
 
@@ -168,7 +172,7 @@ const traverseNormalNode = (treeNode) => {
     // context nodes
     if (["Names", "Annotations", "Extensions", "Implementations", "Functions", "AbstractFunctions",
             "Constructors", "Parameters", "Types", "Specifiers", "ReturnValues", "DeclarationStatements",
-            "ExpressionStatements", "InitValues", "Arguments", "Calls", "Callers", "Classes"]
+            "ExpressionStatements", "InitialValues", "Arguments", "Calls", "Callers", "Classes"]
             .indexOf(treeNode.nodeType.replace("Context", "")) !== -1) {
         guiNode.key = lemmatize.noun(treeNode.nodeType.replace("Context","").toLowerCase());
         if (treeNode.children) {

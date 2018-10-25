@@ -17,7 +17,7 @@ mustClause
     | returnValues must returnValueExpression
     | declarationStatements must declarationStatementExpression
     | expressionStatements must expressionStatementExpression
-    | initValues must initValueExpression
+    | initialValues must initialValueExpression
     | arguments must argumentExpression
     | calls must callExpression
     | classes must classExpression;
@@ -31,7 +31,7 @@ mustBeEqualToClause
     | returnValues mustBeEqualTo returnValues
     | declarationStatements mustBeEqualTo declarationStatements
     | expressionStatements mustBeEqualTo expressionStatements
-    | initValues mustBeEqualTo initValues
+    | initialValues mustBeEqualTo initialValues
     | arguments mustBeEqualTo arguments
     | calls mustBeEqualTo calls
     | classes mustBeEqualTo classes
@@ -439,7 +439,7 @@ declarationStatementExpression
     : LPAREN declarationStatementExpression RPAREN
     | left=declarationStatementExpression op=binary right=declarationStatementExpression
     | have (
-              annotations | specifiers | types | names | initValues
+              annotations | specifiers | types | names | initialValues
               ) SPACE?
     ;
 
@@ -474,25 +474,25 @@ expressionStatementExpression
     init values
 */
 
-InitValue
+InitialValue
     :  'initial value '
     ;
 
-initValues
-    : InitValue initValueCondition? initValueOf?
+initialValues
+    : InitialValue initialValueCondition? initialValueOf?
     ;
 
-initValueOf
+initialValueOf
     : of declarationStatements
     ;
 
-initValueCondition
-    : where initValueExpression Comma?
+initialValueCondition
+    : where initialValueExpression Comma?
     ;
 
-initValueExpression
-    : LPAREN initValueExpression RPAREN
-    | left=initValueExpression op=binary right=initValueExpression
+initialValueExpression
+    : LPAREN initialValueExpression RPAREN
+    | left=initialValueExpression op=binary right=initialValueExpression
     | have (calls | names) SPACE?
     ;
 
@@ -535,7 +535,7 @@ calls
     ;
 
 callOf
-    : of (arguments | returnValues | expressionStatements | initValues)
+    : of (arguments | returnValues | expressionStatements | initialValues)
     ;
 
 callCondition

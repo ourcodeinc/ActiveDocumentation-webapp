@@ -3,7 +3,7 @@ export class TextConstants {
     static keywords = [
         "name", "annotation", "extension", "implementation", "function", "abstract function", "constructor", "parameter", "type",
         "specifier", "return value", "declaration statement", "expression statement", "initial value", "argument",
-        "call", "caller", "value", "class"];
+        "call", "caller", "class"];
 
     static autoComplete_suggestion = {
         "name": {
@@ -70,7 +70,7 @@ export class TextConstants {
         },
         "call": {
             whereHaveClause: ["callers", "name"],
-            ofClause: ["argument", "return value", "expression statement", "initValue"]
+            ofClause: ["argument", "return value", "expression statement", "initial value"]
         },
         "caller": {
             whereHaveClause: ["name equal to", "name not equal to"],

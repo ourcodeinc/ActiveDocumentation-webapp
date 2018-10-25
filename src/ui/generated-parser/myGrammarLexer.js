@@ -320,7 +320,7 @@ myGrammarLexer.SPECIFIER = 31;
 myGrammarLexer.ReturnValue = 32;
 myGrammarLexer.DeclarationStatement = 33;
 myGrammarLexer.ExpressionStatement = 34;
-myGrammarLexer.InitValue = 35;
+myGrammarLexer.InitialValue = 35;
 myGrammarLexer.ARGUMENT = 36;
 myGrammarLexer.CALL = 37;
 myGrammarLexer.CALLER = 38;
@@ -354,7 +354,7 @@ myGrammarLexer.prototype.symbolicNames = [ null, null, null, null, null,
                                            "FUNCTION", "AbstractFunctions", 
                                            "CONSTRUCTOR", "PARAMETER", "TYPES", 
                                            "SPECIFIER", "ReturnValue", "DeclarationStatement", 
-                                           "ExpressionStatement", "InitValue", 
+                                           "ExpressionStatement", "InitialValue", 
                                            "ARGUMENT", "CALL", "CALLER", 
                                            "CLASSES" ];
 
@@ -367,7 +367,7 @@ myGrammarLexer.prototype.ruleNames = [ "T__0", "T__1", "T__2", "T__3", "T__4",
                                        "FUNCTION", "AbstractFunctions", 
                                        "CONSTRUCTOR", "PARAMETER", "TYPES", 
                                        "SPECIFIER", "ReturnValue", "DeclarationStatement", 
-                                       "ExpressionStatement", "InitValue", 
+                                       "ExpressionStatement", "InitialValue", 
                                        "ARGUMENT", "CALL", "CALLER", "CLASSES" ];
 
 myGrammarLexer.prototype.grammarFileName = "myGrammar.g4";

@@ -76,7 +76,7 @@ SPECIFIER
 ReturnValue
 DeclarationStatement
 ExpressionStatement
-InitValue
+InitialValue
 ARGUMENT
 CALL
 CALLER
@@ -150,10 +150,10 @@ expressionStatements
 expressionStatementOf
 expressionStatementCondition
 expressionStatementExpression
-initValues
-initValueOf
-initValueCondition
-initValueExpression
+initialValues
+initialValueOf
+initialValueCondition
+initialValueExpression
 arguments
 argumentOf
 argumentCondition

@@ -76,7 +76,7 @@ SPECIFIER
 ReturnValue
 DeclarationStatement
 ExpressionStatement
-InitValue
+InitialValue
 ARGUMENT
 CALL
 CALLER
@@ -117,7 +117,7 @@ SPECIFIER
 ReturnValue
 DeclarationStatement
 ExpressionStatement
-InitValue
+InitialValue
 ARGUMENT
 CALL
 CALLER
