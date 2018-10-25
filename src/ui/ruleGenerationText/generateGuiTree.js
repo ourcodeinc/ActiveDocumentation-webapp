@@ -1,5 +1,5 @@
 /**
- * Heavily dependant on Grammar
+ * Dependant on Grammar: OfContext, ExpressionContext, ..sContext, ConditionContext and 'subclass'
  */
 
 import lemmatize from 'wink-lemmatizer';
@@ -7,6 +7,7 @@ import pluralize from 'pluralize';
 
 import {GuiConstants} from "../ruleGenerationGUI/guiConstants";
 import Utilities from "../../core/utilities";
+import {TextConstants} from "./textConstant";
 
 /**
  * create the quantifier and the constraint guiTree based on the grammar parse tree
@@ -170,10 +171,8 @@ const traverseNormalNode = (treeNode) => {
 
     let guiNode = {};
     // context nodes
-    if (["Names", "Annotations", "Extensions", "Implementations", "Functions", "AbstractFunctions",
-            "Constructors", "Parameters", "Types", "Specifiers", "ReturnValues", "DeclarationStatements",
-            "ExpressionStatements", "InitialValues", "Arguments", "Calls", "Callers", "Classes"]
-            .indexOf(treeNode.nodeType.replace("Context", "")) !== -1) {
+    let keywords = TextConstants.keywords.slice().map(w => pluralize(w).split(" ").map(a => a.charAt(0).toUpperCase() + a.slice(1)).join(""));
+    if (keywords.indexOf(treeNode.nodeType.replace("Context", "")) !== -1) {
         guiNode.key = lemmatize.noun(treeNode.nodeType.replace("Context","").toLowerCase());
         if (treeNode.children) {
             treeNode.children.forEach(child => {
@@ -209,9 +208,7 @@ const traverseNormalNode = (treeNode) => {
         guiNode = traverseNormalNode(treeNode.children[0]);
 
     else if (treeNode.nodeType === "TerminalNodeImpl")
-        if (["name", "annotation", "extension", "implementation", "function", "abstract function", "constructor", "parameter",
-                "type", "specifier", "return value", "declaration statement", "expression statement", "initial value", "argument",
-                "call", "caller", "class", "subclass"].indexOf(treeNode.text.trim()) !== -1)
+        if (TextConstants.keywords.slice().concat("subclass").indexOf(treeNode.text.trim()) !== -1)
             guiNode.key = treeNode.text.trim();
 
     else
