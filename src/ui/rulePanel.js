@@ -53,9 +53,6 @@ class RulePanel extends Component {
             tags: props.tags,
             folderConstraint: props.folderConstraint,
             filesFolders: props.filesFolders,
-            autoCompleteText: props.autoCompleteText,
-            quantifierXPath: props.quantifierXPath,
-            constraintXPath: props.constraintXPath,
             // new tag states
             tagName: "",
             tagDetail: ""
@@ -193,10 +190,7 @@ class RulePanel extends Component {
                 tags: nextProps.tags,
                 ruleTags: this.ruleI.tags,
                 folderConstraint: this.ruleI.ruleType.constraint,
-                filesFolders: this.ruleI.ruleType.checkFor,
-                autoCompleteText: this.ruleI.grammar ? this.ruleI.grammar : "",
-                quantifierXPath: this.ruleI.quantifier.command,
-                constraintXPath: this.ruleI.constraint.command
+                filesFolders: this.ruleI.ruleType.checkFor
             });
         else
             this.setState({
@@ -205,10 +199,7 @@ class RulePanel extends Component {
                 tags: nextProps.tags,
                 ruleTags: nextProps.ruleTags,
                 folderConstraint: nextProps.folderConstraint,
-                filesFolders: nextProps.filesFolders,
-                autoCompleteText: nextProps.autoCompleteText,
-                quantifierXPath: nextProps.quantifierXPath,
-                constraintXPath: nextProps.quantifierXPath,
+                filesFolders: nextProps.filesFolders
             });
 
     }
@@ -605,10 +596,7 @@ class RulePanel extends Component {
                 description: this.ruleI.description,
                 ruleTags: this.ruleI.tags,
                 folderConstraint: this.ruleI.ruleType.constraint,
-                filesFolders: this.ruleI.ruleType.checkFor,
-                autoCompleteText: this.ruleI.grammar ? this.ruleI.grammar : "",
-                quantifierXPath: this.ruleI.quantifier.command,
-                constraintXPath: this.ruleI.constraint.command
+                filesFolders: this.ruleI.ruleType.checkFor
             });
         // generating newRule
         else {
@@ -634,11 +622,11 @@ class RulePanel extends Component {
             },
             quantifier: {},
             constraint: {},
-            grammar: this.state.autoCompleteText
+            grammar: this.props.autoCompleteText
         };
 
-        rule.quantifier = {detail: this.ruleI.quantifier.detail, command: "src:unit/" + this.state.quantifierXPath};
-        rule.constraint = {detail: this.ruleI.constraint.detail, command: "src:unit/" + this.state.constraintXPath};
+        rule.quantifier = {detail: this.ruleI.quantifier.detail, command: "src:unit/" + this.props.quantifierXPath};
+        rule.constraint = {detail: this.ruleI.constraint.detail, command: "src:unit/" + this.props.constraintXPath};
 
         if (rule.index === "" || rule.title === "" || rule.description === "") {
             console.log("empty fields");
@@ -687,11 +675,11 @@ class RulePanel extends Component {
             },
             quantifier: {},
             constraint: {},
-            grammar: this.state.autoCompleteText
+            grammar: this.props.autoCompleteText
         };
 
-        rule.quantifier = {detail: "", command: "src:unit/" + this.state.quantifierXPath};
-        rule.constraint = {detail: "", command: "src:unit/" + this.state.constraintXPath};
+        rule.quantifier = {detail: "", command: "src:unit/" + this.props.quantifierXPath};
+        rule.constraint = {detail: "", command: "src:unit/" + this.props.constraintXPath};
 
 
         if (rule.index === "" || rule.title === "" || rule.description === "") {
@@ -734,10 +722,7 @@ class RulePanel extends Component {
             description: this.state.description,
             ruleTags: this.state.ruleTags,
             folderConstraint: this.state.folderConstraint,
-            filesFolders: this.state.filesFolders,
-            autoCompleteText: this.state.autoCompleteText,
-            quantifierXPath: this.state.quantifierXPath,
-            constraintXPath: this.state.quantifierXPath
+            filesFolders: this.state.filesFolders
         });
     }
 }

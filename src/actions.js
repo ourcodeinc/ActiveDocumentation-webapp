@@ -51,3 +51,11 @@ export const clearNewRuleForm = () => {
 export const editNewRuleForm = (formContents) => {
     return {type: "EDIT_NEW_RULE_FORM", value: formContents}
 };
+
+export const editNewRuleGrammarGuiData = (newRuleData) => {
+    return {type: "EDIT_NEW_RULE_GRAMMAR_GUI_DATA", value: newRuleData}
+};
+
+export const receiveGuiTree = (newTreeData) => {
+    return {type: "RECEIVE_GUI_TREE", value: newTreeData}
+};

@@ -20,9 +20,48 @@ const default_state = {
         ruleTags: [],
         folderConstraint: "",
         filesFolders: [],
+
         autoCompleteText: "",
-        quantifierXPath: "",
-        constraintXPath: ""
+        quantifierXPath: "", // only produced by autoComplete grammar
+        constraintXPath: "", // only produced by autoComplete grammar
+
+        guiState: {
+            activeTab: "quantifier",
+            quantifier: {
+                key: "class",
+                value: "",
+                target: "follows",
+                children: {
+                    "top": [],
+                    "before": [],
+                    "before_1": [],
+                    "before_2": [],
+                    "after": [],
+                    "after_1": [],
+                    "after_2": [],
+                    "within": [],
+                    "child": {}
+                }
+            },
+            constraint: {
+                key: "class",
+                value: "",
+                target: "follows",
+                xpath: "src:class",
+                children: {
+                    "top": [],
+                    "before": [],
+                    "before_1": [],
+                    "before_2": [],
+                    "after": [],
+                    "after_1": [],
+                    "after_2": [],
+                    "within": [],
+                    "child": {}
+                }
+            },
+            ruleType: "" // "Must" or "MustBeEqualTo"
+        }
     }
 };
 
@@ -128,18 +167,37 @@ const reducer = (state = default_state, action) => {
         case "CLEAR_NEW_RULE_FORM":
             return Object.assign({}, state, {
                 newOrEditRule: {
-                    title: "",
-                    description: "",
-                    ruleTags: [],
-                    folderConstraint: "",
-                    filesFolders: [],
-                    autoCompleteText: "",
-                    quantifierXPath: "",
-                    constraintXPath: ""
-                }});
+                    ...default_state.newOrEditRule
+                },
+                message: "CLEAR_NEW_RULE_FORM"
+            });
 
-        case "EDIT_NEW_RULE_FORM":
-            return Object.assign({}, state, {newOrEditRule: action["value"]});
+        case "EDIT_NEW_RULE_FORM": //action["value"]
+            return Object.assign({}, state, {
+                newOrEditRule: {
+                    ...state.newOrEditRule,
+                    ...action["value"]
+                }
+            });
+
+        case "EDIT_NEW_RULE_GRAMMAR_GUI_DATA":
+            return Object.assign({}, state, {
+                newOrEditRule: {
+                    ...state.newOrEditRule,
+                    ...action["value"]
+                }
+            });
+
+        case "RECEIVE_GUI_TREE":
+            return Object.assign({}, state, {
+                newOrEditRule: {
+                    ...state.newOrEditRule,
+                    guiState: {
+                        ...state.newOrEditRule.guiState,
+                        ...action["value"]
+                    }
+                }
+            });
 
         default:
             return state;

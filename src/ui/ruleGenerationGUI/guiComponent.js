@@ -16,9 +16,8 @@ class GuiComponent extends React.Component {
     constructor(props) {
         super(props);
         
-        this.element = props["element"];
         this.ws = props["ws"];
-        this.state = props["state"];
+        this.state = {...props["state"], element: props["element"]};
 
         /*
             since the element might keep many text values, each for
@@ -31,8 +30,8 @@ class GuiComponent extends React.Component {
 
     render() {
         return (
-            <div className={"ruleGroupDiv " + this.state.target}>
-                {["annotation", "declaration", "expression", "returnValue", "call"].indexOf(this.element) === -1 ? this.renderRemoveElement("innerRemoveIcon") : null}
+            <div className={"ruleGroupDiv " + this.state.target} key={new Date()}>
+                {["annotation", "declaration", "expression", "returnValue", "call"].indexOf(this.state.element) === -1 ? this.renderRemoveElement("innerRemoveIcon") : null}
                 <div className={"rowGroup"}>
                     {this.renderGroup("top")}
                 </div>
@@ -40,30 +39,38 @@ class GuiComponent extends React.Component {
                     {this.renderElementMainBefore()}
                     {this.renderGroup("before_1")}
                     {this.renderGroup("before_2")}
-                    {this.element !== "declarationStatement" ? this.renderElementMainMiddle() : null}
+                    {this.state.element !== "declarationStatement" ? this.renderElementMainMiddle() : null}
                     {this.renderGroup("after_1")}
-                    {this.element === "declarationStatement" ? this.renderElementMainMiddle() : null}
+                    {this.state.element === "declarationStatement" ? this.renderElementMainMiddle() : null}
                     {this.renderGroup("after_2")}
                     <div className={"rowItem inlineText"}>{this.renderElementMainAfter()}</div>
                     <div
-                        className={"rowItem"}>{["annotation", "declaration", "expression", "returnValue", "call"].indexOf(this.element) !== -1 ? this.renderChild() : null}</div>
-                    {["annotation", "declaration", "expression", "returnValue", "call"].indexOf(this.element) !== -1 ? this.renderRemoveElement("removeIcon") : null}
+                        className={"rowItem"}>{["annotation", "declaration", "expression", "returnValue", "call"].indexOf(this.state.element) !== -1 ? this.renderChild() : null}</div>
+                    {["annotation", "declaration", "expression", "returnValue", "call"].indexOf(this.state.element) !== -1 ? this.renderRemoveElement("removeIcon") : null}
                 </div>
                 <div className={"rowGroup"}>{this.renderElementBodyBegin()}</div>
                 <div className={"rowGroup"}>{this.renderGroup("within")}</div>
                 <div
-                    className={"rowGroup"}>{["annotation", "declaration", "expression", "returnValue", "call"].indexOf(this.element) === -1 ? this.renderChild() : null}</div>
+                    className={"rowGroup"}>{["annotation", "declaration", "expression", "returnValue", "call"].indexOf(this.state.element) === -1 ? this.renderChild() : null}</div>
                 <div className={"rowGroup"}>{this.renderElementBodyEnd()}</div>
             </div>
         )
     }
 
 
+    //componentDidUpdate doesn't work
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            element: nextProps.element,
+            ...nextProps.state
+        });
+    }
+
     /**
      * render groups: top, before, after, within
      */
     renderGroup(group) {
-        if (Object.keys(GuiConstants.code_fragment[this.element][group]).length === 0) return null;
+        if (GuiConstants.code_fragment[this.state.element][group].length === 0) return null;
         return (
             <div className={this.chooseClass(group)}>
                 {this.renderDefaultTitle(group)}
@@ -71,7 +78,7 @@ class GuiComponent extends React.Component {
                     return (
                         <div className={group === "within" ? "" : "rowItem"} key={i}>
                             <div className={"rowItem inlineText"}>
-                                <b>{GuiConstants.code_fragment[this.element][group][cons["key"]]["pre"]}</b>
+                                <b>{GuiConstants.gui_tree[cons["key"]]["pre"]}</b>
                             </div>
                             <div
                                 className={group === "within" || group === "top" ? "" : "rowItem"}>
@@ -133,25 +140,24 @@ class GuiComponent extends React.Component {
                                 )}
                             </div>
                             <div className={group === "within" ? "inlineText" : "rowItem inlineText"}>
-                                <b>{GuiConstants.code_fragment[this.element][group][cons["key"]]["post"]}</b>
+                                <b>{GuiConstants.gui_tree[cons["key"]]["post"]}</b>
                             </div>
                         </div>
                     )
                 })}
 
                 <CustomAddDropDown
-                    menuItemsText={Object.keys(GuiConstants.code_fragment[this.element][group])
-                        .map(key => GuiConstants.code_fragment[this.element][group][key]["buttonName"])}
-                    menuItemsEvent={Object.keys(GuiConstants.code_fragment[this.element][group])
-                        .map(key => key)}
+                    menuItemsText={GuiConstants.code_fragment[this.state.element][group]
+                        .map(key => GuiConstants.gui_tree[key]["buttonName"])}
+                    menuItemsEvent={GuiConstants.code_fragment[this.state.element][group]}
                     onSelectFunction={(evt) => {
                         this.state.children[group].push({
                             key: evt,
-                            value: GuiConstants.code_fragment[this.element][group][evt],
+                            value: GuiConstants.gui_tree[evt],
                             target: "",
                             children: JSON.parse(JSON.stringify(GuiConstants.state_children)),
-                            // xpath: GuiConstants.code_fragment[this.element][group][evt]["xpath"],
-                            grammar: GuiConstants.code_fragment[this.element][group][evt]["grammar"]
+                            // xpath: GuiConstants.code_fragment[this.state.element][group][evt]["xpath"],
+                            grammar: GuiConstants.gui_tree[evt]["grammar"]
                         });
                         this.sendDataBack();
                         this.forceUpdate();
@@ -169,20 +175,19 @@ class GuiComponent extends React.Component {
             return (
                 <div>
                     <CustomFollowDropDown
-                        menuItemsText={Object.keys(GuiConstants.code_fragment[this.element]["child"])
-                            .map(key => GuiConstants.code_fragment[this.element]["child"][key]["buttonName"])}
-                        menuItemsEvent={Object.keys(GuiConstants.code_fragment[this.element]["child"])
-                            .map(key => key)}
+                        menuItemsText={GuiConstants.code_fragment[this.state.element]["child"]
+                            .map(key => GuiConstants.gui_tree[key]["buttonName"])}
+                        menuItemsEvent={GuiConstants.code_fragment[this.state.element]["child"]}
                         target={this.state.target}
                         onSelectFunction={(evt) => {
                             const children = this.state.children;
                             children.child = {
                                 key: evt,
-                                value: GuiConstants.code_fragment[this.element]["child"][evt],
+                                value: GuiConstants.gui_tree[evt],
                                 target: this.state.target !== "" ? this.state.target : "default",
                                 children: JSON.parse(JSON.stringify(GuiConstants.state_children)),
-                                // xpath: GuiConstants.code_fragment[this.element]["child"][evt]["xpath"],
-                                grammar: GuiConstants.code_fragment[this.element]["child"][evt]["grammar"]
+                                // xpath: GuiConstants.code_fragment[this.state.element]["child"][evt]["xpath"],
+                                grammar: GuiConstants.gui_tree[evt]["grammar"]
                             };
                             this.setState({children});
                             this.sendDataBack();
@@ -192,16 +197,13 @@ class GuiComponent extends React.Component {
             );
 
         else {
-            switch (this.state.children["child"].key) {
+            switch (this.state.children["child"].value["type"]) {
                 // elements that don't need to be rendered
                 case "expression":
                 case "annotation":
-                case "parameter":
-                case "extend":
-                case "implement":
-                case "specifier":
-                case "type":
-                case "name":
+                case "declaration":
+                case "text":
+                case "srcml":
                     return (<TiDelete size={20}
                                       className={"tiDelete"}
                                       style={{color: "#2babd2"}}
@@ -247,7 +249,7 @@ class GuiComponent extends React.Component {
      *  render the text in the beginning of the main line
      */
     renderElementMainBefore() {
-        switch (this.element) {
+        switch (this.state.element) {
             case "annotation":
                 return (<div className={"rowItem"}><b>@</b></div>);
             case "returnValue":
@@ -261,7 +263,7 @@ class GuiComponent extends React.Component {
      * render the text in the main line of the element
      */
     renderElementMainMiddle() {
-        switch (this.element) {
+        switch (this.state.element) {
             case "constructor":
                 return (<div className={"rowItem inlineText"}><b>className (</b></div>);
             case "function":
@@ -286,7 +288,7 @@ class GuiComponent extends React.Component {
      *  render the text at the end of the main line
      */
     renderElementMainAfter() {
-        switch (this.element) {
+        switch (this.state.element) {
             case "call":
             case "annotation":
                 return (<div className={"rowItem"}><b>)</b></div>);
@@ -307,7 +309,7 @@ class GuiComponent extends React.Component {
      *  render the text in the beginning of the body
      */
     renderElementBodyBegin() {
-        switch (this.element) {
+        switch (this.state.element) {
             case "class":
             case "function":
             case "constructor":
@@ -322,7 +324,7 @@ class GuiComponent extends React.Component {
      *  render the text at the end of the body
      */
     renderElementBodyEnd() {
-        switch (this.element) {
+        switch (this.state.element) {
             case "class":
             case "function":
             case "constructor":
@@ -339,7 +341,7 @@ class GuiComponent extends React.Component {
      * @returns {XML}
      */
     renderDefaultTitle(group) {
-        switch (this.element) {
+        switch (this.state.element) {
             case "class":
                 if (group === 'after_1' && this.state.children["after_1"].length === 0)
                     return (<div className={" rowItem inlineText"}>
@@ -352,7 +354,7 @@ class GuiComponent extends React.Component {
             case "constructor":
                 if (group === 'before_2' && this.state.children["before_2"].length === 0)
                     return(<div className={" rowItem inlineText"}>
-                        <span className={"temporary-text"}>{this.element} Name</span>
+                        <span className={"temporary-text"}>{this.state.element} Name</span>
                     </div>);
                 return null;
 
@@ -386,28 +388,28 @@ class GuiComponent extends React.Component {
             }
             if (group === "before_1") {
                 if (targetKey === "specifier") isTarget = true;
-                if (targetKey === "name" && this.element === "annotation") isTarget = true;
-                if (targetKey === "name" && this.element === "returnValue") isTarget = true;
-                if (targetKey === "name" && this.element === "expressionStatement") isTarget = true;
+                if (targetKey === "name" && this.state.element === "annotation") isTarget = true;
+                if (targetKey === "name" && this.state.element === "returnValue") isTarget = true;
+                if (targetKey === "name" && this.state.element === "expressionStatement") isTarget = true;
             }
             if (group === "before_2") {
-                if (targetKey === "name" && this.element === "function") isTarget = true;
-                if (targetKey === "name" && this.element === "abstractFunction") isTarget = true;
-                if (targetKey === "type" && this.element === "declaration") isTarget = true;
+                if (targetKey === "name" && this.state.element === "function") isTarget = true;
+                if (targetKey === "name" && this.state.element === "abstractFunction") isTarget = true;
+                if (targetKey === "type" && this.state.element === "declaration") isTarget = true;
             }
             if (group === "after_1") {
-                if (targetKey === "name" && this.element === "class") isTarget = true;
-                if (targetKey === "name" && this.element === "declarationStatement") isTarget = true;
-                if (targetKey === "name" && this.element === "declaration") isTarget = true;
-                if (targetKey === "declaration" && this.element === "function") isTarget = true;
-                if (targetKey === "parameter" && this.element === "function") isTarget = true;
-                if (targetKey === "parameter" && this.element === "abstractFunction") isTarget = true;
-                if (targetKey === "parameter" && this.element === "constructor") isTarget = true;
+                if (targetKey === "name" && this.state.element === "class") isTarget = true;
+                if (targetKey === "name" && this.state.element === "declarationStatement") isTarget = true;
+                if (targetKey === "name" && this.state.element === "declaration") isTarget = true;
+                if (targetKey === "declaration" && this.state.element === "function") isTarget = true;
+                if (targetKey === "parameter" && this.state.element === "function") isTarget = true;
+                if (targetKey === "parameter" && this.state.element === "abstractFunction") isTarget = true;
+                if (targetKey === "parameter" && this.state.element === "constructor") isTarget = true;
             }
             if (group === "after_2") {
                 if (targetKey === "implement") isTarget = true;
                 if (targetKey === "extend") isTarget = true;
-                if (targetKey === "expression" && this.element === "declarationStatement") isTarget = true;
+                if (targetKey === "expression" && this.state.element === "declarationStatement") isTarget = true;
             }
         }
 

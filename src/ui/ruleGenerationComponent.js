@@ -10,11 +10,10 @@ import {Alert} from 'react-bootstrap';
 import {Button, FormGroup, ButtonToolbar} from 'react-bootstrap';
 
 import RuleGeneratorGui from './ruleGenerationGUI/ruleGeneratorGui';
-import Utilities from "../core/utilities";
-import {constants} from "./constants";
 import AutoComplete from "./ruleGenerationText/autoComplete";
 import verifyTextBasedOnGrammar from "./ruleGenerationText/languageProcessing";
-import {editNewRuleForm} from "../actions";
+import {editNewRuleGrammarGuiData, receiveGuiTree} from "../actions";
+import {generateGuiTrees} from "./ruleGenerationText/generateGuiTree";
 
 
 class RuleGenerationComponent extends Component {
@@ -23,7 +22,6 @@ class RuleGenerationComponent extends Component {
         super(props);
 
         this.state = {
-            xPathState: Utilities.cloneJSON(constants.guiXPathState),
             quantifierXPath: "",
             constraintXPath: "",
             error: "",
@@ -62,7 +60,18 @@ class RuleGenerationComponent extends Component {
                                   onBlur={() => {
                                       if(this.shouldAlert) {
                                           verifyTextBasedOnGrammar(this.state.autoCompleteText)
-                                              .then((data) => this.setState({...data, ...{autoCompleteValidationState: null}}))
+                                              .then((data) => {
+                                                  this.setState({
+                                                      quantifierXPath: data.quantifierXPath,
+                                                      constraintXPath: data.constraintXPath,
+                                                      autoCompleteValidationState: null,
+                                                      error: ""
+                                                  });
+
+                                                  // compute and dispatch gui tree for quantifier and constraint
+                                                  generateGuiTrees(data.grammarTree)
+                                                      .then((data) => this.props.onReceiveGuiTree(data));
+                                              })
                                               .catch((error) => this.processLanguageProcessingError(error));
                                           this.shouldAlert = false;
                                       }
@@ -77,9 +86,8 @@ class RuleGenerationComponent extends Component {
                                       this.autoCompleteCaretPosition = -1;
                                       return newFocus;
                                   })()}/>
-                    <RuleGeneratorGui key={new Date()} state={this.state["xPathState"]} className={"generateRuleGui"}/>
+                    <RuleGeneratorGui key={new Date()} className={"generateRuleGui"}/>
                 </FormGroup>
-                quantifierGrammar: {this.state["xPathState"].quantifierGrammar}
             </div>
         );
     }
@@ -89,7 +97,8 @@ class RuleGenerationComponent extends Component {
         this.setState({
             autoCompleteText: nextProps.autoCompleteText,
             quantifierXPath: nextProps.quantifierXPath,
-            constraintXPath: nextProps.quantifierXPath
+            constraintXPath: nextProps.quantifierXPath,
+            error: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "" : this.state.error
         });
     }
 
@@ -99,6 +108,7 @@ class RuleGenerationComponent extends Component {
      * @param error
      */
     processLanguageProcessingError(error) {
+        console.log(error);
         switch (error) {
             case "EMPTY_FIELD":
                 this.setState({
@@ -139,8 +149,8 @@ class RuleGenerationComponent extends Component {
                     this.setState({
                         error: {
                             errorType: "Grammar Error",
-                            message: grammarError.e.ctx.constructor.name
-                            + (grammarError.e.ctx.parentCtx !== null ? (" in " + grammarError.e.ctx.parentCtx.constructor.name) : "")
+                            message: (grammarError.e.ctx? grammarError.e.ctx.constructor.name : "null")
+                            + (grammarError.e.ctx && grammarError.e.ctx.parentCtx !== null ? (" in " + grammarError.e.ctx.parentCtx.constructor.name) : "")
                             + ", character " + error.grammarErrors[0].col,
                             alertType: "danger"
                         }
@@ -165,11 +175,6 @@ class RuleGenerationComponent extends Component {
      */
     onEditNewRuleForm() {
         this.props.onEditForm({
-            title: this.props.title,
-            description: this.props.description,
-            ruleTags: this.props.ruleTags,
-            folderConstraint: this.props.folderConstraint,
-            filesFolders: this.props.filesFolders,
             autoCompleteText: this.state.autoCompleteText,
             quantifierXPath: this.props.quantifierXPath,
             constraintXPath: this.props.quantifierXPath
@@ -182,21 +187,20 @@ function mapStateToProps(state) {
     return {
         ws: state.ws,
 
-        title: state.newOrEditRule.title,
-        description: state.newOrEditRule.description,
-        ruleTags: state.newOrEditRule.ruleTags,
-        folderConstraint: state.newOrEditRule.folderConstraint,
-        filesFolders: state.newOrEditRule.filesFolders,
         autoCompleteText: state.newOrEditRule.autoCompleteText,
         quantifierXPath: state.newOrEditRule.quantifierXPath,
-        constraintXPath: state.newOrEditRule.quantifierXPath
+        constraintXPath: state.newOrEditRule.quantifierXPath,
+        message: state.message
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        onEditForm: (formContents) => {
-            dispatch(editNewRuleForm(formContents))
+        onEditForm: (data) => {
+            dispatch(editNewRuleGrammarGuiData(data))
+        },
+        onReceiveGuiTree: (data) => {
+            dispatch(receiveGuiTree(data))
         }
     }
 }

@@ -11,9 +11,7 @@ import {FormControl, Label, Button, FormGroup, ButtonToolbar} from 'react-bootst
 import {Row, Col} from 'react-bootstrap';
 import TiDelete from 'react-icons/lib/ti/delete';
 
-//import RuleGeneratorGui from './ruleGenerationGUI/ruleGeneratorGui';
 import Utilities from "../core/utilities";
-import {constants} from "./constants";
 import AutoComplete from "./ruleGenerationText/autoComplete";
 import {submitNewRule} from "../actions";
 import verifyTextBasedOnGrammar from "./ruleGenerationText/languageProcessing";
@@ -21,10 +19,138 @@ import verifyTextBasedOnGrammar from "./ruleGenerationText/languageProcessing";
 
 class GenerateRule extends Component {
 
+    static initial_state = {
+        index: "",
+        title: "",
+        description: "",
+        folderConstraint: "",
+        filesFolders: [],
+        tags: [],
+        xPathState: {
+            activeTab: "quantifier",
+            quantifierDetail: "",
+            ruleType: "",
+            cRuleType: "",
+            constraintDetail: "",
+            quantifier: {
+                q0: {
+                    key: "",
+                    value: "",
+                    target: "follows",
+                    children: {
+                        "top": [],
+                        "before": [],
+                        "before_1": [],
+                        "before_2": [],
+                        "after": [],
+                        "after_1": [],
+                        "after_2": [],
+                        "within": [],
+                        "follows": {}
+                    },
+                    xpath: "src:class"
+                },
+                q1: {
+                    key: "",
+                    value: "",
+                    target: "follows",
+                    children: {
+                        "top": [],
+                        "before": [],
+                        "before_1": [],
+                        "before_2": [],
+                        "after": [],
+                        "after_1": [],
+                        "after_2": [],
+                        "within": [],
+                        "follows": {}
+                    },
+                    xpath: "src:class"
+                },
+                q2: {
+                    key: "",
+                    value: "",
+                    target: "follows",
+                    children: {
+                        "top": [],
+                        "before": [],
+                        "before_1": [],
+                        "before_2": [],
+                        "after": [],
+                        "after_1": [],
+                        "after_2": [],
+                        "within": [],
+                        "follows": {}
+                    },
+                    xpath: "src:class"
+                }
+            },
+            constraint: {
+                q0: {
+                    key: "",
+                    value: "",
+                    target: "follows",
+                    children: {
+                        "top": [],
+                        "before": [],
+                        "before_1": [],
+                        "before_2": [],
+                        "after": [],
+                        "after_1": [],
+                        "after_2": [],
+                        "within": [],
+                        "follows": {}
+                    },
+                    xpath: "src:class"
+                },
+                q1: {
+                    key: "",
+                    value: "",
+                    target: "follows",
+                    children: {
+                        "top": [],
+                        "before": [],
+                        "before_1": [],
+                        "before_2": [],
+                        "after": [],
+                        "after_1": [],
+                        "after_2": [],
+                        "within": [],
+                        "follows": {}
+                    },
+                    xpath: "src:class"
+                },
+                q2: {
+                    key: "",
+                    value: "",
+                    target: "follows",
+                    children: {
+                        "top": [],
+                        "before": [],
+                        "before_1": [],
+                        "before_2": [],
+                        "after": [],
+                        "after_1": [],
+                        "after_2": [],
+                        "within": [],
+                        "follows": {}
+                    },
+                    xpath: "src:class"
+                }
+            },
+            q0: "src:unit/src:class",
+            q1: "src:unit/src:class",
+            q2: "src:unit/src:class",
+            c0: "src:unit/src:class",
+            c1: "src:unit/src:class",
+            c2: "src:unit/src:class"
+        }
+    };
+
     constructor() {
         super();
 
-        this.state = Utilities.cloneJSON(constants.initial_state);
+        this.state = Utilities.cloneJSON(GenerateRule.initial_state);
         this.state.availableTags = [];
         this.state.autoCompleteText = "";
         this.state.quantifierXPath = "";
@@ -238,7 +364,7 @@ class GenerateRule extends Component {
      * clear form
      */
     clearForm() {
-        this.setState(JSON.parse(JSON.stringify(constants.initial_state)));
+        this.setState(JSON.parse(JSON.stringify(GenerateRule.initial_state)));
     }
 
 
