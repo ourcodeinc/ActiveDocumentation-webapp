@@ -29,7 +29,8 @@ export class GuiConstants {
                 "abstract function",
                 "constructor",
                 "declaration statement",
-                "class"
+                "class",
+                "interface"
             ],
             "child": [
                 "annotation",
@@ -41,7 +42,8 @@ export class GuiConstants {
                 "function",
                 "constructor",
                 "abstract function",
-                "declaration statement"
+                "declaration statement",
+                "interface"
             ]
         },
         "function": {
@@ -212,7 +214,36 @@ export class GuiConstants {
             "after_2": [],
             "within": [],
             "child": ["name"]
-        }
+        },
+        "interface": {
+            "top": ["annotation"],
+            "before_1": ["specifier", "specifier not"],
+            "before_2": [],
+            "after_1": [
+                "name equal to",
+                "name not equal to",
+                "name include",
+                "name not include",
+                "name start with",
+                "name not start with",
+                "name end with",
+                "name not end with"
+            ],
+            "after_2": [],
+            "within": [
+                "abstract function",
+                "declaration statement",
+                "interface"
+            ],
+            "child": [
+                "annotation",
+                "specifier",
+                "name",
+                "interface",
+                "abstract function",
+                "declaration statement",
+                "interface"
+            ]}
     };
 
     static state_children = {
@@ -487,6 +518,14 @@ export class GuiConstants {
             pre: "",
             post: "",
             grammar: "type"
+        },
+        "interface": {
+            buttonName: "Has interface ...",
+            xpath: "src:block/src:interface",
+            type: "interface",
+            pre: "",
+            post: "",
+            grammar: "interface"
         }
     }
 

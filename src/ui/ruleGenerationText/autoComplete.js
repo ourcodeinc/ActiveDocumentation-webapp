@@ -1,3 +1,8 @@
+/**
+ * Heavily dependant on Grammar, mainly keywords like equal, where, to, etc.
+ */
+
+
 import React, {Component, Fragment} from 'react';
 import CoreNLP, {Properties, Pipeline, ConnectorServer} from 'corenlp';
 import {TextConstants} from "./textConstant";
@@ -963,43 +968,6 @@ class AutoComplete extends Component {
      * @param input
      * @returns {Promise.<String>}
      */
-    lemmatizeWords2(input) {
-        let lemmatized = [];
-        const connector = new ConnectorServer({dsn: 'http://localhost:9000'});
-        const props = new Properties({
-            annotators: 'tokenize,ssplit,pos,lemma,ner,parse',
-        });
-        const pipeline = new Pipeline(props, 'English', connector);
-        const sent = new CoreNLP.simple.Sentence(input);
-        return pipeline.annotate(sent)
-            .then(sent => {
-                const tree = CoreNLP.util.Tree.fromSentence(sent);
-                tree.visitLeaves(node => {
-                    if (node.pos() !== "DT")
-                        lemmatized.push(
-                            node.token().index() > 2 && sent.word(node.token().index() - 2) === '``' ?
-                                node.word() : node.token().lemma());
-                });
-
-                let index = lemmatized.indexOf("``");
-                while (index !== -1) {
-                    if (index !== -1) lemmatized.splice(index, 1);
-                    index = lemmatized.indexOf("``");
-                }
-                index = lemmatized.indexOf("''");
-                while (index !== -1) {
-                    if (index !== -1) lemmatized.splice(index, 1);
-                    index = lemmatized.indexOf("''");
-                }
-                let str = AutoComplete.stringReplaceAll(AutoComplete.stringReplaceAll(lemmatized.join(" "),"-lrb-", "("),"-rrb-", ")");
-                return Promise.resolve(str);
-            })
-            .catch(err => {
-                console.log('err', err);
-                return Promise.reject("");
-            });
-    }
-
     lemmatizeWords(input) {
         let tagger = posTagger();
         let pos = tagger.tagSentence(input);

@@ -20,7 +20,9 @@ mustClause
     | initialValues must initialValueExpression
     | arguments must argumentExpression
     | calls must callExpression
-    | classes must classExpression;
+    | classes must classExpression
+    | interfaces must interfaceExpression
+    ;
 
 mustBeEqualToClause
     : functions mustBeEqualTo functions
@@ -35,7 +37,8 @@ mustBeEqualToClause
     | arguments mustBeEqualTo arguments
     | calls mustBeEqualTo calls
     | classes mustBeEqualTo classes
-    ;
+    | interfaces mustBeEqualTo interfaces
+;
 
 /*
     Constants
@@ -594,7 +597,33 @@ classExpression
     : LPAREN classExpression RPAREN
     | left=classExpression op=binary right=classExpression
     | have (
-              annotations | specifiers | names | extensions | implementations | functions
+              annotations | specifiers | names | extensions | implementations | functions | interfaces
               | abstractFunctions | constructors | declarationStatements | classes | returnValues
               ) SPACE?
+    ;
+
+/*
+    classes
+*/
+
+INTERFACES
+    : 'interface '
+    ;
+
+interfaces
+    : INTERFACES interfaceCondition? interfaceOf?
+    ;
+
+interfaceOf
+    : of (interfaces | classes)
+    ;
+
+interfaceCondition
+    : where interfaceExpression Comma?
+    ;
+
+interfaceExpression
+    : LPAREN interfaceExpression RPAREN
+    | left=interfaceExpression op=binary right=interfaceExpression
+    | have (annotations | specifiers | names | abstractFunctions | declarationStatements | interfaces) SPACE?
     ;

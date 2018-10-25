@@ -3,7 +3,7 @@ export class TextConstants {
     static keywords = [
         "name", "annotation", "extension", "implementation", "function", "abstract function", "constructor", "parameter", "type",
         "specifier", "return value", "declaration statement", "expression statement", "initial value", "argument",
-        "call", "caller", "class"];
+        "call", "caller", "class", "interface"];
 
     static autoComplete_suggestion = {
         "name": {
@@ -84,6 +84,10 @@ export class TextConstants {
             whereHaveClause: ["annotation", "specifier", "name", "extension", "function", "abstract function",
                 "constructor", "declaration statement", "class", "return value", "implementation"],
             ofClause: ["class"]
+        },
+        "interface": {
+            whereHaveClause: ["annotation", "specifier", "name", "abstract function", "declaration statement", "interface"],
+            ofClause: ["class", "interface"]
         }
     };
 

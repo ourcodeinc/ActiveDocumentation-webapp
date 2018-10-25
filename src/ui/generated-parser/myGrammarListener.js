@@ -785,5 +785,41 @@ myGrammarListener.prototype.exitClassExpression = function(ctx) {
 };
 
 
+// Enter a parse tree produced by myGrammarParser#interfaces.
+myGrammarListener.prototype.enterInterfaces = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#interfaces.
+myGrammarListener.prototype.exitInterfaces = function(ctx) {
+};
+
+
+// Enter a parse tree produced by myGrammarParser#interfaceOf.
+myGrammarListener.prototype.enterInterfaceOf = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#interfaceOf.
+myGrammarListener.prototype.exitInterfaceOf = function(ctx) {
+};
+
+
+// Enter a parse tree produced by myGrammarParser#interfaceCondition.
+myGrammarListener.prototype.enterInterfaceCondition = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#interfaceCondition.
+myGrammarListener.prototype.exitInterfaceCondition = function(ctx) {
+};
+
+
+// Enter a parse tree produced by myGrammarParser#interfaceExpression.
+myGrammarListener.prototype.enterInterfaceExpression = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#interfaceExpression.
+myGrammarListener.prototype.exitInterfaceExpression = function(ctx) {
+};
+
+
 
 exports.myGrammarListener = myGrammarListener;

@@ -118,6 +118,10 @@ class GenerateXpath {
                     this.classesContextTraversal(node);
                     break;
 
+                case "interfacesContext":
+                    this.interfacesContextTraversal(node);
+                    break;
+
                 case "NamesContext":
                     this.namesContextTraversal(node);
                     break;
@@ -287,6 +291,39 @@ class GenerateXpath {
             }
 
             if (nodeType === "ClassConditionContext" || nodeType === "ClassExpressionContext") {
+                this.XPath += "[";
+                this.traverseNode(nodeChildren[i]);
+                this.XPath += "]";
+            }
+        }
+    }
+
+    interfacesContextTraversal(node) {
+        let nodeChildren = node.children.slice(0);
+
+        // move Of children to first
+        for (let i = 0; i < node.children.length; i++) {
+            let nodeType = node.getChild(i).constructor.name;
+            if (nodeType.indexOf("InterfaceOfContext") !== -1) {
+                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
+                break;
+            }
+        }
+
+        for (let i = 0; i < node.children.length; i++) {
+            let nodeType = nodeChildren[i].constructor.name;
+
+            // process ofContext
+            if (nodeType === "InterfaceOfContext") {
+                this.traverseNode(nodeChildren[i]);
+                this.XPath += "/";
+            }
+
+            if (nodeType === "TerminalNodeImpl") {
+                this.XPath += "src:interface";
+            }
+
+            if (nodeType === "InterfaceConditionContext" || nodeType === "InterfaceExpressionContext") {
                 this.XPath += "[";
                 this.traverseNode(nodeChildren[i]);
                 this.XPath += "]";

@@ -273,6 +273,8 @@ class GuiComponent extends React.Component {
                 return (<div className={"rowItem inlineText"}><b>(</b></div>);
             case "class":
                 return (<div className={"rowItem inlineText"}><b>class</b></div>);
+            case "interface":
+                return (<div className={"rowItem inlineText"}><b>interface</b></div>);
             case "expressionStatement":
             case "declarationStatement":
                 return (<div className={"rowItem inlineText"}><b>=</b></div>);
@@ -313,6 +315,7 @@ class GuiComponent extends React.Component {
     renderElementBodyBegin() {
         switch (this.state.element) {
             case "class":
+            case "interface":
             case "function":
             case "constructor":
                 return (<div className={"rowGroup"}><b>&#123;</b></div>);
@@ -328,6 +331,7 @@ class GuiComponent extends React.Component {
     renderElementBodyEnd() {
         switch (this.state.element) {
             case "class":
+            case "interface":
             case "function":
             case "constructor":
                 return (<div className={"rowGroup"}><b>&#125;</b></div>);
@@ -350,13 +354,18 @@ class GuiComponent extends React.Component {
                         <span className={"temporary-text"}>className</span>
                     </div>);
                 return null;
-
+            case "interface":
+                if (group === 'after_1' && this.state.children["after_1"].length === 0)
+                    return (<div className={" rowItem inlineText"}>
+                        <span className={"temporary-text"}>interfaceName</span>
+                    </div>);
+                return null;
             case "function":
             case "abstractFunction":
             case "constructor":
                 if (group === 'before_2' && this.state.children["before_2"].length === 0)
                     return(<div className={" rowItem inlineText"}>
-                        <span className={"temporary-text"}>{this.state.element} Name</span>
+                        <span className={"temporary-text"}>{this.state.element}Name</span>
                     </div>);
                 return null;
 
@@ -401,6 +410,7 @@ class GuiComponent extends React.Component {
             }
             if (group === "after_1") {
                 if (targetKey === "name" && this.state.element === "class") isTarget = true;
+                if (targetKey === "name" && this.state.element === "interface") isTarget = true;
                 if (targetKey === "name" && this.state.element === "declarationStatement") isTarget = true;
                 if (targetKey === "name" && this.state.element === "declaration") isTarget = true;
                 if (targetKey === "declaration" && this.state.element === "function") isTarget = true;
