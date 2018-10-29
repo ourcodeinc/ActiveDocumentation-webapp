@@ -47,7 +47,6 @@ const default_state = {
                 key: "class",
                 value: "",
                 target: "follows",
-                xpath: "src:class",
                 children: {
                     "top": [],
                     "before": [],
@@ -66,12 +65,12 @@ const default_state = {
 };
 
 /**
- *
+ * using default_state as a default value surprisingly changes its value
  * @param state
  * @param action
  * @returns {*} new state
  */
-const reducer = (state = default_state, action) => {
+const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
     // console.log('reducer running', action);
     // let tempRuleTable = [];
 
