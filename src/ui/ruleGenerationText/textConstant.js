@@ -5,6 +5,8 @@ export class TextConstants {
         "specifier", "return value", "declaration statement", "expression statement", "initial value", "argument",
         "call", "caller", "class", "interface"];
 
+    static connectors = ["where", "have", "must", "be", "equal", "to", "not", "and", "or", "include", "of", "(", ")", "start", "end", "with"];
+
     static autoComplete_suggestion = {
         "name": {
             whereClause: ["equal to", "not equal to", "include", "not include", "start with", "not start with", "end with", "not end with"],
@@ -65,7 +67,7 @@ export class TextConstants {
             ofClause: ["declaration statement"]
         },
         "argument": {
-            whereHaveClause: [["calls", "name"]],
+            whereHaveClause: ["calls", "name"],
             ofClause: ["call"]
         },
         "call": {

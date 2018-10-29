@@ -195,6 +195,10 @@ body {
     position: relative;
 }
 
+.ruleGeneratorTextContainer {
+    position: relative;
+}
+
 /* override bootstrap */
 
 .suggestionDiv .panel {

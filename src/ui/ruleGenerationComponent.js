@@ -10,10 +10,11 @@ import {Alert} from 'react-bootstrap';
 import {Button, FormGroup, ButtonToolbar} from 'react-bootstrap';
 
 import RuleGeneratorGui from './ruleGenerationGUI/ruleGeneratorGui';
-import AutoComplete from "./ruleGenerationText/autoComplete";
+// import AutoComplete from "./ruleGenerationText/autoComplete";
 import verifyTextBasedOnGrammar from "./ruleGenerationText/languageProcessing";
 import {editNewRuleGrammarGuiData, receiveGuiTree} from "../actions";
 import {generateGuiTrees} from "./ruleGenerationText/generateGuiTree";
+import RuleGeneratorText from "./ruleGenerationText/ruleGeneratorText";
 
 
 class RuleGenerationComponent extends Component {
@@ -55,7 +56,7 @@ class RuleGenerationComponent extends Component {
                     </div>
                 )}
                 <FormGroup validationState={this.state.autoCompleteValidationState}>
-                    <AutoComplete ref={(autoComplete) => this.autoComplete = autoComplete}
+                    <RuleGeneratorText ref={(autoComplete) => this.autoComplete = autoComplete}
                                   defaultValue={this.state.autoCompleteText}
                                   onBlur={() => {
                                       if(this.shouldAlert) {
