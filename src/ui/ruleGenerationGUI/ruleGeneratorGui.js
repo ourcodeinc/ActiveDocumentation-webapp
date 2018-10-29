@@ -5,7 +5,7 @@
 import React, {Component} from 'react';
 import '../../App.css';
 
-import {Tabs, Tab, FormGroup} from 'react-bootstrap';
+import {Tabs, Tab, FormGroup, HelpBlock} from 'react-bootstrap';
 import {RootCloseWrapper} from "react-overlays";
 import {connect} from "react-redux";
 
@@ -26,17 +26,17 @@ class RuleGeneratorGui extends Component {
     render() {
         return (
             <div style={{clear: "both", marginTop: "20px"}} className={this.class}>
-                <p className={"text-muted"}>function where ( have annotation and have specifier ) of class where have function where have
-                    annotation and have name where equal to "foo" must have name</p>
-                <p className={"text-muted"}>function where ( have annotation and have specifier ) of class where have function where have annotation
-                    and have name where equal to "foo" must be equal to function</p>
-                <p className={"text-muted"}>function where have annotation and have specifier must have name</p>
-                <p className={"text-muted"}>function where have annotation where (have name where equal to "bar")
-                    and have specifier must have name</p>
+                {/*<p className={"text-muted"}>function where ( have annotation and have specifier ) of class where have function where have*/}
+                {/*annotation and have name where equal to "foo" must have name</p>*/}
+                {/*<p className={"text-muted"}>function where ( have annotation and have specifier ) of class where have function where have annotation*/}
+                {/*and have name where equal to "foo" must be equal to function</p>*/}
+                {/*<p className={"text-muted"}>function where have annotation and have specifier must have name</p>*/}
+                {/*<p className={"text-muted"}>function where have annotation where (have name where equal to "bar")*/}
+                {/*and have specifier must have name</p>*/}
 
                 {/* Radio buttons - unnecessarily complex */}
                 <FormGroup>
-                    <h5>Rule Type:</h5>
+                    <HelpBlock>Rule Type:</HelpBlock>
                     <div className="radio"><label className="radio-inline">
                         <input type="radio" name="ruleTypeOptions"
                                value={"Must"}
@@ -56,8 +56,10 @@ class RuleGeneratorGui extends Component {
                     <Tab eventKey={"quantifier"} title={"Quantifier Query"} animation={true}>
                         <div style={{marginTop: "10px"}}>
                             <div>
-                                <RootCloseWrapper onRootClose={() => {}}>
-                                    <GuiComponent ws={this.state.ws} element={this.state.quantifier.key ? this.state.quantifier.key : "class"}
+                                <RootCloseWrapper onRootClose={() => {
+                                }}>
+                                    <GuiComponent ws={this.state.ws}
+                                                  element={this.state.quantifier.key ? this.state.quantifier.key : "class"}
                                                   key={new Date()} state={this.state.quantifier}
                                                   callbackFromParent={this.receiveStateData}/>
                                 </RootCloseWrapper>
@@ -68,8 +70,10 @@ class RuleGeneratorGui extends Component {
                     <Tab eventKey={"constraint"} title={"Constraint Query"} animation={true}>
                         <div style={{marginTop: "10px"}}>
                             <div>
-                                <RootCloseWrapper onRootClose={() => {}}>
-                                    <GuiComponent ws={this.state.ws} element={this.state.constraint.key ? this.state.constraint.key : "class"}
+                                <RootCloseWrapper onRootClose={() => {
+                                }}>
+                                    <GuiComponent ws={this.state.ws}
+                                                  element={this.state.constraint.key ? this.state.constraint.key : "class"}
                                                   key={new Date()} state={this.state.constraint}
                                                   callbackFromParent={this.receiveStateData}/>
                                 </RootCloseWrapper>
@@ -77,7 +81,7 @@ class RuleGeneratorGui extends Component {
                         </div>
                     </Tab>
                 </Tabs>
-                <h5>GUI grammar:</h5>
+                <HelpBlock>GUI grammar:</HelpBlock>
                 {this.state.GuiGrammar}
 
             </div>
@@ -115,13 +119,13 @@ class RuleGeneratorGui extends Component {
          * check if two gui nodes are equal (same children and key)
          */
         function equalObject(object1, object2) {
-            if(object1.key !== object2.key ) return false;
+            if (object1.key !== object2.key) return false;
             Object.keys(object1.children).filter(key => key !== "child").forEach(group => {
                 if (object1.children[group].length !== object2.children[group].length) return false;
                 else {
                     object1.children[group].sort((a, b) => a.key > b.key ? 1 : a.key < b.key ? -1 : 0);
                     object2.children[group].sort((a, b) => a.key > b.key ? 1 : a.key < b.key ? -1 : 0);
-                    for (let i=0; i< object1.children[group].length; i++) {
+                    for (let i = 0; i < object1.children[group].length; i++) {
                         if (!equalObject(object1.children[group][i], object2.children[group][i])) return false
                     }
                 }
@@ -217,12 +221,13 @@ class RuleGeneratorGui extends Component {
     traverseChildrenGrammar(parentNode, mustHave = false) {
 
         let grText = "";
-        if(parentNode.children["child"].hasOwnProperty('key')) {
+        if (parentNode.children["child"].hasOwnProperty('key')) {
             grText += this.traverseChildrenGrammar(parentNode.children["child"]);
             grText += " of ";
         }
 
-        if(!mustHave) grText += parentNode.grammar ? parentNode.grammar + " " : parentNode.key ? parentNode.key + " " : "class ";
+        if (!mustHave) grText += (parentNode.value.type === "text" && !parentNode.text) ? parentNode.grammar.split(" ").slice(0, 1).join(" ")
+            : parentNode.grammar ? parentNode.grammar + " " : parentNode.key ? parentNode.key + " " : "class ";
         grText += typeof parentNode.text !== "string" ? "" : parentNode.text !== "" ? ("\"" + parentNode.text + "\"") : "";
 
         let children = [];
@@ -237,7 +242,7 @@ class RuleGeneratorGui extends Component {
             if (i < children.length - 1) grText += " and ";
         }
 
-        if(children.length > 1 && !mustHave) grText += ") ";
+        if (children.length > 1 && !mustHave) grText += ") ";
 
         return grText;
     }

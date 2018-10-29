@@ -32,7 +32,7 @@ class GuiComponent extends React.Component {
 
     render() {
         return (
-            <div className={"ruleGroupDiv " + this.state.target} key={new Date()}>
+            <div className={"ruleGroupDiv " + this.state.target}>
                 {["annotation", "declaration", "expression", "returnValue", "call"].indexOf(this.state.element) === -1 ? this.renderRemoveElement("innerRemoveIcon") : null}
                 <div className={"rowGroup"}>
                     {this.renderGroup("top")}
@@ -84,18 +84,18 @@ class GuiComponent extends React.Component {
                             </div>
                             <div
                                 className={group === "within" || group === "top" ? "" : "rowItem"}>
-                                {this.state.children[group][i].value.type === "text" ? (
+                                {cons.value.type === "text" ? (
                                     <div style={{marginTop: "2px"}}>
                                         <div style={{float: "left"}}>
                                             <input type={"text"} className={"inputText"}
                                                    value={cons["text"]}
-                                                   placeholder={this.state.children[group][i].value.placeholder}
+                                                   placeholder={cons.value.placeholder}
                                                    onBlur={(e) => {
                                                        cons.text = e.target.value;
-                                                       // update XPath
-                                                       const children = this.state.children;
-                                                       // children[group][i].xpath = this.state.children[group][i].value["xpath"].replace('<NAME>', this.state.children[group][i].text);
-                                                       this.setState({children});
+                                                       // // update XPath
+                                                       // const children = this.state.children;
+                                                       // // children[group][i].xpath = this.state.children[group][i].value["xpath"].replace('<NAME>', this.state.children[group][i].text);
+                                                       // this.setState({children});
                                                        this.sendDataBack();
                                                    }}
                                                    onChange={(e) => {
@@ -115,10 +115,10 @@ class GuiComponent extends React.Component {
                                                       }}/>
                                         </div>
                                     </div>
-                                ) : this.state.children[group][i].value.type === "srcml" ? (
+                                ) : cons.value.type === "srcml" ? (
                                     <div style={{marginTop: "2px"}}>
                                         <div style={{float: "left"}}>
-                                            <SrcMLFragment ws={this.ws} state={this.state.children[group][i]}
+                                            <SrcMLFragment ws={this.ws} state={cons}
                                                            placeholder={"Name or Literal"}
                                                            callbackFromParent={this.sendDataBack}
                                                            removeFunction={() => {
@@ -130,8 +130,8 @@ class GuiComponent extends React.Component {
                                         </div>
                                     </div>
                                 ) : (
-                                    <GuiComponent ws={this.ws} state={this.state.children[group][i]}
-                                                  element={this.state.children[group][i].value.type}
+                                    <GuiComponent ws={this.ws} state={cons}
+                                                  element={cons.value.type}
                                                   callbackFromParent={this.sendDataBack}
                                                   removeFunction={() => {
                                                       const children = this.state.children;
