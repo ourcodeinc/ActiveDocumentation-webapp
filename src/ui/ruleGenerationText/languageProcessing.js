@@ -13,7 +13,7 @@ export default async function verifyTextBasedOnGrammar(autoCompleteText) {
     if (replacedPhrases === "") return Promise.reject("NO_INPUT_AFTER_REPLACING_PHRASES");
     let lemmatized = await lemmatize(replacedPhrases);
     if (lemmatized === "") return Promise.reject("NO_INPUT_AFTER_LEMMATIZATION");
-    let returnedObj = antlr(lemmatized + " ");
+    let returnedObj = antlr(lemmatized.trim() + " ");
     if (returnedObj.hasOwnProperty("grammarErrors") || returnedObj.hasOwnProperty("xpathTraverseErrors"))
         return Promise.reject(returnedObj);
     return {
@@ -85,6 +85,7 @@ const stringReplaceAll = (str, search, replacement) => {
  */
 const antlr = (input) => {
 
+    let inputText = input + "";
     let MyGrammarLexerModule = require('../generated-parser/myGrammarLexer');
     let MyGrammarParserModule = require('../generated-parser/myGrammarParser');
 
@@ -115,7 +116,7 @@ const antlr = (input) => {
     let tree = parser.inputSentence();
 
     if (errors.length !== 0)
-        return {grammarErrors: errors};
+        return {grammarErrors: errors, inputText: inputText};
 
     try {
 

@@ -226,8 +226,8 @@ class RuleGeneratorGui extends Component {
             grText += " of ";
         }
 
-        if (!mustHave) grText += (parentNode.value.type === "text" && !parentNode.text) ? parentNode.grammar.split(" ").slice(0, 1).join(" ")
-            : parentNode.grammar ? parentNode.grammar + " " : parentNode.key ? parentNode.key + " " : "class ";
+        if (!mustHave) grText += (parentNode.value.type === "text" && !parentNode.text) ? parentNode.value.grammar.split(" ").slice(0, 1).join(" ")
+            : parentNode.value.grammar ? parentNode.value.grammar + " " : parentNode.key ? parentNode.key + " " : "class ";
         grText += typeof parentNode.text !== "string" ? "" : parentNode.text !== "" ? ("\"" + parentNode.text + "\"") : "";
 
         let children = [];

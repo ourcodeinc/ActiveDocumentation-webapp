@@ -261,7 +261,7 @@ class GenerateXpath {
             node.children[0].children.splice(1, 0, node.children[2]);
             // remove the node after must
             node.children.splice(2, 1);
-            console.log("re-organize (else)", node);
+            // console.log("re-organize (else)", node);
         }
     }
 

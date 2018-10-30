@@ -44,6 +44,7 @@ class RuleGenerationComponent extends Component {
                     <Alert bsStyle={this.state.error.alertType}>
                         <h4>{this.state.error.errorType}</h4>
                         <h6>{this.state.error.message}</h6>
+                        <h6 style={{fontWeight: "bold"}}>{this.state.error.inputText}</h6>
                         <ButtonToolbar>
                             <Button onClick={() => this.setState({error: ""})}>Got it!</Button>
                             <Button onClick={() => this.setState({showAlert: false})}>Hide Alerts</Button>
@@ -116,6 +117,7 @@ class RuleGenerationComponent extends Component {
                     error: {
                         errorType: "Empty Field",
                         message: "The design rule input must not be empty",
+                        inputText: "",
                         alertType: "warning"
                     }
                 });
@@ -125,6 +127,7 @@ class RuleGenerationComponent extends Component {
                     error: {
                         errorType: "Incorrect Input",
                         message: "The used phrases are incorrect. Try using different phrases.",
+                        inputText: "",
                         alertType: "danger"
                     }
                 });
@@ -134,6 +137,7 @@ class RuleGenerationComponent extends Component {
                     error: {
                         errorType: "Incorrect Input",
                         message: "The words used in the design rule are not compatible with CoreNLP library.",
+                        inputText: "",
                         alertType: "danger"
                     }
                 });
@@ -150,9 +154,8 @@ class RuleGenerationComponent extends Component {
                     this.setState({
                         error: {
                             errorType: "Grammar Error",
-                            message: (grammarError.e.ctx? grammarError.e.ctx.constructor.name : "null")
-                            + (grammarError.e.ctx && grammarError.e.ctx.parentCtx !== null ? (" in " + grammarError.e.ctx.parentCtx.constructor.name) : "")
-                            + ", character " + error.grammarErrors[0].col,
+                            message: "The input text after the following sub-text is NOT according to the grammar:",
+                            inputText: "\"" + error.inputText.slice(0, grammarError.col) + "\"",
                             alertType: "danger"
                         }
                     });
@@ -162,6 +165,7 @@ class RuleGenerationComponent extends Component {
                         error: {
                             errorType: "error",
                             message: "",
+                            inputText: "",
                             alertType: "danger"
                         }
                     });

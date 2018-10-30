@@ -89,7 +89,7 @@ const reorderMustClause = (treeNode) => {
             // if not: create and add it w/ children[2] as its child
             else {
                 // must exist with e.g. "function " text
-                let string = newNode.children[0].children.filter(gChild => gChild.nodeType === "TerminalNodeImpl")[0];
+                let string = newNode.children[0].children.filter(gChild => gChild.nodeType === "TerminalNodeImpl")[0].text.trim();
                 let nodeType = string.charAt(0).toUpperCase() + string.slice(1) + "ConditionContext";
                 newNode.children[0].children.push({
                     nodeType: nodeType,
