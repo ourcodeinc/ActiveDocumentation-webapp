@@ -26,7 +26,6 @@ class RuleGenerationComponent extends Component {
             quantifierXPath: "",
             constraintXPath: "",
             error: "",
-            autoCompleteText: props.autoCompleteText,
             showAlert: true,
             autoCompleteValidationState: null // error, success, warning, null
         };
@@ -35,6 +34,11 @@ class RuleGenerationComponent extends Component {
         // the component is updated after changing this value because the state is also changing
         // otherwise call this.forceUpdate()
         this.autoCompleteCaretPosition = -1;
+
+        // can't be part of state, because after clicking on auto-complete suggestion
+        // and then out of its container, the setState() in onUpdateText doesn't update the text instantly.
+        // props is a read-only element
+        this.autoCompleteText = props.autoCompleteText;
     }
 
     render() {
@@ -58,10 +62,10 @@ class RuleGenerationComponent extends Component {
                 )}
                 <FormGroup validationState={this.state.autoCompleteValidationState}>
                     <RuleGeneratorText ref={(autoComplete) => this.autoComplete = autoComplete}
-                                  defaultValue={this.state.autoCompleteText}
+                                  defaultValue={this.autoCompleteText}
                                   onBlur={() => {
                                       if(this.shouldAlert) {
-                                          verifyTextBasedOnGrammar(this.state.autoCompleteText)
+                                          verifyTextBasedOnGrammar(this.autoCompleteText)
                                               .then((data) => {
                                                   this.setState({
                                                       quantifierXPath: data.quantifierXPath,
@@ -80,7 +84,7 @@ class RuleGenerationComponent extends Component {
                                   }}
                                   onUpdateText={(text) => {
                                       this.shouldAlert = true;
-                                      this.setState({autoCompleteText: text});
+                                      this.autoCompleteText = text;
                                       this.onEditNewRuleForm()
                                   }}
                                   caretPosition={(() => {
@@ -96,8 +100,8 @@ class RuleGenerationComponent extends Component {
 
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
+        this.autoCompleteText = nextProps.autoCompleteText;
         this.setState({
-            autoCompleteText: nextProps.autoCompleteText,
             quantifierXPath: nextProps.quantifierXPath,
             constraintXPath: nextProps.quantifierXPath,
             error: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "" : this.state.error
@@ -180,7 +184,7 @@ class RuleGenerationComponent extends Component {
      */
     onEditNewRuleForm() {
         this.props.onEditForm({
-            autoCompleteText: this.state.autoCompleteText,
+            autoCompleteText: this.autoCompleteText,
             quantifierXPath: this.props.quantifierXPath,
             constraintXPath: this.props.quantifierXPath
         });

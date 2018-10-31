@@ -116,9 +116,9 @@ export class TextConstants {
 
 
     static templates = [
-        "function must have ",
-        "abstract function must have ",
-        "constructor must have ",
+        "function must have name",
+        "abstract function must have annotation",
+        "constructor must have expression statement",
         "class must be equal to class",
         "class where have annotation must have name"
     ]

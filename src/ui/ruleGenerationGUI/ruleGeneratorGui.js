@@ -81,7 +81,7 @@ class RuleGeneratorGui extends Component {
                         </div>
                     </Tab>
                 </Tabs>
-                <HelpBlock>GUI grammar:</HelpBlock>
+                <HelpBlock>GUI output:</HelpBlock>
                 {this.state.GuiGrammar}
 
             </div>

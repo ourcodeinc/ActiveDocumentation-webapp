@@ -57,14 +57,15 @@ class RuleGeneratorText extends Component {
                         <div ref={this.setSuggestionDivRef} className={"suggestionDiv"}>
                             <Panel bsStyle="default">
 
-                                {this.state.grammarSuggestion.length !== 0 || this.state.phraseSuggestion.length !== 0 ? null : (
+                                {this.state.myText !== "" ? null : (
                                     <Fragment>
                                         <Panel.Heading>
-                                            <Panel.Title componentClass="h3">Templates</Panel.Title>
+                                            <Panel.Title componentClass="h3">Sample Templates</Panel.Title>
                                         </Panel.Heading>
                                         <ListGroup>
                                             {TextConstants.templates.map((word, i) =>
-                                                (<ListGroupItem key={i}>{word}</ListGroupItem>)
+                                                (<ListGroupItem key={i}
+                                                                onClick={() => this.setState({myText: word})}>{word}</ListGroupItem>)
                                             )}
                                         </ListGroup>
                                     </Fragment>
