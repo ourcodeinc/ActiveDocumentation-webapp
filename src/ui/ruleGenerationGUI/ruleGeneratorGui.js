@@ -20,19 +20,11 @@ class RuleGeneratorGui extends Component {
 
         this.state = {...this.props};
         this.class = props["className"] ? props["className"] : "generateRuleGui"
-
     }
 
     render() {
         return (
             <div style={{clear: "both", marginTop: "20px"}} className={this.class}>
-                {/*<p className={"text-muted"}>function where ( have annotation and have specifier ) of class where have function where have*/}
-                {/*annotation and have name where equal to "foo" must have name</p>*/}
-                {/*<p className={"text-muted"}>function where ( have annotation and have specifier ) of class where have function where have annotation*/}
-                {/*and have name where equal to "foo" must be equal to function</p>*/}
-                {/*<p className={"text-muted"}>function where have annotation and have specifier must have name</p>*/}
-                {/*<p className={"text-muted"}>function where have annotation where (have name where equal to "bar")*/}
-                {/*and have specifier must have name</p>*/}
 
                 {/* Radio buttons - unnecessarily complex */}
                 <FormGroup>
@@ -95,6 +87,16 @@ class RuleGeneratorGui extends Component {
                 this.forceUpdate();
             }
         );
+    }
+
+    /**
+     * when the new props is received through redux state
+     * the componentWillReceiveProps() is not triggered as this
+     * component is unmounted and mounted again by its parent
+     * this function ensures that the required functions are called.
+     */
+    componentDidMount() {
+        this.receiveStateData();
     }
 
     /**
