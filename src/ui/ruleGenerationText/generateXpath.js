@@ -383,7 +383,7 @@ class GenerateXpath {
                     if (nodeChildren[i].getChild(j).constructor.name === "WordsContext") {
                         for (let k = 0; k < nodeChildren[i].getChild(j).children.length; k++)
                             tempText += nodeChildren[i].getChild(j).getChild(k).getSymbol().text;
-                        this.XPath += (tempText.startsWith("\"") ? "" : "\"") + tempText + (tempText.endsWith("\"") ? "" : "\"");
+                        this.XPath += tempText;
                     }
                 }
                 this.XPath += !includes ? "]" : not ? "))]" : ")]";
@@ -457,12 +457,11 @@ class GenerateXpath {
                     if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
                         this.XPath += "!";
                     if (nodeChildren[i].getChild(j).constructor.name === "EqualsToContext")
-                        this.XPath += "=\"";
+                        this.XPath += "=";
                     if (nodeChildren[i].getChild(j).constructor.name === "WordsContext")
                         for (let k = 0; k < nodeChildren[i].getChild(j).children.length; k++)
                             this.XPath += nodeChildren[i].getChild(j).getChild(k).getSymbol().text;
                 }
-                this.XPath += "\"";
                 this.XPath += "]";
             }
         }
@@ -500,12 +499,11 @@ class GenerateXpath {
                     if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
                         this.XPath += "!";
                     if (nodeChildren[i].getChild(j).constructor.name === "EqualsToContext")
-                        this.XPath += "=\"";
+                        this.XPath += "=";
                     if (nodeChildren[i].getChild(j).constructor.name === "WordsContext")
                         for (let k = 0; k < nodeChildren[i].getChild(j).children.length; k++)
                             this.XPath += nodeChildren[i].getChild(j).getChild(k).getSymbol().text;
                 }
-                this.XPath += "\"";
                 this.XPath += "]";
             }
         }
@@ -616,12 +614,11 @@ class GenerateXpath {
                     if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
                         this.XPath += "!";
                     if (nodeChildren[i].getChild(j).constructor.name === "EqualsToContext")
-                        this.XPath += "=\"";
+                        this.XPath += "=";
                     if (nodeChildren[i].getChild(j).constructor.name === "WordsContext")
                         for (let k = 0; k < nodeChildren[i].getChild(j).children.length; k++)
                             this.XPath += nodeChildren[i].getChild(j).getChild(k).getSymbol().text;
                 }
-                this.XPath += "\"";
                 this.XPath += "]";
             }
         }
@@ -659,12 +656,11 @@ class GenerateXpath {
                     if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
                         this.XPath += "!";
                     if (nodeChildren[i].getChild(j).constructor.name === "EqualsToContext")
-                        this.XPath += "=\"";
+                        this.XPath += "=";
                     if (nodeChildren[i].getChild(j).constructor.name === "WordsContext")
                         for (let k = 0; k < nodeChildren[i].getChild(j).children.length; k++)
                             this.XPath += nodeChildren[i].getChild(j).getChild(k).getSymbol().text;
                 }
-                this.XPath += "\"";
                 this.XPath += "]";
             }
         }
@@ -906,12 +902,11 @@ class GenerateXpath {
                     if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
                         this.XPath += "!";
                     if (nodeChildren[i].getChild(j).constructor.name === "EqualsToContext")
-                        this.XPath += "=\"";
+                        this.XPath += "=";
                     if (nodeChildren[i].getChild(j).constructor.name === "WordsContext")
                         for (let k = 0; k < nodeChildren[i].getChild(j).children.length; k++)
                             this.XPath += nodeChildren[i].getChild(j).getChild(k).getSymbol().text;
                 }
-                this.XPath += "\"";
                 this.XPath += "]";
             }
         }

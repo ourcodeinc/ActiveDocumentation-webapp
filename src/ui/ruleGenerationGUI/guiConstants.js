@@ -19,10 +19,10 @@ export class GuiConstants {
                 "name not end with"
             ],
             "after_2": [
-                "extend",
-                "extend not",
-                "implement",
-                "implement not"
+                "extension equal to",
+                "extension not equal to",
+                "implementation equal to",
+                "implementation not equal to"
             ],
             "within": [
                 "function",
@@ -36,8 +36,8 @@ export class GuiConstants {
                 "annotation",
                 "specifier",
                 "name",
-                "extend",
-                "implement",
+                "extension",
+                "implementation",
                 "class",
                 "function",
                 "constructor",
@@ -356,7 +356,15 @@ export class GuiConstants {
             grammar: "name where not end with"
 
         },
-        "extend": {
+        "extension": {
+            buttonName: "Extension",
+            xpath: "src:super/src:extends",
+            type: "text",
+            pre: "extends",
+            post: "",
+            grammar: "extension"
+        },
+        "extension equal to": {
             buttonName: "Extends class named ...",
             xpath: "src:super/src:extends/src:name/text()=\"<NAME>\"",
             type: "text",
@@ -364,7 +372,7 @@ export class GuiConstants {
             post: "",
             grammar: "extension where equal to"
         },
-        "extend not": {
+        "extension not equal to": {
             buttonName: "Extends class not named ...",
             xpath: "src:super/src:extends/src:name/text()!=\"<NAME>\"",
             type: "text",
@@ -372,7 +380,15 @@ export class GuiConstants {
             post: "",
             grammar: "extension where not equal to"
         },
-        "implement": {
+        "implementation": {
+            buttonName: "Implementation",
+            xpath: "src:super/src:implements",
+            type: "text",
+            pre: "implements",
+            post: "",
+            grammar: "implementation"
+        },
+        "implementation equal to": {
             buttonName: "Implements class named ...",
             xpath: "src:super/src:implements/src:name/text()=\"<NAME>\"",
             type: "text",
@@ -380,7 +396,7 @@ export class GuiConstants {
             post: "",
             grammar: "implementation where equal to"
         },
-        "implement not": {
+        "implementation not equal to": {
             buttonName: "Implements class not named ...",
             xpath: "src:super/src:implements/src:name/text()!=\"<NAME>\"",
             type: "text",
@@ -414,7 +430,7 @@ export class GuiConstants {
             grammar: "constructor"
         },
         "declaration statement": {
-            buttonName: "Has declarationStatement ...",
+            buttonName: "Has declaration statement ...",
             xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
             type: "declaration statement",
             pre: "",
@@ -454,7 +470,7 @@ export class GuiConstants {
             grammar: "expression statement"
         },
         "name": {
-            buttonName: "name",
+            buttonName: "Name",
             xpath: "",
             type: "srcml",
             pre: "",

@@ -56,10 +56,10 @@ const lemmatize = (input) => {
     });
 
     let str = lemmatized.join(" ");
-    str = stringReplaceAll(str, " ''", "\"");
+    // str = stringReplaceAll(str, " ''", "\"");
     str = stringReplaceAll(str, " and ", "  and "); // for extra spaces around and
     str = stringReplaceAll(str, " or ", "  or "); // for extra spaces around or
-    str = stringReplaceAll(str, "`` ", "\"");
+    // str = stringReplaceAll(str, "`` ", "\"");
     str = str.replace(/\( /g, "(");
     str = str.replace(/ \) /g, " )"); // no change!
 
