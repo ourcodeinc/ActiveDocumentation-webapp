@@ -61,8 +61,7 @@ class RuleGenerationComponent extends Component {
                     </div>
                 )}
                 <FormGroup validationState={this.state.autoCompleteValidationState}>
-                    <RuleGeneratorText ref={(autoComplete) => this.autoComplete = autoComplete}
-                                  defaultValue={this.autoCompleteText}
+                    <RuleGeneratorText defaultValue={this.autoCompleteText}
                                   onBlur={() => {
                                       if(this.shouldAlert) {
                                           verifyTextBasedOnGrammar(this.autoCompleteText)
@@ -73,7 +72,7 @@ class RuleGenerationComponent extends Component {
                                                       autoCompleteValidationState: null,
                                                       error: ""
                                                   });
-
+                                                  this.onEditNewRuleForm();
                                                   // compute and dispatch gui tree for quantifier and constraint
                                                   generateGuiTrees(data.grammarTree)
                                                       .then((data) => this.props.onReceiveGuiTree(data));
@@ -92,7 +91,7 @@ class RuleGenerationComponent extends Component {
                                       this.autoCompleteCaretPosition = -1;
                                       return newFocus;
                                   })()}/>
-                    <RuleGeneratorGui key={new Date()} className={"generateRuleGui"}/>
+                    <RuleGeneratorGui className={"generateRuleGui"}/>
                 </FormGroup>
             </div>
         );
@@ -185,8 +184,8 @@ class RuleGenerationComponent extends Component {
     onEditNewRuleForm() {
         this.props.onEditForm({
             autoCompleteText: this.autoCompleteText,
-            quantifierXPath: this.props.quantifierXPath,
-            constraintXPath: this.props.quantifierXPath
+            quantifierXPath: this.state.quantifierXPath,
+            constraintXPath: this.state.quantifierXPath
         });
     }
 
