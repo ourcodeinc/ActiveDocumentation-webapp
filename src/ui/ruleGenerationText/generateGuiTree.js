@@ -2,7 +2,6 @@
  * Dependant on Grammar: OfContext, ExpressionContext, ..sContext, ConditionContext and 'subclass'
  */
 
-import lemmatize from 'wink-lemmatizer';
 import pluralize from 'pluralize';
 
 import {GuiConstants} from "../ruleGenerationGUI/guiConstants";
@@ -173,7 +172,7 @@ const traverseNormalNode = (treeNode) => {
     // context nodes
     let keywords = TextConstants.keywords.slice().map(w => pluralize(w).split(" ").map(a => a.charAt(0).toUpperCase() + a.slice(1)).join(""));
     if (keywords.indexOf(treeNode.nodeType.replace("Context", "")) !== -1) {
-        guiNode.key = lemmatize.noun(treeNode.nodeType.replace("Context","").toLowerCase());
+        guiNode.key = TextConstants.keywords[keywords.indexOf(treeNode.nodeType.replace("Context",""))];
         if (treeNode.children) {
             treeNode.children.forEach(child => {
                 if (child.nodeType.endsWith("OfContext"))
@@ -368,7 +367,7 @@ const createGuiNodes = (node) => {
                 else if (within.indexOf(whereChildKey) !== -1)
                     guiNode.children["within"].push(createGuiNodes(node.where[i]));
                 else
-                    console.log("key not found: " + whereChildKey + "  altWhereChildKey must be added.", node);
+                    console.log("key not found: \"" + whereChildKey + "\"  altWhereChildKey must be added.", node);
 
             }
         }

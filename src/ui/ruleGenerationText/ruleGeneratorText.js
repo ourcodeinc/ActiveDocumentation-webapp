@@ -30,19 +30,17 @@ class RuleGeneratorText extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.onClickTextArea = this.onClickTextArea.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this);
-        this.setWrapperRef = this.setWrapperRef.bind(this);
-        this.setSuggestionDivRef = this.setSuggestionDivRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
 
     }
 
     render() {
         return (
-            <div ref={this.setWrapperRef} className={"ruleGeneratorTextContainer"}>
+            <div ref={(node) => this.wrapperRef = node} className={"ruleGeneratorTextContainer"}>
                 <form>
                     <FormGroup>
                         <FormControl componentClass="textarea" placeholder="Design Rule"
-                                     style={{resize: "none"}}
+                                     style={{resize: "vertical"}}
                                      id={"queryText"}
                                      onClick={this.onClickTextArea}
                                      onChange={this.handleChange}
@@ -54,7 +52,7 @@ class RuleGeneratorText extends Component {
                                      value={this.state["myText"]}
                                      ref={(node) => this.queryText = node}
                         />
-                        <div ref={this.setSuggestionDivRef} className={"suggestionDiv"}>
+                        <div ref={(node) => this.suggestionDivRef = node} className={"suggestionDiv"}>
                             <Panel bsStyle="default">
 
                                 {this.state.myText !== "" ? null : (
@@ -211,14 +209,6 @@ class RuleGeneratorText extends Component {
 
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.handleClickOutside);
-    }
-
-    setWrapperRef(node) {
-        this.wrapperRef = node;
-    }
-
-    setSuggestionDivRef(node) {
-        this.suggestionDivRef = node;
     }
 
     handleClickOutside(event) {

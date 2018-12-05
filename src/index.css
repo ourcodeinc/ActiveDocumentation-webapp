@@ -47,6 +47,11 @@ body {
     color: darkred !important;
 }
 
+.buttonDiv {
+    float: left;
+    padding-right: 2px;
+}
+
 .mdAddBox {
     cursor: pointer;
     color: #9b9b9b
