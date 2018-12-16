@@ -362,9 +362,9 @@ const createGuiNodes = (node) => {
                     guiNode.children["before_2"].push(createGuiNodes(node.where[i]));
                 else if (after_1.indexOf(whereChildKey) !== -1 || after_1.indexOf(altWhereChildKey) !== -1)
                     guiNode.children["after_1"].push(createGuiNodes(node.where[i]));
-                else if (after_2.indexOf(whereChildKey) !== -1)
+                else if (after_2.indexOf(whereChildKey) !== -1 || after_2.indexOf(altWhereChildKey) !== -1)
                     guiNode.children["after_2"].push(createGuiNodes(node.where[i]));
-                else if (within.indexOf(whereChildKey) !== -1)
+                else if (within.indexOf(whereChildKey) !== -1 || within.indexOf(altWhereChildKey) !== -1)
                     guiNode.children["within"].push(createGuiNodes(node.where[i]));
                 else
                     console.log("key not found: \"" + whereChildKey + "\"  altWhereChildKey must be added.", node);
