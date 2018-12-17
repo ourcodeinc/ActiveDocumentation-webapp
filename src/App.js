@@ -15,8 +15,6 @@ import TableOfContent from './ui/tableOfContent';
 import RuleTable from './ui/ruleTable';
 import NavBar from './ui/navBar';
 import HeaderBar from './ui/headerBar';
-import IndividualRule from "./ui/individualRule";
-import GenerateRule from './ui/generateRule';
 // import ProjectHierarchy from './ui/projectHierarchy';
 
 class App extends Component {
@@ -78,18 +76,6 @@ class App extends Component {
                              (['rules', 'tag', 'codeChanged', 'rulesForFile', 'violatedRules'].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
                          }>
                         <RuleTable/>
-                    </div>
-                    <div id={"individualRule"}
-                         className={
-                             (['rule'].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
-                         }>
-                        <IndividualRule/>
-                    </div>
-                    <div id={"generateRule"}
-                         className={
-                             (['genRule'].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
-                         }>
-                        <GenerateRule/>
                     </div>
                     {/*<div id={"projectHierarchy"}*/}
                          {/*className={*/}
