@@ -263,8 +263,9 @@ body {
 }
 
 .rowItem {
-    float: left;
-    padding-right: 5px;
+    /*float: left;*/
+    /*padding-right: 5px;*/
+    display: inline-block;
 }
 
 .inlineText {
@@ -274,7 +275,7 @@ body {
     border-radius: 5px;
     /*min-height: 45px;*/
     /*padding: 3px 5px 3px 5px;*/
-    padding: 0 3px;
+    /*padding: 0 3px;*/
 }
 
 .generateRuleGui button.follows {
@@ -318,7 +319,7 @@ body {
     border-radius: 5px;
     /*min-height: 45px;*/
     /*padding: 3px 5px 3px 5px;*/
-    padding: 0 3px;
+    padding: 2px 3px 0 3px;
 }
 
 .generateRuleGui .exprDiv {
@@ -335,15 +336,33 @@ body {
     margin-left: 0;
     width: 100%;
     clear: both;
+    margin-bottom: 5px;
 }
 
 .generateRuleGui .removeIcon {
-    float: left;
+    /*float: left;*/
+}
+
+.generateRuleGui input.redText, .generateRuleGui input.redText::placeholder {
+    color: indianred;
+}
+
+.generateRuleGui input {
+    width: 100%;
+}
+
+.generateRuleGui input:disabled {
+    background-color: #e4e4e4;
+}
+
+.generateRuleGui input:disabled::placeholder {
+    color: #a9a9a9;
 }
 
 .generateRuleGui .innerRemoveIcon {
     float: right;
-    margin: -12px;
+    margin-right: -10px;
+    margin-top: -10px;
 }
 
 .generateRuleGui .inputText {
@@ -359,6 +378,24 @@ body {
 
 .generateRuleGui .tiDelete:hover {
     color: #969696;
+}
+
+.generateRuleGui .tiDelete.default {
+    cursor: pointer;
+    color: #737373;
+}
+
+.generateRuleGui .tiDelete.default:hover {
+    color: #515151;
+}
+
+.generateRuleGui .tiDelete.follows {
+    cursor: pointer;
+    color: #2babd2;
+}
+
+.generateRuleGui .tiDelete.follows:hover {
+    color: #2785a8;
 }
 
 .generateRuleGui .mdAddBox {

@@ -56,6 +56,24 @@ myGrammarListener.prototype.exitWords = function(ctx) {
 };
 
 
+// Enter a parse tree produced by myGrammarParser#combinatorialWords.
+myGrammarListener.prototype.enterCombinatorialWords = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#combinatorialWords.
+myGrammarListener.prototype.exitCombinatorialWords = function(ctx) {
+};
+
+
+// Enter a parse tree produced by myGrammarParser#symbols.
+myGrammarListener.prototype.enterSymbols = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#symbols.
+myGrammarListener.prototype.exitSymbols = function(ctx) {
+};
+
+
 // Enter a parse tree produced by myGrammarParser#end.
 myGrammarListener.prototype.enterEnd = function(ctx) {
 };
@@ -242,15 +260,6 @@ myGrammarListener.prototype.enterAnnotationCondition = function(ctx) {
 
 // Exit a parse tree produced by myGrammarParser#annotationCondition.
 myGrammarListener.prototype.exitAnnotationCondition = function(ctx) {
-};
-
-
-// Enter a parse tree produced by myGrammarParser#annotationExpression.
-myGrammarListener.prototype.enterAnnotationExpression = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#annotationExpression.
-myGrammarListener.prototype.exitAnnotationExpression = function(ctx) {
 };
 
 
@@ -443,15 +452,6 @@ myGrammarListener.prototype.exitParameterCondition = function(ctx) {
 };
 
 
-// Enter a parse tree produced by myGrammarParser#parameterExpression.
-myGrammarListener.prototype.enterParameterExpression = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#parameterExpression.
-myGrammarListener.prototype.exitParameterExpression = function(ctx) {
-};
-
-
 // Enter a parse tree produced by myGrammarParser#types.
 myGrammarListener.prototype.enterTypes = function(ctx) {
 };
@@ -533,15 +533,6 @@ myGrammarListener.prototype.exitReturnValueCondition = function(ctx) {
 };
 
 
-// Enter a parse tree produced by myGrammarParser#returnValueExpression.
-myGrammarListener.prototype.enterReturnValueExpression = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#returnValueExpression.
-myGrammarListener.prototype.exitReturnValueExpression = function(ctx) {
-};
-
-
 // Enter a parse tree produced by myGrammarParser#declarationStatements.
 myGrammarListener.prototype.enterDeclarationStatements = function(ctx) {
 };
@@ -605,15 +596,6 @@ myGrammarListener.prototype.exitExpressionStatementCondition = function(ctx) {
 };
 
 
-// Enter a parse tree produced by myGrammarParser#expressionStatementExpression.
-myGrammarListener.prototype.enterExpressionStatementExpression = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#expressionStatementExpression.
-myGrammarListener.prototype.exitExpressionStatementExpression = function(ctx) {
-};
-
-
 // Enter a parse tree produced by myGrammarParser#initialValues.
 myGrammarListener.prototype.enterInitialValues = function(ctx) {
 };
@@ -638,114 +620,6 @@ myGrammarListener.prototype.enterInitialValueCondition = function(ctx) {
 
 // Exit a parse tree produced by myGrammarParser#initialValueCondition.
 myGrammarListener.prototype.exitInitialValueCondition = function(ctx) {
-};
-
-
-// Enter a parse tree produced by myGrammarParser#initialValueExpression.
-myGrammarListener.prototype.enterInitialValueExpression = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#initialValueExpression.
-myGrammarListener.prototype.exitInitialValueExpression = function(ctx) {
-};
-
-
-// Enter a parse tree produced by myGrammarParser#arguments.
-myGrammarListener.prototype.enterArguments = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#arguments.
-myGrammarListener.prototype.exitArguments = function(ctx) {
-};
-
-
-// Enter a parse tree produced by myGrammarParser#argumentOf.
-myGrammarListener.prototype.enterArgumentOf = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#argumentOf.
-myGrammarListener.prototype.exitArgumentOf = function(ctx) {
-};
-
-
-// Enter a parse tree produced by myGrammarParser#argumentCondition.
-myGrammarListener.prototype.enterArgumentCondition = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#argumentCondition.
-myGrammarListener.prototype.exitArgumentCondition = function(ctx) {
-};
-
-
-// Enter a parse tree produced by myGrammarParser#argumentExpression.
-myGrammarListener.prototype.enterArgumentExpression = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#argumentExpression.
-myGrammarListener.prototype.exitArgumentExpression = function(ctx) {
-};
-
-
-// Enter a parse tree produced by myGrammarParser#calls.
-myGrammarListener.prototype.enterCalls = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#calls.
-myGrammarListener.prototype.exitCalls = function(ctx) {
-};
-
-
-// Enter a parse tree produced by myGrammarParser#callOf.
-myGrammarListener.prototype.enterCallOf = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#callOf.
-myGrammarListener.prototype.exitCallOf = function(ctx) {
-};
-
-
-// Enter a parse tree produced by myGrammarParser#callCondition.
-myGrammarListener.prototype.enterCallCondition = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#callCondition.
-myGrammarListener.prototype.exitCallCondition = function(ctx) {
-};
-
-
-// Enter a parse tree produced by myGrammarParser#callExpression.
-myGrammarListener.prototype.enterCallExpression = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#callExpression.
-myGrammarListener.prototype.exitCallExpression = function(ctx) {
-};
-
-
-// Enter a parse tree produced by myGrammarParser#callers.
-myGrammarListener.prototype.enterCallers = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#callers.
-myGrammarListener.prototype.exitCallers = function(ctx) {
-};
-
-
-// Enter a parse tree produced by myGrammarParser#callerOf.
-myGrammarListener.prototype.enterCallerOf = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#callerOf.
-myGrammarListener.prototype.exitCallerOf = function(ctx) {
-};
-
-
-// Enter a parse tree produced by myGrammarParser#callerCondition.
-myGrammarListener.prototype.enterCallerCondition = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#callerCondition.
-myGrammarListener.prototype.exitCallerCondition = function(ctx) {
 };
 
 

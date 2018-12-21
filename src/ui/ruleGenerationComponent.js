@@ -65,7 +65,7 @@ class RuleGenerationComponent extends Component {
                                   onBlur={() => {
                                       if(this.shouldAlert) {
                                           verifyTextBasedOnGrammar(this.autoCompleteText)
-                                              .then((data) => {
+                                              .then((data) => {console.log(data.quantifierXPath, data.constraintXPath);
                                                   this.setState({
                                                       quantifierXPath: data.quantifierXPath,
                                                       constraintXPath: data.constraintXPath,

@@ -144,6 +144,13 @@ class Utilities {
     }
 
 
+    /**
+     * move an array element from old_index to new_index
+     * @param arr array of elements
+     * @param old_index origin
+     * @param new_index destination
+     * @returns {*}
+     */
     static arrayMove(arr, old_index, new_index) {
         while (old_index < 0) {
             old_index += arr.length;
@@ -159,14 +166,6 @@ class Utilities {
         }
         arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
         return arr; // for testing purposes
-    };
-
-    static stringReplaceAll(str, search, replacement) {
-        return str.replace(new RegExp(search, 'g'), replacement);
-    };
-
-    static stringSplice(str, start, delCount, newSubStr) {
-        return str.slice(0, start) + newSubStr + str.slice(start + Math.abs(delCount));
     };
 
 

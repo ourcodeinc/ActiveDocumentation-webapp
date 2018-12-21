@@ -150,6 +150,10 @@ const combineWordsNode = (node) => {
         let word = node.children.map(child => child.text !== "\"" ? child.text : null).join("");
         return {nodeType: "word", text: word}
     }
+    if (node.nodeType === "CombinatorialWordsContext") {
+        let word = node.children.map(child => child.text !== "\"" ? child.text : null).join("");
+        return {nodeType: "word", text: word}
+    }
 
     if (node.children && node.children.length > 0)
         node.children = node.children.map(child => combineWordsNode(child));
@@ -354,7 +358,7 @@ const createGuiNodes = (node) => {
                 // like "name", where we have "name equal to" etc.
                 let altWhereChildKey = whereChildKey + " equal to";
 
-                if (top.indexOf(whereChildKey) !== -1)
+                if (top.indexOf(whereChildKey) !== -1 || top.indexOf(altWhereChildKey) !== -1)
                     guiNode.children["top"].push(createGuiNodes(node.where[i]));
                 else if (before_1.indexOf(whereChildKey) !== -1 || before_1.indexOf(altWhereChildKey) !== -1)
                     guiNode.children["before_1"].push(createGuiNodes(node.where[i]));
@@ -367,7 +371,8 @@ const createGuiNodes = (node) => {
                 else if (within.indexOf(whereChildKey) !== -1 || within.indexOf(altWhereChildKey) !== -1)
                     guiNode.children["within"].push(createGuiNodes(node.where[i]));
                 else
-                    console.log("key not found: \"" + whereChildKey + "\"  altWhereChildKey must be added.", node);
+                    console.log("key not found. \"" + whereChildKey + "\" or \"" + altWhereChildKey + "\" " +
+                        "must be added to GuiConstants.code_fragment[" + node.key + "] children.", node);
 
             }
         }

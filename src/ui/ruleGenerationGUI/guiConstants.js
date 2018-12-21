@@ -1,12 +1,10 @@
 
-// xpath property is not used
-
 export class GuiConstants {
 
     static code_fragment = {
         "class": {
-            "top": ["annotation"],
-            "before_1": ["specifier", "specifier not"],
+            "top": ["annotation equal to", "annotation not equal to"],
+            "before_1": ["specifier equal to", "specifier not equal to"],
             "before_2": [],
             "after_1": [
                 "name equal to",
@@ -47,8 +45,8 @@ export class GuiConstants {
             ]
         },
         "function": {
-            "top": ["annotation"],
-            "before_1": ["specifier", "specifier not"],
+            "top": ["annotation equal to", "annotation not equal to"],
+            "before_1": ["specifier equal to", "specifier not equal to"],
             "before_2": [
                 "name equal to",
                 "name not equal to",
@@ -59,11 +57,13 @@ export class GuiConstants {
                 "name end with",
                 "name not end with"
             ],
-            "after_1": ["parameter"],
+            "after_1": ["parameter equal to", "parameter not equal to"],
             "after_2": [],
             "within": [
-                "return value",
-                "expression statement",
+                "return value equal to",
+                "return value not equal to",
+                "expression statement equal to",
+                "expression statement not equal to",
                 "declaration statement"
             ],
             "child": [
@@ -77,13 +77,14 @@ export class GuiConstants {
             ]
         },
         "constructor": {
-            "top": ["annotation"],
-            "before_1": ["specifier", "specifier not"],
+            "top": ["annotation equal to", "annotation not equal to"],
+            "before_1": ["specifier equal to", "specifier not equal to"],
             "before_2": [],
-            "after_1": ["parameter"],
+            "after_1": ["parameter equal to", "parameter not equal to"],
             "after_2": [],
             "within": [
-                "expression statement",
+                "expression statement equal to",
+                "expression statement not equal to",
                 "declaration statement"
             ],
             "child": [
@@ -96,8 +97,8 @@ export class GuiConstants {
             ]
         },
         "abstract function": {
-            "top": ["annotation"],
-            "before_1": ["specifier", "specifier not"],
+            "top": ["annotation equal to", "annotation not equal to"],
+            "before_1": ["specifier equal to", "specifier not equal to"],
             "before_2": [
                 "name equal to",
                 "name not equal to",
@@ -108,7 +109,7 @@ export class GuiConstants {
                 "name end with",
                 "name not end with"
             ],
-            "after_1": ["parameter"],
+            "after_1": ["parameter equal to", "parameter not equal to"],
             "after_2": [],
             "within": [],
             "child": [
@@ -118,37 +119,10 @@ export class GuiConstants {
                 "parameter"
             ]
         },
-        "expression statement": {
-            "top": [],
-            "before_1": ["name"],
-            "before_2": [],
-            "after_1": ["call"],
-            "after_2": [],
-            "within": [],
-            "child": ["call", "name"]
-        },
-        "expression": {
-            "top": [],
-            "before_1": ["name", "call"],
-            "before_2": [],
-            "after_1": [],
-            "after_2": [],
-            "within": [],
-            "child": ["call", "name"]
-        },
-        "return value": {
-            "top": [],
-            "before_1": ["name", "call"],
-            "before_2": [],
-            "after_1": [],
-            "after_2": [],
-            "within": [],
-            "child": ["call", "name"]
-        },
         "declaration statement": {
-            "top": ["annotation"],
-            "before_1": ["specifier", "specifier not"],
-            "before_2": ["type name", "type not name"],
+            "top": ["annotation equal to", "annotation not equal to"],
+            "before_1": ["specifier equal to", "specifier not equal to"],
+            "before_2": ["type equal to", "type not equal to"],
             "after_1": [
                 "name equal to",
                 "name not equal to",
@@ -159,65 +133,19 @@ export class GuiConstants {
                 "name end with",
                 "name not end with"
             ],
-            "after_2": ["init value"],
+            "after_2": ["initial value equal to", "initial value not equal to"],
             "within": [],
             "child": [
                 "annotation",
                 "specifier",
                 "type",
                 "name",
-                "init value"
+                "initial value"
             ]
         },
-        // used for parameter in functions
-        "declaration": {
-            "top": [],
-            "before_1": [],
-            "before_2": ["type name", "type not name"],
-            "after_1": [
-                "name equal to",
-                "name not equal to",
-                "name include",
-                "name not include",
-                "name start with",
-                "name not start with",
-                "name end with",
-                "name not end with"
-            ],
-            "after_2": [],
-            "within": [],
-            "child": ["type", "name"]
-        },
-        "call": {
-            "top": [],
-            "before_1": ["caller"],
-            "before_2": [],
-            "after_1": ["argument"],
-            "after_2": [],
-            "within": [],
-            "child": ["argument", "name"]
-        },
-        "annotation": {
-            "top": [],
-            "before_1": [
-                "name equal to",
-                "name not equal to",
-                "name include",
-                "name not include",
-                "name start with",
-                "name not start with",
-                "name end with",
-                "name not end with"
-            ],
-            "before_2": [],
-            "after_1": ["argument"],
-            "after_2": [],
-            "within": [],
-            "child": ["name"]
-        },
         "interface": {
-            "top": ["annotation"],
-            "before_1": ["specifier", "specifier not"],
+            "top": ["annotation equal to", "annotation not equal to"],
+            "before_1": ["specifier equal to", "specifier not equal to"],
             "before_2": [],
             "after_1": [
                 "name equal to",
@@ -243,7 +171,8 @@ export class GuiConstants {
                 "abstract function",
                 "declaration statement",
                 "interface"
-            ]}
+            ]
+        }
     };
 
     static state_children = {
@@ -257,35 +186,109 @@ export class GuiConstants {
     };
 
     static gui_tree = {
-        "annotation": {
-            buttonName: "Has annotation",
-            xpath: "src:annotation",
-            type: "annotation",
+        "class": {
+            buttonName: "Have subclass ...",
+            type: "class",
             pre: "",
+            post: "",
+            grammar: "class"
+        },
+        "interface": {
+            buttonName: "Have interface ...",
+            type: "interface",
+            pre: "",
+            post: "",
+            grammar: "interface"
+        },
+        "function": {
+            buttonName: "Have function ...",
+            type: "function",
+            pre: "",
+            post: "",
+            grammar: "function"
+        },
+        "abstract function": {
+            buttonName: "Have abstract function ...",
+            type: "abstract function",
+            pre: "",
+            post: "",
+            grammar: "abstract function"
+        },
+        "constructor": {
+            buttonName: "Have constructor ...",
+            type: "constructor",
+            pre: "",
+            post: "",
+            grammar: "constructor"
+        },
+        "declaration statement": {
+            buttonName: "Have declaration statement ...",
+            type: "declaration statement",
+            pre: "",
+            post: "",
+            grammar: "declaration statement"
+        },
+
+        "annotation": {
+            buttonName: "Annotation",
+            type: "text",
+            placeholder: "annotation",
+            pre: "@",
             post: "",
             grammar: "annotation"
         },
+        "annotation equal to": {
+            buttonName: "Have annotation equal to ...",
+            type: "text",
+            placeholder: "annotation",
+            pre: "@",
+            post: "",
+            grammar: "annotation where equal to"
+        },
+        "annotation not equal to": {
+            buttonName: "Have annotation not equal to ...",
+            type: "text",
+            placeholder: "annotation",
+            pre: "@",
+            post: "",
+            grammar: "annotation where not equal to"
+        },
+
         "specifier": {
-            buttonName: "Specifier is ...",
-            xpath: "src:specifier/text()=\"<NAME>\"",
+            buttonName: "Specifier",
+            placeholder: "specifier",
+            type: "text",
+            pre: "",
+            post: "",
+            grammar: "specifier"
+        },
+        "specifier equal to": {
+            buttonName: "Have specifier equal to ...",
             placeholder: "specifier",
             type: "text",
             pre: "",
             post: "",
             grammar: "specifier where equal to"
         },
-        "specifier not": {
-            buttonName: "Specifier is not ...",
-            xpath: "src:specifier/text()!=\"<NAME>\"",
+        "specifier not equal to": {
+            buttonName: "Have specifier not equal to ...",
             placeholder: "specifier",
             type: "text",
             pre: "",
             post: "",
             grammar: "specifier where not equal to"
         },
+
+        "name": {
+            buttonName: "Name",
+            type: "text",
+            placeholder: "name",
+            pre: "",
+            post: "",
+            grammar: "name"
+        },
         "name equal to": {
-            buttonName: "Name equals to ...",
-            xpath: "src:name/text()=\"<NAME>\"",
+            buttonName: "Have name equal to ...",
             type: "text",
             placeholder: "class name",
             pre: "",
@@ -293,8 +296,7 @@ export class GuiConstants {
             grammar: "name where equal to"
         },
         "name not equal to": {
-            buttonName: "Name not equals to ...",
-            xpath: "src:name/text()!=\"<NAME>\"",
+            buttonName: "Have name not equal to ...",
             type: "text",
             placeholder: "class name",
             pre: "",
@@ -302,8 +304,7 @@ export class GuiConstants {
             grammar: "name where not equal to"
         },
         "name include": {
-            buttonName: "Name include ...",
-            xpath: "src:name[contains(text(),\"<NAME>\"]",
+            buttonName: "Have name include ...",
             type: "text",
             placeholder: "class name",
             pre: "",
@@ -311,8 +312,7 @@ export class GuiConstants {
             grammar: "name where include"
         },
         "name not include": {
-            buttonName: "Name not include ...",
-            xpath: "src:name[not(contains(text(),\"<NAME>\")]",
+            buttonName: "Have name not include ...",
             type: "text",
             placeholder: "class name",
             pre: "",
@@ -320,8 +320,7 @@ export class GuiConstants {
             grammar: "name where not include"
         },
         "name start with": {
-            buttonName: "Name starts with ...",
-            xpath: "src:name[starts-with(text(),\"<NAME>\"]",
+            buttonName: "Have name starts with ...",
             type: "text",
             placeholder: "class name",
             pre: "",
@@ -329,8 +328,7 @@ export class GuiConstants {
             grammar: "name where not start with"
         },
         "name not start with": {
-            buttonName: "Name not starts with ...",
-            xpath: "src:name[not(starts-with(text(),\"<NAME>\")]",
+            buttonName: "Have name not starts with ...",
             type: "text",
             placeholder: "class name",
             pre: "",
@@ -338,8 +336,7 @@ export class GuiConstants {
             grammar: "name where not start with"
         },
         "name end with": {
-            buttonName: "Name ends with ...",
-            xpath: "src:name[ends-with(text(),\"<NAME>\"]",
+            buttonName: "Have name ends with ...",
             type: "text",
             placeholder: "class name",
             pre: "",
@@ -347,8 +344,7 @@ export class GuiConstants {
             grammar: "name where end with"
         },
         "name not end with": {
-            buttonName: "Name not ends with ...",
-            xpath: "src:name[not(ends-with(text(),\"<NAME>\")]",
+            buttonName: "Have name not ends with ...",
             type: "text",
             placeholder: "class name",
             pre: "",
@@ -356,192 +352,181 @@ export class GuiConstants {
             grammar: "name where not end with"
 
         },
+
         "extension": {
             buttonName: "Extension",
-            xpath: "src:super/src:extends",
             type: "text",
+            placeholder: "extension",
             pre: "extends",
             post: "",
             grammar: "extension"
         },
         "extension equal to": {
-            buttonName: "Extends class named ...",
-            xpath: "src:super/src:extends/src:name/text()=\"<NAME>\"",
+            buttonName: "Have extension equal to ...",
             type: "text",
+            placeholder: "parent class",
             pre: "extends",
             post: "",
             grammar: "extension where equal to"
         },
         "extension not equal to": {
-            buttonName: "Extends class not named ...",
-            xpath: "src:super/src:extends/src:name/text()!=\"<NAME>\"",
+            buttonName: "Have extension not equal to ...",
             type: "text",
+            placeholder: "parent class",
             pre: "extends",
             post: "",
             grammar: "extension where not equal to"
         },
+
         "implementation": {
             buttonName: "Implementation",
-            xpath: "src:super/src:implements",
             type: "text",
+            placeholder: "implement",
             pre: "implements",
             post: "",
             grammar: "implementation"
         },
         "implementation equal to": {
-            buttonName: "Implements class named ...",
-            xpath: "src:super/src:implements/src:name/text()=\"<NAME>\"",
+            buttonName: "Have implement equal to ...",
             type: "text",
+            placeholder: "implemented class",
             pre: "implements",
             post: "",
             grammar: "implementation where equal to"
         },
         "implementation not equal to": {
-            buttonName: "Implements class not named ...",
-            xpath: "src:super/src:implements/src:name/text()!=\"<NAME>\"",
+            buttonName: "Have implement not equal to ...",
             type: "text",
+            placeholder: "implemented class",
             pre: "implements",
             post: "",
             grammar: "implementation where not equal to"
 
         },
-        "function": {
-            buttonName: "Has function ...",
-            xpath: "src:block/src:function",
-            type: "function",
-            pre: "",
-            post: "",
-            grammar: "function"
-        },
-        "abstract function": {
-            buttonName: "Has abstractFunction ...",
-            xpath: "src:block/src:function_decl",
-            type: "abstract function",
-            pre: "",
-            post: "",
-            grammar: "abstract function"
-        },
-        "constructor": {
-            buttonName: "Has constructor ...",
-            xpath: "src:block/src:constructor",
-            type: "constructor",
-            pre: "",
-            post: "",
-            grammar: "constructor"
-        },
-        "declaration statement": {
-            buttonName: "Has declaration statement ...",
-            xpath: "src:block/descendant-or-self::src:decl_stmt/src:decl",
-            type: "declaration statement",
-            pre: "",
-            post: "",
-            grammar: "declaration statement"
-        },
-        "class": {
-            buttonName: "Has subclass ...",
-            xpath: "src:block/src:class",
-            type: "class",
-            pre: "",
-            post: "",
-            grammar: "class"
-        },
+
         "parameter": {
-            buttonName: "One of its parameter is ...",
-            xpath: "src:parameter_list/src:parameter/src:decl",
-            type: "declaration",
+            buttonName: "Parameter",
+            type: "text",
+            placeholder: "parameter",
             pre: "",
             post: "",
             grammar: "parameter"
         },
-        "return value": {
-            buttonName: "Return value/variable is ...",
-            xpath: "src:block/descendant-or-self::src:return/src:expr",
-            type: "return value",
+        "parameter equal to": {
+            buttonName: "Have parameter equal to ...",
+            type: "text",
+            placeholder: "parameter",
             pre: "",
             post: "",
-            grammar: "return value where have expression statement"
+            grammar: "parameter where equal to"
         },
-        "expression statement": {
-            buttonName: "Has expression statement ...",
-            xpath: "src:block/descendant-or-self::src:expr_stmt/src:expr",
-            type: "expression statement",
+        "parameter not equal to": {
+            buttonName: "Have parameter not equal to ...",
+            type: "text",
+            placeholder: "parameter",
             pre: "",
             post: "",
+            grammar: "parameter where not equal to"
+        },
+
+        "expression statement": {
+            buttonName: "Expression statement",
+            type: "wideText",
+            placeholder: "expression statement",
+            pre: "",
+            post: ";",
             grammar: "expression statement"
         },
-        "name": {
-            buttonName: "Name",
-            xpath: "",
-            type: "srcml",
+        "expression statement equal to": {
+            buttonName: "Have expression statement equal to ...",
+            type: "wideText",
+            placeholder: "expression statement",
             pre: "",
-            post: "",
-            grammar: "name"
+            post: ";",
+            grammar: "expression statement where equal to"
         },
-        "call": {
-            buttonName: "method invoke",
-            xpath: "src:call",
-            type: "call",
+        "expression statement not equal to": {
+            buttonName: "Have expression statement not equal to ...",
+            type: "wideText",
+            placeholder: "expression statement",
             pre: "",
-            post: "",
-            grammar: "call"
+            post: ";",
+            grammar: "expression statement where not equal to"
         },
-        "type name": {
-            buttonName: "Type 'name' is ...",
-            xpath: "src:type//src:name/text()=\"<NAME>\"",
-            type: "text",
-            placeholder: "type name",
-            pre: "",
-            post: "",
-            grammar: "type where equal to"
-        },
-        "type not name": {
-            buttonName: "Type 'name' is not ...",
-            xpath: "src:type//src:name/text()!=\"<NAME>\"",
-            type: "text",
-            placeholder: "type not named",
-            pre: "",
-            post: "",
-            grammar: "type where not equal to"
-        },
-        "init value": {
-            buttonName: "Has initialization ...",
-            xpath: "src:init",
-            type: "expression",
-            pre: "",
-            post: "",
-            grammar: "initial value"
-        },
-        "caller": {
-            buttonName: "The caller is",
-            xpath: "src:name/text()=\"<NAME>\"",
-            type: "text",
-            pre: "",
-            post: "",
-            grammar: "caller where equals to"
-        },
-        "argument": {
-            buttonName: "One of its argument is ...",
-            xpath: "src:argument_list/src:argument/src:expr",
-            type: "expression",
-            pre: "",
-            post: ",",
-            grammar: "argument"
-        },
+
         "type": {
-            buttonName: "type",
-            xpath: "src:type/src:name/text()",
+            buttonName: "Type",
             type: "text",
+            placeholder: "type",
             pre: "",
             post: "",
             grammar: "type"
         },
-        "interface": {
-            buttonName: "Has interface ...",
-            xpath: "src:block/src:interface",
-            type: "interface",
+        "type equal to": {
+            buttonName: "Have type equal to ...",
+            type: "text",
+            placeholder: "type",
             pre: "",
             post: "",
-            grammar: "interface"
+            grammar: "type where equal to"
+        },
+        "type not equal to": {
+            buttonName: "Have type not equal to ...",
+            type: "text",
+            placeholder: "type",
+            pre: "",
+            post: "",
+            grammar: "type where not equal to"
+        },
+
+        "initial value": {
+            buttonName: "Initialization",
+            type: "text",
+            placeholder: "initial value/expression",
+            pre: "",
+            post: "",
+            grammar: "initial value"
+        },
+        "initial value equal to": {
+            buttonName: "Have initialization equal to ...",
+            type: "text",
+            placeholder: "initial value/expression",
+            pre: "",
+            post: "",
+            grammar: "initial value where equal to"
+        },
+        "initial value not equal to": {
+            buttonName: "Have initialization not equal to...",
+            type: "text",
+            placeholder: "initial value/expression",
+            pre: "",
+            post: "",
+            grammar: "initial value where not equal to"
+        },
+
+        "return value": {
+            buttonName: "Return value/expression",
+            type: "wideText",
+            placeholder: "return expression/value",
+            pre: "",
+            post: "",
+            grammar: "return value"
+        },
+        "return value equal to": {
+            buttonName: "Have return Value equal to ...",
+            type: "wideText",
+            placeholder: "Return Value is ...",
+            pre: "return",
+            post: "",
+            grammar: "return value where equal to"
+        },
+        "return value not equal to": {
+            buttonName: "Have return Value not equal to ...",
+            type: "wideText",
+            placeholder: "Return Value is not ...",
+            pre: "return",
+            post: "",
+            grammar: "return value where not equal to"
         }
     }
 

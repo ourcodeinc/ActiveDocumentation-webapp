@@ -4,6 +4,7 @@
 
 import {TerminalNodeImpl} from "antlr4/tree/Tree";
 import Utilities from "../../core/utilities";
+import store from "../../reduxStore";
 
 class GenerateXpath {
 
@@ -18,10 +19,32 @@ class GenerateXpath {
         this.constraintXPath = "";
         this.dumpXPath = false;
         this.isConstraint = isConstraint;
+        this.ws = store.getState().ws;
+
+        // keeps the number of messages already sent and waiting for the response
+        // Without it there is a synchronization problem, that is the xpath is already sent
+        // and the result XML is not received yet.
+        this.numberOfWaitingMessages = 0;
+
+        this.unsubscribe = store.subscribe(() => {
+            if (store.getState().message === "RECEIVE_EXPR_STMT_XML") {
+                // one message is replied.
+                this.numberOfWaitingMessages -= 1;
+                console.log(this.numberOfWaitingMessages, " <- numberOfWaitingMessages (subscribe)");
+                let textAndXpath = this.traverseXml(store.getState().exprStmtXML);
+
+                // replace all occurrences of textAndXpath.originalText
+                let copiedXpath = this.XPath.split("'" + textAndXpath.originalText + "'");
+                this.XPath = copiedXpath.join(textAndXpath.xpathResult);
+            }
+        });
     }
 
     traverseTree() {
         this.traverseNode(this.tree);
+
+        // todo wait for this.numberOfWaitingMessages to be 0
+
         if (this.dumpXPath)
             return;
         if (this.quantifierXPath !== "")
@@ -178,18 +201,6 @@ class GenerateXpath {
                     this.initialValuesContextTraversal(node);
                     break;
 
-                case "ArgumentsContext":
-                    this.argumentsContextTraversal(node);
-                    break;
-
-                case "CallsContext":
-                    this.callsContextTraversal(node);
-                    break;
-
-                case "CallersContext":
-                    this.callersContextTraversal(node);
-                    break;
-
                 // WordsContext
                 case "WordsContext":
                     for (let i = 0; i < node.children.length; i++) {
@@ -244,7 +255,7 @@ class GenerateXpath {
 
             // clone the children of 'where' for first token
             let oldCondition = node.children[0].children[1].children[1];
-            let clonedNode = Object.assign( Object.create( Object.getPrototypeOf(oldCondition)), oldCondition);
+            let clonedNode = Object.assign(Object.create(Object.getPrototypeOf(oldCondition)), oldCondition);
             // update the children of the first token
             node.children[0].children[1].children[1].children = [
                 new TerminalNodeImpl({text: "(("}),
@@ -355,7 +366,7 @@ class GenerateXpath {
             // console.log("name", node);
 
             if (nodeType === "TerminalNodeImpl") {
-                if(this.XPath === "") this.XPath += "/";
+                if (this.XPath === "") this.XPath += "/";
                 this.XPath += "src:name"; // todo: check parent or different name entities? descendant-or-self::
             }
 
@@ -413,14 +424,22 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
-                if(this.XPath === "") this.XPath += "/";
+                if (this.XPath === "") this.XPath += "/";
                 this.XPath += "src:annotation";
             }
 
-            if (nodeType === "AnnotationConditionContext" || nodeType === "AnnotationExpressionContext") {
-                this.XPath += "[";
-                this.traverseNode(nodeChildren[i]);
-                this.XPath += "]";
+            if (nodeType === "AnnotationConditionContext") {
+                let not = false;
+                let tempText = "";
+                for (let j = 0; j < nodeChildren[i].children.length; j++) {
+                    if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
+                        not = true;
+                    if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
+                        tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
+                        this.sendTextDataToSrcML(tempText);
+                    }
+                }
+                this.XPath += not ? ("[not('" + tempText + "')]") : "['" + tempText + "']";
             }
         }
     }
@@ -447,7 +466,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
-                if(this.XPath === "") this.XPath += "/";
+                if (this.XPath === "") this.XPath += "/";
                 this.XPath += "src:super/src:extends";
             }
 
@@ -467,7 +486,7 @@ class GenerateXpath {
         }
     }
 
-    implementationsContextTraversal (node) {
+    implementationsContextTraversal(node) {
         let nodeChildren = node.children.slice(0);
 
         // move Of children to first
@@ -489,7 +508,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
-                if(this.XPath === "") this.XPath += "/";
+                if (this.XPath === "") this.XPath += "/";
                 this.XPath += "src:super/src:implements";
             }
 
@@ -536,7 +555,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
-                if(this.XPath === "") this.XPath += "/";
+                if (this.XPath === "") this.XPath += "/";
                 this.XPath += "src:block/src:" + xPathTag;
             }
 
@@ -570,14 +589,22 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
-                if(this.XPath === "") this.XPath += "/";
+                if (this.XPath === "") this.XPath += "/";
                 this.XPath += "src:parameter_list/src:parameter/src:decl";
             }
 
-            if (nodeType === "ParameterConditionContext" || nodeType === "ParameterExpressionContext") {
-                this.XPath += "[";
-                this.traverseNode(nodeChildren[i]);
-                this.XPath += "]";
+            if (nodeType === "ParameterConditionContext") {
+                let not = false;
+                let tempText = "";
+                for (let j = 0; j < nodeChildren[i].children.length; j++) {
+                    if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
+                        not = true;
+                    if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
+                        tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
+                        this.sendTextDataToSrcML(tempText);
+                    }
+                }
+                this.XPath += not ? ("[not('" + tempText + "')]") : "['" + tempText + "']";
             }
         }
     }
@@ -604,7 +631,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
-                if(this.XPath === "") this.XPath += "/";
+                if (this.XPath === "") this.XPath += "/";
                 this.XPath += "src:type";
             }
 
@@ -646,7 +673,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
-                if(this.XPath === "") this.XPath += "/";
+                if (this.XPath === "") this.XPath += "/";
                 this.XPath += "src:specifier";
             }
 
@@ -688,14 +715,22 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
-                if(this.XPath === "") this.XPath += "/";
+                if (this.XPath === "") this.XPath += "/";
                 this.XPath += "src:block/descendant-or-self::src:return/src:expr";
             }
 
-            if (nodeType === "ReturnValueConditionContext" || nodeType === "ReturnValueExpressionContext") {
-                this.XPath += "[";
-                this.traverseNode(nodeChildren[i]);
-                this.XPath += "]";
+            if (nodeType === "ReturnValueConditionContext") {
+                let not = false;
+                let tempText = "";
+                for (let j = 0; j < nodeChildren[i].children.length; j++) {
+                    if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
+                        not = true;
+                    if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
+                        tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
+                        this.sendTextDataToSrcML(tempText);
+                    }
+                }
+                this.XPath += not ? ("[not('" + tempText + "')]") : "['" + tempText + "']";
             }
         }
     }
@@ -722,7 +757,7 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
-                if(this.XPath === "") this.XPath += "/";
+                if (this.XPath === "") this.XPath += "/";
                 this.XPath += "src:decl_stmt/src:decl";
             }
 
@@ -756,14 +791,22 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
-                if(this.XPath === "") this.XPath += "/";
+                if (this.XPath === "") this.XPath += "/";
                 this.XPath += "src:block/descendant-or-self::src:expr_stmt/src:expr";
             }
 
-            if (nodeType === "ExpressionStatementConditionContext" || nodeType === "ExpressionStatementExpressionContext") {
-                this.XPath += "[";
-                this.traverseNode(nodeChildren[i]);
-                this.XPath += "]";
+            if (nodeType === "ExpressionStatementConditionContext") {
+                let not = false;
+                let tempText = "";
+                for (let j = 0; j < nodeChildren[i].children.length; j++) {
+                    if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
+                        not = true;
+                    if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
+                        tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
+                        this.sendTextDataToSrcML(tempText);
+                    }
+                }
+                this.XPath += not ? ("[not('" + tempText + "')]") : "['" + tempText + "']";
             }
         }
     }
@@ -790,126 +833,125 @@ class GenerateXpath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
-                if(this.XPath === "") this.XPath += "/";
+                if (this.XPath === "") this.XPath += "/";
                 this.XPath += "src:init/src:expr";
             }
 
-            if (nodeType === "InitialValueConditionContext" || nodeType === "InitExpressionContext") {
-                this.XPath += "[";
-                this.traverseNode(nodeChildren[i]);
-                this.XPath += "]";
-            }
-        }
-    }
-
-    argumentsContextTraversal(node) {
-        let nodeChildren = node.children.slice(0);
-
-        // move Of children to first
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf("ArgumentOfContext") !== -1) {
-                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-                break;
-            }
-        }
-
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = nodeChildren[i].constructor.name;
-
-            // process ofContext
-            if (nodeType === "ArgumentOfContext") {
-                this.traverseNode(nodeChildren[i]);
-                this.XPath += "/";
-            }
-
-            if (nodeType === "TerminalNodeImpl") {
-                if(this.XPath === "") this.XPath += "/";
-                this.XPath += "src:argument_list/src:argument/src:expr";
-            }
-
-            if (nodeType === "ArgumentConditionContext" || nodeType === "ArgumentExpressionContext") {
-                this.XPath += "[";
-                this.traverseNode(nodeChildren[i]);
-                this.XPath += "]";
-            }
-        }
-    }
-
-    callsContextTraversal(node) {
-        let nodeChildren = node.children.slice(0);
-
-        // move Of children to first
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf("CallOfContext") !== -1) {
-                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-                break;
-            }
-        }
-
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = nodeChildren[i].constructor.name;
-
-            // process ofContext
-            if (nodeType === "CallOfContext") {
-                this.traverseNode(nodeChildren[i]);
-                this.XPath += "/";
-            }
-
-            if (nodeType === "TerminalNodeImpl") {
-                if(this.XPath === "") this.XPath += "/";
-                this.XPath += "src:call";
-            }
-
-            if (nodeType === "CallConditionContext") {
-                this.XPath += "[";
-                this.traverseNode(nodeChildren[i]);
-                this.XPath += "]";
-            }
-        }
-    }
-
-    callersContextTraversal(node) {
-        let nodeChildren = node.children.slice(0);
-
-        // move Of children to first
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf("CallerOfContext") !== -1) {
-                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-                break;
-            }
-        }
-
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = nodeChildren[i].constructor.name;
-
-            // process ofContext
-            if (nodeType === "CallerOfContext") {
-                this.traverseNode(nodeChildren[i]);
-                this.XPath += "/";
-            }
-
-            if (nodeType === "TerminalNodeImpl") {
-                if(this.XPath === "") this.XPath += "/";
-                this.XPath += "descendant-or-self::src:name";
-            }
-
-            if (nodeType === "CallerConditionContext" || nodeType === "CallerExpressionContext") {
-                this.XPath += "[text()";
+            if (nodeType === "InitialValueConditionContext") {
+                let not = false;
+                let tempText = "";
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
                     if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
-                        this.XPath += "!";
-                    if (nodeChildren[i].getChild(j).constructor.name === "EqualsToContext")
-                        this.XPath += "=";
-                    if (nodeChildren[i].getChild(j).constructor.name === "WordsContext")
-                        for (let k = 0; k < nodeChildren[i].getChild(j).children.length; k++)
-                            this.XPath += nodeChildren[i].getChild(j).getChild(k).getSymbol().text;
+                        not = true;
+                    if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
+                        tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
+                        this.sendTextDataToSrcML(tempText);
+                    }
                 }
-                this.XPath += "]";
+                this.XPath += not ? ("[not('" + tempText + "')]") : "['" + tempText + "']";
             }
         }
+    }
+
+    /**
+     * traverse CombinatorialWords node to extract the word
+     * It doesn't alter this.XPath
+     * @param node
+     * @returns {string}
+     */
+    combinatorialWordsContextTraversal(node){
+        let word = "";
+
+        // based on the grammar the first and last children are quotation marks
+        if (node.children.length <= 2) return word;
+
+        for (let k = 1; k < node.children.length - 1; k++) {
+            if (node.getChild(k).constructor.name === "TerminalNodeImpl")
+                word += node.getChild(k).getSymbol().text;
+            else if (node.getChild(k).constructor.name === "SymbolsContext")
+                word += node.getChild(k).getChild(0).getSymbol().text;
+        }
+        return word;
+    }
+
+    /**
+     * send text data to the server to be processed by srcml
+     * and return XML
+     * @param text
+     */
+    sendTextDataToSrcML(text) {
+        if (text === "") return;
+        // todo process text for predefined literals like '?'
+
+        // one message is sent
+        this.numberOfWaitingMessages += 1;
+        console.log(this.numberOfWaitingMessages, " <- numberOfWaitingMessages (send)");
+        Utilities.sendToServer(this.ws, "EXPR_STMT", text);
+    }
+
+    /**
+     * check validity of an xml and generate the xpath query
+     * @param text
+     * @returns {{text: string, xpathResult: string}} text is the original text and xpathResult the the xpath
+     * derived from the originalText
+     */
+    traverseXml(text) {
+
+        let exprValidation = "//src:unit[count(src:expr_stmt)=1]/src:expr_stmt/src:expr";
+        let parser = new DOMParser();
+
+        function nsResolver(prefix) {
+            let ns = {'src': 'http://www.srcML.org/srcML/src'};
+            return ns[prefix] || null;
+        }
+
+        // checks validity of the XML
+        let xml = parser.parseFromString(text, "text/xml");
+        if (!xml.evaluate) {
+            console.log("error in xml.evaluate");
+            return {text: "", xpathResult: ""};
+        }
+
+
+        let validNodes = xml.evaluate(exprValidation, xml, nsResolver, XPathResult.ANY_TYPE, null);
+        let resultValidNode = validNodes.iterateNext(); // expr_stmt/expr
+        if (!resultValidNode) {
+            console.log("error");
+            return {text: "", xpathResult: ""};
+        }
+
+        // result xpath: 'src:expr[....]' where 'src:expr[' and the final ']' is extra.
+        let textAndXpath = this.traverseChildren(resultValidNode);
+        textAndXpath.xpathResult = textAndXpath.xpathResult.substring(9,textAndXpath.xpathResult.length-1);
+        return textAndXpath;
+    }
+
+    /**
+     * traverse the state_children of a parent node to generate xpath query conditions
+     * @param parentNode
+     * @returns {{text: string, xpathResult: string}}
+     */
+    traverseChildren(parentNode) {
+        let originalText = "";
+        let res = [];
+        let children = parentNode.childNodes;
+        for (let i = 0; i < children.length; i++) {
+
+            if (children[i].nodeName === "#text") {
+                originalText += children[i].nodeValue;
+                if (children.length === 1)
+                    res.push("text()=\"" + children[i].nodeValue + "\"");
+            }
+            else {
+                let textAndXpath = this.traverseChildren(children[i]);
+                originalText += textAndXpath.originalText;
+                res.push(textAndXpath.xpathResult);
+            }
+        }
+        return {
+            originalText: originalText,
+            xpathResult: "src:" + parentNode.nodeName + "[" + res.join(' and ') + "]"
+        };
     }
 
 }

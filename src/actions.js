@@ -59,3 +59,7 @@ export const editNewRuleGrammarGuiData = (newRuleData) => {
 export const receiveGuiTree = (newTreeData) => {
     return {type: "RECEIVE_GUI_TREE", value: newTreeData}
 };
+
+export const expressionStatementXML = (xmlData) => {
+    return {type: "RECEIVE_EXPR_STMT_XML", value: xmlData}
+};

@@ -2,18 +2,17 @@ export class TextConstants {
 
     static keywords = [
         "name", "annotation", "extension", "implementation", "function", "abstract function", "constructor", "parameter", "type",
-        "specifier", "return value", "declaration statement", "expression statement", "initial value", "argument",
-        "call", "caller", "class", "interface"];
+        "specifier", "return value", "declaration statement", "expression statement", "class", "interface", "initial value"];
 
     static connectors = ["where", "have", "must", "be", "equal", "to", "not", "and", "or", "include", "of", "(", ")", "start", "end", "with"];
 
     static autoComplete_suggestion = {
         "name": {
             whereClause: ["equal to", "not equal to", "include", "not include", "start with", "not start with", "end with", "not end with"],
-            ofClause: ["class", "function", "abstract function", "type", "constructor", "argument", "extension"]
+            ofClause: ["class", "function", "abstract function", "type", "constructor", "extension"]
         },
         "annotation": {
-            whereHaveClause: ["name", "argument"],
+            whereClause: ["equal to", "not equal to"],
             ofClause: ["class", "function", "constructor", "abstract function", "declaration statement"]
         },
         "extension": {
@@ -34,12 +33,11 @@ export class TextConstants {
             ofClause: ["class"]
         },
         "constructor": {
-            whereHaveClause: ["annotation", "specifier", "parameter", "return value", "declaration statement",
-                "expression statement"],
+            whereHaveClause: ["annotation", "specifier", "parameter", "declaration statement", "expression statement"],
             ofClause: ["class"]
         },
         "parameter": {
-            whereHaveClause: ["name", "type"],
+            whereClause: ["equal to", "not equal to"],
             ofClause: ["function", "constructor", "abstract function"]
         },
         "type": {
@@ -51,36 +49,24 @@ export class TextConstants {
             ofClause: ["function", "constructor", "abstract function", "declaration statement", "class"]
         },
         "return value": {
-            whereHaveClause: ["calls", "name"],
+            whereClause: ["equal to", "not equal to"],
             ofClause: ["function"]
         },
         "declaration statement": {
-            whereHaveClause: ["annotation", "specifier", "types", "name", "initial value"],
+            whereHaveClause: ["annotation", "specifier", "type", "name", "initial value"],
             ofClause: ["class", "function", "constructor"]
         },
         "expression statement": {
-            whereHaveClause: ["calls", "name"],
+            whereClause: ["equal to", "not equal to"],
             ofClause: ["function", "constructor", "constructor"]
         },
         "initial value": {
-            whereHaveClause: ["calls", "name"],
+            whereClause: ["equal to", "not equal to"],
             ofClause: ["declaration statement"]
-        },
-        "argument": {
-            whereHaveClause: ["calls", "name"],
-            ofClause: ["call"]
-        },
-        "call": {
-            whereHaveClause: ["callers", "name"],
-            ofClause: ["argument", "return value", "expression statement", "initial value"]
-        },
-        "caller": {
-            whereHaveClause: ["name equal to", "name not equal to"],
-            ofClause: ["calls"]
         },
         "value": {
             whereClause: ["equal to", "not equal to"],
-            ofClause: ["argument", "return value", "expression statement", "initial value"]
+            ofClause: ["return value", "expression statement"]
         },
         "class": {
             whereHaveClause: ["annotation", "specifier", "name", "extension", "function", "abstract function",

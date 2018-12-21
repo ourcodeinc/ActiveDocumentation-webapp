@@ -9,8 +9,8 @@ import {Tabs, Tab, FormGroup, HelpBlock} from 'react-bootstrap';
 import {RootCloseWrapper} from "react-overlays";
 import {connect} from "react-redux";
 
-import GuiComponent from './guiComponent';
 import Utilities from "../../core/utilities";
+import GuiComponent from "./guiComponent";
 
 
 class RuleGeneratorGui extends Component {
@@ -141,13 +141,12 @@ class RuleGeneratorGui extends Component {
          * returns either "MustEqualTo" or the array of {group: "", element: {GUI node}} when the type is "Must"
          */
         function equalMainPath(obj1, obj2) {
-            if (obj1.children.child.key) {
-                if (!equalObject(obj1, obj2)) return "MustBeEqualTo";
-                return equalMainPath(obj1.children.child, obj2.children.child);
-            }
+            if (obj1.key !== obj2.key) return "MustBeEqualTo";
+
             // if it is the target
             // check if children of obj1 is subset of children of obj2
 
+            // first examine normal children
             let addedConstraintIndex = []; // list of added constraints for "Must" case
             let groups = Object.keys(obj1.children).filter(key => key !== "child");
             for (let g = 0; g < groups.length; g++) {
@@ -159,6 +158,9 @@ class RuleGeneratorGui extends Component {
                     obj1.children[group].sort((a, b) => a.key > b.key ? 1 : a.key < b.key ? -1 : 0);
                     obj2.children[group].sort((a, b) => a.key > b.key ? 1 : a.key < b.key ? -1 : 0);
 
+                    // the index of the child of obj2 where the previous child is matched with
+                    // a child from obj1. Unmatched children from index 0 to currentIndex2 from
+                    // obj2 are the diffs
                     let currentIndex2 = 0;
                     let countFound = 0;
 
@@ -184,6 +186,13 @@ class RuleGeneratorGui extends Component {
                     }
                 }
             }
+
+            // examine 'child' node
+            // the only differences must be for the leaf 'child'
+            if (addedConstraintIndex.length === 0 && obj1.children.child.key)
+                return equalMainPath(obj1.children.child, obj2.children.child);
+            else if (addedConstraintIndex.length !== 0 && obj1.children.child.key)
+                return "MustBeEqualTo";
             return addedConstraintIndex
         }
 
@@ -197,17 +206,17 @@ class RuleGeneratorGui extends Component {
         else {
             let tempChildren = {
                 "top": [],
-                "before": [],
                 "before_1": [],
                 "before_2": [],
-                "after": [],
                 "after_1": [],
                 "after_2": [],
                 "within": [],
                 "child": {}
             };
             result.forEach(res => tempChildren[res.group].push(res.element));
-            let tempTree = {...nodeQ, children: tempChildren};
+            // the only differences must be for the leaf 'child'
+            // so we only consider the leaf child
+            let tempTree = {...nodeC, children: tempChildren};
             let grammarTextQ = this.traverseChildrenGrammar(this.state.quantifier);
             let grammarTextC = this.traverseChildrenGrammar(tempTree, true);
             this.setState({ruleType: "Must", GuiGrammar: grammarTextQ + " must " + grammarTextC});

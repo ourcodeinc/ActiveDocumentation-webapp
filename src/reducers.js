@@ -44,7 +44,7 @@ const default_state = {
                 }
             },
             constraint: {
-                key: "class",
+                key: "",
                 value: "",
                 target: "follows",
                 children: {
@@ -61,7 +61,8 @@ const default_state = {
             },
             ruleType: "" // "Must" or "MustBeEqualTo"
         }
-    }
+    },
+    exprStmtXML: ""
 };
 
 /**
@@ -189,6 +190,7 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
 
         case "RECEIVE_GUI_TREE":
             return Object.assign({}, state, {
+                message: "RECEIVE_GUI_TREE",
                 newOrEditRule: {
                     ...state.newOrEditRule,
                     guiState: {
@@ -196,6 +198,12 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
                         ...action["value"]
                     }
                 }
+            });
+
+        case "RECEIVE_EXPR_STMT_XML":
+            return Object.assign({}, state, {
+                exprStmtXML: action["value"],
+                message: "RECEIVE_EXPR_STMT_XML"
             });
 
         default:

@@ -12,14 +12,6 @@ mustClause
     : functions must functionExpression
     | abstractFunctions must abstractFunctionExpression
     | constructors must constructorExpression
-    | annotations must annotationExpression
-    | parameters must parameterExpression
-    | returnValues must returnValueExpression
-    | declarationStatements must declarationStatementExpression
-    | expressionStatements must expressionStatementExpression
-    | initialValues must initialValueExpression
-    | arguments must argumentExpression
-    | calls must callExpression
     | classes must classExpression
     | interfaces must interfaceExpression
     ;
@@ -33,9 +25,6 @@ mustBeEqualToClause
     | returnValues mustBeEqualTo returnValues
     | declarationStatements mustBeEqualTo declarationStatements
     | expressionStatements mustBeEqualTo expressionStatements
-    | initialValues mustBeEqualTo initialValues
-    | arguments mustBeEqualTo arguments
-    | calls mustBeEqualTo calls
     | classes mustBeEqualTo classes
     | interfaces mustBeEqualTo interfaces
 ;
@@ -49,6 +38,14 @@ SPACE
 
 words
     : '"' Alphabet+ '"'
+    ;
+
+combinatorialWords
+    : '"' (Alphabet | symbols)+ '"'
+    ;
+
+symbols
+    : '.' | '=' | '>' | '<' | '(' | ')'
     ;
 
 Alphabet
@@ -155,7 +152,7 @@ names
 nameOf
     : of (classes | functions | abstractFunctions
     | declarationStatements | parameters | annotations
-    | types | constructors | arguments | extensions | implementations)
+    | types | constructors | extensions | implementations)
     ;
 
 nameCondition
@@ -180,14 +177,9 @@ annotationOf
     ;
 
 annotationCondition
-    : where annotationExpression Comma?
+    : where not? equalsTo combinatorialWords Comma?
     ;
 
-annotationExpression
-    : LPAREN annotationExpression RPAREN
-    | left=annotationExpression op=binary right=annotationExpression
-    | have (names | arguments) SPACE?
-    ;
 
 /*
     extensions
@@ -339,14 +331,9 @@ parameterOf
     ;
 
 parameterCondition
-    : where parameterExpression Comma?
+    : where not? equalsTo combinatorialWords Comma?
     ;
 
-parameterExpression
-    : LPAREN parameterExpression RPAREN
-    | left=parameterExpression op=binary right=parameterExpression
-    | have (names | types) SPACE?
-    ;
 
 /*
     types
@@ -392,7 +379,6 @@ specifierCondition
 
 /*
     return values
-    // call or name or literal like expr_stmt/expr
 */
 
 ReturnValue
@@ -408,13 +394,7 @@ returnValueOf
     ;
 
 returnValueCondition
-    : where returnValueExpression Comma?
-    ;
-
-returnValueExpression
-    : LPAREN returnValueExpression RPAREN
-    | left=returnValueExpression op=binary right=returnValueExpression
-    | have (calls | names) SPACE?
+    : where not? equalsTo combinatorialWords Comma?
     ;
 
 
@@ -464,14 +444,9 @@ expressionStatementOf
     ;
 
 expressionStatementCondition
-    : where expressionStatementExpression Comma?
+    : where not? equalsTo combinatorialWords Comma?
     ;
 
-expressionStatementExpression
-    : LPAREN expressionStatementExpression RPAREN
-    | left=expressionStatementExpression op=binary right=expressionStatementExpression
-    | have (calls | names) SPACE?
-    ;
 
 /*
     init values
@@ -490,86 +465,7 @@ initialValueOf
     ;
 
 initialValueCondition
-    : where initialValueExpression Comma?
-    ;
-
-initialValueExpression
-    : LPAREN initialValueExpression RPAREN
-    | left=initialValueExpression op=binary right=initialValueExpression
-    | have (calls | names) SPACE?
-    ;
-
-/*
-    arguments
-*/
-
-ARGUMENT
-    :  'argument '
-    ;
-
-arguments
-    : ARGUMENT argumentCondition? argumentOf?
-    ;
-
-argumentOf
-    : of calls
-    ;
-
-argumentCondition
-    : where argumentExpression Comma?
-    ;
-
-argumentExpression
-    : LPAREN argumentExpression RPAREN
-    | left=argumentExpression op=binary right=argumentExpression
-    | have (calls | names) SPACE?
-    ;
-
-/*
-    calls
-*/
-
-CALL
-    : 'call '
-    ;
-
-calls
-    : CALL callCondition? callOf?
-    ;
-
-callOf
-    : of (arguments | returnValues | expressionStatements | initialValues)
-    ;
-
-callCondition
-    : where callExpression Comma?
-    ;
-
-callExpression
-    : LPAREN callExpression RPAREN
-    | left=callExpression op=binary right=callExpression
-    | have (callers | arguments) SPACE?
-    ;
-
-
-/*
-    callers
-*/
-
-CALLER
-    : 'caller '
-    ;
-
-callers
-    : CALLER callerCondition? callerOf?
-    ;
-
-callerOf
-    : of calls
-    ;
-
-callerCondition
-    : where have NAME not? equalsTo words Comma?
+    :where not? equalsTo combinatorialWords Comma?
     ;
 
 
