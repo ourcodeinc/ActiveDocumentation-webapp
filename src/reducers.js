@@ -20,8 +20,6 @@ const default_state = {
         constraintXPath: ""
         quantifierXPath: ""
         autoCompleteText: ""
-        sentMessages: []
-        receivedMessages: []
         activeTab: 0
         guiState: {activeTab: "quantifier", quantifier: {…}, constraint: {…}, ruleType: ""}
     }
@@ -108,8 +106,6 @@ const default_rulePanelState = {
     autoCompleteText: "",
     quantifierXPath: "", // only produced by autoComplete grammar
     constraintXPath: "", // only produced by autoComplete grammar
-    sentMessages: [],
-    receivedMessages: [],
 
     guiState: {
         activeTab: "quantifier",
@@ -205,17 +201,18 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
         case "UPDATE_RULE_TABLE":
             let rules = JSON.parse(JSON.stringify(action["ruleTable"]));
             rules = rules.map(d => {
+                let a =  Object.assign({}, d);
                 return Object.assign({}, d, {
                     rulePanelState: {
                         ...default_rulePanelState,
-                        title: d.title,
-                        description: d.description,
-                        ruleTags: d.tags,
-                        folderConstraint: d.ruleType.constraint,
-                        filesFolders: d.ruleType.checkFor,
-                        quantifierXPath: d.quantifier.command,
-                        constraintXPath: d.constraint.command,
-                        autoCompleteText: d.grammar
+                        title: a.title,
+                        description: a.description,
+                        ruleTags: a.tags,
+                        folderConstraint: a.ruleType.constraint,
+                        filesFolders: a.ruleType.checkFor,
+                        quantifierXPath: a.quantifier.command,
+                        constraintXPath: a.constraint.command,
+                        autoCompleteText: a.grammar
                     }
                 });
             });
@@ -399,13 +396,16 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
                     if (a.index !== action["ruleIndex"]) return a;
                     a.rulePanelState.quantifierXPath = action["quantifierXPath"];
                     a.rulePanelState.constraintXPath = action["constraintXPath"];
-                    a.rulePanelState.sentMessages = action["sentMessages"];
-                    a.rulePanelState.receivedMessages = action["receivedMessages"];
                     return a;
                 });
                 return Object.assign({}, state, {
                     message: "MATCHED_MESSAGES",
-                    ruleTable: rules
+                    ruleTable: rules,
+                    newOrEditRule: {
+                        ...state.newOrEditRule,
+                        sentMessages: action["sentMessages"],
+                        receivedMessages: action["receivedMessages"]
+                    },
                 });
             }
             else

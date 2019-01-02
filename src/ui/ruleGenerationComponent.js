@@ -127,8 +127,10 @@ class RuleGenerationComponent extends Component {
 
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
-        if (nextProps.message === "RECEIVE_EXPR_STMT_XML")
+        if (nextProps.message === "RECEIVE_EXPR_STMT_XML") {
+
             this.matchSentAndReceivedMessages(nextProps);
+        }
 
         else {
             if(nextProps.ruleIndex !== this.ruleIndex) {
@@ -182,8 +184,8 @@ class RuleGenerationComponent extends Component {
     matchSentAndReceivedMessages(nextProps) {
         let sentMessages = nextProps.sentMessages.map(a => ({...a})); // clone
         let receivedMessages = nextProps.receivedMessages.map(a => ({...a})); // clone
-        let quantifierXPath = nextProps.quantifierXPath.slice(0);
-        let constraintXPath = nextProps.constraintXPath.slice(0);
+        let quantifierXPath = this.state.quantifierXPath.slice(0);
+        let constraintXPath = this.state.constraintXPath.slice(0);
 
         sentMessages.sort((a, b) => a["messageID"] - b["messageID"]);
         receivedMessages.forEach(a => a["messageID"] = +a["messageID"]);

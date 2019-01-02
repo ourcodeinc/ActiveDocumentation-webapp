@@ -84,14 +84,14 @@ export const receiveExpressionStatementXML = (xmlData) => {
 };
 
 // messages are matched and XPaths are modified based on the received messages
-export const matchMessages = (ruleIndex, sentMessages, receivedMessages, quantifierXpath, constraintXpath) => {
+export const matchMessages = (ruleIndex, sentMessages, receivedMessages, quantifierXPath, constraintXPath) => {
     return {
         type: "MATCHED_MESSAGES",
         ruleIndex: ruleIndex,
         sentMessages: sentMessages,
         receivedMessages: receivedMessages,
-        quantifierXpath: quantifierXpath,
-        constraintXpath: constraintXpath
+        quantifierXPath: quantifierXPath,
+        constraintXPath: constraintXPath
     }
 };
 
