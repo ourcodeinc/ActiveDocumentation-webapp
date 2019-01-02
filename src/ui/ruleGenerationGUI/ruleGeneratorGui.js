@@ -18,8 +18,37 @@ class RuleGeneratorGui extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {...this.props};
-        this.class = props["className"] ? props["className"] : "generateRuleGui"
+        this.ruleIndex = props.ruleIndex;
+
+        // new rule
+        this.state = {
+            ws: props.ws,
+            constraint: props.constraint,
+            quantifier: props.quantifier,
+            activeTab: props.activeTab,
+            ruleType: props.ruleType,
+            GuiGrammar: ""
+        };
+
+        this.class = props["className"] ? props["className"] : "generateRuleGui";
+
+        // existing rule
+        if (this.ruleIndex !== -1) {
+            let indices = props.rules.map(d => d.index);
+            let arrayIndex = indices.indexOf(this.ruleIndex);
+            if (arrayIndex === -1)
+                console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
+                Only ${indices.toString()} are found as indices.`);
+            else {
+                this.ruleI = props.rules[arrayIndex];
+                // updating the rule
+                this.state.constraint = this.ruleI.rulePanelState.guiState.constraint;
+                this.state.quantifier = this.ruleI.rulePanelState.guiState.quantifier;
+                this.state.activeTab = this.ruleI.rulePanelState.guiState.activeTab;
+                this.state.ruleType = this.ruleI.rulePanelState.guiState.ruleType;
+            }
+        }
+
     }
 
     render() {
@@ -261,6 +290,7 @@ class RuleGeneratorGui extends Component {
 
 function mapStateToProps(state) {
     return {
+        rules: state.ruleTable,
         ws: state.ws,
         activeTab: state.newOrEditRule.guiState.activeTab,
         quantifier: state.newOrEditRule.guiState.quantifier,

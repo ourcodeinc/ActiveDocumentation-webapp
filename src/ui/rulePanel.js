@@ -17,7 +17,10 @@ import MdEdit from 'react-icons/lib/md/edit';
 import TiDelete from "react-icons/lib/ti/delete";
 import {FaQuestionCircle} from "react-icons/lib/fa/index";
 
-import {clearNewRuleForm, editNewRuleForm, ignoreFile, submitNewRule, submitNewTag, updateRule} from "../actions";
+import {
+    changeEditMode, clearNewRuleForm, editRuleForm, ignoreFile,
+    submitNewRule, submitNewTag, updateRule
+} from "../actions";
 import RuleGenerationComponent from './ruleGenerationComponent';
 
 import {connect} from "react-redux";
@@ -41,22 +44,73 @@ class RulePanel extends Component {
         this.shouldAlert = true;
 
         this.state = {
-            open: true,
+            openPanel: true,
             className: "rulePanelDiv" + (this.newRuleRequest ? " edit-bg" : ""),
             activeTab: 0,
-            editMode: !!props["newRule"], // default must be false unless a new rule is being generated,
-            showNewTagModal: false,
-            // ruleI states
+
+            editMode: !!props["newRule"],
+
+            // rule states
             title: props.title,
             description: props.description,
             ruleTags: props.ruleTags,
-            tags: props.tags,
             folderConstraint: props.folderConstraint,
             filesFolders: props.filesFolders,
+            tags: props.tags,
+
             // new tag states
+            showNewTagModal: false,
             tagName: "",
             tagDetail: ""
         };
+
+
+        // existing rule
+        if (!this.newRuleRequest && this.ruleIndex !== -1) {
+            let indices = props.rules.map(d => d.index);
+            let arrayIndex = indices.indexOf(this.ruleIndex);
+            if (arrayIndex === -1)
+                console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
+                Only ${indices.toString()} are found as indices.`);
+            else {
+                this.ruleI = props.rules[arrayIndex];
+                // updating the rule
+                if (this.ruleI.rulePanelState.editMode) {
+                    this.state.title = this.ruleI.rulePanelState.title;
+                    this.state.description = this.ruleI.rulePanelState.description;
+                    this.state.ruleTags = this.ruleI.rulePanelState.ruleTags;
+                    this.state.folderConstraint = this.ruleI.rulePanelState.folderConstraint;
+                    this.state.filesFolders = this.ruleI.rulePanelState.filesFolders;
+                    this.state.tags = props.tags;
+
+                    this.state.editMode = true;
+                }
+                // reading the rule
+                else {
+                    this.state.title = this.ruleI.title;
+                    this.state.description = this.ruleI.description;
+                    this.state.ruleTags = this.ruleI.tags;
+                    this.state.folderConstraint = this.ruleI.ruleType.constraint;
+                    this.state.filesFolders = this.ruleI.ruleType.checkFor;
+                    this.state.tags = props.tags;
+
+                    this.state.editMode = false;
+                }
+            }
+        }
+        // new rule
+        else
+            {
+                this.state.title = props.title;
+                this.state.description = props.description;
+                this.state.ruleTags = props.ruleTags;
+                this.state.folderConstraint = props.folderConstraint;
+                this.state.filesFolders = props.filesFolders;
+                this.state.tags = props.tags;
+
+                this.state.editMode = true
+            }
+        
 
         this.caretClass = {
             true: {cursor: "pointer", color: "black"},
@@ -70,27 +124,16 @@ class RulePanel extends Component {
     }
 
     render() {
-        if (!this.newRuleRequest) {
-            try {
-                this.ruleI = this.props.rules.filter((d) => d.index === this.ruleIndex)[0];
-            }
-            catch (e) {
-                console.log(`There is no rule with index ${this.ruleIndex}`);
-                this.ruleI = null;
-            }
-        }
-        else this.ruleI = null;
-
         return (
             <div className={this.state.className}>
                 <FormGroup>
                     <div style={{float: 'right'}}>
                         {!this.state.editMode ? (
                             <Fragment>
-                                <FaCaretUp size={20} onClick={() => this.setState({open: false})}
-                                           style={this.caretClass[this.state.open.toString()]}/>
-                                <FaCaretDown size={20} onClick={() => this.setState({open: true})}
-                                             style={this.caretClass[(!this.state.open).toString()]}/>
+                                <FaCaretUp size={20} onClick={() => this.setState({openPanel: false})}
+                                           style={this.caretClass[this.state.openPanel.toString()]}/>
+                                <FaCaretDown size={20} onClick={() => this.setState({openPanel: true})}
+                                             style={this.caretClass[(!this.state.openPanel).toString()]}/>
                             </Fragment>
                         ) : null}
                         <MdEdit size={20} style={this.editIconClass[this.state.editMode.toString()]}
@@ -133,7 +176,7 @@ class RulePanel extends Component {
                         </Fragment>
                     )}
                 </FormGroup>
-                <Collapse in={this.state.open}>
+                <Collapse in={this.state.openPanel}>
                     <div>
                         <div style={{paddingTop: '10px', clear: 'both'}}>
                             {this.renderTags()}
@@ -160,7 +203,7 @@ class RulePanel extends Component {
                 {!this.state.editMode ? null : (
                     <div style={{paddingTop: '10px', clear: 'both'}}>
                         {this.renderFileConstraints()}
-                        <RuleGenerationComponent/>
+                        <RuleGenerationComponent ruleIndex={this.ruleIndex}/>
                         <div>
                             <ButtonToolbar className={"submitButtons"}>
                                 <Button bsStyle="primary"
@@ -183,40 +226,68 @@ class RulePanel extends Component {
 
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
-        if (this.ruleI)
-            this.setState({
-                title: this.ruleI.title,
-                description: this.ruleI.description,
-                tags: nextProps.tags,
-                ruleTags: this.ruleI.tags,
-                folderConstraint: this.ruleI.ruleType.constraint,
-                filesFolders: this.ruleI.ruleType.checkFor
-            });
+        // existing rule
+        if (!this.newRuleRequest && this.ruleIndex !== -1)
+        {
+            let indices = nextProps.rules.map(d => d.index);
+            let arrayIndex = indices.indexOf(this.ruleIndex);
+            if (arrayIndex === -1)
+                console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
+                Only ${indices.toString()} are found as indices.`);
+            else {
+                this.ruleI = nextProps.rules[arrayIndex];
+                // updating the rule
+                if (this.ruleI.rulePanelState.editMode) {
+                    this.setState({
+                        title: this.ruleI.rulePanelState.title,
+                        description: this.ruleI.rulePanelState.description,
+                        ruleTags: this.ruleI.rulePanelState.ruleTags,
+                        folderConstraint: this.ruleI.rulePanelState.folderConstraint,
+                        filesFolders: this.ruleI.rulePanelState.filesFolders,
+                        tags: nextProps.tags,
+
+                        editMode: true
+                    });
+                }
+                // reading the rule
+                else
+                    this.setState({
+                        title: this.ruleI.title,
+                        description: this.ruleI.description,
+                        ruleTags: this.ruleI.tags,
+                        folderConstraint: this.ruleI.ruleType.constraint,
+                        filesFolders: this.ruleI.ruleType.checkFor,
+                        tags: nextProps.tags,
+
+                        editMode: false
+                    });
+            }
+        }
+        // new rule
         else
             this.setState({
                 title: nextProps.title,
                 description: nextProps.description,
-                tags: nextProps.tags,
                 ruleTags: nextProps.ruleTags,
                 folderConstraint: nextProps.folderConstraint,
-                filesFolders: nextProps.filesFolders
-            });
+                filesFolders: nextProps.filesFolders,
+                tags: nextProps.tags,
 
+                editMode: true
+            });
     }
 
     /**
-     * set the states 'open' and 'className' after mounting.
+     * set the states 'openPanel' and 'className' after mounting.
      */
     componentDidMount() {
         if (!this.props.codeChanged) {
             this.setState({
                 className: "rulePanelDiv" + (this.newRuleRequest ? " edit-bg" : ""),
-                open: (() => {
+                openPanel: (() => {
                     if (this.props.filePath === "none") return true;
                     let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.props.filePath);
                     return (file.length > 0)
-                    //     return file[0]['data'].violated !== 0 || file[0]['data'].satisfied !== 0;
-                    // return false;
                 })()
             });
             return;
@@ -225,32 +296,27 @@ class RulePanel extends Component {
         let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.props.filePath);
         let ruleIfile = file.length !== 0 ? file[0]['data'] : {};
         if (ruleIfile['allChanged'] === 'greater' && ruleIfile['satisfiedChanged'] === ruleIfile['violatedChanged'] === 'none') {
-            this.setState({open: true, className: "rulePanelDiv blue-bg"});
+            this.setState({openPanel: true, className: "rulePanelDiv blue-bg"});
             return;
         }
         if (ruleIfile['satisfiedChanged'] === 'greater') {
-            this.setState({open: true, className: "rulePanelDiv green-bg"});
+            this.setState({openPanel: true, className: "rulePanelDiv green-bg"});
             return;
         }
         if (ruleIfile['violatedChanged'] === 'greater') {
-            this.setState({open: true, className: "rulePanelDiv red-bg"});
+            this.setState({openPanel: true, className: "rulePanelDiv red-bg"});
             return;
         }
-        // if (!ruleIfile['changed'] && ruleIfile['violated'] === 0 && ruleIfile['satisfied'] === 0) {
-        //     this.setState({open: false, className: "rulePanelDiv"});
-        //     return;
-        // }
-
         if (file.length > 0) {
-            this.setState({open: true, className: "rulePanelDiv"});
+            this.setState({openPanel: true, className: "rulePanelDiv"});
             return;
         }
 
         if (ruleIfile['violated'] === 0) {
-            this.setState({open: false, className: "rulePanelDiv"});
+            this.setState({openPanel: false, className: "rulePanelDiv"});
             return;
         }
-        this.setState({open: false, className: "rulePanelDiv"});
+        this.setState({openPanel: false, className: "rulePanelDiv"});
 
         // fixed the height of text areas
         let els = document.getElementsByTagName("textarea");
@@ -590,26 +656,18 @@ class RulePanel extends Component {
         if (this.ruleI)
             this.setState({
                 className: "rulePanelDiv" + (!this.state.editMode ? " edit-bg" : ""),
-                open: true,
-                editMode: !this.state.editMode,
-                title: this.ruleI.title,
-                description: this.ruleI.description,
-                ruleTags: this.ruleI.tags,
-                folderConstraint: this.ruleI.ruleType.constraint,
-                filesFolders: this.ruleI.ruleType.checkFor
+                openPanel: true
             });
-        // generating newRule
-        else {
+        else
             this.props["cancelGeneratingNewRule"]();
-            this.onEditNewRuleForm();
-        }
+
+        this.props.onChangeEditMode(this.ruleIndex, !this.state.editMode)
     }
 
     /**
      * submit the updated rule (with the given Index)
      */
     onSubmitUpdatedRule() {
-
         let rule = {
             index: this.ruleIndex,
             title: this.state.title,
@@ -620,13 +678,15 @@ class RulePanel extends Component {
                 checkFor: this.state.filesFolders.filter((d) => d !== ""),
                 type: "WITHIN"
             },
-            quantifier: {},
-            constraint: {},
-            grammar: this.props.autoCompleteText
+            quantifier: {detail: "", command: "src:unit/" + this.ruleI.rulePanelState.quantifierXPath},
+            constraint: {detail: "", command: "src:unit/" + this.ruleI.rulePanelState.constraintXPath},
+            grammar: this.ruleI.rulePanelState.autoCompleteText
         };
 
-        rule.quantifier = {detail: this.ruleI.quantifier.detail, command: "src:unit/" + this.props.quantifierXPath};
-        rule.constraint = {detail: this.ruleI.constraint.detail, command: "src:unit/" + this.props.constraintXPath};
+        if (this.props.numberOfSentMessages !== 0) {
+            console.log("Please wait for the server to respond to " + this.props.numberOfSentMessages + " sent messages for retrieving XPath.");
+            return;
+        }
 
         if (rule.index === "" || rule.title === "" || rule.description === "") {
             console.log("empty fields");
@@ -638,7 +698,7 @@ class RulePanel extends Component {
             return;
         }
 
-        if (this.state.quantifierXPath === "" || this.state.constraintXPath === "") {
+        if (this.ruleI.rulePanelState.quantifierXPath === "" || this.ruleI.rulePanelState.constraintXPath === "") {
             console.log("XPaths are not specified");
             return;
         }
@@ -673,14 +733,15 @@ class RulePanel extends Component {
                 checkFor: this.state.filesFolders.filter((d) => d !== ""),
                 type: "WITHIN"
             },
-            quantifier: {},
-            constraint: {},
+            quantifier: {detail: "", command: "src:unit/" + this.props.quantifierXPath},
+            constraint: {detail: "", command: "src:unit/" + this.props.constraintXPath},
             grammar: this.props.autoCompleteText
         };
 
-        rule.quantifier = {detail: "", command: "src:unit/" + this.props.quantifierXPath};
-        rule.constraint = {detail: "", command: "src:unit/" + this.props.constraintXPath};
-
+        if (this.props.numberOfSentMessages !== 0) {
+            console.log("Please wait for the server to respond to " + this.props.numberOfSentMessages + " sent messages for retrieving XPath.");
+            return;
+        }
 
         if (rule.index === "" || rule.title === "" || rule.description === "") {
             console.log("empty fields");
@@ -692,7 +753,7 @@ class RulePanel extends Component {
             return;
         }
 
-        if (this.state.quantifierXPath === "" || this.state.constraintXPath === "") {
+        if (rule.quantifierXPath === "" || rule.constraintXPath === "") {
             console.log("XPaths are not specified");
             return;
         }
@@ -707,6 +768,7 @@ class RulePanel extends Component {
      * In tagJson, the property is 'detail'
      */
     onSubmitNewTag () {
+        // todo it doesn't check for duplicate tags
         let tag = {tagName: this.state.tagName, detail: this.state.tagDetail};
         this.props.onSubmitNewTag(tag);
         Utilities.sendToServer(this.props.ws, "NEW_TAG", tag);
@@ -717,13 +779,14 @@ class RulePanel extends Component {
      * to update the content of the form in the main state
      */
     onEditNewRuleForm() {
-        this.props.onEditForm({
-            title: this.state.title,
-            description: this.state.description,
-            ruleTags: this.state.ruleTags,
-            folderConstraint: this.state.folderConstraint,
-            filesFolders: this.state.filesFolders
-        });
+        this.props.onEditForm(
+            this.ruleIndex,
+            this.state.title,
+            this.state.description,
+            this.state.ruleTags,
+            this.state.folderConstraint,
+            this.state.filesFolders
+        );
     }
 }
 
@@ -737,36 +800,33 @@ function mapStateToProps(state) {
             ('/Users/saharmehrpour/Documents/Workspace/' + state.filePath) : "none",
         ws: state.ws,
 
+        // for new rule
         title: state.newOrEditRule.title,
         description: state.newOrEditRule.description,
         ruleTags: state.newOrEditRule.ruleTags,
         folderConstraint: state.newOrEditRule.folderConstraint,
         filesFolders: state.newOrEditRule.filesFolders,
+        // used when submitting
         autoCompleteText: state.newOrEditRule.autoCompleteText,
         quantifierXPath: state.newOrEditRule.quantifierXPath,
-        constraintXPath: state.newOrEditRule.quantifierXPath
+        constraintXPath: state.newOrEditRule.constraintXPath,
+
+        // for submitting the rule
+        numberOfSentMessages: state.newOrEditRule.sentMessages.length,
+
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        onIgnoreFile: (value) => {
-            dispatch(ignoreFile(value));
-        },
-        onSubmitNewRule: (newRule) => {
-            dispatch(submitNewRule(newRule))
-        },
-        onUpdateRule: (updatedRule) => {
-            dispatch(updateRule(updatedRule));
-        },
-        onSubmitNewTag: (newTag) => {
-            dispatch(submitNewTag(newTag))
-        },
-        onClearForm: () => {
-            dispatch(clearNewRuleForm())
-        },
-        onEditForm: (formContents) => {
-            dispatch(editNewRuleForm(formContents))
+        onIgnoreFile: (shouldIgnore) => dispatch(ignoreFile(shouldIgnore)),
+        onSubmitNewRule: (newRule) => dispatch(submitNewRule(newRule)),
+        onUpdateRule: (updatedRule) => dispatch(updateRule(updatedRule)),
+        onSubmitNewTag: (newTag) => dispatch(submitNewTag(newTag)),
+        onClearForm: () => dispatch(clearNewRuleForm()),
+        onChangeEditMode: (ruleIndex, newEditMode) => dispatch(changeEditMode(ruleIndex, newEditMode)),
+        onEditForm: (ruleIndex, title, description, ruleTags, folderConstraint, filesFolders) => {
+            dispatch(editRuleForm(ruleIndex, title, description, ruleTags, folderConstraint, filesFolders))
         }
     }
 }

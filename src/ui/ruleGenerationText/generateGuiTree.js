@@ -277,7 +277,7 @@ const reverseParentChildOrder = (node) => {
  * base on the object obtained by reverseParentChildOrder function, a data structure for Generate Rule Gui is created
  * If guiConstant is changed, this function must be changed accordingly
  * @param node
- * @returns {{key: string, value: string, target: string, children: {top: Array, before_1: Array, before_2: Array, after_1: Array, after_2: Array, within: Array, child: {}}, text: string}}
+ * @returns {{key: string, value: string, target: string, children: {top: Array, before_1: Array, before_2: Array, after_1: Array, after_2: Array, within: Array, child: {}}, text: number}}
  */
 const createGuiNodes = (node) => {
 

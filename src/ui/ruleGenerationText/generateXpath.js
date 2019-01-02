@@ -5,6 +5,7 @@
 import {TerminalNodeImpl} from "antlr4/tree/Tree";
 import Utilities from "../../core/utilities";
 import store from "../../reduxStore";
+import {sendExpressionStatementXML} from "../../actions";
 
 class GenerateXpath {
 
@@ -20,30 +21,10 @@ class GenerateXpath {
         this.dumpXPath = false;
         this.isConstraint = isConstraint;
         this.ws = store.getState().ws;
-
-        // keeps the number of messages already sent and waiting for the response
-        // Without it there is a synchronization problem, that is the xpath is already sent
-        // and the result XML is not received yet.
-        this.numberOfWaitingMessages = 0;
-
-        this.unsubscribe = store.subscribe(() => {
-            if (store.getState().message === "RECEIVE_EXPR_STMT_XML") {
-                // one message is replied.
-                this.numberOfWaitingMessages -= 1;
-                console.log(this.numberOfWaitingMessages, " <- numberOfWaitingMessages (subscribe)");
-                let textAndXpath = this.traverseXml(store.getState().exprStmtXML);
-
-                // replace all occurrences of textAndXpath.originalText
-                let copiedXpath = this.XPath.split("'" + textAndXpath.originalText + "'");
-                this.XPath = copiedXpath.join(textAndXpath.xpathResult);
-            }
-        });
     }
 
     traverseTree() {
         this.traverseNode(this.tree);
-
-        // todo wait for this.numberOfWaitingMessages to be 0
 
         if (this.dumpXPath)
             return;
@@ -883,77 +864,14 @@ class GenerateXpath {
         if (text === "") return;
         // todo process text for predefined literals like '?'
 
-        // one message is sent
-        this.numberOfWaitingMessages += 1;
-        console.log(this.numberOfWaitingMessages, " <- numberOfWaitingMessages (send)");
-        Utilities.sendToServer(this.ws, "EXPR_STMT", text);
-    }
-
-    /**
-     * check validity of an xml and generate the xpath query
-     * @param text
-     * @returns {{text: string, xpathResult: string}} text is the original text and xpathResult the the xpath
-     * derived from the originalText
-     */
-    traverseXml(text) {
-
-        let exprValidation = "//src:unit[count(src:expr_stmt)=1]/src:expr_stmt/src:expr";
-        let parser = new DOMParser();
-
-        function nsResolver(prefix) {
-            let ns = {'src': 'http://www.srcML.org/srcML/src'};
-            return ns[prefix] || null;
-        }
-
-        // checks validity of the XML
-        let xml = parser.parseFromString(text, "text/xml");
-        if (!xml.evaluate) {
-            console.log("error in xml.evaluate");
-            return {text: "", xpathResult: ""};
-        }
-
-
-        let validNodes = xml.evaluate(exprValidation, xml, nsResolver, XPathResult.ANY_TYPE, null);
-        let resultValidNode = validNodes.iterateNext(); // expr_stmt/expr
-        if (!resultValidNode) {
-            console.log("error");
-            return {text: "", xpathResult: ""};
-        }
-
-        // result xpath: 'src:expr[....]' where 'src:expr[' and the final ']' is extra.
-        let textAndXpath = this.traverseChildren(resultValidNode);
-        textAndXpath.xpathResult = textAndXpath.xpathResult.substring(9,textAndXpath.xpathResult.length-1);
-        return textAndXpath;
-    }
-
-    /**
-     * traverse the state_children of a parent node to generate xpath query conditions
-     * @param parentNode
-     * @returns {{text: string, xpathResult: string}}
-     */
-    traverseChildren(parentNode) {
-        let originalText = "";
-        let res = [];
-        let children = parentNode.childNodes;
-        for (let i = 0; i < children.length; i++) {
-
-            if (children[i].nodeName === "#text") {
-                originalText += children[i].nodeValue;
-                if (children.length === 1)
-                    res.push("text()=\"" + children[i].nodeValue + "\"");
-            }
-            else {
-                let textAndXpath = this.traverseChildren(children[i]);
-                originalText += textAndXpath.originalText;
-                res.push(textAndXpath.xpathResult);
-            }
-        }
-        return {
-            originalText: originalText,
-            xpathResult: "src:" + parentNode.nodeName + "[" + res.join(' and ') + "]"
+        let data = {
+            "codeText": text,
+            "messageID": Math.floor(new Date().getTime() / 1000)  // to match send and receive messages
         };
-    }
 
+        Utilities.sendToServer(this.ws, "EXPR_STMT", data);
+        store.dispatch(sendExpressionStatementXML(data));
+    }
 }
 
 export default GenerateXpath;

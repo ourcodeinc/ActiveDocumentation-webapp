@@ -32,7 +32,7 @@ class Utilities {
                     break;
 
                 case 'EXPR_STMT':
-                    messageJson['data'] = data;
+                    messageJson['data'] = data; // {codeText: "", messageID: ""}
                     break;
 
                 case 'DECL_STMT':

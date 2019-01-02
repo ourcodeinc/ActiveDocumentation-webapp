@@ -10,9 +10,8 @@ import {Alert} from 'react-bootstrap';
 import {Button, FormGroup, ButtonToolbar} from 'react-bootstrap';
 
 import RuleGeneratorGui from './ruleGenerationGUI/ruleGeneratorGui';
-// import AutoComplete from "./ruleGenerationText/autoComplete";
 import verifyTextBasedOnGrammar from "./ruleGenerationText/languageProcessing";
-import {editNewRuleGrammarGuiData, receiveGuiTree} from "../actions";
+import {matchMessages, receiveGuiTree} from "../actions";
 import {generateGuiTrees} from "./ruleGenerationText/generateGuiTree";
 import RuleGeneratorText from "./ruleGenerationText/ruleGeneratorText";
 
@@ -38,7 +37,37 @@ class RuleGenerationComponent extends Component {
         // can't be part of state, because after clicking on auto-complete suggestion
         // and then out of its container, the setState() in onUpdateText doesn't update the text instantly.
         // props is a read-only element
-        this.autoCompleteText = props.autoCompleteText;
+        this.autoCompleteText = "";
+
+        // received through react props.
+        this.ruleIndex = props.ruleIndex;
+
+        // existing rule
+        if (this.ruleIndex !== -1) {
+            let indices = props.rules.map(d => d.index);
+            let arrayIndex = indices.indexOf(this.ruleIndex);
+            if (arrayIndex === -1)
+                console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
+                Only ${indices.toString()} are found as indices.`);
+            else {
+                this.ruleI = props.rules[arrayIndex];
+                // updating the rule
+                this.state.quantifierXPath = this.ruleI.rulePanelState.quantifierXPath;
+                this.state.constraintXPath = this.ruleI.rulePanelState.constraintXPath;
+                this.autoCompleteText = this.ruleI.rulePanelState.autoCompleteText;
+            }
+        }
+        // new rule
+        else
+        {
+            this.state.quantifierXPath = props.quantifierXPath;
+            this.state.constraintXPath = props.constraintXPath;
+            this.autoCompleteText = props.autoCompleteText;
+        }
+
+
+        // computing and setting the redux store for GUI tree will un-mount the rulePanel component
+        // and as such, the edit mode is off and so a loop is created.
     }
 
     render() {
@@ -62,36 +91,35 @@ class RuleGenerationComponent extends Component {
                 )}
                 <FormGroup validationState={this.state.autoCompleteValidationState}>
                     <RuleGeneratorText defaultValue={this.autoCompleteText}
-                                  onBlur={() => {
-                                      if(this.shouldAlert) {
-                                          verifyTextBasedOnGrammar(this.autoCompleteText)
-                                              .then((data) => {console.log(data.quantifierXPath, data.constraintXPath);
-                                                  this.setState({
-                                                      quantifierXPath: data.quantifierXPath,
-                                                      constraintXPath: data.constraintXPath,
-                                                      autoCompleteValidationState: null,
-                                                      error: ""
-                                                  });
-                                                  this.onEditNewRuleForm();
-                                                  // compute and dispatch gui tree for quantifier and constraint
-                                                  generateGuiTrees(data.grammarTree)
-                                                      .then((data) => this.props.onReceiveGuiTree(data));
-                                              })
-                                              .catch((error) => this.processLanguageProcessingError(error));
-                                          this.shouldAlert = false;
-                                      }
-                                  }}
-                                  onUpdateText={(text) => {
-                                      this.shouldAlert = true;
-                                      this.autoCompleteText = text;
-                                      this.onEditNewRuleForm()
-                                  }}
-                                  caretPosition={(() => {
-                                      let newFocus = this.autoCompleteCaretPosition;
-                                      this.autoCompleteCaretPosition = -1;
-                                      return newFocus;
-                                  })()}/>
-                    <RuleGeneratorGui className={"generateRuleGui"}/>
+                                       onBlur={() => {
+                                           if (this.shouldAlert) {
+                                               verifyTextBasedOnGrammar(this.autoCompleteText)
+                                                   .then((data) => {
+                                                       if (this._mounted)
+                                                           this.setState({
+                                                               quantifierXPath: data.quantifierXPath,
+                                                               constraintXPath: data.constraintXPath,
+                                                               autoCompleteValidationState: null,
+                                                               error: ""
+                                                           });
+                                                       // compute and dispatch gui tree for quantifier and constraint
+                                                       generateGuiTrees(data.grammarTree)
+                                                           .then((tree) => this.props.onReceiveGuiTree(this.ruleIndex, tree, this.autoCompleteText, data.quantifierXPath, data.constraintXPath));
+                                                   })
+                                                   .catch((error) => this.processLanguageProcessingError(error));
+                                               this.shouldAlert = false;
+                                           }
+                                       }}
+                                       onUpdateText={(text) => {
+                                           this.shouldAlert = true;
+                                           this.autoCompleteText = text;
+                                       }}
+                                       caretPosition={(() => {
+                                           let newFocus = this.autoCompleteCaretPosition;
+                                           this.autoCompleteCaretPosition = -1;
+                                           return newFocus;
+                                       })()}/>
+                    <RuleGeneratorGui ruleIndex={this.ruleIndex} className={"generateRuleGui"}/>
                 </FormGroup>
             </div>
         );
@@ -99,12 +127,161 @@ class RuleGenerationComponent extends Component {
 
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
-        this.autoCompleteText = nextProps.autoCompleteText;
-        this.setState({
-            quantifierXPath: nextProps.quantifierXPath,
-            constraintXPath: nextProps.quantifierXPath,
-            error: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "" : this.state.error
-        });
+        if (nextProps.message === "RECEIVE_EXPR_STMT_XML")
+            this.matchSentAndReceivedMessages(nextProps);
+
+        else {
+            if(nextProps.ruleIndex !== this.ruleIndex) {
+                this.ruleIndex = nextProps.ruleIndex;
+                let indices = nextProps.rules.map(d => d.index);
+                let arrayIndex = indices.indexOf(this.ruleIndex);
+                if (arrayIndex === -1)
+                    console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
+                Only ${indices.toString()} are found as indices.`);
+                else
+                    this.ruleI = nextProps.rules[arrayIndex];
+            }
+
+            // existing rule
+            if (this.ruleIndex !== -1) {
+                this.autoCompleteText = this.ruleI.rulePanelState.autoCompleteText;
+                this.setState({
+                    quantifierXPath: this.ruleI.rulePanelState.quantifierXPath,
+                    constraintXPath: this.ruleI.rulePanelState.constraintXPath,
+                    error: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "" : this.state.error
+                });
+            }
+            // new rule
+            else
+            {
+                this.autoCompleteText = nextProps.autoCompleteText;
+                this.setState({
+                    quantifierXPath: nextProps.quantifierXPath,
+                    constraintXPath: nextProps.constraintXPath,
+                    error: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "" : this.state.error
+                });
+            }
+        }
+    }
+
+    // _mounted is added to remove the warning caused by setting states
+    // in Promise.then() function in onBlur
+    componentDidMount() {
+        this._mounted = true
+    }
+
+    componentWillUnmount() {
+        this._mounted = false
+    }
+
+
+    /**
+     * Match nextProps.sentMessages and nextProps.receivedMessages using messageIDs, update XPaths
+     * and send actions to update store
+     */
+    matchSentAndReceivedMessages(nextProps) {
+        let sentMessages = nextProps.sentMessages.map(a => ({...a})); // clone
+        let receivedMessages = nextProps.receivedMessages.map(a => ({...a})); // clone
+        let quantifierXPath = nextProps.quantifierXPath.slice(0);
+        let constraintXPath = nextProps.constraintXPath.slice(0);
+
+        sentMessages.sort((a, b) => a["messageID"] - b["messageID"]);
+        receivedMessages.forEach(a => a["messageID"] = +a["messageID"]);
+        receivedMessages.sort((a, b) => a["messageID"] - b["messageID"]);
+
+        let matchedIndices = {sent: [], received: []};
+
+        let otherIndex = 0;
+        for (let index = 0; index < sentMessages.length; index++) {
+            if (otherIndex >= receivedMessages.length) break;
+            for (let j = otherIndex; j < receivedMessages.length; j++) {
+                // matched messages
+                if (+sentMessages[index]["messageID"] === +receivedMessages[j]["messageID"]) {
+                    let resultXpath = this.traverseReceivedXml(receivedMessages[j]["xmlText"]);
+                    // replace all occurrences of textAndXpath.originalText
+                    let copiedQXpath = quantifierXPath.split("'" + sentMessages[index]["codeText"] + "'");
+                    quantifierXPath = copiedQXpath.join(resultXpath);
+                    let copiedCXpath = constraintXPath.split("'" + sentMessages[index]["codeText"] + "'");
+                    constraintXPath = copiedCXpath.join(resultXpath);
+
+                    matchedIndices.sent.push(index);
+                    matchedIndices.received.push(j);
+
+                    otherIndex = j + 1;
+                    break;
+                }
+            }
+        }
+
+        // remove matched messages from list of messages
+        for (let i = matchedIndices.sent.length - 1; i >= 0; i--)
+            sentMessages.splice(matchedIndices.sent[i], 1);
+        for (let i = matchedIndices.received.length - 1; i >= 0; i--)
+            receivedMessages.splice(matchedIndices.received[i], 1);
+
+        // at least one message is responded
+        if (matchedIndices.sent.length > 0)
+            this.props.onMatchMessages(this.ruleIndex, sentMessages, receivedMessages, quantifierXPath, constraintXPath);
+    }
+
+
+    /**
+     * check validity of an xml and generate the xpath query
+     * @param text
+     * @returns string xpath
+     * derived from the originalText
+     */
+    traverseReceivedXml(text) {
+
+        let exprValidation = "//src:unit[count(src:expr_stmt)=1]/src:expr_stmt/src:expr";
+        let parser = new DOMParser();
+
+        function nsResolver(prefix) {
+            let ns = {'src': 'http://www.srcML.org/srcML/src'};
+            return ns[prefix] || null;
+        }
+
+        // checks validity of the XML
+        let xml = parser.parseFromString(text, "text/xml");
+        if (!xml.evaluate) {
+            console.log("error in xml.evaluate");
+            return "";
+        }
+
+
+        let validNodes = xml.evaluate(exprValidation, xml, nsResolver, XPathResult.ANY_TYPE, null);
+        let resultValidNode = validNodes.iterateNext(); // expr_stmt/expr
+        if (!resultValidNode) {
+            console.log("error");
+            return "";
+        }
+
+        /**
+         * recursive function
+         * traverse the state_children of a parent node to generate xpath query conditions
+         * @param parentNode
+         * @returns string
+         */
+        let traverseChildren = (parentNode) => {
+            let res = [];
+            let children = parentNode.childNodes;
+            for (let i = 0; i < children.length; i++) {
+
+                if (children[i].nodeName === "#text") {
+                    if (children.length === 1)
+                        res.push("text()=\"" + children[i].nodeValue + "\"");
+                }
+                else {
+                    res.push(traverseChildren(children[i]));
+                }
+            }
+            return "src:" + parentNode.nodeName + "[" + res.join(' and ') + "]";
+        };
+
+        // result xpath: 'src:expr[....]' where 'src:expr[' and the final ']' is extra.
+        let resultXpath = traverseChildren(resultValidNode);
+        resultXpath = resultXpath.substring(9, resultXpath.length - 1);
+        return resultXpath;
     }
 
 
@@ -176,39 +353,31 @@ class RuleGenerationComponent extends Component {
         }
     }
 
-
-    /***
-     * This function calls a dispatcher for redux
-     * to update the content of the form in the main state
-     */
-    onEditNewRuleForm() {
-        this.props.onEditForm({
-            autoCompleteText: this.autoCompleteText,
-            quantifierXPath: this.state.quantifierXPath,
-            constraintXPath: this.state.quantifierXPath
-        });
-    }
-
 }
 
 function mapStateToProps(state) {
     return {
+        rules: state.ruleTable,
         ws: state.ws,
 
+        // for new rule
         autoCompleteText: state.newOrEditRule.autoCompleteText,
         quantifierXPath: state.newOrEditRule.quantifierXPath,
         constraintXPath: state.newOrEditRule.quantifierXPath,
-        message: state.message
+        message: state.message,
+
+        sentMessages: state.newOrEditRule.sentMessages,
+        receivedMessages: state.newOrEditRule.receivedMessages
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        onEditForm: (data) => {
-            dispatch(editNewRuleGrammarGuiData(data))
+        onReceiveGuiTree: (ruleIndex, treeData, autoCompleteText, quantifierXPath, constraintXPath) => {
+            dispatch(receiveGuiTree(ruleIndex, treeData, autoCompleteText, quantifierXPath, constraintXPath))
         },
-        onReceiveGuiTree: (data) => {
-            dispatch(receiveGuiTree(data))
+        onMatchMessages: (ruleIndex, sentMessages, receivedMessages, quantifierXpath, constraintXpath) => {
+            dispatch(matchMessages(ruleIndex, sentMessages, receivedMessages, quantifierXpath, constraintXpath))
         }
     }
 }

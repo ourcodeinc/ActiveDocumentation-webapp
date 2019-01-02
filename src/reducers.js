@@ -1,5 +1,32 @@
 const default_state = {
     ws: null,
+
+    /*
+    index: 1545798262
+    title: ""
+    description: ""
+    tags: []
+    grammar: ""
+    ruleType: {constraint: "NONE", checkFor: [], type: "WITHIN"}
+    quantifier: {detail: "", command: ""}
+    constraint: {detail: "", command: ""}
+    rulePanelState: {
+        editMode: false
+        title: ""
+        description: ""
+        ruleTags: []
+        folderConstraint: ""
+        filesFolders: []
+        constraintXPath: ""
+        quantifierXPath: ""
+        autoCompleteText: ""
+        sentMessages: []
+        receivedMessages: []
+        activeTab: 0
+        guiState: {activeTab: "quantifier", quantifier: {…}, constraint: {…}, ruleType: ""}
+    }
+    xPathQueryResult: []
+     */
     ruleTable: [],
     tagTable: [],
     xml: [],
@@ -14,6 +41,7 @@ const default_state = {
         forwardDisable: "disabled",
         backDisable: "disabled"
     },
+    // used for new rule form
     newOrEditRule: {
         title: "",
         description: "",
@@ -24,6 +52,8 @@ const default_state = {
         autoCompleteText: "",
         quantifierXPath: "", // only produced by autoComplete grammar
         constraintXPath: "", // only produced by autoComplete grammar
+        sentMessages: [],
+        receivedMessages: [],
 
         guiState: {
             activeTab: "quantifier",
@@ -61,12 +91,68 @@ const default_state = {
             },
             ruleType: "" // "Must" or "MustBeEqualTo"
         }
-    },
-    exprStmtXML: ""
+    }
+
+};
+
+// used for editing existing rule
+const default_rulePanelState = {
+    editMode: false, // default must be false unless a new rule is being generated: !!props["newRule"]
+
+    title: "",
+    description: "",
+    ruleTags: [],
+    folderConstraint: "",
+    filesFolders: [],
+
+    autoCompleteText: "",
+    quantifierXPath: "", // only produced by autoComplete grammar
+    constraintXPath: "", // only produced by autoComplete grammar
+    sentMessages: [],
+    receivedMessages: [],
+
+    guiState: {
+        activeTab: "quantifier",
+        quantifier: {
+            key: "class",
+            value: "",
+            target: "follows",
+            children: {
+                "top": [],
+                "before": [],
+                "before_1": [],
+                "before_2": [],
+                "after": [],
+                "after_1": [],
+                "after_2": [],
+                "within": [],
+                "child": {}
+            }
+        },
+        constraint: {
+            key: "",
+            value: "",
+            target: "follows",
+            children: {
+                "top": [],
+                "before": [],
+                "before_1": [],
+                "before_2": [],
+                "after": [],
+                "after_1": [],
+                "after_2": [],
+                "within": [],
+                "child": {}
+            }
+        },
+        ruleType: "" // "Must" or "MustBeEqualTo"
+    }
 };
 
 /**
  * using default_state as a default value surprisingly changes its value
+ * Any incoming variable through arguments must be cloned and mutated,
+ * Direct mutation doesn't work properly (UPDATE_RULE_TABLE)
  * @param state
  * @param action
  * @returns {*} new state
@@ -117,7 +203,26 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
             return Object.assign({}, state, {tagTable: action["value"], message: "UPDATE_TAG_TABLE"});
 
         case "UPDATE_RULE_TABLE":
-            return Object.assign({}, state, {ruleTable: action["value"], message: "UPDATE_RULE_TABLE"});
+            let rules = JSON.parse(JSON.stringify(action["ruleTable"]));
+            rules = rules.map(d => {
+                return Object.assign({}, d, {
+                    rulePanelState: {
+                        ...default_rulePanelState,
+                        title: d.title,
+                        description: d.description,
+                        ruleTags: d.tags,
+                        folderConstraint: d.ruleType.constraint,
+                        filesFolders: d.ruleType.checkFor,
+                        quantifierXPath: d.quantifier.command,
+                        constraintXPath: d.constraint.command,
+                        autoCompleteText: d.grammar
+                    }
+                });
+            });
+            return Object.assign({}, state, {
+                ruleTable: rules,
+                message: "UPDATE_RULE_TABLE"
+            });
 
         case "UPDATE_RULE":
             return Object.assign({}, state, {
@@ -136,7 +241,7 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
             });
 
         case "IGNORE_FILE":
-            return Object.assign({}, state, {ignoreFile: action["value"], message: "IGNORE_FILE"});
+            return Object.assign({}, state, {ignoreFile: action["shouldIgnore"], message: "IGNORE_FILE"});
 
         case "CLICKED_ON_FORWARD":
             return Object.assign({}, state, {
@@ -172,38 +277,157 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
                 message: "CLEAR_NEW_RULE_FORM"
             });
 
-        case "EDIT_NEW_RULE_FORM": //action["value"]
-            return Object.assign({}, state, {
-                newOrEditRule: {
-                    ...state.newOrEditRule,
-                    ...action["value"]
-                }
-            });
+        case "EDIT_RULE_FORM":
+            if (action["ruleIndex"] !== -1) {
+                let rules = JSON.parse(JSON.stringify(state.ruleTable));
+                rules = rules.map(d => {
+                    let a = Object.assign({}, d);
+                    if (a.index !== action["ruleIndex"]) return a;
+                    a.rulePanelState.title = action["title"];
+                    a.rulePanelState.description = action["description"];
+                    a.rulePanelState.tags = action["ruleTags"];
+                    a.rulePanelState.folderConstraint = action["folderConstraint"];
+                    a.rulePanelState.filesFolders = action["filesFolders"];
+                    return a;
+                });
+                return Object.assign({}, state, {
+                    ruleTable: rules
+                });
+            }
+            else
+                return Object.assign({}, state, {
+                    newOrEditRule: {
+                        ...state.newOrEditRule,
+                        title: action["title"],
+                        description: action["description"],
+                        ruleTags: action["ruleTags"],
+                        folderConstraint: action["folderConstraint"],
+                        filesFolders: action["filesFolders"]
+                    }
+                });
 
-        case "EDIT_NEW_RULE_GRAMMAR_GUI_DATA":
-            return Object.assign({}, state, {
-                newOrEditRule: {
-                    ...state.newOrEditRule,
-                    ...action["value"]
-                }
-            });
+        case "CHANGE_EDIT_MODE":
+            if (action["ruleIndex"] !== -1) {
+                // deep copy, slice(0) and array.map() doesn't work
+                let rules = JSON.parse(JSON.stringify(state.ruleTable));
+                rules = rules.map(d => {
+                    let a = Object.assign({}, d);
+                    if (a.index === action["ruleIndex"]) {
+                        a.rulePanelState.editMode = action["newEditMode"];
+
+                        // reset fields of the form after cancel editing
+                        if (!action["newEditMode"])
+                            a.rulePanelState = {
+                                ...default_rulePanelState,
+                                title: d.title,
+                                description: d.description,
+                                ruleTags: d.tags,
+                                folderConstraint: d.ruleType.constraint,
+                                filesFolders: d.ruleType.checkFor,
+                                quantifierXPath: d.quantifier.command,
+                                constraintXPath: d.constraint.command,
+                                autoCompleteText: d.grammar
+                            }
+                    }
+                    return a;
+                });
+                return Object.assign({}, state, {
+                    ruleTable: rules
+                });
+            }
+            else
+                return state;
 
         case "RECEIVE_GUI_TREE":
+            if (action["ruleIndex"] !== -1) {
+                let rules = JSON.parse(JSON.stringify(state.ruleTable));
+                rules = rules.map(d => {
+                    let a = Object.assign({}, d);
+                    if (a.index !== action["ruleIndex"]) return a;
+                    a.rulePanelState.quantifierXPath = action["quantifierXPath"];
+                    a.rulePanelState.constraintXPath = action["constraintXPath"];
+                    a.rulePanelState.autoCompleteText = action["autoCompleteText"];
+                    a.rulePanelState.guiState = {
+                        ...a.rulePanelState.guiState,
+                        ...action["newTreeData"]
+                    };
+                    return a;
+                });
+                return Object.assign({}, state, {
+                    message: "RECEIVE_GUI_TREE",
+                    ruleTable: rules
+                });
+            }
+            else
+                return Object.assign({}, state, {
+                    message: "RECEIVE_GUI_TREE",
+                    newOrEditRule: {
+                        ...state.newOrEditRule,
+                        quantifierXPath: action["quantifierXPath"],
+                        constraintXPath: action["constraintXPath"],
+                        autoCompleteText: action["autoCompleteText"],
+                        guiState: {
+                            ...state.newOrEditRule.guiState,
+                            ...action["newTreeData"]
+                        }
+                    }
+                });
+
+        case "SEND_EXPR_STMT_XML":
             return Object.assign({}, state, {
-                message: "RECEIVE_GUI_TREE",
                 newOrEditRule: {
                     ...state.newOrEditRule,
-                    guiState: {
-                        ...state.newOrEditRule.guiState,
-                        ...action["value"]
-                    }
-                }
+                    sentMessages: state.newOrEditRule.sentMessages.concat([action["codeTextAndID"]])
+                },
+                message: "SEND_EXPR_STMT_XML"
             });
 
         case "RECEIVE_EXPR_STMT_XML":
             return Object.assign({}, state, {
-                exprStmtXML: action["value"],
+                newOrEditRule: {
+                    ...state.newOrEditRule,
+                    receivedMessages: state.newOrEditRule.receivedMessages.concat([action["xmlData"]])
+                },
                 message: "RECEIVE_EXPR_STMT_XML"
+            });
+
+        case "MATCHED_MESSAGES":
+            if (action["ruleIndex"] !== -1) {
+                let rules = JSON.parse(JSON.stringify(state.ruleTable));
+                rules = rules.map(d => {
+                    let a = Object.assign({}, d);
+                    if (a.index !== action["ruleIndex"]) return a;
+                    a.rulePanelState.quantifierXPath = action["quantifierXPath"];
+                    a.rulePanelState.constraintXPath = action["constraintXPath"];
+                    a.rulePanelState.sentMessages = action["sentMessages"];
+                    a.rulePanelState.receivedMessages = action["receivedMessages"];
+                    return a;
+                });
+                return Object.assign({}, state, {
+                    message: "MATCHED_MESSAGES",
+                    ruleTable: rules
+                });
+            }
+            else
+                return Object.assign({}, state, {
+                    newOrEditRule: {
+                        ...state.newOrEditRule,
+                        quantifierXPath: action["quantifierXpath"],
+                        constraintXPath: action["constraintXpath"],
+                        sentMessages: action["sentMessages"],
+                        receivedMessages: action["receivedMessages"]
+                    },
+                    message: "MATCHED_MESSAGES"
+                });
+
+        case "CLEAR_MESSAGE_LISTS":
+            return Object.assign({}, state, {
+                newOrEditRule: {
+                    ...state.newOrEditRule,
+                    sentMessages: [],
+                    receivedMessages: []
+                },
+                message: "CLEAR_MESSAGE_LISTS"
             });
 
         default:

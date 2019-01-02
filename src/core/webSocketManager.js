@@ -6,7 +6,7 @@ import {Component} from 'react';
 import {connect} from "react-redux";
 
 import {
-    expressionStatementXML, ignoreFile, updateFilePath, updateRuleTable, updateTagTable,
+    receiveExpressionStatementXML, ignoreFile, updateFilePath, updateRuleTable, updateTagTable,
     updateWS
 } from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from './ruleExecutor';
@@ -130,8 +130,7 @@ class WebSocketManager extends Component {
 
                 // after sending a piece of code EXPR_STMT
                 case "EXPR_STMT_XML":
-                    this.props.onReceiveExprStmtXML(message.data);//console.log(message.data);
-                    // PubSub.publish('EXPR_STMT_XML', [message.data]);
+                    this.props.onReceiveExprStmtXML(message.data); // {xmlText: "", messageID: ""}
                     break;
 
                 case "NEW_RULE":
@@ -210,7 +209,7 @@ function mapDispatchToProps(dispatch) {
             dispatch(ignoreFile(false))
         },
         onReceiveExprStmtXML: (data) => {
-            dispatch(expressionStatementXML(data))
+            dispatch(receiveExpressionStatementXML(data))
         }
     }
 }
