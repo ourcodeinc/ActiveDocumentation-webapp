@@ -412,8 +412,8 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
                 return Object.assign({}, state, {
                     newOrEditRule: {
                         ...state.newOrEditRule,
-                        quantifierXPath: action["quantifierXpath"],
-                        constraintXPath: action["constraintXpath"],
+                        quantifierXPath: action["quantifierXPath"],
+                        constraintXPath: action["constraintXPath"],
                         sentMessages: action["sentMessages"],
                         receivedMessages: action["receivedMessages"]
                     },

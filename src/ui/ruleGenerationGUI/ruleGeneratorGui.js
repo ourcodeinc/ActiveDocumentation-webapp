@@ -5,7 +5,7 @@
 import React, {Component} from 'react';
 import '../../App.css';
 
-import {Tabs, Tab, FormGroup, HelpBlock} from 'react-bootstrap';
+import {Tabs, Tab, HelpBlock} from 'react-bootstrap';
 import {RootCloseWrapper} from "react-overlays";
 import {connect} from "react-redux";
 
@@ -26,7 +26,6 @@ class RuleGeneratorGui extends Component {
             constraint: props.constraint,
             quantifier: props.quantifier,
             activeTab: props.activeTab,
-            ruleType: props.ruleType,
             GuiGrammar: ""
         };
 
@@ -45,7 +44,6 @@ class RuleGeneratorGui extends Component {
                 this.state.constraint = this.ruleI.rulePanelState.guiState.constraint;
                 this.state.quantifier = this.ruleI.rulePanelState.guiState.quantifier;
                 this.state.activeTab = this.ruleI.rulePanelState.guiState.activeTab;
-                this.state.ruleType = this.ruleI.rulePanelState.guiState.ruleType;
             }
         }
 
@@ -54,24 +52,6 @@ class RuleGeneratorGui extends Component {
     render() {
         return (
             <div style={{clear: "both", marginTop: "20px"}} className={this.class}>
-
-                {/* Radio buttons - unnecessarily complex */}
-                <FormGroup>
-                    <HelpBlock>Rule Type:</HelpBlock>
-                    <div className="radio"><label className="radio-inline">
-                        <input type="radio" name="ruleTypeOptions"
-                               value={"Must"}
-                               checked={this.state.ruleType === "" ? true : this.state.ruleType === "Must"}
-                               onChange={(e) => this.setState({ruleType: e.target.value})}/>
-                        Quantifier "must" have additional restriction</label></div>
-                    <div className="radio"><label className="radio-inline">
-                        <input type="radio" name="ruleTypeOptions"
-                               value={"MustBeEqualTo"}
-                               checked={this.state.ruleType === "MustBeEqualTo"}
-                               onChange={(e) => this.setState({ruleType: e.target.value})}/>
-                        Quantifier "must be equal to" Constraint</label></div>
-                </FormGroup>
-
                 <Tabs animation={true} id={"rule_generator_gui_tabs"} activeKey={this.state.activeTab}
                       onSelect={(key) => this.setState({activeTab: key})}>
                     <Tab eventKey={"quantifier"} title={"Quantifier Query"} animation={true}>
@@ -230,7 +210,7 @@ class RuleGeneratorGui extends Component {
         if (result === "MustBeEqualTo") {
             let grammarTextQ = this.traverseChildrenGrammar(this.state.quantifier);
             let grammarTextC = this.traverseChildrenGrammar(this.state.constraint);
-            this.setState({ruleType: "MustBeEqualTo", GuiGrammar: grammarTextQ + " must be equal to " + grammarTextC});
+            this.setState({GuiGrammar: grammarTextQ + " must be equal to " + grammarTextC});
         }
         else {
             let tempChildren = {
@@ -248,7 +228,7 @@ class RuleGeneratorGui extends Component {
             let tempTree = {...nodeC, children: tempChildren};
             let grammarTextQ = this.traverseChildrenGrammar(this.state.quantifier);
             let grammarTextC = this.traverseChildrenGrammar(tempTree, true);
-            this.setState({ruleType: "Must", GuiGrammar: grammarTextQ + " must " + grammarTextC});
+            this.setState({GuiGrammar: grammarTextQ + " must " + grammarTextC});
         }
     };
 
@@ -295,7 +275,6 @@ function mapStateToProps(state) {
         activeTab: state.newOrEditRule.guiState.activeTab,
         quantifier: state.newOrEditRule.guiState.quantifier,
         constraint: state.newOrEditRule.guiState.constraint,
-        ruleType: state.newOrEditRule.guiState.ruleType
     };
 }
 

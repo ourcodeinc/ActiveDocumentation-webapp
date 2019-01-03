@@ -26,6 +26,7 @@ class RuleGenerationComponent extends Component {
             constraintXPath: "",
             error: "",
             showAlert: true,
+            autoCompleteText: "",
             autoCompleteValidationState: null // error, success, warning, null
         };
 
@@ -33,11 +34,6 @@ class RuleGenerationComponent extends Component {
         // the component is updated after changing this value because the state is also changing
         // otherwise call this.forceUpdate()
         this.autoCompleteCaretPosition = -1;
-
-        // can't be part of state, because after clicking on auto-complete suggestion
-        // and then out of its container, the setState() in onUpdateText doesn't update the text instantly.
-        // props is a read-only element
-        this.autoCompleteText = "";
 
         // received through react props.
         this.ruleIndex = props.ruleIndex;
@@ -54,7 +50,7 @@ class RuleGenerationComponent extends Component {
                 // updating the rule
                 this.state.quantifierXPath = this.ruleI.rulePanelState.quantifierXPath;
                 this.state.constraintXPath = this.ruleI.rulePanelState.constraintXPath;
-                this.autoCompleteText = this.ruleI.rulePanelState.autoCompleteText;
+                this.state.autoCompleteText = this.ruleI.rulePanelState.autoCompleteText;
             }
         }
         // new rule
@@ -62,7 +58,7 @@ class RuleGenerationComponent extends Component {
         {
             this.state.quantifierXPath = props.quantifierXPath;
             this.state.constraintXPath = props.constraintXPath;
-            this.autoCompleteText = props.autoCompleteText;
+            this.state.autoCompleteText = props.autoCompleteText;
         }
 
 
@@ -90,10 +86,10 @@ class RuleGenerationComponent extends Component {
                     </div>
                 )}
                 <FormGroup validationState={this.state.autoCompleteValidationState}>
-                    <RuleGeneratorText defaultValue={this.autoCompleteText}
+                    <RuleGeneratorText defaultValue={this.state.autoCompleteText}
                                        onBlur={() => {
                                            if (this.shouldAlert) {
-                                               verifyTextBasedOnGrammar(this.autoCompleteText)
+                                               verifyTextBasedOnGrammar(this.state.autoCompleteText)
                                                    .then((data) => {
                                                        if (this._mounted)
                                                            this.setState({
@@ -104,7 +100,7 @@ class RuleGenerationComponent extends Component {
                                                            });
                                                        // compute and dispatch gui tree for quantifier and constraint
                                                        generateGuiTrees(data.grammarTree)
-                                                           .then((tree) => this.props.onReceiveGuiTree(this.ruleIndex, tree, this.autoCompleteText, data.quantifierXPath, data.constraintXPath));
+                                                           .then((tree) => this.props.onReceiveGuiTree(this.ruleIndex, tree, this.state.autoCompleteText, data.quantifierXPath, data.constraintXPath));
                                                    })
                                                    .catch((error) => this.processLanguageProcessingError(error));
                                                this.shouldAlert = false;
@@ -112,7 +108,7 @@ class RuleGenerationComponent extends Component {
                                        }}
                                        onUpdateText={(text) => {
                                            this.shouldAlert = true;
-                                           this.autoCompleteText = text;
+                                           this.setState({autoCompleteText: text});
                                        }}
                                        caretPosition={(() => {
                                            let newFocus = this.autoCompleteCaretPosition;
@@ -146,8 +142,8 @@ class RuleGenerationComponent extends Component {
 
             // existing rule
             if (this.ruleIndex !== -1) {
-                this.autoCompleteText = this.ruleI.rulePanelState.autoCompleteText;
                 this.setState({
+                    autoCompleteText: this.ruleI.rulePanelState.autoCompleteText,
                     quantifierXPath: this.ruleI.rulePanelState.quantifierXPath,
                     constraintXPath: this.ruleI.rulePanelState.constraintXPath,
                     error: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "" : this.state.error
@@ -156,8 +152,8 @@ class RuleGenerationComponent extends Component {
             // new rule
             else
             {
-                this.autoCompleteText = nextProps.autoCompleteText;
                 this.setState({
+                    autoCompleteText: nextProps.autoCompleteText,
                     quantifierXPath: nextProps.quantifierXPath,
                     constraintXPath: nextProps.constraintXPath,
                     error: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "" : this.state.error
@@ -199,12 +195,12 @@ class RuleGenerationComponent extends Component {
             for (let j = otherIndex; j < receivedMessages.length; j++) {
                 // matched messages
                 if (+sentMessages[index]["messageID"] === +receivedMessages[j]["messageID"]) {
-                    let resultXpath = this.traverseReceivedXml(receivedMessages[j]["xmlText"]);
-                    // replace all occurrences of textAndXpath.originalText
-                    let copiedQXpath = quantifierXPath.split("'" + sentMessages[index]["codeText"] + "'");
-                    quantifierXPath = copiedQXpath.join(resultXpath);
-                    let copiedCXpath = constraintXPath.split("'" + sentMessages[index]["codeText"] + "'");
-                    constraintXPath = copiedCXpath.join(resultXpath);
+                    let resultXPath = this.traverseReceivedXml(receivedMessages[j]["xmlText"]);
+                    // replace all occurrences of textAndXPath.originalText
+                    let copiedQXPath = quantifierXPath.split("'" + sentMessages[index]["codeText"] + "'");
+                    quantifierXPath = copiedQXPath.join(resultXPath);
+                    let copiedCXPath = constraintXPath.split("'" + sentMessages[index]["codeText"] + "'");
+                    constraintXPath = copiedCXPath.join(resultXPath);
 
                     matchedIndices.sent.push(index);
                     matchedIndices.received.push(j);
@@ -281,9 +277,9 @@ class RuleGenerationComponent extends Component {
         };
 
         // result xpath: 'src:expr[....]' where 'src:expr[' and the final ']' is extra.
-        let resultXpath = traverseChildren(resultValidNode);
-        resultXpath = resultXpath.substring(9, resultXpath.length - 1);
-        return resultXpath;
+        let resultXPath = traverseChildren(resultValidNode);
+        resultXPath = resultXPath.substring(9, resultXPath.length - 1);
+        return resultXPath;
     }
 
 
@@ -378,8 +374,8 @@ function mapDispatchToProps(dispatch) {
         onReceiveGuiTree: (ruleIndex, treeData, autoCompleteText, quantifierXPath, constraintXPath) => {
             dispatch(receiveGuiTree(ruleIndex, treeData, autoCompleteText, quantifierXPath, constraintXPath))
         },
-        onMatchMessages: (ruleIndex, sentMessages, receivedMessages, quantifierXpath, constraintXpath) => {
-            dispatch(matchMessages(ruleIndex, sentMessages, receivedMessages, quantifierXpath, constraintXpath))
+        onMatchMessages: (ruleIndex, sentMessages, receivedMessages, quantifierXPath, constraintXPath) => {
+            dispatch(matchMessages(ruleIndex, sentMessages, receivedMessages, quantifierXPath, constraintXPath))
         }
     }
 }

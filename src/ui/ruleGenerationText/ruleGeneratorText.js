@@ -114,7 +114,7 @@ class RuleGeneratorText extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps["caretPosition"] && nextProps["caretPosition"] !== -1) {
             let focus = nextProps["caretPosition"];
-            let data = this.grammarSuggestion(this.state.myText, -1, focus);
+            let data = this.grammarSuggestion(this.state.myText, focus);
             this.setState({
                     myText: nextProps.defaultValue === "" ? "" : this.state.myText,
                     selectionStart: -1,
@@ -138,7 +138,7 @@ class RuleGeneratorText extends Component {
         let start = e.target.selectionStart === e.target.selectionEnd ? -1 : e.target.selectionStart;
         let end = e.target.selectionEnd;
         let newText = e.target.value;
-        let data = this.grammarSuggestion(e.target.value, start, end);
+        let data = this.grammarSuggestion(e.target.value, end);
         this.setState({
                 myText: newText,
                 selectionStart: start,
@@ -160,7 +160,7 @@ class RuleGeneratorText extends Component {
     onClickTextArea(e) {
         let start = e.target.selectionStart === e.target.selectionEnd ? -1 : e.target.selectionStart;
         let end = e.target.selectionStart === e.target.selectionEnd ? e.target.selectionStart : e.target.selectionEnd;
-        let data = this.grammarSuggestion(this.state.myText, start, end);
+        let data = this.grammarSuggestion(this.state.myText, end);
             this.setState({
                 selectionStart: start,
                 selectionEnd: end,
@@ -180,7 +180,7 @@ class RuleGeneratorText extends Component {
         let myText = e.target.value;
 
         if (e.keyCode === 37 || e.keyCode === 39) { // left and right arrows
-            let data = this.grammarSuggestion(e.target.value, start, end);
+            let data = this.grammarSuggestion(e.target.value, end);
             this.setState({
                 selectionStart: start,
                 selectionEnd: end,
@@ -250,11 +250,10 @@ class RuleGeneratorText extends Component {
     /**
      *
      * @param myText full text
-     * @param selectionStart based on state.selectionStart
      * @param selectionEnd based on state.selectionEnd
      * @returns {Array} array of objects: suggestion: "", info:""
      */
-    grammarSuggestion(myText, selectionStart, selectionEnd) {
+    grammarSuggestion(myText, selectionEnd) {
 
         /**
          * lemmatize the words in the input string
@@ -368,16 +367,13 @@ class RuleGeneratorText extends Component {
 
         let isConnectorWord = TextConstants.connectors.indexOf(lastWord) !== -1;
         let isKeyword = TextConstants.keywords.indexOf(lastWord) !== -1;
-
-        // if the last word is random letters!
-        if (!isConnectorWord && !isKeyword) lastWord = wordsArray.length >= 2 ? wordsArray[wordsArray.length - 2] : lastWord;
-        if (!isConnectorWord && !isKeyword) lastWordIndex = wordsArray.length >= 2 ? wordsArray.length - 2 : lastWordIndex;
-        let isSecondWord = lastWordIndex !== (wordsArray.length - 1);
-
-
+        let isWord = lastWord ? lastWord.startsWith("\"") : false;
         let xWord; // must be in TextConstants.keywords
-        let lastWhereIndex = wordsArray.lastIndexOf("where");
         let results = [], beforeSuggText = "", suggText = "",  infoText = "";
+        let auxWordArray = wordsArray.map((w, i) => {
+            return (w === "where" && ["not", "equal", "include", "start", "end"].indexOf(wordsArray[i + 1]) === -1) ? 1 : 0
+        });
+        let lastWhereIndex = auxWordArray.lastIndexOf(1);
 
         /**
          * try to find 2-part keywords
@@ -403,6 +399,27 @@ class RuleGeneratorText extends Component {
             if (TextConstants.keywords.indexOf(wordsArray[index]) !== -1) return wordsArray[index];
             return "";
         }
+
+        if (isWord) {
+            // "someWord["]
+            if (!lastWord.endsWith("\""))
+                return [RuleGeneratorText.createGrammarSuggestion("\"", lastWord)];
+            // … [X] where have name/annotation/etc. where not? equal to "someWord" [based on X]
+            xWord = selectXWord(lastWhereIndex - 1);
+            results.push(RuleGeneratorText.createGrammarSuggestion("and have", xWord));
+            results.push(RuleGeneratorText.createGrammarSuggestion("or have", xWord));
+            results.push(RuleGeneratorText.createGrammarSuggestion("of", xWord));
+
+            if (wordsArray.indexOf("must") === -1)
+                results.push(RuleGeneratorText.createGrammarSuggestion("must", selectXWord(0)));
+
+            return results;
+        }
+
+        // if the last word is random letters!
+        if (!isConnectorWord && !isKeyword) lastWord = wordsArray.length >= 2 ? wordsArray[wordsArray.length - 2] : lastWord;
+        if (!isConnectorWord && !isKeyword) lastWordIndex = wordsArray.length >= 2 ? wordsArray.length - 2 : lastWordIndex;
+        let isSecondWord = lastWordIndex !== (wordsArray.length - 1);
 
         switch (lastWord) {
             case "where":
@@ -754,11 +771,10 @@ class RuleGeneratorText extends Component {
             caretPosition = this.state.selectionStart;
             newText = myText.slice(0, this.state.selectionStart) + suggestion + myText.slice(this.state.selectionEnd);
             focus = caretPosition + suggestion.length;
-
         }
 
         else {
-            let caretPosition = this.state.selectionEnd;
+            caretPosition = this.state.selectionEnd;
             let beforeCaret = caretPosition > 0 ? myText[caretPosition - 1] : null;
             let afterCaret = myText.length - 1 > caretPosition ? myText[caretPosition] : null;
 
@@ -783,11 +799,11 @@ class RuleGeneratorText extends Component {
             // -> add suggestion + space at caret
             else if (beforeCaret === " " || !afterCaret) {
                 newText = myText.slice(0, caretPosition) + suggestion + " " + myText.slice(caretPosition);
-                focus = newText.length;
+                focus = caretPosition + suggestion.length;
             }
         }
         //focus = caretPosition + suggestion.length;
-        let data = this.grammarSuggestion(newText, -1, focus)
+        let data = this.grammarSuggestion(newText, focus);
         this.setState({
                 myText: newText,
                 selectionStart: -1,
@@ -875,7 +891,7 @@ class RuleGeneratorText extends Component {
             focus = ((beforeSuggestion.length > 0 ? beforeSuggestion + " " : "") + suggestion["phraseText"] + " ").length;
 
         }
-        let data = this.grammarSuggestion(newText, -1, focus);
+        let data = this.grammarSuggestion(newText, focus);
         this.setState({
                 myText: newText,
                 selectionStart: -1,
