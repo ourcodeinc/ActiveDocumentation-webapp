@@ -220,7 +220,7 @@ class GuiComponent extends React.Component {
                      style={cons.value.type === "wideText" ? {width: "70%"} : {}}>
                     <input type={"text"}
                            className={"inputText" + (cons["key"].includes(" not ") ? " redText" : "")}
-                           value={cons["text"]}
+                           value={typeof cons["text"] === "string" ? cons["text"] : ""}
                            placeholder={cons.value.placeholder}
                            onBlur={(e) => {
                                cons.text = e.target.value;

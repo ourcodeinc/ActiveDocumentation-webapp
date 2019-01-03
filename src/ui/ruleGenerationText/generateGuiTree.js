@@ -51,7 +51,7 @@ const createQuantifierTree = (tree) => {
 /**
  * create the gui tree based on the grammar parse tree for constraint
  * @param tree
- * @returns {{key: string, value: string, target: string, children: {top: Array, before_1: Array, before_2: Array, after_1: Array, after_2: Array, within: Array, child: {}}, text: string}}
+ * @returns {{key: string, value: string, target: string, children: {top: Array, before_1: Array, before_2: Array, after_1: Array, after_2: Array, within: Array, child: {}}, text: number}}
  */
 const createConstraintTree = (tree) => {
     let combinedNodes = combineNode(tree);
@@ -72,6 +72,14 @@ const createConstraintTree = (tree) => {
  */
 const reorderMustClause = (treeNode) => {
     let newNode = {...treeNode};
+
+    function camelCase(words) {
+        let wordArray = words.split(" ");
+        let str = "";
+        wordArray.forEach(w => str += w.charAt(0).toUpperCase() + w.slice(1));
+        return str;
+    }
+
     if (newNode.nodeType === "MustClauseContext") {
         // it has 3 children: [0]..Context or TerminalNodeImpl e.g. "function ", [1]TerminalNodeImpl "must ", [2]..ExpressionContext
 
@@ -101,9 +109,8 @@ const reorderMustClause = (treeNode) => {
             // the node does not have condition or parent nodes
             if (newNode.children[0].nodeType === "TerminalNodeImpl") {
                 let nodeType = newNode.children[0].text.charAt(0).toUpperCase() + newNode.children[0].text.trim().slice(1);
-
                 newNode.children[0] = {
-                    nodeType: pluralize(nodeType) + "Context",
+                    nodeType: camelCase(pluralize(nodeType)) + "Context",
                     children: [{...newNode.children[0]}, {
                         nodeType: nodeType + "ConditionContext",
                         children: [{...newNode.children[2]}]

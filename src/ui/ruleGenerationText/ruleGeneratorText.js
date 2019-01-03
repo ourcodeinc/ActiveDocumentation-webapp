@@ -4,6 +4,7 @@
 
 
 import React, {Component, Fragment} from 'react';
+import ReactDOM from 'react-dom'
 import {TextConstants} from "./textConstant";
 import {FormControl, FormGroup, ListGroup, ListGroupItem, Panel} from "react-bootstrap";
 import posTagger from 'wink-pos-tagger';
@@ -61,9 +62,16 @@ class RuleGeneratorText extends Component {
                                             <Panel.Title componentClass="h3">Sample Templates</Panel.Title>
                                         </Panel.Heading>
                                         <ListGroup>
-                                            {TextConstants.templates.map((word, i) =>
+                                            {TextConstants.templates.map((template, i) =>
                                                 (<ListGroupItem key={i}
-                                                                onClick={() => this.setState({myText: word})}>{word}</ListGroupItem>)
+                                                                onClick={() => {
+                                                                    ReactDOM.findDOMNode(this.queryText).focus();
+                                                                    this.setState({
+                                                                        myText: template,
+                                                                        selectionStart: -1,
+                                                                        selectionEnd: template.length,
+                                                                    })
+                                                                }}>{template}</ListGroupItem>)
                                             )}
                                         </ListGroup>
                                     </Fragment>
