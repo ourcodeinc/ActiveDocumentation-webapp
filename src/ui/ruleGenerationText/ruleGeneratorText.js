@@ -124,18 +124,18 @@ class RuleGeneratorText extends Component {
             let focus = nextProps["caretPosition"];
             let data = this.grammarSuggestion(this.state.myText, focus);
             this.setState({
-                    myText: nextProps.defaultValue === "" ? "" : this.state.myText,
+                    myText: nextProps.defaultValue ? nextProps.defaultValue : this.state.myText,
                     selectionStart: -1,
                     selectionEnd: focus,
                     grammarSuggestion: data,
                     phraseSuggestion: this.phraseSuggestion(this.state.myText, -1, focus)
                 },
-                () => this.setCaretPosition("queryText", focus),
+                () => this.setCaretPosition("queryText", focus)
             );
 
         }
         else
-            this.setState({myText: nextProps.defaultValue === "" ? "" : this.state.myText})
+            this.setState({myText: nextProps.defaultValue ? nextProps.defaultValue : this.state.myText})
     }
 
     /**
