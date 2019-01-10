@@ -14,7 +14,7 @@ class RuleGeneratorText extends Component {
         super(props);
 
         this.state = {
-            myText: props.hasOwnProperty("defaultValue") ? props.defaultValue : "",
+            myText: (props.hasOwnProperty("defaultValue") && props.defaultValue) ? props.defaultValue : "",
             selectionStart: -1,
             selectionEnd: 0,
             grammarSuggestion: [],
