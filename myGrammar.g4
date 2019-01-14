@@ -253,7 +253,8 @@ functionExpression
     | have (
               annotations | specifiers | names | parameters | returnValues
               | declarationStatements | expressionStatements
-              ) SPACE?
+              )
+    | functionExpression SPACE
     ;
 
 /*
@@ -279,9 +280,8 @@ abstractFunctionCondition
 abstractFunctionExpression
     : LPAREN abstractFunctionExpression RPAREN
     | left=abstractFunctionExpression op=binary right=abstractFunctionExpression
-    | have (
-              annotations | specifiers | names | parameters
-              ) SPACE?
+    | have (annotations | specifiers | names | parameters)
+    | abstractFunctionExpression SPACE
     ;
 
 
@@ -311,7 +311,8 @@ constructorExpression
     | have (
               annotations | specifiers | parameters | returnValues
               | declarationStatements | expressionStatements
-              ) SPACE?
+             )
+    | constructorExpression SPACE
     ;
 
 /*
@@ -421,9 +422,8 @@ declarationStatementCondition
 declarationStatementExpression
     : LPAREN declarationStatementExpression RPAREN
     | left=declarationStatementExpression op=binary right=declarationStatementExpression
-    | have (
-              annotations | specifiers | types | names | initialValues
-              ) SPACE?
+    | have ( annotations | specifiers | types | names | initialValues )
+    | declarationStatementExpression SPACE
     ;
 
 
@@ -495,7 +495,8 @@ classExpression
     | have (
               annotations | specifiers | names | extensions | implementations | functions | interfaces
               | abstractFunctions | constructors | declarationStatements | classes | returnValues
-              ) SPACE?
+              )
+    | classExpression SPACE
     ;
 
 /*
@@ -521,5 +522,6 @@ interfaceCondition
 interfaceExpression
     : LPAREN interfaceExpression RPAREN
     | left=interfaceExpression op=binary right=interfaceExpression
-    | have (annotations | specifiers | names | abstractFunctions | declarationStatements | interfaces) SPACE?
+    | have (annotations | specifiers | names | abstractFunctions | declarationStatements | interfaces)
+    | interfaceExpression SPACE
     ;
