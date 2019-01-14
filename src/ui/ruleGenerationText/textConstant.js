@@ -102,11 +102,45 @@ export class TextConstants {
 
 
     static templates = [
-        "function must have name",
-        "abstract function must have annotation",
-        "constructor must have expression statement",
-        "class must be equal to class",
-        "class where have annotation must have name"
-    ]
+        "function must have name ",
+        "abstract function must have annotation ",
+        "constructor must have expression statement ",
+        "class must be equal to class ",
+        "class where have annotation must have name ",
+        "class where (have function where have name where equal to \"execute\") or (have extension where equal to \"Command\") " +
+        "must have annotation where equal to \"Subclass(index=true)\" "
+    ];
+
+
+    static error_messages = {
+        100: "'where' must be used after a valid keyword.",
+        101: "'have' must be used after a keyword and 'where'.",
+        102: "'be' must be used after a valid keyword and 'must'.",
+        103: "'must' should be used only once in the rule.",
+
+
+        200: "'must' must be used as keyword + '… must …'.", // not used
+        201: "'equal' must be used as  valid keyword + 'must be equal to', 'where equal to', 'where not equal to'.",
+        202: "'to' must be used as valid keyword + 'where equal to', 'must be equal to'.",
+        203: "'not' must be used as valid keyword + 'where not' + 'equal to' or 'include/start with/end with' only for 'name'.",
+        204: "'and'/'or' must be used as keyword + 'where (…) and/or (…)', 'where … and/or …'.",
+        205: "'include' must be used as valid keyword + 'where include', 'where not include'.",
+        206: "'start' must be used as keyword + 'where start with', keyword + 'where not start with'.",
+        207: "'end' must be used as keyword + 'where end with', keyword + 'where not end with'.",
+        208: "'with' must be used as 'end with', keyword + 'start with'.",
+        209: "')' must be used as keyword + 'where (…)', '((…) and/or (…))'.",
+        210: "'(' must be used as valid keyword + 'where ( have', '((…) and/or (…))'.",
+        211: "Parenthesis must be paired.",
+        212: "'of' must be used as keyword + 'of', keyword + 'where … of'.",
+
+
+        300: "The word before 'where' is not a valid keyword.",
+        301: "The word before 'equal' is not a valid keyword.", // not used
+        302: "The keyword does not have a restriction defined by 'have'.",
+        303: "'The keyword before the corresponding open parenthesis is not valid.",
+        304: "The first word in the rule is not a valid keyword.",
+
+        400: "The input text is not valid. See templates as an example."
+    }
 
 }

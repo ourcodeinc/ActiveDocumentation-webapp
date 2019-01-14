@@ -55,40 +55,25 @@ class RuleGeneratorText extends Component {
                         />
                         <div ref={(node) => this.suggestionDivRef = node} className={"suggestionDiv"}>
                             <Panel bsStyle="default">
-
-                                {this.state.myText !== "" ? null : (
-                                    <Fragment>
-                                        <Panel.Heading>
-                                            <Panel.Title componentClass="h3">Sample Templates</Panel.Title>
-                                        </Panel.Heading>
-                                        <ListGroup>
-                                            {TextConstants.templates.map((template, i) =>
-                                                (<ListGroupItem key={i}
-                                                                onClick={() => {
-                                                                    ReactDOM.findDOMNode(this.queryText).focus();
-                                                                    this.setState({
-                                                                        myText: template,
-                                                                        selectionStart: -1,
-                                                                        selectionEnd: template.length,
-                                                                    })
-                                                                }}>{template}</ListGroupItem>)
-                                            )}
-                                        </ListGroup>
-                                    </Fragment>
-                                )}
-
                                 {this.state.grammarSuggestion.length === 0 ? null : (
                                     <Fragment>
                                         <Panel.Heading>
                                             <Panel.Title componentClass="h3">Grammar</Panel.Title>
                                         </Panel.Heading>
                                         <ListGroup>
-                                            {this.state.grammarSuggestion.map((word, i) =>
-                                                (<ListGroupItem key={i}
-                                                                onClick={() => this.updateGrammarText(word.suggestion)}>
-                                                    <span style={{color: "#999999"}}> {word.information} </span>
-                                                    {word.suggestion}
-                                                </ListGroupItem>)
+                                            {this.state.grammarSuggestion.map((item, i) =>
+                                                item.type === "suggestion" ?
+                                                    (<ListGroupItem key={i}
+                                                                    onClick={() => this.updateGrammarText(item.suggestion)}>
+                                                        <span
+                                                            style={{color: "#999999"}}> {item.information + " "}</span>
+                                                        {item.suggestion}
+                                                    </ListGroupItem>)
+                                                    : item.type === "error" ?
+                                                    (<ListGroupItem key={i}>
+                                                        <span style={{color: "#99555a"}}> {item.information}</span>
+                                                    </ListGroupItem>)
+                                                    : null
                                             )}
                                         </ListGroup>
                                     </Fragment>
@@ -105,6 +90,30 @@ class RuleGeneratorText extends Component {
                                                                 onClick={() => this.updatePhraseText(sug)}>
                                                     {sug.phraseText}
                                                 </ListGroupItem>)
+                                            )}
+                                        </ListGroup>
+                                    </Fragment>
+                                )}
+                                {this.state.grammarSuggestion.filter(d => d.type === "suggestion").length !== 0 || this.state.phraseSuggestion.length !== 0 ? null : (
+                                    <Fragment>
+                                        <Panel.Heading>
+                                            <Panel.Title componentClass="h3">Sample Templates</Panel.Title>
+                                        </Panel.Heading>
+                                        <ListGroup>
+                                            {TextConstants.templates.map((template, i) =>
+                                                (<ListGroupItem key={i}
+                                                                onClick={() => {
+                                                                    ReactDOM.findDOMNode(this.queryText).focus();
+                                                                    this.setState({
+                                                                            myText: template,
+                                                                            selectionStart: -1,
+                                                                            selectionEnd: template.length,
+                                                                        },
+                                                                        () => {
+                                                                            this.setCaretPosition("queryText", template.length);
+                                                                            this.onUpdateText(template)
+                                                                        })
+                                                                }}>{template}</ListGroupItem>)
                                             )}
                                         </ListGroup>
                                     </Fragment>
@@ -259,9 +268,26 @@ class RuleGeneratorText extends Component {
      *
      * @param myText full text
      * @param selectionEnd based on state.selectionEnd
-     * @returns {Array} array of objects: suggestion: "", info:""
+     * @returns {Array} array of objects: suggestion: "", info:"", type: "suggestion" or "error"
      */
     grammarSuggestion(myText, selectionEnd) {
+        try {
+            return this.grammarSuggestion_try_catch(myText, selectionEnd);
+        }
+        catch (e) {
+            console.log("error in 'grammarSuggestion' function :");
+            console.log(e);
+            return [];
+        }
+    }
+
+    /**
+     *
+     * @param myText full text
+     * @param selectionEnd based on state.selectionEnd
+     * @returns {Array} array of objects: suggestion: "", info:"", type: "suggestion" or "error"
+     */
+    grammarSuggestion_try_catch(myText, selectionEnd) {
 
         /**
          * lemmatize the words in the input string
@@ -300,39 +326,87 @@ class RuleGeneratorText extends Component {
             let tagger = posTagger();
             let pos = tagger.tagSentence(input);
             let nouns = [];
-            pos.forEach(node => {
-                if (node.pos === "NN" || node.pos === "NNS")
-                    nouns.push(!node.lemma ? node.value : node.lemma);
-            });
+
+            // find nouns outside of paired parenthesis
+            let unresolvedCloseParen = 0;
+            for (let i = pos.length - 1; i > -1; i--) {
+                if (pos[i].value === ")")
+                    unresolvedCloseParen++;
+                else if (pos[i].value === "(") {
+                    if (unresolvedCloseParen > 0)
+                        unresolvedCloseParen--;
+                }
+                else if ((pos[i].pos === "NN" || pos[i].pos === "NNS") && unresolvedCloseParen === 0) {
+                    nouns.push(!pos[i].lemma ? pos[i].value : pos[i].lemma);
+                    if (i > 0 && pos[i].lemma && pos[i - 1].lemma) {
+                        if (pos[i - 1].lemma === "abstract" && pos[i].lemma === "function") nouns.push("abstract function");
+                        if (pos[i - 1].lemma === "return" && pos[i].lemma === "value") nouns.push("return value");
+                        if (pos[i - 1].lemma === "declaration" && pos[i].lemma === "statement") nouns.push("declaration statement");
+                        if (pos[i - 1].lemma === "expression" && pos[i].lemma === "statement") nouns.push("expression statement");
+                        if (pos[i - 1].lemma === "initial" && pos[i].lemma === "value") nouns.push("initial value");
+                    }
+                }
+            }
             return nouns;
         };
 
         /**
-         *
          * @param input array of words and letters including "(" and ")"
          * @returns number index of "(" for ")" -2: error; -1: not found
          */
-        const findCorrespondingOpenParanIndex =(input) => {
-            let openCloseParan = [];
+        const findCorrespondingOpenParenIndex = (input) => {
+            let unresolvedCloseParen = 0;
             for (let i = input.length - 1; i > -1; i--) {
                 if (input[i] === ")")
-                    openCloseParan.push(")");
+                    unresolvedCloseParen++;
                 else if (input[i] === "(") {
-                    if (openCloseParan.length === 0)
-                        return -2;
-                    else if (openCloseParan.length === 1)
-                        return i;
-                    else
-                        openCloseParan.pop();
+                    if (unresolvedCloseParen === 0) return -2;
+                    else if (unresolvedCloseParen === 1) return i;
+                    else unresolvedCloseParen--;
                 }
             }
             return -1;
         };
 
         /**
-         * this block is only for cases when the last word is not finished yet
-         * like: function where have an
-         * because otherwise lemmatization will remove 'an' and 'a' and other determiners
+         * skip 'where' in paired pair of parenthesis
+         * @param input array of strings
+         * @returns modified array of words, replaced `skipped' instead of `where`
+         */
+        const ignoreWhereInParen = (input) => {
+            let copiedInput = input.map(a => a);
+            let unresolvedCloseParen = 0;
+            for (let i = input.length - 1; i > -1; i--) {
+                if (input[i] === ")")
+                    unresolvedCloseParen++;
+                else if (input[i] === "(") {
+                    if (unresolvedCloseParen === 0)
+                        return copiedInput;
+                    else if (unresolvedCloseParen === 1)
+                        return copiedInput;
+                    else
+                        unresolvedCloseParen--;
+                }
+                else if (input[i] === "where" && unresolvedCloseParen > 0) {
+                    copiedInput[i] = "skipped";
+                }
+            }
+            return copiedInput;
+        };
+
+        /**
+         * creating error message
+         * @param errorMessageNumber
+         * @return {[]} array with a single element
+         */
+        const errorGenerator = (errorMessageNumber) => {
+            return [{suggestion: "", information: TextConstants.error_messages[errorMessageNumber], type: "error"}]
+        };
+
+
+        /*
+         * determines if the last word is finished yet or not
+         * like: function where have an[notation]
          */
         if (myText === "") return [];
         let caretPosition = selectionEnd;
@@ -341,44 +415,51 @@ class RuleGeneratorText extends Component {
 
         let wordsArray = [];
 
-        /**
-         * this block is only for cases when the last word is not finished yet
-         * like: function where have an
-         * because otherwise lemmatization will remove 'an' and 'a' and other determiners
+        /*
+         * lemmatization
+         * If the last word is not finished yet, it is removed from the list of words
+         * because in lemmatization, 'an' and 'a' and other determiners are removed, e.g. an(notation)
+         * Then it is pushed back.
          */
         let text = myText.slice(0, caretPosition);
         let typingWord = isMiddleOfWord ? text.split(" ").pop() : "";
         let toLemmatize = isMiddleOfWord ? text.split(" ").slice(0, text.split(" ").length - 1).join(" ") : text;
+        toLemmatize.replace(/\( /g, " ( ").replace(/\) /g, " ) ");
         wordsArray = toLemmatize !== "" ? (lemmatizeWords(toLemmatize)).split(" ") : [];
-        if (typingWord !== "") wordsArray.push(typingWord);
+        if (isMiddleOfWord) wordsArray.push(typingWord);
 
-        let lastWord = wordsArray[wordsArray.length - 1];
+        // lastWord is the main part used for suggestions
+        let lastWord = wordsArray[wordsArray.length - 1].toLowerCase();
         let lastWordIndex = wordsArray.length - 1;
 
         // complete incomplete connectors as the last word
-        if (["wh", "whe", "wher"].includes(lastWord))
-            lastWord = "where";
-        else if (["ha", "hav"].includes(lastWord))
-            lastWord = "have";
-        else if (["mu", "mus"].includes(lastWord))
-            lastWord = "must";
-        else if (["eq", "equ", "equa"].includes(lastWord))
-            lastWord = "equal";
-        else if (["inc", "incl", "inclu", "includ"].includes(lastWord))
-            lastWord = "include";
-        else if (["st", "sta", "star"].includes(lastWord))
-            lastWord = "start";
-        else if (["en"].includes(lastWord))
-            lastWord = "end";
-        else if (["wi", "wit"].includes(lastWord))
-            lastWord = "with";
+        if (isMiddleOfWord) {
+            if (["wh", "whe", "wher"].includes(lastWord))
+                lastWord = "where";
+            else if (["ha", "hav"].includes(lastWord))
+                lastWord = "have";
+            else if (["mu", "mus"].includes(lastWord))
+                lastWord = "must";
+            else if (["eq", "equ", "equa"].includes(lastWord))
+                lastWord = "equal";
+            else if (["inc", "incl", "inclu", "includ"].includes(lastWord))
+                lastWord = "include";
+            else if (["st", "sta", "star"].includes(lastWord))
+                lastWord = "start";
+            else if (["en"].includes(lastWord))
+                lastWord = "end";
+            else if (["wi", "wit"].includes(lastWord))
+                lastWord = "with";
+        }
 
+        // determines type of the lastWord
         let isConnectorWord = TextConstants.connectors.indexOf(lastWord) !== -1;
         let isKeyword = TextConstants.keywords.indexOf(lastWord) !== -1;
         let isWord = lastWord ? lastWord.startsWith("\"") : false;
+
         let xWord; // must be in TextConstants.keywords
         let results = [], beforeSuggText = "", suggText = "",  infoText = "";
-        let auxWordArray = wordsArray.map((w, i) => {
+        let auxWordArray = ignoreWhereInParen(wordsArray).map((w, i) => {
             return (w === "where" && ["not", "equal", "include", "start", "end"].indexOf(wordsArray[i + 1]) === -1) ? 1 : 0
         });
         let lastWhereIndex = auxWordArray.lastIndexOf(1);
@@ -389,8 +470,10 @@ class RuleGeneratorText extends Component {
          * @returns {*} keyword string
          */
         function selectXWord(index) {
+            if (index < 0) return "";
             if (wordsArray.length < index + 1) return "";
             if (index > 0) {
+                while (index > 0 && wordsArray[index - 1] === "(") index--;
                 if (wordsArray[index - 1] === "abstract" && wordsArray[index] === "function") return "abstract function";
                 if (wordsArray[index - 1] === "return" && wordsArray[index] === "value") return "return value";
                 if (wordsArray[index - 1] === "declaration" && wordsArray[index] === "statement") return "declaration statement";
@@ -398,6 +481,7 @@ class RuleGeneratorText extends Component {
                 if (wordsArray[index - 1] === "initial" && wordsArray[index] === "value") return "initial value";
             }
             if (wordsArray.length < index + 2) {
+                while (wordsArray.length < index + 2 && wordsArray[index] === "(") index--;
                 if (wordsArray[index] === "abstract" && wordsArray[index + 1] === "function") return "abstract function";
                 if (wordsArray[index] === "return" && wordsArray[index + 1] === "value") return "return value";
                 if (wordsArray[index] === "declaration" && wordsArray[index + 1] === "statement") return "declaration statement";
@@ -408,6 +492,7 @@ class RuleGeneratorText extends Component {
             return "";
         }
 
+        // This block process strings.
         if (isWord) {
             // "someWord["]
             if (!lastWord.endsWith("\""))
@@ -424,298 +509,316 @@ class RuleGeneratorText extends Component {
             return results;
         }
 
-        // if the last word is random letters!
-        if (!isConnectorWord && !isKeyword) lastWord = wordsArray.length >= 2 ? wordsArray[wordsArray.length - 2] : lastWord;
-        if (!isConnectorWord && !isKeyword) lastWordIndex = wordsArray.length >= 2 ? wordsArray.length - 2 : lastWordIndex;
+        /*
+         * If the last word is random letters and is not finished yet,
+         * update the lastWord to one to the last word
+        */
+        if (!isConnectorWord && !isKeyword && isMiddleOfWord) lastWord = wordsArray.length >= 2 ? wordsArray[wordsArray.length - 2] : lastWord;
+        if (!isConnectorWord && !isKeyword && isMiddleOfWord) lastWordIndex = wordsArray.length >= 2 ? wordsArray.length - 2 : lastWordIndex;
         let isSecondWord = lastWordIndex !== (wordsArray.length - 1);
+
+        /*
+         * If the last word is random letters and it follows 'to', 'with', 'include',
+         * it should be quoted.
+         */
+        if (isSecondWord && wordsArray[wordsArray.length - 1].length > 2 && ["to", "with", "include"].indexOf(wordsArray[wordsArray.length - 2]) !== -1) {
+            suggText = "\"" + wordsArray[wordsArray.length - 1] + "\"";
+            infoText = "(Strings and variables must be quoted)";
+            results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
+        }
 
         switch (lastWord) {
             case "where":
-                // … [X] where [based on X]
-                if (lastWordIndex < 1) return [];
+                // [X] where
                 xWord = selectXWord(lastWordIndex - 1);
-                if (xWord === "") return [];
+                if (xWord === "") return errorGenerator(100);
 
-                let hasWhereHaveClause = !!TextConstants.autoComplete_suggestion[xWord].whereHaveClause;
-
-                if (hasWhereHaveClause) {
-                    suggText = isSecondWord ? "have" : ((isMiddleOfWord ? "where" : "") + " have");
-                    infoText = isSecondWord ? (xWord + " where ") : (xWord + (!isMiddleOfWord ? " where " : ""));
+                // … [X] where have …
+                if (!!TextConstants.autoComplete_suggestion[xWord].whereHaveClause) {
+                    suggText = (!isSecondWord && isMiddleOfWord ? "where" : "") + " have";
+                    infoText = xWord + (!isSecondWord && isMiddleOfWord ? "" : " where");
                     results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
                 }
+                // … [X] where not? equal to/include/start with/end with
                 else {
-                    beforeSuggText = isSecondWord ? "": (isMiddleOfWord ? "where" : "");
-                    infoText = isSecondWord ? (xWord + " where") : (xWord + (!isMiddleOfWord ? " where " : ""));
+                    beforeSuggText = !isSecondWord && isMiddleOfWord ? "where" : "";
+                    infoText = xWord + (!isSecondWord && isMiddleOfWord ? "" : " where");
                     results = results.concat(this.whereSuggestionCreator(xWord, beforeSuggText, infoText, isSecondWord, isSecondWord ? wordsArray[wordsArray.length - 1] : ""));
                 }
                 break;
 
             case "have":
-                if (lastWordIndex < 2) return [];
+                // [X] where have
+                if (lastWordIndex < 2) return errorGenerator(101);
+
                 // [X] … must have [based on X]
                 if (wordsArray[lastWordIndex - 1] === "must") {
                     xWord = selectXWord(0);
-                    if (xWord === "") return [];
+                    if (xWord === "") return errorGenerator(304);
 
-                    beforeSuggText = isSecondWord ? "" : (isMiddleOfWord ? "have" : "");
-                    infoText = isSecondWord ? (xWord + " must have") : (xWord + " must" + (!isMiddleOfWord ? " have" : ""));
+                    beforeSuggText = !isSecondWord && isMiddleOfWord ? "have" : "";
+                    infoText = xWord + " must" + (!isSecondWord && isMiddleOfWord ? "" : " have");
                     results = results.concat(this.whereSuggestionCreator(xWord, beforeSuggText, infoText, isSecondWord, isSecondWord ? wordsArray[wordsArray.length - 1] : ""));
                 }
-                // … [X] where ( … and have [based on X]
+                // … [X] where have [based on X]
                 else {
-                    if (lastWhereIndex < 1) return [];
                     xWord = selectXWord(lastWhereIndex - 1);
-                    if (xWord === "") return [];
+                    if (xWord === "") return errorGenerator(101);
 
-                    if (!TextConstants.autoComplete_suggestion[xWord].whereHaveClause) return [];
+                    if (!TextConstants.autoComplete_suggestion[xWord].whereHaveClause) 
+                        return errorGenerator(302);
 
-                    beforeSuggText = isSecondWord ? "" : (isMiddleOfWord ? "have" : "");
-                    infoText = isSecondWord ? (xWord + " where have") : (xWord + " where" + (!isMiddleOfWord ? " have" : ""));
+                    beforeSuggText = !isSecondWord && isMiddleOfWord ? "have" : "";
+                    infoText = xWord + " where" + (!isSecondWord && isMiddleOfWord ? "" : " have");
                     results = results.concat(this.whereSuggestionCreator(xWord, beforeSuggText, infoText, isSecondWord, isSecondWord ? wordsArray[wordsArray.length - 1] : ""));
                 }
 
                 break;
 
             case "must":
-                if (lastWordIndex < 1) return [];
+                // … must …
+                if (wordsArray.reduce((n, val) => n + (val === "must"), 0) > 1) return errorGenerator(103);
                 xWord = selectXWord(0);
-                if (xWord === "") return [];
+                if (xWord === "") return errorGenerator(304);
 
                 // [X] … must have [based on X]
-                beforeSuggText = isSecondWord ? "have" : (isMiddleOfWord ? "must have" : "have");
-                infoText = isSecondWord ? (xWord + " must") : (xWord + (!isMiddleOfWord ? " must" : ""));
+                beforeSuggText = (!isSecondWord && isMiddleOfWord ? "must " : "") + "have";
+                infoText = xWord + (!isSecondWord && isMiddleOfWord ? "" : " must");
                 results = results.concat(this.whereSuggestionCreator(xWord, beforeSuggText, infoText, isSecondWord, isSecondWord ? wordsArray[wordsArray.length - 1] : ""));
 
                 // [X] … must be equal to [X]
-                suggText = (isConnectorWord && isMiddleOfWord) ? "must be equal to" : "be equal to";
-                infoText = (isConnectorWord && isMiddleOfWord) ? xWord : xWord + " must";
+                suggText = ((isConnectorWord && isMiddleOfWord) ? "must " : "") + "be equal to";
+                infoText = xWord + ((isConnectorWord && isMiddleOfWord) ? "" : " must");
                 results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
                 break;
 
             case "be":
-                if (lastWordIndex < 2) return [];
-                //[X] … must be equal to [X]
-                if (wordsArray[lastWordIndex - 1] !== "must") return [];
-                xWord = selectXWord(0);
-                if (xWord === "") return [];
+                // [X] must be
+                if (lastWordIndex < 2) return errorGenerator(102);
 
-                suggText = (isConnectorWord && isMiddleOfWord) ? "be equal to" : "equal to";
-                infoText = (isConnectorWord && isMiddleOfWord) ? xWord + " must" : xWord + " must be";
+                // … must be …
+                if (wordsArray[lastWordIndex - 1] !== "must") return errorGenerator(102);
+                xWord = selectXWord(0);
+                if (xWord === "") return errorGenerator(304);
+
+                // [X] … must be equal to
+                suggText = ((isConnectorWord && isMiddleOfWord) ? "be " : "") + "equal to";
+                infoText = xWord + " must" + ((isConnectorWord && isMiddleOfWord) ? "" : " be");
                 results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
                 break;
 
             case "equal":
-                if (lastWordIndex < 3) return [];
+                // [X] where equal
+                if (lastWordIndex < 2) return errorGenerator(201);
 
                 // [X] … must be equal to
                 if (wordsArray[lastWordIndex - 1] === "be") {
                     xWord = selectXWord(0);
-                    if (xWord === "") return [];
+                    if (xWord === "") return errorGenerator(304);
 
-                    suggText = (isConnectorWord && isMiddleOfWord) ? "equal to" : "to";
-                    infoText = (isConnectorWord && isMiddleOfWord) ? xWord + " must be" : xWord + " must be equal";
+                    suggText = (isConnectorWord && isMiddleOfWord ? "equal " : "") + "to";
+                    infoText = xWord + " must be" + (isConnectorWord && isMiddleOfWord ? "" : " equal");
                     results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
                 }
 
-                // … where … [X] not? equal to
+                // … [X] where not? equal to
                 else {
-                    xWord = wordsArray[lastWordIndex - 1] === "not" ? selectXWord(lastWordIndex - 2) : selectXWord(lastWordIndex - 1);
-                    if (xWord === "") return [];
+                    xWord = wordsArray[lastWordIndex - 1] === "not" ? selectXWord(lastWordIndex - 3) : selectXWord(lastWordIndex - 2);
+                    if (xWord === "") return errorGenerator(201);
 
-                    results.push(RuleGeneratorText.createGrammarSuggestion(((isConnectorWord && isMiddleOfWord) ? "equal " : "") + "to"
-                        , xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not" : "")));
-
-                    suggText = (isConnectorWord && isMiddleOfWord) ? "equal to" : "to";
-                    infoText = (isConnectorWord && isMiddleOfWord) ? "where " + xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not" : "")
-                        : "where " + xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not" : "") + " equal";
+                    suggText = ((isConnectorWord && isMiddleOfWord) ? "equal " : "") + "to";
+                    infoText = xWord + " where " + (wordsArray[lastWordIndex - 1] === "not" ? " not" : "") + ((isConnectorWord && isMiddleOfWord) ? "" : " equal");
                     results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
                 }
                 break;
 
             case "to":
-                if (wordsArray[lastWordIndex - 1] !== "equal") return [];
+                // [X] where equal to
+                if (lastWordIndex < 3) return errorGenerator(202);
+                if (wordsArray[lastWordIndex - 1] !== "equal") return errorGenerator(202);
 
-                if (lastWordIndex < 2) return [];
                 // … [X] where equal to
                 if (wordsArray[lastWordIndex - 2] === "where") {
                     xWord = selectXWord(lastWordIndex - 3);
-                    if (xWord === "") return [];
+                    if (xWord === "") return errorGenerator(300);
                     suggText = (isMiddleOfWord) ? "to" : "\"TEXT\"";
-                    infoText = (isMiddleOfWord) ? "where " + xWord + " equal" : "where " + xWord + " equal to";
+                    infoText = xWord + " where equal" + (isMiddleOfWord ? "" : " to");
                     results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
                     break;
                 }
 
-                if (lastWordIndex < 3) return [];
-                // … [X] must be equal to [X]
+                // [X] … must be equal to [X]
                 if (wordsArray[lastWordIndex - 3] === "must" && wordsArray[lastWordIndex - 2] === "be") {
                     xWord = selectXWord(0);
-                    if (xWord === "") return [];
+                    if (xWord === "") return errorGenerator(304);
 
-                    suggText = (isConnectorWord && isMiddleOfWord) ? "to " + xWord : xWord;
-                    infoText = (isConnectorWord && isMiddleOfWord) ? xWord + " must be equal" : xWord + " must be equal to";
+                    suggText = (isConnectorWord && isMiddleOfWord ? "to " : "") + xWord;
+                    infoText = xWord + " must be equal" + (isConnectorWord && isMiddleOfWord ? "" : " to");
                     results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
                     break;
                 }
                 // … [X] where not equal to
                 if (wordsArray[lastWordIndex - 3] === "where" && wordsArray[lastWordIndex - 2] === "not") {
                     xWord = selectXWord(lastWordIndex - 4);
-                    if (xWord === "") return [];
+                    if (xWord === "") return errorGenerator(300);
                     suggText = (isMiddleOfWord) ? "to" : "\"TEXT\"";
-                    infoText = (isMiddleOfWord) ? "where " + xWord + " not equal" : "where " + xWord + " not equal to";
+                    infoText = xWord + " where not equal" + (isMiddleOfWord ? "" : " to");
                     results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
                 }
-                // … [X] equal to
-                else {
-                    xWord = selectXWord(lastWordIndex - 2);
-                    if (xWord === "") return [];
+                // … [X] where equal to
+                else if (wordsArray[lastWordIndex - 2] === "where") {
+                    xWord = selectXWord(lastWordIndex - 3);
+                    if (xWord === "") return errorGenerator(300);
                 }
                 break;
 
             case "not":
-                if (lastWordIndex < 1) return [];
-                xWord = TextConstants.keywords.includes(selectXWord(lastWordIndex - 1)) ? selectXWord(lastWordIndex - 1) + " " : "";
-                suggText = (isConnectorWord && isMiddleOfWord) ? "not include" : "include";
-                infoText = (isConnectorWord && isMiddleOfWord) ? xWord : xWord + "not";
+                // [X] where not
+                if (lastWordIndex < 2) return errorGenerator(203);
+                xWord = selectXWord(lastWordIndex - 2);
+                if (xWord === "") return errorGenerator(203);
+                suggText = (isConnectorWord && isMiddleOfWord ? "not " : "" ) + "equal to";
+                infoText = xWord + " where" + (isConnectorWord && isMiddleOfWord ? "" : " not");
                 results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
-                suggText = (isConnectorWord && isMiddleOfWord) ? "not equal to" : "equal to";
+                if (xWord !== "name") break;
+                // include, start with, end with are only used for 'name'
+                suggText = (isConnectorWord && isMiddleOfWord ? "not " : "" ) + "include";
+                results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
+                suggText = (isConnectorWord && isMiddleOfWord ? "not " : "" ) + "start with";
+                results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
+                suggText = (isConnectorWord && isMiddleOfWord ? "not " : "" ) + "end with";
                 results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
                 break;
 
             case "and":
             case "or":
-                let openParanIndex = findCorrespondingOpenParanIndex(wordsArray.slice(0).push(")"));
-
-                // … [X] where ( … and [based on X]
-                if (openParanIndex > 0) {
-                    xWord = selectXWord(openParanIndex - 2);
-                    if (xWord === "") return [];
-                }
                 // … [X] where … and [based on X]
-                else if (lastWhereIndex > 0) {
-                    xWord = selectXWord(lastWordIndex - 1);
-                    if (xWord === "") return [];
-                }
+                xWord = selectXWord(lastWhereIndex - 1);
+                if (xWord === "") return errorGenerator(204);
 
                 beforeSuggText = (isConnectorWord && isMiddleOfWord) ? lastWord : "";
-                infoText = (isConnectorWord && isMiddleOfWord) ? xWord + " where ... " : xWord + " where ... " + lastWord;
+                infoText = xWord + " where ... " + (isConnectorWord && isMiddleOfWord ? "" : lastWord);
                 results = results.concat(this.whereSuggestionCreator(xWord, beforeSuggText, infoText, isSecondWord, isSecondWord ? wordsArray[wordsArray.length - 1] : ""));
                 break;
 
             case "include":
-                if (lastWordIndex < 2) return [];
-                // … [X] not? include
-                xWord = wordsArray[lastWordIndex - 1] === "not" ? selectXWord(lastWordIndex - 2) : selectXWord(lastWordIndex - 1);
+                // [X] where include
+                if (lastWordIndex < 2) return errorGenerator(205);
+                // … [X] where not? include
+                xWord = wordsArray[lastWordIndex - 1] === "not" ? selectXWord(lastWordIndex - 3) : selectXWord(lastWordIndex - 2);
+                if (xWord === "") return errorGenerator(205);
 
-                suggText = (isConnectorWord && isMiddleOfWord) ? "include" : "\"TEXT\"";
-                infoText = (isConnectorWord && isMiddleOfWord) ? "where " + xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not": "")
-                    : "where " + xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not": "") + " include";
+                suggText = (isConnectorWord && isMiddleOfWord ? "include " : "") + "\"TEXT\"";
+                infoText = xWord + " where" + (wordsArray[lastWordIndex - 1] === "not" ? " not" : "") + (isConnectorWord && isMiddleOfWord ? "" : " include");
                 results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
                 break;
 
             case "start":
-                if (lastWordIndex < 2) return [];
-                // … [X] not? start with
-                xWord = wordsArray[lastWordIndex - 1] === "not" ? selectXWord(lastWordIndex - 2) : selectXWord(lastWordIndex - 1);
+                // [X] where start
+                if (lastWordIndex < 2) return errorGenerator(206);
+                // … [X] where not? start with
+                xWord = wordsArray[lastWordIndex - 1] === "not" ? selectXWord(lastWordIndex - 3) : selectXWord(lastWordIndex - 2);
+                if (xWord === "") return errorGenerator(206);
 
-                suggText = (isConnectorWord && isMiddleOfWord) ? "start with" : "with";
-                infoText = (isConnectorWord && isMiddleOfWord) ? "where " + xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not": "")
-                    : "where " + xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not": "") + " start with";
+                suggText = (isConnectorWord && isMiddleOfWord ? "start " : "") + "with \"TEXT\"";
+                infoText = xWord + " where" + (wordsArray[lastWordIndex - 1] === "not" ? " not" : "") + (isConnectorWord && isMiddleOfWord ? "" : " start");
                 results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
                 break;
 
             case "end":
-                if (lastWordIndex < 2) return [];
-                // … [X] not? end with
-                xWord = wordsArray[lastWordIndex - 1] === "not" ? selectXWord(lastWordIndex - 2) : selectXWord(lastWordIndex - 1);
+                // [X] where end
+                if (lastWordIndex < 2) return errorGenerator(207);
+                // … [X] where not? end with
+                xWord = wordsArray[lastWordIndex - 1] === "not" ? selectXWord(lastWordIndex - 3) : selectXWord(lastWordIndex - 2);
+                if (xWord === "") return errorGenerator(207);
 
-                suggText = (isConnectorWord && isMiddleOfWord) ? "end with" : "with";
-                infoText = (isConnectorWord && isMiddleOfWord) ? "where " + xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not": "")
-                    : "where " + xWord + (wordsArray[lastWordIndex - 1] === "not" ? " not": "") + " end with";
+                suggText = (isConnectorWord && isMiddleOfWord ? "end " : "") + "with \"TEXT\"";
+                infoText = xWord + " where" + (wordsArray[lastWordIndex - 1] === "not" ? " not" : "") + (isConnectorWord && isMiddleOfWord ? "" : " end");
                 results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
                 break;
 
             case "with":
-                if (lastWordIndex < 2) return [];
-                // … [X] not? end/start with
+                // [X] where end/start with
+                if (lastWordIndex < 3) return errorGenerator(208);
+                // … [X] where not? end/start with
                 xWord = wordsArray[lastWordIndex - 2] === "not" ? selectXWord(lastWordIndex - 4) : selectXWord(lastWordIndex - 3);
+                if (xWord === "") return errorGenerator(208);
 
-                suggText = (isConnectorWord && isMiddleOfWord) ? "with" : "\"TEXT\"";
-                infoText = (isConnectorWord && isMiddleOfWord) ? xWord + " where " + (wordsArray[lastWordIndex - 1] === "not" ? " not": "") + wordsArray[lastWordIndex - 1]
-                    : xWord + " where " + (wordsArray[lastWordIndex - 1] === "not" ? " not ": "") + wordsArray[lastWordIndex - 1] + " with";
+                suggText = (isConnectorWord && isMiddleOfWord ? "with " : "") + "\"TEXT\"";
+                infoText = xWord + " where" + (wordsArray[lastWordIndex - 2] === "not" ? " not " : " ") + wordsArray[lastWordIndex - 1] + (isConnectorWord && isMiddleOfWord ? "" : " with");
                 results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
                 break;
 
             case "(":
-                if (lastWordIndex < 2) return [];
-                if (lastWhereIndex < 1) return [];
-                // … [X] where ( [based on X]
-                xWord = selectXWord(lastWordIndex - 1);
-                if (xWord === "") return [];
+                // [X] where (
+                if (lastWordIndex < 2) return errorGenerator(210);
+                if (lastWhereIndex < 1) return errorGenerator(210);
 
-                beforeSuggText = "(";
-                infoText = xWord + " where";
+                // … [X] where ( have [based on X]
+                xWord = selectXWord(lastWhereIndex - 1);
+                if (xWord === "") return errorGenerator(300);
+                if (!TextConstants.autoComplete_suggestion[xWord].whereHaveClause) return errorGenerator(210);
+
+                suggText = (!!TextConstants.autoComplete_suggestion[xWord].whereHaveClause ? " have" : "" );
+                infoText = xWord + " where (";
                 results = results.concat(this.whereSuggestionCreator(xWord, beforeSuggText, infoText, isSecondWord, isSecondWord ? wordsArray[wordsArray.length - 1] : ""));
                 break;
 
             case ")":
-                if (lastWordIndex < 3) return [];
-                if (lastWhereIndex < 1) return [];
+                // [X] where ( )
+                if (lastWordIndex < 3) return errorGenerator(209);
+                if (lastWhereIndex < 1) return errorGenerator(209);
+
                 // … [X] where ( … ) of [based on X]
-                let corrOpenParanIndex =  findCorrespondingOpenParanIndex(wordsArray);
-                if (corrOpenParanIndex < 1) return [];
-                xWord = selectXWord(corrOpenParanIndex - 1);
-                if (xWord === "") return [];
+                let corrOpenParanIndex =  findCorrespondingOpenParenIndex(wordsArray);
+                if (corrOpenParanIndex < 2) return errorGenerator(211);
+                xWord = selectXWord(corrOpenParanIndex - 2);
+                if (xWord === "") return errorGenerator(303);
 
-                beforeSuggText = ")";
-                infoText = xWord + " where ( ... " ;
-                results = results.concat(this.whereSuggestionCreator(xWord, beforeSuggText, infoText, isSecondWord, isSecondWord ? wordsArray[wordsArray.length - 1] : ""));
+                // [X] where (…) and/or ( have …
+                suggText = "and (" + (!!TextConstants.autoComplete_suggestion[xWord].whereHaveClause ? " have" : "" );
+                infoText = xWord + " where ( ( ... ) " ;
+                results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
+                suggText = "or (" + (!!TextConstants.autoComplete_suggestion[xWord].whereHaveClause ? " have" : "" );
+                results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
+                // [X] where (…) of
+                suggText = "of";
+                results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
 
-                // [X]… <no must> … where ( … ) must have [based on X]
-                // [X]… <no must> … where ( … ) must be equal to [X]
-                if(!wordsArray.includes("must")) {
+                // [X]… <no must> … where ( … ) must have
+                // [X]… <no must> … where ( … ) must be equal to
+                if(!wordsArray.includes("must") && findCorrespondingOpenParenIndex(wordsArray.concat(")")) < 0) { // no open parenthesis
                     xWord = selectXWord(0);
-                    if (xWord === "") return [];
+                    if (xWord === "") return errorGenerator(304);
 
-                    beforeSuggText = ") must have";
-                    infoText = xWord + " where ( ..." ;
-                    results = results.concat(this.whereSuggestionCreator(xWord, beforeSuggText, infoText, isSecondWord, isSecondWord ? wordsArray[wordsArray.length - 1] : ""));
+                    suggText = "must have";
+                    infoText = xWord + " where ( ... )" ;
+                    results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
 
-                    suggText = ") must be equal to " + xWord;
-                    infoText = xWord + " where ( ...";
+                    xWord = selectXWord(0);
+                    suggText = "must be equal to " + xWord;
+                    infoText = xWord;
                     results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
                 }
 
                 break;
 
             case "of":
-                if (lastWordIndex < 1) return [];
-                // … [X] where ( … ) of [based on X]
-                if (wordsArray[lastWordIndex -1] === ")") {
-                    let corrOpenParanIndex =  findCorrespondingOpenParanIndex(wordsArray);
-                    if (corrOpenParanIndex < 2) return [];
-                    if (wordsArray[corrOpenParanIndex - 1] !== "where") return [];
-                    xWord = selectXWord(corrOpenParanIndex - 2);
-                    if (xWord === "") return [];
+                // [X] of
+                if (lastWordIndex < 1) return errorGenerator(212);
 
-                    suggText = (isConnectorWord && isMiddleOfWord) ? "of" : "";
-                    infoText = (isConnectorWord && isMiddleOfWord) ? xWord + " where ( ... )" : xWord + " where ( ... ) of";
-                    results = results.concat(this.ofSuggestionCreator(xWord, beforeSuggText, infoText, isSecondWord, isSecondWord ? wordsArray[wordsArray.length - 1] : ""));
-                }
-
+                // NOT accurate
                 // … must … [X] … of [based on X]
-                else {
-                    let mustIndex = wordsArray.indexOf("must");
-                    let arrayInput = mustIndex > 0 ? wordsArray.slice(mustIndex, wordsArray.length) : wordsArray;
-                    let nouns = findNounsInInput(arrayInput.join(" "));
+                let mustIndex = wordsArray.indexOf("must");
+                let arrayInput = mustIndex > 0 ? wordsArray.slice(mustIndex, wordsArray.length) : wordsArray;
+                let nouns = findNounsInInput(arrayInput.join(" "));
 
-                    nouns.forEach(d => {
-                        xWord = d;
-                        suggText = (isConnectorWord && isMiddleOfWord) ? "of" : "";
-                        infoText = (isConnectorWord && isMiddleOfWord) ? xWord : xWord + " of";
-                        results = results.concat(this.ofSuggestionCreator(xWord, beforeSuggText, infoText, isSecondWord, isSecondWord ? wordsArray[wordsArray.length - 1] : ""));
-                    })
-                }
+                nouns.forEach(d => {
+                    xWord = d;
+                    suggText = (isConnectorWord && isMiddleOfWord) ? "of" : "";
+                    infoText = xWord + (isConnectorWord && isMiddleOfWord ? "" : " of");
+                    results = results.concat(this.ofSuggestionCreator(xWord, beforeSuggText, infoText, isSecondWord, isSecondWord ? wordsArray[wordsArray.length - 1] : ""));
+                });
                 break;
 
             case "":
@@ -726,24 +829,20 @@ class RuleGeneratorText extends Component {
             default:
                 xWord = selectXWord(lastWordIndex) === "" ? lastWord : selectXWord(lastWordIndex);
                 TextConstants.keywords
-                    .filter(d => d.indexOf(xWord) !== -1)
+                    .filter(d => isMiddleOfWord ? d.indexOf(xWord) !== -1 : d === xWord)
                     .forEach(d => {
                         if(isMiddleOfWord && !isSecondWord) // still typing the keyword
                             results.push(RuleGeneratorText.createGrammarSuggestion(d, ""));
 
                         else {
                             let hasWhereHaveClause = !!TextConstants.autoComplete_suggestion[d].whereHaveClause;
-                            suggText = (isMiddleOfWord) ?
-                                (isSecondWord ? "" : d + " ") + "where" + (hasWhereHaveClause ? " have" : "")
-                                : "where" + (hasWhereHaveClause ? " have" : "");
-                            infoText = (isMiddleOfWord) ? (!isSecondWord ? "" : d) : d;
+                            suggText = (isMiddleOfWord && !isSecondWord ? d + " " : "" ) + "where" + (hasWhereHaveClause ? " have" : "");
+                            infoText = isMiddleOfWord && !isSecondWord ? "" : d;
                             results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
-                            // results = results.concat(this.whereSuggestionCreator(d, beforeSuggText, infoText, false));
 
-                            suggText = (isMiddleOfWord) ? (isSecondWord ? "" : d + " ") + "of" : "of";
-                            infoText = (isMiddleOfWord) ? (!isSecondWord ? "" : d) : d;
+                            suggText = (isMiddleOfWord && !isSecondWord ? d + " " : "") + "of";
+                            infoText = isMiddleOfWord && !isSecondWord ? "" : d;
                             results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
-                            // results = results.concat(this.ofSuggestionCreator(d, beforeSuggText, infoText, false));
 
                             if (!isSecondWord && wordsArray.indexOf("must") === -1) {
                                 suggText = (!isMiddleOfWord ? "" : d + " ") + "must be equal to" + (!isMiddleOfWord ? "" : d + " ");
@@ -753,12 +852,13 @@ class RuleGeneratorText extends Component {
                                 suggText = (!isMiddleOfWord ? "" : d + " ") + "must have";
                                 infoText = lastWordIndex !== 0 ? xWord : (isMiddleOfWord ? "" : d);
                                 results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
-                                // results = results.concat(this.whereSuggestionCreator(wordsArray[0], beforeSuggText, infoText, false));
                             }
                         }
                     });
         }
 
+        if (results.length === 0)
+            return errorGenerator(400);
         return results;
     }
 
@@ -961,10 +1061,10 @@ class RuleGeneratorText extends Component {
      * used for creating grammar suggestion objects, each row in suggestion auto-complete
      * @param text
      * @param info
-     * @returns {{suggestion: *, information: *}}
+     * @returns {{suggestion: *, information: *, type: "suggestion"}}
      */
     static createGrammarSuggestion(text, info) {
-        return {suggestion: text, information: info};
+        return {suggestion: text, information: info, type: "suggestion"};
     }
 
     /**
