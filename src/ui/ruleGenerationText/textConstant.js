@@ -102,6 +102,7 @@ export class TextConstants {
 
 
     static templates = [
+        "function where have name where start with \"str\" must have annotation ",
         "function must have name ",
         "abstract function must have annotation ",
         "constructor must have expression statement ",

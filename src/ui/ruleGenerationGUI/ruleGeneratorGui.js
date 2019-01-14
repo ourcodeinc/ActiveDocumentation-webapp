@@ -4,10 +4,12 @@
 
 import React, {Component} from 'react';
 import '../../App.css';
+import ReactTooltip from 'react-tooltip'
 
 import {Tabs, Tab, HelpBlock} from 'react-bootstrap';
 import {RootCloseWrapper} from "react-overlays";
 import {connect} from "react-redux";
+import {FaQuestionCircle} from "react-icons/lib/fa/index";
 
 import Utilities from "../../core/utilities";
 import GuiComponent from "./guiComponent";
@@ -82,7 +84,20 @@ class RuleGeneratorGui extends Component {
                         </div>
                     </Tab>
                 </Tabs>
-                <HelpBlock>GUI output:</HelpBlock>
+                <HelpBlock>GUI output:
+                    <FaQuestionCircle size={20} className={"faQuestionCircle"}
+                                      data-class={"customTheme"}
+                                      data-tip={"<h4>The output of the GUI interface.</h4> " +
+                                      "<p>The <em>\"child\"</em> dropdowns represents <em>\"of\"</em> clauses. " +
+                                      "For example, to display <em>\"function of class\"</em>, select \"function\" from the " +
+                                      "\"child\" dropdown for \"class\".</p>" +
+                                      "<p>The GUI interface is interactive and its output can be used in the grammar textbox. " +
+                                      "It also displays the graphical representation of the input text automatically. " +
+                                      "However it is limited in combining restrictions." +
+                                      "That is it only <em>conjuncts</em> restrictions. The output can be altered in the grammar textbox after copying.</p>"
+                                      }/>
+                    <ReactTooltip html={true} effect={"solid"} place={"right"}/>
+                </HelpBlock>
                 {this.state.GuiGrammar}
 
             </div>

@@ -35,7 +35,7 @@ const ruleType = (tree) => {
 /**
  * create the gui tree based on the grammar parse tree for quantifier
  * @param tree
- * @returns {{key: string, value: string, target: string, children: {top: Array, before_1: Array, before_2: Array, after_1: Array, after_2: Array, within: Array, child: {}}, text: string}}
+ * @returns {{key: string, value: string, target: string, children: {top: Array, before_1: Array, before_2: Array, after_1: Array, after_2: Array, within: Array, child: {}}, text: number}}
  */
 const createQuantifierTree = (tree) => {
     let combinedNodes = combineNode(tree);

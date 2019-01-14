@@ -325,7 +325,7 @@ export class GuiConstants {
             placeholder: "class name",
             pre: "",
             post: "",
-            grammar: "name where not start with"
+            grammar: "name where start with"
         },
         "name not start with": {
             buttonName: "Have name not starts with ...",
