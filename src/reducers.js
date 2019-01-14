@@ -72,7 +72,7 @@ const default_state = {
                 }
             },
             constraint: {
-                key: "",
+                key: "class",
                 value: "",
                 target: "follows",
                 children: {
@@ -126,7 +126,7 @@ const default_rulePanelState = {
             }
         },
         constraint: {
-            key: "",
+            key: "class",
             value: "",
             target: "follows",
             children: {
@@ -267,9 +267,58 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
             return Object.assign({}, state, {filePath: action["value"], message: "FILE_PATH_UPDATED"});
 
         case "CLEAR_NEW_RULE_FORM":
+            // copied value from default_state doesn't work properly
+            // the default_state is changed although being const
             return Object.assign({}, state, {
                 newOrEditRule: {
-                    ...default_state.newOrEditRule
+                    title: "",
+                    description: "",
+                    ruleTags: [],
+                    folderConstraint: "",
+                    filesFolders: [],
+
+                    autoCompleteText: "",
+                    quantifierXPath: "", // only produced by autoComplete grammar
+                    constraintXPath: "", // only produced by autoComplete grammar
+                    sentMessages: [],
+                    receivedMessages: [],
+
+                    guiState: {
+                        activeTab: "quantifier",
+                        quantifier: {
+                            key: "class",
+                            value: "",
+                            target: "follows",
+                            children: {
+                                "top": [],
+                                "before": [],
+                                "before_1": [],
+                                "before_2": [],
+                                "after": [],
+                                "after_1": [],
+                                "after_2": [],
+                                "within": [],
+                                "child": {}
+                            }
+                        },
+                        constraint: {
+                            key: "class",
+                            value: "",
+                            target: "follows",
+                            children: {
+                                "top": [],
+                                "before": [],
+                                "before_1": [],
+                                "before_2": [],
+                                "after": [],
+                                "after_1": [],
+                                "after_2": [],
+                                "within": [],
+                                "child": {}
+                            }
+                        },
+                        ruleType: "" // "Must" or "MustBeEqualTo"
+                    }
                 },
                 message: "CLEAR_NEW_RULE_FORM"
             });
