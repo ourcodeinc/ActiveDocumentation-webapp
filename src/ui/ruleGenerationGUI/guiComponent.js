@@ -68,7 +68,7 @@ class GuiComponent extends React.Component {
     renderGroup(group) {
         if (GuiConstants.code_fragment[this.state.element][group].length === 0) return null;
         return (
-            <div className={this.chooseClass(group) + (group === "within" ? null : " rowItem")}>
+            <div className={this.chooseClass(group) + (group === "within" ? "" : " rowItem")}>
                 {this.renderDefaultTitle(group)}
                 {this.state.children[group].map((cons, i) =>
                     (<div className={group === "within" || group === "top" ? "rowGroup" : "rowItem"} key={i}>
@@ -157,7 +157,7 @@ class GuiComponent extends React.Component {
                         ) : null}
                         <div className={"rowItem inlineText"} style={{width: "70%"}}>
                             <input type={"text"} className={"inputText"} disabled={true}
-                                   value={this.state.children["child"]["text"]}
+                                   value={typeof this.state.children["child"]["text"] === "string" ? this.state.children["child"]["text"] : ""}
                                    placeholder={this.state.children["child"].value.placeholder}
                                    onBlur={(e) => {
                                        let children = this.state.children;
@@ -220,7 +220,7 @@ class GuiComponent extends React.Component {
                      style={cons.value.type === "wideText" ? {width: "70%"} : {}}>
                     <input type={"text"}
                            className={"inputText" + (cons["key"].includes(" not ") ? " redText" : "")}
-                           value={this.state.text[group][i].text}
+                           value={typeof this.state.text[group][i].text === "string" ? this.state.text[group][i].text : ""}
                            placeholder={cons.value.placeholder}
                            onBlur={(e) => {
                                cons.text = e.target.value;
