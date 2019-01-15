@@ -102,6 +102,8 @@ export class TextConstants {
 
 
     static templates = [
+        "function where ((have annotation and have specifier where equal to \"public\") or have name where equal to \"exe\") " +
+        "must (((have specifier where equal to \"static\") and have name where not start with \"test\") or (have declaration statement))  ",
         "function where have name where start with \"str\" must have annotation ",
         "function must have name ",
         "abstract function must have annotation ",
@@ -124,13 +126,13 @@ export class TextConstants {
         201: "'equal' must be used as  valid keyword + 'must be equal to', 'where equal to', 'where not equal to'.",
         202: "'to' must be used as valid keyword + 'where equal to', 'must be equal to'.",
         203: "'not' must be used as valid keyword + 'where not' + 'equal to' or 'include/start with/end with' only for 'name'.",
-        204: "'and'/'or' must be used as keyword + 'where (…) and/or (…)', 'where … and/or …'.",
+        204: "'and'/'or' must be used as valid keyword + 'where (…) and/or (…)', 'where … and/or …'.",
         205: "'include' must be used as valid keyword + 'where include', 'where not include'.",
         206: "'start' must be used as keyword + 'where start with', keyword + 'where not start with'.",
         207: "'end' must be used as keyword + 'where end with', keyword + 'where not end with'.",
         208: "'with' must be used as 'end with', keyword + 'start with'.",
         209: "')' must be used as keyword + 'where (…)', '((…) and/or (…))'.",
-        210: "'(' must be used as valid keyword + 'where ( have', '((…) and/or (…))'.",
+        210: "'(' must be used as valid keyword + 'where ( have', '((…) and/or (…))', 'must ( have'.",
         211: "Parenthesis must be paired.",
         212: "'of' must be used as keyword + 'of', keyword + 'where … of'.",
 
