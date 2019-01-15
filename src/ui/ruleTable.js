@@ -9,12 +9,13 @@ import RulePanel from './rulePanel';
 import {connect} from "react-redux";
 import {Button} from "react-bootstrap";
 import {MdPlaylistAdd} from "react-icons/lib/md/index";
+import {changeEditMode} from "../actions";
 
 class RuleTable extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {newRule: false};
+        this.state = props.newRule;
     }
 
     render() {
@@ -23,7 +24,7 @@ class RuleTable extends Component {
                 {this.props.hash0 === "rules" ?
                     (!this.state.newRule ? (
                         <div style={{paddingBottom: '10px', clear: 'both'}}>
-                            <Button onClick={() => this.setState({newRule: true})} style={{padding: "0 5px"}}>
+                            <Button onClick={() => this.props.onChangeEditMode()} style={{padding: "0 5px"}}>
                                 <MdPlaylistAdd size={35}/>
                                 Add a New Rule
                             </Button>
@@ -53,7 +54,10 @@ class RuleTable extends Component {
 
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
-        this.forceUpdate();
+        if (nextProps.newRule !== this.state.newRule)
+            this.setState({newRule: nextProps.newRule});
+        else
+            this.forceUpdate();
     }
 
 }
@@ -69,7 +73,8 @@ function mapStateToProps(state) {
         ws: state.ws,
         rulesToDisplay: [],
         hash0: state.hash[0],
-        message: state.message
+        message: state.message,
+        newRule: state.newOrEditRule.isEditMode
     };
 
 
@@ -97,4 +102,10 @@ function mapStateToProps(state) {
     return props;
 }
 
-export default connect(mapStateToProps, null)(RuleTable);
+function mapDispatchToProps(dispatch) {
+    return {
+        onChangeEditMode: () => dispatch(changeEditMode(-1, true))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(RuleTable);

@@ -41,6 +41,7 @@ const default_state = {
     },
     // used for new rule form
     newOrEditRule: {
+        isEditMode: false,
         title: "",
         description: "",
         ruleTags: [],
@@ -169,10 +170,6 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
                         activeHash: state.hashManager.activeHash + 1,
                         forwardDisable: "disabled",
                         backDisable: state.hashManager.activeHash === 0
-                    },
-                    individualRule: {
-                        title: "",
-                        description: ""
                     }
                 });
             }
@@ -185,10 +182,6 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
                     activeHash: state.hashManager.activeHash,
                     forwardDisable: state.hashManager.forwardDisable,
                     backDisable: state.hashManager.backDisable
-                },
-                individualRule: {
-                    title: "",
-                    description: ""
                 }
             });
 
@@ -238,6 +231,8 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
             });
 
         case "IGNORE_FILE":
+            let editCount = state.ruleTable.reduce((count, element) =>  count + element.rulePanelState.editMode ? 1 : 0);
+            if (state.newOrEditRule.isEditMode || editCount > 0)  return Object.assign({}, state);
             return Object.assign({}, state, {ignoreFile: action["shouldIgnore"], message: "IGNORE_FILE"});
 
         case "CLICKED_ON_FORWARD":
@@ -271,6 +266,7 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
             // the default_state is changed although being const
             return Object.assign({}, state, {
                 newOrEditRule: {
+                    isEditMode: true,
                     title: "",
                     description: "",
                     ruleTags: [],
@@ -354,6 +350,11 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
 
         case "CHANGE_EDIT_MODE":
             if (action["ruleIndex"] !== -1) {
+                let editCount = state.ruleTable.reduce((count, element) => {
+                    if (element.index !== action["ruleIndex"]) return count + element.rulePanelState.editMode ? 1 : 0;
+                    return count + action["newEditMode"] ? 1 : 0;
+                });
+
                 // deep copy, slice(0) and array.map() doesn't work
                 let rules = JSON.parse(JSON.stringify(state.ruleTable));
                 rules = rules.map(d => {
@@ -378,11 +379,18 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
                     return a;
                 });
                 return Object.assign({}, state, {
+                    ignoreFile: (state.newOrEditRule.isEditMode || editCount > 0),
                     ruleTable: rules
                 });
             }
             else
-                return state;
+                return Object.assign({}, state, {
+                    ignoreFile: (action["newEditMode"] || state.ruleTable.reduce((count, element) => count + element.rulePanelState.editMode ? 1 : 0) > 0),
+                    newOrEditRule: {
+                        ...state.newOrEditRule,
+                        isEditMode: action["newEditMode"]
+                    }
+                });
 
         case "RECEIVE_GUI_TREE":
             if (action["ruleIndex"] !== -1) {
@@ -480,7 +488,7 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
             });
 
         default:
-            return state;
+            return Object.assign({}, state);
     }
 };
 
