@@ -19,7 +19,6 @@ export class NavBar extends Component {
             <Navbar inverse collapseOnSelect
                     style={{backgroundColor: "transparent", backgroundImage: "none", border: "none"}}>
                 <Navbar.Header>
-                    <Navbar.Toggle/>
                     <Nav>
                         <NavItem eventKey={1} className={this.props.backDisable} onClick={() => this.props.backClick(this.props)}>
                             <FaArrowLeft size={20}/>
@@ -29,6 +28,7 @@ export class NavBar extends Component {
                         </NavItem>
                     </Nav>
                 </Navbar.Header>
+                <Navbar.Toggle/>
                 <Navbar.Collapse>
                     <Nav
                         onSelect={key => {
