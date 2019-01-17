@@ -143,7 +143,7 @@ export class TextConstants {
         303: "'The keyword before the corresponding open parenthesis is not valid.",
         304: "The first word in the rule is not a valid keyword.",
 
-        400: "The input text is not valid. See templates as an example."
+        400: "The input text is not valid. See examples and grammar rules documentation."
     }
 
 }

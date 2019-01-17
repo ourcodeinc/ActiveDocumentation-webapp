@@ -97,7 +97,7 @@ class RuleGeneratorText extends Component {
                                 {this.state.grammarSuggestion.filter(d => d.type === "suggestion").length !== 0 || this.state.phraseSuggestion.length !== 0 ? null : (
                                     <Fragment>
                                         <Panel.Heading>
-                                            <Panel.Title componentClass="h3">Sample Templates</Panel.Title>
+                                            <Panel.Title componentClass="h3">Examples</Panel.Title>
                                         </Panel.Heading>
                                         <ListGroup>
                                             {TextConstants.templates.map((template, i) =>
@@ -657,6 +657,7 @@ class RuleGeneratorText extends Component {
                     xWord = wordsArrayAtIndex(lastWordIndex - 1) === "not" ? selectXWord(lastWordIndex - 3) : selectXWord(lastWordIndex - 2);
                     if (xWord === "") return errorGenerator(201);
 
+                    if (!TextConstants.autoComplete_suggestion[xWord].whereClause) return errorGenerator(201);
                     suggText = ((isConnectorWord && isMiddleOfWord) ? "equal " : "") + "to";
                     infoText = xWord + " where " + (wordsArrayAtIndex(lastWordIndex - 1) === "not" ? " not" : "") + ((isConnectorWord && isMiddleOfWord) ? "" : " equal");
                     results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
@@ -667,16 +668,6 @@ class RuleGeneratorText extends Component {
                 // [X] where equal to
                 if (lastWordIndex < 3) return errorGenerator(202);
                 if (wordsArrayAtIndex(lastWordIndex - 1) !== "equal") return errorGenerator(202);
-
-                // … [X] where equal to
-                if (wordsArrayAtIndex(lastWordIndex - 2) === "where") {
-                    xWord = selectXWord(lastWordIndex - 3);
-                    if (xWord === "") return errorGenerator(300);
-                    suggText = (isMiddleOfWord) ? "to" : "\"TEXT\"";
-                    infoText = xWord + " where equal" + (isMiddleOfWord ? "" : " to");
-                    results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
-                    break;
-                }
 
                 // [X] … must be equal to [X]
                 if (wordsArrayAtIndex(lastWordIndex - 3) === "must" && wordsArrayAtIndex(lastWordIndex - 2) === "be") {
@@ -692,6 +683,7 @@ class RuleGeneratorText extends Component {
                 if (wordsArrayAtIndex(lastWordIndex - 3) === "where" && wordsArrayAtIndex(lastWordIndex - 2) === "not") {
                     xWord = selectXWord(lastWordIndex - 4);
                     if (xWord === "") return errorGenerator(300);
+                    if (!TextConstants.autoComplete_suggestion[xWord].whereClause) return errorGenerator(202);
                     suggText = (isMiddleOfWord) ? "to" : "\"TEXT\"";
                     infoText = xWord + " where not equal" + (isMiddleOfWord ? "" : " to");
                     results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
@@ -708,6 +700,7 @@ class RuleGeneratorText extends Component {
                 if (lastWordIndex < 2) return errorGenerator(203);
                 xWord = selectXWord(lastWordIndex - 2);
                 if (xWord === "") return errorGenerator(203);
+                if (!TextConstants.autoComplete_suggestion[xWord].whereClause) return errorGenerator(203);
                 suggText = (isConnectorWord && isMiddleOfWord ? "not " : "" ) + "equal to";
                 infoText = xWord + " where" + (isConnectorWord && isMiddleOfWord ? "" : " not");
                 results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
@@ -740,6 +733,7 @@ class RuleGeneratorText extends Component {
                 xWord = wordsArrayAtIndex(lastWordIndex - 1) === "not" ? selectXWord(lastWordIndex - 3) : selectXWord(lastWordIndex - 2);
                 if (xWord === "") return errorGenerator(205);
 
+                if (!TextConstants.autoComplete_suggestion[xWord].whereClause) return errorGenerator(205);
                 suggText = (isConnectorWord && isMiddleOfWord ? "include " : "") + "\"TEXT\"";
                 infoText = xWord + " where" + (wordsArrayAtIndex(lastWordIndex - 1) === "not" ? " not" : "") + (isConnectorWord && isMiddleOfWord ? "" : " include");
                 results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
@@ -752,6 +746,7 @@ class RuleGeneratorText extends Component {
                 xWord = wordsArrayAtIndex(lastWordIndex - 1) === "not" ? selectXWord(lastWordIndex - 3) : selectXWord(lastWordIndex - 2);
                 if (xWord === "") return errorGenerator(206);
 
+                if (!TextConstants.autoComplete_suggestion[xWord].whereClause) return errorGenerator(206);
                 suggText = (isConnectorWord && isMiddleOfWord ? "start " : "") + "with \"TEXT\"";
                 infoText = xWord + " where" + (wordsArrayAtIndex(lastWordIndex - 1) === "not" ? " not" : "") + (isConnectorWord && isMiddleOfWord ? "" : " start");
                 results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
@@ -764,6 +759,7 @@ class RuleGeneratorText extends Component {
                 xWord = wordsArrayAtIndex(lastWordIndex - 1) === "not" ? selectXWord(lastWordIndex - 3) : selectXWord(lastWordIndex - 2);
                 if (xWord === "") return errorGenerator(207);
 
+                if (!TextConstants.autoComplete_suggestion[xWord].whereClause) return errorGenerator(207);
                 suggText = (isConnectorWord && isMiddleOfWord ? "end " : "") + "with \"TEXT\"";
                 infoText = xWord + " where" + (wordsArrayAtIndex(lastWordIndex - 1) === "not" ? " not" : "") + (isConnectorWord && isMiddleOfWord ? "" : " end");
                 results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
@@ -776,6 +772,7 @@ class RuleGeneratorText extends Component {
                 xWord = wordsArrayAtIndex(lastWordIndex - 2) === "not" ? selectXWord(lastWordIndex - 4) : selectXWord(lastWordIndex - 3);
                 if (xWord === "") return errorGenerator(208);
 
+                if (!TextConstants.autoComplete_suggestion[xWord].whereClause) return errorGenerator(208);
                 suggText = (isConnectorWord && isMiddleOfWord ? "with " : "") + "\"TEXT\"";
                 infoText = xWord + " where" + (wordsArrayAtIndex(lastWordIndex - 2) === "not" ? " not " : " ") + wordsArrayAtIndex(lastWordIndex - 1) + (isConnectorWord && isMiddleOfWord ? "" : " with");
                 results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
