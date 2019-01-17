@@ -410,7 +410,7 @@ class RulePanel extends Component {
                                               onClick={() => {
                                                   const tags = this.state.ruleTags;
                                                   tags.splice(i, 1);
-                                                  this.setState({tags});
+                                                  this.setState({tags}, this.onEditNewRuleForm);
                                               }}/>
                                 </Label>
                             </div>)
@@ -424,7 +424,7 @@ class RulePanel extends Component {
                             else {
                                 const tags = this.state.ruleTags;
                                 tags.push(evt);
-                                this.setState({tags})
+                                this.setState({tags}, this.onEditNewRuleForm)
                             }
                         }}/>
                     <FaQuestionCircle size={20} className={"faQuestionCircle"}
@@ -548,8 +548,7 @@ class RulePanel extends Component {
                                 title={this.state.folderConstraint === "" ? "Select" : this.state.folderConstraint === "NONE" ? "No Restriction" : "Specific Files/Folders"}
                                 className={this.state.target} id={"drop_down"}>
                                 <MenuItem eventKey={"FOLDER"} onSelect={(evt) => {
-                                    this.setState({folderConstraint: evt});
-                                    this.onEditNewRuleForm()
+                                    this.setState({folderConstraint: evt}, this.onEditNewRuleForm);
                                 }}>Specific Files/Folders
                                 </MenuItem>
                                 <MenuItem eventKey={"NONE"} onSelect={(evt) => {
@@ -561,8 +560,7 @@ class RulePanel extends Component {
                                     onClick={() => {
                                         const filesFolders = this.state.filesFolders;
                                         filesFolders.push("");
-                                        this.setState({filesFolders});
-                                        this.onEditNewRuleForm()
+                                        this.setState({filesFolders}, this.onEditNewRuleForm);
                                     }}
                             >Add files/folders
                             </Button>
@@ -582,7 +580,8 @@ class RulePanel extends Component {
                                                          const filesFolders = this.state.filesFolders;
                                                          filesFolders[i] = e.target.value;
                                                          this.setState({filesFolders});
-                                                     }}/>
+                                                     }}
+                                                     onBlur={() => this.onEditNewRuleForm()}/>
                                     </FormGroup>
                                 </Col>
                                 <Col sm={1} md={1} style={{paddingTop: "5px"}}>
@@ -591,7 +590,7 @@ class RulePanel extends Component {
                                               onClick={() => {
                                                   const filesFolders = this.state.filesFolders;
                                                   filesFolders.splice(i, 1);
-                                                  this.setState({filesFolders});
+                                                  this.setState({filesFolders}, this.onEditNewRuleForm);
                                               }}/>
                                 </Col>
                             </Row>

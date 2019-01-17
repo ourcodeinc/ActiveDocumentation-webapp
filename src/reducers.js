@@ -327,7 +327,7 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
                     if (a.index !== action["ruleIndex"]) return a;
                     a.rulePanelState.title = action["title"];
                     a.rulePanelState.description = action["description"];
-                    a.rulePanelState.tags = action["ruleTags"];
+                    a.rulePanelState.ruleTags = action["ruleTags"];
                     a.rulePanelState.folderConstraint = action["folderConstraint"];
                     a.rulePanelState.filesFolders = action["filesFolders"];
                     return a;
