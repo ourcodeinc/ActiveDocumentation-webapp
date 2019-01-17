@@ -423,7 +423,7 @@ class GuiComponent extends React.Component {
             if (group === "before_2") {
                 if (targetKey === "name" && this.state.element === "function") isTarget = true;
                 if (targetKey === "name" && this.state.element === " abstract function") isTarget = true;
-                if (targetKey === "type" && this.state.element === "declaration") isTarget = true;
+                if (targetKey === "type" && this.state.element === "declaration statement") isTarget = true;
             }
             if (group === "after_1") {
                 if (targetKey === "name" && this.state.element === "class") isTarget = true;
@@ -432,9 +432,9 @@ class GuiComponent extends React.Component {
                 if (targetKey === "parameter") isTarget = true;
             }
             if (group === "after_2") {
-                if (targetKey === "implement") isTarget = true;
-                if (targetKey === "extend") isTarget = true;
-                if (targetKey === "init value") isTarget = true;
+                if (targetKey === "implementation") isTarget = true;
+                if (targetKey === "extension") isTarget = true;
+                if (targetKey === "initial value") isTarget = true;
             }
         }
 
