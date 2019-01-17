@@ -166,6 +166,9 @@ export const runRulesByTypes = (xmlFiles, ruleI) => {
         ruleI = runXpathQueryMixed(xmlFilesToVerify, ruleI);
     }
 
+    // if the file and folders are not valid, this property is not created
+    if (!ruleI['xPathQueryResult']) ruleI['xPathQueryResult'] = [];
+
     return ruleI;
 };
 

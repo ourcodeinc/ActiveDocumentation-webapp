@@ -231,7 +231,7 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
             });
 
         case "IGNORE_FILE":
-            let editCount = state.ruleTable.reduce((count, element) =>  count + element.rulePanelState.editMode ? 1 : 0);
+            let editCount = state.ruleTable.reduce((count, element) =>  count + element.rulePanelState.editMode ? 1 : 0, 0);
             if (state.newOrEditRule.isEditMode || editCount > 0)  return Object.assign({}, state);
             return Object.assign({}, state, {ignoreFile: action["shouldIgnore"], message: "IGNORE_FILE"});
 
@@ -353,7 +353,7 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
                 let editCount = state.ruleTable.reduce((count, element) => {
                     if (element.index !== action["ruleIndex"]) return count + element.rulePanelState.editMode ? 1 : 0;
                     return count + action["newEditMode"] ? 1 : 0;
-                });
+                }, 0);
 
                 // deep copy, slice(0) and array.map() doesn't work
                 let rules = JSON.parse(JSON.stringify(state.ruleTable));
@@ -385,7 +385,7 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
             }
             else
                 return Object.assign({}, state, {
-                    ignoreFile: (action["newEditMode"] || state.ruleTable.reduce((count, element) => count + element.rulePanelState.editMode ? 1 : 0) > 0),
+                    ignoreFile: (action["newEditMode"] || state.ruleTable.reduce((count, element) => count + element.rulePanelState.editMode ? 1 : 0, 0) > 0),
                     newOrEditRule: {
                         ...state.newOrEditRule,
                         isEditMode: action["newEditMode"]
