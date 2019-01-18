@@ -112,6 +112,7 @@ class GuiComponent extends React.Component {
      * render the 'child' elements and constraints, drop down or a component
      */
     renderChild() {
+        if (this.state.target === "") return null;
         if (!this.state.children["child"].hasOwnProperty("key"))
             return (
                 <div>
