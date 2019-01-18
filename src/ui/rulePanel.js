@@ -61,7 +61,12 @@ class RulePanel extends Component {
             // new tag states
             showNewTagModal: false,
             tagName: "",
-            tagDetail: ""
+            tagDetail: "",
+
+            // error message
+            showError: false,
+            errorTitle: "",
+            errorMessage: ""
         };
 
 
@@ -220,6 +225,7 @@ class RulePanel extends Component {
                     </div>
                 )}
                 {this.renderNewTagModalDialog()}
+                {this.renderErrorInSubmission()}
             </div>
         );
     }
@@ -641,7 +647,29 @@ class RulePanel extends Component {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button bsStyle="primary" onClick={() => this.onSubmitNewTag()}>Save</Button>
-                    <Button onClick={()=>this.setState({showNewTagModal: false})}>Close</Button>
+                    <Button onClick={()=>this.setState({showNewTagModal: false})}>Cancel</Button>
+                </Modal.Footer>
+            </Modal>
+        )
+    }
+
+
+    /**
+     * render the modal for printing messages when errors appear for submission
+     * @return {XML}
+     */
+    renderErrorInSubmission() {
+        return (
+            <Modal show={this.state.showError} onHide={()=>this.setState({showError: false})}
+                   backdrop={"static"} keyboard={true}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{this.state.errorTitle}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {this.state.errorMessage}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={()=>this.setState({showError: false})}>OK</Button>
                 </Modal.Footer>
             </Modal>
         )
@@ -683,22 +711,40 @@ class RulePanel extends Component {
         };
 
         if (this.props.numberOfSentMessages !== 0) {
-            console.log("Please wait for the server to respond to " + this.props.numberOfSentMessages + " sent messages for retrieving XPath.");
+            this.setState({
+                errorTitle: "Error in Submitting the Rule",
+                errorMessage: "Please wait for the server to respond to " + this.props.numberOfSentMessages + " sent messages for retrieving XPath. " +
+                "If the error appeared by mistake, reset the form by 'clear' button.",
+                showError: true
+            });
             return;
         }
 
         if (rule.index === "" || rule.title === "" || rule.description === "") {
-            console.log("empty fields");
+            this.setState({
+                errorTitle: "Error in Submitting the updated Rule",
+                errorMessage: "Make sure to enter 'title' and 'description' for the rule.",
+                showError: true
+            });
             return;
         }
 
         if (rule.ruleType.constraint === "" || (rule.ruleType.constraint === "FOLDER" && rule.ruleType.checkFor.length === 0)) {
-            console.log("folder constraints are not specified");
+            this.setState({
+                errorTitle: "Error in Submitting the updated Rule",
+                errorMessage: "Make sure to specify the folder 'restriction'. " +
+                "If the constraint is set to 'Specific Files/Folders', at least one file/folder must be specified.",
+                showError: true
+            });
             return;
         }
 
         if (this.ruleI.rulePanelState.quantifierXPath === "" || this.ruleI.rulePanelState.constraintXPath === "") {
-            console.log("XPaths are not specified");
+            this.setState({
+                errorTitle: "Error in Submitting the updated Rule",
+                errorMessage: "Please specify a valid design rule according to the grammar.",
+                showError: true
+            });
             return;
         }
 
@@ -738,22 +784,40 @@ class RulePanel extends Component {
         };
 
         if (this.props.numberOfSentMessages !== 0) {
-            console.log("Please wait for the server to respond to " + this.props.numberOfSentMessages + " sent messages for retrieving XPath.");
+            this.setState({
+                errorTitle: "Error in Submitting the new Rule",
+                errorMessage: "Please wait for the server to respond to " + this.props.numberOfSentMessages + " sent messages for retrieving XPath. " +
+                "If the error appeared by mistake, reset the form by 'clear' button.",
+                showError: true
+            });
             return;
         }
 
         if (rule.index === "" || rule.title === "" || rule.description === "") {
-            console.log("empty fields");
+            this.setState({
+                errorTitle: "Error in Submitting the new Rule",
+                errorMessage: "Make sure to enter 'title' and 'description' for the rule.",
+                showError: true
+            });
             return;
         }
 
         if (rule.ruleType.constraint === "" || (rule.ruleType.constraint === "FOLDER" && rule.ruleType.checkFor.length === 0)) {
-            console.log("folder constraints are not specified");
+            this.setState({
+                errorTitle: "Error in Submitting the new Rule",
+                errorMessage: "Make sure to specify the folder 'restriction'. " +
+                "If the constraint is set to 'Specific Files/Folders', at least one file/folder must be specified.",
+                showError: true
+            });
             return;
         }
 
         if (rule.quantifierXPath === "" || rule.constraintXPath === "") {
-            console.log("XPaths are not specified");
+            this.setState({
+                errorTitle: "Error in Submitting the new Rule",
+                errorMessage: "Please specify a valid design rule according to the grammar.",
+                showError: true
+            });
             return;
         }
 
@@ -767,6 +831,19 @@ class RulePanel extends Component {
      * In tagJson, the property is 'detail'
      */
     onSubmitNewTag () {
+        if (this.state.tagName === "" || this.state.tagDetail === "") {
+            this.setState({errorMessage: "Please specify non-empty name and description for the new tag.", showError: true});
+            return;
+        }
+        if (this.state.tags.filter(tag => tag.tagName === this.state.tagName).length > 0) {
+            this.setState({
+                errorTitle: "Error in Submitting the new Tag",
+                errorMessage: `"${this.state.tagName}" already exists with description "${this.state.tagDetail}'". 
+                If the new tag is different, please select a different name.`,
+                showError: true
+            });
+            return;
+        }
         // todo it doesn't check for duplicate tags
         let tag = {tagName: this.state.tagName, detail: this.state.tagDetail};
         this.props.onSubmitNewTag(tag);
