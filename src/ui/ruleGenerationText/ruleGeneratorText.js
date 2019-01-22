@@ -692,6 +692,10 @@ class RuleGeneratorText extends Component {
                 else if (wordsArrayAtIndex(lastWordIndex - 2) === "where") {
                     xWord = selectXWord(lastWordIndex - 3);
                     if (xWord === "") return errorGenerator(300);
+                    if (!TextConstants.autoComplete_suggestion[xWord].whereClause) return errorGenerator(202);
+                    suggText = (isMiddleOfWord) ? "to" : "\"TEXT\"";
+                    infoText = xWord + " where equal" + (isMiddleOfWord ? "" : " to");
+                    results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText));
                 }
                 break;
 

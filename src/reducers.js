@@ -156,7 +156,6 @@ const default_rulePanelState = {
  */
 const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
     // console.log('reducer running', action);
-    // let tempRuleTable = [];
 
     switch (action.type) {
         case "HASH":
@@ -198,6 +197,7 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
                 return Object.assign({}, d, {
                     rulePanelState: {
                         ...default_rulePanelState,
+                        editMode: false,
                         title: a.title,
                         description: a.description,
                         ruleTags: a.tags,
@@ -216,12 +216,15 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
 
         case "UPDATE_RULE":
             return Object.assign({}, state, {
-                // ruleTable: tempRuleTable,
                 message: "UPDATE_RULE"
             });
 
         case "SUBMIT_NEW_RULE":
             return Object.assign({}, state, {
+                newOrEditRule: {
+                    ...state.newOrEditRule,
+                    isEditMode: false
+                },
                 message: "NEW_RULE"
             });
 
