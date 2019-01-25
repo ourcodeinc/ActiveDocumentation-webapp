@@ -290,7 +290,7 @@ export class GuiConstants {
         "name equal to": {
             buttonName: "Have name equal to ...",
             type: "text",
-            placeholder: "class name",
+            placeholder: "name",
             pre: "",
             post: "",
             grammar: "name where equal to"
@@ -298,7 +298,7 @@ export class GuiConstants {
         "name not equal to": {
             buttonName: "Have name not equal to ...",
             type: "text",
-            placeholder: "class name",
+            placeholder: "name",
             pre: "",
             post: "",
             grammar: "name where not equal to"
@@ -306,7 +306,7 @@ export class GuiConstants {
         "name include": {
             buttonName: "Have name include ...",
             type: "text",
-            placeholder: "class name",
+            placeholder: "name",
             pre: "",
             post: "",
             grammar: "name where include"
@@ -314,7 +314,7 @@ export class GuiConstants {
         "name not include": {
             buttonName: "Have name not include ...",
             type: "text",
-            placeholder: "class name",
+            placeholder: "name",
             pre: "",
             post: "",
             grammar: "name where not include"
@@ -322,7 +322,7 @@ export class GuiConstants {
         "name start with": {
             buttonName: "Have name starts with ...",
             type: "text",
-            placeholder: "class name",
+            placeholder: "name",
             pre: "",
             post: "",
             grammar: "name where start with"
@@ -330,7 +330,7 @@ export class GuiConstants {
         "name not start with": {
             buttonName: "Have name not starts with ...",
             type: "text",
-            placeholder: "class name",
+            placeholder: "name",
             pre: "",
             post: "",
             grammar: "name where not start with"
@@ -338,7 +338,7 @@ export class GuiConstants {
         "name end with": {
             buttonName: "Have name ends with ...",
             type: "text",
-            placeholder: "class name",
+            placeholder: "name",
             pre: "",
             post: "",
             grammar: "name where end with"
@@ -346,7 +346,7 @@ export class GuiConstants {
         "name not end with": {
             buttonName: "Have name not ends with ...",
             type: "text",
-            placeholder: "class name",
+            placeholder: "name",
             pre: "",
             post: "",
             grammar: "name where not end with"

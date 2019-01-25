@@ -372,24 +372,28 @@ class GuiComponent extends React.Component {
             case "class":
                 if (group === 'after_1' && this.state.children["after_1"].length === 0)
                     return (<div className={" rowItem inlineText"}>
-                        <span className={"temporary-text"}>class name</span>
+                        <span className={"temporary-text"}>className</span>
                     </div>);
                 return null;
             case "interface":
                 if (group === 'after_1' && this.state.children["after_1"].length === 0)
                     return (<div className={" rowItem inlineText"}>
-                        <span className={"temporary-text"}>interface name</span>
+                        <span className={"temporary-text"}>interfaceName</span>
                     </div>);
                 return null;
             case "function":
-            case "abstract function":
             case "constructor":
                 if (group === 'before_2' && this.state.children["before_2"].length === 0)
                     return(<div className={" rowItem inlineText"}>
-                        <span className={"temporary-text"}>{this.state.element} name</span>
+                        <span className={"temporary-text"}>{this.state.element}Name</span>
                     </div>);
                 return null;
-
+            case "abstract function":
+                if (group === 'before_2' && this.state.children["before_2"].length === 0)
+                    return(<div className={" rowItem inlineText"}>
+                        <span className={"temporary-text"}>abstractFunctionName</span>
+                    </div>);
+                return null;
             default:
                 return null;
         }

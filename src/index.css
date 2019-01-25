@@ -283,10 +283,8 @@ body {
     background-image: -o-linear-gradient(top, #5bc0de 0%, #2aabd2 100%);
     background-image: -webkit-gradient(linear, left top, left bottom, from(#5bc0de), to(#2aabd2));
     background-image: linear-gradient(to bottom, #5bc0de 0%, #2aabd2 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff5bc0de', endColorstr='#ff2aabd2', GradientType=0);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
     background-repeat: repeat-x;
-    border-color: #28a4c9;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, .2);
     -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
@@ -315,11 +313,14 @@ body {
 }
 
 .generateRuleGui .divBorder {
+    border: 1px solid transparent;
+    border-radius: 5px;
+    padding: 2px 3px 0 3px;
+}
+
+.generateRuleGui .divBorder:hover {
     border: 1px solid #dadada;
     border-radius: 5px;
-    /*min-height: 45px;*/
-    /*padding: 3px 5px 3px 5px;*/
-    padding: 2px 3px 0 3px;
 }
 
 .generateRuleGui .exprDiv {
@@ -373,7 +374,7 @@ body {
 
 .generateRuleGui .tiDelete {
     cursor: pointer;
-    color: #d6d6d6;
+    color: #e6e6e6;
 }
 
 .generateRuleGui .tiDelete:hover {
@@ -400,7 +401,7 @@ body {
 
 .generateRuleGui .mdAddBox {
     cursor: pointer;
-    color: #d6d6d6
+    color: #e2e2e2
 }
 
 .generateRuleGui .mdAddBox:hover {
@@ -418,4 +419,8 @@ code {
     padding: 5px;
     font-weight: bold;
     font-size: 14px;
+}
+
+.generateRuleGui .btn-group {
+    margin-bottom: 5px;
 }

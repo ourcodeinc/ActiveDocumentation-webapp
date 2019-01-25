@@ -31,7 +31,7 @@ export class CustomAddDropDown extends Component {
                 <Dropdown id={this.state.id} open={this.state.open}
                           onToggle={() => this.setState({open: !this.state.open})}>
                     <CustomToggle bsRole="toggle">
-                        <MdAddBox size={25} className={"mdAddBox"}/>
+                        <MdAddBox size={15} className={"mdAddBox"}/>
                     </CustomToggle>
                     <CustomMenu bsRole="menu">
                         {this.state.menuItemsEvent.map((el, i) =>
