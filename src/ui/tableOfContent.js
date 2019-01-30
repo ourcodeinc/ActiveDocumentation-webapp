@@ -5,7 +5,10 @@
 import React, {Component} from 'react';
 import '../App.css';
 import {connect} from 'react-redux';
+import {Button} from "react-bootstrap";
+import {MdPlaylistAdd} from "react-icons/lib/md/index";
 
+import {changeEditMode} from "../actions";
 
 class TableOfContent extends Component {
 
@@ -41,18 +44,30 @@ class TableOfContent extends Component {
                     <h4>Rules</h4>
                 </div>
                 <div className={"ist-inline"}>
-                    <table><tbody>
-                    {this.props.rules.map((rule, i) =>
-                        <tr key={i}>
-                            <td><a className={"list-group-item"}>
-                                {rule.index}
-                            </a></td>
-                            <td><a className={"list-group-item"}>
-                                {rule['title']}
-                            </a></td>
-                        </tr>
-                    )}
-                    </tbody></table>
+                    <table>
+                        <tbody>
+                        {this.props.rules.map((rule, i) =>
+                            <tr key={i}>
+                                <td><a className={"list-group-item"}>
+                                    {rule.index}
+                                </a></td>
+                                <td><a className={"list-group-item"}>
+                                    {rule['title']}
+                                </a></td>
+                            </tr>
+                        )}
+                        </tbody>
+                    </table>
+                    <div style={{padding: '10px 0 10px 0', clear: 'both'}}>
+                        <Button style={{padding: "0 5px"}}
+                                onClick={() => {
+                                    window.location.hash = "#/rules";
+                                    this.props.onAddNewRule()
+                                }}>
+                            <MdPlaylistAdd size={35}/>
+                            Add a New Rule
+                        </Button>
+                    </div>
                 </div>
             </div>
         )
@@ -103,4 +118,10 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps, null)(TableOfContent);
+function mapDispatchToProps(dispatch) {
+    return {
+        onAddNewRule: () => dispatch(changeEditMode(-1, true))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TableOfContent);
