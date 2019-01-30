@@ -6,8 +6,12 @@
 import React, {Component, Fragment} from 'react';
 import ReactDOM from 'react-dom'
 import {TextConstants} from "./textConstant";
-import {FormControl, FormGroup, ListGroup, ListGroupItem, Panel} from "react-bootstrap";
+import {//FormControl, FormGroup,
+    ListGroup, ListGroupItem, Panel} from "react-bootstrap";
 import posTagger from 'wink-pos-tagger';
+import MonacoEditor from 'react-monaco-editor';
+
+import {ASP_FORMAT, ASP_THEME, EDITOR_OPTION} from "./monacoEditorConfig";
 
 class RuleGeneratorText extends Component {
     constructor(props) {
@@ -19,7 +23,10 @@ class RuleGeneratorText extends Component {
             selectionEnd: 0,
             grammarSuggestion: [],
             phraseSuggestion: [],
-            focused: false
+            focused: false,
+
+            editor: null,
+            monaco: null
         };
 
         if (!props.onUpdateText || !props.onBlur)
@@ -29,30 +36,46 @@ class RuleGeneratorText extends Component {
         this.onBlur = props.onBlur;
 
         this.handleChange = this.handleChange.bind(this);
-        this.onClickTextArea = this.onClickTextArea.bind(this);
-        this.onKeyUp = this.onKeyUp.bind(this);
+        // this.onClickTextArea = this.onClickTextArea.bind(this);
+        // this.onKeyUp = this.onKeyUp.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
+        this.editorDidMount = this.editorDidMount.bind(this);
 
     }
 
     render() {
         return (
             <div ref={(node) => this.wrapperRef = node} className={"ruleGeneratorTextContainer"}>
-                <form>
-                    <FormGroup>
-                        <FormControl componentClass="textarea" placeholder="Design Rule"
-                                     style={{resize: "vertical"}}
-                                     id={"queryText"}
-                                     onClick={this.onClickTextArea}
-                                     onChange={this.handleChange}
-                                     onKeyUp={this.onKeyUp}
-                                     onFocus={() => {
-                                         this.suggestionDivRef.style.display = "block";
-                                         this.setState({focused: true})
-                                     }}
-                                     value={this.state["myText"]}
-                                     ref={(node) => this.queryText = node}
+
+                {/*<form>*/}
+                {/*<FormGroup>*/}
+                <div style={{border: "1px solid #cbcbcb"}}>
+                        <MonacoEditor
+                            ref="monaco"
+                            options={EDITOR_OPTION}
+                            language="asp"
+                            value={this.state["myText"]}
+                            height={50}
+                            theme="draco-light"
+                            editorDidMount={this.editorDidMount}
+                            editorWillMount={this.editorWillMount}
+                            onChange={this.handleChange}
                         />
+                    </div>
+
+                        {/*<FormControl componentClass="textarea" placeholder="Design Rule"*/}
+                                     {/*style={{resize: "vertical"}}*/}
+                                     {/*id={"queryText"}*/}
+                                     {/*onClick={this.onClickTextArea}*/}
+                                     {/*onChange={this.handleChange}*/}
+                                     {/*onKeyUp={this.onKeyUp}*/}
+                                     {/*onFocus={() => {*/}
+                                         {/*this.suggestionDivRef.style.display = "block";*/}
+                                         {/*this.setState({focused: true})*/}
+                                     {/*}}*/}
+                                     {/*value={this.state["myText"]}*/}
+                                     {/*ref={(node) => this.queryText = node}*/}
+                        {/*/>*/}
                         <div ref={(node) => this.suggestionDivRef = node} className={"suggestionDiv"}>
                             <Panel bsStyle="default">
                                 {this.state.grammarSuggestion.length === 0 ? null : (
@@ -121,10 +144,43 @@ class RuleGeneratorText extends Component {
                             </Panel>
                         </div>
 
-                    </FormGroup>
-                </form>
+                    {/*</FormGroup>*/}
+                {/*</form>*/}
             </div>
         );
+    }
+
+    editorDidMount(editor, monaco) {
+        this.setState({
+            editor: editor,
+            monaco: monaco
+        });
+        editor.onDidChangeCursorSelection((e) => {
+            if (e.reason === 3) {
+                let value = this.state.editor.getValue();
+                let selection = e.selection; // indices starts from 1
+                let start = selection.startColumn === selection.endColumn ? -1 : selection.startColumn - 1;
+                let end = selection.endColumn;
+                this.setState({
+                    myText: value,
+                    selectionStart: start,
+                    selectionEnd: end,
+                    grammarSuggestion: this.grammarSuggestion(value, end),
+                    phraseSuggestion: this.phraseSuggestion(value, start, end)
+                });
+            }
+
+        });
+        editor.onDidFocusEditorText(() => {
+            this.suggestionDivRef.style.display = "block";
+            this.setState({focused: true});
+        });
+    }
+
+    editorWillMount(monaco) {
+        monaco.languages.register({id: "asp"});
+        monaco.languages.setMonarchTokensProvider("asp", ASP_FORMAT);
+        monaco.editor.defineTheme("draco-light", ASP_THEME);
     }
 
     //componentDidUpdate doesn't work
@@ -149,14 +205,20 @@ class RuleGeneratorText extends Component {
 
     /**
      * update text and suggestion upon changing the text
-     * @param e
+     * @param newText
      */
-    handleChange(e) {
-        let start = e.target.selectionStart === e.target.selectionEnd ? -1 : e.target.selectionStart;
-        let end = e.target.selectionEnd;
-        let newText = e.target.value;
-        let data = this.grammarSuggestion(e.target.value, end);
+    handleChange(newText) {
+        let selection = this.state.editor.getSelection(); // indices starts from 1
+        let start = selection.startColumn === selection.endColumn ? -1 : selection.startColumn - 1;
+        let end = selection.endColumn;
+
+
+        // let start = e.target.selectionStart === e.target.selectionEnd ? -1 : e.target.selectionStart;
+        // let end = e.target.selectionEnd;
+        let data = this.grammarSuggestion(newText, end);
+
         this.setState({
+                focused: true,
                 myText: newText,
                 selectionStart: start,
                 selectionEnd: end,
@@ -170,53 +232,53 @@ class RuleGeneratorText extends Component {
     }
 
 
-    /**
-     * update suggestion upon changing the caret/offset position
-     * @param e
-     */
-    onClickTextArea(e) {
-        let start = e.target.selectionStart === e.target.selectionEnd ? -1 : e.target.selectionStart;
-        let end = e.target.selectionStart === e.target.selectionEnd ? e.target.selectionStart : e.target.selectionEnd;
-        let data = this.grammarSuggestion(this.state.myText, end);
-            this.setState({
-                selectionStart: start,
-                selectionEnd: end,
-                grammarSuggestion: data,//this.grammarSuggestion(this.state.myText, start, end),//this.grammarSuggestion(e.target.value.slice(start, end)),
-                phraseSuggestion: this.phraseSuggestion(this.state.myText, start, end)//e.target.value.slice(start, end))
-            });
-    }
-
-
-    /**
-     * update suggestion upon moving the caret/offset by keyboard arrow keys
-     * @param e
-     */
-    onKeyUp(e) {
-        let start = e.target.selectionStart === e.target.selectionEnd ? -1 : e.target.selectionStart;
-        let end = e.target.selectionStart === e.target.selectionEnd ? e.target.selectionStart : e.target.selectionEnd;
-        let myText = e.target.value;
-
-        e.target.style.cssText = 'height:0';
-        e.target.style.cssText = 'overflow:hidden;height:' + e.target.scrollHeight + 'px';
-
-        if (e.keyCode === 37 || e.keyCode === 39) { // left and right arrows
-            let data = this.grammarSuggestion(e.target.value, end);
-            this.setState({
-                selectionStart: start,
-                selectionEnd: end,
-                grammarSuggestion: data,
-                phraseSuggestion: this.phraseSuggestion(myText, start, end)//e.target.value.slice(0, e.target.selectionStart))
-            });
-        }
-        // if (e.keyCode === 32) { // space
-        // }
-
-        // if (e.keyCode === 38) { // up
-        // }
-
-        // if (e.keyCode === 40) { // down
-        // }
-    }
+    // /**
+    //  * update suggestion upon changing the caret/offset position
+    //  * @param e
+    //  */
+    // onClickTextArea(e) {
+    //     let start = e.target.selectionStart === e.target.selectionEnd ? -1 : e.target.selectionStart;
+    //     let end = e.target.selectionStart === e.target.selectionEnd ? e.target.selectionStart : e.target.selectionEnd;
+    //     let data = this.grammarSuggestion(this.state.myText, end);
+    //         this.setState({
+    //             selectionStart: start,
+    //             selectionEnd: end,
+    //             grammarSuggestion: data,//this.grammarSuggestion(this.state.myText, start, end),//this.grammarSuggestion(e.target.value.slice(start, end)),
+    //             phraseSuggestion: this.phraseSuggestion(this.state.myText, start, end)//e.target.value.slice(start, end))
+    //         });
+    // }
+    //
+    //
+    // /**
+    //  * update suggestion upon moving the caret/offset by keyboard arrow keys
+    //  * @param e
+    //  */
+    // onKeyUp(e) {
+    //     let start = e.target.selectionStart === e.target.selectionEnd ? -1 : e.target.selectionStart;
+    //     let end = e.target.selectionStart === e.target.selectionEnd ? e.target.selectionStart : e.target.selectionEnd;
+    //     let myText = e.target.value;
+    //
+    //     e.target.style.cssText = 'height:0';
+    //     e.target.style.cssText = 'overflow:hidden;height:' + e.target.scrollHeight + 'px';
+    //
+    //     if (e.keyCode === 37 || e.keyCode === 39) { // left and right arrows
+    //         let data = this.grammarSuggestion(e.target.value, end);
+    //         this.setState({
+    //             selectionStart: start,
+    //             selectionEnd: end,
+    //             grammarSuggestion: data,
+    //             phraseSuggestion: this.phraseSuggestion(myText, start, end)//e.target.value.slice(0, e.target.selectionStart))
+    //         });
+    //     }
+    //     // if (e.keyCode === 32) { // space
+    //     // }
+    //
+    //     // if (e.keyCode === 38) { // up
+    //     // }
+    //
+    //     // if (e.keyCode === 40) { // down
+    //     // }
+    // }
 
 
     /**
@@ -225,6 +287,7 @@ class RuleGeneratorText extends Component {
 
     componentDidMount() {
         document.addEventListener('mousedown', this.handleClickOutside);
+        window.addEventListener('resize', () => this.state.editor.layout());
     }
 
     componentWillUnmount() {
