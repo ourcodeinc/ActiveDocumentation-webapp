@@ -101,7 +101,7 @@ export class TextConstants {
     static phrase_hash = {"function": [0, 1], "foo": [0], "bar": [1], "Command": [2], "class": [2]};
 
 
-    static templates = [
+    static examples = [
         "function where ((have annotation and have specifier where equal to \"public\") or have name where equal to \"exe\") " +
         "must (((have specifier where equal to \"static\") and have name where not start with \"test\") or (have declaration statement))  ",
         "function where have name where start with \"str\" must have annotation ",

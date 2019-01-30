@@ -5,28 +5,9 @@ export const ASP_FORMAT = {
         ["(", ")", "delimiter.parenthesis"]
     ],
 
-    keywords: ["function","class", "annotation", "specifier", "argument", "call"],
+    keywords: ["must"],
 
-    operators: [
-        ":",
-        "..",
-        ":~",
-        ":-",
-        "|",
-        ";",
-        ",",
-        "=",
-        "!=",
-        "<",
-        "<=",
-        ">",
-        ">=",
-        "+",
-        "-",
-        "/",
-        "*",
-        "@"
-    ],
+    operators: [],
 
     // operators
     symbols: /([.]{2})|([=><!:|+\-~*/%,;]+)/,
@@ -87,7 +68,7 @@ export const ASP_THEME = {
         { token: "comment", foreground: "87a1c4" },
         { token: "number", foreground: "256fd1"},
         { token: "identifier", foreground: "586677" },
-        { token: "keyword", foreground: "0090ff"},
+        { token: "keyword", foreground: "c98526"},
         { token: "string", foreground: "7c71f2"}
     ],
     colors: {
@@ -107,7 +88,7 @@ export const EDITOR_OPTION = {
     overviewRulerBorder: false,
     hideCursorInOverviewRuler: true,
     minimap: {enabled: false},
-    fontSize: 15,
+    fontSize: 13,
     dragAndDrop: true,
     folding: false,
     wordWrap: "on",

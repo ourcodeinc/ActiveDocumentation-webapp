@@ -4,13 +4,13 @@
 
 
 import React, {Component, Fragment} from 'react';
-import ReactDOM from 'react-dom'
-import {TextConstants} from "./textConstant";
-import {//FormControl, FormGroup,
-    ListGroup, ListGroupItem, Panel} from "react-bootstrap";
+// import ReactDOM from 'react-dom'
+import {ListGroup, ListGroupItem, Panel} from "react-bootstrap";
 import posTagger from 'wink-pos-tagger';
 import MonacoEditor from 'react-monaco-editor';
+import IoClose from "react-icons/lib/io/close";
 
+import {TextConstants} from "./textConstant";
 import {ASP_FORMAT, ASP_THEME, EDITOR_OPTION} from "./monacoEditorConfig";
 
 class RuleGeneratorText extends Component {
@@ -26,7 +26,10 @@ class RuleGeneratorText extends Component {
             focused: false,
 
             editor: null,
-            monaco: null
+            monaco: null,
+
+            showSuggestionDiv: false,
+            showFeedbackDiv: false
         };
 
         if (!props.onUpdateText || !props.onBlur)
@@ -46,109 +49,128 @@ class RuleGeneratorText extends Component {
     render() {
         return (
             <div ref={(node) => this.wrapperRef = node} className={"ruleGeneratorTextContainer"}>
-
-                {/*<form>*/}
-                {/*<FormGroup>*/}
-                <div style={{border: "1px solid #cbcbcb"}}>
-                        <MonacoEditor
-                            ref="monaco"
-                            options={EDITOR_OPTION}
-                            language="asp"
-                            value={this.state["myText"]}
-                            height={50}
-                            theme="draco-light"
-                            editorDidMount={this.editorDidMount}
-                            editorWillMount={this.editorWillMount}
-                            onChange={this.handleChange}
-                        />
-                    </div>
-
-                        {/*<FormControl componentClass="textarea" placeholder="Design Rule"*/}
-                                     {/*style={{resize: "vertical"}}*/}
-                                     {/*id={"queryText"}*/}
-                                     {/*onClick={this.onClickTextArea}*/}
-                                     {/*onChange={this.handleChange}*/}
-                                     {/*onKeyUp={this.onKeyUp}*/}
-                                     {/*onFocus={() => {*/}
-                                         {/*this.suggestionDivRef.style.display = "block";*/}
-                                         {/*this.setState({focused: true})*/}
-                                     {/*}}*/}
-                                     {/*value={this.state["myText"]}*/}
-                                     {/*ref={(node) => this.queryText = node}*/}
-                        {/*/>*/}
-                        <div ref={(node) => this.suggestionDivRef = node} className={"suggestionDiv"}>
-                            <Panel bsStyle="default">
-                                {this.state.grammarSuggestion.length === 0 ? null : (
-                                    <Fragment>
-                                        <Panel.Heading>
-                                            <Panel.Title componentClass="h3">Grammar</Panel.Title>
-                                        </Panel.Heading>
-                                        <ListGroup>
-                                            {this.state.grammarSuggestion.map((item, i) =>
-                                                item.type === "suggestion" ?
-                                                    (<ListGroupItem key={i}
-                                                                    onClick={() => this.updateGrammarText(item.suggestion)}>
-                                                        <span
-                                                            style={{color: "#999999"}}> {item.information + " "}</span>
-                                                        {item.suggestion}
-                                                    </ListGroupItem>)
-                                                    : item.type === "error" ?
-                                                    (<ListGroupItem key={i}>
-                                                        <span style={{color: "#99555a"}}> {item.information}</span>
-                                                    </ListGroupItem>)
-                                                    : null
-                                            )}
-                                        </ListGroup>
-                                    </Fragment>
-                                )}
-                                {this.state.phraseSuggestion.length === 0 ? null : (
-                                    <Fragment>
-                                        <Panel.Heading>
-                                            <Panel.Title componentClass="h3">Phrase</Panel.Title>
-                                        </Panel.Heading>
-
-                                        <ListGroup>
-                                            {this.state.phraseSuggestion.map((sug, i) =>
-                                                (<ListGroupItem key={i}
-                                                                onClick={() => this.updatePhraseText(sug)}>
-                                                    {sug.phraseText}
-                                                </ListGroupItem>)
-                                            )}
-                                        </ListGroup>
-                                    </Fragment>
-                                )}
-                                {this.state.grammarSuggestion.filter(d => d.type === "suggestion").length !== 0 || this.state.phraseSuggestion.length !== 0 ? null : (
-                                    <Fragment>
-                                        <Panel.Heading>
-                                            <Panel.Title componentClass="h3">Examples</Panel.Title>
-                                        </Panel.Heading>
-                                        <ListGroup>
-                                            {TextConstants.templates.map((template, i) =>
-                                                (<ListGroupItem key={i}
-                                                                onClick={() => {
-                                                                    ReactDOM.findDOMNode(this.queryText).focus();
-                                                                    this.setState({
-                                                                            myText: template,
-                                                                            selectionStart: -1,
-                                                                            selectionEnd: template.length,
-                                                                        },
-                                                                        () => {
-                                                                            this.setCaretPosition("queryText", template.length);
-                                                                            this.onUpdateText(template)
-                                                                        })
-                                                                }}>{template}</ListGroupItem>)
-                                            )}
-                                        </ListGroup>
-                                    </Fragment>
-                                )}
-                            </Panel>
-                        </div>
-
-                    {/*</FormGroup>*/}
-                {/*</form>*/}
+                <div
+                    className={"monacoWrapper" + (this.state.myText === "" ? " has-error" : " has-success") + (this.state.focused ? " focused" : "")}>
+                    <MonacoEditor
+                        ref="monaco"
+                        options={EDITOR_OPTION}
+                        language="asp"
+                        value={this.state.myText}
+                        height={100}
+                        theme="draco-light"
+                        editorDidMount={this.editorDidMount}
+                        editorWillMount={this.editorWillMount}
+                        onChange={this.handleChange}
+                    />
+                </div>
+                {this.state.showFeedbackDiv ? this.renderFeedbackDiv() : this.state.showSuggestionDiv ? this.renderSuggestionDiv() : null}
             </div>
         );
     }
+
+
+    /**
+     * render suggestion div including grammar, phrases, and examples
+     * @return {XML}
+     */
+    renderSuggestionDiv () {
+        return (
+            <div className={"suggestionDiv"}>
+                <Panel bsStyle="default">
+                    {this.state.grammarSuggestion.length === 0 ? null : (
+                        <Fragment>
+                            <Panel.Heading>
+                                <Panel.Title componentClass="h3">Grammar</Panel.Title>
+                            </Panel.Heading>
+                            <ListGroup>
+                                {this.state.grammarSuggestion.map((item, i) =>
+                                    item.type === "suggestion" ?
+                                        (<ListGroupItem key={i}
+                                                        onClick={() => this.updateGrammarText(item.suggestion)}>
+                                                        <span
+                                                            style={{color: "#999999"}}> {item.information + " "}</span>
+                                            {item.suggestion}
+                                        </ListGroupItem>)
+                                        : item.type === "error" ?
+                                        (<ListGroupItem key={i}>
+                                            <span style={{color: "#99555a"}}> {item.information}</span>
+                                        </ListGroupItem>)
+                                        : null
+                                )}
+                            </ListGroup>
+                        </Fragment>
+                    )}
+                    {this.state.phraseSuggestion.length === 0 ? null : (
+                        <Fragment>
+                            <Panel.Heading>
+                                <Panel.Title componentClass="h3">Phrase</Panel.Title>
+                            </Panel.Heading>
+
+                            <ListGroup>
+                                {this.state.phraseSuggestion.map((sug, i) =>
+                                    (<ListGroupItem key={i}
+                                                    onClick={() => this.updatePhraseText(sug)}>
+                                        {sug.phraseText}
+                                    </ListGroupItem>)
+                                )}
+                            </ListGroup>
+                        </Fragment>
+                    )}
+                    {this.state.grammarSuggestion.filter(d => d.type === "suggestion").length !== 0 || this.state.phraseSuggestion.length !== 0 ? null : (
+                        <Fragment>
+                            <Panel.Heading>
+                                <Panel.Title componentClass="h3">Examples</Panel.Title>
+                            </Panel.Heading>
+                            <ListGroup>
+                                {TextConstants.examples.map((example, i) =>
+                                    (<ListGroupItem key={i}
+                                                    onClick={() => {
+                                                        this.state.editor.focus();
+                                                        this.setState({
+                                                                myText: example,
+                                                                selectionStart: -1,
+                                                                selectionEnd: example.length,
+                                                            },
+                                                            () => {
+                                                                this.setCaretPosition(example.length);
+                                                                this.onUpdateText(example)
+                                                            })
+                                                    }}>{example}</ListGroupItem>)
+                                )}
+                            </ListGroup>
+                        </Fragment>
+                    )}
+                </Panel>
+            </div>
+        )
+    }
+
+
+    /**
+     * render feedback div, under construction!
+     * @return {XML}
+     */
+    renderFeedbackDiv() {
+        return this.state.showFeedbackDiv ? (
+            <div className={"feedbackDiv"}>
+
+                <div onClick={() => console.log("clicked")} style={{float: "left", width: "95%"}}>
+                    <span>{"Show feedback for "}</span>
+                    <span className={"ruleFeedback"}>
+                                {this.state.myText.substring(this.state.selectionStart, this.state.selectionEnd + 1)}
+                    </span>
+                </div>
+                <div style={{float: "left"}}>
+                    <IoClose onClick={() => this.setState({showFeedbackDiv: false})}/>
+                </div>
+
+            </div>
+        ) : null;
+    }
+
+    /**
+     * callback functions for monaco editor
+     */
 
     editorDidMount(editor, monaco) {
         this.setState({
@@ -166,14 +188,14 @@ class RuleGeneratorText extends Component {
                     selectionStart: start,
                     selectionEnd: end,
                     grammarSuggestion: this.grammarSuggestion(value, end),
-                    phraseSuggestion: this.phraseSuggestion(value, start, end)
+                    phraseSuggestion: this.phraseSuggestion(value, start, end),
+                    showFeedbackDiv: start !== -1
                 });
             }
 
         });
         editor.onDidFocusEditorText(() => {
-            this.suggestionDivRef.style.display = "block";
-            this.setState({focused: true});
+            this.setState({focused: true, showSuggestionDiv: true});
         });
     }
 
@@ -182,6 +204,7 @@ class RuleGeneratorText extends Component {
         monaco.languages.setMonarchTokensProvider("asp", ASP_FORMAT);
         monaco.editor.defineTheme("draco-light", ASP_THEME);
     }
+
 
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
@@ -195,7 +218,7 @@ class RuleGeneratorText extends Component {
                     grammarSuggestion: data,
                     phraseSuggestion: this.phraseSuggestion(this.state.myText, -1, focus)
                 },
-                () => this.setCaretPosition("queryText", focus)
+                () => this.setCaretPosition(focus)
             );
 
         }
@@ -226,59 +249,10 @@ class RuleGeneratorText extends Component {
                 phraseSuggestion: this.phraseSuggestion(newText, start, end)
             },
             () => {
-                this.setCaretPosition("queryText", end);
+                this.setCaretPosition(end);
                 this.onUpdateText(newText)
             });
     }
-
-
-    // /**
-    //  * update suggestion upon changing the caret/offset position
-    //  * @param e
-    //  */
-    // onClickTextArea(e) {
-    //     let start = e.target.selectionStart === e.target.selectionEnd ? -1 : e.target.selectionStart;
-    //     let end = e.target.selectionStart === e.target.selectionEnd ? e.target.selectionStart : e.target.selectionEnd;
-    //     let data = this.grammarSuggestion(this.state.myText, end);
-    //         this.setState({
-    //             selectionStart: start,
-    //             selectionEnd: end,
-    //             grammarSuggestion: data,//this.grammarSuggestion(this.state.myText, start, end),//this.grammarSuggestion(e.target.value.slice(start, end)),
-    //             phraseSuggestion: this.phraseSuggestion(this.state.myText, start, end)//e.target.value.slice(start, end))
-    //         });
-    // }
-    //
-    //
-    // /**
-    //  * update suggestion upon moving the caret/offset by keyboard arrow keys
-    //  * @param e
-    //  */
-    // onKeyUp(e) {
-    //     let start = e.target.selectionStart === e.target.selectionEnd ? -1 : e.target.selectionStart;
-    //     let end = e.target.selectionStart === e.target.selectionEnd ? e.target.selectionStart : e.target.selectionEnd;
-    //     let myText = e.target.value;
-    //
-    //     e.target.style.cssText = 'height:0';
-    //     e.target.style.cssText = 'overflow:hidden;height:' + e.target.scrollHeight + 'px';
-    //
-    //     if (e.keyCode === 37 || e.keyCode === 39) { // left and right arrows
-    //         let data = this.grammarSuggestion(e.target.value, end);
-    //         this.setState({
-    //             selectionStart: start,
-    //             selectionEnd: end,
-    //             grammarSuggestion: data,
-    //             phraseSuggestion: this.phraseSuggestion(myText, start, end)//e.target.value.slice(0, e.target.selectionStart))
-    //         });
-    //     }
-    //     // if (e.keyCode === 32) { // space
-    //     // }
-    //
-    //     // if (e.keyCode === 38) { // up
-    //     // }
-    //
-    //     // if (e.keyCode === 40) { // down
-    //     // }
-    // }
 
 
     /**
@@ -296,37 +270,19 @@ class RuleGeneratorText extends Component {
 
     handleClickOutside(event) {
         if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-            this.suggestionDivRef.style.display = "none";
-            if (this.state.focused)
-                this.onBlur();
-            this.setState({focused: false});
+            if (this.state.focused) this.onBlur();
+            this.setState({focused: false, showSuggestionDiv: false, showFeedbackDiv: false});
         }
     }
 
 
     /**
      * set the caret position, used when a word is replaced or added in the textbox
-     * @param elemId
      * @param caretPos
      */
-    setCaretPosition(elemId, caretPos) {
-        let elem = document.getElementById(elemId);
-
-        if (elem !== null) {
-            if (elem.createTextRange) {
-                let range = elem.createTextRange();
-                range.move('character', caretPos);
-                range.select();
-            }
-            else {
-                if (elem.selectionStart) {
-                    elem.focus();
-                    elem.setSelectionRange(caretPos, caretPos);
-                }
-                else
-                    elem.focus();
-            }
-        }
+    setCaretPosition(caretPos) {
+        this.state.editor.setPosition({column: caretPos + 1, lineNumber: 1});
+        this.state.editor.focus();
     }
     
 
@@ -1042,7 +998,7 @@ class RuleGeneratorText extends Component {
                 phraseSuggestion: this.phraseSuggestion(newText, -1, focus)
             },
             () => {
-                this.setCaretPosition("queryText", focus);
+                this.setCaretPosition(focus);
                 this.onUpdateText(newText)
             }
         );
@@ -1130,7 +1086,7 @@ class RuleGeneratorText extends Component {
                 phraseSuggestion: this.phraseSuggestion(newText, -1, focus)
             },
             () => {
-                this.setCaretPosition("queryText", focus);
+                this.setCaretPosition(focus);
                 this.onUpdateText(newText)
             }
         );
