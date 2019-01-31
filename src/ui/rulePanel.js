@@ -541,7 +541,7 @@ class RulePanel extends Component {
                                     }}>Rule must be applied on SPECIFIC Files/Folders
                                     </MenuItem>
                                     <MenuItem eventKey={"NONE"} onSelect={(evt) => {
-                                        this.setState({folderConstraint: evt, filesFolders: []})
+                                        this.setState({folderConstraint: evt, filesFolders: []}, this.onEditNewRuleForm)
                                     }}>Rule must be applied on ALL Files/Folders
                                     </MenuItem>
                                 </DropdownButton>
