@@ -113,7 +113,7 @@ class EditRuleForm extends Component {
 
     render() {
         return (
-            <div className={"rulePanelDiv edit-bg"}>
+            <div className={"rulePanelDiv" + (this.ruleIndex === -1 ? " edit-bg" : "")}>
                 <FormGroup>
                     <div style={{float: 'right'}}>
                         <MdEdit size={20} style={{color: "#337ab7", cursor: "pointer"}}

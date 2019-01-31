@@ -25,9 +25,6 @@ class RulePanel extends Component {
         this.ruleI = null;
         this.newRuleRequest = this.ruleIndex === -1;
 
-        if (this.newRuleRequest && !props["cancelGeneratingNewRule"])
-            console.error(`'cancelGeneratingNewRule' is required in props when creating a new rule.`);
-
         this.state = {
             openPanel: true,
             className: "rulePanelDiv" + (this.newRuleRequest ? " edit-bg" : ""),
@@ -76,6 +73,7 @@ class RulePanel extends Component {
     }
 
     render() {
+        if(!this.ruleI && !this.state.editMode) return null;
         return (<Fragment>
             {this.state.editMode ? (
                 <EditRuleForm ruleIndex={this.ruleIndex}
@@ -365,9 +363,6 @@ class RulePanel extends Component {
      * change edit mode, set the states
      */
     changeEditMode() {
-        if (!this.ruleI)
-            this.props["cancelGeneratingNewRule"]();
-
         this.setState({editMode: !this.state.editMode},
             () => this.props.onChangeEditMode(this.ruleIndex, this.state.editMode));
     }
