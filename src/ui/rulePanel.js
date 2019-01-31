@@ -60,7 +60,7 @@ class RulePanel extends Component {
                 this.state.filesFolders = this.ruleI.ruleType.checkFor;
                 this.state.tags = props.tags;
 
-                this.state.editMode = false;
+                this.state.editMode = this.ruleI.rulePanelState.editMode;
             }
         }
 
@@ -76,53 +76,54 @@ class RulePanel extends Component {
     }
 
     render() {
-        if(this.state.editMode)
-            return (<EditRuleForm ruleIndex={this.ruleIndex}
-                                  changeEditMode={()=>this.changeEditMode()}/>);
-        else
-            return (
-            <div className={this.state.className}>
-                <FormGroup>
-                    <div style={{float: 'right'}}>
-                        <FaCaretUp size={20} onClick={() => this.setState({openPanel: false})}
-                                   style={this.caretClass[this.state.openPanel.toString()]}/>
-                        <FaCaretDown size={20} onClick={() => this.setState({openPanel: true})}
-                                     style={this.caretClass[(!this.state.openPanel).toString()]}/>
-                        <MdEdit size={20} style={this.editIconClass[this.state.editMode.toString()]}
-                                onClick={() => this.changeEditMode()}/>
-                    </div>
-                    <ControlLabel>{this.ruleI["title"]}</ControlLabel>
-                    <p>{this.ruleI["description"]}</p>
-                </FormGroup>
-                <Collapse in={this.state.openPanel}>
-                    <div>
-                        <div style={{paddingTop: '10px', clear: 'both'}}>
-                            {this.renderTags()}
+        return (<Fragment>
+            {this.state.editMode ? (
+                <EditRuleForm ruleIndex={this.ruleIndex}
+                              changeEditMode={() => this.changeEditMode()}/>
+            ) : (
+                <div className={this.state.className}>
+                    <FormGroup>
+                        <div style={{float: 'right'}}>
+                            <FaCaretUp size={20} onClick={() => this.setState({openPanel: false})}
+                                       style={this.caretClass[this.state.openPanel.toString()]}/>
+                            <FaCaretDown size={20} onClick={() => this.setState({openPanel: true})}
+                                         style={this.caretClass[(!this.state.openPanel).toString()]}/>
+                            <MdEdit size={20} style={this.editIconClass[this.state.editMode.toString()]}
+                                    onClick={() => this.changeEditMode()}/>
                         </div>
-                        <div style={{paddingTop: '10px', clear: 'both'}}>
-                            <Tabs animation={true} id={"rules_" + this.ruleIndex} activeKey={this.state.activeTab}
-                                  onSelect={(key) => {
-                                      if (this.state.activeTab === key)
-                                          this.setState({activeTab: 0});
-                                      else
-                                          this.setState({activeTab: key});
-                                  }}>
-                                <Tab eventKey={0} disabled>{}</Tab>
-                                <Tab eventKey={'satisfied'}
-                                     title={this.renderTabHeader('satisfied')}>{this.renderListOfSnippets('satisfied')}</Tab>
-                                <Tab eventKey={'violated'}
-                                     title={this.renderTabHeader('violated')}>{this.renderListOfSnippets('violated')}</Tab>
-                            </Tabs>
+                        <ControlLabel>{this.ruleI["title"]}</ControlLabel>
+                        <p>{this.ruleI["description"]}</p>
+                    </FormGroup>
+                    <Collapse in={this.state.openPanel}>
+                        <div>
+                            <div style={{paddingTop: '10px', clear: 'both'}}>
+                                {this.renderTags()}
+                            </div>
+                            <div style={{paddingTop: '10px', clear: 'both'}}>
+                                <Tabs animation={true} id={"rules_" + this.ruleIndex}
+                                      activeKey={this.state.activeTab}
+                                      onSelect={(key) => {
+                                          if (this.state.activeTab === key)
+                                              this.setState({activeTab: 0});
+                                          else
+                                              this.setState({activeTab: key});
+                                      }}>
+                                    <Tab eventKey={0} disabled>{}</Tab>
+                                    <Tab eventKey={'satisfied'}
+                                         title={this.renderTabHeader('satisfied')}>{this.renderListOfSnippets('satisfied')}</Tab>
+                                    <Tab eventKey={'violated'}
+                                         title={this.renderTabHeader('violated')}>{this.renderListOfSnippets('violated')}</Tab>
+                                </Tabs>
+                            </div>
                         </div>
-                    </div>
-                </Collapse>
-            </div>
-        );
+                    </Collapse>
+                </div>
+            )}
+        </Fragment>);
     }
 
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
-        console.log("nextProps", nextProps);
         // existing rule
         if (this.ruleIndex !== -1)
         {
@@ -366,13 +367,14 @@ class RulePanel extends Component {
     changeEditMode() {
         if (!this.ruleI)
             this.props["cancelGeneratingNewRule"]();
-        this.props.onChangeEditMode(this.ruleIndex, !this.state.editMode)
+
+        this.setState({editMode: !this.state.editMode},
+            () => this.props.onChangeEditMode(this.ruleIndex, this.state.editMode));
     }
 }
 
 // map state to props
 function mapStateToProps(state) {
-    console.log("received state", state.ruleTable[0].rulePanelState, state.message);
     return {
         rules: state.ruleTable,
         tags: state.tagTable,

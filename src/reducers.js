@@ -154,8 +154,8 @@ const default_rulePanelState = {
  * @param action
  * @returns {*} new state
  */
-const reducer = (state = Object.assign({}, default_state), action) => {
-    console.log('reducer running:', action);
+const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
+    // console.log('reducer running', action);
 
     switch (action.type) {
         case "HASH":
@@ -166,7 +166,7 @@ const reducer = (state = Object.assign({}, default_state), action) => {
                     hashManager: {
                         history: [...state.hashManager.history, "#/" + action["value"].join("/")],
                         clicked: false,
-                        activeHash: +(state.hashManager.activeHash.toString()) + 1,
+                        activeHash: state.hashManager.activeHash + 1,
                         forwardDisable: "disabled",
                         backDisable: state.hashManager.activeHash === 0
                     }
@@ -176,8 +176,11 @@ const reducer = (state = Object.assign({}, default_state), action) => {
                 hash: action["value"],
                 message: "HASH",
                 hashManager: {
-                    ...state.hashManager,
-                    clicked: false
+                    history: state.hashManager.history,
+                    clicked: false,
+                    activeHash: state.hashManager.activeHash,
+                    forwardDisable: state.hashManager.forwardDisable,
+                    backDisable: state.hashManager.backDisable
                 }
             });
 
@@ -190,10 +193,10 @@ const reducer = (state = Object.assign({}, default_state), action) => {
         case "UPDATE_RULE_TABLE":
             let rules = JSON.parse(JSON.stringify(action["ruleTable"]));
             rules = rules.map(d => {
-                let a = Object.assign({}, d);
+                let a =  Object.assign({}, d);
                 return Object.assign({}, d, {
                     rulePanelState: {
-                        ...Object.assign({}, default_rulePanelState),
+                        ...default_rulePanelState,
                         editMode: false,
                         title: a.title,
                         description: a.description,
@@ -219,7 +222,7 @@ const reducer = (state = Object.assign({}, default_state), action) => {
         case "SUBMIT_NEW_RULE":
             return Object.assign({}, state, {
                 newOrEditRule: {
-                    ...Object.assign({}, state.newOrEditRule),
+                    ...state.newOrEditRule,
                     isEditMode: false
                 },
                 message: "NEW_RULE"
@@ -231,8 +234,8 @@ const reducer = (state = Object.assign({}, default_state), action) => {
             });
 
         case "IGNORE_FILE":
-            let editCount = state.ruleTable.reduce((count, element) => count + element.rulePanelState.editMode ? 1 : 0, 0);
-            if (state.newOrEditRule.isEditMode || editCount > 0) return Object.assign({}, state);
+            let editCount = state.ruleTable.reduce((count, element) =>  count + element.rulePanelState.editMode ? 1 : 0, 0);
+            if (state.newOrEditRule.isEditMode || editCount > 0)  return Object.assign({}, state);
             return Object.assign({}, state, {ignoreFile: action["shouldIgnore"], message: "IGNORE_FILE"});
 
         case "CLICKED_ON_FORWARD":
@@ -339,7 +342,7 @@ const reducer = (state = Object.assign({}, default_state), action) => {
             else
                 return Object.assign({}, state, {
                     newOrEditRule: {
-                        ...Object.assign({}, state.newOrEditRule),
+                        ...state.newOrEditRule,
                         title: action["title"],
                         description: action["description"],
                         ruleTags: action["ruleTags"],
@@ -350,30 +353,30 @@ const reducer = (state = Object.assign({}, default_state), action) => {
 
         case "CHANGE_EDIT_MODE":
             if (action["ruleIndex"] !== -1) {
-                // deep copy, slice(0) and array.map() doesn't work
-                let copyState = Object.assign({}, state);
-                let editCount = copyState.ruleTable.reduce((count, element) => {
+                let editCount = state.ruleTable.reduce((count, element) => {
                     if (element.index !== action["ruleIndex"]) return count + element.rulePanelState.editMode ? 1 : 0;
                     return count + action["newEditMode"] ? 1 : 0;
                 }, 0);
-                let rules = copyState.ruleTable.map(a => {
-                    // let a = Object.assign({}, d);
+
+                // deep copy, slice(0) and array.map() doesn't work
+                let rules = JSON.parse(JSON.stringify(state.ruleTable));
+                rules = rules.map(d => {
+                    let a = Object.assign({}, d);
                     if (a.index === action["ruleIndex"]) {
                         a.rulePanelState.editMode = action["newEditMode"];
 
                         // reset fields of the form after cancel editing
                         if (!action["newEditMode"])
                             a.rulePanelState = {
-                                ...Object.assign({}, default_rulePanelState),
-                                title: a.title,
-                                description: a.description,
-                                ruleTags: a.tags,
-                                folderConstraint: a.ruleType.constraint,
-                                filesFolders: a.ruleType.checkFor,
-                                quantifierXPath: a.quantifier.command,
-                                constraintXPath: a.constraint.command,
-                                autoCompleteText: a.grammar,
-                                editMode: action["newEditMode"]
+                                ...default_rulePanelState,
+                                title: d.title,
+                                description: d.description,
+                                ruleTags: d.tags,
+                                folderConstraint: d.ruleType.constraint,
+                                filesFolders: d.ruleType.checkFor,
+                                quantifierXPath: d.quantifier.command,
+                                constraintXPath: d.constraint.command,
+                                autoCompleteText: d.grammar
                             }
                     }
                     return a;
@@ -387,7 +390,7 @@ const reducer = (state = Object.assign({}, default_state), action) => {
                 return Object.assign({}, state, {
                     ignoreFile: (action["newEditMode"] || state.ruleTable.reduce((count, element) => count + element.rulePanelState.editMode ? 1 : 0, 0) > 0),
                     newOrEditRule: {
-                        ...Object.assign({}, state.newOrEditRule),
+                        ...state.newOrEditRule,
                         isEditMode: action["newEditMode"]
                     }
                 });
@@ -416,12 +419,12 @@ const reducer = (state = Object.assign({}, default_state), action) => {
                 return Object.assign({}, state, {
                     message: "RECEIVE_GUI_TREE",
                     newOrEditRule: {
-                        ...Object.assign({}, state.newOrEditRule),
+                        ...state.newOrEditRule,
                         quantifierXPath: action["quantifierXPath"],
                         constraintXPath: action["constraintXPath"],
                         autoCompleteText: action["autoCompleteText"],
                         guiState: {
-                            ...Object.assign({}, state.newOrEditRule.guiState),
+                            ...state.newOrEditRule.guiState,
                             ...action["newTreeData"]
                         }
                     }
@@ -430,7 +433,7 @@ const reducer = (state = Object.assign({}, default_state), action) => {
         case "SEND_EXPR_STMT_XML":
             return Object.assign({}, state, {
                 newOrEditRule: {
-                    ...Object.assign({}, state.newOrEditRule),
+                    ...state.newOrEditRule,
                     sentMessages: state.newOrEditRule.sentMessages.concat([action["codeTextAndID"]])
                 },
                 message: "SEND_EXPR_STMT_XML"
@@ -439,7 +442,7 @@ const reducer = (state = Object.assign({}, default_state), action) => {
         case "RECEIVE_EXPR_STMT_XML":
             return Object.assign({}, state, {
                 newOrEditRule: {
-                    ...Object.assign({}, state.newOrEditRule),
+                    ...state.newOrEditRule,
                     receivedMessages: state.newOrEditRule.receivedMessages.concat([action["xmlData"]])
                 },
                 message: "RECEIVE_EXPR_STMT_XML"
@@ -459,7 +462,7 @@ const reducer = (state = Object.assign({}, default_state), action) => {
                     message: "MATCHED_MESSAGES",
                     ruleTable: rules,
                     newOrEditRule: {
-                        ...Object.assign({}, state.newOrEditRule),
+                        ...state.newOrEditRule,
                         sentMessages: action["sentMessages"],
                         receivedMessages: action["receivedMessages"]
                     },
@@ -468,7 +471,7 @@ const reducer = (state = Object.assign({}, default_state), action) => {
             else
                 return Object.assign({}, state, {
                     newOrEditRule: {
-                        ...Object.assign({}, state.newOrEditRule),
+                        ...state.newOrEditRule,
                         quantifierXPath: action["quantifierXPath"],
                         constraintXPath: action["constraintXPath"],
                         sentMessages: action["sentMessages"],
@@ -480,7 +483,7 @@ const reducer = (state = Object.assign({}, default_state), action) => {
         case "CLEAR_MESSAGE_LISTS":
             return Object.assign({}, state, {
                 newOrEditRule: {
-                    ...Object.assign({}, state.newOrEditRule),
+                    ...state.newOrEditRule,
                     sentMessages: [],
                     receivedMessages: []
                 },
@@ -492,9 +495,9 @@ const reducer = (state = Object.assign({}, default_state), action) => {
             if (action["group"] === "quantifier")
                 return Object.assign({}, state, {
                     newOrEditRule: {
-                        ...Object.assign({}, state.newOrEditRule),
+                        ...state.newOrEditRule,
                         guiState: {
-                            ...Object.assign({}, state.newOrEditRule.guiState),
+                            ...state.newOrEditRule.guiState,
                             activeTab: "quantifier",
                             quantifier: {
                                 key: action["element"],
@@ -519,9 +522,9 @@ const reducer = (state = Object.assign({}, default_state), action) => {
             else if (action["group"] === "constraint")
                 return Object.assign({}, state, {
                     newOrEditRule: {
-                        ...Object.assign({}, state.newOrEditRule),
+                        ...state.newOrEditRule,
                         guiState: {
-                            ...Object.assign({}, state.newOrEditRule.guiState),
+                            ...state.newOrEditRule.guiState,
                             activeTab: "constraint",
                             constraint: {
                                 key: action["element"],
