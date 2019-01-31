@@ -433,10 +433,6 @@ class RulePanel extends Component {
                                 this.setState({tags}, this.onEditNewRuleForm)
                             }
                         }}/>
-                    <FaQuestionCircle size={20} className={"faQuestionCircle"}
-                                      data-class={"customTheme"}
-                                      data-tip={"<h5>Select tags associated with the rule.</h5>"}/>
-                    <ReactTooltip html={true} effect={"solid"} place={"right"}/>
                 </div>
             );
         return this.ruleI["tags"].map((d, i) => {
@@ -535,42 +531,46 @@ class RulePanel extends Component {
                 <FormGroup
                     validationState={(this.state.folderConstraint === "" || (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0)) ? "error" : "success"}>
                     <div style={{paddingBottom: "10px"}}>
-                        <HelpBlock><em>{"Restriction:   "}</em>
-                            <FaQuestionCircle size={20} className={"faQuestionCircle"}
-                                              data-class={"customTheme"}
-                                              data-tip={"<h4>Select how the rules are verified.</h4> " +
-                                              "<p><span>\"No Restriction\"</span> " +
-                                              "if the rule must be verified on <em>all</em> files and folders.</p>" +
-                                              "<p><span>\"Specific Files/Folders\"</span> " +
-                                              "if the rule is checked on <em>specific</em> files/folders.<br/>" +
-                                              "If the restriction is set to \"Specific Files/Folders\", " +
-                                              "at least one folder/file must be specified.</p>" +
-                                              "<p>Folder and file paths are determined respective to the project directory. " +
-                                              "For example in project \"myProject\", for file path \"Users/Documents/myProject/src/someFile.java\", it suffices to list \"src/someFile.java\"</p>"}/>
-                            <ReactTooltip html={true} effect={"solid"} place={"right"}/>
+                        <HelpBlock>
+                            <ButtonToolbar>
+                                <DropdownButton
+                                    title={this.state.folderConstraint === "" ? "Select Restrictions on Files/Folders" : this.state.folderConstraint === "NONE" ? "Rule must be applied on ALL Files/Folders" : "Rule must be applied on Specific Files/Folders"}
+                                    style={{color: (this.state.folderConstraint === "" || (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0)) ? "#a94442" : "#3c763d"}} id={"drop_down"}>
+                                    <MenuItem eventKey={"FOLDER"} onSelect={(evt) => {
+                                        this.setState({folderConstraint: evt}, this.onEditNewRuleForm);
+                                    }}>Rule must be applied on SPECIFIC Files/Folders
+                                    </MenuItem>
+                                    <MenuItem eventKey={"NONE"} onSelect={(evt) => {
+                                        this.setState({folderConstraint: evt, filesFolders: []})
+                                    }}>Rule must be applied on ALL Files/Folders
+                                    </MenuItem>
+                                </DropdownButton>
+                                <Button disabled={this.state.folderConstraint !== "FOLDER"}
+                                        onClick={() => {
+                                            const filesFolders = this.state.filesFolders;
+                                            filesFolders.push("");
+                                            this.setState({filesFolders}, this.onEditNewRuleForm);
+                                        }}
+                                >Add files/folders
+                                </Button>
+
+                                <FaQuestionCircle size={20} className={"faQuestionCircle"}
+                                                  data-class={"customTheme"}
+                                                  data-tip={"<h4>Select how the rules are verified.</h4> " +
+                                                  "<p><b><em>\"Rule must be applied on ALL Files/Folders\"</em></b></p> " +
+                                                  "<p>If the rule must be verified on <b>All</b> files and folders.</p>" +
+                                                  "<p><b><em>\"Rule must be applied on SPECIFIC Files/Folders\"</em></b></p> " +
+                                                  "<p>If the rule is checked on <b>SPECIFIC</b> files/folders.<br/>" +
+                                                  "If the restriction is set to \"Rule must be applied on Specific Files/Folders\", " +
+                                                  "at least one folder/file must be specified.</p>" +
+                                                  "<p><b><em>Add files/folders</em></b></p>" +
+                                                  "<p>Folder and file paths are determined respective to the project directory. " +
+                                                  "For example in project \"myProject\", for file path \".../myProject/src/someFile.java\", " +
+                                                  "the relative path is \"src/someFile.java\"</p>"}/>
+                                <ReactTooltip html={true} effect={"solid"} place={"right"}/>
+                            </ButtonToolbar>
+
                         </HelpBlock>
-                        <ButtonToolbar>
-                            <DropdownButton
-                                title={this.state.folderConstraint === "" ? "Select" : this.state.folderConstraint === "NONE" ? "No Restriction" : "Specific Files/Folders"}
-                                className={this.state.target} id={"drop_down"}>
-                                <MenuItem eventKey={"FOLDER"} onSelect={(evt) => {
-                                    this.setState({folderConstraint: evt}, this.onEditNewRuleForm);
-                                }}>Specific Files/Folders
-                                </MenuItem>
-                                <MenuItem eventKey={"NONE"} onSelect={(evt) => {
-                                    this.setState({folderConstraint: evt, filesFolders: []})
-                                }}>No Restriction
-                                </MenuItem>
-                            </DropdownButton>
-                            <Button disabled={this.state.folderConstraint !== "FOLDER"}
-                                    onClick={() => {
-                                        const filesFolders = this.state.filesFolders;
-                                        filesFolders.push("");
-                                        this.setState({filesFolders}, this.onEditNewRuleForm);
-                                    }}
-                            >Add files/folders
-                            </Button>
-                        </ButtonToolbar>
                     </div>
                 </FormGroup>
                 <div>

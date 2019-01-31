@@ -57,7 +57,7 @@ const default_state = {
         guiState: {
             activeTab: "quantifier",
             quantifier: {
-                key: "class",
+                key: "", //"class",
                 value: "",
                 target: "follows",
                 children: {
@@ -73,7 +73,7 @@ const default_state = {
                 }
             },
             constraint: {
-                key: "class",
+                key: "", //"class",
                 value: "",
                 target: "follows",
                 children: {
@@ -285,7 +285,7 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
                     guiState: {
                         activeTab: "quantifier",
                         quantifier: {
-                            key: "class",
+                            key: "",
                             value: "",
                             target: "follows",
                             children: {
@@ -301,7 +301,7 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
                             }
                         },
                         constraint: {
-                            key: "class",
+                            key: "",
                             value: "",
                             target: "follows",
                             children: {
@@ -489,6 +489,64 @@ const reducer = (state = JSON.parse(JSON.stringify(default_state)), action) => {
                 },
                 message: "CLEAR_MESSAGE_LISTS"
             });
+
+        case "SELECT_BASE_ELEMENT":
+            // copied activeTab attribute doesn't work for constraint
+            if (action["group"] === "quantifier")
+                return Object.assign({}, state, {
+                    newOrEditRule: {
+                        ...state.newOrEditRule,
+                        guiState: {
+                            ...state.newOrEditRule.guiState,
+                            activeTab: "quantifier",
+                            quantifier: {
+                                key: action["element"],
+                                value: "",
+                                target: "follows",
+                                children: {
+                                    "top": [],
+                                    "before": [],
+                                    "before_1": [],
+                                    "before_2": [],
+                                    "after": [],
+                                    "after_1": [],
+                                    "after_2": [],
+                                    "within": [],
+                                    "child": {}
+                                }
+                            }
+                        }
+                    },
+                    message: "SELECT_BASE_ELEMENT"
+                });
+            else if (action["group"] === "constraint")
+                return Object.assign({}, state, {
+                    newOrEditRule: {
+                        ...state.newOrEditRule,
+                        guiState: {
+                            ...state.newOrEditRule.guiState,
+                            activeTab: "constraint",
+                            constraint: {
+                                key: action["element"],
+                                value: "",
+                                target: "follows",
+                                children: {
+                                    "top": [],
+                                    "before": [],
+                                    "before_1": [],
+                                    "before_2": [],
+                                    "after": [],
+                                    "after_1": [],
+                                    "after_2": [],
+                                    "within": [],
+                                    "child": {}
+                                }
+                            }
+                        }
+                    },
+                    message: "SELECT_BASE_ELEMENT"
+                });
+            return state;
 
         default:
             return Object.assign({}, state);

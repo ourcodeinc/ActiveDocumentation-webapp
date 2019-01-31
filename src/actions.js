@@ -98,3 +98,11 @@ export const matchMessages = (ruleIndex, sentMessages, receivedMessages, quantif
 export const clearMessageLists = () => {
     return {type: "CLEAR_MESSAGE_LISTS"}
 };
+
+export const selectBaseElement = (group, element) => {
+    return {
+        type: "SELECT_BASE_ELEMENT",
+        group: group, // quantifier or constraint
+        element: element
+    }
+};

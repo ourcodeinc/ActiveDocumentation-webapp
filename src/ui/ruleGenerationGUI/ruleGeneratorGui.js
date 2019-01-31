@@ -6,13 +6,15 @@ import React, {Component} from 'react';
 import '../../App.css';
 import ReactTooltip from 'react-tooltip'
 
-import {Tabs, Tab, HelpBlock} from 'react-bootstrap';
-import {RootCloseWrapper} from "react-overlays";
+import {Tabs, Tab, HelpBlock, DropdownButton, MenuItem} from 'react-bootstrap';
+// import {RootCloseWrapper} from "react-overlays";
 import {connect} from "react-redux";
 import {FaQuestionCircle} from "react-icons/lib/fa/index";
 
 import Utilities from "../../core/utilities";
 import GuiComponent from "./guiComponent";
+import {GuiConstants} from "./guiConstants";
+import {selectBaseElement} from "../../actions";
 
 
 class RuleGeneratorGui extends Component {
@@ -56,30 +58,51 @@ class RuleGeneratorGui extends Component {
             <div style={{clear: "both", marginTop: "20px"}} className={this.class}>
                 <Tabs animation={true} id={"rule_generator_gui_tabs"} activeKey={this.state.activeTab}
                       onSelect={(key) => this.setState({activeTab: key})}>
-                    <Tab eventKey={"quantifier"} title={"Quantifier Query"} animation={true}>
+                    <Tab eventKey={"quantifier"} title={"Which element should the rule apply on?"} animation={true}>
                         <div style={{marginTop: "10px"}}>
                             <div>
-                                <RootCloseWrapper onRootClose={() => {
-                                }}>
-                                    <GuiComponent ws={this.state.ws}
-                                                  element={this.state.quantifier.key ? this.state.quantifier.key : "class"}
-                                                  key={new Date()} state={this.state.quantifier}
-                                                  callbackFromParent={this.receiveStateData}/>
-                                </RootCloseWrapper>
+                                {/*<RootCloseWrapper onRootClose={() => {}}>*/}
+                                    <DropdownButton
+                                        title={this.state.quantifier.key ? "The base element is: " + this.state.quantifier.key : "Select the element type"}
+                                        id={"drop_down"}>
+                                        {GuiConstants.base_elements.map((el, i) => (
+                                            <MenuItem eventKey={el} key={i} onSelect={(evt) => {
+                                                this.props.onSelectBaseElement("quantifier", evt)
+                                            }}>{el}</MenuItem>
+                                        ))}
+                                    </DropdownButton>
+                                    {this.state.quantifier.key ? (
+                                        <GuiComponent ws={this.state.ws}
+                                                      element={this.state.quantifier.key}
+                                                      key={new Date()} state={this.state.quantifier}
+                                                      callbackFromParent={this.receiveStateData}/>
+                                    ) : null}
+                                {/*</RootCloseWrapper>*/}
                             </div>
                         </div>
 
                     </Tab>
-                    <Tab eventKey={"constraint"} title={"Constraint Query"} animation={true}>
+                    <Tab eventKey={"constraint"} title={"How should the element be after applying the rule?"}
+                         animation={true}>
                         <div style={{marginTop: "10px"}}>
                             <div>
-                                <RootCloseWrapper onRootClose={() => {
-                                }}>
-                                    <GuiComponent ws={this.state.ws}
-                                                  element={this.state.constraint.key ? this.state.constraint.key : "class"}
-                                                  key={new Date()} state={this.state.constraint}
-                                                  callbackFromParent={this.receiveStateData}/>
-                                </RootCloseWrapper>
+                                {/*<RootCloseWrapper onRootClose={() => {}}>*/}
+                                    <DropdownButton
+                                        title={this.state.constraint.key ? "The base element is: " + this.state.constraint.key : "Select the element type"}
+                                        id={"drop_down"}>
+                                        {GuiConstants.base_elements.map((el, i) => (
+                                            <MenuItem eventKey={el} key={i} onSelect={(evt) => {
+                                                this.props.onSelectBaseElement("constraint", evt)
+                                            }}>{el}</MenuItem>
+                                        ))}
+                                    </DropdownButton>
+                                    {this.state.constraint.key ? (
+                                        <GuiComponent ws={this.state.ws}
+                                                      element={this.state.constraint.key}
+                                                      key={new Date()} state={this.state.constraint}
+                                                      callbackFromParent={this.receiveStateData}/>
+                                    ) : null}
+                                {/*</RootCloseWrapper>*/}
                             </div>
                         </div>
                     </Tab>
@@ -102,7 +125,7 @@ class RuleGeneratorGui extends Component {
 
             </div>
         );
-    }
+    }// todo add styles to gui output
 
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
@@ -293,4 +316,10 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps, null)(RuleGeneratorGui);
+function mapDispatchToProps(dispatch) {
+    return {
+        onSelectBaseElement: (group, element) => dispatch(selectBaseElement(group, element))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(RuleGeneratorGui);

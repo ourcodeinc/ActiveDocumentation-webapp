@@ -29,7 +29,8 @@ class RuleGeneratorText extends Component {
             monaco: null,
 
             showSuggestionDiv: false,
-            showFeedbackDiv: false
+            showFeedbackDiv: false,
+            feedback: []
         };
 
         if (!props.onUpdateText || !props.onBlur)
@@ -56,6 +57,7 @@ class RuleGeneratorText extends Component {
                         options={EDITOR_OPTION}
                         language="asp"
                         value={this.state.myText}
+                        defaultValue={"test"}
                         height={100}
                         theme="draco-light"
                         editorDidMount={this.editorDidMount}
@@ -153,17 +155,28 @@ class RuleGeneratorText extends Component {
     renderFeedbackDiv() {
         return this.state.showFeedbackDiv ? (
             <div className={"feedbackDiv"}>
-
-                <div onClick={() => console.log("clicked")} style={{float: "left", width: "95%"}}>
-                    <span>{"Show feedback for "}</span>
-                    <span className={"ruleFeedback"}>
-                                {this.state.myText.substring(this.state.selectionStart, this.state.selectionEnd + 1)}
-                    </span>
-                </div>
-                <div style={{float: "left"}}>
-                    <IoClose onClick={() => this.setState({showFeedbackDiv: false})}/>
-                </div>
-
+                {this.state.feedback.length === 0 ? (
+                    <Fragment>
+                        <div onClick={() => this.setState({feedback: [1]})} style={{float: "left", width: "95%"}}>
+                            <span>{"Show feedback for "}</span>
+                            <span className={"ruleFeedback"}>
+                                {this.state.myText.substring(this.state.selectionStart, this.state.selectionEnd - 1)}
+                            </span>
+                        </div>
+                        <div style={{float: "left"}}>
+                            <IoClose onClick={() => this.setState({showFeedbackDiv: false})}/>
+                        </div>
+                    </Fragment>
+                ) : (
+                    <Fragment>
+                        <div style={{float: "left", width: "95%", height: "100px"}}>
+                            Summary about the results
+                        </div>
+                        <div style={{float: "left"}}>
+                            <IoClose onClick={() => this.setState({feedback: [], showFeedbackDiv: false})}/>
+                        </div>
+                    </Fragment>
+                )}
             </div>
         ) : null;
     }
@@ -271,7 +284,7 @@ class RuleGeneratorText extends Component {
     handleClickOutside(event) {
         if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
             if (this.state.focused) this.onBlur();
-            this.setState({focused: false, showSuggestionDiv: false, showFeedbackDiv: false});
+            this.setState({focused: false, showSuggestionDiv: false, showFeedbackDiv: false, feedback: []});
         }
     }
 

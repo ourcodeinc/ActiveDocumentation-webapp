@@ -1,6 +1,8 @@
 
 export class GuiConstants {
 
+    static base_elements = ["class", "interface", "function", "abstract function", "constructor"]
+
     static code_fragment = {
         "class": {
             "top": ["annotation equal to", "annotation not equal to"],

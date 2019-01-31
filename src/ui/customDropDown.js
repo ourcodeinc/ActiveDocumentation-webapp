@@ -30,7 +30,9 @@ class CustomDropDown extends Component {
                 <Dropdown id={this.state.id} open={this.state.open}
                           onToggle={() => this.setState({open: !this.state.open})}>
                     <CustomToggle bsRole="toggle">
-                        <FaTag size={25} className={"faTag"}/>
+                        <span className={"faTag"}>Assign Tags
+                            <FaTag size={25} className={"faTag"}/>
+                        </span>
                     </CustomToggle>
                     <CustomMenu bsRole="menu">
                         {this.state.menuItems.map((el, i) =>
