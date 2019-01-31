@@ -31,7 +31,7 @@ class RuleTable extends Component {
                         </div>
                     ) : (
                         <div style={{paddingBottom: "5px"}}>
-                            <RulePanel key={new Date()} newRule
+                            <RulePanel key={new Date()} ruleIndex={-1}
                                        cancelGeneratingNewRule={() => this.setState({newRule: false})}/>
                         </div>
                     ))
