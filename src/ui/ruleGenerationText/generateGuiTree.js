@@ -4,21 +4,31 @@
 
 import pluralize from 'pluralize';
 
-import {GuiConstants} from "../ruleGenerationGUI/guiConstants";
-import Utilities from "../../core/utilities";
+import {generateTreeForElement, getConditionByName} from "../ruleGenerationGUI/guiConstants";
+// import Utilities from "../../core/utilities";
 import {TextConstants} from "./textConstant";
+import {initial_elementTree, initial_guiElements} from "../../initialState";
 
 /**
  * create the quantifier and the constraint guiTree based on the grammar parse tree
  * @param grammarTree
  * @returns {{}}
  */
-export async function generateGuiTrees (grammarTree)  {
+export async function generateGuiTrees(grammarTree) {
     let ruleTypeMust = ruleType(grammarTree);
-    let quantifierTree = await createQuantifierTree(grammarTree);
-    let constraintTree = await createConstraintTree(grammarTree);
+    let quantifierTrees = await createQuantifierTree(grammarTree);
+    let constraintTrees = await createConstraintTree(grammarTree);
+    console.log(quantifierTrees, constraintTrees);
 
-    return {ruleType: ruleTypeMust, quantifier: quantifierTree, constraint: constraintTree}; // match with redux state: newOrEditRule.guiState
+    if (Object.entries(quantifierTrees).length === 0 || Object.entries(constraintTrees).length === 0)
+        return {};
+
+    // match with redux state: newOrEditRule.guiState
+    return {
+        ruleType: ruleTypeMust,
+        quantifier: {tree: quantifierTrees.newElementTree, guiElements: quantifierTrees.newGuiElements},
+        constraint: {tree: constraintTrees.newElementTree, guiElements: constraintTrees.newGuiElements}
+    };
 }
 
 
@@ -35,23 +45,21 @@ const ruleType = (tree) => {
 /**
  * create the gui tree based on the grammar parse tree for quantifier
  * @param tree
- * @returns {{key: string, value: string, target: string, children: {top: Array, before_1: Array, before_2: Array, after_1: Array, after_2: Array, within: Array, child: {}}, text: number}}
+ * @returns {{newGuiElements, newElementTree, grammarTree: *, guiTree: *}}
  */
 const createQuantifierTree = (tree) => {
     let combinedNodes = combineNode(tree);
     let combinedWordsNodes = combineWordsNode(combinedNodes);
     let newTree = traverseNormalNode(combinedWordsNodes);
     let parentChildTree = reverseParentChildOrder(newTree);
-    let quantifierTree = createGuiNodes(parentChildTree);
-    quantifierTree.target = "follows";
-
-    return quantifierTree;
+    let treeOfIDs = createGuiElementTree(parentChildTree);
+    return updateGuiElements(parentChildTree, treeOfIDs);
 };
 
 /**
  * create the gui tree based on the grammar parse tree for constraint
  * @param tree
- * @returns {{key: string, value: string, target: string, children: {top: Array, before_1: Array, before_2: Array, after_1: Array, after_2: Array, within: Array, child: {}}, text: number}}
+ * @returns {{newGuiElements, newElementTree, grammarTree: *, guiTree: *}}
  */
 const createConstraintTree = (tree) => {
     let combinedNodes = combineNode(tree);
@@ -59,10 +67,8 @@ const createConstraintTree = (tree) => {
     let reorderedMustClause = reorderMustClause(combinedWordsNodes);
     let newTree = traverseNormalNode(reorderedMustClause);
     let parentChildTree = reverseParentChildOrder(newTree);
-    let constraintTree = createGuiNodes(parentChildTree);
-    constraintTree.target = "follows";
-
-    return constraintTree;
+    let treeOfIDs = createGuiElementTree(parentChildTree);
+    return updateGuiElements(parentChildTree, treeOfIDs);
 };
 
 /**
@@ -183,11 +189,11 @@ const traverseNormalNode = (treeNode) => {
     // context nodes
     let keywords = TextConstants.keywords.slice().map(w => pluralize(w).split(" ").map(a => a.charAt(0).toUpperCase() + a.slice(1)).join(""));
     if (keywords.indexOf(treeNode.nodeType.replace("Context", "")) !== -1) {
-        guiNode.key = TextConstants.keywords[keywords.indexOf(treeNode.nodeType.replace("Context",""))];
+        guiNode.key = TextConstants.keywords[keywords.indexOf(treeNode.nodeType.replace("Context", ""))];
         if (treeNode.children) {
             treeNode.children.forEach(child => {
                 if (child.nodeType.endsWith("OfContext"))
-                    // child has two children, the first is "of "
+                // child has two children, the first is "of "
                     guiNode.of = traverseNormalNode(child.children[1]);
 
                 else if (child.nodeType.endsWith("ConditionContext")) {
@@ -221,8 +227,8 @@ const traverseNormalNode = (treeNode) => {
         if (TextConstants.keywords.slice().concat("subclass").indexOf(treeNode.text.trim()) !== -1)
             guiNode.key = treeNode.text.trim();
 
-    else
-        console.log(treeNode.nodeType + " node is skipped.", treeNode);
+        else
+            console.log(treeNode.nodeType + " node is skipped.", treeNode);
 
     return guiNode;
 };
@@ -256,7 +262,7 @@ const traverseExpressionNode = (ExpressionNode) => {
         else
             ExpressionNode.children.forEach(child => {
                 if (child.nodeType.endsWith("ExpressionContext"))
-                guiWhereArray = guiWhereArray.concat(traverseExpressionNode(child));
+                    guiWhereArray = guiWhereArray.concat(traverseExpressionNode(child));
             });
     }
     return guiWhereArray;
@@ -273,136 +279,133 @@ const reverseParentChildOrder = (node) => {
     if (node.hasOwnProperty("of")) {
         let parentNode = reverseParentChildOrder(node.of);
         delete node.of;
-        return {...parentNode , child: node}
+        return {...parentNode, child: node}
     }
     else
         return node;
 };
 
 
-/***
- * base on the object obtained by reverseParentChildOrder function, a data structure for Generate Rule Gui is created
- * If guiConstant is changed, this function must be changed accordingly
- * @param node
- * @returns {{key: string, value: string, target: string, children: {top: Array, before_1: Array, before_2: Array, after_1: Array, after_2: Array, within: Array, child: {}}, text: number}}
+/**
+ * build a tree from GUI element IDs
+ * @param tree
+ * @return false/a tree of ids corresponding to the input tree
  */
-const createGuiNodes = (node) => {
+const createGuiElementTree = (tree) => {
 
-    /** input:  {key: "", where: [{key: ""}], child: {key: ""} }
-     *  or
-        "value": {
-            "hasNot": false,
-            "checkType": "equal to",
-            "word": "foo"
-          }
-     */
-    /**  output:
-     *      {
-              "key": "annotation",
-              "value": {
-                "buttonName": "Has annotation",
-                "type": "annotation",
-                "pre": "",
-                "post": "",
-                "grammar": "annotation"
-              },
-              "target": "",
-              "children": {
-                "top": [],
-                "before_1": [],
-                "before_2": [],
-                "after_1": [],
-                "after_2": [],
-                "within": [],
-                "child": {}
-              },
-              "text": {
-                "top": [],
-                "before_1": [],
-                "before_2": [],
-                "after_1": [],
-                "after_2": [],
-                "within": [],
-                "child": {}
-              }
+    let newGuiElements = JSON.parse(JSON.stringify(initial_guiElements));
+    let newElementTree = JSON.parse(JSON.stringify(initial_elementTree));
+
+    let visitedIDs = [];
+
+    let checkNode = (node, idStack, parent_id) => {
+        while (idStack.length > 0) {
+            let elem_id = idStack.pop();
+
+            // check if this is the node
+            if (getConditionByName(newGuiElements[elem_id].conditionName).grammar === node.key) {
+
+                // check if some ids appear more than once in the guiTree
+                // if so, create a new node
+                if (visitedIDs.indexOf(elem_id) !== -1) {
+                    // create a new element
+                    let newElementId = Math.floor(new Date().getTime() / 10).toString();
+                    let newElementsData = generateTreeForElement(newGuiElements[elem_id].conditionName, newElementId);
+
+                    // look for childGroup/subGroup for guiNode.elementId using parentId
+                    // add it to newElementTree and newGuiElements
+                    Object.keys(newElementTree[parent_id].children).forEach(childGroup => {
+                        if (childGroup !== "body")
+                            if (newElementTree[parent_id].children[childGroup].indexOf(elem_id) !== -1)
+                                newElementTree[parent_id].children[childGroup].push(newElementId);
+                            else
+                                newElementTree[parent_id].children["body"].forEach((subGroup, i) => {
+                                    if (subGroup.indexOf(elem_id) !== -1)
+                                        newElementTree[parent_id].children["body"][i].push(newElementId);
+                                });
+                    });
+
+                    // adding new trees
+                    newElementsData.trees.forEach(tree => newElementTree[tree.id] = tree.node);
+                    // adding new elements
+                    newElementsData.elements.forEach(elem => newGuiElements[elem.id] = elem.node);
+
+                    // update the elementId
+                    elem_id = newElementId;
+                }
+
+                let newNode = {elementId: elem_id, parentId: parent_id};
+
+                // accumulate all children
+                let elementChildren = [];
+                Object.keys(newElementTree[elem_id].children).forEach(childGroup => {
+                    if (childGroup !== "body") elementChildren = elementChildren.concat(newElementTree[elem_id].children[childGroup]);
+                    else newElementTree[elem_id].children["body"].forEach(subGroup => elementChildren = elementChildren.concat(subGroup));
+                });
+
+                // first check for child
+                if (node.child) {
+                    let childId = checkNode(node.child, JSON.parse(JSON.stringify(elementChildren)), elem_id);
+                    if (!childId) continue;
+                    newNode.child = childId
+                }
+
+                // for each node in 'where' check if they exist. If not continue the search
+                let found = true;
+                if (node.where) {
+                    newNode.where = [];
+                    node.where.forEach(whereNode => {
+                        let where = checkNode(whereNode, JSON.parse(JSON.stringify(elementChildren)), elem_id);
+                        if (!where) {
+                            found = false;
+                            return;
+                        }
+                        newNode.where.push(where);
+                    });
+                }
+                if (found) return newNode;
             }
-     */
-
-    let guiNode = {
-        "key": "",
-        "value": "",
-        "target": "",
-        "children": {
-            "top": [],
-            "before_1": [],
-            "before_2": [],
-            "after_1": [],
-            "after_2": [],
-            "within": [],
-            "child": {}
-        },
-        "text": 0
+        }
+        return false;
     };
 
-    guiNode.key = node.key;
-    if (Object.keys(GuiConstants.gui_tree).indexOf(node.key) !== -1)
-        guiNode.value = GuiConstants.gui_tree[node.key];
+    // search newElementTree from id="0" to find the root node
+    return checkNode(tree, ["0"], "");
 
-    if (Object.keys(GuiConstants.code_fragment).indexOf(node.key) !== -1) {
-        let top = GuiConstants.code_fragment[node.key]["top"];
-        let before_1 = GuiConstants.code_fragment[node.key]["before_1"];
-        let before_2 = GuiConstants.code_fragment[node.key]["before_2"];
-        let after_1 = GuiConstants.code_fragment[node.key]["after_1"];
-        let after_2 = GuiConstants.code_fragment[node.key]["after_2"];
-        let within = GuiConstants.code_fragment[node.key]["within"];
+};
 
-        if (node.where) {
-            for (let i = 0; i < node.where.length; i++) {
-                let whereChildKey = node.where[i].key
-                    + (node.where[i].value ? ((node.where[i].value.hasNot ? " not " : " ") + node.where[i].value.checkType) : "");
 
-                // alternative, when key doesn't match
-                // like "name", where we have "name equal to" etc.
-                let altWhereChildKey = whereChildKey + " equal to";
+/**
+ * build a new tree based on the tree data
+ * @param grammarTree
+ * @param guiTree
+ * @return {{newGuiElements, newElementTree, grammarTree: *, guiTree: *}}
+ */
+const updateGuiElements = (grammarTree, guiTree) => {
+    if (!guiTree) return {};
+    let newGuiElements = JSON.parse(JSON.stringify(initial_guiElements));
+    let newElementTree = JSON.parse(JSON.stringify(initial_elementTree));
 
-                if (top.indexOf(whereChildKey) !== -1 || top.indexOf(altWhereChildKey) !== -1)
-                    guiNode.children["top"].push(createGuiNodes(node.where[i]));
-                else if (before_1.indexOf(whereChildKey) !== -1 || before_1.indexOf(altWhereChildKey) !== -1)
-                    guiNode.children["before_1"].push(createGuiNodes(node.where[i]));
-                else if (before_2.indexOf(whereChildKey) !== -1 || before_2.indexOf(altWhereChildKey) !== -1)
-                    guiNode.children["before_2"].push(createGuiNodes(node.where[i]));
-                else if (after_1.indexOf(whereChildKey) !== -1 || after_1.indexOf(altWhereChildKey) !== -1)
-                    guiNode.children["after_1"].push(createGuiNodes(node.where[i]));
-                else if (after_2.indexOf(whereChildKey) !== -1 || after_2.indexOf(altWhereChildKey) !== -1)
-                    guiNode.children["after_2"].push(createGuiNodes(node.where[i]));
-                else if (within.indexOf(whereChildKey) !== -1 || within.indexOf(altWhereChildKey) !== -1)
-                    guiNode.children["within"].push(createGuiNodes(node.where[i]));
-                else
-                    console.log("key not found. \"" + whereChildKey + "\" or \"" + altWhereChildKey + "\" " +
-                        "must be added to GuiConstants.code_fragment[" + node.key + "] children.", node);
 
-            }
-        }
-    }
+    let checkNode = (grammarNode, guiNode) => {
+        newGuiElements[guiNode.elementId].activeElement = true;
+        if (guiNode.child) checkNode(grammarNode.child, guiNode.child);
 
-    if (node.value) {
-        guiNode.key = node.key + (node.value.hasNot ? " not " : " ") + node.value.checkType;
-        if (Object.keys(GuiConstants.gui_tree).indexOf(guiNode.key) !== -1) {
-            guiNode.value = GuiConstants.gui_tree[guiNode.key];
-            guiNode.text = node.value.word ? node.value.word : "";
-        }
-        else
-            console.log(guiNode.key + " : guiNode.key not in guiTree. Must be added. ", node);
-    }
+        if (guiNode.where)
+            guiNode.where.forEach((whereNode, i) => checkNode(grammarNode.where[i], whereNode));
+        if (grammarNode.value) // todo process rootNode["properties"].text
+            newGuiElements[guiNode.elementId].text = (grammarNode.value.hasNot ? "not " : "") + grammarNode.value.checkType + " " + grammarNode.value.word;
 
-    if (node.child) {
-        guiNode.children.child = createGuiNodes(node.child);
-        guiNode.children.child.target = "follows"
-    }
+    };
 
-    if (guiNode.text === 0) // not specified
-        guiNode.text = guiNode.value.type === "text" ? "" : Utilities.cloneJSON(guiNode.children);
+    checkNode(grammarTree, guiTree);
 
-    return guiNode;
+    // for detecting the main element
+    let node = JSON.parse(JSON.stringify(guiTree));
+    while (node.child)
+        node = node.child;
+    newElementTree.selectedElementID = node.elementId;
+
+    return {newGuiElements, newElementTree, grammarTree, guiTree}
 
 };

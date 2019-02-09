@@ -95,14 +95,25 @@ export const matchMessages = (ruleIndex, sentMessages, receivedMessages, quantif
     }
 };
 
-export const clearMessageLists = () => {
-    return {type: "CLEAR_MESSAGE_LISTS"}
+
+// changing the GUI tab
+export const changeActiveTab = (ruleIndex, newTab) => {
+    return {
+        type: "CHANGE_ACTIVE_TAB",
+        ruleIndex: ruleIndex,
+        newTab: newTab
+    }
 };
 
-export const selectBaseElement = (group, element) => {
+// tasks is an array of form [{elementId: "", task: "ADD_EXTRA/REMOVE_EXTRA/UPDATE_ELEMENT", value}]
+// for add/remove we have the children group name as value
+// for update we have an object {prop: newValue}
+// group is either quantifier or constraint
+export const changeGuiElement = (ruleIndex, group, tasks) => {
     return {
-        type: "SELECT_BASE_ELEMENT",
-        group: group, // quantifier or constraint
-        element: element
+        type: "CHANGE_GUI_ELEMENT",
+        ruleIndex: ruleIndex,
+        group: group,
+        tasks: tasks
     }
 };

@@ -9,20 +9,23 @@ import ReactTooltip from 'react-tooltip'
 import {
     Alert, DropdownButton, HelpBlock, MenuItem,
     Button, FormGroup, ButtonToolbar, Label, FormControl,
-    Row, Col, Modal
+    Row, Col, Modal, Dropdown
 } from 'react-bootstrap';
 import MdEdit from 'react-icons/lib/md/edit';
 import TiDelete from "react-icons/lib/ti/delete";
 import {FaQuestionCircle} from "react-icons/lib/fa/index";
+import MdAddBox from 'react-icons/lib/md/add-box';
+import {RootCloseWrapper} from "react-overlays";
+import {FaTag} from "react-icons/lib/fa/index";
 
 import RuleGeneratorGui from './ruleGenerationGUI/ruleGeneratorGui';
 import verifyTextBasedOnGrammar from "./ruleGenerationText/languageProcessing";
-import {matchMessages, receiveGuiTree, clearNewRuleForm,
+import {
+    matchMessages, receiveGuiTree, clearNewRuleForm,
     editRuleForm, submitNewRule, submitNewTag, updateRule
 } from "../actions";
 import {generateGuiTrees} from "./ruleGenerationText/generateGuiTree";
 import RuleGeneratorText from "./ruleGenerationText/ruleGeneratorText";
-import CustomDropDown from "./customDropDown";
 import Utilities from '../core/utilities';
 
 
@@ -93,8 +96,7 @@ class EditRuleForm extends Component {
             }
         }
         // new rule
-        else
-        {
+        else {
             this.state.title = props.title;
             this.state.description = props.description;
             this.state.ruleTags = props.ruleTags;
@@ -236,7 +238,8 @@ class EditRuleForm extends Component {
                             <ButtonToolbar>
                                 <DropdownButton
                                     title={this.state.folderConstraint === "" ? "Select Restrictions on Files/Folders" : this.state.folderConstraint === "NONE" ? "Rule must be applied on ALL Files/Folders" : "Rule must be applied on Specific Files/Folders"}
-                                    style={{color: (this.state.folderConstraint === "" || (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0)) ? "#a94442" : "#3c763d"}} id={"drop_down"}>
+                                    style={{color: (this.state.folderConstraint === "" || (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0)) ? "#a94442" : "#3c763d"}}
+                                    id={"drop_down"}>
                                     <MenuItem eventKey={"FOLDER"} onSelect={(evt) => {
                                         this.setState({folderConstraint: evt}, this.onEditNewRuleForm);
                                     }}>Rule must be applied on SPECIFIC Files/Folders
@@ -279,7 +282,8 @@ class EditRuleForm extends Component {
                         return (
                             <Row key={i} style={{paddingBottom: "5px"}}>
                                 <Col sm={11} md={10}>
-                                    <FormGroup validationState={this.state.filesFolders[i] === "" ? "error" : "success"}>
+                                    <FormGroup
+                                        validationState={this.state.filesFolders[i] === "" ? "error" : "success"}>
                                         <FormControl id={"filesFolders_textarea_" + i} type="text"
                                                      placeholder="relative File/Folder path"
                                                      value={this.state.filesFolders[i]}
@@ -375,7 +379,7 @@ class EditRuleForm extends Component {
      */
     renderNewTagModalDialog() {
         return (
-            <Modal show={this.state.showNewTagModal} onHide={()=>this.setState({showNewTagModal: false})}
+            <Modal show={this.state.showNewTagModal} onHide={() => this.setState({showNewTagModal: false})}
                    backdrop={"static"} keyboard={true}>
                 <Modal.Header closeButton>
                     <Modal.Title>New Tag</Modal.Title>
@@ -408,7 +412,7 @@ class EditRuleForm extends Component {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button bsStyle="primary" onClick={() => this.onSubmitNewTag()}>Save</Button>
-                    <Button onClick={()=>this.setState({showNewTagModal: false})}>Cancel</Button>
+                    <Button onClick={() => this.setState({showNewTagModal: false})}>Cancel</Button>
                 </Modal.Footer>
             </Modal>
         )
@@ -421,7 +425,7 @@ class EditRuleForm extends Component {
      */
     renderErrorInSubmission() {
         return (
-            <Modal show={this.state.showError} onHide={()=>this.setState({showError: false})}
+            <Modal show={this.state.showError} onHide={() => this.setState({showError: false})}
                    backdrop={"static"} keyboard={true}>
                 <Modal.Header closeButton>
                     <Modal.Title>{this.state.errorTitle}</Modal.Title>
@@ -430,7 +434,7 @@ class EditRuleForm extends Component {
                     {this.state.errorMessage}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={()=>this.setState({showError: false})}>OK</Button>
+                    <Button onClick={() => this.setState({showError: false})}>OK</Button>
                 </Modal.Footer>
             </Modal>
         )
@@ -444,7 +448,7 @@ class EditRuleForm extends Component {
         }
 
         else {
-            if(nextProps.ruleIndex !== this.ruleIndex) {
+            if (nextProps.ruleIndex !== this.ruleIndex) {
                 this.ruleIndex = nextProps.ruleIndex;
                 let indices = nextProps.rules.map(d => d.index);
                 let arrayIndex = indices.indexOf(this.ruleIndex);
@@ -465,8 +469,7 @@ class EditRuleForm extends Component {
                 });
             }
             // new rule
-            else
-            {
+            else {
                 this.setState({
                     autoCompleteText: nextProps.autoCompleteText,
                     quantifierXPath: nextProps.quantifierXPath,
@@ -813,9 +816,12 @@ class EditRuleForm extends Component {
      * adding a new tag
      * In tagJson, the property is 'detail'
      */
-    onSubmitNewTag () {
+    onSubmitNewTag() {
         if (this.state.tagName === "" || this.state.tagDetail === "") {
-            this.setState({errorMessage: "Please specify non-empty name and description for the new tag.", showError: true});
+            this.setState({
+                errorMessage: "Please specify non-empty name and description for the new tag.",
+                showError: true
+            });
             return;
         }
         if (this.state.tags.filter(tag => tag.tagName === this.state.tagName).length > 0) {
@@ -894,3 +900,79 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditRuleForm);
+
+
+/* custom dropdown for tags */
+
+class CustomDropDown extends Component {
+    constructor(props) {
+        super(props);
+
+        if (!props.menuItems || !props.onSelectFunction)
+            return new Error(`'menuItems' and 'onSelectFunction' are required in props`);
+
+        this.state = {
+            menuItems: props.menuItems,
+            onSelectFunction: props.onSelectFunction,
+            id: props.id ? props.id : "dropdown-custom-menu",
+            open: false
+        }
+    }
+
+    render() {
+        return (
+            <RootCloseWrapper onRootClose={() => this.setState({open: false})}>
+                <Dropdown id={this.state.id} open={this.state.open}
+                          onToggle={() => this.setState({open: !this.state.open})}>
+                    <CustomToggle bsRole="toggle">
+                        <span className={"faTag"}>Assign Tags
+                            <FaTag size={25} className={"faTag"}/>
+                        </span>
+                    </CustomToggle>
+                    <CustomMenu bsRole="menu">
+                        {this.state.menuItems.map((el, i) =>
+                            (<MenuItem eventKey={el} key={i}
+                                       onSelect={this.state.onSelectFunction}
+                            >{(() => el !== "New Tag" ? el :
+                                <Fragment><MdAddBox size={20} className={"mdAddBox"}/> {el}</Fragment>)()}
+                            </MenuItem>)
+                        )}
+                    </CustomMenu>
+                </Dropdown>
+            </RootCloseWrapper>
+        )
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            menuItems: nextProps.menuItems,
+            onSelectFunction: nextProps.onSelectFunction,
+            id: nextProps.id ? nextProps.id : "dropdown-custom-menu"
+        });
+
+    }
+}
+
+class CustomMenu extends Component {
+
+    render() {
+        const {children} = this.props;
+        return (<div className="dropdown-menu">{React.Children.toArray(children)}</div>);
+    }
+}
+
+class CustomToggle extends Component {
+    constructor(props, context) {
+        super(props, context);
+        this.handleClick = this.handleClick.bind(this);
+    }
+
+    handleClick(e) {
+        e.preventDefault();
+        this.props.onClick(e);
+    }
+
+    render() {
+        return (<a href="" onClick={this.handleClick}>{this.props.children}</a>);
+    }
+}

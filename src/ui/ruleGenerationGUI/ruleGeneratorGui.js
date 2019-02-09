@@ -6,15 +6,13 @@ import React, {Component} from 'react';
 import '../../App.css';
 import ReactTooltip from 'react-tooltip'
 
-import {Tabs, Tab, HelpBlock, DropdownButton, MenuItem} from 'react-bootstrap';
-// import {RootCloseWrapper} from "react-overlays";
+import {Tabs, Tab, HelpBlock} from 'react-bootstrap';
 import {connect} from "react-redux";
 import {FaQuestionCircle} from "react-icons/lib/fa/index";
 
-import Utilities from "../../core/utilities";
 import GuiComponent from "./guiComponent";
-import {GuiConstants} from "./guiConstants";
-import {selectBaseElement} from "../../actions";
+import {changeActiveTab, changeGuiElement} from "../../actions";
+import {getConditionByName} from "./guiConstants";
 
 
 class RuleGeneratorGui extends Component {
@@ -27,8 +25,10 @@ class RuleGeneratorGui extends Component {
         // new rule
         this.state = {
             ws: props.ws,
-            constraint: props.constraint,
-            quantifier: props.quantifier,
+            quantifierTree: props.quantifierTree,
+            quantifierGuiElements: props.quantifierGuiElements,
+            constraintTree: props.constraintTree,
+            constraintGuiElements: props.constraintGuiElements,
             activeTab: props.activeTab,
             GuiGrammar: ""
         };
@@ -45,8 +45,10 @@ class RuleGeneratorGui extends Component {
             else {
                 this.ruleI = props.rules[arrayIndex];
                 // updating the rule
-                this.state.constraint = this.ruleI.rulePanelState.guiState.constraint;
-                this.state.quantifier = this.ruleI.rulePanelState.guiState.quantifier;
+                this.state.quantifierTree = this.ruleI.rulePanelState.guiState.quantifierTree;
+                this.state.quantifierGuiElements = this.ruleI.rulePanelState.guiState.quantifierGuiElements;
+                this.state.constraintTree = this.ruleI.rulePanelState.guiState.constraintTree;
+                this.state.constraintGuiElements = this.ruleI.rulePanelState.guiState.constraintGuiElements;
                 this.state.activeTab = this.ruleI.rulePanelState.guiState.activeTab;
             }
         }
@@ -57,53 +59,29 @@ class RuleGeneratorGui extends Component {
         return (
             <div style={{clear: "both", marginTop: "20px"}} className={this.class}>
                 <Tabs animation={true} id={"rule_generator_gui_tabs"} activeKey={this.state.activeTab}
-                      onSelect={(key) => this.setState({activeTab: key})}>
+                      onSelect={(key) => this.props.onChangeActiveTab(this.ruleIndex, key)}>
                     <Tab eventKey={"quantifier"} title={"Which element should the rule apply on?"} animation={true}>
-                        <div style={{marginTop: "10px"}}>
-                            <div>
-                                {/*<RootCloseWrapper onRootClose={() => {}}>*/}
-                                    <DropdownButton
-                                        title={this.state.quantifier.key ? "The base element is: " + this.state.quantifier.key : "Select the element type"}
-                                        id={"drop_down"}>
-                                        {GuiConstants.base_elements.map((el, i) => (
-                                            <MenuItem eventKey={el} key={i} onSelect={(evt) => {
-                                                this.props.onSelectBaseElement("quantifier", evt)
-                                            }}>{el}</MenuItem>
-                                        ))}
-                                    </DropdownButton>
-                                    {this.state.quantifier.key ? (
-                                        <GuiComponent ws={this.state.ws}
-                                                      element={this.state.quantifier.key}
-                                                      key={new Date()} state={this.state.quantifier}
-                                                      callbackFromParent={this.receiveStateData}/>
-                                    ) : null}
-                                {/*</RootCloseWrapper>*/}
-                            </div>
+                        <div style={{marginTop: "10px", backgroundColor: "#FFF"}}>
+                            <GuiComponent key={new Date()} ruleIndex={this.ruleIndex} elementId={"0"}
+                                          rootTree={this.state.quantifierTree}
+                                          guiElements={this.state.quantifierGuiElements}
+                                          onChangeGuiElement={(ruleIndex, jobs) => {
+                                              this.props.onChangeGuiElement(ruleIndex, "quantifier", jobs)
+                                          }}
+                            />
                         </div>
 
                     </Tab>
                     <Tab eventKey={"constraint"} title={"How should the element be after applying the rule?"}
                          animation={true}>
-                        <div style={{marginTop: "10px"}}>
-                            <div>
-                                {/*<RootCloseWrapper onRootClose={() => {}}>*/}
-                                    <DropdownButton
-                                        title={this.state.constraint.key ? "The base element is: " + this.state.constraint.key : "Select the element type"}
-                                        id={"drop_down"}>
-                                        {GuiConstants.base_elements.map((el, i) => (
-                                            <MenuItem eventKey={el} key={i} onSelect={(evt) => {
-                                                this.props.onSelectBaseElement("constraint", evt)
-                                            }}>{el}</MenuItem>
-                                        ))}
-                                    </DropdownButton>
-                                    {this.state.constraint.key ? (
-                                        <GuiComponent ws={this.state.ws}
-                                                      element={this.state.constraint.key}
-                                                      key={new Date()} state={this.state.constraint}
-                                                      callbackFromParent={this.receiveStateData}/>
-                                    ) : null}
-                                {/*</RootCloseWrapper>*/}
-                            </div>
+                        <div style={{marginTop: "10px", backgroundColor: "#FFF"}}>
+                            <GuiComponent key={new Date()} ruleIndex={this.ruleIndex} elementId={"0"}
+                                          rootTree={this.state.constraintTree}
+                                          guiElements={this.state.constraintGuiElements}
+                                          onChangeGuiElement={(ruleIndex, jobs) => {
+                                              this.props.onChangeGuiElement(ruleIndex, "constraint", jobs)
+                                          }}
+                            />
                         </div>
                     </Tab>
                 </Tabs>
@@ -125,15 +103,11 @@ class RuleGeneratorGui extends Component {
 
             </div>
         );
-    }// todo add styles to gui output
+    }
 
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
-        this.setState(nextProps, () => {
-                this.receiveStateData();
-                this.forceUpdate();
-            }
-        );
+        this.setState(nextProps, () => this.receiveStateData(nextProps));
     }
 
     /**
@@ -143,43 +117,152 @@ class RuleGeneratorGui extends Component {
      * this function ensures that the required functions are called.
      */
     componentDidMount() {
-        this.receiveStateData();
+        this.receiveStateData(this.props);
+    }
+
+
+    buildTreeForProcessing(nextProps, group) {
+
+        let guiElements = group === "quantifier" ? nextProps.quantifierGuiElements : nextProps.constraintGuiElements;
+        let tree = group === "quantifier" ? nextProps.quantifierTree : nextProps.constraintTree;
+
+        if (!tree.selectedElementID || tree.selectedElementID === "" ||
+            !guiElements[tree.selectedElementID].activeElement) {
+            console.log("No element is selected as target.");
+            return;
+        }
+
+        // filter active element ids
+        let activeIDs = Object.keys(tree).filter(elementId =>
+            guiElements[elementId] && guiElements[elementId].activeElement
+        );
+
+        let root = activeIDs.filter(elem_id => activeIDs.indexOf(tree[elem_id].parentId) === -1);
+        if (root.length === 0) console.log("Activate at least one element.");
+        if (root.length > 1) console.log("Connect elements.");
+        if (root.length !== 1) return;
+
+
+        let visitedNodeId = [];
+
+        let buildTreeFromNodeId = (nodeId) => {
+            visitedNodeId.push(nodeId);
+
+            let nodeChildren = {};
+            Object.keys(tree[nodeId].children).forEach(childGroup => {
+                nodeChildren[childGroup] = [];
+                if (childGroup !== "body")
+                    tree[nodeId].children[childGroup].forEach(childId => {
+                        if (visitedNodeId.indexOf(childId) !== -1) return;
+                        if (childId === "" || !guiElements[childId].activeElement) return;
+                        nodeChildren[childGroup].push(buildTreeFromNodeId(childId));
+                    });
+                else
+                    tree[nodeId].children["body"].forEach((subGroup, i) => {
+                        nodeChildren["body"].push([]);
+                        subGroup.forEach(childId => {
+                            if (visitedNodeId.indexOf(childId) !== -1) return;
+                            if (childId === "" || !guiElements[childId].activeElement) return;
+                            nodeChildren["body"][i].push(buildTreeFromNodeId(childId));
+                        })
+                    })
+            });
+
+            return {
+                nodeId: nodeId,
+                properties: {
+                    ...guiElements[nodeId],
+                    elementGrammar: getConditionByName(guiElements[nodeId].conditionName).grammar,
+                },
+                parentNode: {},
+                children: nodeChildren
+            };
+
+        };
+
+        let buildBottomUpTreeFromNodeId = (nodeId) => {
+            if (nodeId === "" || !guiElements[nodeId].activeElement) return {};
+            visitedNodeId.push(nodeId);
+
+            let nodeChildren = {};
+            Object.keys(tree[nodeId].children).forEach(childGroup => {
+                nodeChildren[childGroup] = [];
+                if (childGroup !== "body")
+                    tree[nodeId].children[childGroup].forEach(childId => {
+                        if (visitedNodeId.indexOf(childId) !== -1) return;
+                        if (childId === "" || !guiElements[childId].activeElement) return;
+                        nodeChildren[childGroup].push(buildTreeFromNodeId(childId));
+                    });
+                else
+                    tree[nodeId].children["body"].forEach(subGroup => {
+                        nodeChildren["body"].push();
+                        subGroup.forEach(childId => {
+                            if (visitedNodeId.indexOf(childId) !== -1) return;
+                            if (childId === "" || !guiElements[childId].activeElement) return;
+                            nodeChildren["body"].push(buildTreeFromNodeId(childId));
+                        })
+                    })
+            });
+
+            return {
+                nodeId: nodeId,
+                properties: {
+                    ...guiElements[nodeId],
+                    elementGrammar: getConditionByName(guiElements[nodeId].conditionName).grammar,
+                },
+                parentNode: buildBottomUpTreeFromNodeId(tree[nodeId].parentId),
+                children: nodeChildren
+            };
+        };
+
+        // reach root from selectedElementID
+        return buildBottomUpTreeFromNodeId(tree.selectedElementID);
     }
 
     /**
      * receive state data from the child nodes
      */
-    receiveStateData = () => {
+    receiveStateData = (nextProps) => {
+        let tree1 = this.buildTreeForProcessing(nextProps, "quantifier");
+        let tree2 = this.buildTreeForProcessing(nextProps, "constraint");
 
-        let nodeQ = Utilities.cloneJSON(this.state.quantifier);
-        while (nodeQ.children && nodeQ.children.child.key)
-            nodeQ = nodeQ.children.child;
+        if (!tree1 || !tree2) {
+            // console.log(tree1, tree2);
+            // console.log("Tree is not built yet.");
+            return;
+        }
 
-        let nodeC = Utilities.cloneJSON(this.state.constraint);
-        while (nodeC.children && nodeC.children.child.key)
-            nodeC = nodeC.children.child;
+        let nodeQ = JSON.parse(JSON.stringify(tree1));
+        let nodeC = JSON.parse(JSON.stringify(tree2));
 
-        if (nodeQ.key !== nodeC.key) {
-            this.setState({GuiGrammar: "not equal target: " + nodeQ.key + " , " + nodeC.key});
+        if (nodeQ["properties"].conditionName !== nodeC["properties"].conditionName) {
+            this.setState({GuiGrammar: "not equal target: " + nodeQ["properties"].conditionName + " , " + nodeC["properties"].conditionName});
             return;
         }
 
         /*
          * check if two gui nodes are equal (same children and key)
          */
-        function equalObject(object1, object2) {
-            if (object1.key !== object2.key) return false;
-            Object.keys(object1.children).filter(key => key !== "child").forEach(group => {
-                if (object1.children[group].length !== object2.children[group].length) return false;
+        function equalObject(obj1, obj2) {
+            let object1 = JSON.parse(JSON.stringify(obj1));
+            let object2 = JSON.parse(JSON.stringify(obj2));
+            if (Object.entries(object1).length === 0 && Object.entries(object2).length === 0) return true;
+            if (Object.entries(object1).length === 0 || Object.entries(object2).length === 0) return false;
+
+            if (object1["properties"].conditionName !== object2["properties"].conditionName) return false;
+
+            Object.keys(object1.children).forEach(childGroup => {
+                if (object1.children[childGroup].length !== object2.children[childGroup].length) return false;
                 else {
-                    object1.children[group].sort((a, b) => a.key > b.key ? 1 : a.key < b.key ? -1 : 0);
-                    object2.children[group].sort((a, b) => a.key > b.key ? 1 : a.key < b.key ? -1 : 0);
-                    for (let i = 0; i < object1.children[group].length; i++) {
-                        if (!equalObject(object1.children[group][i], object2.children[group][i])) return false
-                    }
+                    object1.children[childGroup].sort((a, b) => a["properties"].conditionName > b["properties"].conditionName ? 1 : a["properties"].conditionName < b["properties"].conditionName ? -1 : 0);
+                    object2.children[childGroup].sort((a, b) => a["properties"].conditionName > b["properties"].conditionName ? 1 : a["properties"].conditionName < b["properties"].conditionName ? -1 : 0);
+                    for (let i = 0; i < object1.children[childGroup].length; i++)
+                        if (!equalObject(object1.children[childGroup][i], object2.children[childGroup][i])) return false
                 }
             });
-            if (typeof object1.text === "string") return object1.text === object2.text;
+
+            if (object1.properties.text) return object1.properties.text === object2.properties.text;
+            if (object1.properties.value) return object1.properties.value === object2.properties.value;
             return true;
         }
 
@@ -188,122 +271,141 @@ class RuleGeneratorGui extends Component {
          * returns either "MustEqualTo" or the array of {group: "", element: {GUI node}} when the type is "Must"
          */
         function equalMainPath(obj1, obj2) {
-            if (obj1.key !== obj2.key) return "MustBeEqualTo";
+            let object1 = JSON.parse(JSON.stringify(obj1));
+            let object2 = JSON.parse(JSON.stringify(obj2));
 
-            // if it is the target
-            // check if children of obj1 is subset of children of obj2
+            if (!equalObject(object1.parentNode, object2.parentNode)) return "MustBeEqualTo";
 
-            // first examine normal children
+            let sortChildren = (a, b) => {
+                if (!a["properties"].text && !b["properties"].text)
+                    return a["properties"].conditionName > b["properties"].conditionName ? 1
+                        : a["properties"].conditionName < b["properties"].conditionName ? -1
+                            : 0;
+                if (!a["properties"].text) return -1;
+                if (!b["properties"].text) return 1;
+                return a["properties"].text > b["properties"].text ? 1
+                    : a["properties"].text < b["properties"].text ? -1
+                        : 0;
+            };
+
             let addedConstraintIndex = []; // list of added constraints for "Must" case
-            let groups = Object.keys(obj1.children).filter(key => key !== "child");
-            for (let g = 0; g < groups.length; g++) {
-                let group = groups[g];
+            Object.keys(object1.children).forEach(childGroup => {
+                if (object1.children[childGroup].length > object2.children[childGroup].length) return "MustBeEqualTo";
 
-                if (obj1.children[group].length > obj2.children[group].length) return "MustBeEqualTo";
+                object1.children[childGroup].sort(sortChildren);
+                object2.children[childGroup].sort(sortChildren);
 
-                else {
-                    obj1.children[group].sort((a, b) => a.key > b.key ? 1 : a.key < b.key ? -1 : 0);
-                    obj2.children[group].sort((a, b) => a.key > b.key ? 1 : a.key < b.key ? -1 : 0);
+                // the index of the child of object2 where the previous child is matched with
+                // a child from object1. Unmatched children from index 0 to currentIndex2 from
+                // object2 are the diffs
+                let currentIndex2 = 0;
+                let countFound = 0;
 
-                    // the index of the child of obj2 where the previous child is matched with
-                    // a child from obj1. Unmatched children from index 0 to currentIndex2 from
-                    // obj2 are the diffs
-                    let currentIndex2 = 0;
-                    let countFound = 0;
-
-                    for (let i = 0; i < obj1.children[group].length; i++) {
-                        // obj2 has no more child to match
-                        if (currentIndex2 >= obj2.children[group].length) return "MustBeEqualTo";
-                        for (let j = currentIndex2; j < obj2.children[group].length; j++) {
-                            if (equalObject(obj1.children[group][i], obj2.children[group][currentIndex2])) {
-                                currentIndex2++;
-                                countFound++;
-                                break;
-                            }
-                            addedConstraintIndex.push({group: group, element: obj2.children[group][currentIndex2]});
+                for (let i = 0; i < object1.children[childGroup].length; i++) {
+                    // object2 has no more child to match
+                    if (currentIndex2 >= object2.children[childGroup].length) return "MustBeEqualTo";
+                    for (let j = currentIndex2; j < object2.children[childGroup].length; j++) {
+                        if (equalObject(object1.children[childGroup][i], object2.children[childGroup][j])) {
                             currentIndex2++;
+                            countFound++;
+                            break;
                         }
-                        // didn't find the matching element
-                        if (countFound < i + 1) return "MustBeEqualTo";
-                    }
-                    // remaining indices must be added
-                    while (currentIndex2 < obj2.children[group].length) {
-                        addedConstraintIndex.push({group: group, element: obj2.children[group][currentIndex2]});
+                        addedConstraintIndex.push({
+                            childGroup: childGroup,
+                            element: object2.children[childGroup][currentIndex2]
+                        });
                         currentIndex2++;
                     }
+                    // didn't find the matching element
+                    if (countFound < i + 1) return "MustBeEqualTo";
                 }
-            }
-
-            // examine 'child' node
-            // the only differences must be for the leaf 'child'
-            if (addedConstraintIndex.length === 0 && obj1.children.child.key)
-                return equalMainPath(obj1.children.child, obj2.children.child);
-            else if (addedConstraintIndex.length !== 0 && obj1.children.child.key)
-                return "MustBeEqualTo";
-            return addedConstraintIndex
+                // remaining indices must be added
+                while (currentIndex2 < object2.children[childGroup].length) {
+                    addedConstraintIndex.push({
+                        childGroup: childGroup,
+                        element: object2.children[childGroup][currentIndex2]
+                    });
+                    currentIndex2++;
+                }
+            });
+            return addedConstraintIndex;
         }
 
-        let result = equalMainPath(this.state.quantifier, this.state.constraint);
+        let result = equalMainPath(nodeQ, nodeC);
+        console.log("result:", result);
 
         if (result === "MustBeEqualTo") {
-            let grammarTextQ = this.traverseChildrenGrammar(this.state.quantifier);
-            let grammarTextC = this.traverseChildrenGrammar(this.state.constraint);
-            this.setState({GuiGrammar: grammarTextQ + " must be equal to " + grammarTextC});
+            let grammarTextQ = this.buildGrammar(tree1);
+            let grammarTextC = this.buildGrammar(tree2);
+            console.log(grammarTextQ, "must be equal to", grammarTextC);
+            this.setState({GuiGrammar: grammarTextQ.map(el => el.text).join(" ") + " must be equal to " + grammarTextC.map(el => el.text).join(" ")});
         }
         else {
-            let tempChildren = {
-                "top": [],
-                "before_1": [],
-                "before_2": [],
-                "after_1": [],
-                "after_2": [],
-                "within": [],
-                "child": {}
-            };
-            result.forEach(res => tempChildren[res.group].push(res.element));
+            let tempChildren = {};
+            // initializing the children fields
+            Object.keys(tree1.children).forEach(childGroup => {
+                tempChildren[childGroup] = []
+            });
+            result.forEach(res => tempChildren[res.childGroup].push(res.element));
             // the only differences must be for the leaf 'child'
             // so we only consider the leaf child
-            let tempTree = {...nodeC, children: tempChildren};
-            let grammarTextQ = this.traverseChildrenGrammar(this.state.quantifier);
-            let grammarTextC = this.traverseChildrenGrammar(tempTree, true);
-            this.setState({GuiGrammar: grammarTextQ + " must " + grammarTextC});
+            let tempTree = {...nodeC, children: tempChildren, parentNode: {}};
+            let grammarTextQ = this.buildGrammar(tree1);
+            let grammarTextC = this.buildGrammar(tempTree, true);
+
+            console.log(grammarTextQ, "must", grammarTextC);
+
+            this.setState({GuiGrammar: grammarTextQ.map(el => el.text).join(" ") + " must " + grammarTextC.map(el => el.text).join(" ")});
         }
     };
 
+
     /**
-     * traverse the state_children of a parent node to generate xpath query conditions
-     * @param parentNode
-     * @param mustHave boolean, when the grammar is partial and is wanted for constraint after 'must'
-     * @returns {string} grammar
+     * traverse the children of a node to generate grammar text
+     * @param rootNode
+     * @param mustHave
+     * @return {Array} of objects {text: "", id: ""}
      */
-    traverseChildrenGrammar(parentNode, mustHave = false) {
+    buildGrammar(rootNode, mustHave = false) {
+        let grammarObject = []; // {text: "", id: ""}
 
-        let grText = "";
-        if (parentNode.children["child"].hasOwnProperty('key')) {
-            grText += this.traverseChildrenGrammar(parentNode.children["child"]);
-            grText += " of ";
+        // element name
+        if (!mustHave)
+            grammarObject.push({text: rootNode["properties"].elementGrammar, id: rootNode.nodeId});
+
+        // text value
+        if (rootNode["properties"].text) {
+            grammarObject.push({text: "where equal to", id: ""});
+            grammarObject.push({text: "\"" + rootNode["properties"].text + "\"", id: ""}); // todo process rootNode["properties"].text
         }
 
-        if (!mustHave) grText += (parentNode.value.type === "text" && !parentNode.text) ? parentNode.value.grammar.split(" ").slice(0, 1).join(" ")
-            : parentNode.value.grammar ? parentNode.value.grammar + " " : parentNode.key ? parentNode.key + " " : "class ";
-        grText += typeof parentNode.text !== "string" ? "" : parentNode.text !== "" ? ("\"" + parentNode.text + "\"") : "";
-
-        let children = [];
-        Object.keys(parentNode.children).filter(key => key !== "child").forEach(group => children = children.concat(parentNode.children[group]));
-
-        if (children.length > 0 && !mustHave) grText += "where ";
-        if (children.length > 1 && !mustHave) grText += "(";
-
-        for (let i = 0; i < children.length; i++) {
-            grText += "have ";
-            grText += this.traverseChildrenGrammar(children[i]);
-            if (i < children.length - 1) grText += " and ";
+        // dropdown value
+        if (rootNode["properties"].value) {
+            grammarObject.push({text: "where equal to", id: ""});
+            grammarObject.push({text: "\"" + rootNode["properties"].value + "\"", id: ""});
         }
 
-        if (children.length > 1 && !mustHave) grText += ") ";
+        //children
+        let allChildren = [];
+        Object.keys(rootNode.children).forEach(group => allChildren = allChildren.concat(rootNode.children[group]));
+        if (allChildren.length > 0 && !mustHave) grammarObject.push({text: "where", id: ""});
+        if (allChildren.length > 1 && !mustHave) grammarObject.push({text: "(", id: ""});
+        for (let i = 0; i < allChildren.length; i++) {
+            grammarObject.push({text: "have", id: ""});
+            grammarObject = grammarObject.concat(this.buildGrammar(allChildren[i]));
+            if (i < allChildren.length - 1) grammarObject.push({text: "and", id: ""});
+        }
+        if (allChildren.length > 1 && !mustHave) grammarObject.push({text: ")", id: ""});
 
-        return grText;
+        // parent
+        if (Object.entries(rootNode.parentNode).length !== 0) {
+            grammarObject.push({text: "of", id: ""});
+            grammarObject = grammarObject.concat(this.buildGrammar(rootNode.parentNode))
+        }
+
+        return grammarObject;
     }
+
 }
 
 function mapStateToProps(state) {
@@ -311,14 +413,17 @@ function mapStateToProps(state) {
         rules: state.ruleTable,
         ws: state.ws,
         activeTab: state.newOrEditRule.guiState.activeTab,
-        quantifier: state.newOrEditRule.guiState.quantifier,
-        constraint: state.newOrEditRule.guiState.constraint,
+        quantifierTree: state.newOrEditRule.guiState.quantifier.tree,
+        quantifierGuiElements: state.newOrEditRule.guiState.quantifier.guiElements,
+        constraintTree: state.newOrEditRule.guiState.constraint.tree,
+        constraintGuiElements: state.newOrEditRule.guiState.constraint.guiElements
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        onSelectBaseElement: (group, element) => dispatch(selectBaseElement(group, element))
+        onChangeActiveTab: (ruleIndex, newTab) => dispatch(changeActiveTab(ruleIndex, newTab)),
+        onChangeGuiElement: (ruleIndex, group, jobs) => dispatch(changeGuiElement(ruleIndex, group, jobs))
     }
 }
 

@@ -3,450 +3,633 @@
  *
  */
 
-import React from 'react';
+import React, {Component, Fragment} from 'react';
+import MdStar from 'react-icons/lib/md/star';
+import {Button, MenuItem, Dropdown} from 'react-bootstrap';
+import {RootCloseWrapper} from "react-overlays";
 
-import TiDelete from 'react-icons/lib/ti/delete';
-
-import {GuiConstants} from './guiConstants';
-import {CustomAddDropDown, CustomFollowDropDown} from "./customAddFollowDropDown";
+import {getConditionByName} from "./guiConstants";
 
 
-class GuiComponent extends React.Component {
+class GuiComponent extends Component {
 
     constructor(props) {
         super(props);
+        // ruleIndex, elementId, rootTree, guiElements, onChangeGuiElement()
 
-        this.ws = props["ws"];
-        this.state = {...props["state"], element: props["element"]};
+        this.state = {};
 
+        this.state.guiElements = props["guiElements"];
+        this.state.elementId = props["elementId"];
+        this.state.rootTree = props["rootTree"];
+
+        // {conditionName: "class_el", activeElement: false, selectedElement: false, fake_activeElement: true/false/undefined},
+        this.state.thisElement = this.state.guiElements[this.state.elementId];
         /*
-            since the element might keep many text values, each for
-            one child, it needs to store a copy of the children
-            It can't be replaced with a simple text variable
-         */
-        this.state.text = JSON.parse(JSON.stringify(this.state.children));
+           {type: "element",
+            children: {
+                top: "class_annotation",
+                before_1: "class_memory",
+                before_2: "class_visibility",
+                before_3: "",
+                after_1: "class_name",
+                after_2: "class_implements",
+                after_3: "class_extends",
+                body: [
+                    "declaration_statement_el",
+                    "constructor_el",
+                    "function_el",
+                    "abstract_function_el"
+                ]
+            },
+            grammar: "class",
+            pre_before_1: "",
+            pre_before_2: "",
+            pre_before_3: "",
+            pre_after_1: "class",
+            pre_after_2: "",
+            pre_after_3: "",
+            post_after_3: "",
+            pre_body: "{",
+            post_body: "}",
+            canBeSelected: true
+        }
+        */
+        this.state.elementCondition = getConditionByName(this.state.thisElement.conditionName);
+        /*
+           {top: ["0.0.0"],
+            before_1: ["0.1.0"],
+            before_2: ["0.2.0"],
+            before_3: ["0.3.0"],
+            after_1: ["0.4.0"],
+            after_2: ["0.5.0"],
+            after_3: ["0.6.0"],
+            body: [["0.7.0"], ["0.7.1"], ["0.7.2"], ["0.7.3"]]
+        }
+        */
+        this.state.elementNode = this.state.rootTree[this.state.elementId];
 
+        // for storing temporary states
+        this.state.texts = {};
+        Object.keys(this.state.elementNode.children).forEach(group => {
+            this.state.texts[group] = [];
+            if (group === "body")
+                this.state.elementNode.children["body"].forEach(subGroup => {
+                    this.state.texts["body"].push([]);
+                    subGroup.forEach((childId) => {
+                        this.state.texts["body"][this.state.texts["body"].length - 1].push(this.state.guiElements[childId].text ? this.state.guiElements[childId].text : "")
+                    });
+                });
+            else
+                this.state.elementNode.children[group].forEach(childId => {
+                    this.state.texts[group].push(this.state.guiElements[childId].text ? this.state.guiElements[childId].text : "")
+                })
+        });
     }
+
+    //componentDidUpdate doesn't work
+    componentWillReceiveProps(nextProps) {
+        // recover texts:
+        let texts = {};
+        Object.keys(nextProps.rootTree[nextProps.elementId].children).forEach(group => {
+            texts[group] = [];
+            if (group === "body")
+                nextProps.rootTree[nextProps.elementId].children["body"].forEach(subGroup => {
+                    texts["body"].push([]);
+                    subGroup.forEach((childId) => {
+                        texts["body"][texts["body"].length - 1].push(nextProps.guiElements[childId].text ? nextProps.guiElements[childId].text : "")
+                    })
+                });
+            else
+                nextProps.rootTree[nextProps.elementId].children[group].forEach(childId => {
+                    texts[group].push(nextProps.guiElements[childId].text ? nextProps.guiElements[childId].text : "")
+                })
+        });
+
+        this.setState({
+            guiElements: nextProps.guiElements,
+            elementId: nextProps.elementId,
+            rootTree: nextProps.rootTree,
+            thisElement: nextProps.guiElements[nextProps.elementId],
+            elementNode: nextProps.rootTree[nextProps.elementId],
+            elementCondition: getConditionByName(nextProps.guiElements[nextProps.elementId].conditionName),
+
+            texts: texts
+        });
+    }
+
 
     render() {
         return (
-            <div className={"ruleGroupDiv " + this.state.target}>
-                {this.renderRemoveElement("innerRemoveIcon")}
+            <div
+                className={"elementDiv" + (this.state.thisElement.activeElement ? " activeElement" : "") + (this.state.thisElement.selectedElement ? " selectedElement" : "")}>
+                {this.renderSelectedElementStar()}
                 <div className={"rowGroup"}>
                     {this.renderGroup("top")}
                 </div>
                 <div className={"rowGroup"}>
-                    {this.renderElementMainBefore()}
+                    {this.renderPrePost("pre_before_1")}
                     {this.renderGroup("before_1")}
+                    {this.renderPrePost("pre_before_2")}
                     {this.renderGroup("before_2")}
-                    {this.renderElementMainMiddle(1)}
+                    {this.renderPrePost("pre_before_3")}
+                    {this.renderGroup("before_3")}
+
+                    {this.renderPrePost("pre_after_1")}
                     {this.renderGroup("after_1")}
-                    {this.renderElementMainMiddle(2)}
+                    {this.renderPrePost("pre_after_2")}
                     {this.renderGroup("after_2")}
-                    {this.renderElementMainAfter()}
+                    {this.renderPrePost("pre_after_3")}
+                    {this.renderGroup("after_3")}
+                    {this.renderPrePost("post_after_3")}
                 </div>
-                <div className={"rowGroup"}>{this.renderElementBodyBegin()}</div>
-                <div className={"rowGroup"}>{this.renderGroup("within")}</div>
-                <div className={"rowGroup"}>{this.renderElementBodyEnd()}</div>
-                <div className={"rowGroup"}>{this.renderChild()}</div>
+                {this.renderPrePost("pre_body")}
+                {this.renderBody()}
+                {this.renderPrePost("post_body")}
             </div>
         )
     }
 
-
-    //componentDidUpdate doesn't work
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            element: nextProps.element,
-            ...nextProps.state
-        });
-    }
-
-    /**
-     * render groups: top, before, after, within
-     */
-    renderGroup(group) {
-        if (GuiConstants.code_fragment[this.state.element][group].length === 0) return null;
-        return (
-            <div className={this.chooseClass(group) + (group === "within" ? "" : " rowItem")}>
-                {this.renderDefaultTitle(group)}
-                {this.state.children[group].map((cons, i) =>
-                    (<div className={group === "within" || group === "top" ? "rowGroup" : "rowItem"} key={i}>
-                        {cons.value.type === "text" || cons.value.type === "wideText" ? this.renderTextElement(cons, group, i) : (
-                            <GuiComponent ws={this.ws} state={cons}
-                                          element={cons.value.type}
-                                          callbackFromParent={this.sendDataBack}
-                                          removeFunction={() => {
-                                              const children = this.state.children;
-                                              children[group].splice(i, 1);
-                                              this.setState({children});
-                                              this.sendDataBack();
-                                          }}/>
-                        )}
-                    </div>)
-                )}
-
-                <div className={group === "within" ? "rowGroup" : "rowItem"}>
-                    <CustomAddDropDown
-                        menuItemsText={GuiConstants.code_fragment[this.state.element][group]
-                            .map(key => GuiConstants.gui_tree[key]["buttonName"])}
-                        menuItemsEvent={GuiConstants.code_fragment[this.state.element][group]}
-                        onSelectFunction={(evt) => {
-                            this.state.children[group].push({
-                                key: evt,
-                                value: GuiConstants.gui_tree[evt],
-                                target: "",
-                                children: JSON.parse(JSON.stringify(GuiConstants.state_children)),
-                                grammar: GuiConstants.gui_tree[evt]["grammar"]
-                            });
-                            this.sendDataBack();
-                            this.forceUpdate();
-                        }}/>
-                </div>
-            </div>
-        )
-    }
-
-
-    /**
-     * render the 'child' elements and constraints, drop down or a component
-     */
-    renderChild() {
-        if (this.state.target === "") return null;
-        if (!this.state.children["child"].hasOwnProperty("key"))
+    renderSelectedElementStar() {
+        if (this.state.thisElement.activeElement && this.state.elementCondition.canBeSelected)
             return (
-                <div>
-                    <CustomFollowDropDown
-                        menuItemsText={GuiConstants.code_fragment[this.state.element]["child"]
-                            .map(key => GuiConstants.gui_tree[key]["buttonName"])}
-                        menuItemsEvent={GuiConstants.code_fragment[this.state.element]["child"]}
-                        target={this.state.target}
-                        onSelectFunction={(evt) => {
-                            const children = this.state.children;
-                            children.child = {
-                                key: evt,
-                                value: GuiConstants.gui_tree[evt],
-                                target: this.state.target !== "" ? this.state.target : "default",
-                                children: JSON.parse(JSON.stringify(GuiConstants.state_children)),
-                                grammar: GuiConstants.gui_tree[evt]["grammar"]
-                            };
-                            this.setState({children});
-                            this.sendDataBack();
-                        }}
-                    />
+                <div className={"MdStar" + (this.state.thisElement.selectedElement ? " selectedElement" : "")}>
+                    <MdStar size={20} onClick={() => {
+                        let jobs = [];
+                        jobs.push({
+                            elementId: this.state.elementId,
+                            task: "SELECT_ELEMENT",
+                            value: true
+                        });
+                        this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+                    }}/>
                 </div>
             );
-
-        else {
-            // elements that don't need to be rendered
-            if (this.state.children["child"].value["type"] === "text")
-                return (<TiDelete size={20}
-                                  className={"tiDelete " + (this.state.target === "" ? "default" : this.state.target)}
-                                  onClick={() => {
-                                      const children = this.state.children;
-                                      children["child"] = {};
-                                      this.setState({children});
-                                      this.sendDataBack();
-                                  }}/>);
-            else if (this.state.children["child"].value["type"] === "wideText")
-                return (
-                    <div className={"ruleGroupDiv " + (this.state["target"] !== "" ? this.state["target"] : "default")}>
-                        {GuiConstants.gui_tree[this.state.children["child"]["key"]]["pre"] ? (
-                            <div className={"rowItem inlineText"}>
-                                <b>{GuiConstants.gui_tree[this.state.children["child"]["key"]]["pre"]}</b>
-                            </div>
-                        ) : null}
-                        <div className={"rowItem inlineText"} style={{width: "70%"}}>
-                            <input type={"text"} className={"inputText"} disabled={true}
-                                   value={typeof this.state.children["child"]["text"] === "string" ? this.state.children["child"]["text"] : ""}
-                                   placeholder={this.state.children["child"].value.placeholder}
-                                   onBlur={(e) => {
-                                       let children = this.state.children;
-                                       children["child"].text = e.target.value;
-                                       this.sendDataBack();
-                                   }}
-                                   onChange={(e) => {
-                                       const text = this.state.text;
-                                       text["child"].text = e.target.value;
-                                       this.setState({text});
-                                   }}/>
-                        </div>
-                        {GuiConstants.gui_tree[this.state.children["child"]["key"]]["post"] ? (
-                            <div className={"rowItem inlineText"}>
-                                <b>{GuiConstants.gui_tree[this.state.children["child"]["key"]]["post"]}</b>
-                            </div>
-                        ) : null}
-                        <div className={"removeIcon rowItem inlineText"}>
-                            <TiDelete size={20}
-                                      className={"tiDelete " + (this.state.target === "" ? "default" : this.state.target)}
-                                      onClick={() => {
-                                          const children = this.state.children;
-                                          children["child"] = {};
-                                          this.setState({children});
-                                          this.sendDataBack();
-                                      }}/>
-                        </div>
-                    </div>
-                );
-            else
-                return (<GuiComponent ws={this.ws} state={this.state.children["child"]}
-                                   element={this.state.children["child"].key}
-                                   callbackFromParent={this.sendDataBack}
-                                   removeFunction={() => {
-                                       const children = this.state.children;
-                                       children["child"] = {};
-                                       this.setState({children});
-                                       this.sendDataBack();
-                                   }}/>)
-        }
-    }
-
-
-    /**
-     * render elements defined by input text
-     * @param cons
-     * @param group
-     * @param i
-     * @returns {XML}
-     */
-    renderTextElement(cons, group, i) {
-        return (
-            <div className={cons.value.type === "wideText"? "divBorder" : ""}>
-                {GuiConstants.gui_tree[cons["key"]]["pre"] ? (
-                    <div className={"rowItem inlineText"}>
-                        <b>{GuiConstants.gui_tree[cons["key"]]["pre"]}</b>
-                    </div>
-                ) : null}
-                <div className={"rowItem inlineText"}
-                     style={cons.value.type === "wideText" ? {width: "70%"} : {}}>
-                    <input type={"text"}
-                           className={"inputText" + (cons["key"].includes(" not ") ? " redText" : "")}
-                           value={typeof this.state.text[group][i].text === "string" ? this.state.text[group][i].text : ""}
-                           placeholder={cons.value.placeholder}
-                           onBlur={(e) => {
-                               cons.text = e.target.value;
-                               this.sendDataBack();
-                           }}
-                           onChange={(e) => {
-                               const text = this.state.text;
-                               text[group][i].text = e.target.value;
-                               this.setState({text});
-                           }}/>
-                </div>
-                {GuiConstants.gui_tree[cons["key"]]["post"] ? (
-                    <div className={"rowItem inlineText"}>
-                        <b>{GuiConstants.gui_tree[cons["key"]]["post"]}</b>
-                    </div>
-                ) : null}
-                <div className={"removeIcon rowItem inlineText"}>
-                    <TiDelete size={20}
-                              className={"tiDelete"}
-                              onClick={() => {
-                                  const children = this.state.children;
-                                  children[group].splice(i, 1);
-                                  this.setState({children});
-                                  this.sendDataBack();
-                              }}/>
-                </div>
-            </div>
-        )
-    }
-
-
-    /**
-     * render the delete icon
-     * @param className "innerRemoveIcon" when the icon is appearing on top-right
-     * "removeIcon" when it appears inline
-     * @returns {*}
-     */
-    renderRemoveElement(className = "innerRemoveIcon") {
-        if (this.props["removeFunction"])
-            return (
-                <div className={className}>
-                    <TiDelete size={20}
-                              className={"tiDelete " + this.state.target}
-                              onClick={() => this.props["removeFunction"]()}/>
-                </div>);
         return null;
     }
 
-    /**
-     *  render the text in the beginning of the main line
-     */
-    renderElementMainBefore() {
-        switch (this.state.element) {
-            case "annotation":
-                return (<div className={"rowItem"}><b>@</b></div>);
-            case "return value":
-                return (<div className={"rowItem"}><b>return</b></div>);
-            default:
-                return null;
-        }
-    }
+    renderGroup(group) {
+        return this.state.elementNode.children[group].map((childId, i) => {
+            let childElement = this.state.guiElements[childId];
+            let childCondition = getConditionByName(childElement.conditionName);
 
-    /**
-     * render the text in the main line of the element
-     * @param location location of the inserted element:
-     * 1 (only for declaration statement between after_1 and after_2) or 2 (between before_2 and after_1)
-     */
-    renderElementMainMiddle(location) {
-        if (location === 2) {
-            if (this.state.element === "declaration statement")
-                return (<div className={"rowItem inlineText"}><b>=</b></div>);
-            return null;
-        }
+            switch (childCondition.type) {
+                case "element":
+                    return (
+                        <Fragment key={i}>
+                            <div className={"rowItem"}>
+                                <GuiComponent key={new Date()} ruleIndex={this.props.ruleIndex} elementId={childId}
+                                              rootTree={this.state.rootTree} guiElements={this.state.guiElements}
+                                              onChangeGuiElement={this.props.onChangeGuiElement}
+                                />
+                                {(i < this.state.elementNode.children[group].length - 1) ? (
+                                    <div className={"removeIcon"}>
+                                        Remove Element
+                                    </div>
+                                ) : null}
+                            </div>
+                            {(i === this.state.elementNode.children[group].length - 1 && this.state.guiElements[childId].activeElement) ? (
+                                <div className={"rowItem"}>
+                                    <Button
+                                        onClick={() => {
+                                            let jobs = [];
+                                            jobs.push({
+                                                elementId: this.state.elementId,
+                                                task: "ADD_EXTRA",
+                                                value: group
+                                            });
+                                            this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+                                        }}>
+                                        Add Field</Button>
+                                </div>
+                            ) : null}
+                        </Fragment>
+                    );
+                case "wideText":
+                case "smallText":
+                case "text":
+                    return (
+                        <Fragment key={i}>
+                            <div
+                                className={"inputTextContainer "
+                                + (childCondition.type === "wideText" ? "rowGroup"
+                                    : childCondition.type === "smallText" ? "smallText rowItem"
+                                        : "rowItem")}>
+                                <div>
+                                    <div className={"rowItem"}><b>{childCondition.pre}</b></div>
+                                    <div
+                                        className={"inputTextDiv rowItem " + (childCondition.type === "wideText" ? "wideText" : "")}>
+                                        <input type={"text"}
+                                               className={"inputText" + (childElement.activeElement ? " activeElement " : "")}
+                                               value={this.state.texts[group][i]}
+                                               placeholder={childCondition.placeholder}
+                                               onChange={e => {
+                                                   let texts = this.state.texts;
+                                                   texts[group][i] = e.target.value;
+                                                   this.setState({texts});
+                                               }}
+                                               onBlur={e => {
+                                                   let jobs = [];
 
-        switch (this.state.element) {
-            case "constructor":
-                return (<div className={"rowItem inlineText"}><b>className (</b></div>);
-            case "function":
-            case "abstract function":
-                return (<div className={"rowItem inlineText"}><b>(</b></div>);
-            case "class":
-                return (<div className={"rowItem inlineText"}><b>class</b></div>);
-            case "interface":
-                return (<div className={"rowItem inlineText"}><b>interface</b></div>);
+                                                   // update texts
+                                                   jobs.push({
+                                                       elementId: childId,
+                                                       task: "UPDATE_ELEMENT",
+                                                       value: {
+                                                           text: e.target.value,
+                                                           activeElement: e.target.value !== "",
+                                                           fake_activeElement: false
+                                                       }
+                                                   });
 
-            default:
-                return null;
-        }
-    }
+                                                   // if the element is not unique and there is no available empty element, add one
+                                                   // or remove extras
+                                                   if (!childCondition.unique) {
+                                                       let availableElements = this.state.elementNode.children[group].reduce((count, elemId) => {
+                                                           if (elemId !== childId)
+                                                               return count + (this.state.guiElements[elemId].activeElement ? 0 : 1);
+                                                           return count + (e.target.value !== "" ? 0 : 1)
+                                                       }, 0);
+                                                       if (availableElements < 1)
+                                                           jobs.push({
+                                                               elementId: this.state.elementId,
+                                                               task: "ADD_EXTRA",
+                                                               value: group
+                                                           });
+                                                       else if (availableElements > 1)
+                                                           jobs.push({
+                                                               elementId: this.state.elementId,
+                                                               task: "REMOVE_EXTRA",
+                                                               value: group
+                                                           });
+                                                   }
 
+                                                   // update activeElement for the main element
+                                                   let haveActiveChild = e.target.value !== "";
+                                                   Object.keys(this.state.elementNode.children).forEach(group => {
+                                                       if (group !== "body")
+                                                           this.state.elementNode.children[group].forEach(elemId => {
+                                                               if (elemId !== childId && this.state.guiElements[elemId].activeElement) haveActiveChild = true;
+                                                           });
+                                                       else
+                                                           this.state.elementNode.children["body"].forEach(subGroup => {
+                                                               subGroup.forEach(elemId => {
+                                                                   if (elemId !== childId && this.state.guiElements[elemId].activeElement) haveActiveChild = true;
+                                                               });
+                                                           });
+                                                   });
+                                                   // if (haveActiveChild !== this.state.thisElement.activeElement)
+                                                   jobs.push({
+                                                       elementId: this.state.elementId,
+                                                       task: "UPDATE_ELEMENT",
+                                                       value: {
+                                                           activeElement: haveActiveChild,
+                                                           fake_activeElement: false
+                                                       }
+                                                   });
 
-    /**
-     *  render the text at the end of the main line
-     */
-    renderElementMainAfter() {
-        switch (this.state.element) {
-            case "abstract function":
-                return (<div className={"rowItem inlineText"}><p><b>); </b></p></div>);
-            case "function":
-            case "constructor":
-                return (<div className={"rowItem inlineText"}><p><b>) </b></p></div>);
-
-            default:
-                return null;
-        }
-    }
-
-
-    /**
-     *  render the text in the beginning of the body
-     */
-    renderElementBodyBegin() {
-        switch (this.state.element) {
-            case "class":
-            case "interface":
-            case "function":
-            case "constructor":
-                return (<div className={"rowGroup"}><b>&#123;</b></div>);
-            default:
-                return null;
-        }
-    }
-
-
-    /**
-     *  render the text at the end of the body
-     */
-    renderElementBodyEnd() {
-        switch (this.state.element) {
-            case "class":
-            case "interface":
-            case "function":
-            case "constructor":
-                return (<div className={"rowGroup"}><b>&#125;</b></div>);
-            default:
-                return null;
-        }
-    }
-
-
-    /**
-     * render default title when there is no children
-     * @param group
-     * @returns {XML}
-     */
-    renderDefaultTitle(group) {
-        switch (this.state.element) {
-            case "class":
-                if (group === 'after_1' && this.state.children["after_1"].length === 0)
-                    return (<div className={" rowItem inlineText"}>
-                        <span className={"temporary-text"}>className</span>
-                    </div>);
-                return null;
-            case "interface":
-                if (group === 'after_1' && this.state.children["after_1"].length === 0)
-                    return (<div className={" rowItem inlineText"}>
-                        <span className={"temporary-text"}>interfaceName</span>
-                    </div>);
-                return null;
-            case "function":
-            case "constructor":
-                if (group === 'before_2' && this.state.children["before_2"].length === 0)
-                    return(<div className={" rowItem inlineText"}>
-                        <span className={"temporary-text"}>{this.state.element}Name</span>
-                    </div>);
-                return null;
-            case "abstract function":
-                if (group === 'before_2' && this.state.children["before_2"].length === 0)
-                    return(<div className={" rowItem inlineText"}>
-                        <span className={"temporary-text"}>abstractFunctionName</span>
-                    </div>);
-                return null;
-            default:
-                return null;
-        }
-    }
-
-    /**
-     * send the xpath data to the parent node
-     */
-    sendDataBack = () => {
-        this.props["callbackFromParent"]();
-    };
-
-    /**
-     * choose the class of the div to display the border for the selected node (name)
-     * @param group
-     * @returns {*}
-     */
-    chooseClass(group) {
-        if (group === "within")
-            return "";
-
-        let isTarget = false;
-        if (this.state.children["child"].hasOwnProperty("key")) {
-            let targetKey = this.state.children["child"].key;
-
-            if(group === "top") {
-                if (targetKey === "annotation") isTarget = true;
+                                                   this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+                                               }}
+                                        />
+                                    </div>
+                                    <div className={"rowItem"}><b>{childCondition.post}</b></div>
+                                </div>
+                            </div>
+                        </Fragment>
+                    );
+                case "dropdown":
+                    return (
+                        <div className={"rowItem dropdownDiv"} key={i}>
+                            <CustomDropDown
+                                menuItemsText={childCondition.items}
+                                menuItemsEvent={childCondition.items.map(item => item === "N/A" ? childCondition.placeholder : item)}
+                                menuDefault={childElement.value ? childElement.value : childCondition.placeholder}
+                                onSelectFunction={(evt) => {
+                                    let jobs = [{
+                                        elementId: childId,
+                                        task: "UPDATE_ELEMENT",
+                                        value: {
+                                            value: evt,
+                                            activeElement: !(evt === childCondition.placeholder)
+                                        }
+                                    }];
+                                    jobs.push({
+                                        elementId: this.state.elementId,
+                                        task: "UPDATE_ELEMENT",
+                                        value: {
+                                            activeElement: !(evt === childCondition.placeholder),
+                                            fake_activeElement: false
+                                        }
+                                    });
+                                    console.log(evt, ",", childCondition.placeholder);
+                                    this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+                                }}
+                            />
+                        </div>
+                    );
+                default:
+                    return null;
             }
-            if (group === "before_1") {
-                if (targetKey === "specifier") isTarget = true;
-            }
-            if (group === "before_2") {
-                if (targetKey === "name" && this.state.element === "function") isTarget = true;
-                if (targetKey === "name" && this.state.element === " abstract function") isTarget = true;
-                if (targetKey === "type" && this.state.element === "declaration statement") isTarget = true;
-            }
-            if (group === "after_1") {
-                if (targetKey === "name" && this.state.element === "class") isTarget = true;
-                if (targetKey === "name" && this.state.element === "interface") isTarget = true;
-                if (targetKey === "name" && this.state.element === "declaration statement") isTarget = true;
-                if (targetKey === "parameter") isTarget = true;
-            }
-            if (group === "after_2") {
-                if (targetKey === "implementation") isTarget = true;
-                if (targetKey === "extension") isTarget = true;
-                if (targetKey === "initial value") isTarget = true;
-            }
-        }
+        });
+    }
 
+    renderBody() {
+        return this.state.elementNode.children["body"].map((ids, i) =>
+            (<div className={"bodyChildrenContainer"} key={i}>
+                {
+                    ids.map((childId, j) => {
+                        let childElement = this.state.guiElements[childId];
+                        let childCondition = getConditionByName(childElement.conditionName);
 
-        return isTarget ? "divBorder ruleGroupDiv " + (this.state["target"] !== "" ? this.state["target"] : "default") : "divBorder";
+                        switch (childCondition.type) {
+                            case "element":
+                                return (
+                                    <Fragment key={j}>
+                                        <div className={"rowGroup"}>
+                                            <GuiComponent key={new Date()} ruleIndex={this.props.ruleIndex}
+                                                          elementId={childId}
+                                                          rootTree={this.state.rootTree}
+                                                          guiElements={this.state.guiElements}
+                                                          onChangeGuiElement={this.props.onChangeGuiElement}
+                                            />
+                                            {(j < this.state.elementNode.children["body"][i].length - 1) ? (
+                                                <div className={"removeIcon"}>
+                                                    <Button
+                                                        onClick={() => {
+                                                            let jobs = [];
+                                                            jobs.push({
+                                                                elementId: childId,
+                                                                task: "REMOVE_ELEMENT",
+                                                                value: {parentId: this.state.elementId}
+                                                            });
+                                                            this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+                                                        }}
+                                                    >Remove Element</Button>
+                                                </div>
+                                            ) : null}
+                                        </div>
+                                        {(j === this.state.elementNode.children["body"][i].length - 1 && this.state.guiElements[childId].activeElement) ? (
+                                            <div className={"rowItem"}>
+                                                <Button
+                                                    onClick={() => {
+                                                        let jobs = [];
+                                                        jobs.push({
+                                                            elementId: this.state.elementId,
+                                                            task: "ADD_EXTRA",
+                                                            value: "body," + i
+                                                        });
+                                                        this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+                                                    }}
+                                                >Add Field</Button>
+                                            </div>
+                                        ) : null}
+                                    </Fragment>
+                                );
+
+                            case "wideText":
+                            case "smallText":
+                            case "text":
+                                return (
+                                    <Fragment key={j}>
+                                        <div
+                                            className={"inputTextContainer "
+                                            + (childCondition.type === "wideText" ? "rowGroup"
+                                                : childCondition.type === "smallText" ? "smallText rowItem"
+                                                    : "rowItem")}>
+                                            <div>
+                                                <div className={"rowItem"}><b>{childCondition.pre}</b></div>
+                                                <div
+                                                    className={"inputTextDiv rowItem " + (childCondition.type === "wideText" ? "wideText" : "")}>
+                                                    <input type={"text"}
+                                                           className={"inputText" + (childElement.activeElement ? " activeElement " : "")}
+                                                           value={this.state.texts["body"][i][j]}
+                                                           placeholder={childCondition.placeholder}
+                                                           onChange={e => {
+                                                               let texts = this.state.texts;
+                                                               texts["body"][i][j] = e.target.value;
+                                                               this.setState({texts});
+                                                           }}
+                                                           onBlur={e => {
+                                                               let jobs = [];
+                                                               // update the text
+                                                               jobs.push({
+                                                                   elementId: childId,
+                                                                   task: "UPDATE_ELEMENT",
+                                                                   value: {
+                                                                       text: e.target.value,
+                                                                       activeElement: e.target.value !== "",
+                                                                       fake_activeElement: false
+                                                                   }
+                                                               });
+                                                               // if the childElement is not unique and there is no available empty element, add one
+                                                               // or remove extras
+                                                               if (!childCondition.unique) {
+                                                                   let availableElements = this.state.elementNode.children["body"][i].reduce((count, elemId) => {
+                                                                       if (elemId !== childId)
+                                                                           return count + (this.state.guiElements[elemId].activeElement ? 0 : 1);
+                                                                       return count + (e.target.value !== "" ? 0 : 1)
+                                                                   }, 0);
+                                                                   if (availableElements < 1)
+                                                                       jobs.push({
+                                                                           elementId: this.state.elementId,
+                                                                           task: "ADD_EXTRA",
+                                                                           value: "body," + i
+                                                                       });
+                                                                   else if (availableElements > 1)
+                                                                       jobs.push({
+                                                                           elementId: this.state.elementId,
+                                                                           task: "REMOVE_EXTRA",
+                                                                           value: "body," + i
+                                                                       });
+                                                               }
+
+                                                               // update activeElement for the main element
+                                                               let haveActiveChild = e.target.value !== "";
+                                                               Object.keys(this.state.elementNode.children).forEach(group => {
+                                                                   if (group !== "body")
+                                                                       this.state.elementNode.children[group].forEach(elemId => {
+                                                                           if (elemId !== childId && this.state.guiElements[elemId].activeElement) haveActiveChild = true;
+                                                                       });
+                                                                   else
+                                                                       this.state.elementNode.children["body"].forEach(subGroup => {
+                                                                           subGroup.forEach(elemId => {
+                                                                               if (elemId !== childId && this.state.guiElements[elemId].activeElement) haveActiveChild = true;
+                                                                           });
+                                                                       });
+                                                               });
+                                                               jobs.push({
+                                                                   elementId: this.state.elementId,
+                                                                   task: "UPDATE_ELEMENT",
+                                                                   value: {
+                                                                       activeElement: haveActiveChild,
+                                                                       fake_activeElement: false
+                                                                   }
+                                                               });
+
+                                                               this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+                                                           }}
+                                                    />
+                                                </div>
+                                                <div className={"rowItem"}><b>{childCondition.post}</b></div>
+                                            </div>
+                                        </div>
+
+                                    </Fragment>
+                                );
+                            case "dropdown":
+                                return (
+                                    <div className={"rowItem dropdownDiv"} key={j}>
+                                        <CustomDropDown
+                                            menuItemsText={childCondition.items}
+                                            menuItemsEvent={childCondition.items.map(item => item === "N/A" ? childCondition.placeholder : item)}
+                                            menuDefault={childElement.value ? childElement.value : childCondition.placeholder}
+                                            onSelectFunction={(evt) => {
+                                                let jobs = [{
+                                                    elementId: childId,
+                                                    task: "UPDATE_ELEMENT",
+                                                    value: {
+                                                        value: evt,
+                                                        activeElement: !(evt === childCondition.placeholder)
+                                                    }
+                                                }];
+                                                jobs.push({
+                                                    elementId: this.state.elementId,
+                                                    task: "UPDATE_ELEMENT",
+                                                    value: {
+                                                        activeElement: !(evt === childCondition.placeholder),
+                                                        fake_activeElement: false
+                                                    }
+                                                });
+                                                this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+                                            }}
+                                        />
+                                    </div>
+                                );
+                            default:
+                                return null;
+                        }
+                    })
+                }
+            </div>)
+        );
+    }
+
+    renderPrePost(category) {
+        if (this.state.elementCondition[category] === "") return null;
+        if (category === "pre_body" || category === "post_body")
+            return (
+                <div className={"rowGroup"}>
+                    <div className={"rowItem"}><b>{this.state.elementCondition[category]}</b></div>
+                </div>
+            );
+        return (
+            <div className={"rowItem"}>
+                <b onClick={() => {
+                    if (this.state.thisElement.selectedElement || (this.state.thisElement.activeElement && !this.state.thisElement.fake_activeElement)) return;
+                    let status = this.state.thisElement.activeElement;
+                    let jobs = [];
+                    jobs.push({
+                        elementId: this.state.elementId,
+                        task: "UPDATE_ELEMENT",
+                        value: {activeElement: !status, fake_activeElement: true}
+                    });
+                    this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+                }}>
+                    {this.state.elementCondition[category]}
+                </b>
+            </div>
+        )
     }
 
 }
 
+
 export default GuiComponent;
+
+
+class CustomDropDown extends Component {
+    constructor(props) {
+        super(props);
+
+        if (!props.menuItemsText || !props.onSelectFunction || !props.menuItemsEvent)
+            console.error(`'menuItemsEvent', 'menuItemsText' and 'onSelectFunction' are required in props`);
+
+        this.state = {
+            menuItemsText: props.menuItemsText,
+            menuItemsEvent: props.menuItemsEvent,
+            onSelectFunction: props.onSelectFunction,
+            menuDefault: props.menuDefault ? props.menuDefault : "select",
+            id: props.id ? props.id : "dropdown-custom-menu",
+            open: false
+        }
+    }
+
+    render() {
+        return (
+            <RootCloseWrapper onRootClose={() => this.setState({open: false})}>
+                <Dropdown id={this.state.id} open={this.state.open} className={"dropdownToggle"}
+                          onToggle={() => this.setState({open: !this.state.open})}>
+                    <CustomToggle bsRole="toggle">
+                        {this.state.menuDefault}
+                        <span className={"caret"}/>
+                    </CustomToggle>
+                    <CustomMenu bsRole="menu">
+                        {this.state.menuItemsEvent.map((el, i) =>
+                            (<MenuItem eventKey={el} key={i}
+                                       onSelect={(evt) => {console.log("dropdown",evt,this.props.menuDefault);
+                                           this.setState({menuDefault: evt, open: false},
+                                               () => this.state.onSelectFunction(evt)
+                                           )}}
+                            > {this.state.menuItemsText[i]}
+                            </MenuItem>)
+                        )}
+                    </CustomMenu>
+                </Dropdown>
+            </RootCloseWrapper>
+        )
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            menuItemsText: nextProps.menuItemsText,
+            menuItemsEvent: nextProps.menuItemsEvent,
+            onSelectFunction: nextProps.onSelectFunction,
+            id: nextProps.id ? nextProps.id : "dropdown-custom-menu"
+        });
+
+    }
+}
+
+class CustomMenu extends Component {
+
+    render() {
+        const {children} = this.props;
+
+        return (
+            <div className="dropdown-menu">
+                {React.Children.toArray(children)}
+            </div>
+        );
+    }
+}
+
+class CustomToggle extends Component {
+    constructor(props, context) {
+        super(props, context);
+
+        this.handleClick = this.handleClick.bind(this);
+    }
+
+    handleClick(e) {
+        e.preventDefault();
+        this.props.onClick(e);
+    }
+
+    render() {
+        return (
+            <span onClick={this.handleClick}>
+                {this.props.children}
+            </span>
+        );
+    }
+}

@@ -294,86 +294,21 @@ body {
     margin-bottom: 0;
 }
 
-/*!*** Xpath Generator Old UI ***!*/
+/*!*** rule Generator GUI ***!*/
 
-.ruleGroupDiv {
-    padding: 5px 10px;
-    border: 1px solid #dadada;
-    border-radius: 5px;
-    /*margin: 10px 0;*/
-    background: white;
+/* arrangement */
+
+.generateRuleGui .elementDiv {
+    padding: 1px;
 }
 
-.rowItem {
-    /*float: left;*/
-    /*padding-right: 5px;*/
+.generateRuleGui .ruleGroupDiv {
+    padding: 5px 10px;
+}
+
+.generateRuleGui .rowItem {
     display: inline-block;
 }
-
-.inlineText {
-    /*margin-top: 10px;*/
-
-    border: 1px solid #ffffff;
-    border-radius: 5px;
-    /*min-height: 45px;*/
-    /*padding: 3px 5px 3px 5px;*/
-    /*padding: 0 3px;*/
-}
-
-.generateRuleGui button.follows {
-    background-image: -webkit-linear-gradient(top, #5bc0de 0%, #2aabd2 100%);
-    background-image: -o-linear-gradient(top, #5bc0de 0%, #2aabd2 100%);
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#5bc0de), to(#2aabd2));
-    background-image: linear-gradient(to bottom, #5bc0de 0%, #2aabd2 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-    background-repeat: repeat-x;
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, .2);
-    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
-    color: #fff;
-    background-color: #5bc0de;
-    border-color: #46b8da;
-}
-
-.generateRuleGui .ruleGroupDiv.default {
-    border: 2px solid gray;
-    border-radius: 5px;
-
-    /*border: 1px solid #dadada;*/
-    /*min-height: 45px;*/
-}
-
-.generateRuleGui .ruleGroupDiv.follows {
-    border: 2px solid #2aabd2;
-    border-radius: 5px;
-
-}
-
-.generateRuleGui .generatedXpath {
-    padding-top: 5px;
-    margin-bottom: 20px;
-}
-
-.generateRuleGui .divBorder {
-    border: 1px solid transparent;
-    border-radius: 5px;
-    padding: 2px 3px 0 3px;
-}
-
-.generateRuleGui .divBorder:hover {
-    border: 1px solid #dadada;
-    border-radius: 5px;
-}
-
-.generateRuleGui .exprDiv {
-    clear: both;
-    padding-bottom: 15px;
-}
-
-.generateRuleGui .temporary-text {
-    color: #828282;
-}
-
 
 .generateRuleGui .rowGroup {
     margin-left: 0;
@@ -382,87 +317,124 @@ body {
     margin-bottom: 5px;
 }
 
-.generateRuleGui .removeIcon {
-    /*float: left;*/
+.generateRuleGui .bodyChildrenContainer {
+    padding-top: 10px;
+    margin: 0 2px 0 20px;
 }
 
-.generateRuleGui input.redText, .generateRuleGui input.redText::placeholder {
-    color: indianred;
+.generateRuleGui .dropdownToggle {
+    border: 1px solid #eeeeee;
+    border-radius: 2px;
+}
+
+.generateRuleGui .dropdownToggle:hover {
+    cursor: pointer;
+    border-color: #afafaf;
+}
+
+.generateRuleGui .dropdownDiv {
+    padding: 0 4px;
+}
+
+.generateRuleGui .wideText {
+    width: 80%;
+}
+
+.generateRuleGui .smallText {
+    width: 60px;
+}
+
+.generateRuleGui .inlineText {
+    border: 1px solid #ffffff;
+    border-radius: 5px;
 }
 
 .generateRuleGui input {
     width: 100%;
 }
 
-.generateRuleGui input:disabled {
-    background-color: #e4e4e4;
+.generateRuleGui .inputTextContainer {
+    padding: 0 1px;
 }
 
-.generateRuleGui input:disabled::placeholder {
-    color: #a9a9a9;
+.generateRuleGui .inputTextDiv {
+    padding: 0 2px;
 }
 
-.generateRuleGui .innerRemoveIcon {
-    float: right;
-    margin-right: -10px;
-    margin-top: -10px;
+/* color */
+
+.generateRuleGui .elementDiv {
+    border: 1px solid transparent;
+    border-radius: 5px;
+}
+
+.generateRuleGui .elementDiv {
+    color: #d3d3d3;
+}
+
+.generateRuleGui .elementDiv:hover {
+    color: #5f5f5f;
+    border-color: #cfcfcf;
+}
+
+.generateRuleGui .activeElement {
+    color: #3c3c3c;
+    border-color: #a6a6a6;
+}
+
+.generateRuleGui .activeElement:hover {
+    color: #303030;
+    border-color: #959595;
+}
+
+.generateRuleGui .activeElement.selectedElement {
+    border: 2px solid #99721c;
+}
+
+.generateRuleGui .activeElement.selectedElement:hover {
+    border: 2px solid #885f0c;
+}
+
+.generateRuleGui .elementDiv.selectedElement {
+    color: #3c3c3c;
 }
 
 .generateRuleGui .inputText {
     border: none;
-    background-color: lightgray;
+    background-color: #f4f4f4;
 }
 
+.generateRuleGui .inputText::placeholder {
+    color: inherit;
+    opacity: 0.5;
+}
 
-.generateRuleGui .tiDelete {
+.generateRuleGui .inputText:hover, .generateRuleGui .inputText:focus{
+    background-color: #e2e2e2;
+}
+
+.generateRuleGui .inputText.activeElement {
+    background-color: #c5c5c5;
+}
+
+.generateRuleGui .removeIcon {
+    float: right;
+}
+
+/* star */
+
+.generateRuleGui .MdStar {
     cursor: pointer;
-    color: #e6e6e6;
+    color: #cecece;
+    float: right;
+    margin-top: -20px; /* size of MdStar */
 }
 
-.generateRuleGui .tiDelete:hover {
+.generateRuleGui .MdStar:hover {
     color: #969696;
 }
 
-.generateRuleGui .tiDelete.default {
+.generateRuleGui .MdStar.selectedElement {
     cursor: pointer;
-    color: #737373;
-}
-
-.generateRuleGui .tiDelete.default:hover {
-    color: #515151;
-}
-
-.generateRuleGui .tiDelete.follows {
-    cursor: pointer;
-    color: #2babd2;
-}
-
-.generateRuleGui .tiDelete.follows:hover {
-    color: #2785a8;
-}
-
-.generateRuleGui .mdAddBox {
-    cursor: pointer;
-    color: #e2e2e2
-}
-
-.generateRuleGui .mdAddBox:hover {
-    color: #969696
-}
-
-
-code {
-    color: #3c3c3c;
-    background-color: #eeeeee;
-    font-family: monospace;
-}
-
-.generatedXpath code {
-    padding: 5px;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-.generateRuleGui .btn-group {
-    margin-bottom: 5px;
+    color: #e5a727;
 }
