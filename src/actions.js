@@ -24,6 +24,10 @@ export const ignoreFile = (shouldIgnore) => {
     return {type: "IGNORE_FILE", shouldIgnore: shouldIgnore};
 };
 
+export const updateFilePath = (filePath) => {
+    return {type: "FILE_PATH", value: filePath};
+};
+
 export const clickedOnForward = () => {
     return {type: "CLICKED_ON_FORWARD"};
 };
@@ -32,9 +36,6 @@ export const clickedOnBack = () => {
     return {type: "CLICKED_ON_BACK"};
 };
 
-export const updateFilePath = (filePath) => {
-    return {type: "FILE_PATH", value: filePath};
-};
 
 export const submitNewRule = (newRuleProps) => {
     return {type: "SUBMIT_NEW_RULE", value: newRuleProps}
@@ -96,24 +97,21 @@ export const matchMessages = (ruleIndex, sentMessages, receivedMessages, quantif
 };
 
 
-// changing the GUI tab
-export const changeActiveTab = (ruleIndex, newTab) => {
-    return {
-        type: "CHANGE_ACTIVE_TAB",
-        ruleIndex: ruleIndex,
-        newTab: newTab
-    }
-};
-
 // tasks is an array of form [{elementId: "", task: "ADD_EXTRA/REMOVE_EXTRA/UPDATE_ELEMENT", value}]
 // for add/remove we have the children group name as value
 // for update we have an object {prop: newValue}
-// group is either quantifier or constraint
-export const changeGuiElement = (ruleIndex, group, tasks) => {
+export const changeGuiElement = (ruleIndex, tasks) => {
     return {
         type: "CHANGE_GUI_ELEMENT",
         ruleIndex: ruleIndex,
-        group: group,
         tasks: tasks
-    }
+    };
+};
+
+export const changeAutoCompleteTextFromGUI = (ruleIndex, newText) => {
+    return {
+        type: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI",
+        ruleIndex: ruleIndex,
+        newText: newText
+    };
 };

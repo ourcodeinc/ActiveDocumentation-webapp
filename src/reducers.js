@@ -1,152 +1,4 @@
-// const default_state = {
-//     ws: null,
-//
-//     /*
-//     index: 1545798262
-//     title: ""
-//     description: ""
-//     tags: []
-//     grammar: ""
-//     ruleType: {constraint: "NONE", checkFor: [], type: "WITHIN"}
-//     quantifier: {detail: "", command: ""}
-//     constraint: {detail: "", command: ""}
-//     rulePanelState: {
-//         editMode: false
-//         title: ""
-//         description: ""
-//         ruleTags: []
-//         folderConstraint: ""
-//         filesFolders: []
-//         constraintXPath: ""
-//         quantifierXPath: ""
-//         autoCompleteText: ""
-//         activeTab: 0
-//         guiState: {activeTab: "quantifier", quantifier: {…}, constraint: {…}, ruleType: ""}
-//     }
-//     xPathQueryResult: []
-//      */
-//     ruleTable: [],
-//     tagTable: [],
-//     xml: [],
-//     hash: ["index"],
-//     ignoreFile: false,
-//     message: "init",
-//     filePath: "",
-//     hashManager: {
-//         history: ["#/index"],
-//         clicked: false,
-//         activeHash: 0,
-//         forwardDisable: "disabled",
-//         backDisable: "disabled"
-//     },
-//     // used for new rule form
-//     newOrEditRule: {
-//         isEditMode: false,
-//         title: "",
-//         description: "",
-//         ruleTags: [],
-//         folderConstraint: "",
-//         filesFolders: [],
-//
-//         autoCompleteText: "",
-//         quantifierXPath: "", // only produced by autoComplete grammar
-//         constraintXPath: "", // only produced by autoComplete grammar
-//         sentMessages: [],
-//         receivedMessages: [],
-//
-//         guiState: {
-//             activeTab: "quantifier",
-//             quantifier: {
-//                 key: "", //"class",
-//                 value: "",
-//                 target: "follows",
-//                 children: {
-//                     "top": [],
-//                     "before": [],
-//                     "before_1": [],
-//                     "before_2": [],
-//                     "after": [],
-//                     "after_1": [],
-//                     "after_2": [],
-//                     "within": [],
-//                     "child": {}
-//                 }
-//             },
-//             constraint: {
-//                 key: "", //"class",
-//                 value: "",
-//                 target: "follows",
-//                 children: {
-//                     "top": [],
-//                     "before": [],
-//                     "before_1": [],
-//                     "before_2": [],
-//                     "after": [],
-//                     "after_1": [],
-//                     "after_2": [],
-//                     "within": [],
-//                     "child": {}
-//                 }
-//             },
-//             ruleType: "" // "Must" or "MustBeEqualTo"
-//         }
-//     }
-//
-// };
-
-// used for editing existing rule
-// const default_rulePanelState = {
-//     editMode: false, // default must be false unless a new rule is being generated: !!props["newRule"]
-//
-//     title: "",
-//     description: "",
-//     ruleTags: [],
-//     folderConstraint: "",
-//     filesFolders: [],
-//
-//     autoCompleteText: "",
-//     quantifierXPath: "", // only produced by autoComplete grammar
-//     constraintXPath: "", // only produced by autoComplete grammar
-//
-//     guiState: {
-//         activeTab: "quantifier",
-//         quantifier: {
-//             key: "class",
-//             value: "",
-//             target: "follows",
-//             children: {
-//                 "top": [],
-//                 "before": [],
-//                 "before_1": [],
-//                 "before_2": [],
-//                 "after": [],
-//                 "after_1": [],
-//                 "after_2": [],
-//                 "within": [],
-//                 "child": {}
-//             }
-//         },
-//         constraint: {
-//             key: "class",
-//             value: "",
-//             target: "follows",
-//             children: {
-//                 "top": [],
-//                 "before": [],
-//                 "before_1": [],
-//                 "before_2": [],
-//                 "after": [],
-//                 "after_1": [],
-//                 "after_2": [],
-//                 "within": [],
-//                 "child": {}
-//             }
-//         },
-//         ruleType: "" // "Must" or "MustBeEqualTo"
-//     }
-// };
-
-import {initial_state, default_rulePanelState, initial_guiState} from './initialState';
+import {initial_state, default_rulePanelState} from './initialState';
 import {generateTreeForElement} from "./ui/ruleGenerationGUI/guiConstants";
 
 
@@ -200,23 +52,22 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
         case "UPDATE_RULE_TABLE":
             let rules = JSON.parse(JSON.stringify(action["ruleTable"]));
-            rules = rules.map(d => {
-                let a =  Object.assign({}, d);
-                return Object.assign({}, d, {
+            rules = rules.map(rule =>
+                Object.assign({}, rule, {
                     rulePanelState: {
-                        ...default_rulePanelState,
+                        ...JSON.parse(JSON.stringify(default_rulePanelState)),
                         editMode: false,
-                        title: a.title,
-                        description: a.description,
-                        ruleTags: a.tags,
-                        folderConstraint: a.ruleType.constraint,
-                        filesFolders: a.ruleType.checkFor,
-                        quantifierXPath: a.quantifier.command,
-                        constraintXPath: a.constraint.command,
-                        autoCompleteText: a.grammar
+                        title: rule.title,
+                        description: rule.description,
+                        ruleTags: rule.tags,
+                        folderConstraint: rule.ruleType.constraint,
+                        filesFolders: rule.ruleType.checkFor,
+                        quantifierXPath: rule.quantifier.command,
+                        constraintXPath: rule.constraint.command,
+                        autoCompleteText: rule.grammar
                     }
-                });
-            });
+                })
+            );
             return Object.assign({}, state, {
                 ruleTable: rules,
                 message: "UPDATE_RULE_TABLE"
@@ -241,10 +92,22 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 message: "NEW_TAG"
             });
 
+        /*
+         file handling
+          */
+
         case "IGNORE_FILE":
-            let editCount = state.ruleTable.reduce((count, element) =>  count + element.rulePanelState.editMode ? 1 : 0, 0);
-            if (state.newOrEditRule.isEditMode || editCount > 0)  return Object.assign({}, state);
+            let editCount = state.ruleTable.reduce((count, element) => count + element.rulePanelState.editMode ? 1 : 0, 0);
+            if (state.newOrEditRule.isEditMode || editCount > 0) return Object.assign({}, state);
             return Object.assign({}, state, {ignoreFile: action["shouldIgnore"], message: "IGNORE_FILE"});
+
+        case "FILE_PATH":
+            if (state.ignoreFile) return Object.assign({}, state, {message: "FILE_PATH_UPDATED"});
+            return Object.assign({}, state, {filePath: action["value"], message: "FILE_PATH_UPDATED"});
+
+        /*
+         nav-bar navigation
+          */
 
         case "CLICKED_ON_FORWARD":
             return Object.assign({}, state, {
@@ -268,27 +131,15 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 }
             });
 
-        case "FILE_PATH":
-            if (state.ignoreFile) return Object.assign({}, state, {message: "FILE_PATH_UPDATED"});
-            return Object.assign({}, state, {filePath: action["value"], message: "FILE_PATH_UPDATED"});
+        /*
+         generate rule form
+          */
 
         case "CLEAR_NEW_RULE_FORM":
             return Object.assign({}, state, {
                 newOrEditRule: {
-                    isEditMode: false,
-                    title: "",
-                    description: "",
-                    ruleTags: [],
-                    folderConstraint: "",
-                    filesFolders: [],
-
-                    autoCompleteText: "",
-                    quantifierXPath: "", // only produced by autoComplete grammar
-                    constraintXPath: "", // only produced by autoComplete grammar
-                    sentMessages: [],
-                    receivedMessages: [],
-
-                    guiState: JSON.parse(JSON.stringify(initial_guiState))
+                    ...JSON.parse(JSON.stringify(initial_state.newOrEditRule)),
+                    isEditMode: true
                 },
                 message: "CLEAR_NEW_RULE_FORM"
             });
@@ -339,7 +190,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         // reset fields of the form after cancel editing
                         if (!action["newEditMode"])
                             a.rulePanelState = {
-                                ...default_rulePanelState,
+                                ...JSON.parse(JSON.stringify(default_rulePanelState)),
                                 title: d.title,
                                 description: d.description,
                                 ruleTags: d.tags,
@@ -452,21 +303,6 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 });
 
         /*
-        * ruleIndex, newTab
-        */
-        case "CHANGE_ACTIVE_TAB":
-            if (action["ruleIndex"] !== -1)
-                copiedState.ruleTable = copiedState.ruleTable.map(rule => {
-                    if (rule.index !== action["ruleIndex"]) return rule;
-                    rule.rulePanelState.guiState.activeTab = action["newTab"];
-                    return rule;
-                });
-            else
-                copiedState.newOrEditRule.guiState.activeTab = action["newTab"];
-            return copiedState;
-
-
-        /*
           {
             type: "CHANGE_GUI_ELEMENT",
             ruleIndex: ruleIndex,
@@ -488,41 +324,41 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                             let childGroup = job["value"].startsWith("body") ? "body" : job["value"];
 
                             let filterFunction = (array, id) => {
-                                if (array[action["group"]].guiElements[id].activeElement)
+                                if (array.guiElements[id].activeElement)
                                     return true;
-                                delete array[action["group"]].guiElements[id];
+                                delete array.guiElements[id];
 
                                 // if the newly removed element is a selected element, un-select it
-                                if (array[action["group"]].tree.selectedElementID === id)
-                                    array[action["group"]].tree.selectedElementID = "";
+                                if (array.guiTree.selectedElementID === id)
+                                    array.guiTree.selectedElementID = "";
 
                                 return false;
                             };
 
-                            let childrenGroup = array[action["group"]].tree[job["elementId"]].children[childGroup];
-                            if (job["value"].startsWith("body")) childrenGroup = array[action["group"]].tree[job["elementId"]].children[childGroup][+(job["value"].split(',')[1])];
+                            let childrenGroup = array.guiTree[job["elementId"]].children[childGroup];
+                            if (job["value"].startsWith("body")) childrenGroup = array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(',')[1])];
 
-                            let newElementConditionName = array[action["group"]].guiElements[childrenGroup[0]].conditionName;
+                            let newElementConditionName = array.guiElements[childrenGroup[0]].conditionName;
                             if (job["task"] === "REMOVE_EXTRA") {
                                 // remove all inactive elements
                                 if (job["value"].startsWith("body"))
-                                    array[action["group"]].tree[job["elementId"]].children[childGroup][+(job["value"].split(',')[1])] =
-                                        array[action["group"]].tree[job["elementId"]].children[childGroup][+(job["value"].split(',')[1])].filter((id) => filterFunction(array, id));
+                                    array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(',')[1])] =
+                                        array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(',')[1])].filter((id) => filterFunction(array, id));
                                 else
-                                    array[action["group"]].tree[job["elementId"]].children[childGroup] =
-                                        array[action["group"]].tree[job["elementId"]].children[childGroup].filter((id) => filterFunction(array, id));
+                                    array.guiTree[job["elementId"]].children[childGroup] =
+                                        array.guiTree[job["elementId"]].children[childGroup].filter((id) => filterFunction(array, id));
                             }
                             let newElementId = Math.floor(new Date().getTime() / 10).toString();
                             let newElementsData = generateTreeForElement(newElementConditionName, newElementId);
                             // updating the existing tree
                             if (job["value"].startsWith("body"))
-                                array[action["group"]].tree[job["elementId"]].children[childGroup][+(job["value"].split(',')[1])].push(newElementId);
+                                array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(',')[1])].push(newElementId);
                             else
-                                array[action["group"]].tree[job["elementId"]].children[childGroup].push(newElementId);
+                                array.guiTree[job["elementId"]].children[childGroup].push(newElementId);
                             // adding new trees
-                            newElementsData.trees.forEach(tree => array[action["group"]].tree[tree.id] = tree.node);
+                            newElementsData.trees.forEach(tree => array.guiTree[tree.id] = tree.node);
                             // adding new elements
-                            newElementsData.elements.forEach(elem => array[action["group"]].guiElements[elem.id] = elem.node);
+                            newElementsData.elements.forEach(elem => array.guiElements[elem.id] = elem.node);
 
                             return array;
                         };
@@ -544,29 +380,29 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         if (action["ruleIndex"] !== -1) {
                             copiedState.ruleTable = copiedState.ruleTable.map(rule => {
                                 if (rule.index !== action["ruleIndex"]) return rule;
-                                rule.rulePanelState.guiState[action["group"]].guiElements[job["elementId"]] = {
-                                    ...rule.rulePanelState.guiState[action["group"]].guiElements[job["elementId"]],
+                                rule.rulePanelState.guiState.guiElements[job["elementId"]] = {
+                                    ...rule.rulePanelState.guiState.guiElements[job["elementId"]],
                                     ...job["value"]
                                 };
 
                                 // if the newly inactive element is a selected element, un-select it
-                                if (rule.rulePanelState.guiState[action["group"]].tree.selectedElementID === job["elementId"] &&
-                                    !rule.rulePanelState.guiState[action["group"]].guiElements[job["elementId"]].activeElement)
-                                    rule.rulePanelState.guiState[action["group"]].tree.selectedElementID = "";
+                                if (rule.rulePanelState.guiState.guiTree.selectedElementID === job["elementId"] &&
+                                    !rule.rulePanelState.guiState.guiElements[job["elementId"]].activeElement)
+                                    rule.rulePanelState.guiState.guiTree.selectedElementID = "";
 
                                 return rule;
                             });
                         }
                         else {
-                            copiedState.newOrEditRule.guiState[action["group"]].guiElements[job["elementId"]] = {
-                                ...copiedState.newOrEditRule.guiState[action["group"]].guiElements[job["elementId"]],
+                            copiedState.newOrEditRule.guiState.guiElements[job["elementId"]] = {
+                                ...copiedState.newOrEditRule.guiState.guiElements[job["elementId"]],
                                 ...job["value"]
                             };
 
                             // if the newly inactive element is a selected element, un-select it
-                            if (copiedState.newOrEditRule.guiState[action["group"]].tree.selectedElementID === job["elementId"] &&
-                                !copiedState.newOrEditRule.guiState[action["group"]].guiElements[job["elementId"]].activeElement)
-                                copiedState.newOrEditRule.guiState[action["group"]].tree.selectedElementID = "";
+                            if (copiedState.newOrEditRule.guiState.guiTree.selectedElementID === job["elementId"] &&
+                                !copiedState.newOrEditRule.guiState.guiElements[job["elementId"]].activeElement)
+                                copiedState.newOrEditRule.guiState.guiTree.selectedElementID = "";
                         }
                         break;
 
@@ -581,12 +417,12 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         //  add ids of children of the popped id tree to the stack
                         // delete toBeDeletedIDs from ...guiState.${group}.guiElements and ....guiState["quantifier/constraint"]
                         let processRemoveElement = (array) => {
-                            let parentTree = array[action["group"]].tree[job["value"]["parentId"]];
+                            let parentTree = array.guiTree[job["value"]["parentId"]];
                             Object.keys(parentTree.children).forEach(childGroup => {
                                 if (childGroup !== "body")
-                                    array[action["group"]].tree[job["value"]["parentId"]].children[childGroup] = parentTree.children[childGroup].filter(elemId => elemId !== job["elementId"]);
+                                    array.guiTree[job["value"]["parentId"]].children[childGroup] = parentTree.children[childGroup].filter(elemId => elemId !== job["elementId"]);
                                 else
-                                    array[action["group"]].tree[job["value"]["parentId"]].children["body"] = parentTree.children["body"].map(subGroup => {
+                                    array.guiTree[job["value"]["parentId"]].children["body"] = parentTree.children["body"].map(subGroup => {
                                         return subGroup.filter(elemId => elemId !== job["elementId"])
                                     });
                             });
@@ -596,13 +432,13 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                                 let tempId = stackIDs.pop();
                                 toBeDeletedIDs.push(tempId);
 
-                                let tempTree = array[action["group"]].tree[tempId];
+                                let tempTree = array.guiTree[tempId];
                                 let childrenIds = [];
 
                                 try {
                                     Object.keys(tempTree.children)
                                 } catch (e) {
-                                    console.log(array[action["group"]].tree, tempId)
+                                    console.log(array.guiTree, tempId)
                                 }
 
                                 Object.keys(tempTree.children).forEach(childGroup => {
@@ -616,12 +452,12 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                             }
 
                             stackIDs.forEach(elemId => {
-                                delete array[action["group"]].guiElements[elemId];
-                                delete array[action["group"]].tree[elemId];
+                                delete array.guiElements[elemId];
+                                delete array.guiTree[elemId];
 
                                 // if the newly removed element is a selected element, un-select it
-                                if (array[action["group"]].tree.selectedElementID === elemId)
-                                    array[action["group"]].tree.selectedElementID = "";
+                                if (array.guiTree.selectedElementID === elemId)
+                                    array.guiTree.selectedElementID = "";
                             });
 
                             return array;
@@ -641,16 +477,16 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     // job = {elementId: "", task: "SELECT_ELEMENT", value: true/false}
                     case "SELECT_ELEMENT":
                         let processSelectElement = (array) => {
-                            let oldSelectedElementId = array[action["group"]].tree.selectedElementID;
+                            let oldSelectedElementId = array.guiTree.selectedElementID;
                             // if selectedElement exists update its state as well
-                            if (array[action["group"]].guiElements.hasOwnProperty(oldSelectedElementId))
-                                array[action["group"]].guiElements[oldSelectedElementId] = {
-                                    ...array[action["group"]].guiElements[oldSelectedElementId],
+                            if (array.guiElements.hasOwnProperty(oldSelectedElementId))
+                                array.guiElements[oldSelectedElementId] = {
+                                    ...array.guiElements[oldSelectedElementId],
                                     selectedElement: !job["value"]
                                 };
-                            array[action["group"]].tree.selectedElementID = job["elementId"];
-                            array[action["group"]].guiElements[job["elementId"]] = {
-                                ...array[action["group"]].guiElements[job["elementId"]],
+                            array.guiTree.selectedElementID = job["elementId"];
+                            array.guiElements[job["elementId"]] = {
+                                ...array.guiElements[job["elementId"]],
                                 selectedElement: job["value"]
                             };
                             return array;
@@ -668,11 +504,50 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
                         break;
 
+
+                    // job = {elementId: "", task: "CONSTRAINT_ELEMENT", value: true/false}
+                    case "CONSTRAINT_ELEMENT":
+                        if (action["ruleIndex"] !== -1) {
+                            copiedState.ruleTable = copiedState.ruleTable.map(rule => {
+                                if (rule.index !== action["ruleIndex"]) return rule;
+                                rule.rulePanelState.guiState.guiElements[job["elementId"]].isConstraint = job["value"];
+                                return rule;
+                            });
+                        }
+                        else
+                            copiedState.newOrEditRule.guiState.guiElements[job["elementId"]].isConstraint = job["value"];
+
+                        break;
+
                     default:
                         break;
                 }
             });
             return copiedState;
+
+        case "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI":
+            if (action["ruleIndex"] !== -1) {
+                let rules = JSON.parse(JSON.stringify(state.ruleTable));
+                rules = rules.map(d => {
+                    if (d.index !== action["ruleIndex"]) return d;
+                    return Object.assign({}, d, {
+                        rulePanelState: {
+                            ...d.rulePanelState,
+                            autoCompleteText: action["newText"]
+                        }
+                    });
+                });
+                return Object.assign({}, state, {
+                    ruleTable: rules
+                });
+            }
+            else
+                return Object.assign({}, state, {
+                    newOrEditRule: {
+                        ...state.newOrEditRule,
+                        autoCompleteText: action["newText"]
+                    }
+                });
 
         default:
             return Object.assign({}, state);

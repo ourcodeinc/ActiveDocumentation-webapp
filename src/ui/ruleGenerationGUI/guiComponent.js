@@ -6,7 +6,9 @@
 import React, {Component, Fragment} from 'react';
 import MdStar from 'react-icons/lib/md/star';
 import {Button, MenuItem, Dropdown} from 'react-bootstrap';
-import {RootCloseWrapper} from "react-overlays";
+import {RootCloseWrapper} from 'react-overlays';
+import MdLockOpen from 'react-icons/lib/md/lock-open';
+import MdLock from 'react-icons/lib/md/lock';
 
 import {getConditionByName} from "./guiConstants";
 
@@ -123,6 +125,7 @@ class GuiComponent extends Component {
         return (
             <div
                 className={"elementDiv" + (this.state.thisElement.activeElement ? " activeElement" : "") + (this.state.thisElement.selectedElement ? " selectedElement" : "")}>
+                {this.renderConstraintElementLock()}
                 {this.renderSelectedElementStar()}
                 <div className={"rowGroup"}>
                     {this.renderGroup("top")}
@@ -148,6 +151,36 @@ class GuiComponent extends Component {
                 {this.renderPrePost("post_body")}
             </div>
         )
+    }
+
+    renderConstraintElementLock() {
+        if (this.state.thisElement.activeElement && this.state.elementCondition.canBeSelected)
+            return (
+                <div>
+                    {this.state.thisElement.isConstraint ? (
+                        <MdLockOpen size={20} onClick={() => {
+                            let jobs = [];
+                            jobs.push({
+                                elementId: this.state.elementId,
+                                task: "CONSTRAINT_ELEMENT",
+                                value: false
+                            });
+                            this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+                        }}/>
+                    ) : (
+                        <MdLock size={20} onClick={() => {
+                            let jobs = [];
+                            jobs.push({
+                                elementId: this.state.elementId,
+                                task: "CONSTRAINT_ELEMENT",
+                                value: true
+                            });
+                            this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+                        }}/>
+                    )}
+                </div>
+            );
+        return null;
     }
 
     renderSelectedElementStar() {
@@ -229,6 +262,7 @@ class GuiComponent extends Component {
                                                    this.setState({texts});
                                                }}
                                                onBlur={e => {
+                                                   if (this.state.elementNode.children[group][i] === e.target.value) return;
                                                    let jobs = [];
 
                                                    // update texts
@@ -321,7 +355,6 @@ class GuiComponent extends Component {
                                             fake_activeElement: false
                                         }
                                     });
-                                    console.log(evt, ",", childCondition.placeholder);
                                     this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
                                 }}
                             />
@@ -410,6 +443,7 @@ class GuiComponent extends Component {
                                                                this.setState({texts});
                                                            }}
                                                            onBlur={e => {
+                                                               if (this.state.elementNode.children["body"][i][j] === e.target.value) return;
                                                                let jobs = [];
                                                                // update the text
                                                                jobs.push({
@@ -576,10 +610,11 @@ class CustomDropDown extends Component {
                     <CustomMenu bsRole="menu">
                         {this.state.menuItemsEvent.map((el, i) =>
                             (<MenuItem eventKey={el} key={i}
-                                       onSelect={(evt) => {console.log("dropdown",evt,this.props.menuDefault);
+                                       onSelect={(evt) => {
                                            this.setState({menuDefault: evt, open: false},
                                                () => this.state.onSelectFunction(evt)
-                                           )}}
+                                           )
+                                       }}
                             > {this.state.menuItemsText[i]}
                             </MenuItem>)
                         )}

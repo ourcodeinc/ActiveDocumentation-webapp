@@ -920,10 +920,10 @@ export function elementState(el_name) {
 }
 
 export function generateInitialElements(el_name, id) {
-
+    // ...element_attributes is the set of common attributes for each element
     switch (element_conditions[el_name].type) {
         case "element":
-            console.log(`"${id}":{conditionName: "${el_name}",activeElement: false,selectedElement: false},`);
+            console.log(`"${id}":{conditionName: "${el_name}", ...element_attributes},`);
             ["top", "before_1", "before_2", "before_3", "after_1", "after_2", "after_3"].forEach((group, i) => {
                 if (element_conditions[el_name].children[group] !== "")
                     generateInitialElements(element_conditions[el_name].children[group], `${id}.${i}.0`);
@@ -934,11 +934,12 @@ export function generateInitialElements(el_name, id) {
             });
             break;
 
+        // leaves, no children
         case "text":
         case "wideText":
         case "smallText":
         case "dropdown":
-            console.log(`"${id}":{conditionName: "${el_name}",activeElement: false,selectedElement: false},`);
+            console.log(`"${id}":{conditionName: "${el_name}", ...element_attributes},`);
             break;
 
         default:

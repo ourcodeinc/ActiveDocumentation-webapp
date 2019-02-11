@@ -128,7 +128,7 @@ class EditRuleForm extends Component {
                 </div>
                 <div style={{paddingTop: '10px', clear: 'both'}}>
                     {this.renderFileConstraints()}
-                    {this.renderAlerts()}
+                    {this.renderTextAndGuiUI()}
                     <div>
                         <ButtonToolbar className={"submitButtons"}>
                             <Button bsStyle="primary"
@@ -316,7 +316,7 @@ class EditRuleForm extends Component {
     /**
      * render alerts for errors in textual design rules.
      */
-    renderAlerts() {
+    renderTextAndGuiUI() {
         return (
             <div style={{paddingTop: '10px', clear: 'both'}}>
                 {this.state.error === "" ? null : !this.state.showAlert ? null : (
@@ -443,7 +443,6 @@ class EditRuleForm extends Component {
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
         if (nextProps.message === "RECEIVE_EXPR_STMT_XML") {
-
             this.matchSentAndReceivedMessages(nextProps);
         }
 
@@ -462,6 +461,13 @@ class EditRuleForm extends Component {
             // existing rule
             if (this.ruleIndex !== -1) {
                 this.setState({
+                    title: this.ruleI.rulePanelState.title,
+                    description: this.ruleI.rulePanelState.description,
+                    ruleTags: this.ruleI.rulePanelState.ruleTags,
+                    folderConstraint: this.ruleI.rulePanelState.folderConstraint,
+                    filesFolders: this.ruleI.rulePanelState.filesFolders,
+                    tags: this.ruleI.rulePanelState.tags,
+
                     autoCompleteText: this.ruleI.rulePanelState.autoCompleteText,
                     quantifierXPath: this.ruleI.rulePanelState.quantifierXPath,
                     constraintXPath: this.ruleI.rulePanelState.constraintXPath,
@@ -471,6 +477,13 @@ class EditRuleForm extends Component {
             // new rule
             else {
                 this.setState({
+                    title: nextProps.title,
+                    description: nextProps.description,
+                    ruleTags: nextProps.ruleTags,
+                    folderConstraint: nextProps.folderConstraint,
+                    filesFolders: nextProps.filesFolders,
+                    tags: nextProps.tags,
+
                     autoCompleteText: nextProps.autoCompleteText,
                     quantifierXPath: nextProps.quantifierXPath,
                     constraintXPath: nextProps.constraintXPath,

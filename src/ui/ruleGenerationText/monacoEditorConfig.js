@@ -1,4 +1,4 @@
-export const ASP_FORMAT = {
+export const LANGUAGE_FORMAT = {
     brackets: [
         ["{", "}", "delimiter.curly"],
         ["[", "]", "delimiter.square"],
@@ -61,7 +61,7 @@ export const ASP_FORMAT = {
     }
 };
 
-export const ASP_THEME = {
+export const LANGUAGE_THEME = {
     base: 'vs', // can also be vs-dark or hc-black
     inherit: true, // can also be false to completely replace the builtin rules
     rules: [

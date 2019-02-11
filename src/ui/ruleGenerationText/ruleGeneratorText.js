@@ -11,7 +11,7 @@ import MonacoEditor from 'react-monaco-editor';
 import IoClose from "react-icons/lib/io/close";
 
 import {TextConstants} from "./textConstant";
-import {ASP_FORMAT, ASP_THEME, EDITOR_OPTION} from "./monacoEditorConfig";
+import {LANGUAGE_FORMAT, LANGUAGE_THEME, EDITOR_OPTION} from "./monacoEditorConfig";
 
 class RuleGeneratorText extends Component {
     constructor(props) {
@@ -55,7 +55,7 @@ class RuleGeneratorText extends Component {
                     <MonacoEditor
                         ref="monaco"
                         options={EDITOR_OPTION}
-                        language="asp"
+                        language="mySpecialLanguage"
                         value={this.state.myText}
                         defaultValue={"test"}
                         height={100}
@@ -213,9 +213,9 @@ class RuleGeneratorText extends Component {
     }
 
     editorWillMount(monaco) {
-        monaco.languages.register({id: "asp"});
-        monaco.languages.setMonarchTokensProvider("asp", ASP_FORMAT);
-        monaco.editor.defineTheme("draco-light", ASP_THEME);
+        monaco.languages.register({id: "mySpecialLanguage"});
+        monaco.languages.setMonarchTokensProvider("mySpecialLanguage", LANGUAGE_FORMAT);
+        monaco.editor.defineTheme("draco-light", LANGUAGE_THEME);
     }
 
 
@@ -225,7 +225,7 @@ class RuleGeneratorText extends Component {
             let focus = nextProps["caretPosition"];
             let data = this.grammarSuggestion(this.state.myText, focus);
             this.setState({
-                    myText: nextProps.defaultValue ? nextProps.defaultValue : this.state.myText,
+                    myText: nextProps.hasOwnProperty("defaultValue") ? nextProps.defaultValue : this.state.myText,
                     selectionStart: -1,
                     selectionEnd: focus,
                     grammarSuggestion: data,
@@ -236,7 +236,7 @@ class RuleGeneratorText extends Component {
 
         }
         else
-            this.setState({myText: nextProps.defaultValue ? nextProps.defaultValue : this.state.myText})
+            this.setState({myText: nextProps.hasOwnProperty("defaultValue") ? nextProps.defaultValue : this.state.myText})
     }
 
     /**
@@ -451,13 +451,13 @@ class RuleGeneratorText extends Component {
          * @return {*}
          */
         const wordsArrayAtIndex = (index) => {
-          if (index < 0) return "";
-          let newIndex = index;
-          while (wordsArray[newIndex] === "(" || wordsArray[newIndex] === ")") {
-              newIndex--;
-              if (newIndex < 0) return "";
-          }
-          return wordsArray[newIndex]
+            if (index < 0) return "";
+            let newIndex = index;
+            while (wordsArray[newIndex] === "(" || wordsArray[newIndex] === ")") {
+                newIndex--;
+                if (newIndex < 0) return "";
+            }
+            return wordsArray[newIndex]
         };
 
 

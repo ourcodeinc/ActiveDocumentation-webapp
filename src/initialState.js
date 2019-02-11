@@ -1,64 +1,63 @@
+const element_attributes = {
+    activeElement: false, // if the element has at least one child
+    selectedElement: false, // if the element is the root of the XPath (unique)
+    fake_activeElement: false, // if the element is active but has no children
+    isConstraint: false // if the element is for the constraint query
+};
+
 export const initial_guiElements = {
-    "0": {conditionName: "class_el", activeElement: false, selectedElement: false},
-    "0.0.0": {conditionName: "annotation", activeElement: false, selectedElement: false},
-    "0.1.0": {conditionName: "memory", activeElement: false, selectedElement: false},
-    "0.2.0": {conditionName: "visibility", activeElement: false, selectedElement: false},
-    "0.4.0": {conditionName: "class_name", activeElement: false, selectedElement: false},
-    "0.5.0": {conditionName: "class_implements", activeElement: false, selectedElement: false},
-    "0.6.0": {conditionName: "class_extends", activeElement: false, selectedElement: false},
-    "0.7.0": {conditionName: "declaration_statement_el", activeElement: false, selectedElement: false},
-    "0.7.0.0.0": {conditionName: "annotation", activeElement: false, selectedElement: false},
-    "0.7.0.1.0": {conditionName: "memory", activeElement: false, selectedElement: false},
-    "0.7.0.2.0": {conditionName: "visibility", activeElement: false, selectedElement: false},
-    "0.7.0.3.0": {conditionName: "declaration_statement_name", activeElement: false, selectedElement: false},
-    "0.7.0.4.0": {conditionName: "declaration_statement_initialization", activeElement: false, selectedElement: false},
-    "0.7.1": {conditionName: "constructor_el", activeElement: false, selectedElement: false},
-    "0.7.1.0.0": {conditionName: "annotation", activeElement: false, selectedElement: false},
-    "0.7.1.2.0": {conditionName: "visibility", activeElement: false, selectedElement: false},
-    "0.7.1.5.0": {conditionName: "parameter_el", activeElement: false, selectedElement: false},
-    "0.7.1.5.0.1.0": {conditionName: "parameter_type", activeElement: false, selectedElement: false},
-    "0.7.1.5.0.4.0": {conditionName: "parameter_name", activeElement: false, selectedElement: false},
-    "0.7.1.7.0": {conditionName: "constructor_expression_statement", activeElement: false, selectedElement: false},
-    "0.7.1.7.1": {conditionName: "declaration_statement_el", activeElement: false, selectedElement: false},
-    "0.7.1.7.1.0.0": {conditionName: "annotation", activeElement: false, selectedElement: false},
-    "0.7.1.7.1.1.0": {conditionName: "memory", activeElement: false, selectedElement: false},
-    "0.7.1.7.1.2.0": {conditionName: "visibility", activeElement: false, selectedElement: false},
-    "0.7.1.7.1.3.0": {conditionName: "declaration_statement_name", activeElement: false, selectedElement: false},
-    "0.7.1.7.1.4.0": {
-        conditionName: "declaration_statement_initialization",
-        activeElement: false,
-        selectedElement: false
-    },
-    "0.7.2": {conditionName: "function_el", activeElement: false, selectedElement: false},
-    "0.7.2.0.0": {conditionName: "annotation", activeElement: false, selectedElement: false},
-    "0.7.2.1.0": {conditionName: "memory", activeElement: false, selectedElement: false},
-    "0.7.2.2.0": {conditionName: "visibility", activeElement: false, selectedElement: false},
-    "0.7.2.3.0": {conditionName: "function_return_type", activeElement: false, selectedElement: false},
-    "0.7.2.4.0": {conditionName: "function_name", activeElement: false, selectedElement: false},
-    "0.7.2.5.0": {conditionName: "parameter_el", activeElement: false, selectedElement: false},
-    "0.7.2.5.0.1.0": {conditionName: "parameter_type", activeElement: false, selectedElement: false},
-    "0.7.2.5.0.4.0": {conditionName: "parameter_name", activeElement: false, selectedElement: false},
-    "0.7.2.7.0": {conditionName: "declaration_statement_el", activeElement: false, selectedElement: false},
-    "0.7.2.7.0.0.0": {conditionName: "annotation", activeElement: false, selectedElement: false},
-    "0.7.2.7.0.1.0": {conditionName: "memory", activeElement: false, selectedElement: false},
-    "0.7.2.7.0.2.0": {conditionName: "visibility", activeElement: false, selectedElement: false},
-    "0.7.2.7.0.3.0": {conditionName: "declaration_statement_name", activeElement: false, selectedElement: false},
-    "0.7.2.7.0.4.0": {
-        conditionName: "declaration_statement_initialization",
-        activeElement: false,
-        selectedElement: false
-    },
-    "0.7.2.7.1": {conditionName: "function_expression_statement", activeElement: false, selectedElement: false},
-    "0.7.2.7.2": {conditionName: "function_return_value", activeElement: false, selectedElement: false},
-    "0.7.3": {conditionName: "abstract_function_el", activeElement: false, selectedElement: false},
-    "0.7.3.0.0": {conditionName: "annotation", activeElement: false, selectedElement: false},
-    "0.7.3.1.0": {conditionName: "memory", activeElement: false, selectedElement: false},
-    "0.7.3.2.0": {conditionName: "visibility", activeElement: false, selectedElement: false},
-    "0.7.3.3.0": {conditionName: "abstract_function_return_type", activeElement: false, selectedElement: false},
-    "0.7.3.4.0": {conditionName: "abstract_function_name", activeElement: false, selectedElement: false},
-    "0.7.3.5.0": {conditionName: "parameter_el", activeElement: false, selectedElement: false},
-    "0.7.3.5.0.1.0": {conditionName: "parameter_type", activeElement: false, selectedElement: false},
-    "0.7.3.5.0.4.0": {conditionName: "parameter_name", activeElement: false, selectedElement: false},
+    "0": {conditionName: "class_el", ...element_attributes},
+    "0.0.0": {conditionName: "annotation", ...element_attributes},
+    "0.1.0": {conditionName: "memory", ...element_attributes},
+    "0.2.0": {conditionName: "visibility", ...element_attributes},
+    "0.4.0": {conditionName: "class_name", ...element_attributes},
+    "0.5.0": {conditionName: "class_implements", ...element_attributes},
+    "0.6.0": {conditionName: "class_extends", ...element_attributes},
+    "0.7.0": {conditionName: "declaration_statement_el", ...element_attributes},
+    "0.7.0.0.0": {conditionName: "annotation", ...element_attributes},
+    "0.7.0.1.0": {conditionName: "memory", ...element_attributes},
+    "0.7.0.2.0": {conditionName: "visibility", ...element_attributes},
+    "0.7.0.3.0": {conditionName: "declaration_statement_name", ...element_attributes},
+    "0.7.0.4.0": {conditionName: "declaration_statement_initialization", ...element_attributes},
+    "0.7.1": {conditionName: "constructor_el", ...element_attributes},
+    "0.7.1.0.0": {conditionName: "annotation", ...element_attributes},
+    "0.7.1.2.0": {conditionName: "visibility", ...element_attributes},
+    "0.7.1.5.0": {conditionName: "parameter_el", ...element_attributes},
+    "0.7.1.5.0.1.0": {conditionName: "parameter_type", ...element_attributes},
+    "0.7.1.5.0.4.0": {conditionName: "parameter_name", ...element_attributes},
+    "0.7.1.7.0": {conditionName: "constructor_expression_statement", ...element_attributes},
+    "0.7.1.7.1": {conditionName: "declaration_statement_el", ...element_attributes},
+    "0.7.1.7.1.0.0": {conditionName: "annotation", ...element_attributes},
+    "0.7.1.7.1.1.0": {conditionName: "memory", ...element_attributes},
+    "0.7.1.7.1.2.0": {conditionName: "visibility", ...element_attributes},
+    "0.7.1.7.1.3.0": {conditionName: "declaration_statement_name", ...element_attributes},
+    "0.7.1.7.1.4.0": {conditionName: "declaration_statement_initialization", ...element_attributes},
+    "0.7.2": {conditionName: "function_el", ...element_attributes},
+    "0.7.2.0.0": {conditionName: "annotation", ...element_attributes},
+    "0.7.2.1.0": {conditionName: "memory", ...element_attributes},
+    "0.7.2.2.0": {conditionName: "visibility", ...element_attributes},
+    "0.7.2.3.0": {conditionName: "function_return_type", ...element_attributes},
+    "0.7.2.4.0": {conditionName: "function_name", ...element_attributes},
+    "0.7.2.5.0": {conditionName: "parameter_el", ...element_attributes},
+    "0.7.2.5.0.1.0": {conditionName: "parameter_type", ...element_attributes},
+    "0.7.2.5.0.4.0": {conditionName: "parameter_name", ...element_attributes},
+    "0.7.2.7.0": {conditionName: "declaration_statement_el", ...element_attributes},
+    "0.7.2.7.0.0.0": {conditionName: "annotation", ...element_attributes},
+    "0.7.2.7.0.1.0": {conditionName: "memory", ...element_attributes},
+    "0.7.2.7.0.2.0": {conditionName: "visibility", ...element_attributes},
+    "0.7.2.7.0.3.0": {conditionName: "declaration_statement_name", ...element_attributes},
+    "0.7.2.7.0.4.0": {conditionName: "declaration_statement_initialization", ...element_attributes},
+    "0.7.2.7.1": {conditionName: "function_expression_statement", ...element_attributes},
+    "0.7.2.7.2": {conditionName: "function_return_value", ...element_attributes},
+    "0.7.3": {conditionName: "abstract_function_el", ...element_attributes},
+    "0.7.3.0.0": {conditionName: "annotation", ...element_attributes},
+    "0.7.3.1.0": {conditionName: "memory", ...element_attributes},
+    "0.7.3.2.0": {conditionName: "visibility", ...element_attributes},
+    "0.7.3.3.0": {conditionName: "abstract_function_return_type", ...element_attributes},
+    "0.7.3.4.0": {conditionName: "abstract_function_name", ...element_attributes},
+    "0.7.3.5.0": {conditionName: "parameter_el", ...element_attributes},
+    "0.7.3.5.0.1.0": {conditionName: "parameter_type", ...element_attributes},
+    "0.7.3.5.0.4.0": {conditionName: "parameter_name", ...element_attributes},
 };
 
 export const initial_elementTree = {
@@ -260,7 +259,7 @@ export const initial_state = {
         quantifierXPath: ""
         autoCompleteText: ""
         activeTab: 0
-        guiState: {activeTab: "quantifier", quantifier: {…}, constraint: {…}, ruleType: ""}
+        guiState: {guiTree: {...initial_elementTree}, guiElements: {...initial_guiElements}, ruleType: ""}
     }
     xPathQueryResult: []
      */
@@ -294,10 +293,9 @@ export const initial_state = {
         receivedMessages: [],
 
         guiState: {
-            activeTab: "quantifier",
-            quantifier: {tree: {...initial_elementTree}, guiElements: {...initial_guiElements}},
-            constraint: {tree: {...initial_elementTree}, guiElements: {...initial_guiElements}},
-            ruleType: "" // "Must" or "MustBeEqualTo"
+            ruleType: "", // "Must" or "MustBeEqualTo"
+            guiTree: {...initial_elementTree},
+            guiElements: {...initial_guiElements}
         }
     },
 };
@@ -317,16 +315,8 @@ export const default_rulePanelState = {
     constraintXPath: "", // only produced by autoComplete grammar
 
     guiState: {
-        activeTab: "quantifier",
-        quantifier: {tree: {...initial_elementTree}, guiElements: {...initial_guiElements}},
-        constraint: {tree: {...initial_elementTree}, guiElements: {...initial_guiElements}},
-        ruleType: "" // "Must" or "MustBeEqualTo"
+        ruleType: "", // "Must" or "MustBeEqualTo"
+        guiTree: {...initial_elementTree},
+        guiElements: {...initial_guiElements}
     }
-};
-
-export const initial_guiState = {
-    activeTab: "quantifier",
-    quantifier: {tree: {...initial_elementTree}, guiElements: {...initial_guiElements}},
-    constraint: {tree: {...initial_elementTree}, guiElements: {...initial_guiElements}},
-    ruleType: "" // "Must" or "MustBeEqualTo"
 };

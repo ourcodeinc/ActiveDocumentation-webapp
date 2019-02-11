@@ -409,7 +409,7 @@ body {
     opacity: 0.5;
 }
 
-.generateRuleGui .inputText:hover, .generateRuleGui .inputText:focus{
+.generateRuleGui .inputText:hover, .generateRuleGui .inputText:focus {
     background-color: #e2e2e2;
 }
 
@@ -437,4 +437,14 @@ body {
 .generateRuleGui .MdStar.selectedElement {
     cursor: pointer;
     color: #e5a727;
+}
+
+/* GUI error icons */
+
+.FaCheckCircle.has-error, .FaConnectdevelop.has-error, .MdStar.has-error {
+    color: #a94442;
+}
+
+.FaCheckCircle.has-success, .FaConnectdevelop.has-success, .MdStar.has-success {
+    color: #3c763d;
 }
