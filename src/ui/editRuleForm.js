@@ -5,18 +5,17 @@
 import React, {Component, Fragment} from 'react';
 import {connect} from "react-redux";
 import '../App.css';
-import ReactTooltip from 'react-tooltip'
 import {
     Alert, DropdownButton, HelpBlock, MenuItem,
     Button, FormGroup, ButtonToolbar, Label, FormControl,
     Row, Col, Modal, Dropdown
 } from 'react-bootstrap';
-import MdEdit from 'react-icons/lib/md/edit';
-import TiDelete from "react-icons/lib/ti/delete";
-import {FaQuestionCircle} from "react-icons/lib/fa/index";
-import MdAddBox from 'react-icons/lib/md/add-box';
 import {RootCloseWrapper} from "react-overlays";
-import {FaTag} from "react-icons/lib/fa/index";
+import {MdEdit, MdAddBox} from 'react-icons/lib/md/index';
+import {TiDelete, TiArrowMaximise} from "react-icons/lib/ti/index";
+import {FaQuestionCircle, FaTag, FaMinusCircle, FaTimesCircle} from "react-icons/lib/fa/index";
+import marked from "marked";
+import Joyride, {ACTIONS, EVENTS} from 'react-joyride';
 
 import RuleGeneratorGui from './ruleGenerationGUI/ruleGeneratorGui';
 import verifyTextBasedOnGrammar from "./ruleGenerationText/languageProcessing";
@@ -27,6 +26,7 @@ import {
 import {generateGuiTrees} from "./ruleGenerationText/generateGuiTree";
 import RuleGeneratorText from "./ruleGenerationText/ruleGeneratorText";
 import Utilities from '../core/utilities';
+import {error_messages_IMarkdownString} from "./ruleGenerationText/textConstant";
 
 
 class EditRuleForm extends Component {
@@ -41,11 +41,96 @@ class EditRuleForm extends Component {
         if (!props["changeEditMode"])
             console.error(`'changeEditMode' is required in props when creating/editing a rule.`);
 
-        // should not be in state, it need to be changed after single use.
-        // the component is updated after changing this value because the state is also changing
-        // otherwise call this.forceUpdate()
-        this.autoCompleteCaretPosition = -1;
-        this.shouldAlert = true;
+
+        this.tourGuideSteps = [
+            {
+                target: `#title_description_div_${this.ruleIndex}`,
+                content: <span style={{textAlign: "left"}}>
+                    <p>Each design rule should have a title by which it is displayed in the tool.
+                        Design rule titles are often single-line statements about the rule.</p>
+                    <p>More information about the rule and the rationale behind the decision,
+                        can be expressed through design rule description.</p>
+                    <p>Both <strong>title</strong> and <strong>description</strong> are mandatory
+                        fields in generating new rule.</p>
+                </span>,
+                title: 'Rule Title and Description',
+                disableBeacon: true
+            }, // 0
+            {
+                target: `#tag_div_${this.ruleIndex}`,
+                content: <span style={{textAlign: "left"}}>
+                    <p>Tags are used to organize design rules. Related design rules may have similar tags.</p>
+                    <p><strong>Tags</strong> can be assigned to each design rule.</p>
+                    <p>New tags can be generated here as well.</p>
+                </span>,
+                title: 'Rule Tags',
+                disableBeacon: true
+            }, // 1
+            {
+                target: `#file_constraint_div_${this.ruleIndex}`,
+                content: <span style={{textAlign: "left"}}>
+                <h4>Select how the rules are verified.</h4>
+                <p><b><em>"Rule must be applied on ALL Files/Folders"</em></b></p>
+                <p>If the rule must be verified on <b>All</b> files and folders.</p>
+                <p><b><em>"Rule must be applied on SPECIFIC Files/Folders"</em></b></p>
+                <p>If the rule is checked on <b>SPECIFIC</b> files/folders.<br/>
+                If the restriction is set to "Rule must be applied on Specific Files/Folders",
+                at least one folder/file must be specified.</p>
+                <p><b><em>Add files/folders</em></b></p>
+                <p>Folder and file paths are determined respective to the project directory.
+                For example in project "myProject", for file path ".../myProject/src/someFile.java",
+                the relative path is "src/someFile.java"</p> </span>,
+                title: 'Specifying File/Folder Constraints',
+                disableBeacon: true
+            }, // 2
+            {
+                target: `#text_ui_div_${this.ruleIndex}`,
+                content: <span style={{float: "left", textAlign: "left"}}>You can write design rules here.</span>,
+                title: "Writing a Design Rule",
+                disableBeacon: true
+            }, // 3
+            {
+                target: `#gui_div_${this.ruleIndex}`,
+                content: <span
+                    style={{float: "left", textAlign: "left"}}>You can write the code you want to match in the project here.</span>,
+                title: 'GUI - Graphical User Interface for Writing Code',
+                disableBeacon: true
+            },  // 4
+            {
+                target: `#gui_error_${this.ruleIndex}`,
+                content: <span
+                    style={{float: "left", textAlign: "left"}}>The GUI error messages are displayed here.</span>,
+                title: 'GUI Errors',
+                disableBeacon: true
+            },  // 5
+            {
+                target: `#id__${this.ruleIndex}__0-0-0`,
+                content: <span
+                    style={{float: "left", textAlign: "left"}}>You can write the code you want to match in the project here.</span>,
+                title: 'GUI Elements',
+                disableBeacon: true
+            }, // 6
+            {
+                target: `#gui__star__${this.props.ruleIndex}__0`,
+                content: <span style={{float: "left", textAlign: "left"}}>
+                    The GUI will select an Element of Interest automatically. However, if you desire to select a different element,
+                    you may click on the star icon on the right-hand side of the desired element.
+                </span>,
+                title: 'GUI - Select Element of Interest',
+                disableBeacon: true
+            }  // 7
+        ];
+        // used as enum
+        this.stepNames = {
+            TITLE_DESCRIPTION: 0,
+            TAGS: 1,
+            FILE_FOLDER: 2,
+            TEXT_UI: 3,
+            GUI: 4,
+            GUI_ERROR: 5,
+            GUI_ELEMENT: 6,
+            GUI_STAR: 7
+        };
 
         this.state = {
             // rule states
@@ -66,12 +151,25 @@ class EditRuleForm extends Component {
             errorTitle: "",
             errorMessage: "",
 
+            // GUI error message
+            guiError: true,
+
+            // styling for Monaco Editor
+            monacoFormStatus: "has-error",
+            errorPoint: -1,
+
+            // tour guide states
+            tourMainKey: 0,
+            tourStepIndex: 0,
+            tourShouldRun: false,
+            isTourGuide: true,
+
+            // editor states
             quantifierXPath: "",
             constraintXPath: "",
-            error: "",
+            editorError: "",
             showAlert: true,
-            autoCompleteText: "",
-            autoCompleteValidationState: null // error, success, warning, null
+            autoCompleteArray: [],
         };
 
         // existing rule
@@ -92,7 +190,9 @@ class EditRuleForm extends Component {
                 // updating the rule
                 this.state.quantifierXPath = this.ruleI.rulePanelState.quantifierXPath;
                 this.state.constraintXPath = this.ruleI.rulePanelState.constraintXPath;
-                this.state.autoCompleteText = this.ruleI.rulePanelState.autoCompleteText;
+                this.state.autoCompleteArray = this.ruleI.rulePanelState.autoCompleteArray;
+
+                this.state.monacoFormStatus = "has-success";
             }
         }
         // new rule
@@ -106,46 +206,46 @@ class EditRuleForm extends Component {
 
             this.state.quantifierXPath = props.quantifierXPath;
             this.state.constraintXPath = props.constraintXPath;
-            this.state.autoCompleteText = props.autoCompleteText;
+            this.state.autoCompleteArray = props.autoCompleteArray;
         }
 
-        // computing and setting the redux store for GUI tree will un-mount the rulePanel component
-        // and as such, the edit mode is off and so a loop is created.
     }
 
     render() {
         return (
             <div className={"rulePanelDiv" + (this.ruleIndex === -1 ? " edit-bg" : "")}>
-                <FormGroup>
-                    <div style={{float: 'right'}}>
-                        <MdEdit size={20} style={{color: "#337ab7", cursor: "pointer"}}
-                                onClick={() => this.changeEditMode()}/>
-                    </div>
-                    {this.renderTitleAndDescription()}
-                </FormGroup>
-                <div style={{paddingTop: '10px', clear: 'both'}}>
-                    {this.renderTags()}
+                <div style={{float: 'right'}}>
+                    <FaQuestionCircle size={20} className={"faQuestionCircle"}
+                                      onClick={() => this.setState({
+                                          tourShouldRun: true,
+                                          isTourGuide: true
+                                      })}/>
+                    <MdEdit size={20} className={"mdEdit"}
+                            onClick={() => this.changeEditMode()}/>
                 </div>
+                {this.renderTitleAndDescription()}
+                {this.renderTags()}
                 <div style={{paddingTop: '10px', clear: 'both'}}>
                     {this.renderFileConstraints()}
-                    {this.renderTextAndGuiUI()}
-                    <div>
-                        <ButtonToolbar className={"submitButtons"}>
-                            <Button bsStyle="primary"
-                                    onClick={() => this.newRuleRequest ? this.onSubmitNewRule() : this.onSubmitUpdatedRule()}>
-                                Submit</Button>
-                            <Button bsStyle="default" onClick={() => this.changeEditMode()}>Cancel</Button>
-                            {!this.newRuleRequest ? null :
-                                <Button bsStyle="default"
-                                        onClick={() => {
-                                            this.props.onClearForm();
-                                        }}>Clear Form</Button>}
-                        </ButtonToolbar>
-                    </div>
+                    {this.renderTutorial()}
+                    {this.renderTextUI()}
+                    {this.renderGUI()}
+                    <ButtonToolbar className={"submitButtons"}>
+                        <Button bsStyle="primary"
+                                onClick={() => this.newRuleRequest ? this.onSubmitNewRule() : this.onSubmitUpdatedRule()}>
+                            Submit</Button>
+                        <Button bsStyle="default" onClick={() => this.changeEditMode()}>Cancel</Button>
+                        {!this.newRuleRequest ? null :
+                            <Button bsStyle="default"
+                                    onClick={() => {
+                                        this.props.onClearForm();
+                                    }}>Clear Form</Button>}
+                    </ButtonToolbar>
                 </div>
 
                 {this.renderNewTagModalDialog()}
                 {this.renderErrorInSubmission()}
+                {this.renderTourGuide()}
             </div>
         );
     }
@@ -155,7 +255,7 @@ class EditRuleForm extends Component {
      */
     renderTitleAndDescription() {
         return (
-            <Fragment>
+            <div id={`title_description_div_${this.ruleIndex}`}>
                 <FormGroup validationState={(this.state.title === "") ? "error" : "success"}>
                     <FormControl componentClass="textarea" placeholder="Rule title. (Required)"
                                  style={{fontWeight: "bold", resize: "vertical"}}
@@ -183,7 +283,7 @@ class EditRuleForm extends Component {
                                  }}
                                  onBlur={() => this.onEditNewRuleForm()}/>
                 </FormGroup>
-            </Fragment>
+            </div>
         )
     }
 
@@ -193,7 +293,7 @@ class EditRuleForm extends Component {
      */
     renderTags() {
         return (
-            <div>
+            <div style={{paddingTop: '10px', clear: 'both'}} id={`tag_div_${this.ruleIndex}`}>
                 {this.state.ruleTags.map((d, i) => {
                     return (
                         <div className={"tagLabel"} key={i}>
@@ -220,6 +320,12 @@ class EditRuleForm extends Component {
                             this.setState({tags}, this.onEditNewRuleForm)
                         }
                     }}/>
+                <FaQuestionCircle size={20} className={"faQuestionCircle"}
+                                  onClick={() => this.setState({
+                                      tourShouldRun: true,
+                                      isTourGuide: false,
+                                      tourStepIndex: this.stepNames.TAGS
+                                  })}/>
             </div>
         );
     }
@@ -230,10 +336,10 @@ class EditRuleForm extends Component {
      */
     renderFileConstraints() {
         return (
-            <div>
+            <div id={`file_constraint_div_${this.ruleIndex}`}>
                 <FormGroup
                     validationState={(this.state.folderConstraint === "" || (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0)) ? "error" : "success"}>
-                    <div style={{paddingBottom: "10px"}}>
+                    <div>
                         <HelpBlock>
                             <ButtonToolbar>
                                 <DropdownButton
@@ -259,19 +365,11 @@ class EditRuleForm extends Component {
                                 </Button>
 
                                 <FaQuestionCircle size={20} className={"faQuestionCircle"}
-                                                  data-class={"customTheme"}
-                                                  data-tip={"<h4>Select how the rules are verified.</h4> " +
-                                                  "<p><b><em>\"Rule must be applied on ALL Files/Folders\"</em></b></p> " +
-                                                  "<p>If the rule must be verified on <b>All</b> files and folders.</p>" +
-                                                  "<p><b><em>\"Rule must be applied on SPECIFIC Files/Folders\"</em></b></p> " +
-                                                  "<p>If the rule is checked on <b>SPECIFIC</b> files/folders.<br/>" +
-                                                  "If the restriction is set to \"Rule must be applied on Specific Files/Folders\", " +
-                                                  "at least one folder/file must be specified.</p>" +
-                                                  "<p><b><em>Add files/folders</em></b></p>" +
-                                                  "<p>Folder and file paths are determined respective to the project directory. " +
-                                                  "For example in project \"myProject\", for file path \".../myProject/src/someFile.java\", " +
-                                                  "the relative path is \"src/someFile.java\"</p>"}/>
-                                <ReactTooltip html={true} effect={"solid"} place={"right"}/>
+                                                  onClick={() => this.setState({
+                                                      tourShouldRun: true,
+                                                      isTourGuide: false,
+                                                      tourStepIndex: this.stepNames.FILE_FOLDER,
+                                                  })}/>
                             </ButtonToolbar>
 
                         </HelpBlock>
@@ -314,63 +412,158 @@ class EditRuleForm extends Component {
 
 
     /**
-     * render alerts for errors in textual design rules.
+     * render the turorial steps above the text editor
+     * @returns {XML}
      */
-    renderTextAndGuiUI() {
+    renderTutorial() {
         return (
-            <div style={{paddingTop: '10px', clear: 'both'}}>
-                {this.state.error === "" ? null : !this.state.showAlert ? null : (
-                    <Alert bsStyle={this.state.error.alertType}>
-                        <h4>{this.state.error.errorType}</h4>
-                        <h6>{this.state.error.message}</h6>
-                        <h6 style={{fontWeight: "bold"}}>{this.state.error.inputText}</h6>
-                        <ButtonToolbar>
-                            <Button onClick={() => this.setState({error: ""})}>Got it!</Button>
-                            <Button onClick={() => this.setState({showAlert: false})}>Hide Alerts</Button>
-                        </ButtonToolbar>
-                    </Alert>
-                )}
-                {this.state.showAlert ? null : (
-                    <div style={{paddingBottom: "10px"}}>
-                        <Button onClick={() => this.setState({showAlert: true})}>Show Alerts</Button>
-                    </div>
-                )}
-                <FormGroup validationState={this.state.autoCompleteValidationState}>
-                    <RuleGeneratorText defaultValue={this.state.autoCompleteText}
-                                       onBlur={() => {
-                                           if (this.shouldAlert) {
-                                               verifyTextBasedOnGrammar(this.state.autoCompleteText)
-                                                   .then((data) => {
-                                                       if (this._mounted)
-                                                           this.setState({
-                                                               quantifierXPath: data.quantifierXPath,
-                                                               constraintXPath: data.constraintXPath,
-                                                               autoCompleteValidationState: null,
-                                                               error: ""
-                                                           });
-                                                       // compute and dispatch gui tree for quantifier and constraint
-                                                       generateGuiTrees(data.grammarTree)
-                                                           .then((tree) => this.props.onReceiveGuiTree(this.ruleIndex, tree, this.state.autoCompleteText, data.quantifierXPath, data.constraintXPath));
-                                                   })
-                                                   .catch((error) => this.processLanguageProcessingError(error));
-                                               this.shouldAlert = false;
-                                           }
-                                       }}
-                                       onUpdateText={(text) => {
-                                           this.shouldAlert = true;
-                                           this.setState({autoCompleteText: text});
-                                       }}
-                                       caretPosition={(() => {
-                                           let newFocus = this.autoCompleteCaretPosition;
-                                           this.autoCompleteCaretPosition = -1;
-                                           return newFocus;
-                                       })()}/>
-                    <RuleGeneratorGui ruleIndex={this.ruleIndex} className={"generateRuleGui"}/>
-                </FormGroup>
+            <div>
+                <div className={"tutorialText"}>
+                    <strong>Step 1:</strong> Write the code you want to match in code using the GUI.
+                    <FaQuestionCircle size={20} className={"faQuestionCircle"}
+                                      onClick={() => this.setState({
+                                          tourShouldRun: true,
+                                          isTourGuide: false,
+                                          tourStepIndex: this.stepNames.GUI
+                                      })}/>
+                </div>
+                <div className={"tutorialText"}>
+                    <strong>Step 2:</strong> Specify what must be true by switching the conditions to
+                    'constraints' by double-clicking on elements. Constraint elements are shown in <span
+                    style={{color: "#3333cc"}}>blue</span>.
+                    <FaQuestionCircle size={20} className={"faQuestionCircle"}
+                                      onClick={() => this.setState({
+                                          tourShouldRun: true,
+                                          isTourGuide: false,
+                                          tourStepIndex: this.stepNames.GUI_ELEMENT
+                                      })}/>
+                </div>
+                <div className={"tutorialText"}>
+                    <strong>Step 3: [Optional]</strong> Edit the rule text by adding parentheses and changing
+                    and' to 'or'.
+                    <FaQuestionCircle size={20} className={"faQuestionCircle"}
+                                      onClick={() => this.setState({
+                                          tourShouldRun: true,
+                                          isTourGuide: false,
+                                          tourStepIndex: this.stepNames.TEXT_UI
+                                      })}/>
+                </div>
             </div>
         )
     }
 
+    /**
+     * render Text UI
+     */
+    renderTextUI() {
+        return (
+            <div style={{paddingTop: '10px', clear: 'both'}} id={`text_ui_div_${this.ruleIndex}`}>
+                <RuleGeneratorText autoCompleteArray={this.state.autoCompleteArray}
+                                   ruleIndex={this.ruleIndex}
+                                   errorPoint={this.state.errorPoint}
+                                   formStatus={this.state.monacoFormStatus}
+                                   onBlur={(newAutoCompleteArray) => {
+                                       verifyTextBasedOnGrammar(newAutoCompleteArray.map(d => d.text).join(" "))
+                                           .then((data) => {
+                                               if (this._mounted)
+                                                   this.setState({
+                                                       monacoFormStatus: "has-success",
+                                                       errorPoint: -1,
+                                                       autoCompleteArray: newAutoCompleteArray,
+                                                       quantifierXPath: data.quantifierXPath,
+                                                       constraintXPath: data.constraintXPath,
+                                                       editorError: ""
+                                                   });
+
+                                               // compute and dispatch gui tree for quantifier and constraint
+                                               generateGuiTrees(data.grammarTree)
+                                                   .then((tree) => this.props.onReceiveGuiTree(this.ruleIndex, tree, newAutoCompleteArray, data.quantifierXPath, data.constraintXPath))
+                                           })
+                                           .catch((error) => {
+                                               this.processLanguageProcessingError(error);
+                                               this.setState({
+                                                   autoCompleteArray: newAutoCompleteArray,
+                                                   monacoFormStatus: "has-error"
+                                               })
+                                           });
+                                   }}
+                                   onError={(errorIndex) => this.processLanguageProcessingError("ERROR_INDEX", errorIndex)}
+                />
+                {this.renderAutoCompleteError()}
+            </div>
+        )
+    }
+
+    /**
+     * render GUI
+     */
+    renderGUI() {
+        return (
+            <div id={`gui_div_${this.ruleIndex}`}>
+                {this.renderGuiError()}
+                <div className={"generateRuleGuiDiv" + (this.state.guiError ? " has-error" : "")}>
+                    <RuleGeneratorGui ruleIndex={this.ruleIndex} className={"generateRuleGui"}
+                                      onError={(error) => error !== this.state.guiError ? this.setState({guiError: error}) : {}}/>
+                </div>
+            </div>
+        )
+    }
+
+    /**
+     * render AutoComplete Alert for displaying errors
+     * @return {XML}
+     */
+    renderAutoCompleteError() {
+        return (
+            <Fragment>
+                {this.state.editorError === "" ? null : !this.state.showAlert ? null : (
+                    <Alert bsStyle={this.state.editorError.alertType}>
+                        <div>
+                            <div className={"controlButtonDiv"}>
+                                <div className={"controlButton"}>
+                                    <FaMinusCircle size={20} onClick={() => this.setState({showAlert: false})}/>
+                                </div>
+                                <div className={"controlButton"}>
+                                    <FaTimesCircle size={20} onClick={() => this.setState({editorError: ""})}/>
+                                </div>
+                            </div>
+                            <div>
+                                {/*<h4>{this.state.editorError.errorType}</h4>*/}
+                                <h6 dangerouslySetInnerHTML={{__html: marked(this.state.editorError.message)}}/>
+                                <h6 style={{fontWeight: "bold"}}>{this.state.editorError.inputText}</h6>
+                            </div>
+                        </div>
+                    </Alert>
+
+                )}
+                {this.state.showAlert || this.state.editorError === "" ? null : (
+                    <Alert bsStyle={this.state.editorError.alertType}>
+                        <div className={"controlButtonDiv controlButton"}>
+                            <TiArrowMaximise size={30} onClick={() => this.setState({showAlert: true})}/>
+                        </div>
+                    </Alert>
+                )}
+            </Fragment>
+        )
+    }
+
+
+    /**
+     * render GUI errors.
+     */
+    renderGuiError() {
+        return !this.state.guiError ? null : (
+            <div className={"guiMessages has-error"} id={`gui_error_${this.ruleIndex}`}>
+                <span>Select at least one element as a constraint.</span>
+                <FaQuestionCircle size={20} className={"faQuestionCircle"}
+                                  onClick={() => this.setState({
+                                      tourShouldRun: true,
+                                      isTourGuide: false,
+                                      tourStepIndex: this.stepNames.GUI_ELEMENT
+                                  })}/>
+            </div>
+        )
+    }
 
     /**
      * render the dialog for adding a new tag
@@ -440,6 +633,58 @@ class EditRuleForm extends Component {
         )
     }
 
+    /**
+     * render step-by-step tour guide
+     * @returns {XML}
+     */
+    renderTourGuide() {
+        return (
+            <Joyride
+                key={this.state.tourMainKey}
+                run={this.state.tourShouldRun}
+                steps={this.tourGuideSteps}
+
+                showSkipButton={this.state.isTourGuide}
+                showProgress={this.state.isTourGuide}
+                continuous={this.state.isTourGuide}
+                hideBackButton={!this.state.isTourGuide}
+
+                stepIndex={this.state.tourStepIndex}
+                disableCloseOnEsc={true}
+                spotlightPadding={5}
+
+                callback={(tourData) => {
+                    if (tourData.action === ACTIONS.CLOSE) {
+                        this.setState({
+                            tourMainKey: this.state.tourMainKey + 1,
+                            tourShouldRun: false,
+                            tourStepIndex: this.state.isTourGuide ? this.state.tourStepIndex : 0
+                        });
+                    }
+                    else if (tourData.type === EVENTS.TOUR_END) {
+                        this.setState({
+                            tourMainKey: this.state.tourMainKey + 1,
+                            tourStepIndex: 0,
+                            tourShouldRun: false
+                        });
+                    } else if ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND].includes(tourData.type)) {
+                        let nextIndex = tourData.index + (tourData.action === ACTIONS.PREV ? -1 : 1);
+                        this.setState({tourStepIndex: nextIndex});
+                    }
+
+                }}
+
+                styles={{
+                    options: {
+                        primaryColor: '#000',
+                        width: 900,
+                        zIndex: 1000,
+                    }
+                }}
+            />
+        )
+    }
+
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
         if (nextProps.message === "RECEIVE_EXPR_STMT_XML") {
@@ -468,10 +713,14 @@ class EditRuleForm extends Component {
                     filesFolders: this.ruleI.rulePanelState.filesFolders,
                     tags: this.ruleI.rulePanelState.tags,
 
-                    autoCompleteText: this.ruleI.rulePanelState.autoCompleteText,
+                    autoCompleteArray: this.ruleI.rulePanelState.autoCompleteArray,
                     quantifierXPath: this.ruleI.rulePanelState.quantifierXPath,
                     constraintXPath: this.ruleI.rulePanelState.constraintXPath,
-                    error: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "" : this.state.error
+                    editorError: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "" : this.state.editorError,
+
+                    monacoFormStatus: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "has-error"
+                        : nextProps.message === "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? "has-success" : this.state.monacoFormStatus,
+                    errorPoint: -1
                 });
             }
             // new rule
@@ -484,10 +733,14 @@ class EditRuleForm extends Component {
                     filesFolders: nextProps.filesFolders,
                     tags: nextProps.tags,
 
-                    autoCompleteText: nextProps.autoCompleteText,
+                    autoCompleteArray: nextProps.autoCompleteArray,
                     quantifierXPath: nextProps.quantifierXPath,
                     constraintXPath: nextProps.constraintXPath,
-                    error: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "" : this.state.error
+                    editorError: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "" : this.state.editorError,
+
+                    monacoFormStatus: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "has-error"
+                        : nextProps.message === "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? "has-success" : this.state.monacoFormStatus,
+                    errorPoint: -1
                 });
             }
         }
@@ -617,15 +870,29 @@ class EditRuleForm extends Component {
     /**
      * process the error received by running verifyTextBasedOnGrammar on autoComplete text
      * @param error
+     * @param errorIndex
      */
-    processLanguageProcessingError(error) {
-        console.log(error);
+    processLanguageProcessingError(error, errorIndex = 400) {
+        // console.log(error);
         switch (error) {
+            case "ERROR_INDEX":
+                if (errorIndex === -1)
+                    this.setState({editorError: ""});
+                else
+                    this.setState({
+                        editorError: {
+                            errorType: "AutoComplete Error",
+                            message: error_messages_IMarkdownString[errorIndex].value,
+                            inputText: "",
+                            alertType: "danger"
+                        }
+                    });
+                break;
             case "EMPTY_FIELD":
                 this.setState({
-                    error: {
+                    editorError: {
                         errorType: "Empty Field",
-                        message: "The design rule input must not be empty",
+                        message: "The design rule input should not be empty",
                         inputText: "",
                         alertType: "warning"
                     }
@@ -633,22 +900,24 @@ class EditRuleForm extends Component {
                 break;
             case "NO_INPUT_AFTER_REPLACING_PHRASES":
                 this.setState({
-                    error: {
+                    editorError: {
                         errorType: "Incorrect Input",
                         message: "The used phrases are incorrect. Try using different phrases.",
                         inputText: "",
                         alertType: "danger"
-                    }
+                    },
+                    errorPoint: 1
                 });
                 break;
             case "NO_INPUT_AFTER_LEMMATIZATION":
                 this.setState({
-                    error: {
+                    editorError: {
                         errorType: "Incorrect Input",
                         message: "The words used in the design rule are not compatible with CoreNLP library.",
                         inputText: "",
                         alertType: "danger"
-                    }
+                    },
+                    errorPoint: 1
                 });
                 break;
             /**
@@ -659,24 +928,25 @@ class EditRuleForm extends Component {
             default:
                 if (error.grammarErrors) {
                     let grammarError = error.grammarErrors[0];
-                    this.autoCompleteCaretPosition = error.grammarErrors[0].col;
                     this.setState({
-                        error: {
+                        editorError: {
                             errorType: "Grammar Error",
                             message: "The input text after the following sub-text is NOT according to the grammar:",
                             inputText: "\"" + error.inputText.slice(0, grammarError.col) + "\"",
                             alertType: "danger"
-                        }
+                        },
+                        errorPoint: grammarError.col
                     });
                 }
                 else
                     this.setState({
-                        error: {
+                        editorError: {
                             errorType: "error",
                             message: "",
                             inputText: "",
                             alertType: "danger"
-                        }
+                        },
+                        errorPoint: 1
                     });
                 break;
         }
@@ -706,7 +976,7 @@ class EditRuleForm extends Component {
             },
             quantifier: {detail: "", command: "src:unit/" + this.ruleI.rulePanelState.quantifierXPath},
             constraint: {detail: "", command: "src:unit/" + this.ruleI.rulePanelState.constraintXPath},
-            grammar: this.ruleI.rulePanelState.autoCompleteText
+            grammar: this.ruleI.rulePanelState.autoCompleteArray.map(d => d.text).join(" ")
         };
 
         if (this.props.numberOfSentMessages !== 0) {
@@ -779,7 +1049,7 @@ class EditRuleForm extends Component {
             },
             quantifier: {detail: "", command: "src:unit/" + this.props.quantifierXPath},
             constraint: {detail: "", command: "src:unit/" + this.props.constraintXPath},
-            grammar: this.props.autoCompleteText
+            grammar: this.props.autoCompleteArray.map(d => d.text).join(" ")
         };
 
         if (this.props.numberOfSentMessages !== 0) {
@@ -882,7 +1152,7 @@ function mapStateToProps(state) {
         folderConstraint: state.newOrEditRule.folderConstraint,
         filesFolders: state.newOrEditRule.filesFolders,
 
-        autoCompleteText: state.newOrEditRule.autoCompleteText,
+        autoCompleteArray: state.newOrEditRule.autoCompleteArray,
         quantifierXPath: state.newOrEditRule.quantifierXPath,
         constraintXPath: state.newOrEditRule.quantifierXPath,
         message: state.message,
@@ -903,8 +1173,8 @@ function mapDispatchToProps(dispatch) {
         onEditForm: (ruleIndex, title, description, ruleTags, folderConstraint, filesFolders) => {
             dispatch(editRuleForm(ruleIndex, title, description, ruleTags, folderConstraint, filesFolders))
         },
-        onReceiveGuiTree: (ruleIndex, treeData, autoCompleteText, quantifierXPath, constraintXPath) => {
-            dispatch(receiveGuiTree(ruleIndex, treeData, autoCompleteText, quantifierXPath, constraintXPath))
+        onReceiveGuiTree: (ruleIndex, treeData, autoCompleteArray, quantifierXPath, constraintXPath) => {
+            dispatch(receiveGuiTree(ruleIndex, treeData, autoCompleteArray, quantifierXPath, constraintXPath))
         },
         onMatchMessages: (ruleIndex, sentMessages, receivedMessages, quantifierXPath, constraintXPath) => {
             dispatch(matchMessages(ruleIndex, sentMessages, receivedMessages, quantifierXPath, constraintXPath))

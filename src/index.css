@@ -18,7 +18,7 @@ body {
     margin-bottom: 5px !important;
 }
 
-/*** ruleTable and rulePanel*/
+/*!*** ruleTable and rulePanel*!*/
 
 .rulePanelDiv {
     background-color: #f3f3f3;
@@ -29,6 +29,10 @@ body {
 
 .rulePanelDiv .btn {
     padding: 2px;
+}
+
+.rulePanelDiv .submitButtons {
+    padding-top: 10px;
 }
 
 .rulePanelDiv .submitButtons .btn {
@@ -66,6 +70,15 @@ body {
     color: #444444;
 }
 
+.mdEdit {
+    cursor: pointer;
+    color: #337ab7
+}
+
+.mdEdit:hover {
+    color: #265a88;
+}
+
 .faQuestionCircle {
     cursor: pointer;
     color: #337ab7
@@ -74,7 +87,6 @@ body {
 .faQuestionCircle:hover {
     color: #265a88;
 }
-
 
 /*** Rule Result */
 
@@ -153,7 +165,6 @@ body {
     cursor: pointer;
 }
 
-
 /*** HeaderBar ***/
 
 .headerDiv {
@@ -185,48 +196,23 @@ body {
     color: #5d5d5d;
 }
 
-/*** Auto Complete ***/
+/*  rule generator */
 
-.suggestionDiv, .feedbackDiv {
-    position: absolute;
-    z-index: 999;
-    left: 0;
-    top: 100%;
-    width: 100%;
+.tutorialText {
+    float: left;
+    width: 33%;
+    padding-right: 10px;
 }
 
-.feedbackDiv {
-    padding: 5px;
-    background-color: #f5f5f5;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-.feedbackDiv:hover {
-    border-color: #6a6a6a;
-    cursor: pointer;
-}
-
-.ruleFeedback {
-    font-family: Menlo, Monaco, "Courier New", monospace;
-    color: #808080;
-}
-
-.autoCompleteContainer {
-    position: relative;
-}
-
-.ruleGeneratorTextContainer {
-    position: relative;
-}
+/*!*** Auto Complete ***!*/
 
 .monacoWrapper {
     border: 1px solid #cbcbcb;
     border-radius: 4px;
     padding: 2px;
     background-color: #fff;
-    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
 }
 
 .monacoWrapper.has-error {
@@ -245,54 +231,45 @@ body {
     box-shadow: 0 0 4px #67b168;
 }
 
-
-/* override bootstrap */
-
-.suggestionDiv .panel {
-    margin-bottom: 0;
-    box-shadow: none;
+.monacoWrapper.has-warning {
+    border-color: #eebd6e;
+    box-shadow: 0 0 4px #ffd88d;
 }
 
-.suggestionDiv .panel-heading {
-    background: #c3c3c3 none;
-    padding: 5px 10px;
+.text-has-error {
+    text-decoration: underline dotted red;
 }
 
-.suggestionDiv .list-group-item {
-    padding: 5px 20px;
+.text-has-success {
+    text-decoration: none;
 }
 
-/*** Rule generating ***/
+/*!*** Rule generating ***!*/
 
-
-/*#generateRule .btn {*/
-    /*padding: 2px;*/
+/*!* override bootstrap *!*/
+/*#generateRule .help-block {*/
+/*margin-bottom: 5px;*/
 /*}*/
 
-/* override bootstrap */
-#generateRule .help-block {
-    margin-bottom: 5px;
-}
+/*.tagLabel {*/
+/*float: left;*/
+/*margin: 0 15px 10px 0*/
+/*}*/
 
-.tagLabel {
-    float: left;
-    margin: 0 15px 10px 0
-}
+/*.customTheme {*/
+/*color: #38404e !important;*/
+/*background-color: #b5c7d8 !important;*/
+/*border: 1px solid #38404e;*/
+/*font-size:          12px !important;*/
+/*padding-left:       14px !important;*/
+/*padding-right:      14px !important;*/
+/*align-items:        center;*/
+/*justify-content:    center;*/
+/*}*/
 
-.customTheme {
-    color: #38404e !important;
-    background-color: #b5c7d8 !important;
-    border: 1px solid #38404e;
-    font-size:          12px !important;
-    padding-left:       14px !important;
-    padding-right:      14px !important;
-    align-items:        center;
-    justify-content:    center;
-}
-
-.navbar {
-    margin-bottom: 0;
-}
+/*.navbar {*/
+/*margin-bottom: 0;*/
+/*}*/
 
 /*!*** rule Generator GUI ***!*/
 
@@ -361,52 +338,72 @@ body {
     padding: 0 2px;
 }
 
-/* color */
+/*** color ***/
+
+/*     border */
+
+.generateRuleGuiDiv {
+    border: 1px solid transparent;
+    border-radius: 5px;
+}
+
+.generateRuleGuiDiv.has-error {
+    border-color: #a94442
+}
 
 .generateRuleGui .elementDiv {
     border: 1px solid transparent;
     border-radius: 5px;
 }
 
-.generateRuleGui .elementDiv {
-    color: #d3d3d3;
-}
-
 .generateRuleGui .elementDiv:hover {
-    color: #5f5f5f;
-    border-color: #cfcfcf;
+    box-shadow: 0 0 10px #999999;
 }
 
-.generateRuleGui .activeElement {
-    color: #3c3c3c;
-    border-color: #a6a6a6;
+.generateRuleGui .elementDiv.activeElement {
+    /*border-color: #a6a6a6;*/
+    box-shadow: 0 0 2px #c6c6c6;
 }
 
-.generateRuleGui .activeElement:hover {
-    color: #303030;
-    border-color: #959595;
+.generateRuleGui .elementDiv.activeElement.hovered {
+    /*border-color: #959595;*/
+    box-shadow: 0 0 10px #999999;
+}
+
+.generateRuleGui .elementDiv.activeElement.constraintElement {
+    box-shadow: 0 0 2px #3333cc;
+    /*border-color: #0017ff;*/
+}
+
+.generateRuleGui .elementDiv.activeElement.constraintElement.hovered {
+    box-shadow: 0 0 10px #3333cc;
 }
 
 .generateRuleGui .activeElement.selectedElement {
-    border: 2px solid #99721c;
+    box-shadow: 0 0 5px #99721c;
 }
 
-.generateRuleGui .activeElement.selectedElement:hover {
-    border: 2px solid #885f0c;
-}
-
-.generateRuleGui .elementDiv.selectedElement {
-    color: #3c3c3c;
+.generateRuleGui .activeElement.selectedElement.hovered {
+    box-shadow: 0 0 10px #99721c;
 }
 
 .generateRuleGui .inputText {
     border: none;
-    background-color: #f4f4f4;
+    border-radius: 3px;
 }
 
-.generateRuleGui .inputText::placeholder {
-    color: inherit;
-    opacity: 0.5;
+/*     background color */
+
+.hoveredAutoComplete {
+    background-color: #ffe0b3 !important;
+}
+
+.generateRuleGui .elementDiv {
+    background-color: #ffffff;
+}
+
+.generateRuleGui .inputText {
+    background-color: #f4f4f4;
 }
 
 .generateRuleGui .inputText:hover, .generateRuleGui .inputText:focus {
@@ -417,15 +414,67 @@ body {
     background-color: #c5c5c5;
 }
 
+/*     text color */
+
+.generateRuleGui .elementDiv {
+    color: #d3d3d3;
+}
+
+.generateRuleGui .elementDiv:hover {
+    color: #5f5f5f;
+}
+
+.generateRuleGui .activeElement {
+    color: #3c3c3c;
+}
+
+.generateRuleGui .activeElement:hover {
+    color: #303030;
+}
+
+.generateRuleGui .activeElement.constraintElement {
+    color: #3333cc;
+}
+
+.generateRuleGui .activeElement.constraintElement:hover {
+    color: #24248f;
+}
+
+.generateRuleGui .inputText {
+    color: #c3c3c3;
+}
+
+.generateRuleGui .inputText:focus {
+    color: #606060;
+}
+
+.generateRuleGui .inputText.activeElement {
+    color: #606060;
+}
+
+.generateRuleGui .activeElement.constraintElement .inputText {
+    color: #3333cc;
+}
+
+.generateRuleGui .activeElement.constraintElement .inputText::placeholder {
+    color: #3333cc;
+}
+
+/*     misc */
+
+.generateRuleGui .inputText::placeholder {
+    opacity: 0.5;
+}
+
 .generateRuleGui .removeIcon {
     float: right;
 }
 
-/* star */
+/****  star */
 
 .generateRuleGui .MdStar {
     cursor: pointer;
-    color: #cecece;
+    color: #e6e6e6;
     float: right;
     margin-top: -20px; /* size of MdStar */
 }
@@ -439,12 +488,182 @@ body {
     color: #e5a727;
 }
 
-/* GUI error icons */
+/* Text error message */
 
-.FaCheckCircle.has-error, .FaConnectdevelop.has-error, .MdStar.has-error {
+.controlButton {
+    cursor: pointer;
+    padding-left: 5px;
+    float: left;
+}
+
+.controlButtonDiv {
+    float: right;
+    margin-top: -15px;
+    margin-right: -10px;
+}
+
+/* GUI error messages */
+
+.guiMessages {
+    margin-top: 10px;
+}
+
+.guiMessages.has-error {
     color: #a94442;
 }
 
-.FaCheckCircle.has-success, .FaConnectdevelop.has-success, .MdStar.has-success {
-    color: #3c763d;
+/* Context menu */
+
+.react-contextmenu {
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, .15);
+    border-radius: .25rem;
+    color: #373a3c;
+    font-size: 16px;
+    margin: 2px 0 0;
+    min-width: 160px;
+    outline: none;
+    opacity: 0;
+    padding: 5px 0;
+    pointer-events: none;
+    text-align: left;
+    transition: opacity 250ms ease !important;
+
+    /*position: fixed;*/
+    /*background: white;*/
+    box-shadow: 0 2px 10px #999999;
+}
+
+.react-contextmenu.react-contextmenu--visible {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 9999;
+
+    padding: 6px 10px 5px 10px;
+    min-width: 160px;
+    cursor: default;
+    font-size: 12px;
+}
+
+.react-contextmenu-item {
+    background: 0 0;
+    border: 0;
+    color: #373a3c;
+    cursor: pointer;
+    font-weight: 400;
+    line-height: 1.5;
+    /*padding: 3px 20px;*/
+    text-align: inherit;
+    white-space: nowrap;
+
+    padding: 6px 10px 5px 10px;
+    min-width: 160px;
+    /*cursor: default;*/
+    font-size: 12px;
+}
+
+.react-contextmenu-item.react-contextmenu-item--active,
+.react-contextmenu-item.react-contextmenu-item--selected {
+    /*color: #fff;*/
+    /*background-color: #20a0ff;*/
+    border-color: #20a0ff;
+    text-decoration: none;
+
+    color: #e9e9e9;
+    background: linear-gradient(to top, #555, #444);
+}
+
+.react-contextmenu-item.react-contextmenu-item--disabled,
+.react-contextmenu-item.react-contextmenu-item--disabled:hover {
+    background-color: transparent;
+    border-color: rgba(0, 0, 0, .15);
+    /*color: #878a8c;*/
+
+    color: #999999;
+    pointer-events: none;
+}
+
+.react-contextmenu-item--divider {
+    border-bottom: 1px solid rgba(0, 0, 0, .15);
+    cursor: inherit;
+    margin-bottom: 3px;
+    padding: 2px 0;
+
+    /*width: 100%;*/
+    /*height: 1px;*/
+    /*background: #CCCCCC;*/
+    /*margin: 0 0 0 0;*/
+}
+
+.react-contextmenu-item--divider:hover {
+    background-color: transparent;
+    border-color: rgba(0, 0, 0, .15);
+}
+
+.react-contextmenu-item.react-contextmenu-submenu {
+    padding: 0;
+}
+
+.react-contextmenu-item.react-contextmenu-submenu > .react-contextmenu-item {
+}
+
+.react-contextmenu-item.react-contextmenu-submenu > .react-contextmenu-item:after {
+    content: "▶";
+    display: inline-block;
+    position: absolute;
+    right: 7px;
+}
+
+/* ======= overlay */
+
+.overlayContainer {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.mainDiv-overlay {
+    width: 100%;
+    height: 100%;
+}
+
+.overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #f8f8f8;
+    opacity: 1;
+    color: #c3c3c3;
+
+    border: 1px solid transparent;
+    border-radius: 5px;
+}
+
+.overlay:hover {
+    display: none;
+}
+
+.overlay .messageDivContainer {
+    display: table;
+    height: 100%;
+    overflow: hidden;
+}
+
+.overlay .messageDiv {
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 10px;
+    color: inherit;
+}
+
+.designRuleOverlay {
+    margin: 2px;
+    width: 99% !important;
+    height: 95% !important;
+    background-color: #ffffff !important;
+    color: #606060 !important;
+    opacity: 0.5;
 }

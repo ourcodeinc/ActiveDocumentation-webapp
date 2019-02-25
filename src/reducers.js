@@ -64,7 +64,10 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         filesFolders: rule.ruleType.checkFor,
                         quantifierXPath: rule.quantifier.command,
                         constraintXPath: rule.constraint.command,
-                        autoCompleteText: rule.grammar
+                        // autoCompleteText: rule.grammar,
+                        autoCompleteArray: rule.grammar ? rule.grammar.split(" ").map(word => {
+                            return {id: "", text: word}
+                        }) : []
                     }
                 })
             );
@@ -117,7 +120,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     activeHash: state.hashManager.activeHash + 1,
                     forwardDisable: state.hashManager.activeHash === state.hashManager.history.length - 2 ? "disabled" : "",
                     backDisable: ""
-                }
+                },
+                message: "CLICKED_ON_FORWARD"
             });
 
         case "CLICKED_ON_BACK":
@@ -128,7 +132,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     activeHash: state.hashManager.activeHash - 1,
                     forwardDisable: "",
                     backDisable: state.hashManager.activeHash === 1 ? "disabled" : ""
-                }
+                },
+                message: "CLICKED_ON_BACK"
             });
 
         /*
@@ -158,7 +163,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     return a;
                 });
                 return Object.assign({}, state, {
-                    ruleTable: rules
+                    ruleTable: rules,
+                    message: "EDIT_RULE_FORM"
                 });
             }
             else
@@ -170,19 +176,18 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         ruleTags: action["ruleTags"],
                         folderConstraint: action["folderConstraint"],
                         filesFolders: action["filesFolders"]
-                    }
+                    },
+                    message: "EDIT_RULE_FORM"
                 });
 
         case "CHANGE_EDIT_MODE":
             if (action["ruleIndex"] !== -1) {
-                let editCount = state.ruleTable.reduce((count, element) => {
+                let editCount = copiedState.ruleTable.reduce((count, element) => {
                     if (element.index !== action["ruleIndex"]) return count + element.rulePanelState.editMode ? 1 : 0;
                     return count + action["newEditMode"] ? 1 : 0;
                 }, 0);
 
-                // deep copy, slice(0) and array.map() doesn't work
-                let rules = JSON.parse(JSON.stringify(state.ruleTable));
-                rules = rules.map(d => {
+                let rules = copiedState.ruleTable.map(d => {
                     let a = Object.assign({}, d);
                     if (a.index === action["ruleIndex"]) {
                         a.rulePanelState.editMode = action["newEditMode"];
@@ -198,14 +203,18 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                                 filesFolders: d.ruleType.checkFor,
                                 quantifierXPath: d.quantifier.command,
                                 constraintXPath: d.constraint.command,
-                                autoCompleteText: d.grammar
+                                // autoCompleteText: d.grammar,
+                                autoCompleteArray: d.grammar.split(" ").map(word => {
+                                    return {id: "", text: word}
+                                })
                             }
                     }
                     return a;
                 });
                 return Object.assign({}, state, {
                     ignoreFile: (state.newOrEditRule.isEditMode || editCount > 0),
-                    ruleTable: rules
+                    ruleTable: rules,
+                    message: "CHANGE_EDIT_MODE"
                 });
             }
             else
@@ -214,7 +223,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     newOrEditRule: {
                         ...state.newOrEditRule,
                         isEditMode: action["newEditMode"]
-                    }
+                    },
+                    message: "CHANGE_EDIT_MODE"
                 });
 
         case "RECEIVE_GUI_TREE":
@@ -225,7 +235,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     if (a.index !== action["ruleIndex"]) return a;
                     a.rulePanelState.quantifierXPath = action["quantifierXPath"];
                     a.rulePanelState.constraintXPath = action["constraintXPath"];
-                    a.rulePanelState.autoCompleteText = action["autoCompleteText"];
+                    a.rulePanelState.autoCompleteArray = action["autoCompleteArray"];
                     a.rulePanelState.guiState = {
                         ...a.rulePanelState.guiState,
                         ...action["newTreeData"]
@@ -244,7 +254,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         ...state.newOrEditRule,
                         quantifierXPath: action["quantifierXPath"],
                         constraintXPath: action["constraintXPath"],
-                        autoCompleteText: action["autoCompleteText"],
+                        autoCompleteArray: action["autoCompleteArray"],
                         guiState: {
                             ...state.newOrEditRule.guiState,
                             ...action["newTreeData"]
@@ -504,26 +514,14 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
                         break;
 
-
-                    // job = {elementId: "", task: "CONSTRAINT_ELEMENT", value: true/false}
-                    case "CONSTRAINT_ELEMENT":
-                        if (action["ruleIndex"] !== -1) {
-                            copiedState.ruleTable = copiedState.ruleTable.map(rule => {
-                                if (rule.index !== action["ruleIndex"]) return rule;
-                                rule.rulePanelState.guiState.guiElements[job["elementId"]].isConstraint = job["value"];
-                                return rule;
-                            });
-                        }
-                        else
-                            copiedState.newOrEditRule.guiState.guiElements[job["elementId"]].isConstraint = job["value"];
-
-                        break;
-
                     default:
                         break;
                 }
             });
-            return copiedState;
+            return {
+                ...copiedState,
+                message: "CHANGE_GUI_ELEMENT"
+            };
 
         case "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI":
             if (action["ruleIndex"] !== -1) {
@@ -533,20 +531,22 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     return Object.assign({}, d, {
                         rulePanelState: {
                             ...d.rulePanelState,
-                            autoCompleteText: action["newText"]
+                            autoCompleteArray: action["newAutoCompleteArray"]
                         }
                     });
                 });
                 return Object.assign({}, state, {
-                    ruleTable: rules
+                    ruleTable: rules,
+                    message: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI"
                 });
             }
             else
                 return Object.assign({}, state, {
                     newOrEditRule: {
                         ...state.newOrEditRule,
-                        autoCompleteText: action["newText"]
-                    }
+                        autoCompleteArray: action["newAutoCompleteArray"]
+                    },
+                    message: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI"
                 });
 
         default:

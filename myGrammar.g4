@@ -1,33 +1,18 @@
 grammar myGrammar;
 
 inputSentence
-    : (emptyLine* | designRule) end? NL* EOF
-    ;
-
-designRule
-    : mustClause | mustBeEqualToClause
+    : (emptyLine* | mustClause) end? NL* EOF
     ;
 
 mustClause
-    : functions must functionExpression
-    | abstractFunctions must abstractFunctionExpression
-    | constructors must constructorExpression
-    | classes must classExpression
-    | interfaces must interfaceExpression
+    : functions must have functionExpression
+    | abstractFunctions must have abstractFunctionExpression
+    | constructors must have constructorExpression
+    | classes must have classExpression
+    | interfaces must have interfaceExpression
+    | parameters must have parameterExpression
+    | declarationStatements must have declarationStatementExpression
     ;
-
-mustBeEqualToClause
-    : functions mustBeEqualTo functions
-    | abstractFunctions mustBeEqualTo abstractFunctions
-    | constructors mustBeEqualTo constructors
-    | annotations mustBeEqualTo annotations
-    | parameters mustBeEqualTo parameters
-    | returnValues mustBeEqualTo returnValues
-    | declarationStatements mustBeEqualTo declarationStatements
-    | expressionStatements mustBeEqualTo expressionStatements
-    | classes mustBeEqualTo classes
-    | interfaces mustBeEqualTo interfaces
-;
 
 /*
     Constants
@@ -63,24 +48,13 @@ emptyLine
     : NL
     ;
 
-Comma
-    : ','
-    ;
 
 /*
-    Keywords
+    connectors
 */
 
 must
     : 'must '
-    ;
-
-mustBeEqualTo
-    : 'must be equal to '
-    ;
-
-where
-    : 'where '
     ;
 
 of
@@ -89,35 +63,19 @@ of
 
 
 and
-    :  ' and '
+    :  'and '
     ;
 
 or
-    :  ' or '
+    :  'or '
     ;
 
 have
     : 'have '
     ;
 
-equalsTo
-    : 'equal to '
-    ;
-
-includes
-    : 'include '
-    ;
-
-startsWith
-    : 'start with '
-    ;
-
-endsWith
-    : 'end with '
-    ;
-
-not
-    : 'not '
+withWord
+    : 'with '
     ;
 
 
@@ -146,17 +104,16 @@ NAME
     ;
 
 names
-    : NAME nameCondition? nameOf?
+    : NAME nameCondition?
     ;
 
 nameOf
-    : of (classes | functions | abstractFunctions
-    | declarationStatements | parameters | annotations
-    | types | constructors | extensions | implementations)
+    : of (classes | functions | abstractFunctions | declarationStatements | parameters | annotations
+            | types | constructors | extensions | implementations)
     ;
 
 nameCondition
-    : where not? (equalsTo | includes | startsWith | endsWith) words Comma?
+    : words SPACE
     ;
 
 
@@ -169,7 +126,7 @@ ANNOTATION
     ;
 
 annotations
-    : ANNOTATION annotationCondition? annotationOf?
+    : ANNOTATION annotationCondition?
     ;
 
 annotationOf
@@ -177,7 +134,7 @@ annotationOf
     ;
 
 annotationCondition
-    : where not? equalsTo combinatorialWords Comma?
+    : combinatorialWords SPACE
     ;
 
 
@@ -185,16 +142,16 @@ annotationCondition
     extensions
 */
 
-EXTEND
-    : 'extend '
-    ;
-
 EXTENSION
     : 'extension '
     ;
 
+SUPERCLASS
+    : 'Superclass'
+    ;
+
 extensions
-    : EXTENSION extensionCondition? extensionOf?
+    : EXTENSION extensionCondition
     ;
 
 extensionOf
@@ -202,7 +159,7 @@ extensionOf
     ;
 
 extensionCondition
-    : where not? equalsTo words Comma?
+    : of ( words SPACE | SUPERCLASS)
     ;
 
 
@@ -214,8 +171,12 @@ IMPLEMENTATION
     : 'implementation '
     ;
 
+INTERFACE
+    : 'Interface '
+    ;
+
 implementations
-    : IMPLEMENTATION implementationCondition? implementationOf?
+    : IMPLEMENTATION implementationCondition
     ;
 
 implementationOf
@@ -223,7 +184,7 @@ implementationOf
     ;
 
 implementationCondition
-    : where not? equalsTo words Comma?
+    : of ( words SPACE | INTERFACE )
     ;
 
 
@@ -244,16 +205,13 @@ functionOf
     ;
 
 functionCondition
-    : where functionExpression Comma?
+    : withWord functionExpression
     ;
 
 functionExpression
     : LPAREN functionExpression RPAREN
     | left=functionExpression op=binary right=functionExpression
-    | have (
-              annotations | specifiers | names | parameters | returnValues
-              | declarationStatements | expressionStatements
-              )
+    | ( annotations | specifiers | visibilities | types | names | parameters | returnValues | declarationStatements | expressionStatements )
     | functionExpression SPACE
     ;
 
@@ -274,13 +232,13 @@ abstractFunctionOf
     ;
 
 abstractFunctionCondition
-    : where abstractFunctionExpression Comma?
+    : withWord abstractFunctionExpression
     ;
 
 abstractFunctionExpression
     : LPAREN abstractFunctionExpression RPAREN
     | left=abstractFunctionExpression op=binary right=abstractFunctionExpression
-    | have (annotations | specifiers | names | parameters)
+    | ( annotations | specifiers | visibilities | types | names | parameters )
     | abstractFunctionExpression SPACE
     ;
 
@@ -302,16 +260,13 @@ constructorOf
     ;
 
 constructorCondition
-    : where constructorExpression Comma?
+    : withWord constructorExpression
     ;
 
 constructorExpression
     : LPAREN constructorExpression RPAREN
     | left=constructorExpression op=binary right=constructorExpression
-    | have (
-              annotations | specifiers | parameters | returnValues
-              | declarationStatements | expressionStatements
-             )
+    | ( annotations | specifiers | visibilities | parameters | returnValues | declarationStatements | expressionStatements )
     | constructorExpression SPACE
     ;
 
@@ -324,7 +279,7 @@ PARAMETER
     ;
 
 parameters
-    : PARAMETER parameterCondition? parameterOf?
+    : PARAMETER parameterCondition?
     ;
 
 parameterOf
@@ -332,7 +287,14 @@ parameterOf
     ;
 
 parameterCondition
-    : where not? equalsTo combinatorialWords Comma?
+    : withWord parameterExpression
+    ;
+
+parameterExpression
+    : LPAREN parameterExpression RPAREN
+    | left=parameterExpression op=binary right=parameterExpression
+    | ( types | names )
+    | parameterExpression SPACE
     ;
 
 
@@ -345,7 +307,7 @@ TYPES
     ;
 
 types
-    : TYPES typeCondition? typeOf?
+    : TYPES typeCondition?
     ;
 
 typeOf
@@ -353,12 +315,12 @@ typeOf
     ;
 
 typeCondition
-    : where not? equalsTo words Comma?
+    : words SPACE
     ;
 
 
 /*
-    specifiers
+    specifiers only static
 */
 
 SPECIFIER
@@ -366,7 +328,7 @@ SPECIFIER
     ;
 
 specifiers
-    : SPECIFIER specifierCondition? specifierOf?
+    : SPECIFIER specifierCondition?
     ;
 
 specifierOf
@@ -374,7 +336,27 @@ specifierOf
     ;
 
 specifierCondition
-    : where not? equalsTo words Comma?
+    : words SPACE
+    ;
+
+/*
+    visibility (also specifier) public/protected/private
+*/
+
+VISIBILITY
+    :  'visibility '
+    ;
+
+visibilities
+    : VISIBILITY visibilityCondition?
+    ;
+
+visibilityOf
+    : of (functions | constructors | abstractFunctions | declarationStatements | classes)
+    ;
+
+visibilityCondition
+    : words SPACE
     ;
 
 
@@ -387,7 +369,7 @@ ReturnValue
     ;
 
 returnValues
-    : ReturnValue returnValueCondition? returnValueOf?
+    : ReturnValue returnValueCondition?
     ;
 
 returnValueOf
@@ -395,7 +377,7 @@ returnValueOf
     ;
 
 returnValueCondition
-    : where not? equalsTo combinatorialWords Comma?
+    : combinatorialWords SPACE
     ;
 
 
@@ -416,13 +398,13 @@ declarationStatementOf
     ;
 
 declarationStatementCondition
-    : where declarationStatementExpression Comma?
+    : withWord declarationStatementExpression
     ;
 
 declarationStatementExpression
     : LPAREN declarationStatementExpression RPAREN
     | left=declarationStatementExpression op=binary right=declarationStatementExpression
-    | have ( annotations | specifiers | types | names | initialValues )
+    | ( annotations | specifiers | visibilities | types | names | initialValues )
     | declarationStatementExpression SPACE
     ;
 
@@ -444,7 +426,7 @@ expressionStatementOf
     ;
 
 expressionStatementCondition
-    : where not? equalsTo combinatorialWords Comma?
+    : combinatorialWords SPACE
     ;
 
 
@@ -465,7 +447,7 @@ initialValueOf
     ;
 
 initialValueCondition
-    :where not? equalsTo combinatorialWords Comma?
+    : combinatorialWords SPACE
     ;
 
 
@@ -486,16 +468,14 @@ classOf
     ;
 
 classCondition
-    : where classExpression Comma?
+    : withWord classExpression
     ;
 
 classExpression
     : LPAREN classExpression RPAREN
     | left=classExpression op=binary right=classExpression
-    | have (
-              annotations | specifiers | names | extensions | implementations | functions | interfaces
-              | abstractFunctions | constructors | declarationStatements | classes | returnValues
-              )
+    | ( annotations | specifiers | visibilities | names | extensions | implementations | functions | interfaces
+            | abstractFunctions | constructors | declarationStatements | classes | returnValues )
     | classExpression SPACE
     ;
 
@@ -516,12 +496,12 @@ interfaceOf
     ;
 
 interfaceCondition
-    : where interfaceExpression Comma?
+    : withWord interfaceExpression
     ;
 
 interfaceExpression
     : LPAREN interfaceExpression RPAREN
     | left=interfaceExpression op=binary right=interfaceExpression
-    | have (annotations | specifiers | names | abstractFunctions | declarationStatements | interfaces)
+    | (annotations | specifiers | visibilities | names | abstractFunctions | declarationStatements | interfaces)
     | interfaceExpression SPACE
     ;

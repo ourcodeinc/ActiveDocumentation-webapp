@@ -5,7 +5,7 @@
 import pluralize from 'pluralize';
 
 import {generateTreeForElement, getConditionByName} from "../ruleGenerationGUI/guiConstants";
-import {TextConstants} from "./textConstant";
+import {grammar_keywords, special_word} from "./textConstant";
 import {initial_elementTree, initial_guiElements} from "../../initialState";
 
 /**
@@ -15,7 +15,10 @@ import {initial_elementTree, initial_guiElements} from "../../initialState";
  */
 export async function generateGuiTrees(grammarTree) {
     let trees = await createConstraintTree(grammarTree);
-    // match with redux state: newOrEditRule.guiState
+    // console.log(trees);
+    if (Object.entries(trees).length === 0)
+        return null;
+    // // match with redux state: newOrEditRule.guiState
     return {
         guiTree: trees.newElementTree,
         guiElements: trees.newGuiElements
@@ -28,13 +31,20 @@ export async function generateGuiTrees(grammarTree) {
  * @returns {{newGuiElements, newElementTree, grammarTree: *, guiTree: *}}
  */
 const createConstraintTree = (tree) => {
+    // console.log(tree);
     let combinedNodes = combineNode(tree);
+    // console.log(combinedNodes);
     let combinedWordsNodes = combineWordsNode(combinedNodes);
+    // console.log(combinedWordsNodes);
     let reorderedMustClause = reorderMustClause(combinedWordsNodes);
+    // console.log(reorderedMustClause);
     let newTree = traverseNormalNode(reorderedMustClause);
+    // console.log(newTree);
     newTree.selectedElement = true;
     let parentChildTree = reverseParentChildOrder(newTree);
+    // console.log(parentChildTree);
     let treeOfIDs = createGuiElementTree(parentChildTree);
+    // console.log(treeOfIDs);
     return updateGuiElements(parentChildTree, treeOfIDs);
 };
 
@@ -54,19 +64,22 @@ const reorderMustClause = (treeNode) => {
     }
 
     if (newNode.nodeType === "MustClauseContext") {
-        // it has 3 children: [0]..Context or TerminalNodeImpl e.g. "function ", [1]TerminalNodeImpl "must ", [2]..ExpressionContext
-
-        newNode.children[2].children.forEach(child => child.isConstraint = true);
+        // it has 4 children:
+        // [0]..Context or TerminalNodeImpl e.g. "function ", [1]TerminalNodeImpl "must ",
+        // [2]TerminalNodeImpl "have ", [3]..ExpressionContext
+        newNode.children[3].isConstraint = true;
+        if (newNode.children[3].children)
+            newNode.children[3].children.forEach(child => child.isConstraint = true);
 
         if (newNode.children[0].children) {
 
             // in children[0].children look for ..ConditionContext
             let conditionNodeIndex = newNode.children[0].children.map(gChild => gChild.nodeType.endsWith("ConditionContext")).indexOf(true);
 
-            // if exists: replace it with another one w/ it and children[2] as its children
+            // if exists: replace it with another one w/ it and children[3] as its children
             if (conditionNodeIndex !== -1)
                 newNode.children[0].children[conditionNodeIndex].children = newNode.children[0].children[conditionNodeIndex].children
-                    .concat(newNode.children[2]);
+                    .concat(newNode.children[3]);
 
             // if not: create and add it w/ children[2] as its child
             else {
@@ -75,7 +88,7 @@ const reorderMustClause = (treeNode) => {
                 let nodeType = string.charAt(0).toUpperCase() + string.slice(1) + "ConditionContext";
                 newNode.children[0].children.push({
                     nodeType: nodeType,
-                    children: [{...newNode.children[2]}]
+                    children: [{...newNode.children[3]}]
                 })
             }
         }
@@ -88,15 +101,11 @@ const reorderMustClause = (treeNode) => {
                     nodeType: camelCase(pluralize(nodeType)) + "Context",
                     children: [{...newNode.children[0]}, {
                         nodeType: nodeType + "ConditionContext",
-                        children: [{...newNode.children[2]}]
+                        children: [{...newNode.children[3]}]
                     }]
                 }
             }
         }
-    }
-    // todo not covered
-    else if (newNode.nodeType === "MustBeEqualToClauseContext") {
-        newNode.children = [{...newNode.children[2]}]
     }
 
     else {
@@ -119,7 +128,7 @@ const combineNode = (node) => {
         else
             return {...combineNode(node.children[0])};
     }
-    return {nodeType: node.constructor.name, text: node.getSymbol().text}
+    return {nodeType: node.constructor.name, text: node.getSymbol().text.trim()}
 };
 
 
@@ -153,57 +162,85 @@ const combineWordsNode = (node) => {
 const traverseNormalNode = (treeNode, isConstraint = false) => {
 
     // guiNode must have
-    // key, value, target, children, text
-    // we add "of" and "where" here
+    // key, value, children, text
+    // we add "of" and "withChildren" here
 
     let guiNode = {};
     guiNode.isConstraint = treeNode.isConstraint || isConstraint;
 
     // context nodes
-    let keywords = TextConstants.keywords.slice().map(w => pluralize(w).split(" ").map(a => a.charAt(0).toUpperCase() + a.slice(1)).join(""));
+    let keywords = grammar_keywords.slice().map(w => pluralize(w).split(" ").map(a => a.charAt(0).toUpperCase() + a.slice(1)).join(""));
     if (keywords.indexOf(treeNode.nodeType.replace("Context", "")) !== -1) {
-        guiNode.key = TextConstants.keywords[keywords.indexOf(treeNode.nodeType.replace("Context", ""))]; //console.log("--->",guiNode.key);
+        guiNode.key = grammar_keywords[keywords.indexOf(treeNode.nodeType.replace("Context", ""))];
         if (treeNode.children) {
             treeNode.children.forEach(child => {
-                if (child.nodeType.endsWith("OfContext"))
-                // child has two children, the first is "of "
-                    guiNode.of = traverseNormalNode(child.children[1]);
+                if (child.nodeType.endsWith("OfContext")) {
+                    // child has two children, the first is "of "
+                    if (child.children[1].nodeType === "TerminalNodeImpl")
+                        guiNode.of = {
+                            key: child.children[1].text.trim(),
+                            isConstraint: child.children[1].isConstraint || guiNode.isConstraint
+                        };
+                    else
+                        guiNode.of = traverseNormalNode(child.children[1]);
+                }
 
                 else if (child.nodeType.endsWith("ConditionContext")) {
-                    // check if it has "ExpressionContext" child
-                    let hasExpressionContext = child.children.filter(node => node.nodeType.endsWith("ExpressionContext")).length > 0;
-                    if (hasExpressionContext)
-                        child.children.forEach(node => {
-                            if (node.nodeType.endsWith("ExpressionContext"))
-                                guiNode.where = guiNode.where ? guiNode.where.concat(traverseExpressionNode(node, guiNode.isConstraint)) : traverseExpressionNode(node, guiNode.isConstraint);
-                        });
-
-                    else {
-                        // name, extension, implementation, type, specifier
-                        // child children: where not? equalsTo|includes|startsWith|endsWith words
-                        if (child.children.length < 3) return;
-                        let node = {};
-                        node.hasNot = child.children[1].text.trim() === "not";
-                        let index = node.hasNot ? 2 : 1;
-                        node.checkType = child.children[index].text.trim();
-                        node.word = child.children[index + 1].text;
-                        guiNode.value = node;
-                    }
+                    child.children.forEach((node, i) => {
+                        if (node.nodeType === "TerminalNodeImpl" && grammar_keywords.indexOf(node.text.trim()) !== -1) {
+                            let guiChild = {
+                                key: node.text.trim(),
+                                isConstraint: node.isConstraint || guiNode.isConstraint
+                            };
+                            if (!guiNode.withChildren) guiNode.withChildren = [];
+                            guiNode.withChildren = guiNode.withChildren.concat([guiChild]);
+                        }
+                        // implementation of "..."/Interface
+                        else if (node.nodeType === "TerminalNodeImpl" && node.text.trim() === "of") {
+                            if (child.children.length !== 2 || i !== 0
+                                || (child.children[i + 1].nodeType !== "TerminalNodeImpl" && child.children[i + 1].nodeType !== "word")) console.log("error", child);
+                            else {
+                                if (!special_word.includes(child.children[1].text)) {
+                                    guiNode.value = {word: child.children[1].text, type: "text"};
+                                }
+                            }
+                        }
+                        else if (node.nodeType.endsWith("ExpressionContext")) {
+                            if (!guiNode.withChildren) guiNode.withChildren = [];
+                            guiNode.withChildren = guiNode.withChildren.concat(traverseExpressionNode(node, guiNode.isConstraint));
+                        }
+                        else if (keywords.indexOf(node.nodeType.replace("Context", ""))!== -1) {
+                            if (!guiNode.withChildren) guiNode.withChildren = [];
+                            guiNode.withChildren = guiNode.withChildren.concat([traverseNormalNode(node, guiNode.isConstraint)]);
+                        }
+                        else if (node.nodeType === "word") {
+                            let type = "text";
+                            // exception in the GUI
+                            if (treeNode.nodeType === "visibilitiesContext") type = "value";
+                            guiNode.value = {word: node.text, type: type};
+                        }
+                    });
+                }
+                // name, extension, implementation, type, specifier
+                // {nodeType: "word", text: "..."}
+                else if (child.nodeType === "word") {
+                    let type = "text";
+                    // exception in the GUI
+                    if (treeNode.nodeType === "visibilitiesContext") type = "value";
+                    guiNode.value = {word: child.text, type: type};
                 }
             })
         }
+        return guiNode
     }
-    else if (["InputSentenceContext", "MustClauseContext", "MustBeEqualToClauseContext"].indexOf(treeNode.nodeType) !== -1)
-        guiNode = traverseNormalNode(treeNode.children[0]);
 
-    else if (treeNode.nodeType === "TerminalNodeImpl")
-        if (TextConstants.keywords.slice().concat("subclass").indexOf(treeNode.text.trim()) !== -1)
-            guiNode.key = treeNode.text.trim();
+    if (["InputSentenceContext", "MustClauseContext"].indexOf(treeNode.nodeType) !== -1)
+        return traverseNormalNode(treeNode.children[0]);
 
-        else
-            console.log(treeNode.nodeType + " node is skipped.", treeNode);
+    // else if (treeNode.nodeType === "TerminalNodeImpl")
+    //     console.log("???", treeNode);
 
-    return guiNode;
+    return {};
 };
 
 
@@ -214,36 +251,29 @@ const traverseNormalNode = (treeNode, isConstraint = false) => {
  * @returns {Array} array of new nodes
  */
 const traverseExpressionNode = (ExpressionNode, isConstraint) => {
-    let guiWhereArray = [];
+    let guiWithArray = [];
     let setIsConstraint = ExpressionNode.isConstraint || isConstraint;
+    // context nodes
+    let keywords = grammar_keywords.slice().map(w => pluralize(w).split(" ").map(a => a.charAt(0).toUpperCase() + a.slice(1)).join(""));
+
     if (ExpressionNode.children) {
-        let child = ExpressionNode.children[0];
-        if (child.nodeType === "TerminalNodeImpl") {
-            // ( ExpressionContext )
-            if (child.text === "(")
-                guiWhereArray = traverseExpressionNode(ExpressionNode.children[1], setIsConstraint || child.isConstraint);
+        ExpressionNode.children.forEach(child => {
+            if (child.nodeType === "TerminalNodeImpl" && grammar_keywords.indexOf(child.text.trim()) !== -1)
+                guiWithArray.push({
+                    key: child.text.trim(),
+                    isConstraint: child.isConstraint || setIsConstraint
+                });
 
-            else if (child.text.trim() === "have") {
-                // have annotation
-                if (ExpressionNode.children[1].nodeType === "TerminalNodeImpl")
-                    guiWhereArray.push({
-                        key: ExpressionNode.children[1].text.trim(),
-                        isConstraint: setIsConstraint || ExpressionNode.children[1].isConstraint
-                    });
+            else if (child.nodeType.endsWith("ExpressionContext"))
+                guiWithArray = guiWithArray.concat(traverseExpressionNode(child, setIsConstraint));
 
-                // have AnnotationsContext
-                else
-                    guiWhereArray.push(traverseNormalNode(ExpressionNode.children[1], setIsConstraint || child.isConstraint));
+            else if (keywords.indexOf(child.nodeType.replace("Context", "")) !== -1) {
+                guiWithArray.push(traverseNormalNode(child, setIsConstraint));
             }
-        }
-        // ExpressionContext and/or ExpressionContext
-        else
-            ExpressionNode.children.forEach(child => {
-                if (child.nodeType.endsWith("ExpressionContext"))
-                    guiWhereArray = guiWhereArray.concat(traverseExpressionNode(child, setIsConstraint || child.isConstraint));
-            });
+        });
     }
-    return guiWhereArray;
+
+    return guiWithArray;
 };
 
 
@@ -257,7 +287,10 @@ const reverseParentChildOrder = (node) => {
     if (node.hasOwnProperty("of")) {
         let parentNode = reverseParentChildOrder(node.of);
         delete node.of;
-        return {...parentNode, where: (parentNode.where ? parentNode.where.concat([node]) : [node])}
+        return {
+            ...parentNode,
+            withChildren: (parentNode.withChildren ? parentNode.withChildren.concat([node]) : [node])
+        }
     }
     else
         return node;
@@ -276,7 +309,9 @@ const createGuiElementTree = (parseTree) => {
 
     let visitedIDs = [];
 
-    let checkNode = (node, idStack, parent_id) => {
+    let checkNode = (node, idStack, parent_id, isRoot = false) => {
+        if (idStack.length === 0) return false;
+        let copiedIdStack = JSON.parse(JSON.stringify(idStack));
         while (idStack.length > 0) {
             let elem_id = idStack.pop();
 
@@ -334,27 +369,40 @@ const createGuiElementTree = (parseTree) => {
                     newNode.child = childId
                 }
 
-                // for each node in 'where' check if they exist. If not continue the search
+                // for each node in 'withChildren' check if they exist. If not continue the search
                 let found = true;
-                if (node.where) {
-                    newNode.where = [];
-                    node.where.forEach(whereNode => {
-                        let where = checkNode(whereNode, JSON.parse(JSON.stringify(elementChildren)), elem_id);
+                if (node.withChildren) {
+                    newNode.withChildren = [];
+                    node.withChildren.forEach(withChildNode => {
+                        let where = checkNode(withChildNode, JSON.parse(JSON.stringify(elementChildren)), elem_id);
                         if (!where) {
                             found = false;
                             return;
                         }
-                        newNode.where.push(where);
+                        newNode.withChildren.push(where);
                     });
                 }
                 if (found) return newNode;
             }
         }
+
+        // if the root is not class search through its children, etc.
+        if (isRoot) {
+            let elementChildren = [];
+            copiedIdStack.forEach(elem_id => {
+                Object.keys(newElementTree[elem_id].children).forEach(childGroup => {
+                    if (childGroup !== "body") elementChildren = elementChildren.concat(newElementTree[elem_id].children[childGroup]);
+                    else newElementTree[elem_id].children["body"].forEach(subGroup => elementChildren = elementChildren.concat(subGroup));
+                });
+            });
+            return checkNode(node, JSON.parse(JSON.stringify(elementChildren)), "")
+        }
+
         return false;
     };
 
     // search newElementTree from id="0" to find the root node
-    return checkNode(parseTree, ["0"], "");
+    return checkNode(parseTree, ["0"], "", true);
 
 };
 
@@ -381,10 +429,10 @@ const updateGuiElements = (grammarTree, guiTree) => {
 
         if (guiNode.child) checkNode(grammarNode.child, guiNode.child);
 
-        if (guiNode.where)
-            guiNode.where.forEach((whereNode, i) => checkNode(grammarNode.where[i], whereNode));
-        if (grammarNode.value) // todo process rootNode["properties"].text
-            newGuiElements[guiNode.elementId].text = (grammarNode.value.hasNot ? "not " : "") + grammarNode.value.checkType + " " + grammarNode.value.word;
+        if (guiNode.withChildren)
+            guiNode.withChildren.forEach((withChildNode, i) => checkNode(grammarNode.withChildren[i], withChildNode));
+        if (grammarNode.value)
+            newGuiElements[guiNode.elementId][grammarNode.value.type] = grammarNode.value.word;
 
     };
 

@@ -48,7 +48,8 @@ const lemmatize = (input) => {
     let lemmatized = [];
     pos.forEach(node => {
         if (node.pos !== "DT") {
-            if (node.tag === "quoted_phrase" || !node.lemma)
+            if (node.tag === "quoted_phrase" || !node.lemma
+                || node.value === "Superclass" || node.value === "Interface") // exceptions
                 lemmatized.push(node.value);
             else
                 lemmatized.push(node.lemma);
@@ -57,8 +58,8 @@ const lemmatize = (input) => {
 
     let str = lemmatized.join(" ");
     // str = stringReplaceAll(str, " ''", "\"");
-    str = stringReplaceAll(str, " and ", "  and "); // for extra spaces around and
-    str = stringReplaceAll(str, " or ", "  or "); // for extra spaces around or
+    // str = stringReplaceAll(str, " and ", "  and "); // for extra spaces around and
+    // str = stringReplaceAll(str, " or ", "  or "); // for extra spaces around or
     // str = stringReplaceAll(str, "`` ", "\"");
     str = str.replace(/\( /g, "(");
     str = str.replace(/ \) /g, " )"); // no change!
@@ -74,9 +75,9 @@ const lemmatize = (input) => {
  * @param replacement
  * @returns {string|XML|*|void}
  */
-const stringReplaceAll = (str, search, replacement) => {
-    return str.replace(new RegExp(search, 'g'), replacement);
-};
+// const stringReplaceAll = (str, search, replacement) => {
+//     return str.replace(new RegExp(search, 'g'), replacement);
+// };
 
 /**
  * check the text against grammar and returns the XPaths for quantifier and constraint
@@ -142,7 +143,8 @@ const antlr = (input) => {
         return {results: {quantifier: quant, constraint: constr}, grammarTree: tree};
 
     }
-    catch (error) {console.log(error);
+    catch (error) {
+        console.log(error);
         return {xpathTraverseErrors: error};
     }
 };

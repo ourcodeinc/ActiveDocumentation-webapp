@@ -79,17 +79,17 @@ export const LANGUAGE_THEME = {
 
 export const EDITOR_OPTION = {
     selectOnLineNumbers: false,
-    suggest: {
-        filterGraceful: false,
-        snippetsPreventQuickSuggestions: false
-    },
-    quickSuggestions: false,
+    // suggest: {
+    //     filterGraceful: false,
+    //     snippetsPreventQuickSuggestions: false
+    // },
+    // quickSuggestions: false,
     lineNumbers: "off",
     overviewRulerBorder: false,
     hideCursorInOverviewRuler: true,
     minimap: {enabled: false},
     fontSize: 13,
-    dragAndDrop: true,
+    // dragAndDrop: true,
     folding: false,
     wordWrap: "on",
     renderLineHighlight: "none",

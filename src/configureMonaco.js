@@ -6,6 +6,7 @@
 
 const defaultMonacoConf = {
     publicURL: process.env.PUBLIC_URL,// set in index.html's head
+    basePath: '',
     isCdn: false,// load from external site, uncomment script in index.html
     builtType: process.env.NODE_ENV === 'production' ? 'min' : 'dev',
     monacoUrl: null,
@@ -42,25 +43,23 @@ const initMonacoLoader = (monacoConf = defaultMonacoConf) => { // uses window.mo
         window.MonacoEnvironment = {
             getWorkerUrl: function (/* workerId, label */) {
                 if (monacoConf.builtType === 'min') {
-                    return `${monacoConf.publicURL}/monaco-worker-loader-proxy.js`;
+                    return `${monacoConf.publicURL + monacoConf.basePath}/monaco-worker-loader-proxy.js`;
                 } else {
-                    return `${monacoConf.publicURL}/monaco-worker-loader-proxy.dev.js`;
+                    return `${monacoConf.publicURL + monacoConf.basePath}/monaco-worker-loader-proxy.dev.js`;
                 }
             }
         };
         monacoConf.monacoUrl = `https://cdn.jsdelivr.net/npm/monaco-editor@${monacoConf.monacoBuild}/${monacoConf.builtType}/vs`;
         return loadMonaco(monacoConf);
     } else {// loading monaco locally
-        monacoConf.monacoUrl = `${monacoConf.publicURL}/monaco-editor/${monacoConf.builtType}/vs`;
+        monacoConf.monacoUrl = `${monacoConf.publicURL + monacoConf.basePath}/monaco-editor/${monacoConf.builtType}/vs`;
         //window.require is MS/monaco's custom AMD loader
         if (window.require) {
             loadMonaco(monacoConf);
         } else {
             importScript(`${monacoConf.monacoUrl}/loader.js`
                 , () => loadMonaco(monacoConf)
-                , error => {
-                    console.log("importScript error:", error)
-                });
+                , error => {});
         }
     }
     return true;

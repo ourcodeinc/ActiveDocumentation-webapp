@@ -5,19 +5,19 @@
 
 import React, {Component, Fragment} from 'react';
 import MdStar from 'react-icons/lib/md/star';
-import {Button, MenuItem, Dropdown} from 'react-bootstrap';
+import {Button, MenuItem, Dropdown, Modal} from 'react-bootstrap';
 import {RootCloseWrapper} from 'react-overlays';
-import MdLockOpen from 'react-icons/lib/md/lock-open';
-import MdLock from 'react-icons/lib/md/lock';
 
 import {getConditionByName} from "./guiConstants";
+import * as marked from "marked";
+import {documentations_IMarkdownString} from "../ruleGenerationText/textConstant";
 
 
 class GuiComponent extends Component {
 
     constructor(props) {
         super(props);
-        // ruleIndex, elementId, rootTree, guiElements, onChangeGuiElement()
+        // ruleIndex, elementId, rootTree, guiElements, onChangeGuiElement(), root << for styling
 
         this.state = {};
 
@@ -25,7 +25,7 @@ class GuiComponent extends Component {
         this.state.elementId = props["elementId"];
         this.state.rootTree = props["rootTree"];
 
-        // {conditionName: "class_el", activeElement: false, selectedElement: false, fake_activeElement: true/false/undefined},
+        // {conditionName: "class_el", activeElement: false, selectedElement: false},
         this.state.thisElement = this.state.guiElements[this.state.elementId];
         /*
            {type: "element",
@@ -123,79 +123,58 @@ class GuiComponent extends Component {
 
     render() {
         return (
-            <div
-                className={"elementDiv" + (this.state.thisElement.activeElement ? " activeElement" : "") + (this.state.thisElement.selectedElement ? " selectedElement" : "")}>
-                {this.renderConstraintElementLock()}
-                {this.renderSelectedElementStar()}
-                <div className={"rowGroup"}>
-                    {this.renderGroup("top")}
-                </div>
-                <div className={"rowGroup"}>
-                    {this.renderPrePost("pre_before_1")}
-                    {this.renderGroup("before_1")}
-                    {this.renderPrePost("pre_before_2")}
-                    {this.renderGroup("before_2")}
-                    {this.renderPrePost("pre_before_3")}
-                    {this.renderGroup("before_3")}
+            <div className={"overlayContainer"}
+                 onMouseEnter={() => this.overlayDiv.style.display = "none"}
+                 onMouseLeave={(e) => {
+                     e.stopPropagation();
+                     this.overlayDiv.style.display = this.props.root || this.state.thisElement.activeElement ? "none" : "block";
+                 }}>
+                <div
+                    className={"mainDiv-overlay elementDiv" + (this.state.thisElement.activeElement ? " activeElement" : "")
+                    + (this.state.thisElement.selectedElement ? " selectedElement" : "")
+                    + (this.state.thisElement.isConstraint ? " constraintElement" : "")}
+                    id={`id__${this.props.ruleIndex}__${this.state.elementId}`}
 
-                    {this.renderPrePost("pre_after_1")}
-                    {this.renderGroup("after_1")}
-                    {this.renderPrePost("pre_after_2")}
-                    {this.renderGroup("after_2")}
-                    {this.renderPrePost("pre_after_3")}
-                    {this.renderGroup("after_3")}
-                    {this.renderPrePost("post_after_3")}
+                    onDoubleClick={(e) => {
+                        e.stopPropagation(); // to stop propagating the click to the underneath elements
+                        this._handleConstraintElement(this.state.elementId, this.state.thisElement);
+                    }}>
+                    {this.renderSelectedElementStar()}
+                    <div className={"rowGroup"}>
+                        {this.renderGroup("top")}
+                    </div>
+                    <div className={"rowGroup"}>
+                        {this.renderPrePost("pre_before_1")}
+                        {this.renderGroup("before_1")}
+                        {this.renderPrePost("pre_before_2")}
+                        {this.renderGroup("before_2")}
+                        {this.renderPrePost("pre_before_3")}
+                        {this.renderGroup("before_3")}
+
+                        {this.renderPrePost("pre_after_1")}
+                        {this.renderGroup("after_1")}
+                        {this.renderPrePost("pre_after_2")}
+                        {this.renderGroup("after_2")}
+                        {this.renderPrePost("pre_after_3")}
+                        {this.renderGroup("after_3")}
+                        {this.renderPrePost("post_after_3")}
+                    </div>
+                    {this.renderPrePost("pre_body")}
+                    {this.renderBody()}
+                    {this.renderPrePost("post_body")}
                 </div>
-                {this.renderPrePost("pre_body")}
-                {this.renderBody()}
-                {this.renderPrePost("post_body")}
+                {this.renderOverlayDiv()}
             </div>
         )
     }
 
-    renderConstraintElementLock() {
-        if (this.state.thisElement.activeElement && this.state.elementCondition.canBeSelected)
-            return (
-                <div>
-                    {this.state.thisElement.isConstraint ? (
-                        <MdLockOpen size={20} onClick={() => {
-                            let jobs = [];
-                            jobs.push({
-                                elementId: this.state.elementId,
-                                task: "CONSTRAINT_ELEMENT",
-                                value: false
-                            });
-                            this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
-                        }}/>
-                    ) : (
-                        <MdLock size={20} onClick={() => {
-                            let jobs = [];
-                            jobs.push({
-                                elementId: this.state.elementId,
-                                task: "CONSTRAINT_ELEMENT",
-                                value: true
-                            });
-                            this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
-                        }}/>
-                    )}
-                </div>
-            );
-        return null;
-    }
-
     renderSelectedElementStar() {
-        if (this.state.thisElement.activeElement && this.state.elementCondition.canBeSelected)
+        if ((this.state.thisElement.activeElement && this.state.elementCondition.canBeSelected) || this.props.root)
             return (
-                <div className={"MdStar" + (this.state.thisElement.selectedElement ? " selectedElement" : "")}>
-                    <MdStar size={20} onClick={() => {
-                        let jobs = [];
-                        jobs.push({
-                            elementId: this.state.elementId,
-                            task: "SELECT_ELEMENT",
-                            value: true
-                        });
-                        this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
-                    }}/>
+                <div className={"MdStar" + (this.state.thisElement.selectedElement ? " selectedElement" : "")}
+                     id={`gui__star__${this.props.ruleIndex}__${this.state.elementId}`}>
+                    <MdStar size={20}
+                            onClick={() => this._handleSelectedElement(this.state.elementId, this.state.thisElement, this.state.elementCondition)}/>
                 </div>
             );
         return null;
@@ -233,7 +212,7 @@ class GuiComponent extends Component {
                                             });
                                             this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
                                         }}>
-                                        Add Field</Button>
+                                        Add {childCondition.grammar}</Button>
                                 </div>
                             ) : null}
                         </Fragment>
@@ -242,118 +221,131 @@ class GuiComponent extends Component {
                 case "smallText":
                 case "text":
                     return (
-                        <Fragment key={i}>
-                            <div
-                                className={"inputTextContainer "
-                                + (childCondition.type === "wideText" ? "rowGroup"
-                                    : childCondition.type === "smallText" ? "smallText rowItem"
-                                        : "rowItem")}>
-                                <div>
-                                    <div className={"rowItem"}><b>{childCondition.pre}</b></div>
-                                    <div
-                                        className={"inputTextDiv rowItem " + (childCondition.type === "wideText" ? "wideText" : "")}>
-                                        <input type={"text"}
-                                               className={"inputText" + (childElement.activeElement ? " activeElement " : "")}
-                                               value={this.state.texts[group][i]}
-                                               placeholder={childCondition.placeholder}
-                                               onChange={e => {
-                                                   let texts = this.state.texts;
-                                                   texts[group][i] = e.target.value;
-                                                   this.setState({texts});
-                                               }}
-                                               onBlur={e => {
-                                                   if (this.state.elementNode.children[group][i] === e.target.value) return;
-                                                   let jobs = [];
+                        <div key={i} id={`id__${this.props.ruleIndex}__${childId}`}
+                             className={"inputTextContainer "
+                             + (childCondition.type === "wideText" ? "rowGroup"
+                                 : childCondition.type === "smallText" ? "smallText rowItem"
+                                     : "rowItem") +
+                             (childElement.activeElement ? " activeElement" : "")
+                             + (childElement.isConstraint ? " constraintElement" : "")}
 
-                                                   // update texts
-                                                   jobs.push({
-                                                       elementId: childId,
-                                                       task: "UPDATE_ELEMENT",
-                                                       value: {
-                                                           text: e.target.value,
-                                                           activeElement: e.target.value !== "",
-                                                           fake_activeElement: false
-                                                       }
-                                                   });
+                             onDoubleClick={(e) => {
+                                 e.stopPropagation(); // to stop propagating the click to the underneath elements
+                                 this._handleConstraintElement(childId, childElement);
+                             }}
+                        >
+                            <div>
+                                <div className={"rowItem"}><b>{childCondition.pre}</b></div>
+                                <div
+                                    className={"inputTextDiv rowItem " + (childCondition.type === "wideText" ? "wideText" : "")}>
+                                    <input type={"text"}
+                                           className={"inputText" + (childElement.activeElement ? " activeElement " : "")}
+                                           value={this.state.texts[group][i]}
+                                           placeholder={childCondition.placeholder}
+                                           onChange={e => {
+                                               let texts = this.state.texts;
+                                               texts[group][i] = e.target.value;
+                                               this.setState({texts});
+                                           }}
+                                           onBlur={e => {
+                                               if (this.state.elementNode.children[group][i] === e.target.value) return;
+                                               let jobs = [];
 
-                                                   // if the element is not unique and there is no available empty element, add one
-                                                   // or remove extras
-                                                   if (!childCondition.unique) {
-                                                       let availableElements = this.state.elementNode.children[group].reduce((count, elemId) => {
-                                                           if (elemId !== childId)
-                                                               return count + (this.state.guiElements[elemId].activeElement ? 0 : 1);
-                                                           return count + (e.target.value !== "" ? 0 : 1)
-                                                       }, 0);
-                                                       if (availableElements < 1)
-                                                           jobs.push({
-                                                               elementId: this.state.elementId,
-                                                               task: "ADD_EXTRA",
-                                                               value: group
-                                                           });
-                                                       else if (availableElements > 1)
-                                                           jobs.push({
-                                                               elementId: this.state.elementId,
-                                                               task: "REMOVE_EXTRA",
-                                                               value: group
-                                                           });
+                                               // update texts
+                                               jobs.push({
+                                                   elementId: childId,
+                                                   task: "UPDATE_ELEMENT",
+                                                   value: {
+                                                       text: e.target.value,
+                                                       activeElement: e.target.value !== "",
+                                                       isConstraint: e.target.value === "" ? false : childElement.isConstraint
                                                    }
+                                               });
 
-                                                   // update activeElement for the main element
-                                                   let haveActiveChild = e.target.value !== "";
-                                                   Object.keys(this.state.elementNode.children).forEach(group => {
-                                                       if (group !== "body")
-                                                           this.state.elementNode.children[group].forEach(elemId => {
+                                               // if the element is not unique and there is no available empty element, add one
+                                               // or remove extras
+                                               if (!childCondition.unique) {
+                                                   let availableElements = this.state.elementNode.children[group].reduce((count, elemId) => {
+                                                       if (elemId !== childId)
+                                                           return count + (this.state.guiElements[elemId].activeElement ? 0 : 1);
+                                                       return count + (e.target.value !== "" ? 0 : 1)
+                                                   }, 0);
+                                                   if (availableElements < 1)
+                                                       jobs.push({
+                                                           elementId: this.state.elementId,
+                                                           task: "ADD_EXTRA",
+                                                           value: group // must be constraint if its parent is
+                                                       });
+                                                   else if (availableElements > 1)
+                                                       jobs.push({
+                                                           elementId: this.state.elementId,
+                                                           task: "REMOVE_EXTRA",
+                                                           value: group
+                                                       });
+                                               }
+
+                                               // update activeElement for the main element
+                                               let haveActiveChild = e.target.value !== "";
+                                               Object.keys(this.state.elementNode.children).forEach(group => {
+                                                   if (group !== "body")
+                                                       this.state.elementNode.children[group].forEach(elemId => {
+                                                           if (elemId !== childId && this.state.guiElements[elemId].activeElement) haveActiveChild = true;
+                                                       });
+                                                   else
+                                                       this.state.elementNode.children["body"].forEach(subGroup => {
+                                                           subGroup.forEach(elemId => {
                                                                if (elemId !== childId && this.state.guiElements[elemId].activeElement) haveActiveChild = true;
                                                            });
-                                                       else
-                                                           this.state.elementNode.children["body"].forEach(subGroup => {
-                                                               subGroup.forEach(elemId => {
-                                                                   if (elemId !== childId && this.state.guiElements[elemId].activeElement) haveActiveChild = true;
-                                                               });
-                                                           });
-                                                   });
-                                                   // if (haveActiveChild !== this.state.thisElement.activeElement)
-                                                   jobs.push({
-                                                       elementId: this.state.elementId,
-                                                       task: "UPDATE_ELEMENT",
-                                                       value: {
-                                                           activeElement: haveActiveChild,
-                                                           fake_activeElement: false
-                                                       }
-                                                   });
+                                                       });
+                                               });
+                                               // if (haveActiveChild !== this.state.thisElement.activeElement)
+                                               jobs.push({
+                                                   elementId: this.state.elementId,
+                                                   task: "UPDATE_ELEMENT",
+                                                   value: {activeElement: haveActiveChild}
+                                               });
 
-                                                   this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
-                                               }}
-                                        />
-                                    </div>
-                                    <div className={"rowItem"}><b>{childCondition.post}</b></div>
+                                               this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+                                           }}
+                                           onMouseMove={e => {
+                                               if (document.activeElement === e.target)
+                                                   e.target.blur();
+                                           }}
+                                    />
                                 </div>
+                                <div className={"rowItem"}><b>{childCondition.post}</b></div>
                             </div>
-                        </Fragment>
+                        </div>
                     );
                 case "dropdown":
                     return (
-                        <div className={"rowItem dropdownDiv"} key={i}>
+                        <div
+                            className={"rowItem dropdownDiv " + (childElement.activeElement ? "activeElement" : "")
+                            + (childElement.isConstraint ? " constraintElement" : "")} key={i}
+                            id={`id__${this.props.ruleIndex}__${childId}`}
+
+                            onDoubleClick={(e) => {
+                                e.stopPropagation(); // to stop propagating the click to the underneath elements
+                                this._handleConstraintElement(childId, childElement);
+                            }}
+                        >
                             <CustomDropDown
                                 menuItemsText={childCondition.items}
                                 menuItemsEvent={childCondition.items.map(item => item === "N/A" ? childCondition.placeholder : item)}
-                                menuDefault={childElement.value ? childElement.value : childCondition.placeholder}
+                                menuDefault={childElement.text && childCondition.items.indexOf(childElement.text) !== -1 ? childElement.text : childCondition.placeholder}
                                 onSelectFunction={(evt) => {
                                     let jobs = [{
                                         elementId: childId,
                                         task: "UPDATE_ELEMENT",
                                         value: {
-                                            value: evt,
+                                            text: evt,
                                             activeElement: !(evt === childCondition.placeholder)
                                         }
                                     }];
                                     jobs.push({
                                         elementId: this.state.elementId,
                                         task: "UPDATE_ELEMENT",
-                                        value: {
-                                            activeElement: !(evt === childCondition.placeholder),
-                                            fake_activeElement: false
-                                        }
+                                        value: {activeElement: !(evt === childCondition.placeholder)}
                                     });
                                     this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
                                 }}
@@ -385,7 +377,7 @@ class GuiComponent extends Component {
                                                           guiElements={this.state.guiElements}
                                                           onChangeGuiElement={this.props.onChangeGuiElement}
                                             />
-                                            {(j < this.state.elementNode.children["body"][i].length - 1) ? (
+                                            {(j > 0 && j < this.state.elementNode.children["body"][i].length - 1) ? (
                                                 <div className={"removeIcon"}>
                                                     <Button
                                                         onClick={() => {
@@ -413,7 +405,7 @@ class GuiComponent extends Component {
                                                         });
                                                         this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
                                                     }}
-                                                >Add Field</Button>
+                                                >Add {childCondition.grammar}</Button>
                                             </div>
                                         ) : null}
                                     </Fragment>
@@ -423,116 +415,128 @@ class GuiComponent extends Component {
                             case "smallText":
                             case "text":
                                 return (
-                                    <Fragment key={j}>
-                                        <div
-                                            className={"inputTextContainer "
-                                            + (childCondition.type === "wideText" ? "rowGroup"
-                                                : childCondition.type === "smallText" ? "smallText rowItem"
-                                                    : "rowItem")}>
-                                            <div>
-                                                <div className={"rowItem"}><b>{childCondition.pre}</b></div>
-                                                <div
-                                                    className={"inputTextDiv rowItem " + (childCondition.type === "wideText" ? "wideText" : "")}>
-                                                    <input type={"text"}
-                                                           className={"inputText" + (childElement.activeElement ? " activeElement " : "")}
-                                                           value={this.state.texts["body"][i][j]}
-                                                           placeholder={childCondition.placeholder}
-                                                           onChange={e => {
-                                                               let texts = this.state.texts;
-                                                               texts["body"][i][j] = e.target.value;
-                                                               this.setState({texts});
-                                                           }}
-                                                           onBlur={e => {
-                                                               if (this.state.elementNode.children["body"][i][j] === e.target.value) return;
-                                                               let jobs = [];
-                                                               // update the text
-                                                               jobs.push({
-                                                                   elementId: childId,
-                                                                   task: "UPDATE_ELEMENT",
-                                                                   value: {
-                                                                       text: e.target.value,
-                                                                       activeElement: e.target.value !== "",
-                                                                       fake_activeElement: false
-                                                                   }
-                                                               });
-                                                               // if the childElement is not unique and there is no available empty element, add one
-                                                               // or remove extras
-                                                               if (!childCondition.unique) {
-                                                                   let availableElements = this.state.elementNode.children["body"][i].reduce((count, elemId) => {
-                                                                       if (elemId !== childId)
-                                                                           return count + (this.state.guiElements[elemId].activeElement ? 0 : 1);
-                                                                       return count + (e.target.value !== "" ? 0 : 1)
-                                                                   }, 0);
-                                                                   if (availableElements < 1)
-                                                                       jobs.push({
-                                                                           elementId: this.state.elementId,
-                                                                           task: "ADD_EXTRA",
-                                                                           value: "body," + i
-                                                                       });
-                                                                   else if (availableElements > 1)
-                                                                       jobs.push({
-                                                                           elementId: this.state.elementId,
-                                                                           task: "REMOVE_EXTRA",
-                                                                           value: "body," + i
-                                                                       });
-                                                               }
+                                    <div key={j} id={`id__${this.props.ruleIndex}__${childId}`}
+                                         className={"inputTextContainer "
+                                         + (childCondition.type === "wideText" ? "rowGroup"
+                                             : childCondition.type === "smallText" ? "smallText rowItem"
+                                                 : "rowItem")
+                                         + (childElement.activeElement ? " activeElement" : "")
+                                         + (childElement.isConstraint ? " constraintElement" : "")}
 
-                                                               // update activeElement for the main element
-                                                               let haveActiveChild = e.target.value !== "";
-                                                               Object.keys(this.state.elementNode.children).forEach(group => {
-                                                                   if (group !== "body")
-                                                                       this.state.elementNode.children[group].forEach(elemId => {
+                                         onDoubleClick={(e) => {
+                                             e.stopPropagation(); // to stop propagating the click to the underneath elements
+                                             this._handleConstraintElement(childId, childElement);
+                                         }}
+                                    >
+                                        <div>
+                                            <div className={"rowItem"}><b>{childCondition.pre}</b></div>
+                                            <div
+                                                className={"inputTextDiv rowItem " + (childCondition.type === "wideText" ? "wideText" : "")}>
+                                                <input type={"text"}
+                                                       className={"inputText" + (childElement.activeElement ? " activeElement " : "")}
+                                                       value={this.state.texts["body"][i][j]}
+                                                       placeholder={childCondition.placeholder}
+                                                       onChange={e => {
+                                                           let texts = this.state.texts;
+                                                           texts["body"][i][j] = e.target.value;
+                                                           this.setState({texts});
+                                                       }}
+                                                       onBlur={e => {
+                                                           if (this.state.elementNode.children["body"][i][j] === e.target.value) return;
+                                                           let jobs = [];
+                                                           // update the text
+                                                           jobs.push({
+                                                               elementId: childId,
+                                                               task: "UPDATE_ELEMENT",
+                                                               value: {
+                                                                   text: e.target.value,
+                                                                   activeElement: e.target.value !== ""
+                                                               }
+                                                           });
+                                                           // if the childElement is not unique and there is no available empty element, add one
+                                                           // or remove extras
+                                                           if (!childCondition.unique) {
+                                                               let availableElements = this.state.elementNode.children["body"][i].reduce((count, elemId) => {
+                                                                   if (elemId !== childId)
+                                                                       return count + (this.state.guiElements[elemId].activeElement ? 0 : 1);
+                                                                   return count + (e.target.value !== "" ? 0 : 1)
+                                                               }, 0);
+                                                               if (availableElements < 1)
+                                                                   jobs.push({
+                                                                       elementId: this.state.elementId,
+                                                                       task: "ADD_EXTRA",
+                                                                       value: "body," + i
+                                                                   });
+                                                               else if (availableElements > 1)
+                                                                   jobs.push({
+                                                                       elementId: this.state.elementId,
+                                                                       task: "REMOVE_EXTRA",
+                                                                       value: "body," + i
+                                                                   });
+                                                           }
+
+                                                           // update activeElement for the main element
+                                                           let haveActiveChild = e.target.value !== "";
+                                                           Object.keys(this.state.elementNode.children).forEach(group => {
+                                                               if (group !== "body")
+                                                                   this.state.elementNode.children[group].forEach(elemId => {
+                                                                       if (elemId !== childId && this.state.guiElements[elemId].activeElement) haveActiveChild = true;
+                                                                   });
+                                                               else
+                                                                   this.state.elementNode.children["body"].forEach(subGroup => {
+                                                                       subGroup.forEach(elemId => {
                                                                            if (elemId !== childId && this.state.guiElements[elemId].activeElement) haveActiveChild = true;
                                                                        });
-                                                                   else
-                                                                       this.state.elementNode.children["body"].forEach(subGroup => {
-                                                                           subGroup.forEach(elemId => {
-                                                                               if (elemId !== childId && this.state.guiElements[elemId].activeElement) haveActiveChild = true;
-                                                                           });
-                                                                       });
-                                                               });
-                                                               jobs.push({
-                                                                   elementId: this.state.elementId,
-                                                                   task: "UPDATE_ELEMENT",
-                                                                   value: {
-                                                                       activeElement: haveActiveChild,
-                                                                       fake_activeElement: false
-                                                                   }
-                                                               });
+                                                                   });
+                                                           });
+                                                           jobs.push({
+                                                               elementId: this.state.elementId,
+                                                               task: "UPDATE_ELEMENT",
+                                                               value: {activeElement: haveActiveChild}
+                                                           });
 
-                                                               this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
-                                                           }}
-                                                    />
-                                                </div>
-                                                <div className={"rowItem"}><b>{childCondition.post}</b></div>
+                                                           this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+                                                       }}
+                                                       onMouseMove={e => {
+                                                           if (document.activeElement === e.target)
+                                                               e.target.blur();
+                                                       }}
+                                                />
                                             </div>
+                                            <div className={"rowItem"}><b>{childCondition.post}</b></div>
                                         </div>
-
-                                    </Fragment>
+                                    </div>
                                 );
                             case "dropdown":
                                 return (
-                                    <div className={"rowItem dropdownDiv"} key={j}>
+                                    <div
+                                        className={"rowItem dropdownDiv " + (childElement.activeElement ? "activeElement" : "")
+                                        + (childElement.isConstraint ? " constraintElement" : "")} key={j}
+                                        id={`id__${this.props.ruleIndex}__${childId}`}
+
+                                        onDoubleClick={(e) => {
+                                            e.stopPropagation(); // to stop propagating the click to the underneath elements
+                                            this._handleConstraintElement(childId, childElement);
+                                        }}
+                                    >
                                         <CustomDropDown
+
                                             menuItemsText={childCondition.items}
                                             menuItemsEvent={childCondition.items.map(item => item === "N/A" ? childCondition.placeholder : item)}
-                                            menuDefault={childElement.value ? childElement.value : childCondition.placeholder}
+                                            menuDefault={childElement.text && childCondition.items.indexOf(childElement.text) !== -1 ? childElement.text : childCondition.placeholder}
                                             onSelectFunction={(evt) => {
                                                 let jobs = [{
                                                     elementId: childId,
                                                     task: "UPDATE_ELEMENT",
                                                     value: {
-                                                        value: evt,
+                                                        text: evt,
                                                         activeElement: !(evt === childCondition.placeholder)
                                                     }
                                                 }];
                                                 jobs.push({
                                                     elementId: this.state.elementId,
                                                     task: "UPDATE_ELEMENT",
-                                                    value: {
-                                                        activeElement: !(evt === childCondition.placeholder),
-                                                        fake_activeElement: false
-                                                    }
+                                                    value: {activeElement: !(evt === childCondition.placeholder)}
                                                 });
                                                 this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
                                             }}
@@ -558,21 +562,84 @@ class GuiComponent extends Component {
             );
         return (
             <div className={"rowItem"}>
-                <b onClick={() => {
-                    if (this.state.thisElement.selectedElement || (this.state.thisElement.activeElement && !this.state.thisElement.fake_activeElement)) return;
-                    let status = this.state.thisElement.activeElement;
-                    let jobs = [];
-                    jobs.push({
-                        elementId: this.state.elementId,
-                        task: "UPDATE_ELEMENT",
-                        value: {activeElement: !status, fake_activeElement: true}
-                    });
-                    this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
-                }}>
+                <b>
                     {this.state.elementCondition[category]}
                 </b>
             </div>
         )
+    }
+
+    renderOverlayDiv() {
+        return (
+            <div ref={node => this.overlayDiv = node}
+                 className={"overlay"}
+                 id={`overlay__${this.props.ruleIndex}__${this.state.elementId}`}
+                 style={{display: this.props.root || this.state.thisElement.activeElement ? "none" : "block"}}>
+                <div className={"messageDivContainer"}>
+                    <div className={"messageDiv"}>
+                        <strong>Specify {this.state.elementCondition.grammar}</strong>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+
+    /**
+     * render the dialog for documentation
+     * @returns {XML}
+     */
+    renderDocModalDialog() {
+        return (
+            <Modal show={this.state.showDocModal} onHide={() => this.setState({showDocModal: false})}
+                   backdrop={"static"} keyboard={true}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{this.state.elementCondition.grammar}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <span
+                        dangerouslySetInnerHTML={{__html: marked(documentations_IMarkdownString[this.state.elementCondition.grammar].value)}}/>
+                </Modal.Body>
+            </Modal>
+        )
+    }
+
+    _handleActivateElement(elementId, thisElement) {
+        if (thisElement.selectedElement || thisElement.activeElement) return;
+        let status = thisElement.activeElement;
+        let jobs = [];
+        jobs.push({
+            elementId: elementId,
+            task: "UPDATE_ELEMENT",
+            value: {
+                activeElement: !status,
+                isConstraint: false
+            }
+        });
+
+        this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+    }
+
+    _handleConstraintElement(elementId, thisElement) {
+        if (!thisElement.activeElement) return;
+        let jobs = [];
+        jobs.push({
+            elementId: elementId,
+            task: "UPDATE_ELEMENT",
+            value: {isConstraint: !thisElement.isConstraint}
+        });
+        this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+    }
+
+    _handleSelectedElement(elementId, thisElement, elementCondition) {
+        if (!(thisElement.activeElement && elementCondition.canBeSelected)) return;
+        let jobs = [];
+        jobs.push({
+            elementId: elementId,
+            task: "SELECT_ELEMENT",
+            value: true
+        });
+        this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
     }
 
 }
@@ -663,8 +730,8 @@ class CustomToggle extends Component {
     render() {
         return (
             <span onClick={this.handleClick}>
-                {this.props.children}
-            </span>
+        {this.props.children}
+        </span>
         );
     }
 }

@@ -24,9 +24,12 @@ export const ignoreFile = (shouldIgnore) => {
     return {type: "IGNORE_FILE", shouldIgnore: shouldIgnore};
 };
 
+
 export const updateFilePath = (filePath) => {
     return {type: "FILE_PATH", value: filePath};
 };
+
+
 
 export const clickedOnForward = () => {
     return {type: "CLICKED_ON_FORWARD"};
@@ -65,12 +68,12 @@ export const changeEditMode = (ruleIndex, newEditMode) => {
     return {type: "CHANGE_EDIT_MODE", ruleIndex: ruleIndex, newEditMode: newEditMode}
 };
 
-export const receiveGuiTree = (ruleIndex, newTreeData, autoCompleteText, quantifierXPath, constraintXPath) => {
+export const receiveGuiTree = (ruleIndex, newTreeData, autoCompleteArray, quantifierXPath, constraintXPath) => {
     return {
         type: "RECEIVE_GUI_TREE",
         ruleIndex: ruleIndex,
         newTreeData: newTreeData,
-        autoCompleteText: autoCompleteText,
+        autoCompleteArray: autoCompleteArray,
         quantifierXPath: quantifierXPath,
         constraintXPath: constraintXPath
     };
@@ -108,10 +111,10 @@ export const changeGuiElement = (ruleIndex, tasks) => {
     };
 };
 
-export const changeAutoCompleteTextFromGUI = (ruleIndex, newText) => {
+export const changeAutoCompleteTextFromGUI = (ruleIndex, newAutoCompleteArray) => {
     return {
         type: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI",
         ruleIndex: ruleIndex,
-        newText: newText
+        newAutoCompleteArray: newAutoCompleteArray
     };
 };
