@@ -130,21 +130,23 @@ export const documentations_IMarkdownString = {
     "QUOTES": {
         isTrusted: true, value:
         "##### Quoted words\n" +
-        "The Rule Generator interface allows to specify the exact value of some elements directly. Values must be **quoted**.\n" +
+        "The Rule Generator interface allows to specify the value of some elements directly. Values must be **quoted**.\n" +
         "For example, `@Entity` can be expresses as: \n" +
         "```\n" +
         "annotation \"Entity\"\n" +
         "``` \n" +
-        "There are some regex-like notations that can be used in both the textual anad graphical UI.\n" +
+        "There are some regex-like notations that can be used in both the textual and graphical UI.\n" +
         "##### **`...`**  \n" +
         "Equals to any sequance of characters. It is equivalent to `.*` in regex. For example:\n" +
         " **\"pre...\"** equals to values that _start with_ the prefix **pre** and end with any sequance of characters.\n" +
-        " **\"...post\"** equals to values that start with any sequance of characters and _end with_ the postfix **post**.\n" +
+        " **\"...post\"** equals to values that start with any sequence of characters and _end with_ the postfix **post**.\n" +
+        " **\"...mid...\"** equals to values that _contain_ the sub-string **mid**.\n" +
         "##### **`!`** \n" +
         "Equals to _NOT_. For example:\n" +
         "**\"!word\"** equals to any value except **'word'**.\n" +
         " **\"!pre...\"** equals to any value that does **NOT** start with the prefix **'pre'**.\n" +
-        " **\"!...post\"** equals to any value that does **NOT** end with the postfix **'post'**."
+        " **\"!...post\"** equals to any value that does **NOT** end with the postfix **'post'**.\n" +
+        " **\"!...mid...\"** equals to any value that does **NOT** contain the sub-string **'mod'**."
     },
     "AND_OR_PAREN": {
         isTrusted: true, value:
@@ -217,9 +219,36 @@ export const documentations_IMarkdownString = {
         "```"
     },
 
+    "Superclass": {
+        isTrusted: true, value:
+        "#### Superclass\n" +
+        "Java classes may extend superclasses. If the name of the superclass is not known or important " +
+        "the word *Superclass* is used as placeholder of the superclass name\n" +
+        "```\n" +
+        "class with extension of Superclass" +
+        "```"
+    },
+    "Interface": {
+        isTrusted: true, value:
+        "#### Interface\n" +
+        "Java classes may implement an interface. If the name of the interface is not known or important " +
+        "the word *Interface* is used as placeholder of the interface name\n" +
+        "```\n" +
+        "class with implementation of Interface" +
+        "```"
+    },
+
     "name": {
         isTrusted: true, value:
-            ""
+        "#### name\n" +
+        "Name is representing name of java classes, variables, methods, and parameters.\n" +
+        "```java\n" +
+        "public class MyClass { \\\\ MyClass is the name of the class\n" +
+        "    int myVariable; \\\\ myVariable is the name of variable\n" +
+        "    void foo (int param1) { \\\\ foo is the name of class and param1 is the name of the parameter\n" +
+        "    }\n" +
+        "}\n" +
+        "```"
     },
     "annotation": {
         isTrusted: true, value:
@@ -369,10 +398,26 @@ export const documentations_IMarkdownString = {
         "}\n" +
         "```"
     },
+    "initial value": {
+        isTrusted: true, value:
+        "#### Initial Value\n" +
+        "Initial value is a value or expression assigned to a variable upon declaring.\n" +
+        "```java\n" +
+        "public MyClass mc = new MyClass(); \\\\ new MyClass() is the initial value\n" +
+        "int i = foo(); \\\\ foo() is the initial value\n" +
+        "String str = \"Hi\"; \\\\ \"Hi\" is the initial value\n" +
+        "```"
+    },
+    "interface": {
+        isTrusted: true, value:
+        "#### interface\n" +
+        "An interface represents a java `interface`\n" +
+        "Interface is not supported currently."
+    },
     "class": {
         isTrusted: true, value:
         "#### class\n" +
-        "A class is a template from which individual objects are created.\n" +
+        "A class represents a java `class`\n" +
         "``` java\n" +
         "public class Student {\n" +
         "    String name;\n" +

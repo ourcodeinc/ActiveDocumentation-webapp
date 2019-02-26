@@ -28,6 +28,21 @@ import RuleGeneratorText from "./ruleGenerationText/ruleGeneratorText";
 import Utilities from '../core/utilities';
 import {error_messages_IMarkdownString} from "./ruleGenerationText/textConstant";
 
+import title_description_filled from '../resources/title_description_filled.png';
+import auto_complete_filled from '../resources/auto_complete_filled.png';
+import auto_complete_info_icon from '../resources/auto_complete_info_icon.png';
+import auto_complete_info from '../resources/auto_complete_info.png';
+import editor_error from '../resources/editor_error.png';
+import editor_error_close_icon from '../resources/editor_error_close_icon.png';
+import editor_error_minimize_icon from '../resources/editor_error_minimize_icon.png';
+import editor_error_maximize_icon from '../resources/editor_error_maximize_icon.png';
+import editor_hover from '../resources/editor_hover.png';
+import gui_element_example from '../resources/gui_element_example.png';
+import constraint_element from '../resources/constraint_element.png';
+import element_of_interest from '../resources/element_of_interest.png';
+import tags from '../resources/tags.png';
+import new_tag from '../resources/new_tag.png';
+
 
 class EditRuleForm extends Component {
 
@@ -42,9 +57,13 @@ class EditRuleForm extends Component {
             console.error(`'changeEditMode' is required in props when creating/editing a rule.`);
 
 
+        /*
+        This constant contains JSX and thus a react.Node
+         */
         this.tourGuideSteps = [
             {
                 target: `#title_description_div_${this.ruleIndex}`,
+                title: 'Rule Title and Description',
                 content: <span style={{textAlign: "left"}}>
                     <p>Each design rule should have a title by which it is displayed in the tool.
                         Design rule titles are often single-line statements about the rule.</p>
@@ -52,56 +71,141 @@ class EditRuleForm extends Component {
                         can be expressed through design rule description.</p>
                     <p>Both <strong>title</strong> and <strong>description</strong> are mandatory
                         fields in generating new rule.</p>
+                    <img className={"tutorialImage"} src={title_description_filled} alt={"Title Description Example"}/>
                 </span>,
-                title: 'Rule Title and Description',
                 disableBeacon: true
-            }, // 0
-            {
-                target: `#text_ui_div_${this.ruleIndex}`,
-                content: <span style={{float: "left", textAlign: "left"}}>You can write design rules here.</span>,
-                title: "Writing a Design Rule",
-                disableBeacon: true
-            }, // 1
+            }, //0
+
             {
                 target: `#gui_div_${this.ruleIndex}`,
-                content: <span
-                    style={{float: "left", textAlign: "left"}}>You can write the code you want to match in the project here.</span>,
                 title: 'GUI - Graphical User Interface for Writing Code',
+                content: <span style={{textAlign: "left"}}>
+                    <p>You can write the code you want to match in the project here.</p>
+                    <p>The GUI includes elements whose attributes can be modified. These elements corresponds to Java pieces of code.</p>
+                </span>,
                 disableBeacon: true
-            },  // 2
-            {
-                target: `#gui_error_${this.ruleIndex}`,
-                content: <span
-                    style={{float: "left", textAlign: "left"}}>The GUI error messages are displayed here.</span>,
-                title: 'GUI Errors',
-                disableBeacon: true
-            },  // 3
+            },  //1
             {
                 target: `#id__${this.ruleIndex}__0-0-0`,
-                content: <span
-                    style={{float: "left", textAlign: "left"}}>You can write the code you want to match in the project here.</span>,
                 title: 'GUI Elements',
+                content: <span style={{textAlign: "left"}}>
+                    <p>For example, element can be an <strong>annotation</strong></p>
+                </span>,
                 disableBeacon: true
-            }, // 4
+            }, //2
+            {
+                target: `#id__${this.ruleIndex}__0-1-0`,
+                title: 'GUI Elements',
+                content: <span style={{textAlign: "left"}}>
+                    <p>Or, <strong>visibility</strong> property.</p>
+                </span>,
+                disableBeacon: true
+            }, //3
+            {
+                target: `#id__${this.ruleIndex}__0-2-0`,
+                title: 'GUI Elements',
+                content: <span style={{textAlign: "left"}}>
+                    <p>Or, <strong>specifier</strong> property.</p>
+                </span>,
+                disableBeacon: true
+            }, //4
+            {
+                target: `#id__${this.ruleIndex}__0-7-0`,
+                title: 'GUI Elements',
+                content: <span style={{textAlign: "left"}}>
+                    <p>Or other properties displayed in a box.</p>
+                    <p>Moving the cursor to the invisible element, make the element visible.</p>
+                    <img className={"tutorialImage"} src={gui_element_example} alt={"GUI Element Example"}/>
+                </span>,
+                disableBeacon: true
+            }, //5
+            {
+                target: `#id__${this.ruleIndex}__0`,
+                title: 'GUI - Constraint Elements',
+                content: <span style={{textAlign: "left"}}>
+                    <p>To create a design rule, at least one element must be selected as constraint by double-clicking on the element.</p>
+                    <p>Constraint elements are specified by <span style={{color: "#3333cc"}}>blue</span> color.</p>
+                    <img className={"tutorialSmallImage"} src={constraint_element} alt={"Constraint Element Example"}/>
+                </span>,
+                disableBeacon: true
+            }, //6
             {
                 target: `#gui__star__${this.props.ruleIndex}__0`,
-                content: <span style={{float: "left", textAlign: "left"}}>
-                    The GUI will select an Element of Interest automatically. However, if you desire to select a different element,
-                    you may click on the star icon on the right-hand side of the desired element.
+                title: 'GUI - Element of Interest',
+                content: <span style={{textAlign: "left"}}>
+                    <p>The GUI will select an Element of Interest automatically. However, if you desire to select a different element,
+                        you may click on the star icon on the right-hand side of the desired element.</p>
+                    <p>If an element is selected, the star and the border of the containing box have <span
+                        style={{color: "#e5a727"}}>golden</span> color.</p>
+                    <img className={"tutorialImage"} src={element_of_interest} alt={"Element of Interest Example"}/>
                 </span>,
-                title: 'GUI - Select Element of Interest',
                 disableBeacon: true
-            },  // 5
+            },  //7
+
+            {
+                target: `#text_ui_div_${this.ruleIndex}`,
+                title: "Writing a Design Rule",
+                content: <span style={{textAlign: "left"}}>
+                    <p>You can write design rules here.</p>
+                    <p>The text editor includes features such as Auto-Complete which helps to write design rules.
+                    It can be activated using <kbd>CTRL</kbd>+<kbd>Space</kbd></p>
+                    <img className={"tutorialImage"} src={auto_complete_filled} alt={"Auto Complete Example"}/>
+
+                </span>,
+                disableBeacon: true
+            }, //8
+            {
+                target: `#text_ui_div_${this.ruleIndex}`,
+                title: "Text Editor - Auto Complete",
+                content: <span style={{textAlign: "left"}}>
+                    <p>Some suggestions include additional information which provides information on the suggestion.
+                    It can be activated using <kbd>CTRL</kbd>+<kbd>Space</kbd> or <img style={{height: "1.1em"}}
+                                                                                       src={auto_complete_info_icon}
+                                                                                       alt={"Auto Complete Information Icon"}/></p>
+                    <img className={"tutorialImage"} src={auto_complete_info}
+                         alt={"Auto Complete Information Example"}/>
+                </span>,
+                disableBeacon: true
+            }, //9
+            {
+                target: `#text_ui_div_${this.ruleIndex}`,
+                title: "Text Editor - Auto Complete (Additional Information)",
+                content: <span style={{textAlign: "left"}}>
+                    <p>While writing the design rule, errors will be displayed below the error.</p>
+                    <img className={"tutorialImage"} src={editor_error} alt={"Editor Error Example"}/>
+                    <br/>
+                    <p>Icons <img style={{height: "1.1em"}} src={editor_error_close_icon}
+                                  alt={"Editor Error Close Icon"}/> and <img style={{height: "1.1em"}}
+                                                                             src={editor_error_minimize_icon}
+                                                                             alt={"Editor Error Minimize Icon"}/> are used to
+                    close and minimize the error messages. To expand the minimized message click on<img
+                            style={{height: "1.1em"}} src={editor_error_maximize_icon}
+                            alt={"Editor Error Maximize Icon"}/>.</p>
+                </span>,
+                disableBeacon: true
+            }, //10
+            {
+                target: `#text_ui_div_${this.ruleIndex}`,
+                title: "Text Editor - Link to GUI",
+                content: <span style={{textAlign: "left"}}>
+                    <p>Hovering over the text in the editor will display information about the text and highlight the GUI element if applicable.</p>
+                    <img className={"tutorialImage"} src={editor_hover} alt={"Auto Complete Hover Example"}/>
+                </span>,
+                disableBeacon: true
+            }, //11
+
             {
                 target: `#tag_div_${this.ruleIndex}`,
                 content: <span style={{textAlign: "left"}}>
                     <p>Tags are used to organize design rules. Related design rules may have similar tags.</p>
                     <p><strong>Tags</strong> can be assigned to each design rule.</p>
+                    <img className={"tutorialSmallImage"} src={tags} alt={"Tags Example"}/>
                     <p>New tags can be generated here as well.</p>
+                    <img className={"tutorialImage"} src={new_tag} alt={"New Tag Example"}/>
                 </span>,
                 title: 'Rule Tags',
                 disableBeacon: true
-            }, // 6
+            }, //12
             {
                 target: `#file_constraint_div_${this.ruleIndex}`,
                 content: <span style={{textAlign: "left"}}>
@@ -118,18 +222,17 @@ class EditRuleForm extends Component {
                 the relative path is "src/someFile.java"</p> </span>,
                 title: 'Specifying File/Folder Constraints',
                 disableBeacon: true
-            }, // 7
+            }, //13
         ];
         // used as enum
         this.stepNames = {
             TITLE_DESCRIPTION: 0,
-            TAGS: 1,
-            FILE_FOLDER: 2,
-            TEXT_UI: 3,
-            GUI: 4,
-            GUI_ERROR: 5,
-            GUI_ELEMENT: 6,
-            GUI_STAR: 7
+            GUI: 1,
+            GUI_CONSTRAINT: 6,
+            GUI_STAR: 7,
+            TEXT_UI: 8,
+            TAGS: 12,
+            FILE_FOLDER: 13,
         };
 
         this.state = {
@@ -435,7 +538,7 @@ class EditRuleForm extends Component {
                                       onClick={() => this.setState({
                                           tourShouldRun: true,
                                           isTourGuide: false,
-                                          tourStepIndex: this.stepNames.GUI_ELEMENT
+                                          tourStepIndex: this.stepNames.GUI_CONSTRAINT
                                       })}/>
                 </div>
                 <div className={"tutorialText"}>
@@ -561,7 +664,7 @@ class EditRuleForm extends Component {
                                   onClick={() => this.setState({
                                       tourShouldRun: true,
                                       isTourGuide: false,
-                                      tourStepIndex: this.stepNames.GUI_ELEMENT
+                                      tourStepIndex: this.stepNames.GUI_CONSTRAINT
                                   })}/>
             </div>
         )
@@ -675,6 +778,8 @@ class EditRuleForm extends Component {
                     }
 
                 }}
+
+                floaterProps={{disableAnimation: true}}
 
                 styles={{
                     options: {

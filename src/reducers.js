@@ -518,10 +518,12 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         break;
                 }
             });
-            return {
-                ...copiedState,
+
+            return Object.assign({}, state, {
+                ruleTable: copiedState.ruleTable,
+                newOrEditRule: copiedState.newOrEditRule,
                 message: "CHANGE_GUI_ELEMENT"
-            };
+            });
 
         case "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI":
             if (action["ruleIndex"] !== -1) {

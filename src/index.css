@@ -675,3 +675,13 @@ body {
     color: #606060 !important;
     opacity: 0.5;
 }
+
+img.tutorialImage {
+    max-width: 80%;
+    max-height: 170px;
+}
+
+img.tutorialSmallImage {
+    max-width: 30%;
+    max-height: 100px;
+}

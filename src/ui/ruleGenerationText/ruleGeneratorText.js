@@ -91,6 +91,14 @@ class RuleGeneratorText extends Component {
 
 
     /**
+     * before un-mounting dispose unwanted registration
+     */
+    componentWillUnmount() {
+        this.hoverProvider.dispose();
+        this.completionProvider.dispose()
+    }
+
+    /**
      * For configuring monaco editor
      */
     componentDidMount() {
@@ -107,11 +115,11 @@ class RuleGeneratorText extends Component {
         });
 
         // on hover information
-        monaco.languages.registerHoverProvider('mySpecialLanguage', {
+        this.hoverProvider = monaco.languages.registerHoverProvider('mySpecialLanguage', {
             provideHover: (model, position, token) => {
                 let range = new monaco.Range(1, 1, position.lineNumber, position.column);
                 let arrayIndex = model.getValueInRange(range).split(" ").length - 1;
-
+                let doc = {value: ""};
                 if (this.autoCompleteArrayHover.length > arrayIndex) {
                     if (this.autoCompleteArrayHover[arrayIndex].id) {
                         let els = document.getElementsByClassName("hoveredAutoComplete");
@@ -122,40 +130,34 @@ class RuleGeneratorText extends Component {
                             document.getElementById("id__" + this.props.ruleIndex + "__" + this.autoCompleteArrayHover[arrayIndex].id).classList.remove("hoveredAutoComplete"), 1200);
                     }
 
-                    let docs = "", thisWord = this.autoCompleteArrayHover[arrayIndex].text;
+                    let thisWord = this.autoCompleteArrayHover[arrayIndex].text;
                     if (Object.keys(documentations_IMarkdownString).indexOf(thisWord) !== -1)
-                        docs = documentations_IMarkdownString[thisWord].value;
+                        doc = documentations_IMarkdownString[thisWord];
 
-                    let xWord = thisWord;
                     if (arrayIndex < this.autoCompleteArrayHover.length - 1) {
-                        xWord = xWord + " " + this.autoCompleteArrayHover[arrayIndex + 1].text;
+                        let xWord = thisWord + " " + this.autoCompleteArrayHover[arrayIndex + 1].text;
                         if (Object.keys(documentations_IMarkdownString).indexOf(xWord) !== -1)
-                            docs = documentations_IMarkdownString[xWord].value;
+                            doc = documentations_IMarkdownString[xWord];
                     }
                     if (arrayIndex > 0) {
-                        xWord = this.autoCompleteArrayHover[arrayIndex - 1].text + " " + xWord;
+                        let xWord = this.autoCompleteArrayHover[arrayIndex - 1].text + " " + thisWord;
                         if (Object.keys(documentations_IMarkdownString).indexOf(xWord) !== -1)
-                            docs = documentations_IMarkdownString[xWord].value;
+                            doc = documentations_IMarkdownString[xWord];
                     }
 
-                    if (thisWord === "with") docs = documentations_IMarkdownString["WITH"].value;
-                    if (thisWord === "of") docs = documentations_IMarkdownString["OF"].value;
+                    if (thisWord === "with") doc = documentations_IMarkdownString["WITH"];
+                    if (thisWord === "of") doc = documentations_IMarkdownString["OF"];
                     if (thisWord === "and" || thisWord === "or" || thisWord === "(" || thisWord === ")")
-                        docs = documentations_IMarkdownString["AND_OR_PAREN"].value;
-                    if (thisWord === "must" || thisWord === "have") docs = documentations_IMarkdownString["MUST_HAVE"].value;
-                    if (thisWord.startsWith("\"")) docs = documentations_IMarkdownString["QUOTES"].value;
-
-                    return {
-                        contents: [
-                            {value: docs},
-                        ]
-                    }
+                        doc = documentations_IMarkdownString["AND_OR_PAREN"];
+                    if (thisWord === "must" || thisWord === "have") doc = documentations_IMarkdownString["MUST_HAVE"];
+                    if (thisWord.startsWith("\"")) doc = documentations_IMarkdownString["QUOTES"];
                 }
+                return {contents: [doc]}
             }
         });
 
         // auto complete suggestions
-        monaco.languages.registerCompletionItemProvider('mySpecialLanguage', {
+        this.completionProvider = monaco.languages.registerCompletionItemProvider('mySpecialLanguage', {
             triggerCharacters: [' '].concat('abcdefghijklmnopqrstuvwxyz'.split('')), // if removed the suggestions won't be updated for the first word
             provideCompletionItems: (model, position, context, token) => {
                 let resultSuggestion = [];
@@ -174,7 +176,7 @@ class RuleGeneratorText extends Component {
                 });
 
                 // underline the last word if there is an error
-                if (resultSuggestion.length === 1 && resultSuggestion[0].label === "Error") {
+                if (model.getValue() !== "" && resultSuggestion.length === 1 && resultSuggestion[0].label === "Error") {
                     // get the latest word and its index
                     let wordsArray = model.getValue().split(" ");
                     let index;
@@ -773,7 +775,7 @@ class RuleGeneratorText extends Component {
                 // after special word
                 else if (!isMiddleOfWord && !isSecondWord && lastWordIndex > 1) {
                     // … [X] preWord special_word [based on X]
-                    if (xWord && xWord !== "" && autoComplete_suggestion[xWord].preWord
+                    if (xWord && xWord !== "" && autoComplete_suggestion[xWord] && autoComplete_suggestion[xWord].preWord
                         && autoComplete_suggestion[xWord].preWord === wordsArray[lastWordIndex - 1])
                         xWord = selectXWord(lastWordIndex - 2);
                 }
