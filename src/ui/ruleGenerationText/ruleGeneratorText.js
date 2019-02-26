@@ -214,15 +214,8 @@ class RuleGeneratorText extends Component {
                 formStatus: this.editor.getModel().getValue() === "" ? "has-error" : this.state.formStatus
             });
 
-            if (this.autoCompleteArray.map(d => d.text).join(" ") !== this.editor.getModel().getValue()) {
-                let txt = this.editor.getModel().getValue().trim();
-                txt = txt.replace(/\(/g, " ( ");
-                txt = txt.replace(/\)/g, " ) ");
-                txt = txt.replace(/\s\s/g, " "); // remove extra spaces
-                this.props.onBlur(txt.split(" ").map(d => {
-                    return {id: "", text: d}
-                }));
-            }
+            if (this.autoCompleteArray.map(d => d.text).join(" ") !== this.editor.getModel().getValue())
+                this.props.onBlur(this.editor.getModel().getValue().trim());
         });
 
         this.editor.onKeyDown((e) => {
@@ -779,9 +772,8 @@ class RuleGeneratorText extends Component {
 
                 // after special word
                 else if (!isMiddleOfWord && !isSecondWord && lastWordIndex > 1) {
-                    xWord = selectXWord(lastWordIndex);
                     // … [X] preWord special_word [based on X]
-                    if (xWord !== "" && autoComplete_suggestion[xWord].preWord
+                    if (xWord && xWord !== "" && autoComplete_suggestion[xWord].preWord
                         && autoComplete_suggestion[xWord].preWord === wordsArray[lastWordIndex - 1])
                         xWord = selectXWord(lastWordIndex - 2);
                 }
@@ -793,6 +785,10 @@ class RuleGeneratorText extends Component {
                         if (lastWordIndex > 1 && findUnResolvedParenthesis(wordsArray) > 0) {
                             suggText = ")";
                             infoText = "";
+                            results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
+                            suggText = "and";
+                            results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
+                            suggText = "or";
                             results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
                         }
                         // still typing the keyword

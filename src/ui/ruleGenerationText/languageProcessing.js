@@ -11,15 +11,18 @@ export default async function verifyTextBasedOnGrammar(autoCompleteText) {
     if (autoCompleteText === "") return Promise.reject("EMPTY_FIELD");
     let replacedPhrases = replacePhrase(autoCompleteText);
     if (replacedPhrases === "") return Promise.reject("NO_INPUT_AFTER_REPLACING_PHRASES");
-    let lemmatized = await lemmatize(replacedPhrases);
-    if (lemmatized === "") return Promise.reject("NO_INPUT_AFTER_LEMMATIZATION");
-    let returnedObj = antlr(lemmatized.trim() + " ");
+    let returnValue = await lemmatize(replacedPhrases);
+    if (returnValue.lemmatized === "") return Promise.reject("NO_INPUT_AFTER_LEMMATIZATION");
+    let returnedObj = antlr(returnValue.lemmatized.trim() + " ");
     if (returnedObj.hasOwnProperty("grammarErrors") || returnedObj.hasOwnProperty("xpathTraverseErrors"))
         return Promise.reject(returnedObj);
     return {
         quantifierXPath: returnedObj.results.quantifier,
         constraintXPath: returnedObj.results.constraint,
-        grammarTree: returnedObj.grammarTree
+        grammarTree: returnedObj.grammarTree,
+        wordArray: returnValue.wordArray.map(d => {
+            return {id: "", text: d}
+        })
     };
 }
 
@@ -46,25 +49,28 @@ const lemmatize = (input) => {
     let tagger = posTagger();
     let pos = tagger.tagSentence(input);
     let lemmatized = [];
+    let wordArray = [];
     pos.forEach(node => {
         if (node.pos !== "DT") {
-            if (node.tag === "quoted_phrase" || !node.lemma
-                || node.value === "Superclass" || node.value === "Interface") // exceptions
+            if (node.tag === "quoted_phrase" || node.value === "Superclass" || node.value === "Interface") { // exceptions
+                lemmatized.push(node.value + " ");
+                wordArray.push(node.value)
+            }
+            else if (node.tag === "punctuation") {
                 lemmatized.push(node.value);
-            else
-                lemmatized.push(node.lemma);
+                wordArray.push(node.value)
+            }
+            else if (!node.lemma) {
+                lemmatized.push(node.value + " ");
+                wordArray.push(node.value);
+            }
+            else {
+                lemmatized.push(node.lemma + " ");
+                wordArray.push(node.lemma)
+            }
         }
     });
-
-    let str = lemmatized.join(" ");
-    // str = stringReplaceAll(str, " ''", "\"");
-    // str = stringReplaceAll(str, " and ", "  and "); // for extra spaces around and
-    // str = stringReplaceAll(str, " or ", "  or "); // for extra spaces around or
-    // str = stringReplaceAll(str, "`` ", "\"");
-    str = str.replace(/\( /g, "(");
-    str = str.replace(/ \) /g, " )"); // no change!
-
-    return str
+    return {lemmatized: lemmatized.join("").trim(), wordArray: wordArray};
 };
 
 

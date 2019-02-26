@@ -57,6 +57,42 @@ class EditRuleForm extends Component {
                 disableBeacon: true
             }, // 0
             {
+                target: `#text_ui_div_${this.ruleIndex}`,
+                content: <span style={{float: "left", textAlign: "left"}}>You can write design rules here.</span>,
+                title: "Writing a Design Rule",
+                disableBeacon: true
+            }, // 1
+            {
+                target: `#gui_div_${this.ruleIndex}`,
+                content: <span
+                    style={{float: "left", textAlign: "left"}}>You can write the code you want to match in the project here.</span>,
+                title: 'GUI - Graphical User Interface for Writing Code',
+                disableBeacon: true
+            },  // 2
+            {
+                target: `#gui_error_${this.ruleIndex}`,
+                content: <span
+                    style={{float: "left", textAlign: "left"}}>The GUI error messages are displayed here.</span>,
+                title: 'GUI Errors',
+                disableBeacon: true
+            },  // 3
+            {
+                target: `#id__${this.ruleIndex}__0-0-0`,
+                content: <span
+                    style={{float: "left", textAlign: "left"}}>You can write the code you want to match in the project here.</span>,
+                title: 'GUI Elements',
+                disableBeacon: true
+            }, // 4
+            {
+                target: `#gui__star__${this.props.ruleIndex}__0`,
+                content: <span style={{float: "left", textAlign: "left"}}>
+                    The GUI will select an Element of Interest automatically. However, if you desire to select a different element,
+                    you may click on the star icon on the right-hand side of the desired element.
+                </span>,
+                title: 'GUI - Select Element of Interest',
+                disableBeacon: true
+            },  // 5
+            {
                 target: `#tag_div_${this.ruleIndex}`,
                 content: <span style={{textAlign: "left"}}>
                     <p>Tags are used to organize design rules. Related design rules may have similar tags.</p>
@@ -65,7 +101,7 @@ class EditRuleForm extends Component {
                 </span>,
                 title: 'Rule Tags',
                 disableBeacon: true
-            }, // 1
+            }, // 6
             {
                 target: `#file_constraint_div_${this.ruleIndex}`,
                 content: <span style={{textAlign: "left"}}>
@@ -82,43 +118,7 @@ class EditRuleForm extends Component {
                 the relative path is "src/someFile.java"</p> </span>,
                 title: 'Specifying File/Folder Constraints',
                 disableBeacon: true
-            }, // 2
-            {
-                target: `#text_ui_div_${this.ruleIndex}`,
-                content: <span style={{float: "left", textAlign: "left"}}>You can write design rules here.</span>,
-                title: "Writing a Design Rule",
-                disableBeacon: true
-            }, // 3
-            {
-                target: `#gui_div_${this.ruleIndex}`,
-                content: <span
-                    style={{float: "left", textAlign: "left"}}>You can write the code you want to match in the project here.</span>,
-                title: 'GUI - Graphical User Interface for Writing Code',
-                disableBeacon: true
-            },  // 4
-            {
-                target: `#gui_error_${this.ruleIndex}`,
-                content: <span
-                    style={{float: "left", textAlign: "left"}}>The GUI error messages are displayed here.</span>,
-                title: 'GUI Errors',
-                disableBeacon: true
-            },  // 5
-            {
-                target: `#id__${this.ruleIndex}__0-0-0`,
-                content: <span
-                    style={{float: "left", textAlign: "left"}}>You can write the code you want to match in the project here.</span>,
-                title: 'GUI Elements',
-                disableBeacon: true
-            }, // 6
-            {
-                target: `#gui__star__${this.props.ruleIndex}__0`,
-                content: <span style={{float: "left", textAlign: "left"}}>
-                    The GUI will select an Element of Interest automatically. However, if you desire to select a different element,
-                    you may click on the star icon on the right-hand side of the desired element.
-                </span>,
-                title: 'GUI - Select Element of Interest',
-                disableBeacon: true
-            }  // 7
+            }, // 7
         ];
         // used as enum
         this.stepNames = {
@@ -169,7 +169,7 @@ class EditRuleForm extends Component {
             constraintXPath: "",
             editorError: "",
             showAlert: true,
-            autoCompleteArray: [],
+            autoCompleteArray: []
         };
 
         // existing rule
@@ -462,14 +462,14 @@ class EditRuleForm extends Component {
                                    ruleIndex={this.ruleIndex}
                                    errorPoint={this.state.errorPoint}
                                    formStatus={this.state.monacoFormStatus}
-                                   onBlur={(newAutoCompleteArray) => {
-                                       verifyTextBasedOnGrammar(newAutoCompleteArray.map(d => d.text).join(" "))
+                                   onBlur={(newAutoCompleteText) => {
+                                       verifyTextBasedOnGrammar(newAutoCompleteText)
                                            .then((data) => {
                                                if (this._mounted)
                                                    this.setState({
                                                        monacoFormStatus: "has-success",
                                                        errorPoint: -1,
-                                                       autoCompleteArray: newAutoCompleteArray,
+                                                       autoCompleteArray: data.wordArray,
                                                        quantifierXPath: data.quantifierXPath,
                                                        constraintXPath: data.constraintXPath,
                                                        editorError: ""
@@ -477,12 +477,14 @@ class EditRuleForm extends Component {
 
                                                // compute and dispatch gui tree for quantifier and constraint
                                                generateGuiTrees(data.grammarTree)
-                                                   .then((tree) => this.props.onReceiveGuiTree(this.ruleIndex, tree, newAutoCompleteArray, data.quantifierXPath, data.constraintXPath))
+                                                   .then((tree) => this.props.onReceiveGuiTree(this.ruleIndex, tree, data.wordArray, data.quantifierXPath, data.constraintXPath))
                                            })
                                            .catch((error) => {
                                                this.processLanguageProcessingError(error);
                                                this.setState({
-                                                   autoCompleteArray: newAutoCompleteArray,
+                                                   autoCompleteArray: newAutoCompleteText.split(" ").map(d => {
+                                                       return {id: "", text: d}
+                                                   }),
                                                    monacoFormStatus: "has-error"
                                                })
                                            });
@@ -718,8 +720,7 @@ class EditRuleForm extends Component {
                     constraintXPath: this.ruleI.rulePanelState.constraintXPath,
                     editorError: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "" : this.state.editorError,
 
-                    monacoFormStatus: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "has-error"
-                        : nextProps.message === "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? "has-success" : this.state.monacoFormStatus,
+                    monacoFormStatus: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "has-error" : nextProps.message === "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? "has-warning" : this.state.monacoFormStatus,
                     errorPoint: -1
                 });
             }
@@ -738,8 +739,7 @@ class EditRuleForm extends Component {
                     constraintXPath: nextProps.constraintXPath,
                     editorError: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "" : this.state.editorError,
 
-                    monacoFormStatus: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "has-error"
-                        : nextProps.message === "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? "has-success" : this.state.monacoFormStatus,
+                    monacoFormStatus: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "has-error" : nextProps.message === "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? "has-warning" : this.state.monacoFormStatus,
                     errorPoint: -1
                 });
             }
@@ -779,11 +779,11 @@ class EditRuleForm extends Component {
             for (let j = otherIndex; j < receivedMessages.length; j++) {
                 // matched messages
                 if (+sentMessages[index]["messageID"] === +receivedMessages[j]["messageID"]) {
-                    let resultXPath = this.traverseReceivedXml(receivedMessages[j]["xmlText"]);
+                    let resultXPath = this.traverseReceivedXml(receivedMessages[j]["xmlText"], sentMessages[index]);
                     // replace all occurrences of textAndXPath.originalText
-                    let copiedQXPath = quantifierXPath.split("'" + sentMessages[index]["codeText"] + "'");
+                    let copiedQXPath = quantifierXPath.split(sentMessages[j]["lookFor"]);
                     quantifierXPath = copiedQXPath.join(resultXPath);
-                    let copiedCXPath = constraintXPath.split("'" + sentMessages[index]["codeText"] + "'");
+                    let copiedCXPath = constraintXPath.split(sentMessages[j]["lookFor"]);
                     constraintXPath = copiedCXPath.join(resultXPath);
 
                     matchedIndices.sent.push(index);
@@ -794,7 +794,6 @@ class EditRuleForm extends Component {
                 }
             }
         }
-
         // remove matched messages from list of messages
         for (let i = matchedIndices.sent.length - 1; i >= 0; i--)
             sentMessages.splice(matchedIndices.sent[i], 1);
@@ -809,13 +808,14 @@ class EditRuleForm extends Component {
 
     /**
      * check validity of an xml and generate the xpath query
-     * @param text
+     * @param xmlText
+     * @param sentMessageData
      * @returns string xpath
      * derived from the originalText
      */
-    traverseReceivedXml(text) {
+    traverseReceivedXml(xmlText, sentMessageData) { //todo use sentMessageData.query
 
-        let exprValidation = "//src:unit[count(src:expr_stmt)=1]/src:expr_stmt/src:expr";
+        let exprValidation = sentMessageData["query"];
         let parser = new DOMParser();
 
         function nsResolver(prefix) {
@@ -824,7 +824,7 @@ class EditRuleForm extends Component {
         }
 
         // checks validity of the XML
-        let xml = parser.parseFromString(text, "text/xml");
+        let xml = parser.parseFromString(xmlText, "text/xml");
         if (!xml.evaluate) {
             console.log("error in xml.evaluate");
             return "";
@@ -832,7 +832,7 @@ class EditRuleForm extends Component {
 
 
         let validNodes = xml.evaluate(exprValidation, xml, nsResolver, XPathResult.ANY_TYPE, null);
-        let resultValidNode = validNodes.iterateNext(); // expr_stmt/expr
+        let resultValidNode = validNodes.iterateNext();
         if (!resultValidNode) {
             console.log("error");
             return "";
@@ -1154,7 +1154,7 @@ function mapStateToProps(state) {
 
         autoCompleteArray: state.newOrEditRule.autoCompleteArray,
         quantifierXPath: state.newOrEditRule.quantifierXPath,
-        constraintXPath: state.newOrEditRule.quantifierXPath,
+        constraintXPath: state.newOrEditRule.constraintXPath,
         message: state.message,
 
         sentMessages: state.newOrEditRule.sentMessages,

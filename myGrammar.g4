@@ -23,10 +23,17 @@ SPACE
 
 words
     : '"' Alphabet+ '"'
+    | '"' '!' Alphabet+ '"'
+    | '"' '...' Alphabet+ '"'
+    | '"' '!...' Alphabet+ '"'
+    | '"' Alphabet+ '...' '"'
+    | '"' '!' Alphabet+ '...' '"'
+    | '"' '...' Alphabet+ '...' '"'
+    | '"' '!...' Alphabet+ '...' '"'
     ;
 
 combinatorialWords
-    : '"' (Alphabet | symbols)+ '"'
+    : '"' (Alphabet | symbols | SPACE)+ '"'
     ;
 
 symbols
@@ -315,7 +322,7 @@ typeOf
     ;
 
 typeCondition
-    : words SPACE
+    : combinatorialWords SPACE
     ;
 
 

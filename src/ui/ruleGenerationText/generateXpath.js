@@ -48,6 +48,7 @@ class GenerateXpath {
      * @returns {*} a clean version of this.tree
      */
     traverseNode(node) {
+        // let befooooo = this.XPath;
         if (node instanceof TerminalNodeImpl) {
 
             /**
@@ -166,6 +167,10 @@ class GenerateXpath {
                     this.specifiersContextTraversal(node);
                     break;
 
+                case "VisibilitiesContext":
+                    this.visibilitiesContextTraversal(node);
+                    break;
+
                 case "ReturnValuesContext":
                     this.returnValuesContextTraversal(node);
                     break;
@@ -182,15 +187,8 @@ class GenerateXpath {
                     this.initialValuesContextTraversal(node);
                     break;
 
-                // WordsContext
-                case "WordsContext":
-                    for (let i = 0; i < node.children.length; i++) {
-                        this.XPath += node.getChild(i).getSymbol().text;
-                    }
-                    break;
-
                 case "OfContext":
-                case "WhereContext":
+                case "WithWordContext":
                 case "HaveContext":
                 case "EndContext":
                     break;
@@ -212,11 +210,6 @@ class GenerateXpath {
                     }
                     break;
 
-                case "MustBeEqualToContext":
-                    this.quantifierXPath = this.XPath;
-                    this.XPath = "";
-                    break;
-
                 default:
                     for (let i = 0; i < node.children.length; i++) {
                         this.traverseNode(nodeChildren[i]);
@@ -225,6 +218,10 @@ class GenerateXpath {
             }
 
         }
+        // console.log(node.constructor.name, node);
+        // // console.log("this.xpath (before)>>", befooooo);
+        // console.log("this.xpath (after)>>", this.XPath);
+        // console.log("======");
     }
 
 
@@ -233,8 +230,7 @@ class GenerateXpath {
         if (node.children.length > 0
             && node.children[0].children.length >= 2
             && node.children[0].children[1].constructor.name.indexOf("ConditionContext") !== -1) {
-
-            // clone the children of 'where' for first token
+            // clone the children of 'with' for first token
             let oldCondition = node.children[0].children[1].children[1];
             let clonedNode = Object.assign(Object.create(Object.getPrototypeOf(oldCondition)), oldCondition);
             // update the children of the first token
@@ -242,17 +238,17 @@ class GenerateXpath {
                 new TerminalNodeImpl({text: "(("}),
                 clonedNode,
                 new TerminalNodeImpl({text: ") and ("}),
-                node.children[2],
+                node.children[3],
                 new TerminalNodeImpl({text: "))"})
             ];
             // remove the node after must
-            node.children.splice(2, 1);
+            node.children.splice(3, 1);
         }
         else {
             // copy the node after must to the children of the first token
-            node.children[0].children.splice(1, 0, node.children[2]);
+            node.children[0].children.splice(1, 0, node.children[3]);
             // remove the node after must
-            node.children.splice(2, 1);
+            node.children.splice(3, 1);
             // console.log("re-organize (else)", node);
         }
     }
@@ -348,37 +344,17 @@ class GenerateXpath {
 
             if (nodeType === "TerminalNodeImpl") {
                 if (this.XPath === "") this.XPath += "/";
-                this.XPath += "src:name"; // todo: check parent or different name entities? descendant-or-self::
+                this.XPath += "src:name";
             }
 
             if (nodeType === "NameConditionContext") {
-                let includes = false;
-                let not = false;
+                let tempText = "";
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
-                    if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
-                        not = true;
-                    if (nodeChildren[i].getChild(j).constructor.name === "EqualsToContext")
-                        this.XPath += not ? "[text()!=" : "[text()=";
-                    if (nodeChildren[i].getChild(j).constructor.name === "IncludesContext") {
-                        this.XPath += not ? "[not(contains(text()," : "[contains(text(),";
-                        includes = true;
-                    }
-                    if (nodeChildren[i].getChild(j).constructor.name === "StartsWithContext") {
-                        this.XPath += not ? "[not(starts-with(text()," : "[starts-with(text(),";
-                        includes = true;
-                    }
-                    if (nodeChildren[i].getChild(j).constructor.name === "IncludesContext") {
-                        this.XPath += not ? "[not(ends-with(text()," : "[ends-with(text(),";
-                        includes = true;
-                    }
-                    let tempText = "";
                     if (nodeChildren[i].getChild(j).constructor.name === "WordsContext") {
-                        for (let k = 0; k < nodeChildren[i].getChild(j).children.length; k++)
-                            tempText += nodeChildren[i].getChild(j).getChild(k).getSymbol().text;
-                        this.XPath += tempText;
+                        tempText = this.wordsContextTraversal(nodeChildren[i].getChild(j));
                     }
                 }
-                this.XPath += !includes ? "]" : not ? "))]" : ")]";
+                this.XPath += "[" + tempText + "]";
             }
         }
     }
@@ -410,17 +386,14 @@ class GenerateXpath {
             }
 
             if (nodeType === "AnnotationConditionContext") {
-                let not = false;
                 let tempText = "";
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
-                    if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
-                        not = true;
                     if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
                         tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
-                        this.sendTextDataToSrcML(tempText);
+                        this.sendTextDataToSrcML(tempText, "annotation");
                     }
                 }
-                this.XPath += not ? ("[not('" + tempText + "')]") : "['" + tempText + "']";
+                this.XPath += "['" + tempText + "']";
             }
         }
     }
@@ -452,17 +425,13 @@ class GenerateXpath {
             }
 
             if (nodeType === "ExtensionConditionContext") {
-                this.XPath += "[src:name/text()";
+                let tempText = "";
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
-                    if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
-                        this.XPath += "!";
-                    if (nodeChildren[i].getChild(j).constructor.name === "EqualsToContext")
-                        this.XPath += "=";
-                    if (nodeChildren[i].getChild(j).constructor.name === "WordsContext")
-                        for (let k = 0; k < nodeChildren[i].getChild(j).children.length; k++)
-                            this.XPath += nodeChildren[i].getChild(j).getChild(k).getSymbol().text;
+                    if (nodeChildren[i].getChild(j).constructor.name === "WordsContext") {
+                        tempText = this.wordsContextTraversal(nodeChildren[i].getChild(j));
+                    }
                 }
-                this.XPath += "]";
+                this.XPath += "/src:name[" + tempText + "]";
             }
         }
     }
@@ -494,17 +463,13 @@ class GenerateXpath {
             }
 
             if (nodeType === "ImplementationConditionContext") {
-                this.XPath += "[src:name/text()";
+                let tempText = "";
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
-                    if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
-                        this.XPath += "!";
-                    if (nodeChildren[i].getChild(j).constructor.name === "EqualsToContext")
-                        this.XPath += "=";
-                    if (nodeChildren[i].getChild(j).constructor.name === "WordsContext")
-                        for (let k = 0; k < nodeChildren[i].getChild(j).children.length; k++)
-                            this.XPath += nodeChildren[i].getChild(j).getChild(k).getSymbol().text;
+                    if (nodeChildren[i].getChild(j).constructor.name === "WordsContext") {
+                        tempText = this.wordsContextTraversal(nodeChildren[i].getChild(j));
+                    }
                 }
-                this.XPath += "]";
+                this.XPath += "/src:name[" + tempText + "]";
             }
         }
     }
@@ -575,17 +540,9 @@ class GenerateXpath {
             }
 
             if (nodeType === "ParameterConditionContext") {
-                let not = false;
-                let tempText = "";
-                for (let j = 0; j < nodeChildren[i].children.length; j++) {
-                    if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
-                        not = true;
-                    if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
-                        tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
-                        this.sendTextDataToSrcML(tempText);
-                    }
-                }
-                this.XPath += not ? ("[not('" + tempText + "')]") : "['" + tempText + "']";
+                this.XPath += "[";
+                this.traverseNode(nodeChildren[i]);
+                this.XPath += "]";
             }
         }
     }
@@ -616,18 +573,15 @@ class GenerateXpath {
                 this.XPath += "src:type";
             }
 
-            if (nodeType === "TypeConditionContext") { // not existed yet
-                this.XPath += "[src:name/text()";
+            if (nodeType === "TypeConditionContext") {
+                let tempText = "";
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
-                    if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
-                        this.XPath += "!";
-                    if (nodeChildren[i].getChild(j).constructor.name === "EqualsToContext")
-                        this.XPath += "=";
-                    if (nodeChildren[i].getChild(j).constructor.name === "WordsContext")
-                        for (let k = 0; k < nodeChildren[i].getChild(j).children.length; k++)
-                            this.XPath += nodeChildren[i].getChild(j).getChild(k).getSymbol().text;
+                    if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
+                        tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
+                        this.sendTextDataToSrcML(tempText, "type");
+                    }
                 }
-                this.XPath += "]";
+                this.XPath += "['" + tempText + "']";
             }
         }
     }
@@ -659,17 +613,51 @@ class GenerateXpath {
             }
 
             if (nodeType === "SpecifierConditionContext") {
-                this.XPath += "[text()";
+                let tempText = "";
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
-                    if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
-                        this.XPath += "!";
-                    if (nodeChildren[i].getChild(j).constructor.name === "EqualsToContext")
-                        this.XPath += "=";
-                    if (nodeChildren[i].getChild(j).constructor.name === "WordsContext")
-                        for (let k = 0; k < nodeChildren[i].getChild(j).children.length; k++)
-                            this.XPath += nodeChildren[i].getChild(j).getChild(k).getSymbol().text;
+                    if (nodeChildren[i].getChild(j).constructor.name === "WordsContext") {
+                        tempText = this.wordsContextTraversal(nodeChildren[i].getChild(j));
+                    }
                 }
-                this.XPath += "]";
+                this.XPath += "[" + tempText + "]";
+            }
+        }
+    }
+
+    visibilitiesContextTraversal(node) {
+        let nodeChildren = node.children.slice(0);
+
+        // move Of children to first
+        for (let i = 0; i < node.children.length; i++) {
+            let nodeType = node.getChild(i).constructor.name;
+            if (nodeType.indexOf("VisibilityOfContext") !== -1) {
+                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
+                break;
+            }
+        }
+
+        for (let i = 0; i < node.children.length; i++) {
+            let nodeType = nodeChildren[i].constructor.name;
+
+            // process ofContext
+            if (nodeType === "SpecifierOfContext") {
+                this.traverseNode(nodeChildren[i]);
+                this.XPath += "/";
+            }
+
+            if (nodeType === "TerminalNodeImpl") {
+                if (this.XPath === "") this.XPath += "/";
+                this.XPath += "src:specifier";
+            }
+
+            if (nodeType === "VisibilityConditionContext") {
+                let tempText = "";
+                for (let j = 0; j < nodeChildren[i].children.length; j++) {
+                    if (nodeChildren[i].getChild(j).constructor.name === "WordsContext") {
+                        tempText = this.wordsContextTraversal(nodeChildren[i].getChild(j));
+                    }
+                }
+                this.XPath += "[" + tempText + "]";
             }
         }
     }
@@ -701,17 +689,14 @@ class GenerateXpath {
             }
 
             if (nodeType === "ReturnValueConditionContext") {
-                let not = false;
                 let tempText = "";
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
-                    if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
-                        not = true;
                     if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
                         tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
-                        this.sendTextDataToSrcML(tempText);
+                        this.sendTextDataToSrcML(tempText, "returnValue");
                     }
                 }
-                this.XPath += not ? ("[not('" + tempText + "')]") : "['" + tempText + "']";
+                this.XPath += "['" + tempText + "']";
             }
         }
     }
@@ -777,17 +762,14 @@ class GenerateXpath {
             }
 
             if (nodeType === "ExpressionStatementConditionContext") {
-                let not = false;
                 let tempText = "";
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
-                    if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
-                        not = true;
                     if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
                         tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
-                        this.sendTextDataToSrcML(tempText);
+                        this.sendTextDataToSrcML(tempText, "expressionStatement");
                     }
                 }
-                this.XPath += not ? ("[not('" + tempText + "')]") : "['" + tempText + "']";
+                this.XPath += "['" + tempText + "']";
             }
         }
     }
@@ -819,17 +801,14 @@ class GenerateXpath {
             }
 
             if (nodeType === "InitialValueConditionContext") {
-                let not = false;
                 let tempText = "";
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
-                    if (nodeChildren[i].getChild(j).constructor.name === "NotContext")
-                        not = true;
                     if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
                         tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
-                        this.sendTextDataToSrcML(tempText);
+                        this.sendTextDataToSrcML(tempText, "initialValue");
                     }
                 }
-                this.XPath += not ? ("[not('" + tempText + "')]") : "['" + tempText + "']";
+                this.XPath += "['" + tempText + "']";
             }
         }
     }
@@ -837,10 +816,11 @@ class GenerateXpath {
     /**
      * traverse CombinatorialWords node to extract the word
      * It doesn't alter this.XPath
+     * annotation/type/returnValue/expressionStatement/initialValue
      * @param node
      * @returns {string}
      */
-    combinatorialWordsContextTraversal(node){
+    combinatorialWordsContextTraversal(node) {
         let word = "";
 
         // based on the grammar the first and last children are quotation marks
@@ -855,22 +835,86 @@ class GenerateXpath {
         return word;
     }
 
+
+    /**
+     * traverse Words node to extract the word
+     * It doesn't alter this.XPath
+     * name/extension/implementation/specifier/visibility
+     * @param node
+     * @returns {string}
+     */
+    wordsContextTraversal(node) {
+        let word = "";
+        let not = false;
+        let status = "equal";
+        // words has at least 3 children
+        if (node.children[1].getSymbol().text === "!") not = true;
+        else if ((node.children[1].getSymbol().text === "!..." || node.children[1].getSymbol().text === "...")
+            && node.children[node.children.length - 2].getSymbol().text === "...") {
+            not = node.children[1].getSymbol().text.startsWith("!");
+            status = "contains";
+        }
+        else if (node.children[1].getSymbol().text === "!..." || node.children[1].getSymbol().text === "...") {
+            not = node.children[1].getSymbol().text.startsWith("!");
+            status = "ends-with";
+        }
+        else if (node.children[node.children.length - 2].getSymbol().text === "...") {
+            status = "starts-with";
+        }
+
+
+        for (let i = 0; i < node.children.length; i++) {
+            if (i !== 1 && i !== node.children.length - 2)
+                word += node.getChild(i).getSymbol().text;
+            else if (["...", "!...", "!"].indexOf(node.getChild(i).getSymbol().text) === -1)
+                word += node.getChild(i).getSymbol().text;
+        }
+
+        if (status === "equal") return not ? "not(text()=" + word + ")" : "text()=" + word;
+        if (status === "contains") return not ? "not(contains(text()," + word + "))" : "contains(text()," + word + ")";
+        if (status === "starts-with") return not ? "not(starts-with(text()," + word + "))" : "starts-with(text()," + word + ")";
+        if (status === "ends-with") return not ? "not(ends-with(text()," + word + "))" : "ends-with(text()," + word + ")";
+        return "text()=" + word;
+    }
+
     /**
      * send text data to the server to be processed by srcml
      * and return XML
      * @param text
+     * @param elementType
      */
-    sendTextDataToSrcML(text) {
+    sendTextDataToSrcML(text, elementType) {
         if (text === "") return;
-        // todo process text for predefined literals like '?'
+        let code = text;
+        let query = "";
+        let messageID = Math.floor(new Date().getTime() / 1000); // to match send and receive messages
 
-        let data = {
-            "codeText": text,
-            "messageID": Math.floor(new Date().getTime() / 1000)  // to match send and receive messages
-        };
+        switch (elementType) {
+            case "annotation":
+                code = "@" + text;
+                query = "//src:unit[count(src:annotation)=1]/src:annotation";
+                break;
+            case "type":
+                code = text + " dummy_variable = 0;";
+                query = "//src:unit[count(src:decl_stmt)=1]/src:decl_stmt/src:type";
+                break;
+            case "returnValue":
+            case "expressionStatement":
+            case "initialValue":
+            default:
+                code = text;
+                query = "//src:unit[count(src:expr_stmt)=1]/src:expr_stmt/src:expr";
+                break;
 
-        Utilities.sendToServer(this.ws, "EXPR_STMT", data);
-        store.dispatch(sendExpressionStatementXML(data));
+        }
+
+        Utilities.sendToServer(this.ws, "EXPR_STMT", {"codeText": code, "messageID": messageID});
+        store.dispatch(sendExpressionStatementXML({
+            "codeText": code,
+            "messageID": messageID,
+            "lookFor": "'"+text+"'",
+            "query": query
+        }));
     }
 }
 

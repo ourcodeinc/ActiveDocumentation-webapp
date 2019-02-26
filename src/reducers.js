@@ -65,7 +65,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         quantifierXPath: rule.quantifier.command,
                         constraintXPath: rule.constraint.command,
                         // autoCompleteText: rule.grammar,
-                        autoCompleteArray: rule.grammar ? rule.grammar.split(" ").map(word => {
+                        autoCompleteArray: rule.grammar && rule.grammar !== "" ? rule.grammar.split(" ").map(word => {
                             return {id: "", text: word}
                         }) : []
                     }
@@ -204,9 +204,9 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                                 quantifierXPath: d.quantifier.command,
                                 constraintXPath: d.constraint.command,
                                 // autoCompleteText: d.grammar,
-                                autoCompleteArray: d.grammar.split(" ").map(word => {
+                                autoCompleteArray: d.grammar && d.grammar !== "" ? d.grammar.split(" ").map(word => {
                                     return {id: "", text: word}
-                                })
+                                }) : []
                             }
                     }
                     return a;
