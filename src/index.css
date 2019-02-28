@@ -246,30 +246,30 @@ body {
 
 /*!*** Rule generating ***!*/
 
-/*!* override bootstrap *!*/
-/*#generateRule .help-block {*/
-/*margin-bottom: 5px;*/
-/*}*/
+/* override bootstrap */
+#generateRule .help-block {
+    margin-bottom: 5px;
+}
 
-/*.tagLabel {*/
-/*float: left;*/
-/*margin: 0 15px 10px 0*/
-/*}*/
+.tagLabel {
+    float: left;
+    margin: 0 15px 10px 0
+}
 
-/*.customTheme {*/
-/*color: #38404e !important;*/
-/*background-color: #b5c7d8 !important;*/
-/*border: 1px solid #38404e;*/
-/*font-size:          12px !important;*/
-/*padding-left:       14px !important;*/
-/*padding-right:      14px !important;*/
-/*align-items:        center;*/
-/*justify-content:    center;*/
-/*}*/
+.customTheme {
+    color: #38404e !important;
+    background-color: #b5c7d8 !important;
+    border: 1px solid #38404e;
+    font-size: 12px !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    align-items: center;
+    justify-content: center;
+}
 
-/*.navbar {*/
-/*margin-bottom: 0;*/
-/*}*/
+.navbar {
+margin-bottom: 0;
+}
 
 /*!*** rule Generator GUI ***!*/
 
