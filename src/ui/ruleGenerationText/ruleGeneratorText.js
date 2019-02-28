@@ -66,6 +66,7 @@ class RuleGeneratorText extends Component {
             this.autoCompleteArray = nextProps["autoCompleteArray"];
             this.autoCompleteArrayHover = nextProps["autoCompleteArray"];
             this.editor.setValue(this.autoCompleteArray.map(a => a.text).join(" "));
+            this.props.onUpdate(this.editor.getModel().getValue().trim());
         }
         if (nextProps.hasOwnProperty("formStatus") && this.state.formStatus !== nextProps.formStatus)
             this.setState({formStatus: nextProps.formStatus});

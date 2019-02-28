@@ -551,6 +551,31 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     message: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI"
                 });
 
+        case "UPDATE_XPATHS":
+            if (action["ruleIndex"] !== -1) {
+                let rules = JSON.parse(JSON.stringify(state.ruleTable));
+                rules = rules.map(d => {
+                    let a = Object.assign({}, d);
+                    if (a.index !== action["ruleIndex"]) return a;
+                    a.rulePanelState.quantifierXPath = action["quantifierXPath"];
+                    a.rulePanelState.constraintXPath = action["constraintXPath"];
+                    return a;
+                });
+                return Object.assign({}, state, {
+                    message: "UPDATE_XPATHS",
+                    ruleTable: rules
+                });
+            }
+            else
+                return Object.assign({}, state, {
+                    newOrEditRule: {
+                        ...state.newOrEditRule,
+                        quantifierXPath: action["quantifierXPath"],
+                        constraintXPath: action["constraintXPath"]
+                    },
+                    message: "UPDATE_XPATHS"
+                });
+
         default:
             return Object.assign({}, state);
     }

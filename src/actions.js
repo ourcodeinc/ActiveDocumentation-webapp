@@ -118,3 +118,12 @@ export const changeAutoCompleteTextFromGUI = (ruleIndex, newAutoCompleteArray) =
         newAutoCompleteArray: newAutoCompleteArray
     };
 };
+
+export const updateXPaths = (ruleIndex, quantifierXPath, constraintXPath) => {
+    return {
+        type: "UPDATE_XPATHS",
+        ruleIndex: ruleIndex,
+        quantifierXPath: quantifierXPath,
+        constraintXPath: constraintXPath
+    }
+};

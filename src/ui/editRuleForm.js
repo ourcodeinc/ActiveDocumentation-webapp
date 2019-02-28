@@ -21,7 +21,7 @@ import RuleGeneratorGui from './ruleGenerationGUI/ruleGeneratorGui';
 import verifyTextBasedOnGrammar from "./ruleGenerationText/languageProcessing";
 import {
     matchMessages, receiveGuiTree, clearNewRuleForm,
-    editRuleForm, submitNewRule, submitNewTag, updateRule
+    editRuleForm, submitNewRule, submitNewTag, updateRule, updateXPaths
 } from "../actions";
 import {generateGuiTrees} from "./ruleGenerationText/generateGuiTree";
 import RuleGeneratorText from "./ruleGenerationText/ruleGeneratorText";
@@ -567,7 +567,7 @@ class EditRuleForm extends Component {
                                    formStatus={this.state.monacoFormStatus}
                                    onBlur={(newAutoCompleteText) => {
                                        verifyTextBasedOnGrammar(newAutoCompleteText)
-                                           .then((data) => {
+                                           .then((data) => {console.log(">>> data",data);
                                                if (this._mounted)
                                                    this.setState({
                                                        monacoFormStatus: "has-success",
@@ -581,6 +581,27 @@ class EditRuleForm extends Component {
                                                // compute and dispatch gui tree for quantifier and constraint
                                                generateGuiTrees(data.grammarTree)
                                                    .then((tree) => this.props.onReceiveGuiTree(this.ruleIndex, tree, data.wordArray, data.quantifierXPath, data.constraintXPath))
+                                           })
+                                           .catch((error) => {
+                                               this.processLanguageProcessingError(error);
+                                               this.setState({
+                                                   autoCompleteArray: newAutoCompleteText.split(" ").map(d => {
+                                                       return {id: "", text: d}
+                                                   }),
+                                                   monacoFormStatus: "has-error"
+                                               })
+                                           });
+                                   }}
+                                   onUpdate={(newAutoCompleteText) => {
+                                       verifyTextBasedOnGrammar(newAutoCompleteText)
+                                           .then((data) => {console.log("><>> update data",data);
+                                               if (this._mounted)
+                                                   this.setState({
+                                                       quantifierXPath: data.quantifierXPath,
+                                                       constraintXPath: data.constraintXPath,
+                                                   });
+
+                                               this.props.onUpdateXPaths(this.ruleIndex, data.quantifierXPath, data.constraintXPath)
                                            })
                                            .catch((error) => {
                                                this.processLanguageProcessingError(error);
@@ -1283,6 +1304,9 @@ function mapDispatchToProps(dispatch) {
         },
         onMatchMessages: (ruleIndex, sentMessages, receivedMessages, quantifierXPath, constraintXPath) => {
             dispatch(matchMessages(ruleIndex, sentMessages, receivedMessages, quantifierXPath, constraintXPath))
+        },
+        onUpdateXPaths: (ruleIndex, quantifierXPath, constraintXPath) => {
+            dispatch(updateXPaths(ruleIndex, quantifierXPath, constraintXPath))
         }
     }
 }
