@@ -567,7 +567,7 @@ class EditRuleForm extends Component {
                                    formStatus={this.state.monacoFormStatus}
                                    onBlur={(newAutoCompleteText) => {
                                        verifyTextBasedOnGrammar(newAutoCompleteText)
-                                           .then((data) => {console.log(">>> data",data);
+                                           .then((data) => {
                                                if (this._mounted)
                                                    this.setState({
                                                        monacoFormStatus: "has-success",
@@ -594,7 +594,7 @@ class EditRuleForm extends Component {
                                    }}
                                    onUpdate={(newAutoCompleteText) => {
                                        verifyTextBasedOnGrammar(newAutoCompleteText)
-                                           .then((data) => {console.log("><>> update data",data);
+                                           .then((data) => {
                                                if (this._mounted)
                                                    this.setState({
                                                        quantifierXPath: data.quantifierXPath,

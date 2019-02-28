@@ -198,7 +198,7 @@ const traverseNormalNode = (treeNode, isConstraint = false) => {
                         // implementation of "..."/Interface
                         else if (node.nodeType === "TerminalNodeImpl" && node.text.trim() === "of") {
                             if (child.children.length !== 2 || i !== 0
-                                || (child.children[i + 1].nodeType !== "TerminalNodeImpl" && child.children[i + 1].nodeType !== "word")) console.log("error", child);
+                                || (child.children[i + 1].nodeType !== "TerminalNodeImpl" && child.children[i + 1].nodeType !== "word")) console.log("error?", child);
                             else {
                                 if (!special_word.includes(child.children[1].text)) {
                                     guiNode.value = {word: child.children[1].text, type: "text"};
