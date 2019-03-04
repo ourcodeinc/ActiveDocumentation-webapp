@@ -497,7 +497,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                             array.guiTree.selectedElementID = job["elementId"];
                             array.guiElements[job["elementId"]] = {
                                 ...array.guiElements[job["elementId"]],
-                                selectedElement: job["value"]
+                                selectedElement: job["value"],
+                                isConstraint: job["value"] ? false : array.guiElements[job["elementId"]].isConstraint
                             };
                             return array;
                         };

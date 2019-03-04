@@ -580,6 +580,9 @@ class GenerateXpath {
                         tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
                         this.sendTextDataToSrcML(tempText, "type");
                     }
+                    else if (nodeChildren[i].getChild(j).constructor.name === "WordsContext") {
+                        tempText = this.wordsContextTraversal(nodeChildren[i].getChild(j));
+                    }
                 }
                 this.XPath += "['" + tempText + "']";
             }
@@ -724,7 +727,7 @@ class GenerateXpath {
 
             if (nodeType === "TerminalNodeImpl") {
                 if (this.XPath === "") this.XPath += "/";
-                this.XPath += "src:decl_stmt/src:decl";
+                this.XPath += "src:block/descendant-or-self::src:decl_stmt/src:decl";
             }
 
             if (nodeType === "DeclarationStatementConditionContext" || nodeType === "DeclarationStatementExpressionContext") {
@@ -873,7 +876,14 @@ class GenerateXpath {
         if (status === "equal") return not ? "not(text()=" + word + ")" : "text()=" + word;
         if (status === "contains") return not ? "not(contains(text()," + word + "))" : "contains(text()," + word + ")";
         if (status === "starts-with") return not ? "not(starts-with(text()," + word + "))" : "starts-with(text()," + word + ")";
-        if (status === "ends-with") return not ? "not(ends-with(text()," + word + "))" : "ends-with(text()," + word + ")";
+
+        // ends-with(@id,'register') <== not valid
+        // substring(@id, string-length(@id) - string-length('register') +1) = 'register'
+
+        if (status === "ends-with") {
+            let query = "substring(text(), string-length(text()) - string-length(" + word + ") + 1) = " + word;
+            return not ? "not(" + query + "))" : query;
+        }
         return "text()=" + word;
     }
 
@@ -912,7 +922,7 @@ class GenerateXpath {
         store.dispatch(sendExpressionStatementXML({
             "codeText": code,
             "messageID": messageID,
-            "lookFor": "'"+text+"'",
+            "lookFor": "'" + text + "'",
             "query": query
         }));
     }

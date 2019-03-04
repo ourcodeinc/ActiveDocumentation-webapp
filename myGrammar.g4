@@ -323,6 +323,7 @@ typeOf
 
 typeCondition
     : combinatorialWords SPACE
+    | words SPACE
     ;
 
 

@@ -16,7 +16,7 @@ const element_conditions = {
         items: ["public", "private", "protected", "N/A"],
         grammar: "visibility"
     },
-    memory: {
+    specifier: {
         type: "smallText",
         pre: "",
         post: "",
@@ -30,7 +30,7 @@ const element_conditions = {
         children: {
             top: "annotation",
             before_1: "visibility",
-            before_2: "memory",
+            before_2: "specifier",
             before_3: "",
             after_1: "class_name",
             after_2: "class_implements",
@@ -86,7 +86,7 @@ const element_conditions = {
         children: {
             top: "annotation",
             before_1: "visibility",
-            before_2: "memory",
+            before_2: "specifier",
             before_3: "",
             after_1: "interface_name",
             after_3: "interface_extends",
@@ -126,7 +126,7 @@ const element_conditions = {
         children: {
             top: "annotation",
             before_1: "visibility",
-            before_2: "memory",
+            before_2: "specifier",
             before_3: "function_return_type",
             after_1: "function_name",
             after_2: "parameter_el",
@@ -223,7 +223,7 @@ const element_conditions = {
         children: {
             top: "annotation",
             before_1: "visibility",
-            before_2: "memory",
+            before_2: "specifier",
             before_3: "abstract_function_return_type",
             after_1: "abstract_function_name",
             after_2: "parameter_el",
@@ -264,10 +264,10 @@ const element_conditions = {
         children: {
             top: "annotation",
             before_1: "visibility",
-            before_2: "memory",
-            before_3: "declaration_statement_name",
-            after_1: "declaration_statement_initialization",
-            after_2: "",
+            before_2: "specifier",
+            before_3: "declaration_statement_type",
+            after_1: "declaration_statement_name",
+            after_2: "declaration_statement_initialization",
             after_3: "",
             body: []
         },
@@ -275,9 +275,9 @@ const element_conditions = {
         pre_before_1: "",
         pre_before_2: "",
         pre_before_3: "",
-        pre_after_1: "=",
-        pre_after_2: ";",
-        pre_after_3: "",
+        pre_after_1: "",
+        pre_after_2: "=",
+        pre_after_3: ";",
         post_after_3: "",
         pre_body: "",
         post_body: "",
@@ -287,7 +287,7 @@ const element_conditions = {
         type: "text",
         pre: "",
         post: "",
-        placeholder: "variable type",
+        placeholder: "variableType",
         unique: true,
         grammar: "type"
     },

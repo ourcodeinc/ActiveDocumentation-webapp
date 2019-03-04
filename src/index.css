@@ -448,6 +448,18 @@ margin-bottom: 0;
     color: #24248f;
 }
 
+.generateRuleGui .activeElement.constraintElement .dropdownDiv {
+    color: #9595e6;
+}
+
+.generateRuleGui .activeElement.constraintElement .dropdownDiv:hover {
+    color: #4b4b73;
+}
+
+.generateRuleGui .activeElement.constraintElement .dropdownDiv.activeElement {
+    color: #24248f;
+}
+
 .generateRuleGui .inputText {
     color: #c3c3c3;
 }

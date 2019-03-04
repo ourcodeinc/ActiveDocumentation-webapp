@@ -63,9 +63,32 @@ class RuleGeneratorGui extends Component {
 
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
-        this.setState(nextProps, () => {
-            this.newReceiveStateData();
-        });
+        if (this.ruleIndex !== -1) {
+            let indices = nextProps.rules.map(d => d.index);
+            let arrayIndex = indices.indexOf(this.ruleIndex);
+            if (arrayIndex === -1)
+                console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
+                Only ${indices.toString()} are found as indices.`);
+            else {
+                this.ruleI = nextProps.rules[arrayIndex];
+
+                this.setState(
+                    {
+                        ws: nextProps.ws,
+                        rules: nextProps.rules,
+                        guiTree: this.ruleI.rulePanelState.guiState.guiTree,
+                        guiElements: this.ruleI.rulePanelState.guiState.guiElements,
+                        autoCompleteArray: this.ruleI.rulePanelState.autoCompleteArray
+                    }, () => {
+                        this.newReceiveStateData();
+                    });
+            }
+        }
+        else {
+            this.setState(nextProps, () => {
+                this.newReceiveStateData();
+            });
+        }
     }
 
     /**
@@ -529,12 +552,13 @@ class RuleGeneratorGui extends Component {
             lcaIndex = -1;
             let isCommon = true;
             while (isCommon) {
-                for (let i = 1; i < treePaths.length; i++) {
+                for (let i = 0; i < treePaths.length; i++) {
                     // if we reached one of the elements
                     // or their parents are different
                     // or we already reached the nominated one
-                    if (treePaths[i].length <= lcaIndex + 1 || treePaths[i - 1].length <= lcaIndex + 1 ||
-                        treePaths[i][lcaIndex + 1] !== treePaths[i - 1][lcaIndex + 1] ||
+                    if (treePaths[i].length <= lcaIndex + 1 ||
+                        (i !== treePaths.length - 1 && treePaths[i][lcaIndex + 1] !== treePaths[i + 1][lcaIndex + 1]) ||
+                        (i === treePaths.length - 1 && treePaths[i][lcaIndex + 1] !== treePaths[i - 1][lcaIndex + 1]) ||
                         treePaths[i][lcaIndex] === guiTree.selectedElementID ||
                         !getConditionByName(guiElements[treePaths[i][lcaIndex + 1]].conditionName).canBeSelected) {
                         isCommon = false;
