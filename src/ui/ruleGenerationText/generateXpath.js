@@ -584,7 +584,7 @@ class GenerateXpath {
                         tempText = this.wordsContextTraversal(nodeChildren[i].getChild(j));
                     }
                 }
-                this.XPath += "['" + tempText + "']";
+                this.XPath += "[" + tempText + "]";
             }
         }
     }
@@ -882,7 +882,7 @@ class GenerateXpath {
 
         if (status === "ends-with") {
             let query = "substring(text(), string-length(text()) - string-length(" + word + ") + 1) = " + word;
-            return not ? "not(" + query + "))" : query;
+            return not ? "not(" + query + ")" : query;
         }
         return "text()=" + word;
     }
