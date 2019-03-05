@@ -577,14 +577,14 @@ class GenerateXpath {
                 let tempText = "";
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
                     if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
-                        tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
+                        tempText = "[" + this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j)) + "]";
                         this.sendTextDataToSrcML(tempText, "type");
                     }
                     else if (nodeChildren[i].getChild(j).constructor.name === "WordsContext") {
-                        tempText = this.wordsContextTraversal(nodeChildren[i].getChild(j));
+                        tempText = "/src:name[" + this.wordsContextTraversal(nodeChildren[i].getChild(j)) + "]";
                     }
                 }
-                this.XPath += "[" + tempText + "]";
+                this.XPath += tempText;
             }
         }
     }
