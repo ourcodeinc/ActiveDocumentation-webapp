@@ -148,6 +148,13 @@ export const documentations_IMarkdownString = {
         " **\"!...post\"** equals to any value that does **NOT** end with the postfix **'post'**.\n" +
         " **\"!...mid...\"** equals to any value that does **NOT** contain the sub-string **'mod'**."
     },
+    "EXACT_CODE": {
+        isTrusted: true, value:
+        "##### Code\n" +
+        "Write the code you want to match here.\n" +
+        "For example, if a function return statement is `return obj1.foo(param1);`\n " +
+        "enter `obj1.foo(param1)` in the **return value** element."
+    },
     "AND_OR_PAREN": {
         isTrusted: true, value:
         "##### and, or, (, )\n" +

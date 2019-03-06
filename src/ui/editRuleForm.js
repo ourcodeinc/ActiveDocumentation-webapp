@@ -678,8 +678,9 @@ class EditRuleForm extends Component {
      * render GUI errors.
      */
     renderGuiError() {
-        return !this.state.guiError ? null : (
-            <div className={"guiMessages has-error"} id={`gui_error_${this.ruleIndex}`}>
+        return (//!this.state.guiError ? null : (
+            <div className={"guiMessages has-error"} id={`gui_error_${this.ruleIndex}`}
+                 style={this.state.guiError ? {} : {visibility: "hidden"}}>
                 <span>Select at least one element as a constraint.</span>
                 <FaQuestionCircle size={20} className={"faQuestionCircle"}
                                   onClick={() => this.setState({

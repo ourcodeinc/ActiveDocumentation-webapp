@@ -4,9 +4,11 @@
  */
 
 import React, {Component, Fragment} from 'react';
-import MdStar from 'react-icons/lib/md/star';
+import {MdStar, MdClose} from 'react-icons/lib/md/index';
+import {FaClose} from "react-icons/lib/fa/index";
 import {Button, MenuItem, Dropdown, Modal} from 'react-bootstrap';
 import {RootCloseWrapper} from 'react-overlays';
+import Switch from 'react-switch';
 
 import {getConditionByName} from "./guiConstants";
 import * as marked from "marked";
@@ -71,20 +73,25 @@ class GuiComponent extends Component {
         */
         this.state.elementNode = this.state.rootTree[this.state.elementId];
 
+        this.nodes = {};
         // for storing temporary states
         this.state.texts = {};
         Object.keys(this.state.elementNode.children).forEach(group => {
             this.state.texts[group] = [];
+            this.nodes[group] = [];
             if (group === "body")
                 this.state.elementNode.children["body"].forEach(subGroup => {
                     this.state.texts["body"].push([]);
+                    this.nodes["body"].push([]);
                     subGroup.forEach((childId) => {
                         this.state.texts["body"][this.state.texts["body"].length - 1].push(this.state.guiElements[childId].text ? this.state.guiElements[childId].text : "")
+                        this.nodes["body"][this.nodes["body"].length - 1].push({});
                     });
                 });
             else
                 this.state.elementNode.children[group].forEach(childId => {
                     this.state.texts[group].push(this.state.guiElements[childId].text ? this.state.guiElements[childId].text : "")
+                    this.nodes[group].push({});
                 })
         });
     }
@@ -95,16 +102,20 @@ class GuiComponent extends Component {
         let texts = {};
         Object.keys(nextProps.rootTree[nextProps.elementId].children).forEach(group => {
             texts[group] = [];
+            this.nodes[group] = [];
             if (group === "body")
                 nextProps.rootTree[nextProps.elementId].children["body"].forEach(subGroup => {
                     texts["body"].push([]);
+                    this.nodes["body"].push([]);
                     subGroup.forEach((childId) => {
                         texts["body"][texts["body"].length - 1].push(nextProps.guiElements[childId].text ? nextProps.guiElements[childId].text : "")
+                        this.nodes["body"][this.nodes["body"].length - 1].push({});
                     })
                 });
             else
                 nextProps.rootTree[nextProps.elementId].children[group].forEach(childId => {
                     texts[group].push(nextProps.guiElements[childId].text ? nextProps.guiElements[childId].text : "")
+                    this.nodes[group].push({});
                 })
         });
 
@@ -228,10 +239,17 @@ class GuiComponent extends Component {
                                      : "rowItem") +
                              (childElement.activeElement ? " activeElement" : "")
                              + (childElement.isConstraint ? " constraintElement" : "")}
-
-                             onDoubleClick={(e) => {
-                                 e.stopPropagation(); // to stop propagating the click to the underneath elements
-                                 this._handleConstraintElement(childId, childElement);
+                             onMouseEnter={() => {
+                                 if (childElement.activeElement && this.nodes[group] && this.nodes[group][i]
+                                     && this.nodes[group][i]["toggle"]
+                                     && Object.entries(this.nodes[group][i]["toggle"]).length !== 0)
+                                     this.nodes[group][i]["toggle"].style.display = "block";
+                             }}
+                             onMouseLeave={() => {
+                                 if (this.nodes[group] && this.nodes[group][i]
+                                     && this.nodes[group][i]["toggle"]
+                                     && Object.entries(this.nodes[group][i]["toggle"]).length !== 0)
+                                     this.nodes[group][i]["toggle"].style.display = "none";
                              }}
                         >
                             <div>
@@ -247,7 +265,18 @@ class GuiComponent extends Component {
                                                texts[group][i] = e.target.value;
                                                this.setState({texts});
                                            }}
+                                           onFocus={()=> {
+                                               if (this.nodes[group] && this.nodes[group][i]
+                                                   && this.nodes[group][i]["information"]
+                                                   && Object.entries(this.nodes[group][i]["information"]).length !== 0)
+                                                   this.nodes[group][i]["information"].style.display = "block";
+                                           }}
                                            onBlur={e => {
+                                               if (this.nodes[group] && this.nodes[group][i]
+                                                   && this.nodes[group][i]["information"]
+                                                   && Object.entries(this.nodes[group][i]["information"]).length !== 0)
+                                                   this.nodes[group][i]["information"].style.display = "none";
+
                                                if (this.state.elementNode.children[group][i] === e.target.value) return;
                                                let jobs = [];
 
@@ -307,11 +336,115 @@ class GuiComponent extends Component {
 
                                                this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
                                            }}
-                                           onMouseMove={e => {
-                                               if (document.activeElement === e.target)
-                                                   e.target.blur();
-                                           }}
                                     />
+                                    <div className={"toggleConstraintDiv rowGroup"}
+                                         ref={node => this.nodes[group][i]["toggle"] = node}>
+                                        <div>
+                                            <div style={{float: "left", marginTop: "3px"}}>
+                                                <Switch
+                                                    onChange={() => this._handleConstraintElement(childId, childElement)}
+                                                    checked={childElement.isConstraint ? childElement.isConstraint : false}
+                                                    onColor="#b1b1ff"
+                                                    onHandleColor="#3333fc"
+                                                    handleDiameter={15}
+                                                    uncheckedIcon={false}
+                                                    checkedIcon={false}
+                                                    boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                                                    activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                                                    height={15}
+                                                    width={30}
+                                                />
+                                            </div>
+                                            <div className={"MdRemove rowItem"} style={{display: "inline-block"}}>
+                                                <FaClose size={20}
+                                                         onClick={() => {
+                                                             // similar to blur
+                                                             let jobs = [];
+
+                                                             // update texts
+                                                             jobs.push({
+                                                                 elementId: childId,
+                                                                 task: "UPDATE_ELEMENT",
+                                                                 value: {
+                                                                     text: "",
+                                                                     activeElement: false,
+                                                                     isConstraint: false
+                                                                 }
+                                                             });
+
+                                                             // if the element is not unique and there is no available empty element, add one
+                                                             // or remove extras
+                                                             if (!childCondition.unique) {
+                                                                 let availableElements = this.state.elementNode.children[group].reduce((count, elemId) => {
+                                                                     if (elemId !== childId)
+                                                                         return count + (this.state.guiElements[elemId].activeElement ? 0 : 1);
+                                                                     return count + 1
+                                                                 }, 0);
+                                                                 if (availableElements < 1)
+                                                                     jobs.push({
+                                                                         elementId: this.state.elementId,
+                                                                         task: "ADD_EXTRA",
+                                                                         value: group // must be constraint if its parent is
+                                                                     });
+                                                                 else if (availableElements > 1)
+                                                                     jobs.push({
+                                                                         elementId: this.state.elementId,
+                                                                         task: "REMOVE_EXTRA",
+                                                                         value: group
+                                                                     });
+                                                             }
+
+                                                             // update activeElement for the main element
+                                                             let haveActiveChild = false;
+                                                             Object.keys(this.state.elementNode.children).forEach(group => {
+                                                                 if (group !== "body")
+                                                                     this.state.elementNode.children[group].forEach(elemId => {
+                                                                         if (elemId !== childId && this.state.guiElements[elemId].activeElement) haveActiveChild = true;
+                                                                     });
+                                                                 else
+                                                                     this.state.elementNode.children["body"].forEach(subGroup => {
+                                                                         subGroup.forEach(elemId => {
+                                                                             if (elemId !== childId && this.state.guiElements[elemId].activeElement) haveActiveChild = true;
+                                                                         });
+                                                                     });
+                                                             });
+                                                             // if (haveActiveChild !== this.state.thisElement.activeElement)
+                                                             jobs.push({
+                                                                 elementId: this.state.elementId,
+                                                                 task: "UPDATE_ELEMENT",
+                                                                 value: {activeElement: haveActiveChild}
+                                                             });
+
+                                                             this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+                                                         }}/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className={"informationDiv rowGroup"}
+                                         ref={node => this.nodes[group][i]["information"] = node}>
+                                        <div>
+                                            <div className={"MdRemove"} style={{float: "right"}}>
+                                                <MdClose size={20}
+                                                         onClick={() => {
+                                                             if (this.nodes[group] && this.nodes[group][i]
+                                                                 && this.nodes[group][i]["information"]
+                                                                 && Object.entries(this.nodes[group][i]["information"]).length !== 0)
+                                                                 this.nodes[group][i]["information"].style.display = "none";
+                                                         }}/>
+                                            </div>
+                                            {childCondition.type === "wideText" ? (
+                                                <span
+                                                    dangerouslySetInnerHTML={{__html: marked(documentations_IMarkdownString["EXACT_CODE"].value)}}
+                                                />
+                                            ) : (
+                                            <span
+                                                dangerouslySetInnerHTML={{__html: marked(documentations_IMarkdownString["QUOTES"].value)}}
+                                            />
+                                            )}
+                                        </div>
+                                    </div>
+
                                 </div>
                                 <div className={"rowItem"}><b>{childCondition.post}</b></div>
                             </div>
@@ -324,11 +457,102 @@ class GuiComponent extends Component {
                             + (childElement.isConstraint ? " constraintElement" : "")} key={i}
                             id={`id__${this.props.ruleIndex}__${childId}`}
 
-                            onDoubleClick={(e) => {
-                                e.stopPropagation(); // to stop propagating the click to the underneath elements
-                                this._handleConstraintElement(childId, childElement);
+                            onMouseEnter={() => {
+                                if (childElement.activeElement && this.nodes[group] && this.nodes[group][i]
+                                    && this.nodes[group][i]["toggle"]
+                                    && Object.entries(this.nodes[group][i]["toggle"]).length !== 0)
+                                    this.nodes[group][i]["toggle"].style.display = "block";
+                            }}
+                            onMouseLeave={() => {
+                                if (this.nodes[group] && this.nodes[group][i]
+                                    && this.nodes[group][i]["toggle"]
+                                    && Object.entries(this.nodes[group][i]["toggle"]).length !== 0)
+                                    this.nodes[group][i]["toggle"].style.display = "none";
                             }}
                         >
+                            <div className={"toggleConstraintDiv rowGroup"} style={{marginTop: "-25px"}}
+                                 ref={node => this.nodes[group][i]["toggle"] = node}>
+                                <div>
+                                    <div style={{float: "left", marginTop: "3px"}}>
+                                        <Switch
+                                            onChange={() => this._handleConstraintElement(childId, childElement)}
+                                            checked={childElement.isConstraint ? childElement.isConstraint : false}
+                                            onColor="#b1b1ff"
+                                            onHandleColor="#3333fc"
+                                            handleDiameter={15}
+                                            uncheckedIcon={false}
+                                            checkedIcon={false}
+                                            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                                            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                                            height={15}
+                                            width={30}
+                                        />
+                                    </div>
+                                    <div className={"MdRemove rowItem"} style={{display: "inline-block"}}>
+                                        <FaClose size={20}
+                                                 onClick={() => {
+                                                     // similar to blur
+                                                     let jobs = [];
+
+                                                     // update texts
+                                                     jobs.push({
+                                                         elementId: childId,
+                                                         task: "UPDATE_ELEMENT",
+                                                         value: {
+                                                             text: "",
+                                                             activeElement: false,
+                                                             isConstraint: false
+                                                         }
+                                                     });
+
+                                                     // if the element is not unique and there is no available empty element, add one
+                                                     // or remove extras
+                                                     if (!childCondition.unique) {
+                                                         let availableElements = this.state.elementNode.children[group].reduce((count, elemId) => {
+                                                             if (elemId !== childId)
+                                                                 return count + (this.state.guiElements[elemId].activeElement ? 0 : 1);
+                                                             return count + 1
+                                                         }, 0);
+                                                         if (availableElements < 1)
+                                                             jobs.push({
+                                                                 elementId: this.state.elementId,
+                                                                 task: "ADD_EXTRA",
+                                                                 value: group // must be constraint if its parent is
+                                                             });
+                                                         else if (availableElements > 1)
+                                                             jobs.push({
+                                                                 elementId: this.state.elementId,
+                                                                 task: "REMOVE_EXTRA",
+                                                                 value: group
+                                                             });
+                                                     }
+
+                                                     // update activeElement for the main element
+                                                     let haveActiveChild = false;
+                                                     Object.keys(this.state.elementNode.children).forEach(group => {
+                                                         if (group !== "body")
+                                                             this.state.elementNode.children[group].forEach(elemId => {
+                                                                 if (elemId !== childId && this.state.guiElements[elemId].activeElement) haveActiveChild = true;
+                                                             });
+                                                         else
+                                                             this.state.elementNode.children["body"].forEach(subGroup => {
+                                                                 subGroup.forEach(elemId => {
+                                                                     if (elemId !== childId && this.state.guiElements[elemId].activeElement) haveActiveChild = true;
+                                                                 });
+                                                             });
+                                                     });
+                                                     // if (haveActiveChild !== this.state.thisElement.activeElement)
+                                                     jobs.push({
+                                                         elementId: this.state.elementId,
+                                                         task: "UPDATE_ELEMENT",
+                                                         value: {activeElement: haveActiveChild}
+                                                     });
+
+                                                     this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+                                                 }}/>
+                                    </div>
+                                </div>
+                            </div>
                             <CustomDropDown
                                 menuItemsText={childCondition.items}
                                 menuItemsEvent={childCondition.items.map(item => item === "N/A" ? childCondition.placeholder : item)}
@@ -422,10 +646,17 @@ class GuiComponent extends Component {
                                                  : "rowItem")
                                          + (childElement.activeElement ? " activeElement" : "")
                                          + (childElement.isConstraint ? " constraintElement" : "")}
-
-                                         onDoubleClick={(e) => {
-                                             e.stopPropagation(); // to stop propagating the click to the underneath elements
-                                             this._handleConstraintElement(childId, childElement);
+                                         onMouseEnter={() => {
+                                             if (childElement.activeElement && this.nodes["body"] && this.nodes["body"][i]
+                                                 && this.nodes["body"][i][j] && this.nodes["body"][i][j]["information"]
+                                                 && Object.entries(this.nodes["body"][i][j]["information"]).length !== 0)
+                                                 this.nodes["body"][i][j]["toggle"].style.display = "block";
+                                         }}
+                                         onMouseLeave={() => {
+                                             if (this.nodes["body"] && this.nodes["body"][i] && this.nodes["body"][i][j]
+                                                 && this.nodes["body"][i][j]["information"]
+                                                 && Object.entries(this.nodes["body"][i][j]["information"]).length !== 0)
+                                                 this.nodes["body"][i][j]["toggle"].style.display = "none";
                                          }}
                                     >
                                         <div>
@@ -441,7 +672,18 @@ class GuiComponent extends Component {
                                                            texts["body"][i][j] = e.target.value;
                                                            this.setState({texts});
                                                        }}
+                                                       onFocus={() => {
+                                                           if (this.nodes["body"] && this.nodes["body"][i] && this.nodes["body"][i][j]
+                                                               && this.nodes["body"][i][j]["information"]
+                                                               && Object.entries(this.nodes["body"][i][j]["information"]).length !== 0)
+                                                               this.nodes["body"][i][j]["information"].style.display = "block";
+                                                       }}
                                                        onBlur={e => {
+                                                           if (this.nodes["body"] && this.nodes["body"][i] && this.nodes["body"][i][j]
+                                                               && this.nodes["body"][i][j]["information"]
+                                                               && Object.entries(this.nodes["body"][i][j]["information"]).length !== 0)
+                                                               this.nodes["body"][i][j]["information"].style.display = "none";
+
                                                            if (this.state.elementNode.children["body"][i][j] === e.target.value) return;
                                                            let jobs = [];
                                                            // update the text
@@ -497,11 +739,114 @@ class GuiComponent extends Component {
 
                                                            this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
                                                        }}
-                                                       onMouseMove={e => {
-                                                           if (document.activeElement === e.target)
-                                                               e.target.blur();
-                                                       }}
                                                 />
+
+                                                <div className={"toggleConstraintDiv rowGroup"}
+                                                     ref={node => this.nodes["body"][i][j]["toggle"] = node}>
+                                                    <div>
+                                                        <div style={{float: "left", marginTop: "3px"}}>
+                                                            <Switch
+                                                                onChange={() => this._handleConstraintElement(childId, childElement)}
+                                                                checked={childElement.isConstraint ? childElement.isConstraint : false}
+                                                                onColor="#b1b1ff"
+                                                                onHandleColor="#3333fc"
+                                                                handleDiameter={15}
+                                                                uncheckedIcon={false}
+                                                                checkedIcon={false}
+                                                                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                                                                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                                                                height={15}
+                                                                width={30}
+                                                            />
+                                                        </div>
+                                                        <div className={"MdRemove rowItem"}
+                                                             style={{display: "inline-block"}}>
+                                                            <FaClose size={20}
+                                                                     onClick={() => {
+                                                                         // similar to blur
+
+                                                                         let jobs = [];
+                                                                         // update the text
+                                                                         jobs.push({
+                                                                             elementId: childId,
+                                                                             task: "UPDATE_ELEMENT",
+                                                                             value: {
+                                                                                 text: "",
+                                                                                 activeElement: false
+                                                                             }
+                                                                         });
+                                                                         // if the childElement is not unique and there is no available empty element, add one
+                                                                         // or remove extras
+                                                                         if (!childCondition.unique) {
+                                                                             let availableElements = this.state.elementNode.children["body"][i].reduce((count, elemId) => {
+                                                                                 if (elemId !== childId)
+                                                                                     return count + (this.state.guiElements[elemId].activeElement ? 0 : 1);
+                                                                                 return count + 1
+                                                                             }, 0);
+                                                                             if (availableElements < 1)
+                                                                                 jobs.push({
+                                                                                     elementId: this.state.elementId,
+                                                                                     task: "ADD_EXTRA",
+                                                                                     value: "body," + i
+                                                                                 });
+                                                                             else if (availableElements > 1)
+                                                                                 jobs.push({
+                                                                                     elementId: this.state.elementId,
+                                                                                     task: "REMOVE_EXTRA",
+                                                                                     value: "body," + i
+                                                                                 });
+                                                                         }
+
+                                                                         // update activeElement for the main element
+                                                                         let haveActiveChild = false;
+                                                                         Object.keys(this.state.elementNode.children).forEach(group => {
+                                                                             if (group !== "body")
+                                                                                 this.state.elementNode.children[group].forEach(elemId => {
+                                                                                     if (elemId !== childId && this.state.guiElements[elemId].activeElement) haveActiveChild = true;
+                                                                                 });
+                                                                             else
+                                                                                 this.state.elementNode.children["body"].forEach(subGroup => {
+                                                                                     subGroup.forEach(elemId => {
+                                                                                         if (elemId !== childId && this.state.guiElements[elemId].activeElement) haveActiveChild = true;
+                                                                                     });
+                                                                                 });
+                                                                         });
+                                                                         jobs.push({
+                                                                             elementId: this.state.elementId,
+                                                                             task: "UPDATE_ELEMENT",
+                                                                             value: {activeElement: haveActiveChild}
+                                                                         });
+
+                                                                         this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+                                                                     }}/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className={"informationDiv rowGroup"}
+                                                     ref={node => this.nodes["body"][i][j]["information"] = node}>
+                                                    <div>
+                                                        <div className={"MdRemove"} style={{float: "right"}}>
+                                                            <MdClose size={20}
+                                                                     onClick={() => {
+                                                                         if (this.nodes["body"] && this.nodes["body"][i] && this.nodes["body"][i][j]
+                                                                             && this.nodes["body"][i][j]["information"]
+                                                                             && Object.entries(this.nodes["body"][i][j]["information"]).length !== 0)
+                                                                             this.nodes["body"][i][j]["information"].style.display = "none";
+                                                                     }}/>
+                                                        </div>
+                                                        {childCondition.type === "wideText" ? (
+                                                            <span
+                                                                dangerouslySetInnerHTML={{__html: marked(documentations_IMarkdownString["EXACT_CODE"].value)}}
+                                                            />
+                                                        ) : (
+                                                            <span
+                                                                dangerouslySetInnerHTML={{__html: marked(documentations_IMarkdownString["QUOTES"].value)}}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                </div>
+
                                             </div>
                                             <div className={"rowItem"}><b>{childCondition.post}</b></div>
                                         </div>
@@ -514,11 +859,99 @@ class GuiComponent extends Component {
                                         + (childElement.isConstraint ? " constraintElement" : "")} key={j}
                                         id={`id__${this.props.ruleIndex}__${childId}`}
 
-                                        onDoubleClick={(e) => {
-                                            e.stopPropagation(); // to stop propagating the click to the underneath elements
-                                            this._handleConstraintElement(childId, childElement);
+                                        onMouseEnter={() => {
+                                            if (childElement.activeElement && this.nodes["body"] && this.nodes["body"][i] && this.nodes["body"][i][j]
+                                                && this.nodes["body"][i][j]["toggle"]
+                                                && Object.entries(this.nodes["body"][i][j]["toggle"]).length !== 0)
+                                                this.nodes["body"][i][j]["toggle"].style.display = "block";
+                                        }}
+                                        onMouseLeave={() => {
+                                            if (this.nodes["body"] && this.nodes["body"][i] && this.nodes["body"][i][j]
+                                                && this.nodes["body"][i][j]["toggle"]
+                                                && Object.entries(this.nodes["body"][i][j]["toggle"]).length !== 0)
+                                                this.nodes["body"][i][j]["toggle"].style.display = "none";
                                         }}
                                     >
+                                        <div className={"toggleConstraintDiv rowGroup"} style={{marginTop: "-25px"}}
+                                             ref={node => this.nodes["body"][i][j]["toggle"] = node}>
+                                            <div>
+                                                <div style={{float: "left", marginTop: "3px"}}>
+                                                    <Switch
+                                                        onChange={() => this._handleConstraintElement(childId, childElement)}
+                                                        checked={childElement.isConstraint ? childElement.isConstraint : false}
+                                                        onColor="#b1b1ff"
+                                                        onHandleColor="#3333fc"
+                                                        handleDiameter={15}
+                                                        uncheckedIcon={false}
+                                                        checkedIcon={false}
+                                                        boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                                                        activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                                                        height={15}
+                                                        width={30}
+                                                    />
+                                                </div>
+                                                <div className={"MdRemove rowItem"} style={{display: "inline-block"}}>
+                                                    <FaClose size={20}
+                                                             onClick={() => {
+                                                                 // similar to blur
+
+                                                                 let jobs = [];
+                                                                 // update the text
+                                                                 jobs.push({
+                                                                     elementId: childId,
+                                                                     task: "UPDATE_ELEMENT",
+                                                                     value: {
+                                                                         text: "",
+                                                                         activeElement: false
+                                                                     }
+                                                                 });
+                                                                 // if the childElement is not unique and there is no available empty element, add one
+                                                                 // or remove extras
+                                                                 if (!childCondition.unique) {
+                                                                     let availableElements = this.state.elementNode.children["body"][i].reduce((count, elemId) => {
+                                                                         if (elemId !== childId)
+                                                                             return count + (this.state.guiElements[elemId].activeElement ? 0 : 1);
+                                                                         return count + 1
+                                                                     }, 0);
+                                                                     if (availableElements < 1)
+                                                                         jobs.push({
+                                                                             elementId: this.state.elementId,
+                                                                             task: "ADD_EXTRA",
+                                                                             value: "body," + i
+                                                                         });
+                                                                     else if (availableElements > 1)
+                                                                         jobs.push({
+                                                                             elementId: this.state.elementId,
+                                                                             task: "REMOVE_EXTRA",
+                                                                             value: "body," + i
+                                                                         });
+                                                                 }
+
+                                                                 // update activeElement for the main element
+                                                                 let haveActiveChild = false;
+                                                                 Object.keys(this.state.elementNode.children).forEach(group => {
+                                                                     if (group !== "body")
+                                                                         this.state.elementNode.children[group].forEach(elemId => {
+                                                                             if (elemId !== childId && this.state.guiElements[elemId].activeElement) haveActiveChild = true;
+                                                                         });
+                                                                     else
+                                                                         this.state.elementNode.children["body"].forEach(subGroup => {
+                                                                             subGroup.forEach(elemId => {
+                                                                                 if (elemId !== childId && this.state.guiElements[elemId].activeElement) haveActiveChild = true;
+                                                                             });
+                                                                         });
+                                                                 });
+                                                                 jobs.push({
+                                                                     elementId: this.state.elementId,
+                                                                     task: "UPDATE_ELEMENT",
+                                                                     value: {activeElement: haveActiveChild}
+                                                                 });
+
+                                                                 this.props.onChangeGuiElement(this.props.ruleIndex, jobs);
+                                                             }}/>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <CustomDropDown
 
                                             menuItemsText={childCondition.items}

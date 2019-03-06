@@ -29,7 +29,7 @@ class RuleGeneratorGui extends Component {
             autoCompleteArray: props.autoCompleteArray,
         };
 
-        this.class = props["className"] ? props["className"] : "generateRuleGui";
+        this.class = (props["className"] ? props["className"] : "generateRuleGui") + " guiBoundingBox";
 
         // existing rule
         if (this.ruleIndex !== -1) {
@@ -51,7 +51,7 @@ class RuleGeneratorGui extends Component {
 
     render() {
         return (
-            <div style={{clear: "both", marginTop: "20px"}} className={this.class}>
+            <div className={this.class}>
                 <GuiComponent key={new Date()} ruleIndex={this.ruleIndex} elementId={"0"} root
                               rootTree={this.state.guiTree}
                               guiElements={this.state.guiElements}
@@ -75,7 +75,6 @@ class RuleGeneratorGui extends Component {
                 this.setState(
                     {
                         ws: nextProps.ws,
-                        rules: nextProps.rules,
                         guiTree: this.ruleI.rulePanelState.guiState.guiTree,
                         guiElements: this.ruleI.rulePanelState.guiState.guiElements,
                         autoCompleteArray: this.ruleI.rulePanelState.autoCompleteArray
