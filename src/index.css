@@ -368,29 +368,23 @@ body {
 }
 
 .generateRuleGui .elementDiv.activeElement {
-    /*border-color: #a6a6a6;*/
     box-shadow: 0 0 2px #c6c6c6;
 }
 
-.generateRuleGui .elementDiv.activeElement.hovered {
-    /*border-color: #959595;*/
-    box-shadow: 0 0 10px #999999;
-}
-
 .generateRuleGui .elementDiv.activeElement.constraintElement {
-    box-shadow: 0 0 2px #3333cc;
+    box-shadow: 0 0 2px #e5efff;
     /*border-color: #0017ff;*/
 }
 
-.generateRuleGui .elementDiv.activeElement.constraintElement.hovered {
-    box-shadow: 0 0 10px #3333cc;
+.generateRuleGui .elementDiv.activeElement.constraintElement:hover {
+    box-shadow: 0 0 10px #8e94a4;
 }
 
 .generateRuleGui .activeElement.selectedElement {
     box-shadow: 0 0 5px #99721c;
 }
 
-.generateRuleGui .activeElement.selectedElement.hovered {
+.generateRuleGui .activeElement.selectedElement:hover {
     box-shadow: 0 0 10px #99721c;
 }
 
@@ -409,6 +403,10 @@ body {
     background-color: #ffffff;
 }
 
+.generateRuleGui .activeElement.constraintElement {
+    background-color: #F2F8FF;
+}
+
 .generateRuleGui .inputText {
     background-color: #f4f4f4;
 }
@@ -419,6 +417,18 @@ body {
 
 .generateRuleGui .inputText.activeElement {
     background-color: #c5c5c5;
+}
+
+.generateRuleGui .inputText.constraintElement {
+    background-color: #d9e8ff;
+}
+
+.generateRuleGui .dropdownToggle.constraintElement {
+    background-color: #d9e8ff;
+}
+
+.generateRuleGui .inputText.constraintElement:hover, .generateRuleGui .inputText.constraintElement:focus {
+    background-color: #bfd9ff;
 }
 
 /*     text color */
@@ -447,26 +457,6 @@ body {
     color: #303030;
 }
 
-.generateRuleGui .activeElement.constraintElement {
-    color: #3333cc;
-}
-
-.generateRuleGui .activeElement.constraintElement:hover {
-    color: #24248f;
-}
-
-.generateRuleGui .activeElement.constraintElement .dropdownDiv {
-    color: #9595e6;
-}
-
-.generateRuleGui .activeElement.constraintElement .dropdownDiv:hover {
-    color: #4b4b73;
-}
-
-.generateRuleGui .activeElement.constraintElement .dropdownDiv.activeElement {
-    color: #24248f;
-}
-
 .generateRuleGui .inputText {
     color: #c3c3c3;
 }
@@ -479,77 +469,63 @@ body {
     color: #606060;
 }
 
-.generateRuleGui .activeElement.constraintElement .inputText {
-    color: #3333cc;
-}
-
-.generateRuleGui .activeElement.constraintElement .inputText::placeholder {
-    color: #3333cc;
-}
-
 /*     misc */
 
 .generateRuleGui .inputText::placeholder {
     opacity: 0.5;
 }
 
-.generateRuleGui .removeIcon {
-    float: right;
-}
-
 .generateRuleGui .informationDiv {
     position: absolute;
     margin-top: 1px;
     padding: 1px 0 0 5px;
-    background-color: #ffffff;
+    background-color: #ebf8ff;
     z-index: 1000;
     display: none;
-    width: 50%;
-    left: 30%;
+    right: 0;
+    color: #333333;
+    box-shadow: 0 0 10px #828282;
 }
 
-/* toggle */
+/****  icons */
 
 .generateRuleGui .toggleConstraintDiv {
     position: absolute;
-    margin-top: -47px;
+    margin-top: -50px;
     padding: 1px 0 0 5px;
-    background-color: #d9edf7;
+    background-color: #ffffff;
+    border: 1px solid #d2d2d2;
+    border-radius: 3px;
     z-index: 1000;
     display: none;
-    width: 80px;
+    width: 60px;
 }
 
-/****  star */
+.generateRuleGui .toggleConstraintContainer {
+    float: left;
+    margin-top: 5px;
+}
 
-.generateRuleGui .MdStar {
-    cursor: pointer;
-    color: #cacaca;
+.generateRuleGui .elementIconsDiv {
     float: right;
-    margin-top: -20px; /* size of MdStar */
+    margin-top: -25px;
 }
 
-.generateRuleGui .MdStar:hover {
-    color: #969696;
-}
-
-.generateRuleGui .MdStar.selectedElement {
+.generateRuleGui .MdStar, .generateRuleGui .MdRemove {
     cursor: pointer;
+    padding-top: 2px;
+    color: #cacaca;
+}
+
+.generateRuleGui .MdStar:hover, .generateRuleGui .MdStar.selectedElement {
     color: #e5a727;
-}
-
-/**** remove element */
-
-.generateRuleGui .MdRemove {
-    cursor: pointer;
-    color: #888888;
 }
 
 .generateRuleGui .MdRemove:hover {
     color: #980617;
 }
 
-/* Text error message */
+/* Editor Text error message */
 
 .controlButton {
     cursor: pointer;
@@ -592,7 +568,7 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    background-color: #f8f8f8;
+    background-color: #f4f4f4;
     opacity: 1;
     color: #c3c3c3;
 

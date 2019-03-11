@@ -2,6 +2,7 @@ const element_attributes = {
     activeElement: false, // if the element has at least one child
     selectedElement: false, // if the element is the root of the XPath (unique)
     isConstraint: false // if the element is for the constraint query
+    // text: string (for storing values)
 };
 
 export const initial_guiElements = {

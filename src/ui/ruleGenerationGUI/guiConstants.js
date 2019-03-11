@@ -485,13 +485,13 @@ export function generateInitialElementTreeNodes(el_name, elem_id, parent_id) {
     }
 }
 
-export function generateTreeForElement(el_name, id) {
+export function generateTreeForElement(el_name, elemId, parentId) {
     let result = {elements: [], trees: []};
     if (!element_conditions.hasOwnProperty(el_name)) return result;
 
     if (element_conditions[el_name].type === "element") {
         let node = {
-            parentId: `${id}`,
+            parentId: `${parentId}`,
             children: {
                 top: [],
                 before_1: [],
@@ -506,29 +506,29 @@ export function generateTreeForElement(el_name, id) {
 
         ["top", "before_1", "before_2", "before_3", "after_1", "after_2", "after_3"].forEach((group, i) => {
             if (element_conditions[el_name].children[group] !== "") {
-                node.children[group].push(`${id}-${i}-0`);
-                let newResult = generateTreeForElement(element_conditions[el_name].children[group], `${id}-${i}-0`);
+                node.children[group].push(`${elemId}-${i}-0`);
+                let newResult = generateTreeForElement(element_conditions[el_name].children[group], `${elemId}-${i}-0`, elemId);
                 result.elements = result.elements.concat(newResult.elements);
                 result.trees = result.trees.concat(newResult.trees);
             }
         });
 
         element_conditions[el_name].children.body.forEach((e, j) => {
-            node.children.body.push([`${id}-7-${j}`]);
-            let newResult = generateTreeForElement(element_conditions[el_name].children.body[j], `${id}-7-${j}`);
+            node.children.body.push([`${elemId}-7-${j}`]);
+            let newResult = generateTreeForElement(element_conditions[el_name].children.body[j], `${elemId}-7-${j}`, elemId);
             result.elements = result.elements.concat(newResult.elements);
             result.trees = result.trees.concat(newResult.trees);
         });
 
-        result.trees.push({id: `${id}`, node: node});
+        result.trees.push({id: `${elemId}`, node: node});
     }
     else {
-        result.trees.push({id: `${id}`, node: {parentId: `${id}`, children: {}}});
+        result.trees.push({id: `${elemId}`, node: {parentId: `${parentId}`, children: {}}});
     }
 
     result.elements.push(
         {
-            id: `${id}`,
+            id: `${elemId}`,
             node: {
                 conditionName: el_name,
                 activeElement: false,

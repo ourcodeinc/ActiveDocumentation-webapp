@@ -10,7 +10,7 @@
     "diff": "^4.0.1",
     "marked": "^0.6.1",
     "monaco-editor": "^0.15.6",
-    "npm": "^6.8.0",
+    "npm": "^6.9.0",
     "pluralize": "^7.0.0",
     "react": "^16.8.4",
     "react-bootstrap": "^0.32.4",
@@ -21,6 +21,7 @@
     "react-redux": "^5.1.1",
     "react-scripts": "1.1.4",
     "react-switch": "^4.1.0",
+    "react-tooltip": "^3.10.0",
     "redux": "^4.0.1",
     "wink-lemmatizer": "^2.0.0",
     "wink-pos-tagger": "^1.5.0"

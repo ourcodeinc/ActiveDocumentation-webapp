@@ -359,7 +359,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                                         array.guiTree[job["elementId"]].children[childGroup].filter((id) => filterFunction(array, id));
                             }
                             let newElementId = Math.floor(new Date().getTime() / 10).toString();
-                            let newElementsData = generateTreeForElement(newElementConditionName, newElementId);
+                            let newElementsData = generateTreeForElement(newElementConditionName, newElementId, job["elementId"]);
                             // updating the existing tree
                             if (job["value"].startsWith("body"))
                                 array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(',')[1])].push(newElementId);
@@ -444,12 +444,6 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
                                 let tempTree = array.guiTree[tempId];
                                 let childrenIds = [];
-
-                                try {
-                                    Object.keys(tempTree.children)
-                                } catch (e) {
-                                    console.log(array.guiTree, tempId)
-                                }
 
                                 Object.keys(tempTree.children).forEach(childGroup => {
                                     if (childGroup !== "body") childrenIds = childrenIds.concat(tempTree.children[childGroup]);
