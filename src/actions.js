@@ -8,6 +8,13 @@ export const updateWS = (ws) => {
     return {type: "NEW_WS", value: ws};
 };
 
+export const updateXmlFiles = (xmlFiles) => {
+    return {
+        type: "UPDATE_XML_FILES",
+        xmlFiles: xmlFiles
+    }
+};
+
 export const updateTagTable = (newTagTable) => {
     return {type: "UPDATE_TAG_TABLE", value: newTagTable};
 };
@@ -22,6 +29,10 @@ export const updateRule = (updatedRule) => {
 
 export const ignoreFile = (shouldIgnore) => {
     return {type: "IGNORE_FILE", shouldIgnore: shouldIgnore};
+};
+
+export const updateDisplayEditTutorial = (shouldDisplay) => {
+    return {type: "UPDATE_DISPLAY_EDIT_TUTORIAL", shouldDisplay: shouldDisplay};
 };
 
 

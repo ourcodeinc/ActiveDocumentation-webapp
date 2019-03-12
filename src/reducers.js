@@ -47,6 +47,9 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
         case "NEW_WS":
             return Object.assign({}, state, {ws: action["value"], message: "NEW_WS"});
 
+        case "UPDATE_XML_FILES":
+            return Object.assign({}, state, {xmlFiles: action["xmlFiles"], message: "UPDATE_XML_FILES"});
+
         case "UPDATE_TAG_TABLE":
             return Object.assign({}, state, {tagTable: action["value"], message: "UPDATE_TAG_TABLE"});
 
@@ -103,6 +106,9 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             let editCount = state.ruleTable.reduce((count, element) => count + element.rulePanelState.editMode ? 1 : 0, 0);
             if (state.newOrEditRule.isEditMode || editCount > 0) return Object.assign({}, state);
             return Object.assign({}, state, {ignoreFile: action["shouldIgnore"], message: "IGNORE_FILE"});
+
+        case "UPDATE_DISPLAY_EDIT_TUTORIAL":
+            return Object.assign({}, state, {displayEditRuleTutorial: action["shouldDisplay"], message: "UPDATE_DISPLAY_EDIT_TUTORIAL"});
 
         case "FILE_PATH":
             if (state.ignoreFile) return Object.assign({}, state, {message: "FILE_PATH_UPDATED"});

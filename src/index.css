@@ -103,7 +103,7 @@ body {
 }
 
 .edit-bg {
-    background-color: #dbeeff !important;
+    background-color: #f3faff !important;
 }
 
 /*** SRCML xml styling */
@@ -517,7 +517,7 @@ body {
     color: #cacaca;
 }
 
-.generateRuleGui .MdStar:hover, .generateRuleGui .MdStar.selectedElement {
+.generateRuleGui .MdStar:hover, .generateRuleGui .MdStar.selectedElement, .MdStar.selectedElement {
     color: #e5a727;
 }
 
@@ -547,6 +547,12 @@ body {
 
 .guiMessages.has-error {
     color: #a94442;
+}
+
+.switchContainer{
+    display: inline;
+    padding: 6px 7px 0 7px;
+    border-radius: 3px;
 }
 
 /* ======= overlay */
@@ -605,8 +611,8 @@ body {
 /* tutorial */
 
 img.tutorialImage {
-    max-width: 80%;
-    max-height: 170px;
+    max-width: 100%;
+    max-height: 200px;
 }
 
 img.tutorialSmallImage {

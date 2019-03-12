@@ -7,7 +7,7 @@ import {connect} from "react-redux";
 
 import {
     receiveExpressionStatementXML, ignoreFile, updateFilePath, updateRuleTable, updateTagTable,
-    updateWS
+    updateWS, updateXmlFiles
 } from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from './ruleExecutor';
 
@@ -52,6 +52,7 @@ class WebSocketManager extends Component {
                 // send initially on open, when the ruleJson.txt is changed, followed by VERIFY_RULES
                 case "RULE_TABLE":
                     ruleTable = JSON.parse(message.data);
+                    this.props.onUpdateXmlFiles(xml);
                     break;
 
                 // send initially on open, when the tagJson.txt is changed, followed by VERIFY_RULES
@@ -78,6 +79,7 @@ class WebSocketManager extends Component {
                         xml.push({'filePath': message.data['filePath'], 'xml': message.data['xml']});
                     else
                         filtered[0].xml = message.data['xml'];
+                    this.props.onUpdateXmlFiles(xml);
                     break;
 
                 // when the code changes, after UPDATE_XML
@@ -190,27 +192,14 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        onUpdateWS: (ws) => {
-            dispatch(updateWS(ws));
-        },
-        onProjectHierarchy: (hierarchyData) => {
-
-        },
-        onUpdateRuleTable: (ruleTable) => {
-            dispatch(updateRuleTable(ruleTable));
-        },
-        onUpdateTagTable: (tagTable) => {
-            dispatch(updateTagTable(tagTable));
-        },
-        onFilePathChange: (filePath) => {
-            dispatch(updateFilePath(filePath));
-        },
-        onFalsifyIgnoreFile: () => {
-            dispatch(ignoreFile(false))
-        },
-        onReceiveExprStmtXML: (data) => {
-            dispatch(receiveExpressionStatementXML(data))
-        }
+        onUpdateWS: (ws) => dispatch(updateWS(ws)),
+        onProjectHierarchy: (hierarchyData) => {},
+        onUpdateRuleTable: (ruleTable) => dispatch(updateRuleTable(ruleTable)),
+        onUpdateTagTable: (tagTable) => dispatch(updateTagTable(tagTable)),
+        onFilePathChange: (filePath) => dispatch(updateFilePath(filePath)),
+        onFalsifyIgnoreFile: () => dispatch(ignoreFile(false)),
+        onReceiveExprStmtXML: (data) => dispatch(receiveExpressionStatementXML(data)),
+        onUpdateXmlFiles: (xmlFiles) => dispatch(updateXmlFiles(xmlFiles))
     }
 }
 

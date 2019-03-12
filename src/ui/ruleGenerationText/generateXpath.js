@@ -48,7 +48,6 @@ class GenerateXpath {
      * @returns {*} a clean version of this.tree
      */
     traverseNode(node) {
-        // let befooooo = this.XPath;
         if (node instanceof TerminalNodeImpl) {
 
             /**
@@ -218,10 +217,6 @@ class GenerateXpath {
             }
 
         }
-        // console.log(node.constructor.name, node);
-        // // console.log("this.xpath (before)>>", befooooo);
-        // console.log("this.xpath (after)>>", this.XPath);
-        // console.log("======");
     }
 
 
@@ -256,22 +251,23 @@ class GenerateXpath {
     classesContextTraversal(node) {
         let nodeChildren = node.children.slice(0);
 
-        // move Of children to first
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf("ClassOfContext") !== -1) {
-                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-                break;
-            }
-        }
+        // // move Of children to first
+        // for (let i = 0; i < node.children.length; i++) {
+        //     let nodeType = node.getChild(i).constructor.name;
+        //     if (nodeType.indexOf("ClassOfContext") !== -1) {
+        //         nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
+        //         break;
+        //     }
+        // }
 
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = nodeChildren[i].constructor.name;
 
             // process ofContext
             if (nodeType === "ClassOfContext") {
+                this.XPath += "[ancestor-or-self::";
                 this.traverseNode(nodeChildren[i]);
-                this.XPath += "/";
+                this.XPath += "]";
             }
 
             if (nodeType === "TerminalNodeImpl") {
@@ -289,22 +285,23 @@ class GenerateXpath {
     interfacesContextTraversal(node) {
         let nodeChildren = node.children.slice(0);
 
-        // move Of children to first
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf("InterfaceOfContext") !== -1) {
-                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-                break;
-            }
-        }
+        // // move Of children to first
+        // for (let i = 0; i < node.children.length; i++) {
+        //     let nodeType = node.getChild(i).constructor.name;
+        //     if (nodeType.indexOf("InterfaceOfContext") !== -1) {
+        //         nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
+        //         break;
+        //     }
+        // }
 
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = nodeChildren[i].constructor.name;
 
             // process ofContext
             if (nodeType === "InterfaceOfContext") {
+                this.XPath += "[ancestor-or-self::";
                 this.traverseNode(nodeChildren[i]);
-                this.XPath += "/";
+                this.XPath += "]";
             }
 
             if (nodeType === "TerminalNodeImpl") {
@@ -322,22 +319,23 @@ class GenerateXpath {
     namesContextTraversal(node) {
         let nodeChildren = node.children.slice(0);
 
-        // move Of children to first
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf("NameOfContext") !== -1) {
-                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-                break;
-            }
-        }
+        // // move Of children to first
+        // for (let i = 0; i < node.children.length; i++) {
+        //     let nodeType = node.getChild(i).constructor.name;
+        //     if (nodeType.indexOf("NameOfContext") !== -1) {
+        //         nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
+        //         break;
+        //     }
+        // }
 
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = nodeChildren[i].constructor.name;
 
             // process ofContext
             if (nodeType === "NameOfContext") {
+                this.XPath += "[ancestor-or-self::";
                 this.traverseNode(nodeChildren[i]);
-                this.XPath += "/";
+                this.XPath += "]";
             }
 
             // console.log("name", node);
@@ -362,22 +360,23 @@ class GenerateXpath {
     annotationsContextTraversal(node) {
         let nodeChildren = node.children.slice(0);
 
-        // move Of children to first
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf("AnnotationOfContext") !== -1) {
-                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-                break;
-            }
-        }
+        // // move Of children to first
+        // for (let i = 0; i < node.children.length; i++) {
+        //     let nodeType = node.getChild(i).constructor.name;
+        //     if (nodeType.indexOf("AnnotationOfContext") !== -1) {
+        //         nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
+        //         break;
+        //     }
+        // }
 
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = nodeChildren[i].constructor.name;
 
             // process ofContext
             if (nodeType === "AnnotationOfContext") {
+                this.XPath += "[ancestor-or-self::";
                 this.traverseNode(nodeChildren[i]);
-                this.XPath += "/";
+                this.XPath += "]";
             }
 
             if (nodeType === "TerminalNodeImpl") {
@@ -401,22 +400,23 @@ class GenerateXpath {
     extensionsContextTraversal(node) {
         let nodeChildren = node.children.slice(0);
 
-        // move Of children to first
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf("ExtensionOfContext") !== -1) {
-                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-                break;
-            }
-        }
+        // // move Of children to first
+        // for (let i = 0; i < node.children.length; i++) {
+        //     let nodeType = node.getChild(i).constructor.name;
+        //     if (nodeType.indexOf("ExtensionOfContext") !== -1) {
+        //         nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
+        //         break;
+        //     }
+        // }
 
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = nodeChildren[i].constructor.name;
 
             // process ofContext
             if (nodeType === "ExtensionOfContext") {
+                this.XPath += "[ancestor-or-self::";
                 this.traverseNode(nodeChildren[i]);
-                this.XPath += "/";
+                this.XPath += "]";
             }
 
             if (nodeType === "TerminalNodeImpl") {
@@ -439,22 +439,23 @@ class GenerateXpath {
     implementationsContextTraversal(node) {
         let nodeChildren = node.children.slice(0);
 
-        // move Of children to first
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf("ImplementationOfContext") !== -1) {
-                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-                break;
-            }
-        }
+        // // move Of children to first
+        // for (let i = 0; i < node.children.length; i++) {
+        //     let nodeType = node.getChild(i).constructor.name;
+        //     if (nodeType.indexOf("ImplementationOfContext") !== -1) {
+        //         nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
+        //         break;
+        //     }
+        // }
 
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = nodeChildren[i].constructor.name;
 
             // process ofContext
             if (nodeType === "ImplementationOfContext") {
+                this.XPath += "[ancestor-or-self::";
                 this.traverseNode(nodeChildren[i]);
-                this.XPath += "/";
+                this.XPath += "]";
             }
 
             if (nodeType === "TerminalNodeImpl") {
@@ -482,22 +483,23 @@ class GenerateXpath {
     allFunctionsContextTraversal(node, kindOfFunction, xPathTag) {
         let nodeChildren = node.children.slice(0);
 
-        // move Of children to first
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf(kindOfFunction + "OfContext") !== -1) {
-                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-                break;
-            }
-        }
+        // // move Of children to first
+        // for (let i = 0; i < node.children.length; i++) {
+        //     let nodeType = node.getChild(i).constructor.name;
+        //     if (nodeType.indexOf(kindOfFunction + "OfContext") !== -1) {
+        //         nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
+        //         break;
+        //     }
+        // }
 
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = nodeChildren[i].constructor.name;
 
             // process ofContext
             if (nodeType === kindOfFunction + "OfContext") {
+                this.XPath += "[ancestor-or-self::";
                 this.traverseNode(nodeChildren[i]);
-                this.XPath += "/"; // /src:block/ // there is "function of class" only
+                this.XPath += "]"; // /src:block/ // there is "function of class" only
             }
 
             if (nodeType === "TerminalNodeImpl") {
@@ -516,22 +518,23 @@ class GenerateXpath {
     parametersContextTraversal(node) {
         let nodeChildren = node.children.slice(0);
 
-        // move Of children to first
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf("ParameterOfContext") !== -1) {
-                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-                break;
-            }
-        }
+        // // move Of children to first
+        // for (let i = 0; i < node.children.length; i++) {
+        //     let nodeType = node.getChild(i).constructor.name;
+        //     if (nodeType.indexOf("ParameterOfContext") !== -1) {
+        //         nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
+        //         break;
+        //     }
+        // }
 
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = nodeChildren[i].constructor.name;
 
             // process ofContext
             if (nodeType === "ParameterOfContext") {
+                this.XPath += "[ancestor-or-self::";
                 this.traverseNode(nodeChildren[i]);
-                this.XPath += "/";
+                this.XPath += "]";
             }
 
             if (nodeType === "TerminalNodeImpl") {
@@ -550,22 +553,23 @@ class GenerateXpath {
     typesContextTraversal(node) {
         let nodeChildren = node.children.slice(0);
 
-        // move Of children to first
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf("TypeOfContext") !== -1) {
-                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-                break;
-            }
-        }
+        // // move Of children to first
+        // for (let i = 0; i < node.children.length; i++) {
+        //     let nodeType = node.getChild(i).constructor.name;
+        //     if (nodeType.indexOf("TypeOfContext") !== -1) {
+        //         nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
+        //         break;
+        //     }
+        // }
 
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = nodeChildren[i].constructor.name;
 
             // process ofContext
             if (nodeType === "TypeOfContext") {
+                this.XPath += "[ancestor-or-self::";
                 this.traverseNode(nodeChildren[i]);
-                this.XPath += "/";
+                this.XPath += "]";
             }
 
             if (nodeType === "TerminalNodeImpl") {
@@ -592,22 +596,23 @@ class GenerateXpath {
     specifiersContextTraversal(node) {
         let nodeChildren = node.children.slice(0);
 
-        // move Of children to first
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf("SpecifierOfContext") !== -1) {
-                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-                break;
-            }
-        }
+        // // move Of children to first
+        // for (let i = 0; i < node.children.length; i++) {
+        //     let nodeType = node.getChild(i).constructor.name;
+        //     if (nodeType.indexOf("SpecifierOfContext") !== -1) {
+        //         nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
+        //         break;
+        //     }
+        // }
 
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = nodeChildren[i].constructor.name;
 
             // process ofContext
             if (nodeType === "SpecifierOfContext") {
+                this.XPath += "[ancestor-or-self::";
                 this.traverseNode(nodeChildren[i]);
-                this.XPath += "/";
+                this.XPath += "]";
             }
 
             if (nodeType === "TerminalNodeImpl") {
@@ -630,22 +635,23 @@ class GenerateXpath {
     visibilitiesContextTraversal(node) {
         let nodeChildren = node.children.slice(0);
 
-        // move Of children to first
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf("VisibilityOfContext") !== -1) {
-                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-                break;
-            }
-        }
+        // // move Of children to first
+        // for (let i = 0; i < node.children.length; i++) {
+        //     let nodeType = node.getChild(i).constructor.name;
+        //     if (nodeType.indexOf("VisibilityOfContext") !== -1) {
+        //         nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
+        //         break;
+        //     }
+        // }
 
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = nodeChildren[i].constructor.name;
 
             // process ofContext
             if (nodeType === "SpecifierOfContext") {
+                this.XPath += "[ancestor-or-self::";
                 this.traverseNode(nodeChildren[i]);
-                this.XPath += "/";
+                this.XPath += "]";
             }
 
             if (nodeType === "TerminalNodeImpl") {
@@ -668,22 +674,23 @@ class GenerateXpath {
     returnValuesContextTraversal(node) {
         let nodeChildren = node.children.slice(0);
 
-        // move Of children to first
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf("ReturnValueOfContext") !== -1) {
-                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-                break;
-            }
-        }
+        // // move Of children to first
+        // for (let i = 0; i < node.children.length; i++) {
+        //     let nodeType = node.getChild(i).constructor.name;
+        //     if (nodeType.indexOf("ReturnValueOfContext") !== -1) {
+        //         nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
+        //         break;
+        //     }
+        // }
 
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = nodeChildren[i].constructor.name;
 
             // process ofContext
             if (nodeType === "ReturnValueOfContext") {
+                this.XPath += "[ancestor-or-self::";
                 this.traverseNode(nodeChildren[i]);
-                this.XPath += "/";
+                this.XPath += "]";
             }
 
             if (nodeType === "TerminalNodeImpl") {
@@ -708,26 +715,27 @@ class GenerateXpath {
         let nodeChildren = node.children.slice(0);
 
         // move Of children to first
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf("DeclarationStatementOfContext") !== -1) {
-                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-                break;
-            }
-        }
+        // for (let i = 0; i < node.children.length; i++) {
+        //     let nodeType = node.getChild(i).constructor.name;
+        //     if (nodeType.indexOf("DeclarationStatementOfContext") !== -1) {
+        //         nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
+        //         break;
+        //     }
+        // }
 
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = nodeChildren[i].constructor.name;
 
             // process ofContext
             if (nodeType === "DeclarationStatementOfContext") {
+                this.XPath += "[ancestor-or-self::";
                 this.traverseNode(nodeChildren[i]);
-                this.XPath += "/src:block/descendant-or-self::";
+                this.XPath += "]";
             }
 
             if (nodeType === "TerminalNodeImpl") {
                 if (this.XPath === "") this.XPath += "/";
-                this.XPath += "src:block/descendant-or-self::src:decl_stmt/src:decl";
+                this.XPath += "descendant-or-self::src:decl_stmt/src:decl";
             }
 
             if (nodeType === "DeclarationStatementConditionContext" || nodeType === "DeclarationStatementExpressionContext") {
@@ -741,27 +749,28 @@ class GenerateXpath {
     expressionStatementsContextTraversal(node) {
         let nodeChildren = node.children.slice(0);
 
-        // move Of children to first
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf("ExpressionStatementOfContext") !== -1) {
-                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-                break;
-            }
-        }
+        // // move Of children to first
+        // for (let i = 0; i < node.children.length; i++) {
+        //     let nodeType = node.getChild(i).constructor.name;
+        //     if (nodeType.indexOf("ExpressionStatementOfContext") !== -1) {
+        //         nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
+        //         break;
+        //     }
+        // }
 
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = nodeChildren[i].constructor.name;
 
             // process ofContext
             if (nodeType === "ExpressionStatementOfContext") {
+                this.XPath += "[ancestor-or-self::";
                 this.traverseNode(nodeChildren[i]);
-                this.XPath += "/";
+                this.XPath += "]";
             }
 
             if (nodeType === "TerminalNodeImpl") {
                 if (this.XPath === "") this.XPath += "/";
-                this.XPath += "src:block/descendant-or-self::src:expr_stmt/src:expr";
+                this.XPath += "descendant-or-self::src:expr_stmt/src:expr";
             }
 
             if (nodeType === "ExpressionStatementConditionContext") {
@@ -780,22 +789,23 @@ class GenerateXpath {
     initialValuesContextTraversal(node) {
         let nodeChildren = node.children.slice(0);
 
-        // move Of children to first
-        for (let i = 0; i < node.children.length; i++) {
-            let nodeType = node.getChild(i).constructor.name;
-            if (nodeType.indexOf("InitialValueOfContext") !== -1) {
-                nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
-                break;
-            }
-        }
+        // // move Of children to first
+        // for (let i = 0; i < node.children.length; i++) {
+        //     let nodeType = node.getChild(i).constructor.name;
+        //     if (nodeType.indexOf("InitialValueOfContext") !== -1) {
+        //         nodeChildren = Utilities.arrayMove(nodeChildren, i, 0);
+        //         break;
+        //     }
+        // }
 
         for (let i = 0; i < node.children.length; i++) {
             let nodeType = nodeChildren[i].constructor.name;
 
             // process ofContext
             if (nodeType === "InitialValueOfContext") {
+                this.XPath += "[ancestor-or-self::";
                 this.traverseNode(nodeChildren[i]);
-                this.XPath += "/";
+                this.XPath += "]";
             }
 
             if (nodeType === "TerminalNodeImpl") {

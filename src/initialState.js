@@ -271,9 +271,10 @@ export const initial_state = {
      */
     ruleTable: [],
     tagTable: [],
-    xml: [],
+    xmlFiles: [],
     hash: ["index"],
     ignoreFile: false,
+    displayEditRuleTutorial: true, // display the tour guide for edit rule
     message: "init",
     filePath: "",
     hashManager: {

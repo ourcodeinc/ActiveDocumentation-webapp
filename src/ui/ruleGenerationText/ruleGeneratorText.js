@@ -496,6 +496,8 @@ class RuleGeneratorText extends Component {
                 && autoComplete_suggestion[word].preWord === wordsArray[lastWordIndex - 1])
                 isSpecialWord = true;
         }
+        let specialCase = "";
+        if (lastWord === "a" || lastWord === "an" || lastWord === "o") specialCase = lastWord;
 
         let xWord; // must be in TextConstants.keywords
         let results = [], beforeSuggText = "", suggText = "", infoText = "";
@@ -521,7 +523,7 @@ class RuleGeneratorText extends Component {
                 if (wordsArray[index - 1] === "expression" && wordsArray[index] === "statement") return "expression statement";
                 if (wordsArray[index - 1] === "initial" && wordsArray[index] === "value") return "initial value";
             }
-            if (wordsArray.length < index + 2) {
+            if (wordsArray.length > index + 2) {
                 while (wordsArray.length < index + 2 && wordsArray[index] === "(") index--;
                 if (wordsArray[index] === "abstract" && wordsArray[index + 1] === "function") return "abstract function";
                 if (wordsArray[index] === "return" && wordsArray[index + 1] === "value") return "return value";
@@ -832,8 +834,17 @@ class RuleGeneratorText extends Component {
                         }
                     });
         }
-        if (results.length === 0)
-            return errorGenerator(400);
+
+        if (results.length === 0) {
+            if (specialCase !== "") {
+                // special case for a and and
+                if (specialCase === "a" || specialCase === "an")
+                    results.push(RuleGeneratorText.createGrammarSuggestion("and", "and", "AND_OR_PAREN"));
+                if (specialCase === "o")
+                    results.push(RuleGeneratorText.createGrammarSuggestion("or", "or", "AND_OR_PAREN"));
+            }
+            else return errorGenerator(400);
+        }
         return results;
     }
 

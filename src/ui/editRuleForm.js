@@ -8,20 +8,21 @@ import '../App.css';
 import {
     Alert, DropdownButton, HelpBlock, MenuItem,
     Button, FormGroup, ButtonToolbar, Label, FormControl,
-    Row, Col, Modal, Dropdown
+    Row, Col, Modal, Dropdown, Tabs, Tab, Badge
 } from 'react-bootstrap';
 import {RootCloseWrapper} from "react-overlays";
-import {MdEdit, MdAddBox} from 'react-icons/lib/md/index';
+import {MdEdit, MdAddBox, MdStar} from 'react-icons/lib/md/index';
 import {TiDelete, TiArrowMaximise} from "react-icons/lib/ti/index";
 import {FaQuestionCircle, FaTag, FaMinusCircle, FaTimesCircle} from "react-icons/lib/fa/index";
 import marked from "marked";
 import Joyride, {ACTIONS, EVENTS} from 'react-joyride';
+import Switch from 'react-switch';
 
 import RuleGeneratorGui from './ruleGenerationGUI/ruleGeneratorGui';
 import verifyTextBasedOnGrammar from "./ruleGenerationText/languageProcessing";
 import {
     matchMessages, receiveGuiTree, clearNewRuleForm,
-    editRuleForm, submitNewRule, submitNewTag, updateRule, updateXPaths
+    editRuleForm, submitNewRule, submitNewTag, updateRule, updateXPaths, updateDisplayEditTutorial
 } from "../actions";
 import {generateGuiTrees} from "./ruleGenerationText/generateGuiTree";
 import RuleGeneratorText from "./ruleGenerationText/ruleGeneratorText";
@@ -29,6 +30,10 @@ import Utilities from '../core/utilities';
 import {error_messages_IMarkdownString} from "./ruleGenerationText/textConstant";
 
 import title_description_filled from '../resources/title_description_filled.png';
+import visibility_class_declaration from '../resources/visibility_class_declaration.png';
+import visibility_class_declaration_code from '../resources/visibility_class_declaration_code.png';
+import hidden_element_interaction from '../resources/hidden_element_interaction.png';
+import constraint_example from '../resources/constraint_example.png';
 import auto_complete_filled from '../resources/auto_complete_filled.png';
 import auto_complete_info_icon from '../resources/auto_complete_info_icon.png';
 import auto_complete_info from '../resources/auto_complete_info.png';
@@ -36,12 +41,12 @@ import editor_error from '../resources/editor_error.png';
 import editor_error_close_icon from '../resources/editor_error_close_icon.png';
 import editor_error_minimize_icon from '../resources/editor_error_minimize_icon.png';
 import editor_error_maximize_icon from '../resources/editor_error_maximize_icon.png';
-import editor_hover from '../resources/editor_hover.png';
-import gui_element_example from '../resources/gui_element_example.png';
-import constraint_element from '../resources/constraint_element.png';
-import element_of_interest from '../resources/element_of_interest.png';
+import auto_complete_example from '../resources/auto_complete_example.png';
 import tags from '../resources/tags.png';
 import new_tag from '../resources/new_tag.png';
+import feedback_snippet_1 from '../resources/feedback_snippet_1.png';
+import feedback_snippet_2 from '../resources/feedback_snippet_2.png';
+import {checkRulesForAll} from "../core/ruleExecutor";
 
 
 class EditRuleForm extends Component {
@@ -56,6 +61,9 @@ class EditRuleForm extends Component {
         if (!props["changeEditMode"])
             console.error(`'changeEditMode' is required in props when creating/editing a rule.`);
 
+        this.switchHandleColor = "#bfd9ff"; // same as inputText backGround color, constraint
+        this.switchOnColor = "#d9e9ff";
+        this.switchOffColor = "#e2e2e2"; // same as inputText backGround color, on hover
 
         /*
         This constant contains JSX and thus a react.Node
@@ -67,80 +75,118 @@ class EditRuleForm extends Component {
                 content: <span style={{textAlign: "left"}}>
                     <p>Each design rule should have a title by which it is displayed in the tool.
                         Design rule titles are often single-line statements about the rule.</p>
-                    <p>More information about the rule and the rationale behind the decision,
-                        can be expressed through design rule description.</p>
-                    <p>Both <strong>title</strong> and <strong>description</strong> are mandatory
-                        fields in generating new rule.</p>
-                    <img className={"tutorialImage"} src={title_description_filled} alt={"Title Description Example"}/>
+                    <p>Additional information about the rule and the rationale behind the decision,
+                        can be expressed in the design rule description.</p>
+                    <img className={"tutorialImage"} src={title_description_filled} alt={"Title Description Example"}
+                         style={{width: "75%"}}/>
                 </span>,
                 disableBeacon: true
             }, //0
 
             {
-                target: `#gui_div_${this.ruleIndex}`,
+                target: `#gui_div_${this.ruleIndex}>.generateRuleGuiDiv`,
                 title: 'GUI - Graphical User Interface for Writing Code',
                 content: <span style={{textAlign: "left"}}>
-                    <p>You can write the code you want to match in the project here.</p>
+                    <p>GUI enables you to write code you want to match.</p>
                     <p>The GUI includes elements whose attributes can be modified. These elements corresponds to Java pieces of code.</p>
                 </span>,
                 disableBeacon: true
             },  //1
             {
-                target: `#id__${this.ruleIndex}__0-0-0`,
+                target: `#gui_div_${this.ruleIndex}>.generateRuleGuiDiv`,
                 title: 'GUI Elements',
                 content: <span style={{textAlign: "left"}}>
-                    <p>For example, element can be an <strong>annotation</strong></p>
+                    <p>For example, you can match the <strong>visibility</strong> property for class declaration statement.</p>
+                    <div>
+                        <div style={{display: "inline"}}>
+                            <img className={"tutorialImage"}
+                                 src={visibility_class_declaration}
+                                 style={{width: "60%", maxHeight: "none"}}
+                                 alt={"Matching Element Example"}/></div>
+                    <div style={{display: "inline", paddingLeft: "2%"}}>
+                        <img className={"tutorialImage"}
+                             src={visibility_class_declaration_code}
+                             style={{width: "38%"}}
+                             alt={"Matching Element Example"}/></div>
+                    </div>
                 </span>,
                 disableBeacon: true
             }, //2
-            {
-                target: `#id__${this.ruleIndex}__0-1-0`,
-                title: 'GUI Elements',
-                content: <span style={{textAlign: "left"}}>
-                    <p>Or, <strong>visibility</strong> property.</p>
-                </span>,
-                disableBeacon: true
-            }, //3
-            {
-                target: `#id__${this.ruleIndex}__0-2-0`,
-                title: 'GUI Elements',
-                content: <span style={{textAlign: "left"}}>
-                    <p>Or, <strong>specifier</strong> property.</p>
-                </span>,
-                disableBeacon: true
-            }, //4
+
+            // {
+            //     target: `#id__${this.ruleIndex}__0-1-0`,
+            //     title: 'GUI Elements',
+            //     content: <span style={{textAlign: "left"}}>
+            //         <p>Or, <strong>visibility</strong> property.</p>
+            //     </span>,
+            //     disableBeacon: true
+            // }, //3
+            // {
+            //     target: `#id__${this.ruleIndex}__0-2-0`,
+            //     title: 'GUI Elements',
+            //     content: <span style={{textAlign: "left"}}>
+            //         <p>Or, <strong>specifier</strong> property.</p>
+            //     </span>,
+            //     disableBeacon: true
+            // }, //4
             {
                 target: `#id__${this.ruleIndex}__0-7-0`,
                 title: 'GUI Elements',
                 content: <span style={{textAlign: "left"}}>
-                    <p>Or other properties displayed in a box.</p>
-                    <p>Moving the cursor to the invisible element, make the element visible.</p>
-                    <img className={"tutorialImage"} src={gui_element_example} alt={"GUI Element Example"}/>
+                    <p>Some properties are hidden under an overlaying box.</p>
+                    <p>Moving the cursor over the hidden element, make the element visible.</p>
+                    <img className={"tutorialImage"} src={hidden_element_interaction} alt={"Hidden Element Example"}/>
                 </span>,
                 disableBeacon: true
-            }, //5
+            }, //3
             {
-                target: `#id__${this.ruleIndex}__0`,
+                target: `#gui_div_${this.ruleIndex}>.generateRuleGuiDiv`,
                 title: 'GUI - Constraint Elements',
                 content: <span style={{textAlign: "left"}}>
-                    <p>To create a design rule, at least one element must be selected as constraint by double-clicking on the element.</p>
-                    <p>Constraint elements are specified by <span style={{color: "#3333cc"}}>blue</span> color.</p>
-                    <img className={"tutorialSmallImage"} src={constraint_element} alt={"Constraint Element Example"}/>
+                    <p>A design rule can be expressed in IF/THEN structure:</p>
+                    <p>IF a class has name ending with 'Controller', THEN it should have a <span
+                        style={{fontFamily: "monospace"}}>private static</span> field with name ending with 'Controller'.</p>
+                    <p>The <span style={{fontFamily: "monospace"}}>private static</span> field with name ending with 'Controller' is a constraint of the design rule.</p>
+                    <div>In the GUI, constraints can be specified using toggle (
+                        <div className={"switchContainer"}>
+                            <Switch
+                                onChange={() => {
+                                }}
+                                checked={true}
+                                onColor={this.switchOnColor}
+                                offColor={this.switchOffColor}
+                                onHandleColor={this.switchHandleColor}
+                                handleDiameter={15}
+                                uncheckedIcon={false}
+                                checkedIcon={false}
+                                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                                height={15}
+                                width={30}
+                            />
+                        </div>
+                        ). Constraint elements have <span
+                            style={{backgroundColor: "#bfd9ff"}}>light blue background</span></div>
+                    <img className={"tutorialImage"} src={constraint_example} alt={"Constraint Element Example"}/>
                 </span>,
                 disableBeacon: true
-            }, //6
+            }, //4
             {
-                target: `#gui__star__${this.props.ruleIndex}__0`,
+                target: `#gui_div_${this.ruleIndex}>.generateRuleGuiDiv`,
                 title: 'GUI - Element of Interest',
                 content: <span style={{textAlign: "left"}}>
-                    <p>The GUI will select an Element of Interest automatically. However, if you desire to select a different element,
-                        you may click on the star icon on the right-hand side of the desired element.</p>
-                    <p>If an element is selected, the star and the border of the containing box have <span
-                        style={{color: "#e5a727"}}>golden</span> color.</p>
-                    <img className={"tutorialImage"} src={element_of_interest} alt={"Element of Interest Example"}/>
+                    <p>Each design rule has an <em>Element of Interest.</em>. That is the design rule is about a certain element.
+                        In the following example the <em>Element of Interest.</em> is <strong>class</strong></p>
+                    <p>IF a <strong>class</strong> has name ending with 'Controller', THEN <strong>it</strong> should have a <span
+                        style={{fontFamily: "monospace"}}>private static</span> field with name ending with 'Controller'.</p>
+                    <div>The GUI will select an Element of Interest automatically. However, if you desire to select a different element,
+                        you may click on
+                        <div className={"MdStar selectedElement"} style={{display: "inline"}}><MdStar size={20}/></div>
+                        .</div>
+                    <img className={"tutorialImage"} src={constraint_example} alt={"Constraint Element Example"}/>
                 </span>,
                 disableBeacon: true
-            },  //7
+            },  //5
 
             {
                 target: `#text_ui_div_${this.ruleIndex}`,
@@ -153,7 +199,7 @@ class EditRuleForm extends Component {
 
                 </span>,
                 disableBeacon: true
-            }, //8
+            }, //6
             {
                 target: `#text_ui_div_${this.ruleIndex}`,
                 title: "Text Editor - Auto Complete",
@@ -166,7 +212,7 @@ class EditRuleForm extends Component {
                          alt={"Auto Complete Information Example"}/>
                 </span>,
                 disableBeacon: true
-            }, //9
+            }, //7
             {
                 target: `#text_ui_div_${this.ruleIndex}`,
                 title: "Text Editor - Auto Complete (Additional Information)",
@@ -183,16 +229,17 @@ class EditRuleForm extends Component {
                             alt={"Editor Error Maximize Icon"}/>.</p>
                 </span>,
                 disableBeacon: true
-            }, //10
+            }, //8
             {
                 target: `#text_ui_div_${this.ruleIndex}`,
                 title: "Text Editor - Link to GUI",
                 content: <span style={{textAlign: "left"}}>
                     <p>Hovering over the text in the editor will display information about the text and highlight the GUI element if applicable.</p>
-                    <img className={"tutorialImage"} src={editor_hover} alt={"Auto Complete Hover Example"}/>
+                    <img className={"tutorialImage"} src={auto_complete_example} alt={"Auto Complete Hover Example"}
+                         style={{height: "300px", maxHeight: "none"}}/>
                 </span>,
                 disableBeacon: true
-            }, //11
+            }, //9
 
             {
                 target: `#tag_div_${this.ruleIndex}`,
@@ -205,7 +252,7 @@ class EditRuleForm extends Component {
                 </span>,
                 title: 'Rule Tags',
                 disableBeacon: true
-            }, //12
+            }, //10
             {
                 target: `#file_constraint_div_${this.ruleIndex}`,
                 content: <span style={{textAlign: "left"}}>
@@ -222,17 +269,38 @@ class EditRuleForm extends Component {
                 the relative path is "src/someFile.java"</p> </span>,
                 title: 'Specifying File/Folder Constraints',
                 disableBeacon: true
-            }, //13
+            }, //11
+
+            {
+                target: `#feedback_snippet_div_${this.ruleIndex}`,
+                content: <span style={{textAlign: "left"}}>
+                    <p>The code is checked against the design rule and the result of the validation is visible before submitting the design rule.</p>
+                    <div>
+                        <div style={{display: "inline"}}>
+                            <img className={"tutorialImage"}
+                                 src={feedback_snippet_1}
+                                 style={{width: "48%", maxHeight: "none"}}
+                                 alt={"Feedback Snippets Example 1"}/></div>
+                    <div style={{display: "inline", paddingLeft: "2%"}}>
+                        <img className={"tutorialImage"}
+                             src={feedback_snippet_2}
+                             style={{width: "48%"}}
+                             alt={"Feedback Snippets Example 2"}/></div>
+                    </div>
+                </span>,
+                title: 'FeedBack',
+                disableBeacon: true
+            }, //12
         ];
         // used as enum
         this.stepNames = {
             TITLE_DESCRIPTION: 0,
             GUI: 1,
-            GUI_CONSTRAINT: 6,
-            GUI_STAR: 7,
-            TEXT_UI: 8,
-            TAGS: 12,
-            FILE_FOLDER: 13,
+            GUI_CONSTRAINT: 4,
+            GUI_STAR: 5,
+            TEXT_UI: 6,
+            TAGS: 10,
+            FILE_FOLDER: 11,
         };
 
         this.state = {
@@ -257,6 +325,10 @@ class EditRuleForm extends Component {
             // GUI error message
             guiError: true,
 
+            // snippet feedback
+            activeTab: 0,
+            xPathQueryResult: [],
+
             // styling for Monaco Editor
             monacoFormStatus: "has-error",
             errorPoint: -1,
@@ -264,7 +336,7 @@ class EditRuleForm extends Component {
             // tour guide states
             tourMainKey: 0,
             tourStepIndex: 0,
-            tourShouldRun: false,
+            tourShouldRun: props["displayEditRuleTutorial"],
             isTourGuide: true,
 
             // editor states
@@ -333,6 +405,7 @@ class EditRuleForm extends Component {
                     {this.renderTutorial()}
                     {this.renderTextUI()}
                     {this.renderGUI()}
+                    {this.renderFeedbackSnippet()}
                     <ButtonToolbar className={"submitButtons"}>
                         <Button bsStyle="primary"
                                 onClick={() => this.newRuleRequest ? this.onSubmitNewRule() : this.onSubmitUpdatedRule()}>
@@ -491,7 +564,7 @@ class EditRuleForm extends Component {
                                                      onChange={(e) => {
                                                          const filesFolders = this.state.filesFolders;
                                                          filesFolders[i] = e.target.value;
-                                                         this.setState({filesFolders});
+                                                         this.setState({filesFolders}, this.updateFeedbackSnippet);
                                                      }}
                                                      onBlur={() => this.onEditNewRuleForm()}/>
                                     </FormGroup>
@@ -502,7 +575,10 @@ class EditRuleForm extends Component {
                                               onClick={() => {
                                                   const filesFolders = this.state.filesFolders;
                                                   filesFolders.splice(i, 1);
-                                                  this.setState({filesFolders}, this.onEditNewRuleForm);
+                                                  this.setState({filesFolders}, () => {
+                                                      this.updateFeedbackSnippet();
+                                                      this.onEditNewRuleForm()
+                                                  })
                                               }}/>
                                 </Col>
                             </Row>
@@ -532,7 +608,25 @@ class EditRuleForm extends Component {
                 </div>
                 <div className={"tutorialText"}>
                     <strong>Step 2:</strong> Specify what must be true by switching the conditions to
-                    'constraints' by double-clicking on elements. Constraint elements are shown in <span
+                    'constraints' by clicking on toggles
+                    <div className={"switchContainer"}>
+                        <Switch
+                            onChange={() => {
+                            }}
+                            checked={true}
+                            onColor={this.switchOnColor}
+                            offColor={this.switchOffColor}
+                            onHandleColor={this.switchHandleColor}
+                            handleDiameter={15}
+                            uncheckedIcon={false}
+                            checkedIcon={false}
+                            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                            height={15}
+                            width={30}
+                        />
+                    </div>
+                    . Constraint elements are shown in <span
                     style={{color: "#3333cc"}}>blue</span>.
                     <FaQuestionCircle size={20} className={"faQuestionCircle"}
                                       onClick={() => this.setState({
@@ -678,10 +772,29 @@ class EditRuleForm extends Component {
      * render GUI errors.
      */
     renderGuiError() {
-        return (//!this.state.guiError ? null : (
+        return (
             <div className={"guiMessages has-error"} id={`gui_error_${this.ruleIndex}`}
                  style={this.state.guiError ? {} : {visibility: "hidden"}}>
-                <span>Select at least one element as a constraint.</span>
+                <span style={{paddingRight: "2px"}}>
+                    {"Select at least one element as Constraint using toggles:  "}
+                    <div className={"switchContainer"}>
+                    <Switch
+                        onChange={() => {
+                        }}
+                        checked={true}
+                        onColor={this.switchOnColor}
+                        offColor={this.switchOffColor}
+                        onHandleColor={this.switchHandleColor}
+                        handleDiameter={15}
+                        uncheckedIcon={false}
+                        checkedIcon={false}
+                        boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                        activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                        height={15}
+                        width={30}
+                    />
+                    </div>
+                </span>
                 <FaQuestionCircle size={20} className={"faQuestionCircle"}
                                   onClick={() => this.setState({
                                       tourShouldRun: true,
@@ -786,7 +899,7 @@ class EditRuleForm extends Component {
                             tourMainKey: this.state.tourMainKey + 1,
                             tourShouldRun: false,
                             tourStepIndex: this.state.isTourGuide ? this.state.tourStepIndex : 0
-                        });
+                        }, () => this.props.onUpdateDisplayEditTutorial(false));
                     }
                     else if (tourData.type === EVENTS.TOUR_END) {
                         this.setState({
@@ -814,10 +927,100 @@ class EditRuleForm extends Component {
         )
     }
 
+
+    renderFeedbackSnippet() {
+        return (
+            <div style={{paddingTop: '10px', clear: 'both'}} id={`feedback_snippet_div_${this.ruleIndex}`}>
+                <Tabs animation={true} id={"edit_rule_000"}
+                      activeKey={this.state.activeTab}
+                      onSelect={(key) => {
+                          if (this.state.activeTab === key)
+                              this.setState({activeTab: 0});
+                          else
+                              this.setState({activeTab: key});
+                      }}>
+                    <Tab eventKey={0} disabled/>
+                    <Tab eventKey={'satisfied'}
+                         title={this.renderTabHeader('satisfied')}>{this.renderListOfSnippets('satisfied')}</Tab>
+                    <Tab eventKey={'violated'}
+                         title={this.renderTabHeader('violated')}>{this.renderListOfSnippets('violated')}</Tab>
+                </Tabs>
+            </div>
+        )
+    }
+
+    /**
+     * render the tab headers
+     * @param group
+     */
+    renderTabHeader(group) {
+        // sum up the number of satisfied and violated
+        let totalSatisfied = 0, totalViolated = 0;
+        for (let i = 0; i < this.state.xPathQueryResult.length; i++) {
+            totalSatisfied += this.state.xPathQueryResult[i]['data']['satisfied'];
+            totalViolated += this.state.xPathQueryResult[i]['data']['violated']
+        }
+
+        switch (group) {
+            case 'all':
+                return (
+                    <span className="rulePanelGeneralTab">Matches
+                            <Badge className="forAll">{totalSatisfied + totalViolated}</Badge>
+                        <Badge className="forFile hidden">{}</Badge>
+                    </span>);
+            case 'satisfied':
+                return (
+                    <span className="rulePanelSatisfiedTab">Examples
+                            <Badge className="forAll">{totalSatisfied}</Badge>
+                        <Badge className="forFile hidden">{}</Badge>
+                    </span>);
+            case 'violated':
+                return (
+                    <span className="rulePanelViolatedTab">Violated
+                            <Badge className="forAll">{totalViolated}</Badge>
+                        <Badge className="forFile hidden">{}</Badge>
+                    </span>);
+            default:
+                break;
+        }
+    }
+
+    /**
+     * create a list div node for quantifier and satisfied result and wrap them in a div
+     * @param group
+     * @returns {XML}
+     */
+    renderListOfSnippets(group) {
+
+        let filesList = [];
+        let res = group === "satisfied" ? "satisfiedResult" : group === "violated" ? "violatedResult" : "quantifierResult";
+        for (let i = 0; i < this.state.xPathQueryResult.length; i++) {
+            filesList = filesList.concat(this.state.xPathQueryResult[i]['data'][res])
+        }
+
+        if (filesList.length === 0)
+            return (<div><h5>No snippet</h5></div>);
+
+        return (
+            <div>
+                {filesList.map((d, i) => {
+                    return (
+                        <div data-file-path={d['filePath']} className="snippetDiv" key={i}>
+                            <pre className="link" onClick={() => {}}>
+                                <div className="content" dangerouslySetInnerHTML={{__html: d['snippet']}}/>
+                            </pre>
+                        </div>
+                    )
+                })}
+            </div>);
+    }
+
+
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
         if (nextProps.message === "RECEIVE_EXPR_STMT_XML") {
             this.matchSentAndReceivedMessages(nextProps);
+            this.updateFeedbackSnippet();
         }
 
         else {
@@ -849,7 +1052,7 @@ class EditRuleForm extends Component {
 
                     monacoFormStatus: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "has-error" : nextProps.message === "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? "has-warning" : this.state.monacoFormStatus,
                     errorPoint: -1
-                });
+                }, this.updateFeedbackSnippet);
             }
             // new rule
             else {
@@ -868,7 +1071,7 @@ class EditRuleForm extends Component {
 
                     monacoFormStatus: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "has-error" : nextProps.message === "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? "has-warning" : this.state.monacoFormStatus,
                     errorPoint: -1
-                });
+                }, this.updateFeedbackSnippet);
             }
         }
     }
@@ -1087,6 +1290,32 @@ class EditRuleForm extends Component {
         this.props["changeEditMode"]();
     }
 
+    updateFeedbackSnippet() {
+        if (this.state.quantifierXPath === "" || this.state.quantifierXPath === "" || this.state.folderConstraint === ""
+            || (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.filter((d) => d !== "").length === 0))
+            return;
+
+        let ruleInArray = [
+            {
+                index: "000",
+                ruleType: {
+                    constraint: this.state.folderConstraint,
+                    checkFor: this.state.filesFolders.filter((d) => d !== ""),
+                    type: "WITHIN"
+                },
+                quantifier: {command: "src:unit/" + this.state.quantifierXPath},
+                constraint: {command: "src:unit/" + this.state.constraintXPath},
+            }
+        ];
+        try {
+            ruleInArray = checkRulesForAll(this.props.xmlFiles, ruleInArray);
+            this.setState({xPathQueryResult: ruleInArray[0].xPathQueryResult});
+        } catch (e) {
+            console.log("failed to evaluate the rule.");
+            this.setState({xPathQueryResult: []});
+        }
+    }
+
     /**
      * submit the updated rule (with the given Index)
      */
@@ -1270,6 +1499,7 @@ function mapStateToProps(state) {
     return {
         rules: state.ruleTable,
         tags: state.tagTable,
+        xmlFiles: state.xmlFiles,
         ws: state.ws,
 
         // for new rule
@@ -1287,7 +1517,9 @@ function mapStateToProps(state) {
         sentMessages: state.newOrEditRule.sentMessages,
         receivedMessages: state.newOrEditRule.receivedMessages,
         // for submitting the rule
-        numberOfSentMessages: state.newOrEditRule.sentMessages.length
+        numberOfSentMessages: state.newOrEditRule.sentMessages.length,
+
+        displayEditRuleTutorial: state.displayEditRuleTutorial
     };
 }
 
@@ -1297,18 +1529,14 @@ function mapDispatchToProps(dispatch) {
         onUpdateRule: (updatedRule) => dispatch(updateRule(updatedRule)),
         onSubmitNewTag: (newTag) => dispatch(submitNewTag(newTag)),
         onClearForm: () => dispatch(clearNewRuleForm()),
-        onEditForm: (ruleIndex, title, description, ruleTags, folderConstraint, filesFolders) => {
-            dispatch(editRuleForm(ruleIndex, title, description, ruleTags, folderConstraint, filesFolders))
-        },
-        onReceiveGuiTree: (ruleIndex, treeData, autoCompleteArray, quantifierXPath, constraintXPath) => {
-            dispatch(receiveGuiTree(ruleIndex, treeData, autoCompleteArray, quantifierXPath, constraintXPath))
-        },
-        onMatchMessages: (ruleIndex, sentMessages, receivedMessages, quantifierXPath, constraintXPath) => {
-            dispatch(matchMessages(ruleIndex, sentMessages, receivedMessages, quantifierXPath, constraintXPath))
-        },
-        onUpdateXPaths: (ruleIndex, quantifierXPath, constraintXPath) => {
-            dispatch(updateXPaths(ruleIndex, quantifierXPath, constraintXPath))
-        }
+        onEditForm: (ruleIndex, title, description, ruleTags, folderConstraint, filesFolders) =>
+            dispatch(editRuleForm(ruleIndex, title, description, ruleTags, folderConstraint, filesFolders)),
+        onReceiveGuiTree: (ruleIndex, treeData, autoCompleteArray, quantifierXPath, constraintXPath) =>
+            dispatch(receiveGuiTree(ruleIndex, treeData, autoCompleteArray, quantifierXPath, constraintXPath)),
+        onMatchMessages: (ruleIndex, sentMessages, receivedMessages, quantifierXPath, constraintXPath) =>
+            dispatch(matchMessages(ruleIndex, sentMessages, receivedMessages, quantifierXPath, constraintXPath)),
+        onUpdateXPaths: (ruleIndex, quantifierXPath, constraintXPath) => dispatch(updateXPaths(ruleIndex, quantifierXPath, constraintXPath)),
+        onUpdateDisplayEditTutorial: (value) => dispatch(updateDisplayEditTutorial(value))
     }
 }
 

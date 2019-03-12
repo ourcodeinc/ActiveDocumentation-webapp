@@ -793,7 +793,7 @@ class GuiComponent extends Component {
                             </div>
                         </div>
                         <ReactToolTip place={"top"} type={"dark"} effect={"solid"} id={"switch"} delayShow={300}>
-                            <span>{"Change to/from Constraint"}</span>
+                            <span>{"Click on the toggle to change into/from Constraint"}</span>
                         </ReactToolTip>
                     </div>
                 )}
