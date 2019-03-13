@@ -28,8 +28,8 @@ class TableOfContent extends Component {
                 <div className={"well well-sm"}>
                     <h4>Tags</h4>
                 </div>
-                <div className={"list-inline"} id={"alphabet_index"}>{this.createAlphabetIndex()}</div>
-                <hr className={"bottomBorder"}/>
+                {/*<div className={"list-inline"} id={"alphabet_index"}>{this.createAlphabetIndex()}</div>*/}
+                {/*<hr className={"bottomBorder"}/>*/}
                 <ul className={"list-inline"} id={"tags_list"}>
                     {this.props.tags.map((tag, i) =>
                         (<li key={i}
@@ -48,12 +48,7 @@ class TableOfContent extends Component {
                         <tbody>
                         {this.props.rules.map((rule, i) =>
                             <tr key={i}>
-                                <td><a className={"list-group-item"}>
-                                    {rule.index}
-                                </a></td>
-                                <td><a className={"list-group-item"}>
-                                    {rule['title']}
-                                </a></td>
+                                <td className={"list-group-item"}>{rule['title']}</td>
                             </tr>
                         )}
                         </tbody>
