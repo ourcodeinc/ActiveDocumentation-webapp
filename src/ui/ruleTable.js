@@ -15,13 +15,17 @@ class RuleTable extends Component {
 
     constructor(props) {
         super(props);
-        this.state = props.newRule;
+        this.state = {
+            newRule: false,
+            indicesOfRulesToDisplay: [],
+            hash0: ""
+        };
     }
 
     render() {
         return (
             <Fragment>
-                {this.props.hash0 === "rules" ?
+                {this.state.hash0 === "rules" ?
                     (!this.state.newRule ? (
                         <div style={{paddingBottom: '10px', clear: 'both'}}>
                             <Button onClick={() => this.props.onChangeEditMode()} style={{padding: "0 5px"}}>
@@ -31,18 +35,18 @@ class RuleTable extends Component {
                         </div>
                     ) : (
                         <div style={{paddingBottom: "5px"}}>
-                            <RulePanel ruleIndex={-1} key={new Date()}/>
+                            <RulePanel ruleIndex={-1}/>
                         </div>
                     ))
                     : null}
-                <div key={new Date()}>
-                    {this.props.rulesToDisplay.map((d, i) =>
-                        (<div key={new Date().getTime() + i} style={{paddingBottom: "5px"}}>
-                            <RulePanel ruleIndex={d.index} key={new Date()}/>
+                <div>
+                    {this.state.indicesOfRulesToDisplay.map((d, i) =>
+                        (<div key={i} style={{paddingBottom: "5px"}}>
+                            <RulePanel ruleIndex={d}/>
                         </div>)
                     )}
                 </div>
-                {this.props.hash0 !== "rules" && this.props.rulesToDisplay.length === 0 ? (
+                {this.state.hash0 !== "rules" && this.state.indicesOfRulesToDisplay.length === 0 ? (
                     <div>
                         <h4>There are no rules to display.</h4>
                     </div>
@@ -53,10 +57,7 @@ class RuleTable extends Component {
 
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
-        if (nextProps.newRule !== this.state.newRule)
-            this.setState({newRule: nextProps.newRule});
-        else
-            this.forceUpdate();
+        this.setState(nextProps);
     }
 
 }
@@ -65,38 +66,21 @@ class RuleTable extends Component {
 function mapStateToProps(state) {
 
     let props = {
-        rules: state.ruleTable,
-        tags: state.tagTable,
-        codeChanged: false,
-        filePath: "none",
-        ws: state.ws,
-        rulesToDisplay: [],
-        hash0: state.hash[0],
-        message: state.message,
-        newRule: state.newOrEditRule.isEditMode
+        newRule: state.newOrEditRule.isEditMode,
+        indicesOfRulesToDisplay: state.ruleTable.map(d => d.index),
+        hash0: state.hash[0]
     };
 
 
     if (state.hash[0] === "tag")
-        props.rulesToDisplay = state.ruleTable.filter((d) => d['tags'].indexOf(state.hash[1]) !== -1);
-
-    else if (state.hash[0] === "rules")
-        props.rulesToDisplay = state.ruleTable;
+        props.indicesOfRulesToDisplay = state.ruleTable
+            .filter((d) => d['tags'].indexOf(state.hash[1]) !== -1)
+            .map(d => d.index);
 
     else if (state.hash[0] === "violatedRules")
-        props.rulesToDisplay = state.ruleTable.filter(d => d['xPathQueryResult'].map(dd => dd['data'].violated).reduce((a, b) => a + b) !== 0);
-
-    else if (state.hash[0] === 'rulesForFile') {
-        props.rulesToDisplay = state.ruleTable;
-        props.filePath = '/Users/saharmehrpour/Documents/Workspace/' + state.filePath
-    }
-
-    if (state.hash[0] === "codeChanged") {
-        props.codeChanged = true;
-        props.rulesToDisplay = state.ruleTable;
-        props.filePath = '/Users/saharmehrpour/Documents/Workspace/' + state.filePath;
-        props["date"] = new Date() // for update
-    }
+        props.indicesOfRulesToDisplay = state.ruleTable
+            .filter(d => d['xPathQueryResult'].map(dd => dd['data'].violated).reduce((a, b) => a + b) !== 0)
+            .map(d => d.index);
 
     return props;
 }

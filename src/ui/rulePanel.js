@@ -133,20 +133,35 @@ class RulePanel extends Component {
             else {
                 this.ruleI = nextProps.rules[arrayIndex];
 
-                if (this.ruleI.rulePanelState.editMode)
-                    this.setState({editMode: true});
+                if (this.ruleI.rulePanelState.editMode && !this.state.editMode)
+                    this.setState({editMode: true},()=>console.log("update state, editMode"));
 
-                else
-                    this.setState({
-                        title: this.ruleI.title,
-                        description: this.ruleI.description,
-                        ruleTags: this.ruleI.tags,
-                        folderConstraint: this.ruleI.ruleType.constraint,
-                        filesFolders: this.ruleI.ruleType.checkFor,
-                        tags: nextProps.tags,
+                else {
+                    let equalArrays = (arr1, arr2) => {
+                        if (arr1.length !== arr2.length) return false;
+                        for (let i = 0; i < arr1.length; i++)
+                            if (arr1[i] !== arr2[2]) return false;
+                        return true;
+                    };
 
-                        editMode: false
-                    });
+                    let newState = {};
+                    if (this.state.title !== this.ruleI.title)
+                        newState.title = this.ruleI.title;
+                    if (this.state.description !== this.ruleI.description)
+                        newState.description = this.ruleI.description;
+                    if (!equalArrays(this.state.ruleTags, this.ruleI.tags))
+                        newState.ruleTags = this.ruleI.tags;
+                    if (this.state.folderConstraint !== this.ruleI.ruleType.constraint)
+                        newState.folderConstraint = this.ruleI.ruleType.constraint;
+                    if (!equalArrays(this.state.filesFolders, this.ruleI.ruleType.checkFor))
+                        newState.filesFolders = this.ruleI.ruleType.checkFor;
+                    if (this.state.tags !== nextProps.tags) newState.tags = nextProps.tags;
+                    if (this.state.editMode !== false)
+                        newState.editMode = false;
+
+                    if (Object.keys(newState).length !== 0)
+                        this.setState(newState);
+                }
             }
         }
     }
