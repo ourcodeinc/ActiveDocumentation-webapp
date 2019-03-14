@@ -5,7 +5,7 @@ const element_conditions = {
         pre: "@",
         post: "",
         placeholder: "annotation",
-        unique: false,
+        unique: true,
         grammar: "annotation"
     },
     visibility: {

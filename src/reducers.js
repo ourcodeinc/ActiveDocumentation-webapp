@@ -401,11 +401,6 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                                     ...job["value"]
                                 };
 
-                                // if the newly inactive element is a selected element, un-select it
-                                if (rule.rulePanelState.guiState.guiTree.selectedElementID === job["elementId"] &&
-                                    !rule.rulePanelState.guiState.guiElements[job["elementId"]].activeElement)
-                                    rule.rulePanelState.guiState.guiTree.selectedElementID = "";
-
                                 return rule;
                             });
                         }
@@ -414,11 +409,6 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                                 ...copiedState.newOrEditRule.guiState.guiElements[job["elementId"]],
                                 ...job["value"]
                             };
-
-                            // if the newly inactive element is a selected element, un-select it
-                            if (copiedState.newOrEditRule.guiState.guiTree.selectedElementID === job["elementId"] &&
-                                !copiedState.newOrEditRule.guiState.guiElements[job["elementId"]].activeElement)
-                                copiedState.newOrEditRule.guiState.guiTree.selectedElementID = "";
                         }
                         break;
 
@@ -495,11 +485,11 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                                     selectedElement: !job["value"]
                                 };
                             array.guiTree.selectedElementID = job["elementId"];
-                            array.guiElements[job["elementId"]] = {
-                                ...array.guiElements[job["elementId"]],
-                                selectedElement: job["value"],
-                                isConstraint: job["value"] ? false : array.guiElements[job["elementId"]].isConstraint
-                            };
+                            if (array.guiElements.hasOwnProperty(job["elementId"]))
+                                array.guiElements[job["elementId"]] = {
+                                    ...array.guiElements[job["elementId"]],
+                                    selectedElement: job["value"]
+                                };
                             return array;
                         };
 

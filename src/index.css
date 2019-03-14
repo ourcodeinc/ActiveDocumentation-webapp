@@ -196,14 +196,6 @@ body {
     color: #5d5d5d;
 }
 
-/*  rule generator */
-
-.tutorialText {
-    float: left;
-    width: 33%;
-    padding-right: 10px;
-}
-
 /*!*** Auto Complete ***!*/
 
 .monacoWrapper {
@@ -381,11 +373,11 @@ body {
 }
 
 .generateRuleGui .activeElement.selectedElement {
-    box-shadow: 0 0 5px #99721c;
+    box-shadow: 0 0 5px #99721c !important;
 }
 
 .generateRuleGui .activeElement.selectedElement:hover {
-    box-shadow: 0 0 10px #99721c;
+    box-shadow: 0 0 10px #99721c !important;
 }
 
 .generateRuleGui .inputText {
@@ -489,19 +481,19 @@ body {
 
 /****  icons */
 
-.generateRuleGui .toggleConstraintDiv {
+.generateRuleGui .checkboxConstraintDiv {
     position: absolute;
     margin-top: -50px;
-    padding: 1px 0 0 5px;
+    padding: 1px 5px 0 5px;
     background-color: #ffffff;
     border: 1px solid #d2d2d2;
     border-radius: 3px;
     z-index: 1000;
     display: none;
-    width: 60px;
+    width: auto;
 }
 
-.generateRuleGui .toggleConstraintContainer {
+.generateRuleGui .checkboxConstraintContainer {
     float: left;
     margin-top: 5px;
 }
@@ -511,7 +503,12 @@ body {
     margin-top: -25px;
 }
 
-.generateRuleGui .MdStar, .generateRuleGui .MdRemove {
+
+.generateRuleGui .checkboxConstraint.constraint, .checkboxConstraint.constraint {
+    color: #80b5ff;
+}
+
+.generateRuleGui .MdStar, .generateRuleGui .MdRemove, .generateRuleGui .checkboxConstraint {
     cursor: pointer;
     padding-top: 2px;
     color: #cacaca;
@@ -618,4 +615,34 @@ img.tutorialImage {
 img.tutorialSmallImage {
     max-width: 30%;
     max-height: 100px;
+}
+
+.tutorialText {
+    width: 30%;
+    padding-right: 10px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.tutorialArrow {
+    width: 1em;
+    padding-right: 2px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.tutorial .has-success {
+    color: #3c763d;
+}
+
+.tutorial .has-error {
+    color: #a94442;
+}
+
+.tutorial .inactive {
+    opacity: 0.5;
+}
+
+.tutorial .optional {
+    color: #265a88;
 }

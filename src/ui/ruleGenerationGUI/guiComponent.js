@@ -5,10 +5,9 @@
 
 import React, {Component, Fragment} from 'react';
 import {MdStar, MdClose} from 'react-icons/lib/md/index';
-import {FaEraser} from "react-icons/lib/fa/index";
+import {FaEraser, FaCheckSquareO, FaSquareO} from "react-icons/lib/fa/index";
 import {Button, MenuItem, Dropdown, Modal} from 'react-bootstrap';
 import {RootCloseWrapper} from 'react-overlays';
-import Switch from 'react-switch';
 import * as marked from 'marked';
 import ReactToolTip from 'react-tooltip';
 
@@ -73,29 +72,31 @@ class GuiComponent extends Component {
         */
         this.state.elementNode = props["rootTree"][this.state.elementId];
 
-        this.switchHandleColor = "#bfd9ff"; // same as inputText backGround color, constraint
-        this.switchOnColor = "#d9e9ff";
-        this.switchOffColor = "#e2e2e2"; // same as inputText backGround color, on hover
-
         // reference for components
         this.thisNode = {};
         this.nodes = {};
+
+        this.state.hoverCheckbox = {element: false};
         // for storing temporary states
         this.state.texts = {};
         Object.keys(this.state.elementNode.children).forEach(group => {
+            this.state.hoverCheckbox[group] = [];
             this.state.texts[group] = [];
             this.nodes[group] = [];
             if (group === "body")
                 this.state.elementNode.children["body"].forEach(subGroup => {
+                    this.state.hoverCheckbox["body"].push([]);
                     this.state.texts["body"].push([]);
                     this.nodes["body"].push([]);
                     subGroup.forEach((childId) => {
-                        this.state.texts["body"][this.state.texts["body"].length - 1].push(this.state.guiElements[childId].text ? this.state.guiElements[childId].text : "")
+                        this.state.hoverCheckbox["body"][this.state.hoverCheckbox["body"].length - 1].push(false);
+                        this.state.texts["body"][this.state.texts["body"].length - 1].push(this.state.guiElements[childId].text ? this.state.guiElements[childId].text : "");
                         this.nodes["body"][this.nodes["body"].length - 1].push({});
                     });
                 });
             else
                 this.state.elementNode.children[group].forEach(childId => {
+                    this.state.hoverCheckbox[group].push(false);
                     this.state.texts[group].push(this.state.guiElements[childId].text ? this.state.guiElements[childId].text : "");
                     this.nodes[group].push({});
                 })
@@ -104,23 +105,28 @@ class GuiComponent extends Component {
 
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
+        let hoverCheckbox = {element: false};
         // recover texts:
         let texts = {};
         Object.keys(nextProps["rootTree"][nextProps.elementId].children).forEach(group => {
+            hoverCheckbox[group] = [];
             texts[group] = [];
             this.nodes[group] = [];
             if (group === "body")
                 nextProps["rootTree"][nextProps.elementId].children["body"].forEach(subGroup => {
+                    hoverCheckbox["body"].push([]);
                     texts["body"].push([]);
                     this.nodes["body"].push([]);
                     subGroup.forEach((childId) => {
-                        texts["body"][texts["body"].length - 1].push(nextProps.guiElements[childId].text ? nextProps.guiElements[childId].text : "")
+                        hoverCheckbox["body"][hoverCheckbox["body"].length - 1].push(false);
+                        texts["body"][texts["body"].length - 1].push(nextProps.guiElements[childId].text ? nextProps.guiElements[childId].text : "");
                         this.nodes["body"][this.nodes["body"].length - 1].push({});
                     })
                 });
             else
                 nextProps["rootTree"][nextProps.elementId].children[group].forEach(childId => {
-                    texts[group].push(nextProps.guiElements[childId].text ? nextProps.guiElements[childId].text : "")
+                    hoverCheckbox[group].push(false);
+                    texts[group].push(nextProps.guiElements[childId].text ? nextProps.guiElements[childId].text : "");
                     this.nodes[group].push({});
                 })
         });
@@ -132,7 +138,8 @@ class GuiComponent extends Component {
             elementNode: nextProps["rootTree"][nextProps.elementId],
             elementCondition: getConditionByName(nextProps.guiElements[nextProps.elementId].conditionName),
 
-            texts: texts
+            texts: texts,
+            hoverCheckbox: hoverCheckbox
         });
     }
 
@@ -159,7 +166,7 @@ class GuiComponent extends Component {
                             document.activeElement.blur();
                     }}
                 >
-                    {this.renderStarAndToggle()}
+                    {this.renderElementToolBar()}
                     <div className={"rowGroup"}>
                         {this.renderGroup("top")}
                     </div>
@@ -188,69 +195,148 @@ class GuiComponent extends Component {
         )
     }
 
-    renderStarAndToggle() {
+    renderElementToolBar() {
 
-        let resetAllChildren = (nodeId, jobs) => {
-            jobs.push({
-                elementId: nodeId,
-                task: "UPDATE_ELEMENT",
-                value: {
-                    activeElement: false,
-                    isConstraint: false,
-                    text: "" // may not be input text field
-                }
-            });
-            Object.keys(this.props["rootTree"][nodeId].children).forEach(group => {
-                if (group !== "body") {
-                    this.props["rootTree"][nodeId].children[group].forEach(elemId => {
-                        jobs.push({
-                            elementId: elemId,
-                            task: "UPDATE_ELEMENT",
-                            value: {
-                                activeElement: false,
-                                isConstraint: false,
-                                text: "" // may not be input text field
+        // change constraint condition of an element
+        let changeFunction = () => this._handleConstraintElement(this.state.elementId, this.state.thisElement);
+        // when the parent can be starred and the element is constraint
+        let changeAndResetFunction = () => {
+            /**
+             * iteratively change descendants to constraints
+             * @param elemId
+             * @returns {*} jobs
+             */
+            let makeChildrenNonConstraint = (elemId) => {
+                let newJobs = [];
+                let elementNode = this.props["rootTree"][elemId];
+                Object.keys(elementNode.children).forEach(group => {
+                    if (group !== "body")
+                        elementNode.children[group].forEach(childId => {
+                            if (this.state.guiElements[childId].activeElement) {
+                                newJobs.push({
+                                    elementId: childId,
+                                    task: "UPDATE_ELEMENT",
+                                    value: {isConstraint: false}
+                                });
+                                newJobs = newJobs.concat(makeChildrenNonConstraint(childId));
                             }
                         });
-                        resetAllChildren(elemId, jobs);
-                    });
-                    if (this.props["rootTree"][nodeId].children[group].length > 1)
-                        jobs.push({
-                            elementId: nodeId,
-                            task: "REMOVE_EXTRA",
-                            value: group
-                        });
-                }
-                else
-                    this.props["rootTree"][nodeId].children["body"].forEach((subGroup, i) => {
-                        subGroup.forEach(elemId => {
-                            jobs.push({
-                                elementId: elemId,
-                                task: "UPDATE_ELEMENT",
-                                value: {
-                                    activeElement: false,
-                                    isConstraint: false,
-                                    text: "" // may not be input text field
+
+                    else
+                        elementNode.children["body"].forEach(ids => {
+                            ids.forEach(childId => {
+                                if (this.state.guiElements[childId].activeElement) {
+                                    newJobs.push({
+                                        elementId: childId,
+                                        task: "UPDATE_ELEMENT",
+                                        value: {isConstraint: false}
+                                    });
+                                    newJobs = newJobs.concat(makeChildrenNonConstraint(childId));
                                 }
-                            });
-                            resetAllChildren(elemId, jobs);
+                            })
+                        })
+                });
+                return newJobs;
+            };
+
+            let jobs = [];
+            jobs.push({
+                elementId: this.state.elementId,
+                task: "UPDATE_ELEMENT",
+                value: {
+                    activeElement: !this.state.thisElement.isConstraint ? true : this.state.thisElement.activeElement,
+                    isConstraint: !this.state.thisElement.isConstraint
+                }
+            });
+            jobs = jobs.concat(makeChildrenNonConstraint(this.state.elementId));
+            this.props["changeGuiElementJobs"](this.props.ruleIndex, jobs);
+
+        };
+        // erasing and resetting the element and all its descendants
+        let eraseFunction = () => {
+
+            // erasing all children
+            let resetAllChildren = (nodeId, jobs) => {
+                jobs.push({
+                    elementId: nodeId,
+                    task: "UPDATE_ELEMENT",
+                    value: {
+                        activeElement: false,
+                        isConstraint: false,
+                        text: "" // may not be input text field
+                    }
+                });
+                Object.keys(this.props["rootTree"][nodeId].children).forEach(group => {
+                    if (group !== "body") {
+                        this.props["rootTree"][nodeId].children[group].forEach(elemId => {
+                            if (this.state.guiElements[elemId].activeElement) {
+                                jobs.push({
+                                    elementId: elemId,
+                                    task: "UPDATE_ELEMENT",
+                                    value: {
+                                        activeElement: false,
+                                        isConstraint: false,
+                                        text: "" // may not be input text field
+                                    }
+                                });
+                                resetAllChildren(elemId, jobs);
+                            }
                         });
-                        if (subGroup.length > 1)
+                        if (this.props["rootTree"][nodeId].children[group].length > 1)
                             jobs.push({
                                 elementId: nodeId,
                                 task: "REMOVE_EXTRA",
-                                value: "body," + i
+                                value: group
                             });
-                    });
-            });
+                    }
+                    else
+                        this.props["rootTree"][nodeId].children["body"].forEach((subGroup, i) => {
+                            subGroup.forEach(elemId => {
+                                if (this.state.guiElements[elemId].activeElement) {
+                                    jobs.push({
+                                        elementId: elemId,
+                                        task: "UPDATE_ELEMENT",
+                                        value: {
+                                            activeElement: false,
+                                            isConstraint: false,
+                                            text: "" // may not be input text field
+                                        }
+                                    });
+                                    resetAllChildren(elemId, jobs);
+                                }
+                            });
+                            if (subGroup.length > 1)
+                                jobs.push({
+                                    elementId: nodeId,
+                                    task: "REMOVE_EXTRA",
+                                    value: "body," + i
+                                });
+                        });
+                });
 
-            return jobs;
-        };
-        let changeFunction = () => this._handleConstraintElement(this.state.elementId, this.state.thisElement);
-        let checkedStatus = this.state.thisElement.isConstraint ? this.state.thisElement.isConstraint : false;
-        let closeFunction = () => {
+                return jobs;
+            };
+
             // search for all descendants and reset them all
             let jobs = resetAllChildren(this.state.elementId, []);
+
+            // change the selected element
+            if (this.state.thisElement.selectedElement) {
+                let newSelectedElementID = "";
+                while (this.props["canBeStarredIDs"].length > 0) {
+                    let temp = this.props["canBeStarredIDs"].pop();
+                    if (temp !== this.state.elementId) {
+                        newSelectedElementID = temp;
+                        break;
+                    }
+                }
+                jobs.push({
+                    elementId: newSelectedElementID,
+                    task: "SELECT_ELEMENT",
+                    value: true
+                })
+            }
+
             this.props["changeGuiElementJobs"](this.props.ruleIndex, jobs);
         };
 
@@ -272,11 +358,14 @@ class GuiComponent extends Component {
                 })
         });
         let isDelegate = this.props["canBeStarredIDs"].indexOf(this.state.elementId) === -1 && hasConstraintChild;
+        let isResetting = this.state.elementNode.parentId === this.props["rootTree"].selectedElementID && hasConstraintChild;
+        let checkedStatus = this.state.thisElement.isConstraint ? this.state.thisElement.isConstraint : false;
 
         if ((this.state.thisElement.activeElement && this.state.elementCondition.canBeSelected) || this.props.root)
             return (
                 <div className={"elementIconsDiv"}>
-                    {!this.state.thisElement.activeElement ? null : this.renderToggleAndClose(changeFunction, checkedStatus, closeFunction, !isDelegate)}
+                    {!this.state.thisElement.activeElement ? null
+                        : this.renderCheckboxAndErase(!isResetting ? changeFunction : changeAndResetFunction, checkedStatus, eraseFunction, "element", null, null, !isDelegate || isResetting)}
                     {this.props["canBeStarredIDs"].indexOf(this.state.elementId) === -1 ? null : (
                         <div style={{float: "left"}}>
                             <div data-tip={"React-tooltip"} data-for={"star"}>
@@ -352,6 +441,17 @@ class GuiComponent extends Component {
     renderElementChild(group, innerIndex, index, childId, childCondition) {
         let array = group === "body" ? this.state.elementNode.children["body"][innerIndex] : this.state.elementNode.children[group];
 
+        // add element after clicking on the button
+        let processAddElement = () => {
+            let jobs = [];
+            jobs.push({
+                elementId: this.state.elementId,
+                task: "ADD_EXTRA",
+                value: group !== "body" ? group : "body," + innerIndex
+            });
+            this.props["changeGuiElementJobs"](this.props.ruleIndex, jobs);
+        };
+
         return (
             <Fragment key={index}>
                 <div className={group === "body" ? "rowGroup" : "rowItem"}>
@@ -360,35 +460,10 @@ class GuiComponent extends Component {
                                   canBeStarredIDs={this.props["canBeStarredIDs"]}
                                   changeGuiElementJobs={this.props["changeGuiElementJobs"]}
                     />
-                    {(index < array.length - 1) ? (
-                        <div className={"removeIcon"}>
-                            <Button
-                                onClick={() => {
-                                    let jobs = [];
-                                    jobs.push({
-                                        elementId: childId,
-                                        task: "REMOVE_ELEMENT",
-                                        value: {parentId: this.state.elementId}
-                                    });
-                                    this.props["changeGuiElementJobs"](this.props.ruleIndex, jobs);
-                                }}
-                            >Remove Element</Button>
-                        </div>
-                    ) : null}
                 </div>
                 {(index === array.length - 1 && this.state.guiElements[childId].activeElement) ? (
                     <div className={"rowItem"}>
-                        <Button
-                            onClick={() => {
-                                let jobs = [];
-                                jobs.push({
-                                    elementId: this.state.elementId,
-                                    task: "ADD_EXTRA",
-                                    value: group !== "body" ? group : "body," + innerIndex
-                                });
-                                this.props["changeGuiElementJobs"](this.props.ruleIndex, jobs);
-                            }}>
-                            Add {childCondition.grammar}</Button>
+                        <Button onClick={processAddElement}>Add {childCondition.grammar}</Button>
                     </div>
                 ) : null}
             </Fragment>
@@ -400,30 +475,25 @@ class GuiComponent extends Component {
         let closeInformationDiv = null;
         let clickedElement = null;
         let shouldDisplayInformation = true;
-
         let className = "inputTextContainer "
             + (childCondition.type === "wideText" ? "rowGroup"
                 : childCondition.type === "smallText" ? "smallText rowItem"
                     : "rowItem");
-        // + (childElement.activeElement ? " activeElement" : "")
-        // + (childElement.isConstraint ? " constraintElement" : "");
-
         let nodes = group !== "body" ? this.nodes[group] : this.nodes["body"][innerIndex];
         let texts = group !== "body" ? this.state.texts[group] : this.state.texts["body"][innerIndex];
         let children = group !== "body" ? this.state.elementNode.children[group] : this.state.elementNode.children["body"][innerIndex];
-
         let informationGroup = childCondition.type === "wideText" ? "EXACT_CODE" : "QUOTES";
 
         let mouseEnter = () => {
-            if (childElement.activeElement && nodes && nodes[index] && nodes[index]["toggle"]
-                && Object.entries(nodes[index]["toggle"]).length !== 0)
-                nodes[index]["toggle"].style.display = "block";
+            if (childElement.activeElement && nodes && nodes[index] && nodes[index]["checkbox"]
+                && Object.entries(nodes[index]["checkbox"]).length !== 0)
+                nodes[index]["checkbox"].style.display = "block";
         };
 
         let mouseLeave = () => {
-            if (nodes && nodes[index] && nodes[index]["toggle"]
-                && Object.entries(nodes[index]["toggle"]).length !== 0)
-                nodes[index]["toggle"].style.display = "none";
+            if (nodes && nodes[index] && nodes[index]["checkbox"]
+                && Object.entries(nodes[index]["checkbox"]).length !== 0)
+                nodes[index]["checkbox"].style.display = "none";
         };
 
         let change = (e) => {
@@ -568,9 +638,9 @@ class GuiComponent extends Component {
                                    onChange={change}
                                    onFocus={focus}
                                    onBlur={(e) => blur(e.target.value)}/>
-                            <div className={"toggleConstraintDiv rowGroup"}
-                                 ref={node => group !== "body" ? this.nodes[group][index]["toggle"] = node : this.nodes["body"][innerIndex][index]["toggle"] = node}>
-                                {!childElement.activeElement ? null : this.renderToggleAndClose(changeFunction, checkedStatus, closeFunction, renderSwitch)}
+                            <div className={"checkboxConstraintDiv rowGroup"}
+                                 ref={node => group !== "body" ? this.nodes[group][index]["checkbox"] = node : this.nodes["body"][innerIndex][index]["checkbox"] = node}>
+                                {!childElement.activeElement ? null : this.renderCheckboxAndErase(changeFunction, checkedStatus, closeFunction, group, innerIndex, index, renderSwitch)}
                             </div>
                         </form>
                     </div>
@@ -598,15 +668,15 @@ class GuiComponent extends Component {
         let children = group !== "body" ? this.state.elementNode.children[group] : this.state.elementNode.children["body"][innerIndex];
 
         let mouseEnter = () => {
-            if (childElement.activeElement && nodes && nodes[index] && nodes[index]["toggle"]
-                && Object.entries(nodes[index]["toggle"]).length !== 0)
-                nodes[index]["toggle"].style.display = "block";
+            if (childElement.activeElement && nodes && nodes[index] && nodes[index]["checkbox"]
+                && Object.entries(nodes[index]["checkbox"]).length !== 0)
+                nodes[index]["checkbox"].style.display = "block";
         };
 
         let mouseLeave = () => {
-            if (nodes && nodes[index] && nodes[index]["toggle"]
-                && Object.entries(nodes[index]["toggle"]).length !== 0)
-                nodes[index]["toggle"].style.display = "none";
+            if (nodes && nodes[index] && nodes[index]["checkbox"]
+                && Object.entries(nodes[index]["checkbox"]).length !== 0)
+                nodes[index]["checkbox"].style.display = "none";
         };
 
         let clear = () => {
@@ -707,9 +777,9 @@ class GuiComponent extends Component {
                 onMouseEnter={mouseEnter}
                 onMouseLeave={mouseLeave}
             >
-                <div className={"toggleConstraintDiv rowGroup"} style={{marginTop: "-25px"}}
-                     ref={node => group !== "body" ? this.nodes[group][index]["toggle"] = node : this.nodes["body"][innerIndex][index]["toggle"] = node}>
-                    {!childElement.activeElement ? null : this.renderToggleAndClose(changeFunction, checkedStatus, clear, renderSwitch)}
+                <div className={"checkboxConstraintDiv rowGroup"} style={{marginTop: "-25px"}}
+                     ref={node => group !== "body" ? this.nodes[group][index]["checkbox"] = node : this.nodes["body"][innerIndex][index]["checkbox"] = node}>
+                    {!childElement.activeElement ? null : this.renderCheckboxAndErase(changeFunction, checkedStatus, clear, group, innerIndex, index, renderSwitch)}
                 </div>
                 <CustomDropDown
                     className={(childElement.activeElement ? "activeElement" : "") + (childElement.isConstraint ? " constraintElement" : "")}
@@ -769,32 +839,36 @@ class GuiComponent extends Component {
         )
     }
 
-    renderToggleAndClose(changeFunction, checkedStatus, closeFunction, renderSwitch = true) {
+    renderCheckboxAndErase(changeFunction, checkedStatus, closeFunction, group, innerIndex, index, renderSwitch = true) {
+        let hoverCheckbox = group === "element" ? this.state.hoverCheckbox["element"]
+            : group === "body" ? this.state.hoverCheckbox["body"][innerIndex][index]
+                : this.state.hoverCheckbox[group][index];
+
+        let mouseChange = (newState) => {
+            let hover = this.state.hoverCheckbox;
+            if (group === "element")
+                hover[group] = newState;
+            else if (group === "body")
+                hover[group][innerIndex][index] = newState;
+            else
+                hover[group][index] = newState;
+            this.setState({hoverCheckbox: hover})
+        };
+
         return (
             <div style={{float: "left"}}>
                 {!renderSwitch ? null : (
                     <div style={{float: "left"}}>
-                        <div data-tip={"React-tooltip"} data-for={"switch"}>
-                            <div className={"toggleConstraintContainer"}>
-                                <Switch
-                                    onChange={changeFunction}
-                                    checked={checkedStatus}
-                                    onColor={this.switchOnColor}
-                                    offColor={this.switchOffColor}
-                                    onHandleColor={this.switchHandleColor}
-                                    handleDiameter={15}
-                                    uncheckedIcon={false}
-                                    checkedIcon={false}
-                                    boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                                    activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                                    height={15}
-                                    width={30}
-                                />
-                            </div>
+                        <div className={"checkboxConstraint" + (checkedStatus ? " constraint" : "")}
+                             onMouseEnter={() => mouseChange(true)}
+                             onMouseLeave={() => mouseChange(false)}>
+
+                            {checkedStatus || hoverCheckbox ? (
+                                <FaCheckSquareO size={20} onClick={changeFunction}/>
+                            ) : (
+                                <FaSquareO size={20} onClick={changeFunction}/>
+                            )}
                         </div>
-                        <ReactToolTip place={"top"} type={"dark"} effect={"solid"} id={"switch"} delayShow={300}>
-                            <span>{"Click on the toggle to change into/from Constraint"}</span>
-                        </ReactToolTip>
                     </div>
                 )}
                 <div style={{float: "left"}}>
@@ -804,7 +878,7 @@ class GuiComponent extends Component {
                         </div>
                     </div>
                     <ReactToolTip place={"top"} type={"dark"} effect={"solid"} id={"clear"} delayShow={300}>
-                        <span>Clear the Element and Remove its Characteristics</span>
+                        <span>Clear the Element and its Characteristics</span>
                     </ReactToolTip>
                 </div>
             </div>
@@ -831,22 +905,6 @@ class GuiComponent extends Component {
         )
     }
 
-    _handleActivateElement(elementId, thisElement) {
-        if (thisElement.selectedElement || thisElement.activeElement) return;
-        let status = thisElement.activeElement;
-        let jobs = [];
-        jobs.push({
-            elementId: elementId,
-            task: "UPDATE_ELEMENT",
-            value: {
-                activeElement: !status,
-                isConstraint: false
-            }
-        });
-
-        this.props["changeGuiElementJobs"](this.props.ruleIndex, jobs);
-    }
-
     _handleConstraintElement(elementId, thisElement) {
         if (!thisElement.activeElement) return;
         let jobs = [];
@@ -858,6 +916,72 @@ class GuiComponent extends Component {
                 isConstraint: !thisElement.isConstraint
             }
         });
+
+        /**
+         * iteratively change descendants to constraints
+         * @param elemId
+         * @returns {*} jobs
+         */
+        let makeChildrenConstraint = (elemId) => {
+            let newJobs = [];
+            let elementNode = this.props["rootTree"][elemId];
+            Object.keys(elementNode.children).forEach(group => {
+                if (group !== "body")
+                    elementNode.children[group].forEach(childId => {
+                        if (this.state.guiElements[childId].activeElement) {
+                            newJobs.push({
+                                elementId: childId,
+                                task: "UPDATE_ELEMENT",
+                                value: {isConstraint: true}
+                            });
+                            newJobs = newJobs.concat(makeChildrenConstraint(childId));
+                        }
+                    });
+
+                else
+                    elementNode.children["body"].forEach(ids => {
+                        ids.forEach(childId => {
+                            if (this.state.guiElements[childId].activeElement) {
+                                newJobs.push({
+                                    elementId: childId,
+                                    task: "UPDATE_ELEMENT",
+                                    value: {isConstraint: true}
+                                });
+                                newJobs = newJobs.concat(makeChildrenConstraint(childId));
+                            }
+                        })
+                    })
+            });
+            return newJobs;
+        };
+
+        /**
+         * iteratively change ancestor to non-constraint
+         * @param elemId
+         * @returns {*} jobs
+         */
+        let makeParentNonConstraint = (elemId) => {
+            let newJobs = [];
+            let parentId = this.props["rootTree"][elemId].parentId;
+            if (parentId === "") return[];
+            if (this.state.guiElements[parentId].activeElement && this.state.guiElements[parentId].isConstraint) {
+                newJobs.push({
+                    elementId: parentId,
+                    task: "UPDATE_ELEMENT",
+                    value: {isConstraint: false}
+                });
+                newJobs = newJobs.concat(makeParentNonConstraint(parentId));
+            }
+            return newJobs;
+        };
+
+
+        // make active children constraint if the new condition is constraint
+        if (!thisElement.isConstraint)
+            jobs = jobs.concat(makeChildrenConstraint(elementId));
+        else
+            jobs = jobs.concat(makeParentNonConstraint(elementId));
+
         this.props["changeGuiElementJobs"](this.props.ruleIndex, jobs);
     }
 

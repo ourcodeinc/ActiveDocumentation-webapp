@@ -13,10 +13,9 @@ import {
 import {RootCloseWrapper} from "react-overlays";
 import {MdEdit, MdAddBox, MdStar} from 'react-icons/lib/md/index';
 import {TiDelete, TiArrowMaximise} from "react-icons/lib/ti/index";
-import {FaQuestionCircle, FaTag, FaMinusCircle, FaTimesCircle} from "react-icons/lib/fa/index";
+import {FaQuestionCircle, FaTag, FaMinusCircle, FaTimesCircle, FaCheckSquareO} from "react-icons/lib/fa/index";
 import marked from "marked";
 import Joyride, {ACTIONS, EVENTS} from 'react-joyride';
-import Switch from 'react-switch';
 
 import RuleGeneratorGui from './ruleGenerationGUI/ruleGeneratorGui';
 import verifyTextBasedOnGrammar from "./ruleGenerationText/languageProcessing";
@@ -60,10 +59,6 @@ class EditRuleForm extends Component {
 
         if (!props["changeEditMode"])
             console.error(`'changeEditMode' is required in props when creating/editing a rule.`);
-
-        this.switchHandleColor = "#bfd9ff"; // same as inputText backGround color, constraint
-        this.switchOnColor = "#d9e9ff";
-        this.switchOffColor = "#e2e2e2"; // same as inputText backGround color, on hover
 
         /*
         This constant contains JSX and thus a react.Node
@@ -147,23 +142,9 @@ class EditRuleForm extends Component {
                     <p>IF a class has name ending with 'Controller', THEN it should have a <span
                         style={{fontFamily: "monospace"}}>private static</span> field with name ending with 'Controller'.</p>
                     <p>The <span style={{fontFamily: "monospace"}}>private static</span> field with name ending with 'Controller' is a constraint of the design rule.</p>
-                    <div>In the GUI, constraints can be specified using toggle (
-                        <div className={"switchContainer"}>
-                            <Switch
-                                onChange={() => {
-                                }}
-                                checked={true}
-                                onColor={this.switchOnColor}
-                                offColor={this.switchOffColor}
-                                onHandleColor={this.switchHandleColor}
-                                handleDiameter={15}
-                                uncheckedIcon={false}
-                                checkedIcon={false}
-                                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                                height={15}
-                                width={30}
-                            />
+                    <div>In the GUI, constraints can be specified using checkboxes (
+                        <div className={"switchContainer checkboxConstraint constraint"}>
+                            <FaCheckSquareO size={20}/>
                         </div>
                         ). Constraint elements have <span
                             style={{backgroundColor: "#bfd9ff"}}>light blue background</span></div>
@@ -324,6 +305,7 @@ class EditRuleForm extends Component {
 
             // GUI error message
             guiError: true,
+            isFilledGUI: false,
 
             // snippet feedback
             activeTab: 0,
@@ -336,7 +318,7 @@ class EditRuleForm extends Component {
             // tour guide states
             tourMainKey: 0,
             tourStepIndex: 0,
-            tourShouldRun: props["displayEditRuleTutorial"],
+            tourShouldRun: false,//props["displayEditRuleTutorial"], todo
             isTourGuide: true,
 
             // editor states
@@ -403,8 +385,8 @@ class EditRuleForm extends Component {
                 <div style={{paddingTop: '10px', clear: 'both'}}>
                     {this.renderFileConstraints()}
                     {this.renderTutorial()}
-                    {this.renderTextUI()}
                     {this.renderGUI()}
+                    {this.renderTextUI()}
                     {this.renderFeedbackSnippet()}
                     <ButtonToolbar className={"submitButtons"}>
                         <Button bsStyle="primary"
@@ -594,10 +576,16 @@ class EditRuleForm extends Component {
      * render the turorial steps above the text editor
      * @returns {XML}
      */
-    renderTutorial() {
+    renderTutorial() { //console.log(this.state.guiError,"guiError");console.log(this.state.isFilledGUI,"isFilledGUI");
+
+        let stepOneStatus = !this.state.isFilledGUI ? "has-error" : "";
+        let stepTwoStatus = !this.state.isFilledGUI ? "inactive" : this.state.guiError ? "has-error" : "";
+        let stepThreeStatus = !this.state.isFilledGUI || this.state.guiError ? "inactive" : "";
+
         return (
-            <div>
-                <div className={"tutorialText"}>
+            <div className={"tutorial"}>
+                <div className={"tutorialArrow " + stepOneStatus}>&#x25B6;</div>
+                <div className={"tutorialText " + stepOneStatus}>
                     <strong>Step 1:</strong> Write the code you want to match in code using the GUI.
                     <FaQuestionCircle size={20} className={"faQuestionCircle"}
                                       onClick={() => this.setState({
@@ -606,28 +594,14 @@ class EditRuleForm extends Component {
                                           tourStepIndex: this.stepNames.GUI
                                       })}/>
                 </div>
-                <div className={"tutorialText"}>
+                <div className={"tutorialArrow " + stepTwoStatus}>&#x25B6;</div>
+                <div className={"tutorialText " + stepTwoStatus}>
                     <strong>Step 2:</strong> Specify what must be true by switching the conditions to
-                    'constraints' by clicking on toggles
-                    <div className={"switchContainer"}>
-                        <Switch
-                            onChange={() => {
-                            }}
-                            checked={true}
-                            onColor={this.switchOnColor}
-                            offColor={this.switchOffColor}
-                            onHandleColor={this.switchHandleColor}
-                            handleDiameter={15}
-                            uncheckedIcon={false}
-                            checkedIcon={false}
-                            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                            height={15}
-                            width={30}
-                        />
+                    'constraints' by clicking on checkboxes
+                    <div className={"switchContainer checkboxConstraint constraint"}>
+                        <FaCheckSquareO size={20}/>
                     </div>
-                    . Constraint elements are shown in <span
-                    style={{color: "#3333cc"}}>blue</span>.
+                    . Constraint elements are highlighted in the GUI.
                     <FaQuestionCircle size={20} className={"faQuestionCircle"}
                                       onClick={() => this.setState({
                                           tourShouldRun: true,
@@ -635,7 +609,8 @@ class EditRuleForm extends Component {
                                           tourStepIndex: this.stepNames.GUI_CONSTRAINT
                                       })}/>
                 </div>
-                <div className={"tutorialText"}>
+                <div className={"tutorialArrow " + stepThreeStatus}>&#x25B6;</div>
+                <div className={"tutorialText " + stepThreeStatus}>
                     <strong>Step 3: [Optional]</strong> Edit the rule text by adding parentheses and changing
                     and' to 'or'.
                     <FaQuestionCircle size={20} className={"faQuestionCircle"}
@@ -720,10 +695,10 @@ class EditRuleForm extends Component {
     renderGUI() {
         return (
             <div id={`gui_div_${this.ruleIndex}`}>
-                {this.renderGuiError()}
                 <div className={"generateRuleGuiDiv" + (this.state.guiError ? " has-error" : "")}>
                     <RuleGeneratorGui ruleIndex={this.ruleIndex} className={"generateRuleGui"}
-                                      onError={(error) => error !== this.state.guiError ? this.setState({guiError: error}) : {}}/>
+                                      onError={(error) => error !== this.state.guiError ? this.setState({guiError: error}) : {}}
+                                      onFilledGUI={(isFilled) => isFilled !== this.state.isFilledGUI ? this.setState({isFilledGUI: isFilled}) : {}}/>
                 </div>
             </div>
         )
@@ -764,44 +739,6 @@ class EditRuleForm extends Component {
                     </Alert>
                 )}
             </Fragment>
-        )
-    }
-
-
-    /**
-     * render GUI errors.
-     */
-    renderGuiError() {
-        return (
-            <div className={"guiMessages has-error"} id={`gui_error_${this.ruleIndex}`}
-                 style={this.state.guiError ? {} : {visibility: "hidden"}}>
-                <span style={{paddingRight: "2px"}}>
-                    {"Select at least one element as Constraint using toggles:  "}
-                    <div className={"switchContainer"}>
-                    <Switch
-                        onChange={() => {
-                        }}
-                        checked={true}
-                        onColor={this.switchOnColor}
-                        offColor={this.switchOffColor}
-                        onHandleColor={this.switchHandleColor}
-                        handleDiameter={15}
-                        uncheckedIcon={false}
-                        checkedIcon={false}
-                        boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                        activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                        height={15}
-                        width={30}
-                    />
-                    </div>
-                </span>
-                <FaQuestionCircle size={20} className={"faQuestionCircle"}
-                                  onClick={() => this.setState({
-                                      tourShouldRun: true,
-                                      isTourGuide: false,
-                                      tourStepIndex: this.stepNames.GUI_CONSTRAINT
-                                  })}/>
-            </div>
         )
     }
 
@@ -1330,8 +1267,8 @@ class EditRuleForm extends Component {
                 checkFor: this.state.filesFolders.filter((d) => d !== ""),
                 type: "WITHIN"
             },
-            quantifier: {detail: "", command: "src:unit/" + this.ruleI.rulePanelState.quantifierXPath},
-            constraint: {detail: "", command: "src:unit/" + this.ruleI.rulePanelState.constraintXPath},
+            quantifier: {detail: "", command: "src:unit/" + this.state.quantifierXPath},
+            constraint: {detail: "", command: "src:unit/" + this.state.constraintXPath},
             grammar: this.ruleI.rulePanelState.autoCompleteArray.map(d => d.text).join(" ")
         };
 
@@ -1364,10 +1301,10 @@ class EditRuleForm extends Component {
             return;
         }
 
-        if (this.ruleI.rulePanelState.quantifierXPath === "" || this.ruleI.rulePanelState.constraintXPath === "") {
+        if (this.state.quantifierXPath === "" || this.state.constraintXPath === "") {
             this.setState({
                 errorTitle: "Error in Submitting the updated Rule",
-                errorMessage: "Please specify a valid design rule according to the grammar.",
+                errorMessage: "Please specify a valid design rule.",
                 showError: true
             });
             return;
@@ -1403,8 +1340,8 @@ class EditRuleForm extends Component {
                 checkFor: this.state.filesFolders.filter((d) => d !== ""),
                 type: "WITHIN"
             },
-            quantifier: {detail: "", command: "src:unit/" + this.props.quantifierXPath},
-            constraint: {detail: "", command: "src:unit/" + this.props.constraintXPath},
+            quantifier: {detail: "", command: "src:unit/" + this.state.quantifierXPath},
+            constraint: {detail: "", command: "src:unit/" + this.state.constraintXPath},
             grammar: this.props.autoCompleteArray.map(d => d.text).join(" ")
         };
 
@@ -1437,10 +1374,10 @@ class EditRuleForm extends Component {
             return;
         }
 
-        if (rule.quantifierXPath === "" || rule.constraintXPath === "") {
+        if (this.state.quantifierXPath === "" || this.state.constraintXPath === "") {
             this.setState({
                 errorTitle: "Error in Submitting the new Rule",
-                errorMessage: "Please specify a valid design rule according to the grammar.",
+                errorMessage: "Please specify a valid design rule.",
                 showError: true
             });
             return;

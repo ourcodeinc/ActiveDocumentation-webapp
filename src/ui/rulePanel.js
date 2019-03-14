@@ -73,51 +73,50 @@ class RulePanel extends Component {
     }
 
     render() {
-        if(!this.ruleI && !this.state.editMode) return null;
-        return (<Fragment>
-            {this.state.editMode ? (
+        if (!this.ruleI && !this.state.editMode) return null;
+        if (this.state.editMode)
+            return (
                 <EditRuleForm ruleIndex={this.ruleIndex}
-                              changeEditMode={() => this.changeEditMode()}/>
-            ) : (
-                <div className={this.state.className}>
-                    <FormGroup>
-                        <div style={{float: 'right'}}>
-                            <FaCaretUp size={20} onClick={() => this.setState({openPanel: false})}
-                                       style={this.caretClass[this.state.openPanel.toString()]}/>
-                            <FaCaretDown size={20} onClick={() => this.setState({openPanel: true})}
-                                         style={this.caretClass[(!this.state.openPanel).toString()]}/>
-                            <MdEdit size={20} style={this.editIconClass[this.state.editMode.toString()]}
-                                    onClick={() => this.changeEditMode()}/>
+                              changeEditMode={() => this.changeEditMode()}/>);
+        return (
+            <div className={this.state.className}>
+                <FormGroup>
+                    <div style={{float: 'right'}}>
+                        <FaCaretUp size={20} onClick={() => this.setState({openPanel: false})}
+                                   style={this.caretClass[this.state.openPanel.toString()]}/>
+                        <FaCaretDown size={20} onClick={() => this.setState({openPanel: true})}
+                                     style={this.caretClass[(!this.state.openPanel).toString()]}/>
+                        <MdEdit size={20} style={this.editIconClass[this.state.editMode.toString()]}
+                                onClick={() => this.changeEditMode()}/>
+                    </div>
+                    <ControlLabel>{this.state.title}</ControlLabel>
+                    <p>{this.state.description}</p>
+                </FormGroup>
+                <Collapse in={this.state.openPanel}>
+                    <div>
+                        <div style={{paddingTop: '10px', clear: 'both'}}>
+                            {this.renderTags()}
                         </div>
-                        <ControlLabel>{this.ruleI["title"]}</ControlLabel>
-                        <p>{this.ruleI["description"]}</p>
-                    </FormGroup>
-                    <Collapse in={this.state.openPanel}>
-                        <div>
-                            <div style={{paddingTop: '10px', clear: 'both'}}>
-                                {this.renderTags()}
-                            </div>
-                            <div style={{paddingTop: '10px', clear: 'both'}}>
-                                <Tabs animation={true} id={"rules_" + this.ruleIndex}
-                                      activeKey={this.state.activeTab}
-                                      onSelect={(key) => {
-                                          if (this.state.activeTab === key)
-                                              this.setState({activeTab: 0});
-                                          else
-                                              this.setState({activeTab: key});
-                                      }}>
-                                    <Tab eventKey={0} disabled>{}</Tab>
-                                    <Tab eventKey={'satisfied'}
-                                         title={this.renderTabHeader('satisfied')}>{this.renderListOfSnippets('satisfied')}</Tab>
-                                    <Tab eventKey={'violated'}
-                                         title={this.renderTabHeader('violated')}>{this.renderListOfSnippets('violated')}</Tab>
-                                </Tabs>
-                            </div>
+                        <div style={{paddingTop: '10px', clear: 'both'}}>
+                            <Tabs animation={true} id={"rules_" + this.ruleIndex}
+                                  activeKey={this.state.activeTab}
+                                  onSelect={(key) => {
+                                      if (this.state.activeTab === key)
+                                          this.setState({activeTab: 0});
+                                      else
+                                          this.setState({activeTab: key});
+                                  }}>
+                                <Tab eventKey={0} disabled>{}</Tab>
+                                <Tab eventKey={'satisfied'}
+                                     title={this.renderTabHeader('satisfied')}>{this.renderListOfSnippets('satisfied')}</Tab>
+                                <Tab eventKey={'violated'}
+                                     title={this.renderTabHeader('violated')}>{this.renderListOfSnippets('violated')}</Tab>
+                            </Tabs>
                         </div>
-                    </Collapse>
-                </div>
-            )}
-        </Fragment>);
+                    </div>
+                </Collapse>
+            </div>
+        );
     }
 
     //componentDidUpdate doesn't work
@@ -134,13 +133,13 @@ class RulePanel extends Component {
                 this.ruleI = nextProps.rules[arrayIndex];
 
                 if (this.ruleI.rulePanelState.editMode && !this.state.editMode)
-                    this.setState({editMode: true},()=>console.log("update state, editMode"));
+                    this.setState({editMode: true});
 
                 else {
                     let equalArrays = (arr1, arr2) => {
                         if (arr1.length !== arr2.length) return false;
                         for (let i = 0; i < arr1.length; i++)
-                            if (arr1[i] !== arr2[2]) return false;
+                            if (arr1[i] !== arr2[i]) return false;
                         return true;
                     };
 
@@ -206,13 +205,6 @@ class RulePanel extends Component {
             return;
         }
         this.setState({openPanel: false, className: "rulePanelDiv"});
-
-        // fixed the height of text areas
-        let els = document.getElementsByTagName("textarea");
-        for (let i = 0; i < els.length; i++) {
-            els[i].style.cssText = 'height:0';
-            els[i].style.cssText = 'overflow:hidden;height:' + (els[i].scrollHeight + 5) + 'px';
-        }
     }
 
 
@@ -378,8 +370,7 @@ class RulePanel extends Component {
      * change edit mode, set the states
      */
     changeEditMode() {
-        this.setState({editMode: !this.state.editMode},
-            () => this.props.onChangeEditMode(this.ruleIndex, this.state.editMode));
+        this.props.onChangeEditMode(this.ruleIndex, !this.state.editMode)
     }
 }
 

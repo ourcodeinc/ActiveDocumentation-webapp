@@ -130,23 +130,23 @@ export const documentations_IMarkdownString = {
     "QUOTES": {
         isTrusted: true, value:
         "##### Quoted words\n" +
-        "The Rule Generator interface allows to specify the value of some elements directly. Values must be **quoted**.\n" +
+        "The Rule Generator interface allows you to specify the value of some elements directly. Values must be **quoted**.\n" +
         "For example, `@Entity` can be expresses as: \n" +
         "```\n" +
         "annotation \"Entity\"\n" +
         "``` \n" +
-        "There are some regex-like notations that can be used in both the textual and graphical UI.\n" +
+        "You can also use some regex-like notations in both the textual and graphical UI.\n" +
         "##### **`...`**  \n" +
-        "Equals to any sequance of characters. It is equivalent to `.*` in regex. For example:\n" +
-        " **\"pre...\"** equals to values that _start with_ the prefix **pre** and end with any sequance of characters.\n" +
-        " **\"...post\"** equals to values that start with any sequence of characters and _end with_ the postfix **post**.\n" +
-        " **\"...mid...\"** equals to values that _contain_ the sub-string **mid**.\n" +
+        "Equals to any sequence of characters. It is equivalent to `.*` in regex. For example:\n" +
+        " **\"pre...\"** matches values that _start with_ the prefix **pre** and end with any sequance of characters.\n" +
+        " **\"...post\"** matches values that start with any sequence of characters and _end with_ the postfix **post**.\n" +
+        " **\"...mid...\"** matches values that _contain_ the sub-string **mid**.\n" +
         "##### **`!`** \n" +
         "Equals to _NOT_. For example:\n" +
-        "**\"!word\"** equals to any value except **'word'**.\n" +
-        " **\"!pre...\"** equals to any value that does **NOT** start with the prefix **'pre'**.\n" +
-        " **\"!...post\"** equals to any value that does **NOT** end with the postfix **'post'**.\n" +
-        " **\"!...mid...\"** equals to any value that does **NOT** contain the sub-string **'mod'**."
+        "**\"!word\"** matches any value except **'word'**.\n" +
+        " **\"!pre...\"** matches any value that does **NOT** start with the prefix **'pre'**.\n" +
+        " **\"!...post\"** matches any value that does **NOT** end with the postfix **'post'**.\n" +
+        " **\"!...mid...\"** matches any value that does **NOT** contain the sub-string **'mod'**."
     },
     "EXACT_CODE": {
         isTrusted: true, value:
@@ -158,43 +158,59 @@ export const documentations_IMarkdownString = {
     "AND_OR_PAREN": {
         isTrusted: true, value:
         "##### and, or, (, )\n" +
-        "An element may have several children. For example, the `class` element may have several children ; **annotation**, **declaration statement**, and **constructor**.\n" +
-        "Children of an element can be listed after the name of element followed by preposition **with**. For example:\n" +
+        "**and** and **or** can be used to add two or characteristics to an element.\n" +
+        "For example, assume you want to match the following code:\n" +
+        "```java\n" +
+        "@Entity\n" +
+        "class myClass extends superClass{\n" +
+        "    // some logic here\n" +
+        "    @Id\n" +
+        "    int objectId;\n // declaration statement" +
+        "}\n" +
         "```\n" +
-        "class with annotation\n" +
+        "You can write the design rule as:\n" +
         "```\n" +
-        "**and** and **or** can be used to add more children.\n" +
+        "class with annotation \"Entity\" and extension of \"superClass\" must have \n" +
+        "declaration statement with annotation \"Id\" and type \"int\" and name \"objectId\"\n" +
         "```\n" +
-        "class with annotation and declaration statement or constructor\n" +
+        "To avoid ambiguity, parenthesis may also be used to group characteristics. " +
+        "For example, assume you want to match the following code.\n" +
+        "```java\n" +
+        "@Entity\n" +
+        "class myClass extends superClass{\n" +
+        "    // some logic here\n" +
+        "    @Id  // either annotation or the name objectId and type int\n" +
+        "    int objectId;\n // declaration statement" +
+        "}\n" +
         "```\n" +
-        "To avoid ambiguity, parenthesis may also be used to group children. For example, the following example concern `classes` that have either `annotation and declaration statement` or `constructor`.\n" +
         "```\n" +
-        "class with ( annotation and declaration statement) or constructor\n" +
+        "class with annotation \"Entity\" and extension of \"superClass\" must have \n" +
+        "declaration statement with ((annotation \"Id\") or (type \"int\" and name \"objectId\"))\n" +
         "```"
     },
     "OF": {
         isTrusted: true, value:
         "##### of\n" +
-        "If the parent of the element is important, it can be specify after preposition **of**. For example, consider public functions of annotated classes.\n" +
+        "If you want to match an element that is a characteristic for another element (owner), you can use preposition **of**. \n" +
+        "For example, consider the following snippet:\n" +
         "```java\n" +
-        "@annot\n" +
+        "@Entity\n" +
         "class myClass {\n" +
-        "    public void myFunc() {\n" +
+        "    public void myFunction() { // we want to match this element\n" +
         "        // some logic\n" +
         "    }\n" +
         "}\n" +
         "```\n" +
-        "This can be expresses as:\n" +
+        "This design rule for the above snippet is:\n" +
         "```\n" +
-        "function with visibility \"public\" of class with annotation\n" +
-        "```\n" +
-        "Note to list children first (if exist), then the parent."
+        "function with visibility \"public\" of class with annotation \"Entity\" must have return value \"void\"\n" +
+        "```\n"
     },
     "MUST_HAVE": {
         isTrusted: true, value:
         "##### must have\n" +
-        "The rule consists of two parts, the code you want to match (quantifier), and conditions on the code that " +
-        "needs to hold to satisfy the rule (constraint). \n" +
+        "A design rule consists of two parts: the code you want to match (quantifier) and conditions on the code that " +
+        "need to hold to satisfy the rule (constraint). \n" +
         "These parts are connected by **must have**.\n" +
         "For example, consider the following rule: \n" +
         "```\n" +
@@ -209,50 +225,87 @@ export const documentations_IMarkdownString = {
     "WITH": {
         isTrusted: true, value:
         "##### with\n" +
-        "An element may have several children. In the following example, for the element `class`, " +
-        "several children can be specified; **annotation**, **name**, **declaration statement**, and **constructor**.\n" +
+        "An element may have several characteristics. For example, the `class` element may have **annotation**, **declaration statement**, and/or **constructor**.\n" +
+        "Characteristics of an element can be listed after the name of element followed by preposition **with**. For example:\n" +
         "```java\n" +
-        "@ Entity\n" +
+        "// annotation \n" +
+        "@Entity\n" +
+        "// name of the class \n" +
         "class myClass {\n" +
-        "    int id;   // declarartion statement\n" +
+        "    // declaration statement\n" +
+        "    int id;\n" +
+        "    // constructor \n" +
         "    public myClass (int ID) {\n" +
+        "        this.id = ID;\n" +
+        "    }\n" +
+        "    // function (method) \n" +
+        "    void setId (int ID) {\n" +
         "        this.id = ID;\n" +
         "    }\n" +
         "}\n" +
         "```\n" +
-        "Children of an element can be listed after the name of element followed by preposition **with**. For example:\n" +
+        "Characteristics of an element can be listed after the name of element followed by preposition **with**. \n" +
+        "For example, consider the following snippet:\n" +
+        "```java\n" +
+        "// annotation \n" +
+        "@Entity\n" +
+        "// name of the class \n" +
+        "class myClass {\n" +
+        "    // constructor \n" +
+        "    public myClass () {\n" +
+        "        // some logic\n" +
+        "    }\n" +
+        "}\n" +
         "```\n" +
-        "class with annotation\n" +
+        "The design rule for matching this snippet may be: \n" +
+        "```\n" +
+        "class with annotation \"Entity\" and name \"myClass\" must have constructor\n" +
         "```"
     },
 
     "Superclass": {
         isTrusted: true, value:
         "#### Superclass\n" +
-        "Java classes may extend superclasses. If the name of the superclass is not known or important " +
-        "the word *Superclass* is used as placeholder of the superclass name\n" +
+        "To match java classes that extend a Superclass, you can use the keyword *extension* followed by *of* and name of the superclass.\n" +
+        "If the name of the superclass is not known or important, the word *Superclass* is used as placeholder of the superclass name\n" +
+        "```java\n" +
+        "class myClass extends someSuperClass{\n" +
+        "    public void myFunction() {\n" +
+        "        // some logic\n" +
+        "    }\n" +
+        "}\n" +
         "```\n" +
-        "class with extension of Superclass" +
+        "The following design rule matches the above code:\n" +
+        "```\n" +
+        "class with extension of Superclass must have function with name \"myFunction\"\n" +
         "```"
     },
     "Interface": {
         isTrusted: true, value:
         "#### Interface\n" +
-        "Java classes may implement an interface. If the name of the interface is not known or important " +
-        "the word *Interface* is used as placeholder of the interface name\n" +
+        "To match java classes that implement an interface, you can use the keyword *implementation* followed by *of* and name of the interface.\n" +
+        "If the name of the interface is not known or important, the word *Interface* is used as placeholder of the interface name\n" +
+        "```java\n" +
+        "class myClass implements someInterface{\n" +
+        "    public void myFunction() {\n" +
+        "        // some logic\n" +
+        "    }\n" +
+        "}\n" +
         "```\n" +
-        "class with implementation of Interface" +
+        "The following design rule matches the above code:\n" +
+        "```\n" +
+        "class with extension of Interface must have function with name \"myFunction\"\n" +
         "```"
     },
 
     "name": {
         isTrusted: true, value:
         "#### name\n" +
-        "Name is representing name of java classes, variables, methods, and parameters.\n" +
+        "Name represents the identifier of a java class, variable, method, or parameter.\n" +
         "```java\n" +
-        "public class MyClass { \\\\ MyClass is the name of the class\n" +
-        "    int myVariable; \\\\ myVariable is the name of variable\n" +
-        "    void foo (int param1) { \\\\ foo is the name of class and param1 is the name of the parameter\n" +
+        "public class MyClass { // MyClass is the name of the class\n" +
+        "    int myVariable; // myVariable is the name of variable\n" +
+        "    void foo (int param1) { // foo is the name of class and param1 is the name of the parameter\n" +
         "    }\n" +
         "}\n" +
         "```"
@@ -260,6 +313,7 @@ export const documentations_IMarkdownString = {
     "annotation": {
         isTrusted: true, value:
         "#### annotation\n" +
+        "Some elements may have an annotation which is marked by *@*. \n" +
         "Annotations, a form of metadata, provide data about a program that is not part of the program itself. " +
         "Annotations have no direct effect on the operation of the code they annotate.\n" +
         "```java\n" +
@@ -267,50 +321,70 @@ export const documentations_IMarkdownString = {
         "void foo() {\n" +
         "    // ...\n" +
         "}\n" +
-        "```"
+        "```\n" +
+        "The design rule corresponding to the above code snippet is: \n" +
+        "```\n" +
+        "function with name \"foo\" must have annotation \"Override\"\n" +
+        "```\n"
     },
     "extension": {
         isTrusted: true, value:
-        "#### extesion\n" +
-        "To create a sub class (child) from a Java super class (parent), the keyword extends is used. " +
-        "You then follow the `extends` keyword with the parent class you want to extend. \n" +
+        "#### extension\n" +
+        "To match java classes that extend a superclass, you can use the keyword *extension* followed by *of* and name of the superclass.\n" +
+        "If the name of the superclass is not known or important, the word *Superclass* is used as placeholder of the superclass name\n" +
         "```java\n" +
-        "class dogs extends animals {\n" +
-        "    \\\\ ...\n" +
+        "class myClass extends mySuperClass {\n" +
+        "    // some logic here\n" +
         "}\n" +
+        "```\n" +
+        "The following design rule matches the above code:\n" +
+        "```\n" +
+        "class with name \"myClass\" must have extension of \"mySuperClass\"\n" +
         "```"
     },
     "implementation": {
         isTrusted: true, value:
         "#### implementation\n" +
-        "Interfaces specify what a class must do and not how. It is the blueprint of the class. " +
-        "A class that implement interface must implement all the methods declared in the interface. To implement interface use `implements` keyword.\n" +
+        "To match java classes that implement an interface, you can use the keyword *implementation* followed by *of* and name of the interface.\n" +
+        "If the name of the interface is not known or important, the word *Interface* is used as placeholder of the interface name\n" +
         "```java\n" +
-        "class english implements language {\n" +
-        "    \\\\ ...\n" +
+        "class myClass implements myInterface {\n" +
+        "    // some logic here\n" +
         "}\n" +
+        "```\n" +
+        "The following design rule matches the above code:\n" +
+        "```\n" +
+        "class with name \"myClass\" must have interface of \"myInterface\"\n" +
         "```"
     },
     "function": {
         isTrusted: true, value:
         "#### function\n" +
-        "Function is a collection of statements that are grouped together to perform an operation. " +
-        "All function definitions must be inside classes. \n" +
+        "A Function represents a Java method that is a collection of statements that are grouped together to perform an operation. \n" +
+        "Functions may have several characteristics such as *specifier*, *return type*, *name*, *parameter*, etc. \n" +
         "``` java\n" +
         "public void foo (int num1, int num2) {\n" +
         "    // some logic here\n" +
         "}\n" +
+        "```\n" +
+        "The following design rule matches the above code:\n" +
+        "```\n" +
+        "function with name \"foo\" and parameter with type \"int\" must have visibility \"public\"\n" +
         "```"
     },
     "abstract function": {
         isTrusted: true, value:
         "#### abstract function\n" +
-        "Abstract methods are declared without any implementation. " +
-        "They are declared with the purpose of having the child class provide implementation. They must be declared within an abstract class.\n" +
+        "An Abstract Function represents a Java abstract method that is declared without any implementation. " +
+        "Abstract methods are declared with the purpose of having the child class provide implementation. They must be declared within an abstract class.\n" +
         "```java\n" +
         "abstract class myClass{\n" +
         "   public abstract int sum(int n1, int n2);\n" +
         "}\n" +
+        "```\n" +
+        "The following design rule matches the above code:\n" +
+        "```\n" +
+        "abstract function with name \"sum\" must have visibility \"public\"\n" +
         "```"
     },
     "constructor": {
@@ -326,6 +400,10 @@ export const documentations_IMarkdownString = {
         "        ID = id;\n" +
         "    }\n" +
         "} \n" +
+        "```\n" +
+        "The following design rule matches the above code:\n" +
+        "```\n" +
+        "class with name \"myClass\" must have constructor\n" +
         "```"
     },
     "parameter": {
@@ -337,6 +415,10 @@ export const documentations_IMarkdownString = {
         "public void foo(int paramName) {\n" +
         "    // some logic here\n" +
         "}\n" +
+        "```\n" +
+        "The following design rule matches the above code:\n" +
+        "```\n" +
+        "function with name \"foo\" must have parameter with type \"int\" and name \"paramName\"\n" +
         "```"
     },
     "type": {
@@ -408,11 +490,11 @@ export const documentations_IMarkdownString = {
     "initial value": {
         isTrusted: true, value:
         "#### Initial Value\n" +
-        "Initial value is a value or expression assigned to a variable upon declaring.\n" +
+        "Initial value is a value or expression assigned to a variable upon declaration.\n" +
         "```java\n" +
-        "public MyClass mc = new MyClass(); \\\\ new MyClass() is the initial value\n" +
-        "int i = foo(); \\\\ foo() is the initial value\n" +
-        "String str = \"Hi\"; \\\\ \"Hi\" is the initial value\n" +
+        "public MyClass mc = new MyClass(); // new MyClass() is the initial value\n" +
+        "int i = foo(); // foo() is the initial value\n" +
+        "String str = \"Hi\"; // \"Hi\" is the initial value\n" +
         "```"
     },
     "interface": {

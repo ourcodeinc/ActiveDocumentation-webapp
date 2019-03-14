@@ -80,15 +80,11 @@ class RuleGeneratorGui extends Component {
                         guiTree: this.ruleI.rulePanelState.guiState.guiTree,
                         guiElements: this.ruleI.rulePanelState.guiState.guiElements,
                         autoCompleteArray: this.ruleI.rulePanelState.autoCompleteArray
-                    }, () => {
-                        this.receiveStateData();
-                    });
+                    }, this.receiveStateData);
             }
         }
         else {
-            this.setState(nextProps, () => {
-                this.receiveStateData();
-            });
+            this.setState(nextProps, this.receiveStateData);
         }
     }
 
@@ -111,14 +107,16 @@ class RuleGeneratorGui extends Component {
         // check connectivity of elements
         let activateJobs = this.connectElements(guiElements, guiTree);
         if (activateJobs.jobs.length !== 0) {
-            this.props.onChangeGuiElement(this.ruleIndex, activateJobs.jobs);
+            console.log("error: not connected", activateJobs.jobs);
+            // this.props.onChangeGuiElement(this.ruleIndex, activateJobs.jobs);
             return;
         }
 
         // check the selected element
         let selectJobs = this.lowestCommonAncestor(guiElements, guiTree);
         if (selectJobs.jobs.length !== 0) {
-            this.props.onChangeGuiElement(this.ruleIndex, selectJobs.jobs);
+            console.log("error: not EoI", selectJobs.jobs);
+            // this.props.onChangeGuiElement(this.ruleIndex, selectJobs.jobs);
             return;
         }
         if (selectJobs.error) {
@@ -218,9 +216,13 @@ class RuleGeneratorGui extends Component {
      * process the data received from GUI
      */
     receiveStateData = () => {
-
         let trees = this.buildTreeForProcessing();
-        if (!trees) return;
+        if (!trees) {
+            if (Object.keys(this.state.guiElements).filter(id => this.state.guiElements[id].activeElement).length === 0)
+                this.canBeStarredIDs = [];
+            this.props["onFilledGUI"](Object.keys(this.state.guiElements).filter(id => this.state.guiElements[id].activeElement).length !== 0);
+            return;
+        }
 
         let quantifierTree = JSON.parse(JSON.stringify(trees.quantifierTree));
         let constraintTree = JSON.parse(JSON.stringify(trees.constraintTree));
@@ -245,7 +247,7 @@ class RuleGeneratorGui extends Component {
 
             this.props.onChangeAutoCompleteTextFromGUI(this.props.ruleIndex, trivialGuiArray);
             this.props["onError"](false);
-
+            this.props["onFilledGUI"](true);
             return;
         }
 
@@ -280,9 +282,9 @@ class RuleGeneratorGui extends Component {
                 .concat([{text: "must", id: ""}, {text: "have", id: ""}])
                 .concat(grammarTrivialTextC);
 
-            this.props.onChangeAutoCompleteTextFromGUI(this.props.ruleIndex, trivialGuiArray)
+            this.props.onChangeAutoCompleteTextFromGUI(this.props.ruleIndex, trivialGuiArray);
             this.props["onError"](false);
-
+            this.props["onFilledGUI"](true);
             return;
         }
 
@@ -296,7 +298,7 @@ class RuleGeneratorGui extends Component {
 
         if (!isIdentical) this.props.onChangeAutoCompleteTextFromGUI(this.props.ruleIndex, matchedIds);
         this.props["onError"](false);
-
+        this.props["onFilledGUI"](true);
     };
 
     /**
@@ -306,7 +308,6 @@ class RuleGeneratorGui extends Component {
      * @return {Array} of objects {text: "", id: ""}
      */
     buildGrammarTree(rootNode, constraintQuery = false) {
-        // console.log(rootNode);
         let grammarObject = []; // {text: "", id: ""}
 
         // element name
@@ -361,7 +362,6 @@ class RuleGeneratorGui extends Component {
      * @return {Array} of objects {text: "", id: ""}
      */
     buildTrivialGrammar(rootNode, constraintQuery = false) {
-        // console.log(rootNode);
         let grammarObject = []; // {text: "", id: ""}
 
         // element name
@@ -521,6 +521,43 @@ class RuleGeneratorGui extends Component {
         return {jobs: jobs};
     }
 
+
+    /**
+     * when adding new elements, constraints should not contains non-constraint
+     * @param guiElements
+     * @param guiTree
+     * @returns {{jobs: Array}}
+     */
+    makeConstraint(guiElements, guiTree) {
+        let jobs = [];
+
+        // for each active element, find the path from root to the node.
+        let treePaths = Object.keys(guiElements)
+            .filter(id => guiElements[id].activeElement)
+            .map(id => {
+                let path = [id];
+                let tempID = id;
+                while (guiTree[tempID].parentId !== "") {
+                    path.push(guiTree[tempID].parentId);
+                    tempID = guiTree[tempID].parentId;
+                }
+                return path.reverse(); // return root to node path
+            });
+
+        // activate the elements between root and the node
+        treePaths.forEach(path => {
+            for (let i = 1; i < path.length; i++) {
+                if (guiElements[path[i - 1]].isConstraint && !guiElements[path[i]].isConstraint)
+                    jobs.push({
+                        elementId: path[i],
+                        task: "UPDATE_ELEMENT",
+                        value: {isConstraint: true}
+                    });
+            }
+        });
+        return {jobs: jobs};
+    }
+
     /**
      *
      * @param guiElements
@@ -623,6 +660,7 @@ class RuleGeneratorGui extends Component {
         let guiElements = JSON.parse(JSON.stringify(this.state.guiElements));
         let guiTree = JSON.parse(JSON.stringify(this.state.guiTree));
 
+        // simulating the reducer
         let applyJobs = (tasks) => {
             tasks.forEach(job => {
                 switch (job["task"]) {
@@ -682,8 +720,8 @@ class RuleGeneratorGui extends Component {
                         };
 
                         // if the newly inactive element is a selected element, un-select it
-                        if (guiTree.selectedElementID === job["elementId"] && !guiElements[job["elementId"]].activeElement)
-                            guiTree.selectedElementID = "";
+                        // if (guiTree.selectedElementID === job["elementId"] && !guiElements[job["elementId"]].activeElement)
+                        //     guiTree.selectedElementID = "";
 
                         break;
 
@@ -747,14 +785,13 @@ class RuleGeneratorGui extends Component {
                                 selectedElement: !job["value"]
                             };
                         guiTree.selectedElementID = job["elementId"];
-                        guiElements[job["elementId"]] = {
-                            ...guiElements[job["elementId"]],
-                            selectedElement: job["value"],
-                            isConstraint: job["value"] ? false : guiElements[job["elementId"]].isConstraint
-                        };
-
+                        if (guiElements.hasOwnProperty(job["elementId"]))
+                            guiElements[job["elementId"]] = {
+                                ...guiElements[job["elementId"]],
+                                selectedElement: job["value"],
+                                isConstraint: job["value"] ? false : guiElements[job["elementId"]].isConstraint
+                            };
                         break;
-
                     default:
                         break;
                 }
@@ -767,6 +804,10 @@ class RuleGeneratorGui extends Component {
         let activateJobs = this.connectElements(guiElements, guiTree);
         applyJobs(activateJobs.jobs);
         jobs = jobs.concat(activateJobs.jobs);
+
+        let constraintJobs = this.makeConstraint(guiElements, guiTree);
+        applyJobs(constraintJobs.jobs);
+        jobs = jobs.concat(constraintJobs.jobs);
 
         // check the selected element
         let selectJobs = this.lowestCommonAncestor(guiElements, guiTree);
