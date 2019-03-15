@@ -856,7 +856,7 @@ class GenerateXpath {
      * @param node
      * @returns {string}
      */
-    wordsContextTraversal(node) {
+    mmwordsContextTraversal(node) {
         let word = "";
         let not = false;
         let status = "equal";
@@ -895,6 +895,62 @@ class GenerateXpath {
             return not ? "not(" + query + ")" : query;
         }
         return "text()=" + word;
+    }
+
+
+    wordsContextTraversal(node) {
+
+        let wordTraversal = (node) => {
+            let word = "";
+            let not = false;
+            let status = "equal";
+            // words has at least 3 children
+            if (node.children[0].getSymbol().text === "!") not = true;
+            else if ((node.children[0].getSymbol().text === "!..." || node.children[0].getSymbol().text === "...")
+                && node.children[node.children.length - 1].getSymbol().text === "...") {
+                not = node.children[0].getSymbol().text.startsWith("!");
+                status = "contains";
+            }
+            else if (node.children[0].getSymbol().text === "!..." || node.children[0].getSymbol().text === "...") {
+                not = node.children[0].getSymbol().text.startsWith("!");
+                status = "ends-with";
+            }
+            else if (node.children[node.children.length - 1].getSymbol().text === "...") {
+                status = "starts-with";
+            }
+
+
+            word += "\"";
+            for (let i = 0; i < node.children.length; i++) {
+                if (["...", "!...", "!"].indexOf(node.getChild(i).getSymbol().text) === -1)
+                    word += node.getChild(i).getSymbol().text;
+            }
+            word += "\"";
+
+            if (status === "equal") return not ? "not(text()=" + word + ")" : "text()=" + word;
+            if (status === "contains") return not ? "not(contains(text()," + word + "))" : "contains(text()," + word + ")";
+            if (status === "starts-with") return not ? "not(starts-with(text()," + word + "))" : "starts-with(text()," + word + ")";
+
+            // ends-with(@id,'register') <== not valid
+            // substring(@id, string-length(@id) - string-length('register') +1) = 'register'
+
+            if (status === "ends-with") {
+                let query = "substring(text(),string-length(text())-string-length(" + word + ")+1)=" + word;
+                return not ? "not(" + query + ")" : query;
+            }
+            return "text()=" + word;
+        };
+
+        let result = "";
+        for (let i = 1; i < node.children.length - 1; i++) {
+            if (node.getChild(i) instanceof TerminalNodeImpl) {
+                if (node.getChild(i).getSymbol().text === "&&") result += " and ";
+                else if (node.getChild(i).getSymbol().text === "||") result += " or ";
+            }
+            else
+                result += wordTraversal(node.getChild(i))
+        }
+        return result;
     }
 
     /**

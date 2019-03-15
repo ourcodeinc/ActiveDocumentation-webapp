@@ -114,7 +114,7 @@ class RuleGeneratorGui extends Component {
 
         // check the selected element
         let selectJobs = this.lowestCommonAncestor(guiElements, guiTree);
-        if (selectJobs.jobs.length !== 0) {
+        if (selectJobs.jobs.length !== 0) {console.log(this.canBeStarredIDs);
             console.log("error: not EoI", selectJobs.jobs);
             // this.props.onChangeGuiElement(this.ruleIndex, selectJobs.jobs);
             return;
@@ -629,6 +629,8 @@ class RuleGeneratorGui extends Component {
             if (!getConditionByName(guiElements[lcaID].conditionName).canBeSelected && guiTree[lcaID].parentId === "")
                 return {jobs: [], error: true};
             this.canBeStarredIDs = [lcaID];
+            if (elementIDs[0] === lcaID && guiTree[lcaID].parentId !== "")
+                this.canBeStarredIDs.push(guiTree[lcaID].parentId)
         }
 
         // activate the elements between LCA and the node
@@ -644,7 +646,7 @@ class RuleGeneratorGui extends Component {
         });
 
         // update the selected element if changed
-        if (guiTree.selectedElementID !== lcaID)
+        if (this.canBeStarredIDs.indexOf(guiTree.selectedElementID) === -1)
             jobs.push({elementId: lcaID, task: "SELECT_ELEMENT", value: true});
 
         return {jobs: jobs, error: false};

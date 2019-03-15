@@ -318,7 +318,7 @@ class EditRuleForm extends Component {
             // tour guide states
             tourMainKey: 0,
             tourStepIndex: 0,
-            tourShouldRun: false,//props["displayEditRuleTutorial"], todo
+            tourShouldRun: props["displayEditRuleTutorial"],
             isTourGuide: true,
 
             // editor states
@@ -662,25 +662,28 @@ class EditRuleForm extends Component {
                                            });
                                    }}
                                    onUpdate={(newAutoCompleteText) => {
-                                       verifyTextBasedOnGrammar(newAutoCompleteText)
-                                           .then((data) => {
-                                               if (this._mounted)
-                                                   this.setState({
-                                                       quantifierXPath: data.quantifierXPath,
-                                                       constraintXPath: data.constraintXPath,
-                                                   });
+                                       if (this.state.autoCompleteArray.map(d => d.text).join(" ") !== newAutoCompleteText)
+                                           verifyTextBasedOnGrammar(newAutoCompleteText)
+                                               .then((data) => {
+                                                   if (this.state.quantifierXPath !== data.quantifierXPath || this.state.constraintXPath !== data.constraintXPath) {
+                                                       if (this._mounted)
+                                                           this.setState({
+                                                               quantifierXPath: data.quantifierXPath,
+                                                               constraintXPath: data.constraintXPath,
+                                                           });
 
-                                               this.props.onUpdateXPaths(this.ruleIndex, data.quantifierXPath, data.constraintXPath)
-                                           })
-                                           .catch((error) => {
-                                               this.processLanguageProcessingError(error);
-                                               this.setState({
-                                                   autoCompleteArray: newAutoCompleteText.split(" ").map(d => {
-                                                       return {id: "", text: d}
-                                                   }),
-                                                   monacoFormStatus: "has-error"
+                                                       this.props.onUpdateXPaths(this.ruleIndex, data.quantifierXPath, data.constraintXPath)
+                                                   }
                                                })
-                                           });
+                                               .catch((error) => {
+                                                   this.processLanguageProcessingError(error);
+                                                   this.setState({
+                                                       autoCompleteArray: newAutoCompleteText.split(" ").map(d => {
+                                                           return {id: "", text: d}
+                                                       }),
+                                                       monacoFormStatus: "has-error"
+                                                   })
+                                               });
                                    }}
                                    onError={(errorIndex) => this.processLanguageProcessingError("ERROR_INDEX", errorIndex)}
                 />
@@ -955,6 +958,7 @@ class EditRuleForm extends Component {
 
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
+        if (nextProps.message === "SEND_EXPR_STMT_XML") return;
         if (nextProps.message === "RECEIVE_EXPR_STMT_XML") {
             this.matchSentAndReceivedMessages(nextProps);
             this.updateFeedbackSnippet();
@@ -1080,7 +1084,7 @@ class EditRuleForm extends Component {
      * @returns string xpath
      * derived from the originalText
      */
-    traverseReceivedXml(xmlText, sentMessageData) { //todo use sentMessageData.query
+    traverseReceivedXml(xmlText, sentMessageData) {
 
         let exprValidation = sentMessageData["query"];
         let parser = new DOMParser();
@@ -1393,6 +1397,13 @@ class EditRuleForm extends Component {
      * In tagJson, the property is 'detail'
      */
     onSubmitNewTag() {
+        if (this.state.tagName.indexOf(" ") !== -1 || this.state.tagName.indexOf("\t") !== -1) {
+            this.setState({
+                errorMessage: "The name of the tag should not include spaces or tabs",
+                showError: true
+            });
+            return;
+        }
         if (this.state.tagName === "" || this.state.tagDetail === "") {
             this.setState({
                 errorMessage: "Please specify non-empty name and description for the new tag.",
@@ -1409,7 +1420,7 @@ class EditRuleForm extends Component {
             });
             return;
         }
-        // todo it doesn't check for duplicate tags
+
         let tag = {tagName: this.state.tagName, detail: this.state.tagDetail};
         this.props.onSubmitNewTag(tag);
         Utilities.sendToServer(this.props.ws, "NEW_TAG", tag);

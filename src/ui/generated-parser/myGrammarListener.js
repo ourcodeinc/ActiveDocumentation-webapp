@@ -38,6 +38,24 @@ myGrammarListener.prototype.exitWords = function(ctx) {
 };
 
 
+// Enter a parse tree produced by myGrammarParser#word.
+myGrammarListener.prototype.enterWord = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#word.
+myGrammarListener.prototype.exitWord = function(ctx) {
+};
+
+
+// Enter a parse tree produced by myGrammarParser#oldWords.
+myGrammarListener.prototype.enterOldWords = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#oldWords.
+myGrammarListener.prototype.exitOldWords = function(ctx) {
+};
+
+
 // Enter a parse tree produced by myGrammarParser#combinatorialWords.
 myGrammarListener.prototype.enterCombinatorialWords = function(ctx) {
 };

@@ -21,7 +21,24 @@ SPACE
     : (' ' | '\t')+
     ;
 
+
 words
+    : '"' (word '||' | word '&&')* word '"'
+    ;
+
+word
+    :  Alphabet+
+    |  '!' Alphabet+
+    |  '...' Alphabet+
+    |  '!...' Alphabet+
+    |  Alphabet+ '...'
+    |  '!' Alphabet+ '...'
+    |  '...' Alphabet+ '...'
+    |  '!...' Alphabet+ '...'
+    ;
+
+
+oldWords
     : '"' Alphabet+ '"'
     | '"' '!' Alphabet+ '"'
     | '"' '...' Alphabet+ '"'

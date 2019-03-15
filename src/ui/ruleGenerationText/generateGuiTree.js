@@ -139,7 +139,15 @@ const combineNode = (node) => {
  */
 const combineWordsNode = (node) => {
     if (node.nodeType === "WordsContext") {
-        let word = node.children.map(child => child.text !== "\"" ? child.text : null).join("");
+        let word = "";
+        for (let i = 1; i < node.children.length - 1; i++) {
+            if (node.children[i].nodeType === "TerminalNodeImpl")
+                word += node.children[i].text;
+            else
+                word += node.children[i].children.map(child => child.text).join("");
+        }
+
+        // let word = node.children.map(child => child.text !== "\"" ? child.text : null).join("");
         return {nodeType: "word", text: word}
     }
     if (node.nodeType === "CombinatorialWordsContext") {

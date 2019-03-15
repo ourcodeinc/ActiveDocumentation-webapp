@@ -126,9 +126,11 @@ class RuleGeneratorText extends Component {
                         let els = document.getElementsByClassName("hoveredAutoComplete");
                         for (let i = 0; i < els.length; i++) els[i].classList.remove("hoveredAutoComplete");
 
-                        document.getElementById("id__" + this.props.ruleIndex + "__" + this.autoCompleteArrayHover[arrayIndex].id).classList.add("hoveredAutoComplete");
-                        setTimeout(() =>
-                            document.getElementById("id__" + this.props.ruleIndex + "__" + this.autoCompleteArrayHover[arrayIndex].id).classList.remove("hoveredAutoComplete"), 1200);
+                        let hoveredElementNode = document.getElementById("id__" + this.props.ruleIndex + "__" + this.autoCompleteArrayHover[arrayIndex].id);
+                        if (hoveredElementNode) {
+                            hoveredElementNode.classList.add("hoveredAutoComplete");
+                            setTimeout(() => hoveredElementNode.classList.remove("hoveredAutoComplete"), 1200);
+                        }
                     }
 
                     let thisWord = this.autoCompleteArrayHover[arrayIndex].text;
@@ -177,7 +179,7 @@ class RuleGeneratorText extends Component {
                 });
 
                 // underline the last word if there is an error
-                if (model.getValue() !== "" && resultSuggestion.length === 1 && resultSuggestion[0].label === "Error") {
+                if (model.getValue().trim() !== "" && resultSuggestion.length === 1 && resultSuggestion[0].label === "Error") {
                     // get the latest word and its index
                     let wordsArray = model.getValue().split(" ");
                     let index;
