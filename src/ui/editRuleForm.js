@@ -16,6 +16,7 @@ import {TiDelete, TiArrowMaximise} from "react-icons/lib/ti/index";
 import {FaQuestionCircle, FaTag, FaMinusCircle, FaTimesCircle, FaCheckSquareO} from "react-icons/lib/fa/index";
 import marked from "marked";
 import Joyride, {ACTIONS, EVENTS} from 'react-joyride';
+import ReactToolTip from 'react-tooltip';
 
 import RuleGeneratorGui from './ruleGenerationGUI/ruleGeneratorGui';
 import verifyTextBasedOnGrammar from "./ruleGenerationText/languageProcessing";
@@ -33,18 +34,14 @@ import visibility_class_declaration from '../resources/visibility_class_declarat
 import visibility_class_declaration_code from '../resources/visibility_class_declaration_code.png';
 import hidden_element_interaction from '../resources/hidden_element_interaction.png';
 import constraint_example from '../resources/constraint_example.png';
+import stars_toolbar from '../resources/stars_toolbar.png';
 import auto_complete_filled from '../resources/auto_complete_filled.png';
 import auto_complete_info_icon from '../resources/auto_complete_info_icon.png';
 import auto_complete_info from '../resources/auto_complete_info.png';
-import editor_error from '../resources/editor_error.png';
-import editor_error_close_icon from '../resources/editor_error_close_icon.png';
-import editor_error_minimize_icon from '../resources/editor_error_minimize_icon.png';
-import editor_error_maximize_icon from '../resources/editor_error_maximize_icon.png';
 import auto_complete_example from '../resources/auto_complete_example.png';
 import tags from '../resources/tags.png';
 import new_tag from '../resources/new_tag.png';
 import feedback_snippet_1 from '../resources/feedback_snippet_1.png';
-import feedback_snippet_2 from '../resources/feedback_snippet_2.png';
 import {checkRulesForAll} from "../core/ruleExecutor";
 
 
@@ -82,7 +79,7 @@ class EditRuleForm extends Component {
                 target: `#gui_div_${this.ruleIndex}>.generateRuleGuiDiv`,
                 title: 'GUI - Graphical User Interface for Writing Code',
                 content: <span style={{textAlign: "left"}}>
-                    <p>GUI enables you to write code you want to match.</p>
+                    <p>The GUI enables you to write code you want to match.</p>
                     <p>The GUI includes elements whose attributes can be modified. These elements corresponds to Java pieces of code.</p>
                 </span>,
                 disableBeacon: true
@@ -108,22 +105,6 @@ class EditRuleForm extends Component {
                 disableBeacon: true
             }, //2
 
-            // {
-            //     target: `#id__${this.ruleIndex}__0-1-0`,
-            //     title: 'GUI Elements',
-            //     content: <span style={{textAlign: "left"}}>
-            //         <p>Or, <strong>visibility</strong> property.</p>
-            //     </span>,
-            //     disableBeacon: true
-            // }, //3
-            // {
-            //     target: `#id__${this.ruleIndex}__0-2-0`,
-            //     title: 'GUI Elements',
-            //     content: <span style={{textAlign: "left"}}>
-            //         <p>Or, <strong>specifier</strong> property.</p>
-            //     </span>,
-            //     disableBeacon: true
-            // }, //4
             {
                 target: `#id__${this.ruleIndex}__0-7-0`,
                 title: 'GUI Elements',
@@ -139,15 +120,14 @@ class EditRuleForm extends Component {
                 title: 'GUI - Constraint Elements',
                 content: <span style={{textAlign: "left"}}>
                     <p>A design rule can be expressed in IF/THEN structure:</p>
-                    <p>IF a class has name ending with 'Controller', THEN it should have a <span
-                        style={{fontFamily: "monospace"}}>private static</span> field with name ending with 'Controller'.</p>
-                    <p>The <span style={{fontFamily: "monospace"}}>private static</span> field with name ending with 'Controller' is a constraint of the design rule.</p>
-                    <div>In the GUI, constraints can be specified using checkboxes (
+                    <p><strong><em>IF a class has name ending with 'Controller', THEN <span style={{backgroundColor: "#bfd9ff"}}>it should have a <span
+                        style={{fontFamily: "monospace"}}>private static</span> field with name ending with 'Controller'.</span></em></strong></p>
+                    <p>The <span style={{backgroundColor: "#bfd9ff"}}><span style={{fontFamily: "monospace"}}>private static</span> field with name ending with 'Controller'</span> is a <span style={{textDecoration: "underline"}}>constraint</span> of the design rule.</p>
+                    <div style={{paddingBottom: "10px"}}>In the GUI, <span style={{textDecoration: "underline"}}>constraints</span> can be specified using checkboxes (
                         <div className={"switchContainer checkboxConstraint constraint"}>
                             <FaCheckSquareO size={20}/>
                         </div>
-                        ). Constraint elements have <span
-                            style={{backgroundColor: "#bfd9ff"}}>light blue background</span></div>
+                        ).</div>
                     <img className={"tutorialImage"} src={constraint_example} alt={"Constraint Element Example"}/>
                 </span>,
                 disableBeacon: true
@@ -156,15 +136,15 @@ class EditRuleForm extends Component {
                 target: `#gui_div_${this.ruleIndex}>.generateRuleGuiDiv`,
                 title: 'GUI - Element of Interest',
                 content: <span style={{textAlign: "left"}}>
-                    <p>Each design rule has an <em>Element of Interest.</em>. That is the design rule is about a certain element.
-                        In the following example the <em>Element of Interest.</em> is <strong>class</strong></p>
+                    <p>Each design rule has an <em>Element of Interest.</em>. That is the design rule is about a certain element.</p>
                     <p>IF a <strong>class</strong> has name ending with 'Controller', THEN <strong>it</strong> should have a <span
                         style={{fontFamily: "monospace"}}>private static</span> field with name ending with 'Controller'.</p>
-                    <div>The GUI will select an Element of Interest automatically. However, if you desire to select a different element,
-                        you may click on
-                        <div className={"MdStar selectedElement"} style={{display: "inline"}}><MdStar size={20}/></div>
+                    <p>In the above example the <strong>class</strong> is <em>Element of Interest.</em></p>
+                    <div style={{paddingBottom:"10px"}}>The GUI will select an Element of Interest automatically (Marked by <div className={"MdStar selectedElement"} style={{display: "inline"}}><MdStar size={20}/></div>).
+                        However, if you desire to select a different element,
+                        you may click on <div className={"MdStar"} style={{display: "inline"}}><MdStar size={20}/></div>
                         .</div>
-                    <img className={"tutorialImage"} src={constraint_example} alt={"Constraint Element Example"}/>
+                    <img className={"tutorialSmallImage"} src={stars_toolbar} alt={"Star Toolbar"} style={{width: "70px"}}/>
                 </span>,
                 disableBeacon: true
             },  //5
@@ -194,23 +174,7 @@ class EditRuleForm extends Component {
                 </span>,
                 disableBeacon: true
             }, //7
-            {
-                target: `#text_ui_div_${this.ruleIndex}`,
-                title: "Text Editor - Auto Complete (Additional Information)",
-                content: <span style={{textAlign: "left"}}>
-                    <p>While writing the design rule, errors will be displayed below the error.</p>
-                    <img className={"tutorialImage"} src={editor_error} alt={"Editor Error Example"}/>
-                    <br/>
-                    <p>Icons <img style={{height: "1.1em"}} src={editor_error_close_icon}
-                                  alt={"Editor Error Close Icon"}/> and <img style={{height: "1.1em"}}
-                                                                             src={editor_error_minimize_icon}
-                                                                             alt={"Editor Error Minimize Icon"}/> are used to
-                    close and minimize the error messages. To expand the minimized message click on<img
-                            style={{height: "1.1em"}} src={editor_error_maximize_icon}
-                            alt={"Editor Error Maximize Icon"}/>.</p>
-                </span>,
-                disableBeacon: true
-            }, //8
+
             {
                 target: `#text_ui_div_${this.ruleIndex}`,
                 title: "Text Editor - Link to GUI",
@@ -220,7 +184,7 @@ class EditRuleForm extends Component {
                          style={{height: "300px", maxHeight: "none"}}/>
                 </span>,
                 disableBeacon: true
-            }, //9
+            }, //8
 
             {
                 target: `#tag_div_${this.ruleIndex}`,
@@ -233,7 +197,7 @@ class EditRuleForm extends Component {
                 </span>,
                 title: 'Rule Tags',
                 disableBeacon: true
-            }, //10
+            }, //9
             {
                 target: `#file_constraint_div_${this.ruleIndex}`,
                 content: <span style={{textAlign: "left"}}>
@@ -250,28 +214,20 @@ class EditRuleForm extends Component {
                 the relative path is "src/someFile.java"</p> </span>,
                 title: 'Specifying File/Folder Constraints',
                 disableBeacon: true
-            }, //11
+            }, //10
 
             {
                 target: `#feedback_snippet_div_${this.ruleIndex}`,
                 content: <span style={{textAlign: "left"}}>
                     <p>The code is checked against the design rule and the result of the validation is visible before submitting the design rule.</p>
-                    <div>
-                        <div style={{display: "inline"}}>
-                            <img className={"tutorialImage"}
-                                 src={feedback_snippet_1}
-                                 style={{width: "48%", maxHeight: "none"}}
-                                 alt={"Feedback Snippets Example 1"}/></div>
-                    <div style={{display: "inline", paddingLeft: "2%"}}>
-                        <img className={"tutorialImage"}
-                             src={feedback_snippet_2}
-                             style={{width: "48%"}}
-                             alt={"Feedback Snippets Example 2"}/></div>
-                    </div>
+                    <img className={"tutorialImage"}
+                         src={feedback_snippet_1}
+                         style={{width: "50%"}}
+                         alt={"Feedback Snippets Example 1"}/>
                 </span>,
                 title: 'FeedBack',
                 disableBeacon: true
-            }, //12
+            }, //11
         ];
         // used as enum
         this.stepNames = {
@@ -280,8 +236,8 @@ class EditRuleForm extends Component {
             GUI_CONSTRAINT: 4,
             GUI_STAR: 5,
             TEXT_UI: 6,
-            TAGS: 10,
-            FILE_FOLDER: 11,
+            TAGS: 9,
+            FILE_FOLDER: 10,
         };
 
         this.state = {
@@ -720,10 +676,22 @@ class EditRuleForm extends Component {
                         <div>
                             <div className={"controlButtonDiv"}>
                                 <div className={"controlButton"}>
-                                    <FaMinusCircle size={20} onClick={() => this.setState({showAlert: false})}/>
+                                    <div data-tip={"React-tooltip"} data-for={"minimize"}>
+                                        <FaMinusCircle size={20} onClick={() => this.setState({showAlert: false})}/>
+                                    </div>
+                                    <ReactToolTip place={"top"} type={"dark"} effect={"solid"} id={"minimize"}
+                                                  delayShow={300}>
+                                        <span>Minimize the error message.</span>
+                                    </ReactToolTip>
                                 </div>
                                 <div className={"controlButton"}>
-                                    <FaTimesCircle size={20} onClick={() => this.setState({editorError: ""})}/>
+                                    <div data-tip={"React-tooltip"} data-for={"close"}>
+                                        <FaTimesCircle size={20} onClick={() => this.setState({editorError: ""})}/>
+                                    </div>
+                                    <ReactToolTip place={"top"} type={"dark"} effect={"solid"} id={"close"}
+                                                  delayShow={300}>
+                                        <span>Close the error message.</span>
+                                    </ReactToolTip>
                                 </div>
                             </div>
                             <div>
@@ -738,7 +706,12 @@ class EditRuleForm extends Component {
                 {this.state.showAlert || this.state.editorError === "" ? null : (
                     <Alert bsStyle={this.state.editorError.alertType}>
                         <div className={"controlButtonDiv controlButton"}>
-                            <TiArrowMaximise size={30} onClick={() => this.setState({showAlert: true})}/>
+                            <div data-tip={"React-tooltip"} data-for={"maximize"}>
+                                <TiArrowMaximise size={30} onClick={() => this.setState({showAlert: true})}/>
+                            </div>
+                            <ReactToolTip place={"top"} type={"dark"} effect={"solid"} id={"maximize"} delayShow={300}>
+                                <span>Expand the error message.</span>
+                            </ReactToolTip>
                         </div>
                     </Alert>
                 )}

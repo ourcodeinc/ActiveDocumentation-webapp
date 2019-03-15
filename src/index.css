@@ -518,6 +518,11 @@ body {
     color: #cacaca;
 }
 
+.MdStar {
+    padding-top: 2px;
+    color: #cacaca;
+}
+
 .generateRuleGui .MdStar:hover, .generateRuleGui .MdStar.selectedElement, .MdStar.selectedElement {
     color: #e5a727;
 }
@@ -614,11 +619,15 @@ body {
 img.tutorialImage {
     max-width: 100%;
     max-height: 200px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px #777;
 }
 
 img.tutorialSmallImage {
     max-width: 30%;
     max-height: 100px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px #777;
 }
 
 .tutorialText {
