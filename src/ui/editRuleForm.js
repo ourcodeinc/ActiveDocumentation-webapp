@@ -662,7 +662,8 @@ class EditRuleForm extends Component {
                                            });
                                    }}
                                    onUpdate={(newAutoCompleteText) => {
-                                       if (this.state.autoCompleteArray.map(d => d.text).join(" ") !== newAutoCompleteText)
+                                       if (this.state.autoCompleteArray.map(d => d.text).join(" ") !== newAutoCompleteText
+                                           || this.state.constraintXPath === "" || this.state.quantifierXPath === "")
                                            verifyTextBasedOnGrammar(newAutoCompleteText)
                                                .then((data) => {
                                                    if (this.state.quantifierXPath !== data.quantifierXPath || this.state.constraintXPath !== data.constraintXPath) {
