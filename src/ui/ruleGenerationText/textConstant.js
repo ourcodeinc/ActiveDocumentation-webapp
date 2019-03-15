@@ -146,7 +146,10 @@ export const documentations_IMarkdownString = {
         "**\"!word\"** matches any value except **'word'**.\n" +
         " **\"!pre...\"** matches any value that does **NOT** start with the prefix **'pre'**.\n" +
         " **\"!...post\"** matches any value that does **NOT** end with the postfix **'post'**.\n" +
-        " **\"!...mid...\"** matches any value that does **NOT** contain the sub-string **'mod'**."
+        " **\"!...mid...\"** matches any value that does **NOT** contain the sub-string **'mod'**.\n" +
+        "##### **`&&` and `||`** \n" +
+        "Values can be mixed with `&&` (and) and `||` (or).\n" +
+        "For example, **\"!pre...||...mid...\"** matches values that either not start with 'pre' **OR** contains 'mid'"
     },
     "EXACT_CODE": {
         isTrusted: true, value:
@@ -154,6 +157,24 @@ export const documentations_IMarkdownString = {
         "Write the code you want to match here.\n" +
         "For example, if a function return statement is `return obj1.foo(param1);`\n " +
         "enter `obj1.foo(param1)` in the **return value** element."
+    },
+    "TEXTS": {
+        isTrusted: true, value:
+        "You can use some regex-like notations for matching values.\n" +
+        "##### **`...`**  \n" +
+        "Equals to any sequence of characters. For example:\n" +
+        " **\"pre...\"** matches values that _start with_ the prefix **pre** and end with any sequance of characters.\n" +
+        " **\"...post\"** matches values that start with any sequence of characters and _end with_ the postfix **post**.\n" +
+        " **\"...mid...\"** matches values that _contain_ the sub-string **mid**.\n" +
+        "##### **`!`** \n" +
+        "Equals to _NOT_. For example:\n" +
+        "**\"!word\"** matches any value except **'word'**.\n" +
+        " **\"!pre...\"** matches any value that does **NOT** start with the prefix **'pre'**.\n" +
+        " **\"!...post\"** matches any value that does **NOT** end with the postfix **'post'**.\n" +
+        " **\"!...mid...\"** matches any value that does **NOT** contain the sub-string **'mod'**.\n" +
+        "##### **`&&` and `||`** \n" +
+        "Values can be mixed with `&&` (and) and `||` (or).\n" +
+        "For example, **\"!pre...||...mid...\"** matches values that either not start with 'pre' **OR** contain 'mid'"
     },
     "AND_OR_PAREN": {
         isTrusted: true, value:

@@ -482,7 +482,7 @@ class GuiComponent extends Component {
         let nodes = group !== "body" ? this.nodes[group] : this.nodes["body"][innerIndex];
         let texts = group !== "body" ? this.state.texts[group] : this.state.texts["body"][innerIndex];
         let children = group !== "body" ? this.state.elementNode.children[group] : this.state.elementNode.children["body"][innerIndex];
-        let informationGroup = childCondition.type === "wideText" ? "EXACT_CODE" : "QUOTES";
+        let informationGroup = childCondition.type === "wideText" ? "EXACT_CODE" : "TEXTS";
 
         let mouseEnter = () => {
             if (childElement.activeElement && nodes && nodes[index] && nodes[index]["checkbox"]
