@@ -461,6 +461,10 @@ body {
     color: #606060;
 }
 
+.generateRuleGui .activeElement .inactiveText {
+    color: #c3c3c3;
+}
+
 /*     misc */
 
 .generateRuleGui .inputText::placeholder {

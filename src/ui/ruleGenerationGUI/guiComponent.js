@@ -627,7 +627,7 @@ class GuiComponent extends Component {
                  onMouseMove={e => clickedElement = e.target}
             >
                 <div>
-                    <div className={"rowItem"}><b>{childCondition.pre}</b></div>
+                    <div className={"rowItem" + (childElement.activeElement ? "" : " inactiveText")}><b>{childCondition.pre}</b></div>
                     <div className={"inputTextDiv rowItem " + (childCondition.type === "wideText" ? "wideText" : "")}>
                         <form>
                             <input type={"text"}
