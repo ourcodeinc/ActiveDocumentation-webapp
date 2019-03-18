@@ -77,16 +77,16 @@ class EditRuleForm extends Component {
 
             {
                 target: `#gui_div_${this.ruleIndex}>.generateRuleGuiDiv`,
-                title: 'GUI - Graphical User Interface for Writing Code',
+                title: 'Graphical Editor for Writing Code',
                 content: <span style={{textAlign: "left"}}>
-                    <p>The GUI enables you to write code you want to match.</p>
-                    <p>The GUI includes elements whose attributes can be modified. These elements corresponds to Java pieces of code.</p>
+                    <p>The Graphical Editor enables you to write code you want to match.</p>
+                    <p>The Graphical Editor includes elements whose attributes can be modified. These elements corresponds to Java pieces of code.</p>
                 </span>,
                 disableBeacon: true
             },  //1
             {
                 target: `#gui_div_${this.ruleIndex}>.generateRuleGuiDiv`,
-                title: 'GUI Elements',
+                title: 'The Graphical Editor Elements',
                 content: <span style={{textAlign: "left"}}>
                     <p>For example, you can match the <strong>visibility</strong> property for class declaration statement.</p>
                     <div>
@@ -107,7 +107,7 @@ class EditRuleForm extends Component {
 
             {
                 target: `#id__${this.ruleIndex}__0-7-0`,
-                title: 'GUI Elements',
+                title: 'The Graphical Editor Elements',
                 content: <span style={{textAlign: "left"}}>
                     <p>Some properties are hidden under an overlaying box.</p>
                     <p>Moving the cursor over the hidden element, make the element visible.</p>
@@ -117,30 +117,38 @@ class EditRuleForm extends Component {
             }, //3
             {
                 target: `#gui_div_${this.ruleIndex}>.generateRuleGuiDiv`,
-                title: 'GUI - Constraint Elements',
+                title: 'The Graphical Editor - Constraint Elements',
                 content: <span style={{textAlign: "left"}}>
-                    <p>A design rule can be expressed in IF/THEN structure:</p>
-                    <p><strong><em>IF a class has name ending with 'Controller', THEN <span style={{backgroundColor: "#bfd9ff"}}>it should have a <span
-                        style={{fontFamily: "monospace"}}>private static</span> field with name ending with 'Controller'.</span></em></strong></p>
-                    <p>The <span style={{backgroundColor: "#bfd9ff"}}><span style={{fontFamily: "monospace"}}>private static</span> field with name ending with 'Controller'</span> is a <span style={{textDecoration: "underline"}}>constraint</span> of the design rule.</p>
-                    <div style={{paddingBottom: "10px"}}>In the GUI, <span style={{textDecoration: "underline"}}>constraints</span> can be specified using checkboxes (
+                    <p>A design rule includes two-part information:</p>
+                    <ol>
+                        <li>The code on which the rule must be applied on </li>
+                        <li>The <strong style={{backgroundColor: "#bfd9ff"}}>constraints</strong> that must be true on the code</li>
+                    </ol>
+                    <p>The IF/THEN structure organizes the above information: </p>
+                    <p><strong>IF</strong> some conditions are true, <span style={{backgroundColor: "#bfd9ff"}}><strong>THEN</strong> some constraints must hold.</span></p>
+                    <div style={{paddingBottom: "10px"}}>In the Graphical Editor, <span
+                        style={{textDecoration: "underline"}}>constraints</span> can be specified using checkboxes (
                         <div className={"switchContainer checkboxConstraint constraint"}>
                             <FaCheckSquareO size={20}/>
                         </div>
                         ).</div>
+
+                    <p>For example, the following example is written in the Graphical Editor as follows:</p>
+                    <quote><em>IF a class has name ending with 'Controller', <span style={{backgroundColor: "#bfd9ff"}}>THEN it should have a <span
+                        style={{fontFamily: "monospace"}}>private static</span> field with name ending with 'Controller'.</span></em></quote>
                     <img className={"tutorialImage"} src={constraint_example} alt={"Constraint Element Example"}/>
                 </span>,
                 disableBeacon: true
             }, //4
             {
                 target: `#gui_div_${this.ruleIndex}>.generateRuleGuiDiv`,
-                title: 'GUI - Element of Interest',
+                title: 'The Graphical Editor - Element of Interest',
                 content: <span style={{textAlign: "left"}}>
                     <p>Each design rule has an <em>Element of Interest.</em>. That is the design rule is about a certain element.</p>
                     <p>IF a <strong>class</strong> has name ending with 'Controller', THEN <strong>it</strong> should have a <span
                         style={{fontFamily: "monospace"}}>private static</span> field with name ending with 'Controller'.</p>
                     <p>In the above example the <strong>class</strong> is <em>Element of Interest.</em></p>
-                    <div style={{paddingBottom:"10px"}}>The GUI will select an Element of Interest automatically (Marked by <div className={"MdStar selectedElement"} style={{display: "inline"}}><MdStar size={20}/></div>).
+                    <div style={{paddingBottom:"10px"}}>The Graphical Editor will select an Element of Interest automatically (Marked by <div className={"MdStar selectedElement"} style={{display: "inline"}}><MdStar size={20}/></div>).
                         However, if you desire to select a different element,
                         you may click on <div className={"MdStar"} style={{display: "inline"}}><MdStar size={20}/></div>
                         .</div>
@@ -177,9 +185,9 @@ class EditRuleForm extends Component {
 
             {
                 target: `#text_ui_div_${this.ruleIndex}`,
-                title: "Text Editor - Link to GUI",
+                title: "Text Editor - Link to the Graphical Editor",
                 content: <span style={{textAlign: "left"}}>
-                    <p>Hovering over the text in the editor will display information about the text and highlight the GUI element if applicable.</p>
+                    <p>Hovering over the text in the editor will display information about the text and highlight the Graphical Editor element if applicable.</p>
                     <img className={"tutorialImage"} src={auto_complete_example} alt={"Auto Complete Hover Example"}
                          style={{height: "300px", maxHeight: "none"}}/>
                 </span>,
@@ -542,7 +550,7 @@ class EditRuleForm extends Component {
             <div className={"tutorial"}>
                 <div className={"tutorialArrow " + stepOneStatus}>&#x25B6;</div>
                 <div className={"tutorialText " + stepOneStatus}>
-                    <strong>Step 1:</strong> Write the code you want to match in code using the GUI.
+                    <strong>Step 1:</strong> Write the code you want to match in code using the Graphical Editor.
                     <FaQuestionCircle size={20} className={"faQuestionCircle"}
                                       onClick={() => this.setState({
                                           tourShouldRun: true,
@@ -557,7 +565,7 @@ class EditRuleForm extends Component {
                     <div className={"switchContainer checkboxConstraint constraint"}>
                         <FaCheckSquareO size={20}/>
                     </div>
-                    . Constraint elements are highlighted in the GUI.
+                    . Constraint elements are highlighted in the Graphical Editor.
                     <FaQuestionCircle size={20} className={"faQuestionCircle"}
                                       onClick={() => this.setState({
                                           tourShouldRun: true,
@@ -1253,7 +1261,7 @@ class EditRuleForm extends Component {
         if (this.props.numberOfSentMessages !== 0) {
             this.setState({
                 errorTitle: "Error in Submitting the Rule",
-                errorMessage: "Please wait for the server to respond to " + this.props.numberOfSentMessages + " sent messages for retrieving XPath. " +
+                errorMessage: "Please wait for the server to respond to " + this.props.numberOfSentMessages + " sent messages. " +
                 "If the error appeared by mistake, reset the form by 'clear' button.",
                 showError: true
             });
