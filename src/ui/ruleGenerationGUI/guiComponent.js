@@ -483,6 +483,7 @@ class GuiComponent extends Component {
         let texts = group !== "body" ? this.state.texts[group] : this.state.texts["body"][innerIndex];
         let children = group !== "body" ? this.state.elementNode.children[group] : this.state.elementNode.children["body"][innerIndex];
         let informationGroup = childCondition.type === "wideText" ? "EXACT_CODE" : "TEXTS";
+        let validatorRegex = /^(!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)(&&|\|\|))*!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)$/;
 
         let mouseEnter = () => {
             if (childElement.activeElement && nodes && nodes[index] && nodes[index]["checkbox"]
@@ -631,6 +632,7 @@ class GuiComponent extends Component {
                     <div className={"inputTextDiv rowItem " + (childCondition.type === "wideText" ? "wideText" : "")}>
                         <form>
                             <input type={"text"}
+                                   style={childCondition.type !== "smallText" || texts[index] === "" || texts[index].match(validatorRegex) ? {} : {backgroundColor: "#ffbeb4"}}
                                    ref={node => inputTextNode = node}
                                    className={"inputText" + (childElement.activeElement ? " activeElement " : "") + (childElement.isConstraint ? " constraintElement" : "")}
                                    value={texts[index]}

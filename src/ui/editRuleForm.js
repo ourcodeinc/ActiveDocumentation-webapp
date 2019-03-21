@@ -290,7 +290,9 @@ class EditRuleForm extends Component {
             constraintXPath: "",
             editorError: "",
             showAlert: true,
-            autoCompleteArray: []
+            autoCompleteArray: [],
+
+            shouldUpdateSnippets: false
         };
 
         // existing rule
@@ -505,6 +507,7 @@ class EditRuleForm extends Component {
                                     <FormGroup
                                         validationState={this.state.filesFolders[i] === "" ? "error" : "success"}>
                                         <FormControl id={"filesFolders_textarea_" + i} type="text"
+                                                     autoComplete={"off"}
                                                      placeholder="relative File/Folder path"
                                                      value={this.state.filesFolders[i]}
                                                      onChange={(e) => {
@@ -627,7 +630,7 @@ class EditRuleForm extends Component {
                                    }}
                                    onUpdate={(newAutoCompleteText) => {
                                        if (this.state.autoCompleteArray.map(d => d.text).join(" ") !== newAutoCompleteText
-                                           || this.state.constraintXPath === "" || this.state.quantifierXPath === "")
+                                           || this.state.constraintXPath === "" || this.state.quantifierXPath === "" || this.state.shouldUpdateSnippets)
                                            verifyTextBasedOnGrammar(newAutoCompleteText)
                                                .then((data) => {
                                                    if (this.state.quantifierXPath !== data.quantifierXPath || this.state.constraintXPath !== data.constraintXPath) {
@@ -635,6 +638,8 @@ class EditRuleForm extends Component {
                                                            this.setState({
                                                                quantifierXPath: data.quantifierXPath,
                                                                constraintXPath: data.constraintXPath,
+
+                                                               shouldUpdateSnippets: false
                                                            });
 
                                                        this.props.onUpdateXPaths(this.ruleIndex, data.quantifierXPath, data.constraintXPath)
@@ -646,7 +651,9 @@ class EditRuleForm extends Component {
                                                        autoCompleteArray: newAutoCompleteText.split(" ").map(d => {
                                                            return {id: "", text: d}
                                                        }),
-                                                       monacoFormStatus: "has-error"
+                                                       monacoFormStatus: "has-error",
+
+                                                       shouldUpdateSnippets: false
                                                    })
                                                });
                                    }}
@@ -941,6 +948,8 @@ class EditRuleForm extends Component {
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
         if (nextProps.message === "SEND_EXPR_STMT_XML") return;
+        if (nextProps.message === "CHANGE_GUI_ELEMENT") return;
+
         if (nextProps.message === "RECEIVE_EXPR_STMT_XML") {
             this.matchSentAndReceivedMessages(nextProps);
             this.updateFeedbackSnippet();
@@ -974,7 +983,9 @@ class EditRuleForm extends Component {
                     editorError: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "" : this.state.editorError,
 
                     monacoFormStatus: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "has-error" : nextProps.message === "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? "has-warning" : this.state.monacoFormStatus,
-                    errorPoint: -1
+                    errorPoint: -1,
+
+                    shouldUpdateSnippets: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? true : this.state.shouldUpdateSnippets
                 }, this.updateFeedbackSnippet);
             }
             // new rule
@@ -993,7 +1004,9 @@ class EditRuleForm extends Component {
                     editorError: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "" : this.state.editorError,
 
                     monacoFormStatus: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "has-error" : nextProps.message === "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? "has-warning" : this.state.monacoFormStatus,
-                    errorPoint: -1
+                    errorPoint: -1,
+
+                    shouldUpdateSnippets: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? true : this.state.shouldUpdateSnippets
                 }, this.updateFeedbackSnippet);
             }
         }
