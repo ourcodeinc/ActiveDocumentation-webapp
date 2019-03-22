@@ -34,14 +34,21 @@ import visibility_class_declaration from '../resources/visibility_class_declarat
 import visibility_class_declaration_code from '../resources/visibility_class_declaration_code.png';
 import hidden_element_interaction from '../resources/hidden_element_interaction.png';
 import constraint_example from '../resources/constraint_example.png';
-import stars_toolbar from '../resources/stars_toolbar.png';
+import EoI_GUI_example_1 from '../resources/EoI_GUI_example_1.png';
+import EoI_GUI_example_2 from '../resources/EoI_GUI_example_2.png';
+import EoI_TE_example_1 from '../resources/EoI_TE_example_1.png';
+import EoI_TE_example_2 from '../resources/EoI_TE_example_2.png';
 import auto_complete_filled from '../resources/auto_complete_filled.png';
 import auto_complete_info_icon from '../resources/auto_complete_info_icon.png';
 import auto_complete_info from '../resources/auto_complete_info.png';
 import auto_complete_example from '../resources/auto_complete_example.png';
+import all_files from '../resources/all_files.png';
+import specific_files from'../resources/specific_files.png';
 import tags from '../resources/tags.png';
 import new_tag from '../resources/new_tag.png';
 import feedback_snippet_1 from '../resources/feedback_snippet_1.png';
+import matching_code from '../resources/matching_code.png';
+
 import {checkRulesForAll} from "../core/ruleExecutor";
 
 
@@ -117,45 +124,92 @@ class EditRuleForm extends Component {
             }, //3
             {
                 target: `#gui_div_${this.ruleIndex}>.generateRuleGuiDiv`,
-                title: 'The Graphical Editor - Constraint Elements',
+                title: 'Graphical Editor - Writing the Matching Code',
                 content: <span style={{textAlign: "left"}}>
-                    <p>A design rule includes two-part information:</p>
-                    <ol>
-                        <li>The code on which the rule must be applied on </li>
-                        <li>The <strong style={{backgroundColor: "#bfd9ff"}}>constraints</strong> that must be true on the code</li>
-                    </ol>
-                    <p>The IF/THEN structure organizes the above information: </p>
-                    <p><strong>IF</strong> some conditions are true, <span style={{backgroundColor: "#bfd9ff"}}><strong>THEN</strong> some constraints must hold.</span></p>
-                    <div style={{paddingBottom: "10px"}}>In the Graphical Editor, <span
-                        style={{textDecoration: "underline"}}>constraints</span> can be specified using checkboxes (
+                    <p>Assume the following snippet is a pattern describing a commonality in the code:</p>
+                    <code style={{float: "left", color: "#000"}}><span style={{color: "#666666"}}>package</span> <span
+                        style={{color: "#7b611d"}}>com.bankapplication.controllers</span>;<br/>
+                    <span style={{color: "#a96324"}}>public </span>
+                        <span style={{color: "#8b1a10"}}>class</span>{"... {"}<br/>
+                        {"    "}<span style={{backgroundColor: "#bfd9ff"}}>private static ..Controller ...;</span><br/>
+                        }
+                    </code>
+                    <p style={{clear: "both", paddingTop: "15px"}}>The rule corresponding to this pattern is applied <strong>when</strong> there is a <code>
+                        <strong><span style={{color: "#a96324"}}>public</span> <span
+                            style={{color: "#8b1a10"}}>class</span></strong></code> defined in <code><strong><span
+                        style={{color: "#7b611d"}}>com.bankapplication.controllers</span></strong></code> package.</p>
+                    <p>Now, write this code that you want to match in code using the Graphical Editor as follows.
+                        The package can be considered as a folder which will be explained later.</p>
+                    <img  style={{width: "70%"}} className={"tutorialImage"} src={matching_code} alt={"Matching Code Element Example"}/>
+                </span>,
+                disableBeacon: true
+            },//4
+            {
+                target: `#gui_div_${this.ruleIndex}>.generateRuleGuiDiv`,
+                title: 'Graphical Editor - Constraint Elements',
+                content: <span style={{textAlign: "left"}}>
+                    <p>In the next step, define <strong>what must be true</strong> and <strong>how</strong> the rule is satisfied.</p>
+                    <code style={{float: "left", color: "#000"}}>package com.bankapplication.controllers;<br/>
+                        {"public class ... {"}<br/>
+                        {"    "}<strong><span style={{backgroundColor: "#bfd9ff"}}><span style={{color: "#2456c5"}}>{"private static"}</span><span style={{color: "#58803e"}}>...Controller</span> ...;</span></strong><br/>
+                        }
+                    </code>
+
+                    <p style={{clear: "both", paddingTop: "15px"}}>For the above pattern, we have the following rule:</p>
+                    <p><strong>IF</strong> a <code><span style={{color: "#000"}}>public</span> <span
+                        style={{color: "#000"}}>class</span></code> is defined in <code><span
+                        style={{color: "#000"}}>com.bankapplication.controllers</span></code> package, <br/>
+                    <strong>THEN</strong> it should have a <code><strong><span
+                            style={{color: "#2456c5"}}>private static</span></strong></code> field with <code><strong><span
+                            style={{color: "#58803e"}}>...Controller</span></strong></code> type.</p>
+                    <p>
+                    <code><strong><span
+                        style={{color: "#2456c5"}}>private static</span></strong></code> fields with <code><strong><span
+                        style={{color: "#58803e"}}>...Controller</span></strong></code> type are called <span
+                        style={{backgroundColor: "#bfd9ff"}}>constraints</span>.
+                    </p>
+                    
+                    <p>The rule corresponding to this pattern is violated <strong>when</strong> a <code><span
+                        style={{color: "#000"}}>public</span> <span style={{color: "#000"}}>class</span></code> is defined in <code><span
+                        style={{color: "#000"}}>com.bankapplication.controllers</span></code> package, <strong>but</strong> does not have a <code><strong><span
+                        style={{color: "#2456c5"}}>private static</span><span
+                        style={{color: "#58803e"}}>...Controller</span></strong></code> field.
+                    </p>
+                    <div style={{marginBottom: "10px"}}>Now, specify what must be true by writing code and switching them into <span
+                        style={{backgroundColor: "#bfd9ff"}}>constraints</span> using checkboxes (
                         <div className={"switchContainer checkboxConstraint constraint"}>
                             <FaCheckSquareO size={20}/>
                         </div>
-                        ).</div>
-
-                    <p>For example, the following example is written in the Graphical Editor as follows:</p>
-                    <quote><em>IF a class has name ending with 'Controller', <span style={{backgroundColor: "#bfd9ff"}}>THEN it should have a <span
-                        style={{fontFamily: "monospace"}}>private static</span> field with name ending with 'Controller'.</span></em></quote>
-                    <img className={"tutorialImage"} src={constraint_example} alt={"Constraint Element Example"}/>
-                </span>,
+                        ) in the Graphical Editor as follows.
+                    </div>
+                        <img className={"tutorialImage"} src={constraint_example} alt={"Constraint Element Example"}/>
+                    </span>,
                 disableBeacon: true
-            }, //4
+            }, //5
             {
                 target: `#gui_div_${this.ruleIndex}>.generateRuleGuiDiv`,
                 title: 'The Graphical Editor - Element of Interest',
                 content: <span style={{textAlign: "left"}}>
-                    <p>Each design rule has an <em>Element of Interest.</em>. That is the design rule is about a certain element.</p>
-                    <p>IF a <strong>class</strong> has name ending with 'Controller', THEN <strong>it</strong> should have a <span
-                        style={{fontFamily: "monospace"}}>private static</span> field with name ending with 'Controller'.</p>
-                    <p>In the above example the <strong>class</strong> is <em>Element of Interest.</em></p>
-                    <div style={{paddingBottom:"10px"}}>The Graphical Editor will select an Element of Interest automatically (Marked by <div className={"MdStar selectedElement"} style={{display: "inline"}}><MdStar size={20}/></div>).
-                        However, if you desire to select a different element,
-                        you may click on <div className={"MdStar"} style={{display: "inline"}}><MdStar size={20}/></div>
-                        .</div>
-                    <img className={"tutorialSmallImage"} src={stars_toolbar} alt={"Star Toolbar"} style={{width: "70px"}}/>
+                    <p>In every design rule, one element is the most interesting element of the rule that is called <em>Element of Interest (EoI).</em>.</p>
+                    <div>The Graphical Editor will select an EoI automatically (Marked by <div className={"MdStar selectedElement"} style={{display: "inline"}}><MdStar size={20}/></div>).
+                        EoI can be changed using <div className={"MdStar"} style={{display: "inline"}}><MdStar size={20}/></div></div>
+                    <p>For example, consider the following scenarios.</p>
+
+                    <div style={{width: "80%", marginLeft: "10%", marginBottom: "10px"}}>
+                        <img className={"tutorialImage"} src={EoI_GUI_example_1} style={{marginBottom: "15px"}} alt={"EoI GUI Example 1"}/>
+                        <img className={"tutorialImage"} src={EoI_TE_example_1} alt={"EoI TE Example 1"}/>
+                    </div>
+
+                    <p>Changing the EoI from <em>declaration statement</em> to <em>class</em> changes the rule, and as a result, code snippets.</p>
+
+                    <div style={{width: "80%", marginLeft: "10%"}}>
+                            <img className={"tutorialImage"} src={EoI_GUI_example_2} style={{marginBottom: "15px"}} alt={"EoI GUI Example 2"}/>
+                            <img className={"tutorialImage"} src={EoI_TE_example_2} alt={"EoI TE Example 2"}/>
+                    </div>
+
                 </span>,
                 disableBeacon: true
-            },  //5
+            },  //6
 
             {
                 target: `#text_ui_div_${this.ruleIndex}`,
@@ -168,7 +222,7 @@ class EditRuleForm extends Component {
 
                 </span>,
                 disableBeacon: true
-            }, //6
+            }, //7
             {
                 target: `#text_ui_div_${this.ruleIndex}`,
                 title: "Text Editor - Auto Complete",
@@ -181,7 +235,7 @@ class EditRuleForm extends Component {
                          alt={"Auto Complete Information Example"}/>
                 </span>,
                 disableBeacon: true
-            }, //7
+            }, //8
 
             {
                 target: `#text_ui_div_${this.ruleIndex}`,
@@ -192,7 +246,7 @@ class EditRuleForm extends Component {
                          style={{height: "300px", maxHeight: "none"}}/>
                 </span>,
                 disableBeacon: true
-            }, //8
+            }, //9
 
             {
                 target: `#tag_div_${this.ruleIndex}`,
@@ -205,24 +259,19 @@ class EditRuleForm extends Component {
                 </span>,
                 title: 'Rule Tags',
                 disableBeacon: true
-            }, //9
+            }, //10
             {
                 target: `#file_constraint_div_${this.ruleIndex}`,
                 content: <span style={{textAlign: "left"}}>
-                <h4>Select how the rules are verified.</h4>
-                <p><b><em>"Rule must be applied on ALL Files/Folders"</em></b></p>
-                <p>If the rule must be verified on <b>All</b> files and folders.</p>
-                <p><b><em>"Rule must be applied on SPECIFIC Files/Folders"</em></b></p>
-                <p>If the rule is checked on <b>SPECIFIC</b> files/folders.<br/>
-                If the restriction is set to "Rule must be applied on Specific Files/Folders",
-                at least one folder/file must be specified.</p>
-                <p><b><em>Add files/folders</em></b></p>
-                <p>Folder and file paths are determined respective to the project directory.
-                For example in project "myProject", for file path ".../myProject/src/someFile.java",
-                the relative path is "src/someFile.java"</p> </span>,
-                title: 'Specifying File/Folder Constraints',
+                <p>Some rules may be applied to specific files or folders. For example, a rule may be applied on a specific package
+                    <span style={{color: "#7b611d"}}> com.bankapplication.controllers</span>. The respective path of this package in the project is specified here:</p>
+                    <img style={{width: "90%", marginBottom: "20px"}} src={specific_files} className={"tutorialImage"} alt={"Specific file and folders"}/>
+                <p>If there is no restriction on files and folders on which the rule is applied, then select the other option:</p>
+                    <img style={{width: "45%"}} src={all_files} className={"tutorialImage"} alt={"All file and folders"}/>
+                </span>,
+                title: 'Specifying Files and Folders',
                 disableBeacon: true
-            }, //10
+            }, //11
 
             {
                 target: `#feedback_snippet_div_${this.ruleIndex}`,
@@ -235,17 +284,17 @@ class EditRuleForm extends Component {
                 </span>,
                 title: 'FeedBack',
                 disableBeacon: true
-            }, //11
+            }, //12
         ];
         // used as enum
         this.stepNames = {
             TITLE_DESCRIPTION: 0,
-            GUI: 1,
-            GUI_CONSTRAINT: 4,
-            GUI_STAR: 5,
-            TEXT_UI: 6,
-            TAGS: 9,
-            FILE_FOLDER: 10,
+            GUI_QUANTIFIER: 4,
+            GUI_CONSTRAINT: 5,
+            GUI_STAR: 6,
+            TEXT_UI: 7,
+            TAGS: 10,
+            FILE_FOLDER: 11,
         };
 
         this.state = {
@@ -274,6 +323,7 @@ class EditRuleForm extends Component {
             // snippet feedback
             activeTab: 0,
             xPathQueryResult: [],
+            shouldUpdateSnippets: false,
 
             // styling for Monaco Editor
             monacoFormStatus: "has-error",
@@ -290,9 +340,7 @@ class EditRuleForm extends Component {
             constraintXPath: "",
             editorError: "",
             showAlert: true,
-            autoCompleteArray: [],
-
-            shouldUpdateSnippets: false
+            autoCompleteArray: []
         };
 
         // existing rule
@@ -362,7 +410,11 @@ class EditRuleForm extends Component {
                         {!this.newRuleRequest ? null :
                             <Button bsStyle="default"
                                     onClick={() => {
-                                        this.props.onClearForm();
+                                        this.setState({
+                                            activeTab: 0,
+                                            xPathQueryResult: [],
+                                            shouldUpdateSnippets: false
+                                        }, this.props.onClearForm);
                                     }}>Clear Form</Button>}
                     </ButtonToolbar>
                 </div>
@@ -558,7 +610,7 @@ class EditRuleForm extends Component {
                                       onClick={() => this.setState({
                                           tourShouldRun: true,
                                           isTourGuide: false,
-                                          tourStepIndex: this.stepNames.GUI
+                                          tourStepIndex: this.stepNames.GUI_QUANTIFIER
                                       })}/>
                 </div>
                 <div className={"tutorialArrow " + stepTwoStatus}>&#x25B6;</div>
