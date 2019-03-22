@@ -632,7 +632,7 @@ class GuiComponent extends Component {
                     <div className={"inputTextDiv rowItem " + (childCondition.type === "wideText" ? "wideText" : "")}>
                         <form>
                             <input type={"text"}
-                                   style={childCondition.type !== "smallText" || texts[index] === "" || texts[index].match(validatorRegex) ? {} : {backgroundColor: "#ffbeb4"}}
+                                   style={childCondition.type === "wideText" || texts[index] === "" || texts[index].match(validatorRegex) ? {} : {backgroundColor: "#ffbeb4"}}
                                    ref={node => inputTextNode = node}
                                    className={"inputText" + (childElement.activeElement ? " activeElement " : "") + (childElement.isConstraint ? " constraintElement" : "")}
                                    value={texts[index]}
