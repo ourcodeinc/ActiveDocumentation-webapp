@@ -140,14 +140,13 @@ export const documentations_IMarkdownString = {
         "##### **`pre...`** matches values that _start with_ the prefix **pre** and end with any sequence of characters.\n" +
         "##### **`...post`** matches values that start with any sequence of characters and _end with_ the postfix **post**.\n" +
         "##### **`...mid...`** matches values that _contain_ the sub-string **mid**.\n" +
-        "##### \n" +
+        "##### To express negation use **!** as follows: \n" +
         "##### **`!word`** matches any value except **'word'**.\n" +
         "##### **`!pre...`** matches any value that does **NOT** start with the prefix **'pre'**.\n" +
         "##### **`!...post`** matches any value that does **NOT** end with the postfix **'post'**.\n" +
         "##### **`!...mid...`** matches any value that does **NOT** contain the sub-string **'mod'**.\n" +
-        "##### \n" +
-        "Values can be mixed with `&&` (logical and) and `||` (logical or).\n" +
-        "For example, **\"!pre...||...mid...\"** matches values that either not start with 'pre' **OR** contain 'mid'"
+        "##### Values can be mixed with `&&` (logical and) and `||` (logical or).\n" +
+        "For example, **\"!pre...||...mid...\"** matches values that either do not start with 'pre' **OR** contain 'mid'"
     },
     "EXACT_CODE": {
         isTrusted: true, value:
@@ -159,18 +158,18 @@ export const documentations_IMarkdownString = {
     "TEXTS": {
         isTrusted: true, value:
         "You can use some regex-like notations for matching values.\n" +
+        "The Graphical Editor detects misuse of these operators.\n" +
         "##### **`word`** matches value **'word'**.\n" +
         "##### **`pre...`** matches values that _start with_ the prefix **pre** and end with any sequence of characters.\n" +
         "##### **`...post`** matches values that start with any sequence of characters and _end with_ the postfix **post**.\n" +
         "##### **`...mid...`** matches values that _contain_ the sub-string **mid**.\n" +
-        "##### \n" +
+        "##### To express negation use **!** as follows: \n" +
         "##### **`!word`** matches any value except **'word'**.\n" +
         "##### **`!pre...`** matches any value that does **NOT** start with the prefix **'pre'**.\n" +
         "##### **`!...post`** matches any value that does **NOT** end with the postfix **'post'**.\n" +
         "##### **`!...mid...`** matches any value that does **NOT** contain the sub-string **'mod'**.\n" +
-        "##### \n" +
-        "Values can be mixed with `&&` (logical and) and `||` (logical or).\n" +
-        "For example, **\"!pre...||...mid...\"** matches values that either not start with 'pre' **OR** contain 'mid'"
+        "##### Values can be mixed with `&&` (logical and) and `||` (logical or).\n" +
+        "For example, **\"!pre...||...mid...\"** matches values that either do not start with 'pre' **OR** contain 'mid'"
     },
     "AND_OR_PAREN": {
         isTrusted: true, value:
