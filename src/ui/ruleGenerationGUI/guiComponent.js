@@ -483,7 +483,10 @@ class GuiComponent extends Component {
         let texts = group !== "body" ? this.state.texts[group] : this.state.texts["body"][innerIndex];
         let children = group !== "body" ? this.state.elementNode.children[group] : this.state.elementNode.children["body"][innerIndex];
         let informationGroup = childCondition.type === "wideText" ? "EXACT_CODE" : "TEXTS";
-        let validatorRegex = /^(!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)(&&|\|\|))*!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)$/;
+        let wordRegex = /^(!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)(&&|\|\|))*!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)$/;
+        let combinatorialRegex = /^([a-zA-Z0-9_-]|\.|=|>|<|\(|\)| )+$/;
+        let wordOrCombinatorialRegex = /^(([a-zA-Z0-9_-]|\.|=|>|<|\(|\)| )+|((!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)(&&|\|\|))*!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)))$/;
+        let validatorRegex = childCondition.wordValidation === "both" ? wordOrCombinatorialRegex : childCondition.wordValidation === "word" ? wordRegex : combinatorialRegex;
 
         let mouseEnter = () => {
             if (childElement.activeElement && nodes && nodes[index] && nodes[index]["checkbox"]
@@ -507,7 +510,7 @@ class GuiComponent extends Component {
         };
 
         let focus = () => {
-            if (shouldDisplayInformation && nodes && nodes[index] && nodes[index]["information"]
+            if (childCondition.wordValidation === "word" && shouldDisplayInformation && nodes && nodes[index] && nodes[index]["information"]
                 && Object.entries(nodes[index]["information"]).length !== 0)
                 nodes[index]["information"].style.display = "block";
         };

@@ -6,7 +6,8 @@ const element_conditions = {
         post: "",
         placeholder: "annotation",
         unique: true,
-        grammar: "annotation"
+        grammar: "annotation",
+        wordValidation: "combinatorial"
     },
     visibility: {
         type: "dropdown",
@@ -60,7 +61,8 @@ const element_conditions = {
         post: "",
         placeholder: "className",
         unique: true,
-        grammar: "name"
+        grammar: "name",
+        wordValidation: "word"
     },
     class_implements: {
         type: "text",
@@ -69,7 +71,8 @@ const element_conditions = {
         placeholder: "Interface",
         unique: true,
         grammar: "implementation",
-        required: "of "
+        required: "of ",
+        wordValidation: "word"
     },
     class_extends: {
         type: "text",
@@ -78,7 +81,8 @@ const element_conditions = {
         placeholder: "Superclass",
         unique: true,
         grammar: "extension",
-        required: "of "
+        required: "of ",
+        wordValidation: "word"
     },
 
     interface_el: {
@@ -110,7 +114,8 @@ const element_conditions = {
         post: "",
         placeholder: "interfaceName",
         unique: true,
-        grammar: "name"
+        grammar: "name",
+        wordValidation: "word"
     },
     interface_extends: {
         type: "text",
@@ -118,7 +123,8 @@ const element_conditions = {
         post: "",
         placeholder: "base interface",
         unique: true,
-        grammar: "extension"
+        grammar: "extension",
+        wordValidation: "word"
     },
 
     function_el: {
@@ -155,7 +161,8 @@ const element_conditions = {
         post: "",
         placeholder: "return type",
         unique: true,
-        grammar: "type"
+        grammar: "type",
+        wordValidation: "both"
     },
     function_name: {
         type: "text",
@@ -163,7 +170,8 @@ const element_conditions = {
         post: "",
         placeholder: "functionName",
         unique: true,
-        grammar: "name"
+        grammar: "name",
+        wordValidation: "word"
     },
     function_expression_statement: {
         type: "wideText",
@@ -248,7 +256,8 @@ const element_conditions = {
         post: "",
         placeholder: "return type",
         unique: true,
-        grammar: "type"
+        grammar: "type",
+        wordValidation: "both"
     },
     abstract_function_name: {
         type: "text",
@@ -256,7 +265,8 @@ const element_conditions = {
         post: "",
         placeholder: "abstractFunctionName",
         unique: true,
-        grammar: "name"
+        grammar: "name",
+        wordValidation: "word"
     },
 
     declaration_statement_el: {
@@ -289,7 +299,8 @@ const element_conditions = {
         post: "",
         placeholder: "variableType",
         unique: true,
-        grammar: "type"
+        grammar: "type",
+        wordValidation: "both"
     },
     declaration_statement_name: {
         type: "text",
@@ -297,7 +308,8 @@ const element_conditions = {
         post: "",
         placeholder: "variableName",
         unique: true,
-        grammar: "name"
+        grammar: "name",
+        wordValidation: "word"
     },
     declaration_statement_initialization: {
         type: "text",
@@ -305,7 +317,8 @@ const element_conditions = {
         post: "",
         placeholder: "variableInitialization",
         unique: true,
-        grammar: "initial value"
+        grammar: "initial value",
+        wordValidation: "combinatorial"
     },
 
     parameter_el: {
@@ -338,7 +351,8 @@ const element_conditions = {
         post: "",
         placeholder: "parameter type",
         unique: true,
-        grammar: "type"
+        grammar: "type",
+        wordValidation: "both"
     },
     parameter_name: {
         type: "text",
@@ -346,7 +360,8 @@ const element_conditions = {
         post: "",
         placeholder: "parameter name",
         unique: true,
-        grammar: "name"
+        grammar: "name",
+        wordValidation: "word"
     },
 
 };
