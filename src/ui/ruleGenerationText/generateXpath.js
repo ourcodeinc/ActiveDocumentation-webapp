@@ -386,13 +386,14 @@ class GenerateXpath {
 
             if (nodeType === "AnnotationConditionContext") {
                 let tempText = "";
+                let messageID = Math.floor(new Date().getTime() / 1000); // to match send and receive messages
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
                     if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
                         tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
-                        this.sendTextDataToSrcML(tempText, "annotation");
+                        this.sendTextDataToSrcML(tempText, "annotation", messageID);
                     }
                 }
-                this.XPath += "['" + tempText + "']";
+                this.XPath += "['" + messageID + tempText + "']";
             }
         }
     }
@@ -580,15 +581,18 @@ class GenerateXpath {
             if (nodeType === "TypeConditionContext") {
                 let tempText = "";
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
+                    let messageID = Math.floor(new Date().getTime() / 1000); // to match send and receive messages
                     if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
-                        tempText = "[" + this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j)) + "]";
-                        this.sendTextDataToSrcML(tempText, "type");
+                        tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
+                        this.sendTextDataToSrcML(tempText, "type", messageID);
+                        this.XPath += "['" + messageID + tempText + "']";
                     }
                     else if (nodeChildren[i].getChild(j).constructor.name === "WordsContext") {
                         tempText = "/src:name[" + this.wordsContextTraversal(nodeChildren[i].getChild(j)) + "]";
+                        this.XPath += tempText;
                     }
                 }
-                this.XPath += tempText;
+
             }
         }
     }
@@ -700,13 +704,14 @@ class GenerateXpath {
 
             if (nodeType === "ReturnValueConditionContext") {
                 let tempText = "";
+                let messageID = Math.floor(new Date().getTime() / 1000); // to match send and receive messages
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
                     if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
                         tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
-                        this.sendTextDataToSrcML(tempText, "returnValue");
+                        this.sendTextDataToSrcML(tempText, "returnValue", messageID);
                     }
                 }
-                this.XPath += "['" + tempText + "']";
+                this.XPath += "['" + messageID + tempText + "']";
             }
         }
     }
@@ -775,13 +780,14 @@ class GenerateXpath {
 
             if (nodeType === "ExpressionStatementConditionContext") {
                 let tempText = "";
+                let messageID = Math.floor(new Date().getTime() / 1000); // to match send and receive messages
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
                     if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
                         tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
-                        this.sendTextDataToSrcML(tempText, "expressionStatement");
+                        this.sendTextDataToSrcML(tempText, "expressionStatement", messageID);
                     }
                 }
-                this.XPath += "['" + tempText + "']";
+                this.XPath += "['" + messageID + tempText + "']";
             }
         }
     }
@@ -815,13 +821,14 @@ class GenerateXpath {
 
             if (nodeType === "InitialValueConditionContext") {
                 let tempText = "";
+                let messageID = Math.floor(new Date().getTime() / 1000); // to match send and receive messages
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
                     if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
                         tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
-                        this.sendTextDataToSrcML(tempText, "initialValue");
+                        this.sendTextDataToSrcML(tempText, "initialValue", messageID);
                     }
                 }
-                this.XPath += "['" + tempText + "']";
+                this.XPath += "['" + messageID + tempText + "']";
             }
         }
     }
@@ -958,21 +965,25 @@ class GenerateXpath {
      * and return XML
      * @param text
      * @param elementType
+     * @param messageID
      */
-    sendTextDataToSrcML(text, elementType) {
+    sendTextDataToSrcML(text, elementType, messageID) {
         if (text === "") return;
         let code = text;
         let query = "";
-        let messageID = Math.floor(new Date().getTime() / 1000); // to match send and receive messages
+        let cuttingLength = 9; // for cutting XPath after receiving and processing the message
+        // let messageID = Math.floor(new Date().getTime() / 1000); // to match send and receive messages
 
         switch (elementType) {
             case "annotation":
                 code = "@" + text;
                 query = "//src:unit[count(src:annotation)=1]/src:annotation";
+                cuttingLength = 15; // src:annotation[
                 break;
             case "type":
                 code = text + " dummy_variable = 0;";
-                query = "//src:unit[count(src:decl_stmt)=1]/src:decl_stmt/src:type";
+                query = "//src:unit[count(src:decl_stmt)=1]/src:decl_stmt/src:decl/src:type";
+                cuttingLength = 9; // src:type[
                 break;
             case "returnValue":
             case "expressionStatement":
@@ -980,6 +991,7 @@ class GenerateXpath {
             default:
                 code = text;
                 query = "//src:unit[count(src:expr_stmt)=1]/src:expr_stmt/src:expr";
+                cuttingLength = 9; // src:expr[
                 break;
 
         }
@@ -988,8 +1000,9 @@ class GenerateXpath {
         store.dispatch(sendExpressionStatementXML({
             "codeText": code,
             "messageID": messageID,
-            "lookFor": "'" + text + "'",
-            "query": query
+            "lookFor": "'" + messageID + text + "'",
+            "query": query,
+            "cuttingLength": cuttingLength
         }));
     }
 }

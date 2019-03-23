@@ -774,7 +774,7 @@ class EditRuleForm extends Component {
                     <Alert bsStyle={this.state.editorError.alertType}>
                         <div className={"controlButtonDiv controlButton"}>
                             <div data-tip={"React-tooltip"} data-for={"maximize"}>
-                                <TiArrowMaximise size={30} onClick={() => this.setState({showAlert: true})}/>
+                                <TiArrowMaximise size={20} onClick={() => this.setState({showAlert: true})}/>
                             </div>
                             <ReactToolTip place={"top"} type={"dark"} effect={"solid"} id={"maximize"} delayShow={300}>
                                 <span>Expand the error message.</span>
@@ -1180,7 +1180,7 @@ class EditRuleForm extends Component {
 
         // result xpath: 'src:expr[....]' where 'src:expr[' and the final ']' is extra.
         let resultXPath = traverseChildren(resultValidNode);
-        resultXPath = resultXPath.substring(9, resultXPath.length - 1);
+        resultXPath = resultXPath.substring(sentMessageData["cuttingLength"], resultXPath.length - 1);
         return resultXPath;
     }
 
