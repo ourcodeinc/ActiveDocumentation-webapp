@@ -326,9 +326,13 @@ const createGuiElementTree = (parseTree) => {
             // check if this is the node
             if (getConditionByName(newGuiElements[elem_id].conditionName).grammar === node.key) {
 
+                let neighbor = false;
+
                 // check if some ids appear more than once in the guiTree
                 // if so, create a new node
                 if (visitedIDs.indexOf(elem_id) !== -1) {
+                    neighbor = elem_id;
+
                     // create a new element
                     let newElementId = Math.floor(new Date().getTime() / 10).toString();
                     let newElementsData = generateTreeForElement(newGuiElements[elem_id].conditionName, newElementId, parent_id);
@@ -336,14 +340,15 @@ const createGuiElementTree = (parseTree) => {
                     // look for childGroup/subGroup for guiNode.elementId using parentId
                     // add it to newElementTree and newGuiElements
                     Object.keys(newElementTree[parent_id].children).forEach(childGroup => {
-                        if (childGroup !== "body")
+                        if (childGroup !== "body") {
                             if (newElementTree[parent_id].children[childGroup].indexOf(elem_id) !== -1)
                                 newElementTree[parent_id].children[childGroup].push(newElementId);
-                            else
-                                newElementTree[parent_id].children["body"].forEach((subGroup, i) => {
-                                    if (subGroup.indexOf(elem_id) !== -1)
-                                        newElementTree[parent_id].children["body"][i].push(newElementId);
-                                });
+                        }
+                        else
+                            newElementTree[parent_id].children["body"].forEach((subGroup, i) => {
+                                if (subGroup.indexOf(elem_id) !== -1)
+                                    newElementTree[parent_id].children["body"][i].push(newElementId);
+                            });
                     });
 
                     // adding new trees
@@ -357,9 +362,13 @@ const createGuiElementTree = (parseTree) => {
 
                 let newNode = {
                     elementId: elem_id,
+                    elementType: newGuiElements[elem_id].conditionName, // for new elements
                     parentId: parent_id,
                     isConstraint: node.isConstraint ? node.isConstraint : false // sometimes it is undefined
                 };
+                if (neighbor) newNode.neighbor = neighbor;
+                visitedIDs.push(elem_id);
+
                 if (node.selectedElement)
                     newNode.selectedElement = node.selectedElement;
 
@@ -428,6 +437,28 @@ const updateGuiElements = (grammarTree, guiTree) => {
 
 
     let checkNode = (grammarNode, guiNode) => {
+        if (!newGuiElements.hasOwnProperty(guiNode.elementId)) {
+            let newElementsData = generateTreeForElement(guiNode.elementType, guiNode.elementId, guiNode.parentId);
+            // adding new trees
+            newElementsData.trees.forEach(tree => newElementTree[tree.id] = tree.node);
+            // adding new elements
+            newElementsData.elements.forEach(elem => newGuiElements[elem.id] = elem.node);
+
+            // look for childGroup/subGroup for guiNode.elementId using parentId
+            // add it to newElementTree and newGuiElements
+            Object.keys(newElementTree[guiNode.parentId].children).forEach(childGroup => {
+                if (childGroup !== "body") {
+                    if (newElementTree[guiNode.parentId].children[childGroup].indexOf(guiNode.neighbor) !== -1)
+                        newElementTree[guiNode.parentId].children[childGroup].push(guiNode.elementId);
+                }
+                else
+                    newElementTree[guiNode.parentId].children["body"].forEach((subGroup, i) => {
+                        if (subGroup.indexOf(guiNode.neighbor) !== -1)
+                            newElementTree[guiNode.parentId].children["body"][i].push(guiNode.elementId);
+                    });
+            });
+        }
+
         newGuiElements[guiNode.elementId].activeElement = true;
         if (guiNode.selectedElement) {
             newGuiElements[guiNode.elementId].selectedElement = true;
