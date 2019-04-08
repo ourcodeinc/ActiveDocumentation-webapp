@@ -6,7 +6,8 @@ It communicates with the server using "Web-Socket".
 
 ## ruleJson.txt
 
-There must be a file name `ruleJson.txt` in the project folder in which all rules are stored. Here is an example for this file:
+There must be a file name `ruleJson.txt` in the project folder in which all rules are stored. `grammar` field is recently added for each rule. 
+It is mandatory but is generated for newly added rules. Here is an example for this file:
 
 ```
 [
@@ -113,38 +114,16 @@ There is also another json file named `tagJson.txt`. In this file we store infor
 
 ## Generate Rules
 
-This system is using ANTLR4 and Simple CoreNLP.
+This system is using ANTLR4.
 
-### ANTLR
 * The grammar is stored in `myGrammar.g4`
 * The generated code with ANTLR is created through `gradle` script.
 * The `gradle.build` file is located in the root directory of the project.
 * Run `gradle generateParser`
 
 
-### CoreNLP (replaced with `wink-pos-tagger` package)
-* The CoreNLP package is a node package: [https://github.com/gerardobort/node-corenlp](https://github.com/gerardobort/node-corenlp)
-* There might be an error for `request-promise-native` in `node_modules/corenlp/dist/connector/connector-server.js`. change the line for `require('request-promise-native')` to `require('<full path>/node_modules/request-promise-native/lib/rp.js')`
-* Download the CoreNLP Java sourcecode from the original website: [https://stanfordnlp.github.io/CoreNLP/download.html](https://stanfordnlp.github.io/CoreNLP/download.html)
-* Move the directory to `node_modules/corenlp/corenlp/` as `node_modules/corenlp/corenlp/stanford-corenlp-full-2018-*-*`
-* In `node_modules/corenlp/corenlp/stanford-corenlp-full-2018-*-*` directory run `java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 15000` which runs the server of the CoreNLP on port 9000.
-* To stop the server use `CTRL+C`
-
-The first run of the coreNLP library takes time as it loads necessary libraries.
-Demo of CoreNLP is available in [http://corenlp.run/](http://corenlp.run/)
-
-#### Notes
-! The npm package `concurrently` allows to run several scripts simultaneously.
-The current script `npm run dev` is running the following scripts for `coreNLP` and 
-`npm run start`.
-
-! Note that the script is based on `stanford-corenlp-full-2018-02-27` version. If the version is different, 
-the script should also be changed accordingly.
-
-
 ## Used Ports
 
 Three ports are used for this application:
 * 8887 for websocket
-* 3000 for application server
-* 9000 for CoreNLP (not used currently)
+* 3000 for application server (Changed Frequently, check package.json for the active port)
