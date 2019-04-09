@@ -565,7 +565,9 @@ class EditRuleForm extends Component {
                                                      onChange={(e) => {
                                                          const filesFolders = this.state.filesFolders;
                                                          filesFolders[i] = e.target.value;
-                                                         this.setState({filesFolders}, this.updateFeedbackSnippet);
+                                                         let xPathQueryResult = this.updateFeedbackSnippet(this.state.quantifierXPath, this.state.constraintXPath,
+                                                             this.state.folderConstraint, filesFolders);
+                                                         this.setState({filesFolders, xPathQueryResult});
                                                      }}
                                                      onBlur={() => this.onEditNewRuleForm()}/>
                                     </FormGroup>
@@ -576,10 +578,9 @@ class EditRuleForm extends Component {
                                               onClick={() => {
                                                   const filesFolders = this.state.filesFolders;
                                                   filesFolders.splice(i, 1);
-                                                  this.setState({filesFolders}, () => {
-                                                      this.updateFeedbackSnippet();
-                                                      this.onEditNewRuleForm()
-                                                  })
+                                                  let xPathQueryResult = this.updateFeedbackSnippet(this.state.quantifierXPath, this.state.constraintXPath,
+                                                      this.state.folderConstraint, filesFolders);
+                                                  this.setState({filesFolders, xPathQueryResult}, this.onEditNewRuleForm)
                                               }}/>
                                 </Col>
                             </Row>
@@ -595,7 +596,7 @@ class EditRuleForm extends Component {
      * render the turorial steps above the text editor
      * @returns {XML}
      */
-    renderTutorial() { //console.log(this.state.guiError,"guiError");console.log(this.state.isFilledGUI,"isFilledGUI");
+    renderTutorial() {
 
         let stepOneStatus = !this.state.isFilledGUI ? "has-error" : "";
         let stepTwoStatus = !this.state.isFilledGUI ? "inactive" : this.state.guiError ? "has-error" : "";
@@ -1004,12 +1005,13 @@ class EditRuleForm extends Component {
 
         if (nextProps.message === "RECEIVE_EXPR_STMT_XML") {
             this.matchSentAndReceivedMessages(nextProps);
-            this.updateFeedbackSnippet();
+            this.updateFeedbackSnippet(this.state.quantifierXPath, this.state.constraintXPath, this.state.folderConstraint, this.state.filesFolders);
         }
 
         else {
-            if (nextProps.ruleIndex !== this.ruleIndex) {
-                this.ruleIndex = nextProps.ruleIndex;
+            this.ruleIndex = nextProps.ruleIndex;
+            // existing rule
+            if (this.ruleIndex !== -1) {
                 let indices = nextProps.rules.map(d => d.index);
                 let arrayIndex = indices.indexOf(this.ruleIndex);
                 if (arrayIndex === -1)
@@ -1017,10 +1019,10 @@ class EditRuleForm extends Component {
                 Only ${indices.toString()} are found as indices.`);
                 else
                     this.ruleI = nextProps.rules[arrayIndex];
-            }
 
-            // existing rule
-            if (this.ruleIndex !== -1) {
+
+                let xPathQueryResult = this.updateFeedbackSnippet(this.ruleI.rulePanelState.quantifierXPath, this.ruleI.rulePanelState.constraintXPath,
+                    this.ruleI.rulePanelState.folderConstraint, this.ruleI.rulePanelState.filesFolders);
                 this.setState({
                     title: this.ruleI.rulePanelState.title,
                     description: this.ruleI.rulePanelState.description,
@@ -1037,11 +1039,15 @@ class EditRuleForm extends Component {
                     monacoFormStatus: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "has-error" : nextProps.message === "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? "has-warning" : this.state.monacoFormStatus,
                     errorPoint: -1,
 
-                    shouldUpdateSnippets: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? true : this.state.shouldUpdateSnippets
-                }, this.updateFeedbackSnippet);
+                    shouldUpdateSnippets: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? true : this.state.shouldUpdateSnippets,
+                    xPathQueryResult
+                });
             }
             // new rule
             else {
+                let xPathQueryResult = this.updateFeedbackSnippet(nextProps.quantifierXPath, nextProps.constraintXPath,
+                    nextProps.folderConstraint, nextProps.filesFolders);
+
                 this.setState({
                     title: nextProps.title,
                     description: nextProps.description,
@@ -1058,8 +1064,9 @@ class EditRuleForm extends Component {
                     monacoFormStatus: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "has-error" : nextProps.message === "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? "has-warning" : this.state.monacoFormStatus,
                     errorPoint: -1,
 
-                    shouldUpdateSnippets: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? true : this.state.shouldUpdateSnippets
-                }, this.updateFeedbackSnippet);
+                    shouldUpdateSnippets: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? true : this.state.shouldUpdateSnippets,
+                    xPathQueryResult
+                });
             }
         }
     }
@@ -1067,7 +1074,33 @@ class EditRuleForm extends Component {
     // _mounted is added to remove the warning caused by setting states
     // in Promise.then() function in onBlur
     componentDidMount() {
-        this._mounted = true
+        this._mounted = true;
+
+        if (this.state.autoCompleteArray.length !== 0) {
+            verifyTextBasedOnGrammar(this.state.autoCompleteArray.map(d => d.text).join(" "))
+                .then((data) => {
+                    let xPathQueryResult = this.updateFeedbackSnippet(data.quantifierXPath, data.constraintXPath,
+                        this.state.folderConstraint, this.state.filesFolders);
+                    this.setState({
+                        monacoFormStatus: "has-success",
+                        errorPoint: -1,
+                        autoCompleteArray: data.wordArray,
+                        quantifierXPath: data.quantifierXPath,
+                        constraintXPath: data.constraintXPath,
+                        editorError: "",
+                        xPathQueryResult
+                    });
+
+                    // compute and dispatch gui tree for quantifier and constraint
+                    generateGuiTrees(data.grammarTree)
+                        .then((tree) => this.props.onReceiveGuiTree(this.ruleIndex, tree, data.wordArray, data.quantifierXPath, data.constraintXPath))
+                })
+                .catch((error) => {
+                    this.processLanguageProcessingError(error);
+                    this.setState({monacoFormStatus: "has-error"})
+                });
+        }
+
     }
 
     componentWillUnmount() {
@@ -1278,29 +1311,29 @@ class EditRuleForm extends Component {
         this.props["changeEditMode"]();
     }
 
-    updateFeedbackSnippet() {
-        if (this.state.quantifierXPath === "" || this.state.quantifierXPath === "" || this.state.folderConstraint === ""
-            || (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.filter((d) => d !== "").length === 0))
-            return;
+    updateFeedbackSnippet(quantifierXPath, constraintXPath, folderConstraint, filesFolders) {
+        if (quantifierXPath === "" || constraintXPath === "" || folderConstraint === ""
+            || (folderConstraint === "FOLDER" && filesFolders.filter((d) => d !== "").length === 0))
+            return [];
 
         let ruleInArray = [
             {
                 index: "000",
                 ruleType: {
-                    constraint: this.state.folderConstraint,
-                    checkFor: this.state.filesFolders.filter((d) => d !== ""),
+                    constraint: folderConstraint,
+                    checkFor: filesFolders.filter((d) => d !== ""),
                     type: "WITHIN"
                 },
-                quantifier: {command: "src:unit/" + this.state.quantifierXPath},
-                constraint: {command: "src:unit/" + this.state.constraintXPath},
+                quantifier: {command: quantifierXPath.startsWith("src:unit/") ? quantifierXPath: "src:unit/" + quantifierXPath},
+                constraint: {command: constraintXPath.startsWith("src:unit/") ? constraintXPath: "src:unit/" + constraintXPath},
             }
         ];
         try {
             ruleInArray = checkRulesForAll(this.props.xmlFiles, ruleInArray);
-            this.setState({xPathQueryResult: ruleInArray[0].xPathQueryResult});
+            return ruleInArray[0].xPathQueryResult;
         } catch (e) {
             console.log("failed to evaluate the rule.");
-            this.setState({xPathQueryResult: []});
+            return [];
         }
     }
 

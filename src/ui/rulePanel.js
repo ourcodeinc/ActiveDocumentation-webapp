@@ -37,7 +37,9 @@ class RulePanel extends Component {
             ruleTags: [],
             folderConstraint: "",
             filesFolders: [],
-            tags: []
+            tags: [],
+
+            filePath: "none"
         };
 
 
@@ -121,9 +123,30 @@ class RulePanel extends Component {
 
     //componentDidUpdate doesn't work
     componentWillReceiveProps(nextProps) {
-        // existing rule
-        if (this.ruleIndex !== -1)
+
+        if (nextProps.message === "HASH")
         {
+            let panelState = this.newUpdateStateUponCodeChange(nextProps.codeChanged);
+            this.setState(panelState);
+        }
+
+        else if (nextProps.message === "FILE_PATH_UPDATED")
+            this.setState({filePath: nextProps.filePath});
+
+        else if (nextProps.message === "CHANGE_EDIT_MODE") {
+            let indices = nextProps.rules.map(d => d.index);
+            let arrayIndex = indices.indexOf(this.ruleIndex);
+            if (arrayIndex === -1)
+                console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
+                Only ${indices.toString()} are found as indices.`);
+            else {
+                this.ruleI = nextProps.rules[arrayIndex];
+                this.setState({editMode: this.ruleI.rulePanelState.editMode});
+            }
+        }
+
+        // existing rule
+        else if (nextProps.message === "UPDATE_RULE_TABLE" && this.ruleIndex !== -1) {
             let indices = nextProps.rules.map(d => d.index);
             let arrayIndex = indices.indexOf(this.ruleIndex);
             if (arrayIndex === -1)
@@ -136,30 +159,22 @@ class RulePanel extends Component {
                     this.setState({editMode: true});
 
                 else {
-                    let equalArrays = (arr1, arr2) => {
-                        if (arr1.length !== arr2.length) return false;
-                        for (let i = 0; i < arr1.length; i++)
-                            if (arr1[i] !== arr2[i]) return false;
-                        return true;
-                    };
+                    let panelState = this.newUpdateStateUponCodeChange(nextProps.codeChanged);
+                    let newState = {
+                        title: this.ruleI.title,
+                        description: this.ruleI.description,
+                        ruleTags: this.ruleI.tags,
+                        folderConstraint: this.ruleI.ruleType.constraint,
+                        filesFolders: this.ruleI.ruleType.checkFor,
+                        editMode: false,
 
-                    let newState = {};
-                    if (this.state.title !== this.ruleI.title)
-                        newState.title = this.ruleI.title;
-                    if (this.state.description !== this.ruleI.description)
-                        newState.description = this.ruleI.description;
-                    if (!equalArrays(this.state.ruleTags, this.ruleI.tags))
-                        newState.ruleTags = this.ruleI.tags;
-                    if (this.state.folderConstraint !== this.ruleI.ruleType.constraint)
-                        newState.folderConstraint = this.ruleI.ruleType.constraint;
-                    if (!equalArrays(this.state.filesFolders, this.ruleI.ruleType.checkFor))
-                        newState.filesFolders = this.ruleI.ruleType.checkFor;
-                    if (this.state.tags !== nextProps.tags) newState.tags = nextProps.tags;
-                    if (this.state.editMode !== false)
-                        newState.editMode = false;
+                        className: panelState.className,
+                        openPanel: panelState.openPanel
+                    };
 
                     if (Object.keys(newState).length !== 0)
                         this.setState(newState);
+
                 }
             }
         }
@@ -169,42 +184,8 @@ class RulePanel extends Component {
      * set the states 'openPanel' and 'className' after mounting.
      */
     componentDidMount() {
-        if (!this.props.codeChanged) {
-            this.setState({
-                className: "rulePanelDiv" + (this.newRuleRequest ? " edit-bg" : ""),
-                openPanel: (() => {
-                    if (this.props.filePath === "none") return true;
-                    let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.props.filePath);
-                    return (file.length > 0)
-                })()
-            });
-            return;
-        }
-
-        let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.props.filePath);
-        let ruleIfile = file.length !== 0 ? file[0]['data'] : {};
-        if (ruleIfile['allChanged'] === 'greater' && ruleIfile['satisfiedChanged'] === ruleIfile['violatedChanged'] === 'none') {
-            this.setState({openPanel: true, className: "rulePanelDiv blue-bg"});
-            return;
-        }
-        if (ruleIfile['satisfiedChanged'] === 'greater') {
-            this.setState({openPanel: true, className: "rulePanelDiv green-bg"});
-            return;
-        }
-        if (ruleIfile['violatedChanged'] === 'greater') {
-            this.setState({openPanel: true, className: "rulePanelDiv red-bg"});
-            return;
-        }
-        if (file.length > 0) {
-            this.setState({openPanel: true, className: "rulePanelDiv"});
-            return;
-        }
-
-        if (ruleIfile['violated'] === 0) {
-            this.setState({openPanel: false, className: "rulePanelDiv"});
-            return;
-        }
-        this.setState({openPanel: false, className: "rulePanelDiv"});
+        let panelState = this.newUpdateStateUponCodeChange(this.props.codeChanged);
+        this.setState(panelState);
     }
 
 
@@ -221,7 +202,7 @@ class RulePanel extends Component {
         }
 
         let fileSatisfied = 0, fileViolated = 0;
-        let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.props.filePath);
+        let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.state.filePath);
         if (file.length > 0) {
             fileSatisfied = file[0]['data']['satisfied'];
             fileViolated = file[0]['data']['violated'];
@@ -231,7 +212,7 @@ class RulePanel extends Component {
             case 'all':
                 return (
                     <span className="rulePanelGeneralTab">Matches
-                        {this.props.filePath !== "none" ? (
+                        {this.state.filePath !== "none" ? (
                             <Fragment>
                                 <Badge className="forAll">{fileSatisfied + fileViolated}</Badge>
                                 <span style={{color: "#777"}}>out of</span>
@@ -245,7 +226,7 @@ class RulePanel extends Component {
             case 'satisfied':
                 return (
                     <span className="rulePanelSatisfiedTab">Examples
-                        {this.props.filePath !== "none" ? (
+                        {this.state.filePath !== "none" ? (
                             <Fragment>
                                 <Badge className="forAll">{fileSatisfied}</Badge>
                                 <span style={{color: "#777"}}>out of</span>
@@ -259,7 +240,7 @@ class RulePanel extends Component {
             case 'violated':
                 return (
                     <span className="rulePanelViolatedTab">Violated
-                        {this.props.filePath !== "none" ? (
+                        {this.state.filePath !== "none" ? (
                             <Fragment>
                                 <Badge className="forAll">{fileViolated}</Badge>
                                 <span style={{color: "#777"}}>out of</span>
@@ -295,36 +276,36 @@ class RulePanel extends Component {
     renderListOfSnippets(group) {
 
         let otherFilesList = [], fileList = [];
-        let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.props.filePath);
+        let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.state.filePath);
 
         switch (group) {
             case 'all':
-                if (this.props.filePath !== "none") {
+                if (this.state.filePath !== "none") {
                     if (file.length > 0)
                         fileList = file[0]['data']['quantifierResult'];
                 }
                 for (let i = 0; i < this.ruleI['xPathQueryResult'].length; i++) {
-                    if (this.ruleI['xPathQueryResult'][i]["filePath"] === this.props.filePath) continue;
+                    if (this.ruleI['xPathQueryResult'][i]["filePath"] === this.state.filePath) continue;
                     otherFilesList = otherFilesList.concat(this.ruleI['xPathQueryResult'][i]['data']['quantifierResult'])
                 }
                 break;
             case 'satisfied':
-                if (this.props.filePath !== "none") {
+                if (this.state.filePath !== "none") {
                     if (file.length > 0)
                         fileList = file[0]['data']['satisfiedResult'];
                 }
                 for (let i = 0; i < this.ruleI['xPathQueryResult'].length; i++) {
-                    if (this.ruleI['xPathQueryResult'][i]["filePath"] === this.props.filePath) continue;
+                    if (this.ruleI['xPathQueryResult'][i]["filePath"] === this.state.filePath) continue;
                     otherFilesList = otherFilesList.concat(this.ruleI['xPathQueryResult'][i]['data']['satisfiedResult'])
                 }
                 break;
             case 'violated':
-                if (this.props.filePath !== "none") {
+                if (this.state.filePath !== "none") {
                     if (file.length > 0)
                         fileList = file[0]['data']['violatedResult'];
                 }
                 for (let i = 0; i < this.ruleI['xPathQueryResult'].length; i++) {
-                    if (this.ruleI['xPathQueryResult'][i]["filePath"] === this.props.filePath) continue;
+                    if (this.ruleI['xPathQueryResult'][i]["filePath"] === this.state.filePath) continue;
                     otherFilesList = otherFilesList.concat(this.ruleI['xPathQueryResult'][i]['data']['violatedResult'])
                 }
                 break;
@@ -354,7 +335,7 @@ class RulePanel extends Component {
 
         return (
             <div>
-                {this.props.filePath !== "none" ? (
+                {this.state.filePath !== "none" ? (
                     <Fragment>
                         <h4>{headerText + " for this file"}</h4>
                         <div>{returnList(fileList)}</div>
@@ -364,6 +345,47 @@ class RulePanel extends Component {
                 <div>{returnList(otherFilesList)}</div>
             </div>
         )
+    }
+
+
+    /**
+     * compute the className and state of the panel after the code is changed
+     * @param codeChanged
+     * @returns {*}
+     */
+    newUpdateStateUponCodeChange (codeChanged) {
+        if (!codeChanged) {
+            let open = false;
+            if (this.state.filePath === "none")
+                open = true;
+            else
+                open = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.state.filePath).length > 0;
+
+
+            return {
+                className: "rulePanelDiv" + (this.newRuleRequest ? " edit-bg" : ""),
+                openPanel: open
+            };
+        }
+
+        let file = this.ruleI['xPathQueryResult'].filter(d => d["filePath"] === this.state.filePath);
+        let ruleIfile = file.length !== 0 ? file[0]['data'] : {};
+        if (ruleIfile['allChanged'] === 'greater' && ruleIfile['satisfiedChanged'] === ruleIfile['violatedChanged'] === 'none') {
+            return {openPanel: true, className: "rulePanelDiv blue-bg"};
+        }
+        if (ruleIfile['satisfiedChanged'] === 'greater')
+            return{openPanel: true, className: "rulePanelDiv green-bg"};
+
+        if (ruleIfile['violatedChanged'] === 'greater')
+            return {openPanel: true, className: "rulePanelDiv red-bg"};
+
+        if (file.length > 0)
+            return {openPanel: true, className: "rulePanelDiv"};
+
+        if (ruleIfile['violated'] === 0)
+            return {openPanel: false, className: "rulePanelDiv"};
+
+        return {openPanel: false, className: "rulePanelDiv"};
     }
 
     /**
