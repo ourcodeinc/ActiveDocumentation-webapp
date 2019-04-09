@@ -136,12 +136,14 @@ class RulePanel extends Component {
         else if (nextProps.message === "CHANGE_EDIT_MODE") {
             let indices = nextProps.rules.map(d => d.index);
             let arrayIndex = indices.indexOf(this.ruleIndex);
-            if (arrayIndex === -1)
-                console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
+            if (this.ruleIndex !== -1) {
+                if (arrayIndex === -1)
+                    console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
                 Only ${indices.toString()} are found as indices.`);
-            else {
-                this.ruleI = nextProps.rules[arrayIndex];
-                this.setState({editMode: this.ruleI.rulePanelState.editMode});
+                else {
+                    this.ruleI = nextProps.rules[arrayIndex];
+                    this.setState({editMode: this.ruleI.rulePanelState.editMode});
+                }
             }
         }
 
