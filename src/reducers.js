@@ -2,6 +2,49 @@ import {initial_state, default_rulePanelState} from './initialState';
 import {generateTreeForElement} from "./ui/ruleGenerationGUI/guiConstants";
 
 
+/*
+
+    List of messages:
+
+
+    HASH
+    NEW_WS
+    UPDATE_XML_FILES
+    UPDATE_TAG_TABLE
+    UPDATE_RULE_TABLE
+    UPDATE_RULE
+
+    NEW_RULE
+    NEW_TAG
+
+    IGNORE_FILE
+
+    UPDATE_DISPLAY_EDIT_TUTORIAL
+
+    FILE_PATH_UPDATED
+
+    CLICKED_ON_FORWARD
+    CLICKED_ON_BACK
+
+    CLEAR_NEW_RULE_FORM
+    EDIT_RULE_FORM
+    CHANGE_EDIT_MODE
+
+    RECEIVE_GUI_TREE
+
+    SEND_EXPR_STMT_XML
+    RECEIVE_EXPR_STMT_XML
+    MATCHED_MESSAGES
+
+    CHANGE_GUI_ELEMENT
+    CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI
+    UPDATE_XPATHS
+
+
+ */
+
+
+
 /**
  * using default_state as a default value surprisingly changes its value
  * Any incoming variable through arguments must be cloned and mutated,
@@ -87,7 +130,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
         case "SUBMIT_NEW_RULE":
             return Object.assign({}, state, {
                 newOrEditRule: {
-                    ...state.newOrEditRule,
+                    ...JSON.parse(JSON.stringify(initial_state.newOrEditRule)),
                     isEditMode: false
                 },
                 message: "NEW_RULE"
