@@ -22,7 +22,7 @@ import RuleGeneratorGui from './ruleGenerationGUI/ruleGeneratorGui';
 import verifyTextBasedOnGrammar from "./ruleGenerationText/languageProcessing";
 import {
     matchMessages, receiveGuiTree, clearNewRuleForm,
-    editRuleForm, submitNewRule, submitNewTag, updateRule, updateXPaths, updateDisplayEditTutorial
+    editRuleForm, submitNewRule, submitNewTag, updateRule, updateXPaths, updateDisplayEditTutorial, ignoreFile
 } from "../actions";
 import {generateGuiTrees} from "./ruleGenerationText/generateGuiTree";
 import RuleGeneratorText from "./ruleGenerationText/ruleGeneratorText";
@@ -565,11 +565,14 @@ class EditRuleForm extends Component {
                                                      onChange={(e) => {
                                                          const filesFolders = this.state.filesFolders;
                                                          filesFolders[i] = e.target.value;
-                                                         let xPathQueryResult = this.updateFeedbackSnippet(this.state.quantifierXPath, this.state.constraintXPath,
-                                                             this.state.folderConstraint, filesFolders);
-                                                         this.setState({filesFolders, xPathQueryResult});
+                                                         this.setState({filesFolders});
                                                      }}
-                                                     onBlur={() => this.onEditNewRuleForm()}/>
+                                                     onBlur={() => {
+                                                         let xPathQueryResult = this.updateFeedbackSnippet(this.state.quantifierXPath, this.state.constraintXPath,
+                                                             this.state.folderConstraint, this.state.filesFolders);
+                                                         this.setState({xPathQueryResult});
+                                                         this.onEditNewRuleForm()
+                                                     }}/>
                                     </FormGroup>
                                 </Col>
                                 <Col sm={1} md={1} style={{paddingTop: "5px"}}>
@@ -691,8 +694,8 @@ class EditRuleForm extends Component {
                                                            this.setState({
                                                                quantifierXPath: data.quantifierXPath,
                                                                constraintXPath: data.constraintXPath,
-
-                                                               shouldUpdateSnippets: false
+                                                               shouldUpdateSnippets: false,
+                                                               editorError: ""
                                                            });
 
                                                        this.props.onUpdateXPaths(this.ruleIndex, data.quantifierXPath, data.constraintXPath)
@@ -705,7 +708,6 @@ class EditRuleForm extends Component {
                                                            return {id: "", text: d}
                                                        }),
                                                        monacoFormStatus: "has-error",
-
                                                        shouldUpdateSnippets: false
                                                    })
                                                });
@@ -737,6 +739,7 @@ class EditRuleForm extends Component {
      * @return {XML}
      */
     renderAutoCompleteError() {
+        if (this.state.editorError !== "") console.log(this.state.editorError);
         return (
             <Fragment>
                 {this.state.editorError === "" ? null : !this.state.showAlert ? null : (
@@ -988,7 +991,10 @@ class EditRuleForm extends Component {
                 {filesList.map((d, i) => {
                     return (
                         <div data-file-path={d['filePath']} className="snippetDiv" key={i}>
-                            <pre className="link" onClick={() => {}}>
+                            <pre className="link" onClick={() => {
+                                this.props.onIgnoreFile(true);
+                                Utilities.sendToServer(this.props.ws, "XML_RESULT", d['xml'])
+                            }}>
                                 <div className="content" dangerouslySetInnerHTML={{__html: d['snippet']}}/>
                             </pre>
                         </div>
@@ -1079,21 +1085,17 @@ class EditRuleForm extends Component {
         if (this.state.autoCompleteArray.length !== 0) {
             verifyTextBasedOnGrammar(this.state.autoCompleteArray.map(d => d.text).join(" "))
                 .then((data) => {
-                    let xPathQueryResult = this.updateFeedbackSnippet(data.quantifierXPath, data.constraintXPath,
-                        this.state.folderConstraint, this.state.filesFolders);
                     this.setState({
                         monacoFormStatus: "has-success",
                         errorPoint: -1,
                         autoCompleteArray: data.wordArray,
-                        quantifierXPath: data.quantifierXPath,
-                        constraintXPath: data.constraintXPath,
                         editorError: "",
-                        xPathQueryResult
+                        xPathQueryResult: this.ruleI.xPathQueryResult
                     });
 
                     // compute and dispatch gui tree for quantifier and constraint
                     generateGuiTrees(data.grammarTree)
-                        .then((tree) => this.props.onReceiveGuiTree(this.ruleIndex, tree, data.wordArray, data.quantifierXPath, data.constraintXPath))
+                        .then((tree) => this.props.onReceiveGuiTree(this.ruleIndex, tree, data.wordArray, this.state.quantifierXPath, this.state.constraintXPath))
                 })
                 .catch((error) => {
                     this.processLanguageProcessingError(error);
@@ -1553,6 +1555,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
+        onIgnoreFile: (shouldIgnore) => dispatch(ignoreFile(shouldIgnore)),
         onSubmitNewRule: (newRule) => dispatch(submitNewRule(newRule)),
         onUpdateRule: (updatedRule) => dispatch(updateRule(updatedRule)),
         onSubmitNewTag: (newTag) => dispatch(submitNewTag(newTag)),

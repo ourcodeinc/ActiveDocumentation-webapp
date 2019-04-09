@@ -111,6 +111,11 @@ const antlr = (input) => {
     let errors = [];
     let listener = new ErrorListener(errors);
 
+    let orgParser = new MyGrammarParserModule.myGrammarParser(new antlr4.CommonTokenStream(new MyGrammarLexerModule.myGrammarLexer(new antlr4.InputStream(input))));
+    orgParser.buildParseTrees = true;
+    orgParser.removeErrorListeners();
+    orgParser.addErrorListener(listener);
+    let orgTree = orgParser.inputSentence();
 
     let chars = new antlr4.InputStream(input);
     let lexer = new MyGrammarLexerModule.myGrammarLexer(chars);
@@ -126,28 +131,10 @@ const antlr = (input) => {
         return {grammarErrors: errors, inputText: inputText};
 
     try {
-
-        let traverse = new Traverse(tree, false);
+        let traverse = new Traverse(tree);
         traverse.traverseTree();
 
-        let quant = traverse.getQuantifierXPath();
-        let constr = traverse.getConstraintXPath();
-
-        if (constr === "") {
-
-            let chars2 = new antlr4.InputStream(input);
-            let lexer2 = new MyGrammarLexerModule.myGrammarLexer(chars2);
-            let tokens2 = new antlr4.CommonTokenStream(lexer2);
-            let parser2 = new MyGrammarParserModule.myGrammarParser(tokens2);
-            parser2.buildParseTrees = true;
-            let tree2 = parser2.inputSentence();
-            let traverse2 = new Traverse(tree2, true);
-            traverse2.traverseTree();
-            constr = traverse2.getQuantifierXPath();
-        }
-
-        return {results: {quantifier: quant, constraint: constr}, grammarTree: tree};
-
+        return {results: {quantifier: traverse.XPathQ, constraint: traverse.XPathC}, grammarTree: orgTree};
     }
     catch (error) {
         console.log(error);
