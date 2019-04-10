@@ -126,4 +126,4 @@ This system is using ANTLR4.
 
 Three ports are used for this application:
 * 8887 for websocket
-* 3000 for application server (Changed Frequently, check package.json for the active port)
+* 3000 for application server (Changing Frequently, check package.json for the active port)
