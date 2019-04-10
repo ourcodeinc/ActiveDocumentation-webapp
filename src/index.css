@@ -659,3 +659,22 @@ img.tutorialSmallImage {
 .tutorial .optional {
     color: #265a88;
 }
+
+/*  project hierarchy */
+
+.has-error .projectHierarchy button {
+    color: #a94442;
+}
+
+.MdSave, .tiDelete {
+    cursor: pointer;
+    color: #5f5f5f
+}
+
+.MdSave:hover {
+    color: #007bff;
+}
+
+.tiDelete:hover {
+    color: #980617;
+}

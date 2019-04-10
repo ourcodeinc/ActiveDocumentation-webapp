@@ -7,7 +7,7 @@ import {connect} from "react-redux";
 
 import {
     receiveExpressionStatementXML, ignoreFile, updateFilePath, updateRuleTable, updateTagTable,
-    updateWS, updateXmlFiles
+    updateWS, updateXmlFiles, updateProjectHierarchyData
 } from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from './ruleExecutor';
 
@@ -193,7 +193,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         onUpdateWS: (ws) => dispatch(updateWS(ws)),
-        onProjectHierarchy: (hierarchyData) => {},
+        onProjectHierarchy: (hierarchyData) => dispatch(updateProjectHierarchyData(hierarchyData)),
         onUpdateRuleTable: (ruleTable) => dispatch(updateRuleTable(ruleTable)),
         onUpdateTagTable: (tagTable) => dispatch(updateTagTable(tagTable)),
         onFilePathChange: (filePath) => dispatch(updateFilePath(filePath)),

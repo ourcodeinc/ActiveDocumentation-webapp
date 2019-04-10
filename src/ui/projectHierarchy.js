@@ -4,8 +4,10 @@
 
 
 import React, {Component} from 'react';
+import {MdSave} from 'react-icons/lib/md/index';
+import ReactToolTip from 'react-tooltip';
+
 import '../App.css';
-// import Utilities from '../core/utilities';
 
 
 import {SplitButton, MenuItem, Button} from 'react-bootstrap';
@@ -13,25 +15,48 @@ import {SplitButton, MenuItem, Button} from 'react-bootstrap';
 
 export class ProjectHierarchy extends Component {
 
-    constructor() {
-        super();
-        this.state = {projectHierarchyJson: {}, dropDowns: []};
+    constructor(props) {
+        super(props);
+
+        this.state = {dropDowns: [{itemData: props.projectHierarchy}]};
     }
 
     render() {
         return (
-            <div id="projectHierarchyDropDownDiv">
-                {/*{this.drawDropDowns()}*/}
+            <div style={{backgroundColor: "#fff"}} className={"projectHierarchy"}>
+                <div style={{display: "inline-block", paddingRight: "15px", marginLeft: "3px"}} data-tip={"React-tooltip"} data-for={"save"}>
+                    <MdSave size={20} className={"MdSave"}
+                             onClick={() => {
+                                 let newPath = [];
+                                 this.state.dropDowns.forEach(item => {
+                                     item.itemData["properties"]["fileName"] ?
+                                         newPath.push(item.itemData["properties"]["fileName"]) :
+                                         newPath.push(item.itemData["properties"]["name"])
+                                 });
+                                 this.props["onSubmit"](newPath.join("/"));
+                                 this.setState({dropDowns: [{itemData: this.props.projectHierarchy}]})
+                             }}/>
+
+                </div>
+                <ReactToolTip place={"top"} type={"dark"} effect={"solid"} id={"save"} delayShow={300}>
+                    <span>{"Specify folders/files on which the rule is applied on."}</span>
+                </ReactToolTip>
+                <div style={{display: "inline-block", verticalAlign: "middle"}}>
+                    {this.renderDropDowns()}
+                </div>
             </div>
         )
     }
 
-    drawDropDowns() {
+    renderDropDowns() {
         return this.state.dropDowns.map((myData, i) => {
+            let title = myData['itemData']['properties']['fileName'] ? myData['itemData']['properties']['fileName'] : myData['itemData']['properties']['name'];
             if (myData['itemData'].hasOwnProperty('children'))
                 return (
                     <div key={i} style={{float: "left"}}>
-                        <SplitButton bsStyle="default" title={myData['itemData']['properties']['name']} id="test"
+                        <SplitButton bsStyle={"default"}
+                                     title={title}
+                                     id={"hierarchy"}
                                      onSelect={(evt) => this.updateDropDownList(evt)}
                                      onClick={() => {
                                          this.updateDropDownList(myData['itemData']['properties']['canonicalPath'])
@@ -61,7 +86,7 @@ export class ProjectHierarchy extends Component {
                                     return (
                                         <MenuItem
                                             eventKey={child['properties']['canonicalPath']}
-                                            key={i}>{child['properties']['name']}</MenuItem>
+                                            key={i}>{child['properties']['fileName'] ? child['properties']['fileName'] : child['properties']['name']}</MenuItem>
                                     )
                                 })}
                         </SplitButton>
@@ -73,7 +98,7 @@ export class ProjectHierarchy extends Component {
                         <Button onClick={() => {
                             this.dropDownOnSelect(myData['data']['properties']['canonicalPath'])
                         }}>
-                            {myData['itemData']['properties']['name']}
+                            {title}
                         </Button>
                     </div>
                 );
@@ -87,19 +112,13 @@ export class ProjectHierarchy extends Component {
      * @param canonicalPath: canonicalPath of the selected item
      */
     updateDropDownList(canonicalPath) {
-
-        console.log(canonicalPath);
-
         let parent = canonicalPath.slice(0);
         parent = parent.substring(0, parent.lastIndexOf('/'));
 
         // find the node of the parent
         let indexToKeep = 0;
-        this.state.dropDowns.filter((d, i) => {
-            if (d['itemData']['properties']['canonicalPath'] === parent) {
-                indexToKeep = i;
-            }
-            return i;
+        this.state.dropDowns.forEach((d, i) => {
+            if (d['itemData']['properties']['canonicalPath'] === parent) indexToKeep = i;
         });
 
         // remove i+1 to end
@@ -108,13 +127,11 @@ export class ProjectHierarchy extends Component {
             clonedArray.splice(indexToKeep + 1, clonedArray.length - indexToKeep - 1);
 
         // find the node of the new selection among state_children of the parent
-        let newData = this.state.dropDowns[indexToKeep]['itemData']['children'].filter((d, i) => d['properties']['canonicalPath'] === canonicalPath)[0];
-        clonedArray.push({itemData: newData});
+        let newData = this.state.dropDowns[indexToKeep]['itemData']['children'].filter((d, i) => d['properties']['canonicalPath'] === canonicalPath);
+        if (newData.length > 0)
+            clonedArray.push({itemData: newData[0]});
 
         this.setState({dropDowns: clonedArray});
-
-        // do magic!
-
     }
 
 
@@ -123,17 +140,9 @@ export class ProjectHierarchy extends Component {
      * @param evt: eventKey in MenuItem
      */
     dropDownOnSelect(evt) {
-
-        console.log(evt, "select");
-
         let nameParent = evt.split(',');
-        if (nameParent.length > 1) {
+        if (nameParent.length > 1)
             this.updateDropDownList(nameParent[0], nameParent[1]);
-            // do magic!
-        }
-        else {
-            // do magic!
-        }
     }
 
 

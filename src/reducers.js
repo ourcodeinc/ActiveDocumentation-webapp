@@ -141,6 +141,12 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 message: "NEW_TAG"
             });
 
+        case "HIERARCHY_DATA":
+            return Object.assign({}, state, {
+                projectHierarchy: action["hierarchyData"],
+                message: "HIERARCHY_DATA"
+            });
+
         /*
          file handling
           */

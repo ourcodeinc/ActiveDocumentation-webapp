@@ -6,9 +6,8 @@ import React, {Component, Fragment} from 'react';
 import {connect} from "react-redux";
 import '../App.css';
 import {
-    Alert, DropdownButton, HelpBlock, MenuItem,
-    Button, FormGroup, ButtonToolbar, Label, FormControl,
-    Row, Col, Modal, Dropdown, Tabs, Tab, Badge
+    Alert, MenuItem, Button, FormGroup, ButtonToolbar, Label, FormControl,
+    Modal, Dropdown, Tabs, Tab, Badge
 } from 'react-bootstrap';
 import {RootCloseWrapper} from "react-overlays";
 import {MdEdit, MdAddBox, MdStar} from 'react-icons/lib/md/index';
@@ -42,14 +41,14 @@ import auto_complete_filled from '../resources/auto_complete_filled.png';
 import auto_complete_info_icon from '../resources/auto_complete_info_icon.png';
 import auto_complete_info from '../resources/auto_complete_info.png';
 import auto_complete_example from '../resources/auto_complete_example.png';
-import all_files from '../resources/all_files.png';
-import specific_files from'../resources/specific_files.png';
+import files_folders from '../resources/files_folders.png';
 import tags from '../resources/tags.png';
 import new_tag from '../resources/new_tag.png';
 import feedback_snippet_1 from '../resources/feedback_snippet_1.png';
 import matching_code from '../resources/matching_code.png';
 
 import {checkRulesForAll} from "../core/ruleExecutor";
+import ProjectHierarchy from "./projectHierarchy";
 
 
 class EditRuleForm extends Component {
@@ -265,9 +264,7 @@ class EditRuleForm extends Component {
                 content: <span style={{textAlign: "left"}}>
                 <p>Some rules may be applied to specific files or folders. For example, a rule may be applied on a specific package
                     <span style={{color: "#7b611d"}}> com.bankapplication.controllers</span>. The respective path of this package in the project is specified here:</p>
-                    <img style={{width: "90%", marginBottom: "20px"}} src={specific_files} className={"tutorialImage"} alt={"Specific file and folders"}/>
-                <p>If there is no restriction on files and folders on which the rule is applied, then select the other option:</p>
-                    <img style={{width: "45%"}} src={all_files} className={"tutorialImage"} alt={"All file and folders"}/>
+                    <img style={{marginBottom: "20px"}} src={files_folders} className={"tutorialImage"} alt={"Specific file and folders"}/>
                 </span>,
                 title: 'Specifying Files and Folders',
                 disableBeacon: true
@@ -302,9 +299,10 @@ class EditRuleForm extends Component {
             title: props.title,
             description: props.description,
             ruleTags: props.ruleTags,
-            folderConstraint: props.folderConstraint,
+            folderConstraint: props.folderConstraint ? props.folderConstraint : "FOLDER",
             filesFolders: props.filesFolders,
             tags: props.tags,
+            projectHierarchy: props.projectHierarchy,
 
             // new tag states
             showNewTagModal: false,
@@ -355,7 +353,7 @@ class EditRuleForm extends Component {
                 this.state.title = this.ruleI.rulePanelState.title;
                 this.state.description = this.ruleI.rulePanelState.description;
                 this.state.ruleTags = this.ruleI.rulePanelState.ruleTags;
-                this.state.folderConstraint = this.ruleI.rulePanelState.folderConstraint;
+                this.state.folderConstraint = this.ruleI.rulePanelState.folderConstraint ? this.ruleI.rulePanelState.folderConstraint : "FOLDER";
                 this.state.filesFolders = this.ruleI.rulePanelState.filesFolders;
                 this.state.tags = props.tags;
                 // updating the rule
@@ -371,7 +369,7 @@ class EditRuleForm extends Component {
             this.state.title = props.title;
             this.state.description = props.description;
             this.state.ruleTags = props.ruleTags;
-            this.state.folderConstraint = props.folderConstraint;
+            this.state.folderConstraint = props.folderConstraint ? props.folderConstraint : "FOLDER";
             this.state.filesFolders = props.filesFolders;
             this.state.tags = props.tags;
 
@@ -396,28 +394,26 @@ class EditRuleForm extends Component {
                 </div>
                 {this.renderTitleAndDescription()}
                 {this.renderTags()}
-                <div style={{paddingTop: '10px', clear: 'both'}}>
-                    {this.renderFileConstraints()}
-                    {this.renderTutorial()}
-                    {this.renderGUI()}
-                    {this.renderTextUI()}
-                    {this.renderFeedbackSnippet()}
-                    <ButtonToolbar className={"submitButtons"}>
-                        <Button bsStyle="primary"
-                                onClick={() => this.newRuleRequest ? this.onSubmitNewRule() : this.onSubmitUpdatedRule()}>
-                            Submit</Button>
-                        <Button bsStyle="default" onClick={() => this.changeEditMode()}>Cancel</Button>
-                        {!this.newRuleRequest ? null :
-                            <Button bsStyle="default"
-                                    onClick={() => {
-                                        this.setState({
-                                            activeTab: 0,
-                                            xPathQueryResult: [],
-                                            shouldUpdateSnippets: false
-                                        }, this.props.onClearForm);
-                                    }}>Clear Form</Button>}
-                    </ButtonToolbar>
-                </div>
+                {this.renderFileConstraints()}
+                {this.renderTutorial()}
+                {this.renderGUI()}
+                {this.renderTextUI()}
+                {this.renderFeedbackSnippet()}
+                <ButtonToolbar className={"submitButtons"}>
+                    <Button bsStyle="primary"
+                            onClick={() => this.newRuleRequest ? this.onSubmitNewRule() : this.onSubmitUpdatedRule()}>
+                        Submit</Button>
+                    <Button bsStyle="default" onClick={() => this.changeEditMode()}>Cancel</Button>
+                    {!this.newRuleRequest ? null :
+                        <Button bsStyle="default"
+                                onClick={() => {
+                                    this.setState({
+                                        activeTab: 0,
+                                        xPathQueryResult: [],
+                                        shouldUpdateSnippets: false
+                                    }, this.props.onClearForm);
+                                }}>Clear Form</Button>}
+                </ButtonToolbar>
 
                 {this.renderNewTagModalDialog()}
                 {this.renderErrorInSubmission()}
@@ -496,12 +492,6 @@ class EditRuleForm extends Component {
                             this.setState({tags}, this.onEditNewRuleForm)
                         }
                     }}/>
-                <FaQuestionCircle size={20} className={"faQuestionCircle"}
-                                  onClick={() => this.setState({
-                                      tourShouldRun: true,
-                                      isTourGuide: false,
-                                      tourStepIndex: this.stepNames.TAGS
-                                  })}/>
             </div>
         );
     }
@@ -512,86 +502,41 @@ class EditRuleForm extends Component {
      */
     renderFileConstraints() {
         return (
-            <div id={`file_constraint_div_${this.ruleIndex}`}>
-                <FormGroup
-                    validationState={(this.state.folderConstraint === "" || (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0)) ? "error" : "success"}>
-                    <div>
-                        <HelpBlock>
-                            <ButtonToolbar>
-                                <DropdownButton
-                                    title={this.state.folderConstraint === "" ? "Select Restrictions on Files/Folders" : this.state.folderConstraint === "NONE" ? "Rule must be applied on ALL Files/Folders" : "Rule must be applied on Specific Files/Folders"}
-                                    style={{color: (this.state.folderConstraint === "" || (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0)) ? "#a94442" : "#3c763d"}}
-                                    id={"drop_down"}>
-                                    <MenuItem eventKey={"FOLDER"} onSelect={(evt) => {
-                                        this.setState({folderConstraint: evt}, this.onEditNewRuleForm);
-                                    }}>Rule must be applied on SPECIFIC Files/Folders
-                                    </MenuItem>
-                                    <MenuItem eventKey={"NONE"} onSelect={(evt) => {
-                                        this.setState({folderConstraint: evt, filesFolders: []}, this.onEditNewRuleForm)
-                                    }}>Rule must be applied on ALL Files/Folders
-                                    </MenuItem>
-                                </DropdownButton>
-                                <Button disabled={this.state.folderConstraint !== "FOLDER"}
-                                        onClick={() => {
-                                            const filesFolders = this.state.filesFolders;
-                                            filesFolders.push("");
-                                            this.setState({filesFolders}, this.onEditNewRuleForm);
-                                        }}
-                                >Add files/folders
-                                </Button>
+            <div id={`file_constraint_div_${this.ruleIndex}`} style={{margin: "10px 0 10px 0"}}>
+                {this.state.filesFolders.map((d, i) => {
+                    return (
+                        <div key={i} style={{backgroundColor: "#fff"}}>
+                            <div style={{display: "inline-block", paddingRight: "15px"}}>
+                                <TiDelete size={25}
+                                          className={"tiDelete"}
+                                          onClick={() => {
+                                              const filesFolders = this.state.filesFolders;
+                                              filesFolders.splice(i, 1);
+                                              let xPathQueryResult = this.updateFeedbackSnippet(this.state.quantifierXPath, this.state.constraintXPath,
+                                                  this.state.folderConstraint, filesFolders);
+                                              this.setState({filesFolders, xPathQueryResult}, this.onEditNewRuleForm)
+                                          }}/>
+                            </div>
+                            <div style={{display: "inline-block", verticalAlign: "middle", color: "#3c763d"}}>
+                                {this.state.filesFolders[i]}
+                            </div>
+                        </div>
+                    )
+                })}
 
-                                <FaQuestionCircle size={20} className={"faQuestionCircle"}
-                                                  onClick={() => this.setState({
-                                                      tourShouldRun: true,
-                                                      isTourGuide: false,
-                                                      tourStepIndex: this.stepNames.FILE_FOLDER,
-                                                  })}/>
-                            </ButtonToolbar>
-
-                        </HelpBlock>
-                    </div>
-                </FormGroup>
-                <div>
-                    {this.state.filesFolders.map((d, i) => {
-                        return (
-                            <Row key={i} style={{paddingBottom: "5px"}}>
-                                <Col sm={11} md={10}>
-                                    <FormGroup
-                                        validationState={this.state.filesFolders[i] === "" ? "error" : "success"}>
-                                        <FormControl id={"filesFolders_textarea_" + i} type="text"
-                                                     autoComplete={"off"}
-                                                     placeholder="relative File/Folder path"
-                                                     value={this.state.filesFolders[i]}
-                                                     onChange={(e) => {
-                                                         const filesFolders = this.state.filesFolders;
-                                                         filesFolders[i] = e.target.value;
-                                                         this.setState({filesFolders});
-                                                     }}
-                                                     onBlur={() => {
-                                                         let xPathQueryResult = this.updateFeedbackSnippet(this.state.quantifierXPath, this.state.constraintXPath,
-                                                             this.state.folderConstraint, this.state.filesFolders);
-                                                         this.setState({xPathQueryResult});
-                                                         this.onEditNewRuleForm()
-                                                     }}/>
-                                    </FormGroup>
-                                </Col>
-                                <Col sm={1} md={1} style={{paddingTop: "5px"}}>
-                                    <TiDelete size={25}
-                                              className={"tiDelete"}
-                                              onClick={() => {
-                                                  const filesFolders = this.state.filesFolders;
-                                                  filesFolders.splice(i, 1);
-                                                  let xPathQueryResult = this.updateFeedbackSnippet(this.state.quantifierXPath, this.state.constraintXPath,
-                                                      this.state.folderConstraint, filesFolders);
-                                                  this.setState({filesFolders, xPathQueryResult}, this.onEditNewRuleForm)
-                                              }}/>
-                                </Col>
-                            </Row>
-                        )
-                    })}
+                <div
+                    className={this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0 ? "has-error" : ""}>
+                    <ProjectHierarchy projectHierarchy={this.state.projectHierarchy}
+                                      onSubmit={(newPath) => {
+                                          const filesFolders = this.state.filesFolders;
+                                          filesFolders.push(newPath);
+                                          let xPathQueryResult = this.updateFeedbackSnippet(this.state.quantifierXPath, this.state.constraintXPath,
+                                              this.state.folderConstraint, filesFolders);
+                                          this.setState({filesFolders, xPathQueryResult}, this.onEditNewRuleForm)
+                                      }}/>
                 </div>
             </div>
-        )
+        );
     }
 
 
@@ -1014,6 +959,10 @@ class EditRuleForm extends Component {
             this.updateFeedbackSnippet(this.state.quantifierXPath, this.state.constraintXPath, this.state.folderConstraint, this.state.filesFolders);
         }
 
+        if (nextProps.message === "PROJECT_HIERARCHY") {
+            this.setState({projectHierarchy: nextProps.projectHierarchy})
+        }
+
         else {
             this.ruleIndex = nextProps.ruleIndex;
             // existing rule
@@ -1033,7 +982,7 @@ class EditRuleForm extends Component {
                     title: this.ruleI.rulePanelState.title,
                     description: this.ruleI.rulePanelState.description,
                     ruleTags: this.ruleI.rulePanelState.ruleTags,
-                    folderConstraint: this.ruleI.rulePanelState.folderConstraint,
+                    folderConstraint: this.ruleI.rulePanelState.folderConstraint ? this.ruleI.rulePanelState.folderConstraint : "FOLDER",
                     filesFolders: this.ruleI.rulePanelState.filesFolders,
                     tags: this.ruleI.rulePanelState.tags,
 
@@ -1052,13 +1001,13 @@ class EditRuleForm extends Component {
             // new rule
             else {
                 let xPathQueryResult = this.updateFeedbackSnippet(nextProps.quantifierXPath, nextProps.constraintXPath,
-                    nextProps.folderConstraint, nextProps.filesFolders);
+                    nextProps.folderConstraint ? nextProps.folderConstraint : "FOLDER", nextProps.filesFolders);
 
                 this.setState({
                     title: nextProps.title,
                     description: nextProps.description,
                     ruleTags: nextProps.ruleTags,
-                    folderConstraint: nextProps.folderConstraint,
+                    folderConstraint: nextProps.folderConstraint ? nextProps.folderConstraint : "FOLDER",
                     filesFolders: nextProps.filesFolders,
                     tags: nextProps.tags,
 
@@ -1334,6 +1283,7 @@ class EditRuleForm extends Component {
             ruleInArray = checkRulesForAll(this.props.xmlFiles, ruleInArray);
             return ruleInArray[0].xPathQueryResult;
         } catch (e) {
+            console.log(e);
             console.log("failed to evaluate the rule.");
             return [];
         }
@@ -1380,8 +1330,7 @@ class EditRuleForm extends Component {
         if (rule.ruleType.constraint === "" || (rule.ruleType.constraint === "FOLDER" && rule.ruleType.checkFor.length === 0)) {
             this.setState({
                 errorTitle: "Error in Submitting the updated Rule",
-                errorMessage: "Make sure to specify the folder 'restriction'. " +
-                "If the constraint is set to 'Specific Files/Folders', at least one file/folder must be specified.",
+                errorMessage: "Make sure to specify the folders/files on which the rule is applied on.",
                 showError: true
             });
             return;
@@ -1453,8 +1402,7 @@ class EditRuleForm extends Component {
         if (rule.ruleType.constraint === "" || (rule.ruleType.constraint === "FOLDER" && rule.ruleType.checkFor.length === 0)) {
             this.setState({
                 errorTitle: "Error in Submitting the new Rule",
-                errorMessage: "Make sure to specify the folder 'restriction'. " +
-                "If the constraint is set to 'Specific Files/Folders', at least one file/folder must be specified.",
+                errorMessage: "Make sure to specify the folders/files on which the rule is applied on.",
                 showError: true
             });
             return;
@@ -1531,6 +1479,7 @@ function mapStateToProps(state) {
         tags: state.tagTable,
         xmlFiles: state.xmlFiles,
         ws: state.ws,
+        projectHierarchy: state.projectHierarchy,
 
         // for new rule
         title: state.newOrEditRule.title,
@@ -1597,9 +1546,12 @@ class CustomDropDown extends Component {
                 <Dropdown id={this.state.id} open={this.state.open}
                           onToggle={() => this.setState({open: !this.state.open})}>
                     <CustomToggle bsRole="toggle">
-                        <span className={"faTag"}>Assign Tags
+                        <span className={"faTag"} data-tip={"React-tooltip"} data-for={"tags"}>Assign Tags
                             <FaTag size={25} className={"faTag"}/>
                         </span>
+                        <ReactToolTip place={"top"} type={"dark"} effect={"solid"} id={"tags"} delayShow={300}>
+                            <span>{"Use tags to organize rules."}</span>
+                        </ReactToolTip>
                     </CustomToggle>
                     <CustomMenu bsRole="menu">
                         {this.state.menuItems.map((el, i) =>

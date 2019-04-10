@@ -272,6 +272,7 @@ export const initial_state = {
     ruleTable: [],
     tagTable: [],
     xmlFiles: [],
+    projectHierarchy: {},
     hash: ["index"],
     ignoreFile: false,
     displayEditRuleTutorial: true, // display the tour guide for edit rule

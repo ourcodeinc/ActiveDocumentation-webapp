@@ -27,6 +27,11 @@ export const updateRule = (updatedRule) => {
     return {type: "UPDATE_RULE", updatedRule: updatedRule};
 };
 
+export const updateProjectHierarchyData = (hierarchyData) => {
+    return {type: "HIERARCHY_DATA", hierarchyData: hierarchyData};
+};
+
+
 export const ignoreFile = (shouldIgnore) => {
     return {type: "IGNORE_FILE", shouldIgnore: shouldIgnore};
 };
