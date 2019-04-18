@@ -23,8 +23,12 @@ class GenerateXpath {
         this.traverseNode(this.tree, false);
         while (this.XPathQ.indexOf("[]") !== -1)
             this.XPathQ = this.XPathQ.replace("[]","");
+        while (this.XPathQ.indexOf("][") !== -1)
+            this.XPathQ = this.XPathQ.replace("]["," and ");
         while (this.XPathC.indexOf("[]") !== -1)
             this.XPathC = this.XPathC.replace("[]","");
+        while (this.XPathC.indexOf("][") !== -1)
+            this.XPathC = this.XPathC.replace("]["," and ");
     }
 
     /**

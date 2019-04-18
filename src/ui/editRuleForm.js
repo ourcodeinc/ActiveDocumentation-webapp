@@ -10,9 +10,19 @@ import {
     Modal, Dropdown, Tabs, Tab, Badge
 } from 'react-bootstrap';
 import {RootCloseWrapper} from "react-overlays";
-import {MdEdit, MdAddBox, MdStar} from 'react-icons/lib/md/index';
-import {TiDelete, TiArrowMaximise} from "react-icons/lib/ti/index";
-import {FaQuestionCircle, FaTag, FaMinusCircle, FaTimesCircle, FaCheckSquareO} from "react-icons/lib/fa/index";
+import MdEdit from 'react-icons/lib/md/edit';
+import MdAddBox from 'react-icons/lib/md/add-box';
+import MdStar from 'react-icons/lib/md/star';
+import TiDelete from 'react-icons/lib/ti/delete';
+import TiArrowMaximise from 'react-icons/lib/ti/arrow-maximise';
+import TiPinOutline from 'react-icons/lib/ti/pin-outline';
+import GoAlert from 'react-icons/lib/go/alert';
+import GoPin from 'react-icons/lib/go/pin';
+import FaTag from 'react-icons/lib/fa/tag';
+import FaMinusCircle from 'react-icons/lib/fa/minus-circle';
+import FaTimesCircle from 'react-icons/lib/fa/times-circle';
+import FaCheckSquareO from 'react-icons/lib/fa/check-square-o';
+import FaQuestionCircle from 'react-icons/lib/fa/question-circle'
 import marked from "marked";
 import Joyride, {ACTIONS, EVENTS} from 'react-joyride';
 import ReactToolTip from 'react-tooltip';
@@ -318,6 +328,8 @@ class EditRuleForm extends Component {
             guiError: true,
             isFilledGUI: false,
 
+            pinnedDynamicGuide: false,
+
             // snippet feedback
             activeTab: 0,
             xPathQueryResult: [],
@@ -523,18 +535,23 @@ class EditRuleForm extends Component {
                         </div>
                     )
                 })}
-
-                <div
-                    className={this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0 ? "has-error" : ""}>
-                    <ProjectHierarchy projectHierarchy={this.state.projectHierarchy}
-                                      onSubmit={(newPath) => {
-                                          const filesFolders = this.state.filesFolders;
-                                          filesFolders.push(newPath);
-                                          let xPathQueryResult = this.updateFeedbackSnippet(this.state.quantifierXPath, this.state.constraintXPath,
-                                              this.state.folderConstraint, filesFolders);
-                                          this.setState({filesFolders, xPathQueryResult}, this.onEditNewRuleForm)
-                                      }}/>
-                </div>
+                {Object.entries(this.state.projectHierarchy).length !== 0 ? (
+                    <div className={"projectHierarchy" + (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0 ? " has-error" : "")}>
+                        <ProjectHierarchy projectHierarchy={this.state.projectHierarchy}
+                                          onSubmit={(newPath) => {
+                                              const filesFolders = this.state.filesFolders;
+                                              filesFolders.push(newPath);
+                                              let xPathQueryResult = this.updateFeedbackSnippet(this.state.quantifierXPath, this.state.constraintXPath,
+                                                  this.state.folderConstraint, filesFolders);
+                                              this.setState({filesFolders, xPathQueryResult}, this.onEditNewRuleForm)
+                                          }}/>
+                    </div>
+                ) : (
+                    <div style={{color: "#a94442"}}>
+                        <GoAlert size={25}/>
+                        <strong>{"The plugin is not connected to the IDE."}</strong>
+                    </div>
+                )}
             </div>
         );
     }
@@ -547,11 +564,11 @@ class EditRuleForm extends Component {
     renderTutorial() {
 
         let stepOneStatus = !this.state.isFilledGUI ? "has-error" : "";
-        let stepTwoStatus = !this.state.isFilledGUI ? "inactive" : this.state.guiError ? "has-error" : "";
+        let stepTwoStatus = !this.state.isFilledGUI ? "has-error" : this.state.guiError ? "has-error" : "";
         let stepThreeStatus = !this.state.isFilledGUI || this.state.guiError ? "inactive" : "";
 
         return (
-            <div className={"tutorial"}>
+            <div className={"tutorial" + (this.state.pinnedDynamicGuide ? "" : " sticky")}>
                 <div className={"tutorialArrow " + stepOneStatus}>&#x25B6;</div>
                 <div className={"tutorialText " + stepOneStatus}>
                     <strong>Step 1:</strong> Write the code you want to match in code using the Graphical Editor.
@@ -587,6 +604,15 @@ class EditRuleForm extends Component {
                                           isTourGuide: false,
                                           tourStepIndex: this.stepNames.TEXT_UI
                                       })}/>
+                </div>
+                <div style={{float: "right"}}>
+                    {this.state.pinnedDynamicGuide ?
+                        <GoPin className={"tutorialPin"} size={20}
+                               onClick={() => this.setState({pinnedDynamicGuide: false})}/>
+                        :
+                        <TiPinOutline className={"tutorialPin"} size={20}
+                                      onClick={() => this.setState({pinnedDynamicGuide: true})}/>
+                    }
                 </div>
             </div>
         )
@@ -1103,8 +1129,17 @@ class EditRuleForm extends Component {
             receivedMessages.splice(matchedIndices.received[i], 1);
 
         // at least one message is responded
-        if (matchedIndices.sent.length > 0)
+        if (matchedIndices.sent.length > 0) {
+            while (quantifierXPath.indexOf("[]") !== -1)
+                quantifierXPath = quantifierXPath.replace("[]","");
+            while (quantifierXPath.indexOf("][") !== -1)
+                quantifierXPath = quantifierXPath.replace("]["," and ");
+            while (constraintXPath.indexOf("[]") !== -1)
+                constraintXPath = constraintXPath.replace("[]","");
+            while (constraintXPath.indexOf("][") !== -1)
+                constraintXPath = constraintXPath.replace("]["," and ");
             this.props.onMatchMessages(this.ruleIndex, sentMessages, receivedMessages, quantifierXPath, constraintXPath);
+        }
     }
 
 
@@ -1136,7 +1171,7 @@ class EditRuleForm extends Component {
         let validNodes = xml.evaluate(exprValidation, xml, nsResolver, XPathResult.ANY_TYPE, null);
         let resultValidNode = validNodes.iterateNext();
         if (!resultValidNode) {
-            console.log("error");
+            console.log("error: XPath is not valid.");
             return "";
         }
 

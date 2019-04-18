@@ -23,7 +23,7 @@ export class ProjectHierarchy extends Component {
 
     render() {
         return (
-            <div style={{backgroundColor: "#fff"}} className={"projectHierarchy"}>
+            <div>
                 <div style={{display: "inline-block", paddingRight: "15px", marginLeft: "3px"}} data-tip={"React-tooltip"} data-for={"save"}>
                     <MdSave size={20} className={"MdSave"}
                              onClick={() => {

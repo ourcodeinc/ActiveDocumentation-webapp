@@ -8,7 +8,7 @@ import '../App.css';
 import RulePanel from './rulePanel';
 import {connect} from "react-redux";
 import {Button} from "react-bootstrap";
-import {MdPlaylistAdd} from "react-icons/lib/md/index";
+import MdPlaylistAdd from 'react-icons/lib/md/playlist-add';
 import {changeEditMode} from "../actions";
 
 class RuleTable extends Component {
@@ -79,7 +79,7 @@ function mapStateToProps(state) {
 
     else if (state.hash[0] === "violatedRules")
         props.indicesOfRulesToDisplay = state.ruleTable
-            .filter(d => d['xPathQueryResult'].map(dd => dd['data'].violated).reduce((a, b) => a + b) !== 0)
+            .filter(d => d['xPathQueryResult'].map(dd => dd['data'].violated).reduce((a, b) => { return a + b }, 0) !== 0)
             .map(d => d.index);
 
     return props;

@@ -6,7 +6,6 @@
     "ajv": "^6.10.0",
     "antlr4": "^4.7.2",
     "bootstrap": "^4.3.1",
-    "corenlp": "^1.5.1",
     "diff": "^4.0.1",
     "marked": "^0.6.2",
     "monaco-editor": "^0.15.6",
@@ -19,7 +18,7 @@
     "react-joyride": "^2.0.5",
     "react-overlays": "^0.8.3",
     "react-redux": "^5.1.1",
-    "react-scripts": "1.1.4",
+    "react-scripts": "2.0.3",
     "react-tooltip": "^3.10.0",
     "redux": "^4.0.1",
     "wink-lemmatizer": "^2.0.0",
@@ -29,11 +28,12 @@
     "start": "PORT=9010 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "coreNLP": "cd node_modules/corenlp/corenlp/stanford-corenlp-full-2018-02-27;java -mx4g -cp \"*\" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 3000 -timeout 15000",
-    "dev": "concurrently --kill-others \"npm run start\" \"npm run coreNLP\""
+    "eject": "react-scripts eject"
   },
-  "devDependencies": {
-    "concurrently": "^4.1.0"
-  }
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

@@ -9,6 +9,7 @@ import Utilities from '../core/utilities';
 
 import {FormControl} from 'react-bootstrap';
 import {connect} from "react-redux";
+import GoAlert from 'react-icons/lib/go/alert';
 import {updateTagTable} from "../actions";
 
 
@@ -17,6 +18,9 @@ export class HeaderBar extends Component {
     render() {
         return (
             <div style={{paddingBottom: "30px"}} id="headerBar">
+                {this.props.ws.readyState === 1 ? null : (
+                    <div className={"webSocketError"}><GoAlert size={25}/>The tool is not connected to the IDE. Open the ActiveDocumentation view in IntelliJ IDE. Then refresh the page.</div>
+                )}
                 <div className="headerDiv">
                     {this.renderHeader()}
                 </div>
