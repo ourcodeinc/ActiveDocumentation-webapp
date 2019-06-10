@@ -1632,6 +1632,7 @@ class CustomToggle extends Component {
     }
 
     render() {
+        // eslint-disable-next-line
         return (<a href="" onClick={this.handleClick}>{this.props.children}</a>);
     }
 }
