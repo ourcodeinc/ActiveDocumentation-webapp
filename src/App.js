@@ -15,6 +15,7 @@ import TableOfContent from './ui/tableOfContent';
 import RuleTable from './ui/ruleTable';
 import NavBar from './ui/navBar';
 import HeaderBar from './ui/headerBar';
+import MinedRules from "./ui/minedRules";
 // import ProjectHierarchy from './ui/projectHierarchy';
 
 class App extends Component {
@@ -77,12 +78,12 @@ class App extends Component {
                          }>
                         <RuleTable/>
                     </div>
-                    {/*<div id={"projectHierarchy"}*/}
-                         {/*className={*/}
-                             {/*(['hierarchy'].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"*/}
-                         {/*}>*/}
-                        {/*<ProjectHierarchy/>*/}
-                    {/*</div>*/}
+                    <div id={"minedRules"}
+                         className={
+                             (['minedRules'].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
+                         }>
+                        <MinedRules/>
+                    </div>
                     <div style={{width: "100%", height: "100px"}}/>
                 </div>
             </div>

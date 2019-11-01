@@ -33,7 +33,7 @@ export class NavBar extends Component {
                     <Nav
                         onSelect={key => {
                             window.location.hash = (key === 1) ? "#/index" : (key === 2) ? "#/rules"
-                                : (key === 3) ? "#/violatedRules" : (key === 4) ? "#/genRule" : "#/index"
+                                : (key === 3) ? "#/violatedRules" : (key === 4) ? "#/minedRules" : "#/index"
                         }}>
                         <NavItem eventKey={1}>
                             Table of Contents
@@ -44,9 +44,9 @@ export class NavBar extends Component {
                         <NavItem eventKey={3}>
                             Violated Rules
                         </NavItem>
-                        {/*<NavItem eventKey={4}>*/}
-                            {/*Generate Rules*/}
-                        {/*</NavItem>*/}
+                        <NavItem eventKey={4}>
+                            Mined Design Rules
+                        </NavItem>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

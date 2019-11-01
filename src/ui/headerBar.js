@@ -81,6 +81,12 @@ export class HeaderBar extends Component {
                             className="text-24 important">{this.props.content.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
                     </div>
                 );
+            case 'minedRules':
+                return (
+                    <div>
+                        <span className="text-16 primary">Mined Design Rules</span><br/>
+                    </div>
+                );
             default:
                 return (
                     <div>
