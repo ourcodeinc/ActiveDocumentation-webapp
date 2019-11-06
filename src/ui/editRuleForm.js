@@ -1114,8 +1114,6 @@ class EditRuleForm extends Component {
                     quantifierXPath = quantifierXPath.replace(regQ, resultXPath);
                     let regC = new RegExp(sentMessages[j]["lookFor"], "g");
                     constraintXPath = constraintXPath.replace(regC, resultXPath);
-                    console.log(regQ,quantifierXPath);
-                    console.log(regC,constraintXPath);
 
                     matchedIndices.sent.push(index);
                     matchedIndices.received.push(j);
