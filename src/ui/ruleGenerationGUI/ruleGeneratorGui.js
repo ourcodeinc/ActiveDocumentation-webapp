@@ -217,7 +217,7 @@ class RuleGeneratorGui extends Component {
      */
     receiveStateData = () => {
         let trees = this.buildTreeForProcessing();
-        if (!trees) {
+        if (!trees || Object.keys(trees.quantifierTree).length === 0 || Object.keys(trees.constraintTree).length === 0) {
             if (Object.keys(this.state.guiElements).filter(id => this.state.guiElements[id].activeElement).length === 0)
                 this.canBeStarredIDs = [];
             this.props["onFilledGUI"](Object.keys(this.state.guiElements).filter(id => this.state.guiElements[id].activeElement).length !== 0);
