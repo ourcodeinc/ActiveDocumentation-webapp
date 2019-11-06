@@ -1109,10 +1109,13 @@ class EditRuleForm extends Component {
                 if (+sentMessages[index]["messageID"] === +receivedMessages[j]["messageID"]) {
                     let resultXPath = this.traverseReceivedXml(receivedMessages[j]["xmlText"], sentMessages[index]);
                     // replace all occurrences of textAndXPath.originalText
-                    let copiedQXPath = quantifierXPath.split(sentMessages[j]["lookFor"]);
-                    quantifierXPath = copiedQXPath.join(resultXPath);
-                    let copiedCXPath = constraintXPath.split(sentMessages[j]["lookFor"]);
-                    constraintXPath = copiedCXPath.join(resultXPath);
+
+                    let regQ = new RegExp(sentMessages[j]["lookFor"], "g");
+                    quantifierXPath = quantifierXPath.replace(regQ, resultXPath);
+                    let regC = new RegExp(sentMessages[j]["lookFor"], "g");
+                    constraintXPath = constraintXPath.replace(regC, resultXPath);
+                    console.log(regQ,quantifierXPath);
+                    console.log(regC,constraintXPath);
 
                     matchedIndices.sent.push(index);
                     matchedIndices.received.push(j);

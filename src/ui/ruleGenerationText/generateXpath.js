@@ -909,7 +909,7 @@ class GenerateXpath {
         store.dispatch(sendExpressionStatementXML({
             "codeText": code,
             "messageID": messageID,
-            "lookFor": "'" + messageID + text + "'",
+            "lookFor": messageID + text,
             "query": query,
             "cuttingLength": cuttingLength
         }));
