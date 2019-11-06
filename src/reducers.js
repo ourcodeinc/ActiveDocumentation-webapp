@@ -336,8 +336,6 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             });
 
         case "MATCHED_MESSAGES":
-            console.log(action["quantifierXPath"]);
-            console.log(action["constraintXPath"]);
             if (action["ruleIndex"] !== -1) {
                 let rules = JSON.parse(JSON.stringify(state.ruleTable));
                 rules = rules.map(d => {
@@ -594,8 +592,6 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 });
 
         case "UPDATE_XPATHS":
-            console.log(action["quantifierXPath"]);
-            console.log(action["constraintXPath"]);
             if (action["ruleIndex"] !== -1) {
                 let rules = JSON.parse(JSON.stringify(state.ruleTable));
                 rules = rules.map(d => {

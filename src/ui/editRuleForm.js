@@ -1319,7 +1319,7 @@ class EditRuleForm extends Component {
             ruleInArray = checkRulesForAll(this.props.xmlFiles, ruleInArray);
             return ruleInArray[0].xPathQueryResult;
         } catch (e) {
-            // console.log(e);
+            console.log(e);
             console.log("failed to evaluate the rule.");
             return [];
         }
