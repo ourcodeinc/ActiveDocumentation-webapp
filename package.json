@@ -22,7 +22,10 @@
     "react-tooltip": "^3.10.0",
     "redux": "^4.0.1",
     "wink-lemmatizer": "^2.0.0",
-    "wink-pos-tagger": "^1.5.0"
+    "wink-pos-tagger": "^1.5.0",
+    "fs": "^0.0.1-security",
+    "elementtree": "^0.1.7",
+    "path": "^0.12.7"
   },
   "scripts": {
     "start": "PORT=9010 react-scripts start",
