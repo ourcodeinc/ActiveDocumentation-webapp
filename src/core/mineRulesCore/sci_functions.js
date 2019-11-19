@@ -154,7 +154,7 @@ export const findConstructors = (subCL, attributeList, id_start, queryMap) => {
                         let command = "src:class[src:block/src:constructor[(src:parameter_list/src:parameter/src:decl[src:name[text()=\""
                             + memVarSet[0] + "\"]]";
                         for (let x = 1; x < memVarSet.length; x++){
-                            command = command + " and " + "src:class[src:block/src:constructor[(src:parameter_list/src:parameter/src:decl[src:name[text()=\""
+                            command = command + " and src:class[src:block/src:constructor[(src:parameter_list/src:parameter/src:decl[src:name[text()=\""
                                 + memVarSet[x] + "\"]]";
                         }
 
@@ -462,7 +462,7 @@ export const findMemberVars = (subCL, attributeList, id_start, queryMap) => {
                     if(!attributeList.has(name)){
 
                         let command = "src:class[descendant-or-self::src:decl_stmt/src:decl[src:type['"
-                            + memberVarType.text + "']]]" + " and src:name[text()=\""
+                            + memberVarType.text + "']]] and src:name[text()=\""
                             + memberVarName.text + "\"])]]";
                         //console.log(command);
 
@@ -783,7 +783,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
             fncTypes.sort();
             for (let m = 0; m < fncTypes.length; m++){
 
-                let allFncParamTypes = allFncParamTypes
+                allFncParamTypes = allFncParamTypes
                     + "parameter of type \""
                     + fncTypes[m] + "\"";
 
@@ -901,7 +901,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
                 if(!attributeList.has(name)){
 
                     let command = "src:class[src:block/src:function[(src:type['" + returnType.text
-                        + "'] and " + "src:name[text()=\"" + fncName.text + "\"])]]";
+                        + "'] and src:name[text()=\"" + fncName.text + "\"])]]";
 
                     attributeList.set(name, id_start.id);
                     queryMap.set(command, id_start.id);
@@ -1546,7 +1546,7 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
             fncTypes.sort();
             for (let m = 0; m < fncTypes.length; m++){
 
-                let allFncParamTypes = allFncParamTypes
+                allFncParamTypes = allFncParamTypes
                     + "parameter of type \""
                     + fncTypes[m] + "\"";
 

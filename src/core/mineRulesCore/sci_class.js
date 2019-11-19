@@ -261,7 +261,7 @@ export const findParentChildRelations = (allAttributes, classGroupings,
     let classTree;
 
     // Empty the analysisFile first in case anything has been written before
-    fileN = analysisFileName + "_subClassOf" + parentClass + ".txt";
+    let fileN = analysisFileName + "_subClassOf" + parentClass + ".txt";
     let d = "";
     fs.writeFile(fileN, d, (err) => {
         // In case of a error throw err.
@@ -295,6 +295,11 @@ export const findParentChildRelations = (allAttributes, classGroupings,
         let attributes = [];
         let subCL = classTree.findall('.//class');
         let childName;
+
+        let removeDuplicateMethod = (elem, pos) => {
+            return attributes.indexOf(elem) === pos;
+        };
+
         for(let j = 0; j < subCL.length; j++){
             // Figure out what the child class's name is
             let chName = subCL[j].find('name');
@@ -322,7 +327,6 @@ export const findParentChildRelations = (allAttributes, classGroupings,
 
                 if(parentInfo.get(parentClass) !== undefined){
 
-                    let parentFncsOverridden = new Array((parentInfo.get(parentClass).length)).fill(true);
                     // This will contain a list of functions that are present in both
                     // the parent class and the child class.
                     let matchingFunctions;
@@ -391,9 +395,7 @@ export const findParentChildRelations = (allAttributes, classGroupings,
                 // so we don't want it to output newlines when attributes is empty
                 if(attributes.length > 0){
                     // Remove duplicate elements from attributes
-                    let finalList = attributes.filter(function(elem, pos) {
-                        return attributes.indexOf(elem) === pos;
-                    });
+                    let finalList = attributes.filter(removeDuplicateMethod);
 
                     // By default the JavaScript sort() method will sort values as strings
                     // in alphabetical ascending order; if numbers are sorted as strings,
@@ -428,7 +430,7 @@ export const findParentChildRelations = (allAttributes, classGroupings,
     }// End of outermost for loop
 
     // Record that this file was used to contribute to this database
-    let fileN = analysisFileName + "_subClassOf" + parentClass + ".txt";
+    fileN = analysisFileName + "_subClassOf" + parentClass + ".txt";
     let newStuff = listOfFiles.join("\n");
 
     fileAnalysisMap.set(fileN, newStuff);
