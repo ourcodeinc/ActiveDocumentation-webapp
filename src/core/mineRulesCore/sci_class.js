@@ -211,8 +211,9 @@ export const addParentChildRelations = (id_start, classGroupings, attributeList,
                             // Check if this attribute has been seen globally
                             if(!attributeList.has(name)){
 
-                                // QUERY NOT YET KNOWN
-                                let command = "stand in command for attribute " + name;
+                                let command = "//src:function[src:annotation/src:name/text()=\"Override\""
+                                    + "and src:name/text()=\"" + matchingFunctions[m]
+                                    + "\"]";
                                 //console.log(command);
 
                                 attributeList.set(name, id_start.id);
