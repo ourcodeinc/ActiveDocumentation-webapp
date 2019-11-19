@@ -57,25 +57,19 @@ in this process.
 
  */
 
+import {addChildren, addParentChildRelations, findParentChildRelations, makePairsList} from "./mineRulesCore/sci_class";
 
-import fs from 'fs';
-import path from 'path';
-
-let et = require('elementtree'); // todo import?
-
-import {
-    addChildren,
-    addParentChildRelations, findParentChildRelations, makePairsList,
-    outputFileAnalysisData, outputMetaData
-} from "./mineRulesCore/sci_class";
+import et from 'elementtree';
+import Utilities from "./utilities";
 
 /**
  *
  * @param xmlFiles is an array of objects: {filePath:"", xml: ""}
+ * @param ws
  */
-export const mineRulesFromXmlFiles = (xmlFiles) => {
+export const mineRulesFromXmlFiles = (xmlFiles, ws) => {
 
-    let analysisFileName = "AE_crowdcode";
+    let analysisFileName = "AttributeEncoding";
 
     let allAttributes = new Map();
 
@@ -95,60 +89,30 @@ export const mineRulesFromXmlFiles = (xmlFiles) => {
     // Used to keep track of what xml files were used to create what databases
     let fileAnalysisMap = new Map();
 
-    // This class is used later to group info about parent classes
-    class classNode {
-        constructor() {
-            this.name = "NOT VALID";
-            this.pathToFile = "NOT VALID";
-            this.totalChildren = 0;
-            this.children = [];
-            this.functions = [];
-        }
+    // To check if a class is a parentClass we can simply check to see if
+    // childParent[parentName] === undefined; if so, then it is not a parent;
+    // otherwise, it is a parent name.
 
-        // Adding a method to the constructor
-        printClass() {
-            console.log(this.name);
-            console.log(this.pathToFile);
-            console.log(this.totalChildren);
-            console.log(this.children);
-            console.log(this.functions);
-        }
-    }
+    // The basic idea of the algorithm is to extract all the attributes from a
+    // single base class, and then look for those attributes in a set of classes
+    // that are related to the base class in some way. Only attributes found in
+    // both the base class and the related (peripheral) classes are output to
+    // the database that is fed to the FP Growth algorithm.
 
-// To check if a class is a parentClass we can simply check to see if
-// childParent[parentName] === undefined; if so, then it is not a parent;
-// otherwise, it is a parent name.
+    // Our first step is to make a list of all the parent classes in the
+    // code base; to do this, we need to go through every srcML fle
+    // in the directory and find the names of all the parentClasses.
 
-// The basic idea of the algorithm is to extract all the attributes from a
-// single base class, and then look for those attributes in a set of classes
-// that are related to the base class in some way. Only attributes found in
-// both the base class and the related (peripheral) classes are output to
-// the database that is fed to the FP Growth algorithm.
+    // Path to directory with xml files we wish to iterate through
+    // Currenlty, the directory is the directory main.js is running in
 
-// Our first step is to make a list of all the parent classes in the
-// code base; to do this, we need to go through every srcML fle
-// in the directory and find the names of all the parentClasses.
 
-// Path to directory with xml files we wish to iterate through
-// Currenlty, the directory is the directory main.js is running in
-    let directoryPath = path.join(__dirname);
-    // Make a list of xml files
-    let fileList = [];
-    fs.readdirSync(directoryPath).forEach(file =>{
-        if(file.substring(file.indexOf('.')) === ".xml"){
-            fileList.push(file);
-        }
+    xmlFiles.forEach(pathXml => {
+        classRoot = (et.parse(pathXml["xml"]));
+        makePairsList(classRoot, childParent, classLocations);
     });
 
-    // For each of the XML files in the directory we need to find he childParent
-    // pairs and record their file locations using the makePairsList() function
-    for (let i = 0; i < fileList.length; i++){
-
-        let data = fs.readFileSync(fileList[i]).toString();
-        classRoot = (et.parse(data));
-        makePairsList(classRoot, childParent, classLocations);
-
-    }
+    let xmlData = xmlFiles.map(d => d["xml"]);
 
     // This is a global variable that controls how "deep" the chlid-parent
     // relationships can extend
@@ -172,10 +136,10 @@ export const mineRulesFromXmlFiles = (xmlFiles) => {
     let parentInfo = new Map();
     // We already have all the fileNames, so all we have to do now go through
     // each file and pull out the parent attributes
-    for (let i = 0; i < fileList.length; i++){
+    for (let i = 0; i < xmlFiles.length; i++){
 
-        let data = fs.readFileSync(fileList[i]).toString();
-        classRoot = (et.parse(data));
+        // let data = fs.readFileSync(fileList[i]).toString();
+        classRoot = (et.parse(xmlFiles[i]["xml"]));
 
         // We're going to pull out all the parent info
         let cls = classRoot.findall(".//class");
@@ -217,7 +181,7 @@ export const mineRulesFromXmlFiles = (xmlFiles) => {
                     parentInfo.set(parentName, {name:parentName,
                         totalChildren:(childParent.get(parentName)).length,
                         children:childParent.get(parentName),
-                        pathToFile: fileList[i],
+                        pathToFile: xmlFiles[i]["filePath"],
                         functions: functionList});
                 }
             }
@@ -230,22 +194,69 @@ export const mineRulesFromXmlFiles = (xmlFiles) => {
 
         allAttributes = new Map(allAttributes,
             addParentChildRelations(id_start, groupList.get(group),
-                allAttributes, classLocations, parentInfo, queryMap));
+                allAttributes, xmlData, parentInfo, queryMap));
 
     }
 
-
     // Output the metadata to a file
-    let outputFile = "attributeMETAdata_crowdCode.txt";
-    outputMetaData(allAttributes, outputFile, queryMap);
+    outputMetaData(allAttributes, queryMap, ws);
 
-
+    let dataMap = new Map();
     for (const group of groupList.keys()){
         let grouping = groupList.get(group);
         findParentChildRelations(allAttributes, grouping, analysisFileName,
-            classLocations, parentInfo, fileAnalysisMap);
+            classLocations, xmlData, parentInfo, fileAnalysisMap, dataMap);
     }
 
-    outputFileAnalysisData(fileAnalysisMap);
+    outputDataBases(dataMap, ws);
+
+    outputFileAnalysisData(fileAnalysisMap, ws);
+
+    let support = 60;
+    Utilities.sendToServer(ws, "EXECUTE_FP_MAX", support);
+
+};
+
+const outputMetaData = (allAttributes, queryMap, ws) => {
+
+    let entries = Array.from(allAttributes.entries());
+    let queries = Array.from(queryMap.entries());
+
+    let data = "";
+
+    for(let x = 0; x < entries.length; x++){
+        // Just while debugging is happening; remove after last queries
+        // developed
+
+        data += entries[x][1] + " " + entries[x][0] + "\n" + queries[x][0] + "\n";
+    }
+
+    Utilities.sendToServer(ws, "LEARN_RULES_META_DATA", {fileName: "attribute_META_data.txt", content: data})
+
+};
+
+const outputFileAnalysisData = (fileAnalysisMap, ws) => {
+
+    let entries = Array.from(fileAnalysisMap.entries());
+    //console.log(fileAnalysisMap);
+
+    let stream = "";
+
+    for(let x = 0; x < entries.length; x++){
+        stream += entries[x][0] + "\n" + entries[x][1] + "\n";
+    }
+
+    Utilities.sendToServer(ws, "LEARN_RULES_FILE_LOCATIONS", {fileName: "fileLocations.txt", content: stream})
+
+};
+
+
+const outputDataBases = (dataMap, ws) => {
+    // This variable is an array of all of our databases in the format:
+    //[ ["nameOfFile.txt", "data that is going to be written into file"],
+    // ["nextFile.txt", "some other data"]]
+    let databases = Array.from(dataMap.entries());
+
+    Utilities.sendToServer(ws, "LEARN_RULES_DATABASES", databases)
 
 };

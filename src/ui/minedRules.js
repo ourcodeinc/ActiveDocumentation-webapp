@@ -31,13 +31,14 @@ class MinedRules extends Component {
 
     mineRules() {
         // let minedRules =
-            mineRulesFromXmlFiles(this.props.xmlFiles);
+            mineRulesFromXmlFiles(this.props.xmlFiles, this.props.ws);
         // todo display rules
     }
 }
 
 function mapStateToProps(state) {
     return {
+        ws: state.ws,
         xmlFiles: state['xmlFiles']
     }
 }

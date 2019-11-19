@@ -52,6 +52,22 @@ class Utilities {
                     };
                     break;
 
+                case "LEARN_RULES_META_DATA":
+                    messageJson['data'] = [[data.fileName, data.content]];
+                    break;
+
+                case "LEARN_RULES_FILE_LOCATIONS":
+                    messageJson['data'] = [[data.fileName, data.content]];
+                    break;
+
+                case "LEARN_RULES_DATABASES":
+                    messageJson['data'] = data; // array of arrays: [["file_name.txt", "data to be written"]]
+                    break;
+
+                case "EXECUTE_FP_MAX": // todo call this one
+                    messageJson['data'] = data; // support
+                    break;
+
                 default:
                     break;
             }

@@ -4,34 +4,11 @@
  * Nov 2019
  */
 
-import fs from 'fs';
-
 import {addClassAnnotations, addClsFunctions, addConstructors, addImplementations,
     addMemberVars, findClassAnnotations, findClsFunctions, findConstructors,
     findImplements, findMemberVars} from "./sci_functions";
 
-let et = require('elementtree'); // todo import?
-
-
-export const outputMetaData = (allAttributes, outputFile, queryMap) => {
-
-    let entries = Array.from(allAttributes.entries());
-    let queries = Array.from(queryMap.entries());
-
-    let data = "";
-
-    for(let x = 0; x < entries.length; x++){
-        // Just while debugging is happening; remove after last queries
-        // developed
-
-        data += entries[x][1] + " " + entries[x][0] + "\n" + queries[x][0] + "\n";
-    }
-
-    fs.appendFile(outputFile, data, (err) => {
-        // In case of a error throw err.
-        if (err) throw err;
-    });
-};
+import et from 'elementtree';
 
 export const makePairsList = (classRoot, childParent, classLocations) => {
 
@@ -120,7 +97,7 @@ export const addChildren = (parent, childParent, groupID, currDepth, groupList) 
 };
 
 
-export const addParentChildRelations = (id_start, classGroupings, attributeList, classLocations, parentInfo, queryMap) => {
+export const addParentChildRelations = (id_start, classGroupings, attributeList, xmlData, parentInfo, queryMap) => {
 
     let parentClass = classGroupings[classGroupings.length-1];
     let subCLfncs = [];
@@ -134,19 +111,7 @@ export const addParentChildRelations = (id_start, classGroupings, attributeList,
 
     for(let i = 0; i < classGroupings.length; i++){
 
-        let f = classLocations[classGroupings[i]];
-
-        if(f !== undefined){
-            f = f.split("\\")[(f.split("\\")).length - 1];
-            f = f.split(".")[0] + ".xml";
-
-            let data = fs.readFileSync(f).toString();
-            classTree = et.parse(data); // todo
-
-        }
-        else{
-            continue;
-        }
+        classTree = et.parse(xmlData[i]);
 
         let subCL = classTree.findall('.//class');
         let childName;
@@ -253,20 +218,12 @@ export const addParentChildRelations = (id_start, classGroupings, attributeList,
 
 
 export const findParentChildRelations = (allAttributes, classGroupings,
-                                            analysisFileName, classLocations,
-                                            parentInfo, fileAnalysisMap) => {
+                                            analysisFileName, classLocations, xmlData,
+                                            parentInfo, fileAnalysisMap, dataMap) => {
 
     let parentClass = classGroupings[classGroupings.length-1];
     let subCLfncs = [];
     let classTree;
-
-    // Empty the analysisFile first in case anything has been written before
-    let fileN = analysisFileName + "_subClassOf" + parentClass + ".txt";
-    let d = "";
-    fs.writeFile(fileN, d, (err) => {
-        // In case of a error throw err.
-        if (err) throw err;
-    });
 
     // Used to keep track of all the files we have accessed
     let listOfFiles = [];
@@ -278,19 +235,8 @@ export const findParentChildRelations = (allAttributes, classGroupings,
 
     for(let i = 0; i < classGroupings.length; i++){
 
+        classTree = et.parse(xmlData[i]);
         let f = classLocations[classGroupings[i]];
-
-        if(f !== undefined){
-            f = f.split("\\")[(f.split("\\")).length - 1]
-            f = f.split(".")[0] + ".xml";
-
-            let data = fs.readFileSync(f).toString();
-            classTree = et.parse(data);
-
-        }
-        else{
-            continue;
-        }
 
         let attributes = [];
         let subCL = classTree.findall('.//class');
@@ -388,7 +334,7 @@ export const findParentChildRelations = (allAttributes, classGroupings,
                 addClsFunctions(subCL[j], attributes, allAttributes);
 
                 // This is the file we will be outputting to
-                fileN = analysisFileName + "_subClassOf" + parentClass + ".txt";
+                let fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
 
                 // Output attributes found to database
                 // Current FP Growth implementation will stop when it reads a newline
@@ -408,14 +354,19 @@ export const findParentChildRelations = (allAttributes, classGroupings,
 
                     let data = finalList.join(" ") + "\n";
 
-                    let stream = fs.createWriteStream(fileN, {flags:'a'});
-                    stream.write(data);
-                    stream.end();
-                    /*
-                    fs.appendFile(fileN, data, (err) => {
-                    // In case of a error throw err.
-                    if (err) throw err;
-                  });*/
+                    // Place the data in the map...
+                    // If we already have an entry for this database, then we just
+                    // append the new information
+                    if (dataMap.has(fileN)){
+                        let entry = dataMap.get(fileN);
+                        entry = entry + data;
+                        dataMap.set(fileN, entry);
+                    }
+                    // However, if we haven't yet had any entries for this database,
+                    // then we just set this data as the first entry
+                    else{
+                        dataMap.set(fileN, data);
+                    }
 
                 }
 
@@ -430,28 +381,10 @@ export const findParentChildRelations = (allAttributes, classGroupings,
     }// End of outermost for loop
 
     // Record that this file was used to contribute to this database
-    fileN = analysisFileName + "_subClassOf" + parentClass + ".txt";
+    let fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
     let newStuff = listOfFiles.join("\n");
 
     fileAnalysisMap.set(fileN, newStuff);
 
 
-};
-
-export const outputFileAnalysisData = (fileAnalysisMap) => {
-
-    let entries = Array.from(fileAnalysisMap.entries());
-    //console.log(fileAnalysisMap);
-
-    let fileN = "fileLocations.txt";
-    let stream = fs.createWriteStream(fileN, {flags:'w'});
-
-    for(let x = 0; x < entries.length; x++){
-
-        stream.write(entries[x][0]);
-        stream.write("\n");
-        stream.write(entries[x][1]);
-        stream.write("\n");
-
-    }
 };
