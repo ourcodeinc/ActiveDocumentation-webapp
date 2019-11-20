@@ -796,7 +796,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
             fncTypes.sort();
             for (let m = 0; m < fncTypes.length; m++){
 
-                let allFncParamTypes = allFncParamTypes
+                allFncParamTypes = allFncParamTypes
                     + "parameter of type \""
                     + fncTypes[m] + "\"";
 
@@ -913,7 +913,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
                 if(!attributeList.has(name)){
 
                     let command = "src:class[src:block/src:function[(src:type['" + returnType.text
-                        + "'] and " + "src:name[text()=\"" + fncName.text + "\"])]]";
+                        + "'] and src:name[text()=\"" + fncName.text + "\"])]]";
 
                     attributeList.set(name, id_start.id);
                     queryMap.set(command, id_start.id);
