@@ -32,65 +32,19 @@ corresponding attribute desciprtions for each one.*/
 // File path to output
 // Each of the FI sets - All begin with AE_crowdCode
 
-import fs from 'fs';
-import path from 'path';
+/**
+ *
+ * @param fileList entries in fpMaxOutput ["file1" ,"file2"]
+ * @param attributeQueryMap metaData calculated before {key: {attr: value, query: value}}
+ * @return Array ["modifiedFile1", "modifiedFile2"]
+ */
+export const parseGrouping = (fileList, attributeQueryMap) => {
 
-export const parseGrouping = () => {
-
-    // Path to directory with xml files we wish to iterate through
-    // Currenlty, the directory is the directory main.js is running in
-    let directoryPath = path.join(__dirname);
-    // Make a list of xml files
-    let fileList = [];
-    fs.readdirSync(directoryPath).forEach(file => {
-        let p = path.parse(file);
-
-        // Make sure it is not a modified output file
-        if ((p.name).includes("output") && !(p.name).includes("mod")) {
-            //console.log(p.name);
-            fileList.push(file);
-        }
-
-    });
-
-    // We need to obtain all the metadata info
-    let attributeMap = new Map();
-    let queryMap = new Map();
-
-    let metaData = fs.readFileSync("attributeMETAdata_crowdCode.txt");
-    let data = (metaData.toString()).split("\n");
-
-    for (let q = 0; q < data.length; q++) {
-
-        let idNo, desc, qury;
-        let dataPieces = data[q].split(" ");
-        // If we are on a row with an attribute ID and description, then we want to
-        // store that information
-        if (!isNaN(dataPieces[0]) && dataPieces[0] !== "") {
-            idNo = dataPieces[0];
-            dataPieces = data[q].split(idNo + " ");
-            desc = dataPieces[1];
-        } else {
-            qury = data[q];
-        }
-        // Store the info
-        attributeMap.set(idNo, desc);
-        queryMap.set(idNo, qury);
-
-    }
-
-    // Empty the contents of any files whose names contain "output" and "mod";
-    for (let i = 0; i < fileList.length; i++) {
-        let newFileName = fileList[i].split(".")[0] + "_mod.txt";
-        fs.writeFileSync(newFileName, "");
-    }
-
-    // Now we are ready to create our modified output text files
-    let stream;
+    let modifiedData = [];
     for (let i = 0; i < fileList.length; i++) {
 
-        let contents = fs.readFileSync(fileList[i]);
-        let databaseLines = (contents.toString()).split("\n");
+        let stream = "";
+        let databaseLines = fileList[i].split("\n");
 
         for (let j = 0; j < databaseLines.length; j++) {
 
@@ -100,26 +54,22 @@ export const parseGrouping = () => {
                 // Get all the attributes
                 let allAttributes = (databaseLines[j]).split(" #")[0];
 
-                // We create a new file that is modified with this information
-                let newFileName = fileList[i].split(".")[0] + "_mod.txt";
-
                 if (allAttributes !== "\n") {
 
                     // Write the FI set to the new file
-                    stream = fs.writeFileSync(newFileName, allAttributes + "\n", {flag: 'a'});
+                    stream += allAttributes + "\n";
 
                     let indivAttributes = allAttributes.split(" ");
                     for (let k = 0; k < indivAttributes.length; k++) {
 
                         if (indivAttributes[k] !== "") {
                             // Output the attribute desc and qury for each attribute
-                            stream = fs.writeFileSync(newFileName, indivAttributes[k] + " "
-                                + attributeMap.get(indivAttributes[k]) + "\n", {flag: 'a'});
-                            stream = fs.writeFileSync(newFileName, queryMap.get(indivAttributes[k]) + "\n", {flag: 'a'});
+                            stream += indivAttributes[k] + " " + attributeQueryMap[indivAttributes[k]]["attr"] + "\n";
+                            stream += attributeQueryMap[indivAttributes[k]]["query"] + "\n";
                         }
                     }
                 }
-                j++;
+                j++;  // todo what is this??
             }
         }
 
@@ -128,12 +78,12 @@ export const parseGrouping = () => {
             // Once we're done putting all the attribute info in for each query, then
             // we write the names of the xml files to the bottom of the modified
             // output file.
-            let fileName = fileList[i].split(".")[0] + "_mod.txt";
             if (databaseLines[j] !== undefined && (databaseLines[j]).includes(".xml")) {
-                stream = fs.writeFileSync(fileName, databaseLines[j] + "\n", {flag: 'a'});
+                stream += databaseLines[j] + "\n";
             }
         }
-
-
+        modifiedData.push(stream);
     }
+
+    return modifiedData;
 };
