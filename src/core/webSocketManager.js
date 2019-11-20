@@ -162,6 +162,12 @@ class WebSocketManager extends Component {
 
                     break;
 
+                case "FP_MAX_OUTPUT":
+                    // todo
+                    // in form of "fpMaxOutput" : {0: "content od output0", ...}
+                    console.log(message.data);
+                    break;
+
                 case "PROJECT":
                     // console.log(message);
                     break;
