@@ -144,7 +144,7 @@ export const addParentChildRelations = (id_start, classGroupings, attributeList,
 
                     // This will contain a list of functions that are present in both
                     // the parent class and the child class.
-                    let matchingFunctions;
+                    let matchingFunctions = null;
                     if (parentClass !== childName){
 
                         // First get a list of all the child functions
@@ -166,7 +166,7 @@ export const addParentChildRelations = (id_start, classGroupings, attributeList,
                     }
                     // Come here and output attribute about parent functions matching
                     // Clear out matching functions here as well
-                    if(matchingFunctions !== null){
+                    if(matchingFunctions){
                         for (let m = 0; m < matchingFunctions.length; m++){
 
                             let name = "class overrides function of name \""
@@ -275,7 +275,7 @@ export const findParentChildRelations = (allAttributes, classGroupings,
 
                     // This will contain a list of functions that are present in both
                     // the parent class and the child class.
-                    let matchingFunctions;
+                    let matchingFunctions = null;
                     if (parentClass !== childName){
 
                         // First get a list of all the child functions
@@ -299,7 +299,7 @@ export const findParentChildRelations = (allAttributes, classGroupings,
                     }
                     // Come here and output attribute about parent functions matching
                     // Clear out matching functions here as well
-                    if(matchingFunctions !== null){
+                    if(matchingFunctions){
                         for (let m = 0; m < matchingFunctions.length; m++){
 
                             let name = "class overrides function of name \""
