@@ -306,6 +306,10 @@ export const initial_state = {
             guiElements: {...initial_guiElements}
         }
     },
+    minedRulesState: {
+        metaData: {},
+        minedRules: {}
+    }
 };
 
 // used for editing existing rule

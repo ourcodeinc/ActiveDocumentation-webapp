@@ -65,9 +65,11 @@ import Utilities from "./utilities";
 /**
  *
  * @param xmlFiles is an array of objects: {filePath:"", xml: ""}
+ * @param support
+ * @param metaData {key: {attr: "", query: ""}}
  * @param ws
  */
-export const mineRulesFromXmlFiles = (xmlFiles, ws) => {
+export const mineRulesFromXmlFiles = (xmlFiles, support, metaData, ws) => {
 
     let analysisFileName = "AttributeEncoding";
 
@@ -199,7 +201,7 @@ export const mineRulesFromXmlFiles = (xmlFiles, ws) => {
     }
 
     // Output the metadata to a file
-    outputMetaData(allAttributes, queryMap, ws);
+    outputMetaData(allAttributes, queryMap, metaData, ws);
 
     let dataMap = new Map();
     for (const group of groupList.keys()){
@@ -212,12 +214,11 @@ export const mineRulesFromXmlFiles = (xmlFiles, ws) => {
 
     outputFileAnalysisData(fileAnalysisMap, ws);
 
-    let support = 60;
     Utilities.sendToServer(ws, "EXECUTE_FP_MAX", support);
 
 };
 
-const outputMetaData = (allAttributes, queryMap, ws) => {
+const outputMetaData = (allAttributes, queryMap, metaData, ws) => {
 
     let entries = Array.from(allAttributes.entries());
     let queries = Array.from(queryMap.entries());
@@ -229,6 +230,7 @@ const outputMetaData = (allAttributes, queryMap, ws) => {
         // developed
 
         data += entries[x][1] + " " + entries[x][0] + "\n" + queries[x][0] + "\n";
+        metaData[entries[x][1]] = {attr: entries[x][0], query: queries[x][0]};
     }
 
     Utilities.sendToServer(ws, "LEARN_RULES_META_DATA", {fileName: "attribute_META_data.txt", content: data})

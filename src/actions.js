@@ -143,3 +143,17 @@ export const updateXPaths = (ruleIndex, quantifierXPath, constraintXPath) => {
         constraintXPath: constraintXPath
     }
 };
+
+export const updateMetaData = (metaData) => {
+    return {
+        type: "UPDATE_META_DATA",
+        metaData: metaData
+    }
+};
+
+export const updatedMinedRules = (minedRules) => {
+    return {
+        type: "UPDATE_MINED_RULES",
+        minedRules: minedRules
+    }
+};

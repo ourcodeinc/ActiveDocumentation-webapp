@@ -40,6 +40,7 @@ import {generateTreeForElement} from "./ui/ruleGenerationGUI/guiConstants";
     CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI
     UPDATE_XPATHS
 
+    UPDATE_META_DATA
 
  */
 
@@ -157,7 +158,10 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             return Object.assign({}, state, {ignoreFile: action["shouldIgnore"], message: "IGNORE_FILE"});
 
         case "UPDATE_DISPLAY_EDIT_TUTORIAL":
-            return Object.assign({}, state, {displayEditRuleTutorial: action["shouldDisplay"], message: "UPDATE_DISPLAY_EDIT_TUTORIAL"});
+            return Object.assign({}, state, {
+                displayEditRuleTutorial: action["shouldDisplay"],
+                message: "UPDATE_DISPLAY_EDIT_TUTORIAL"
+            });
 
         case "FILE_PATH":
             if (state.ignoreFile) return Object.assign({}, state, {message: "FILE_PATH_UPDATED"});
@@ -615,6 +619,24 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     },
                     message: "UPDATE_XPATHS"
                 });
+
+        case "UPDATE_META_DATA":
+            return Object.assign({}, state, {
+                message: "UPDATE_META_DATA",
+                minedRulesState: {
+                    metaData: action["metaData"],
+                    minedRules: {}
+                }
+            });
+
+        case "UPDATE_MINED_RULES":
+            return Object.assign({}, state, {
+                message: "UPDATE_MINED_RULES",
+                minedRulesState: {
+                    ...JSON.parse(JSON.stringify(state.minedRulesState)),
+                    minedRules: action["minedRules"]
+                }
+            });
 
         default:
             return Object.assign({}, state);

@@ -62,14 +62,19 @@ export const parseGrouping = (fileList, attributeQueryMap) => {
                     let indivAttributes = allAttributes.split(" ");
                     for (let k = 0; k < indivAttributes.length; k++) {
 
-                        if (indivAttributes[k] !== "") {
-                            // Output the attribute desc and qury for each attribute
-                            stream += indivAttributes[k] + " " + attributeQueryMap[indivAttributes[k]]["attr"] + "\n";
-                            stream += attributeQueryMap[indivAttributes[k]]["query"] + "\n";
+                        if (+indivAttributes[k]) { // check if it is a number
+                            if (attributeQueryMap[+indivAttributes[k]]) {
+                                // Output the attribute desc and qury for each attribute
+                                stream += indivAttributes[k] + " " + attributeQueryMap[indivAttributes[k]]["attr"] + "\n";
+                                stream += attributeQueryMap[indivAttributes[k]]["query"] + "\n";
+                            }
+                            else {
+                                stream += [indivAttributes[k]] + " Meta Data is not found" + "\n";
+                            }
                         }
                     }
                 }
-                j++;  // todo what is this??
+                j++;  // what is this??
             }
         }
 

@@ -7,9 +7,10 @@ import {connect} from "react-redux";
 
 import {
     receiveExpressionStatementXML, ignoreFile, updateFilePath, updateRuleTable, updateTagTable,
-    updateWS, updateXmlFiles, updateProjectHierarchyData
+    updateWS, updateXmlFiles, updateProjectHierarchyData, updatedMinedRules
 } from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from './ruleExecutor';
+import {parseGrouping} from "./mineRulesCore/parseGrouping";
 
 class WebSocketManager extends Component {
 
@@ -163,9 +164,9 @@ class WebSocketManager extends Component {
                     break;
 
                 case "FP_MAX_OUTPUT":
-                    // todo
-                    // in form of "fpMaxOutput" : {0: "content od output0", ...}
-                    console.log(message.data);
+                    // message.data = {"fpMaxOutput" : {0: "content od output0", ...}}
+                    let modifiedOutput = parseGrouping(Object.values(message.data["fpMaxOutput"]), this.props.minedRuleMetaData);
+                    this.props.onUpdateMinedRules(modifiedOutput);
                     break;
 
                 case "PROJECT":
@@ -192,7 +193,8 @@ class WebSocketManager extends Component {
 function mapStateToProps(state) {
     return {
         ignoreFile: state.ignoreFile,
-        message: state.message
+        message: state.message,
+        minedRuleMetaData: state.minedRulesState.metaData
     };
 }
 
@@ -205,7 +207,8 @@ function mapDispatchToProps(dispatch) {
         onFilePathChange: (filePath) => dispatch(updateFilePath(filePath)),
         onFalsifyIgnoreFile: () => dispatch(ignoreFile(false)),
         onReceiveExprStmtXML: (data) => dispatch(receiveExpressionStatementXML(data)),
-        onUpdateXmlFiles: (xmlFiles) => dispatch(updateXmlFiles(xmlFiles))
+        onUpdateXmlFiles: (xmlFiles) => dispatch(updateXmlFiles(xmlFiles)),
+        onUpdateMinedRules: (modifiedOutput) => dispatch(updatedMinedRules(modifiedOutput))
     }
 }
 
