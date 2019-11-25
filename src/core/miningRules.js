@@ -109,10 +109,17 @@ export const mineRulesFromXmlFiles = (xmlFiles, support, metaData, ws) => {
     // Currenlty, the directory is the directory main.js is running in
 
 
-    xmlFiles.forEach(pathXml => {
-        classRoot = (et.parse(pathXml["xml"]));
-        makePairsList(classRoot, childParent, classLocations);
-    });
+    for (let i=0; i< xmlFiles.length; i++) {
+        try {
+            classRoot = (et.parse(xmlFiles[i]["xml"]));
+            makePairsList(classRoot, childParent, classLocations);
+        }
+        catch (e) {
+            console.log("elementTree failed to parse: ", xmlFiles[i]["xml"]);
+            console.error(e);
+            return;
+        }
+    }
 
     let xmlData = xmlFiles.map(d => d["xml"]);
 
