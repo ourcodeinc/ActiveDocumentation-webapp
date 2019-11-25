@@ -8,7 +8,8 @@ import {connect} from 'react-redux';
 import {Button} from "react-bootstrap";
 
 import {mineRulesFromXmlFiles} from "../core/miningRules";
-import {updateMetaData} from "../actions";
+import {ignoreFile, updateMetaData} from "../actions";
+import Utilities from "../core/utilities";
 
 
 class MinedRules extends Component {
@@ -17,16 +18,13 @@ class MinedRules extends Component {
         super(props);
         this.state = {
             support: 60,
-            minedRules: ""
+            minedRules: []
         };
     }
 
     render() {
         return (
             <div>
-                <p>
-                    Mined Design Rules. Boilerplate
-                </p>
                 <div style={{paddingBottom: "10px"}}>
                     {"Support: "}<input type="text" value={this.state.support}
                                         onChange={(event) => this.setState({support: event.target.value})}/>
@@ -35,18 +33,32 @@ class MinedRules extends Component {
                     Mine Rules Now!
                 </Button>
                 <div>
-                    {(typeof this.state.minedRules === "object") ?
-                        (this.state.minedRules.map((d, index) => {
-                            return <div key={index}>
-                                {d.split("\n").map((dd, i) => {
-                                    return <div key={i}>{dd}</div>
-                                })}
-                            </div>
-                        }))
-                        : this.state.minedRules.split("\n").map((dd, i) => {
-                            return <div key={i}>{dd}</div>
-                        })
-                    }
+                    {this.state.minedRules.map((d, index) => {
+                        return (
+                            <div key={index} style={{padding: "20px"}}>
+                                <div style={{paddingTop: "10px"}}>{
+                                    d["attributes"].map((attr, i) => {
+                                        return (<div className={"attrRowContainer"} key={i}>
+                                            <div className={"attrId"}>{attr["id"]}</div>
+                                            <div className={"attrDesc"}>{attr["attr"]}</div>
+                                            <div className={"attrQuery"}>{attr["query"]}</div>
+                                        </div>)
+                                    })}
+                                </div>
+
+
+                                <div style={{paddingTop: "10px"}}>{
+                                    d["files"].map((fileName, i) => {
+                                        return (<div key={i} className={"ruleLink"}
+                                                     onClick={() => {
+                                                         this.props.onIgnoreFile(true);
+                                                         Utilities.sendToServer(this.props.ws, "OPEN_FILE", fileName)
+                                                     }}
+                                        >{fileName}</div>)
+                                    })}
+                                </div>
+                            </div>)
+                    })}
                 </div>
             </div>
         )
@@ -56,7 +68,7 @@ class MinedRules extends Component {
         let metaData = {};
         mineRulesFromXmlFiles(this.props.xmlFiles, this.state.support, metaData, this.props.ws);
         this.props.onUpdateMetaData(metaData);
-        this.setState({minedRules: ""});
+        this.setState({minedRules: []});
     }
 
     componentWillReceiveProps(nextProps) {
@@ -78,6 +90,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
+        onIgnoreFile: (shouldIgnore) => dispatch(ignoreFile(shouldIgnore)),
         onUpdateMetaData: (metaData) => dispatch(updateMetaData(metaData))
     }
 }

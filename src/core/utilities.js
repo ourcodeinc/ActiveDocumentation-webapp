@@ -64,8 +64,17 @@ class Utilities {
                     messageJson['data'] = data; // array of arrays: [["file_name.txt", "data to be written"]]
                     break;
 
-                case "EXECUTE_FP_MAX": // todo call this one
+                case "EXECUTE_FP_MAX":
                     messageJson['data'] = data; // support
+                    break;
+
+                case "OPEN_FILE":
+                    messageJson['command'] = 'XML_RESULT'; // there is no separate command in the server
+                    messageJson['data'] = {
+                        fileName: data,
+                        xml: "<unit xmlns=\"http://www.srcML.org/srcML/src\" revision=\"0.9.5\" language=\"Java\">\n" +
+                            "</unit>"
+                    };
                     break;
 
                 default:

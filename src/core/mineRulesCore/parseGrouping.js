@@ -40,24 +40,29 @@ corresponding attribute desciprtions for each one.*/
  */
 export const parseGrouping = (fileList, attributeQueryMap) => {
 
-    let modifiedData = [];
+    let modifiedResults = [];
+
     for (let i = 0; i < fileList.length; i++) {
 
-        let stream = "";
         let databaseLines = fileList[i].split("\n");
+        let result = {
+            attributes: [],
+            files: []
+        };
+
+        let attributes = [];
+        let files = [];
 
         for (let j = 0; j < databaseLines.length; j++) {
 
             // If it is an FI, then we want to parse the info in the FI so we can
             // output the attribute info
             while (databaseLines[j] !== undefined && !(databaseLines[j]).includes(".xml")) {
+
                 // Get all the attributes
                 let allAttributes = (databaseLines[j]).split(" #")[0];
 
                 if (allAttributes !== "\n") {
-
-                    // Write the FI set to the new file
-                    stream += allAttributes + "\n";
 
                     let indivAttributes = allAttributes.split(" ");
                     for (let k = 0; k < indivAttributes.length; k++) {
@@ -65,11 +70,19 @@ export const parseGrouping = (fileList, attributeQueryMap) => {
                         if (+indivAttributes[k]) { // check if it is a number
                             if (attributeQueryMap[+indivAttributes[k]]) {
                                 // Output the attribute desc and qury for each attribute
-                                stream += indivAttributes[k] + " " + attributeQueryMap[indivAttributes[k]]["attr"] + "\n";
-                                stream += attributeQueryMap[indivAttributes[k]]["query"] + "\n";
+                                attributes.push({
+                                    id: indivAttributes[k],
+                                    attr: attributeQueryMap[indivAttributes[k]]["attr"],
+                                    query: attributeQueryMap[indivAttributes[k]]["query"]
+                                });
+
                             }
                             else {
-                                stream += [indivAttributes[k]] + " Meta Data is not found" + "\n";
+                                attributes.push({
+                                    id: "",
+                                    attr: "Meta Data is not found.",
+                                    query: ""
+                                });
                             }
                         }
                     }
@@ -77,18 +90,22 @@ export const parseGrouping = (fileList, attributeQueryMap) => {
                 j++;  // what is this??
             }
         }
+        result["attributes"] = attributes;
 
         // Now just output the xml files used to create FIs in the original file
         for (let j = 0; j < databaseLines.length; j++) {
             // Once we're done putting all the attribute info in for each query, then
             // we write the names of the xml files to the bottom of the modified
             // output file.
-            if (databaseLines[j] !== undefined && (databaseLines[j]).includes(".xml")) {
-                stream += databaseLines[j] + "\n";
+
+            if (databaseLines[j] !== undefined && (databaseLines[j]).includes(".java")) {
+                files.push(databaseLines[j]);
             }
         }
-        modifiedData.push(stream);
+        result["files"] = files;
+
+        modifiedResults.push(result);
     }
 
-    return modifiedData;
+    return modifiedResults;
 };

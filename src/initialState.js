@@ -308,7 +308,7 @@ export const initial_state = {
     },
     minedRulesState: {
         metaData: {},
-        minedRules: {}
+        minedRules: []
     }
 };
 

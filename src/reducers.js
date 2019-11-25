@@ -625,7 +625,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 message: "UPDATE_META_DATA",
                 minedRulesState: {
                     metaData: action["metaData"],
-                    minedRules: {}
+                    minedRules: []
                 }
             });
 
