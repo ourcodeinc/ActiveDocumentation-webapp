@@ -741,3 +741,15 @@ img.tutorialSmallImage {
 .ruleLink:hover {
     color: #265a88;
 }
+
+.minedFrequentItemSetContainer {
+    padding: 20px;
+}
+
+.minedFrequentItemSet {
+    padding: 10px;
+}
+
+.minedFrequentItemSetFiles {
+    padding: 10px;
+}

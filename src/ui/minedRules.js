@@ -22,7 +22,7 @@ class MinedRules extends Component {
         };
     }
 
-    render() {
+    render() { console.log(this.state.minedRules);
         return (
             <div>
                 <div style={{paddingBottom: "10px"}}>
@@ -33,30 +33,34 @@ class MinedRules extends Component {
                     Mine Rules Now!
                 </Button>
                 <div>
-                    {this.state.minedRules.map((d, index) => {
+                    {this.state.minedRules.map((group, index) => {
                         return (
-                            <div key={index} style={{padding: "20px"}}>
-                                <div style={{paddingTop: "10px"}}>{
-                                    d["attributes"].map((attr, i) => {
-                                        return (<div className={"attrRowContainer"} key={i}>
-                                            <div className={"attrId"}>{attr["id"]}</div>
-                                            <div className={"attrDesc"}>{attr["attr"]}</div>
-                                            <div className={"attrQuery"}>{attr["query"]}</div>
-                                        </div>)
-                                    })}
-                                </div>
+                            <div className={"minedFrequentItemSetContainer"} key={index}>{
+                                group["attributes"].map((list, i) => {
+                                    return (
+                                        <div key={i} className={"minedFrequentItemSet"}>
+                                            {list.map((attr, j) => {
+                                                return (<div className={"attrRowContainer"} key={j}>
+                                                    <div className={"attrId"}>{attr["id"]}</div>
+                                                    <div className={"attrDesc"}>{attr["attr"]}</div>
+                                                    <div className={"attrQuery"}>{attr["query"]}</div>
+                                                </div>)
+                                            })}
 
-
-                                <div style={{paddingTop: "10px"}}>{
-                                    d["files"].map((fileName, i) => {
-                                        return (<div key={i} className={"ruleLink"}
-                                                     onClick={() => {
-                                                         this.props.onIgnoreFile(true);
-                                                         Utilities.sendToServer(this.props.ws, "OPEN_FILE", fileName)
-                                                     }}
-                                        >{fileName}</div>)
-                                    })}
-                                </div>
+                                            <div className={"minedFrequentItemSetFiles"}>{
+                                                group["files"].map((fileName, i) => {
+                                                    return (<div key={i} className={"ruleLink"}
+                                                                 onClick={() => {
+                                                                     this.props.onIgnoreFile(true);
+                                                                     Utilities.sendToServer(this.props.ws, "OPEN_FILE", fileName)
+                                                                 }}
+                                                    >{fileName}</div>)
+                                                })}
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            }
                             </div>)
                     })}
                 </div>

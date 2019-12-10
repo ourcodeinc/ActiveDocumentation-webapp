@@ -50,7 +50,6 @@ export const parseGrouping = (fileList, attributeQueryMap) => {
             files: []
         };
 
-        let attributes = [];
         let files = [];
 
         for (let j = 0; j < databaseLines.length; j++) {
@@ -61,6 +60,7 @@ export const parseGrouping = (fileList, attributeQueryMap) => {
 
                 // Get all the attributes
                 let allAttributes = (databaseLines[j]).split(" #")[0];
+                let atr = [];
 
                 if (allAttributes !== "\n") {
 
@@ -70,7 +70,7 @@ export const parseGrouping = (fileList, attributeQueryMap) => {
                         if (+indivAttributes[k]) { // check if it is a number
                             if (attributeQueryMap[+indivAttributes[k]]) {
                                 // Output the attribute desc and qury for each attribute
-                                attributes.push({
+                                atr.push({
                                     id: indivAttributes[k],
                                     attr: attributeQueryMap[indivAttributes[k]]["attr"],
                                     query: attributeQueryMap[indivAttributes[k]]["query"]
@@ -78,7 +78,7 @@ export const parseGrouping = (fileList, attributeQueryMap) => {
 
                             }
                             else {
-                                attributes.push({
+                                atr.push({
                                     id: "",
                                     attr: "Meta Data is not found.",
                                     query: ""
@@ -87,10 +87,11 @@ export const parseGrouping = (fileList, attributeQueryMap) => {
                         }
                     }
                 }
+                if (atr.length > 0) result["attributes"].push(atr);
                 j++;  // what is this??
             }
         }
-        result["attributes"] = attributes;
+
 
         // Now just output the xml files used to create FIs in the original file
         for (let j = 0; j < databaseLines.length; j++) {
