@@ -97,7 +97,7 @@ export const addChildren = (parent, childParent, groupID, currDepth, groupList) 
 };
 
 
-export const addParentChildRelations = (id_start, classGroupings, attributeList, xmlData, parentInfo, queryMap) => {
+export const findParentChildRelations = (id_start, classGroupings, attributeList, xmlData, parentInfo, queryMap) => {
 
     let parentClass = classGroupings[classGroupings.length-1];
     let subCLfncs = [];
@@ -217,7 +217,7 @@ export const addParentChildRelations = (id_start, classGroupings, attributeList,
 };
 
 
-export const findParentChildRelations = (allAttributes, classGroupings,
+export const addParentChildRelations = (allAttributes, classGroupings,
                                             analysisFileName, classLocations, xmlData,
                                             parentInfo, fileAnalysisMap, dataMap) => {
 

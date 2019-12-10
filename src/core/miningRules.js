@@ -202,7 +202,7 @@ export const mineRulesFromXmlFiles = (xmlFiles, support, metaData, ws) => {
     for (const group of groupList.keys()) {
 
         allAttributes = new Map(allAttributes,
-            addParentChildRelations(id_start, groupList.get(group),
+            findParentChildRelations(id_start, groupList.get(group),
                 allAttributes, xmlData, parentInfo, queryMap));
 
     }
@@ -213,7 +213,7 @@ export const mineRulesFromXmlFiles = (xmlFiles, support, metaData, ws) => {
     let dataMap = new Map();
     for (const group of groupList.keys()){
         let grouping = groupList.get(group);
-        findParentChildRelations(allAttributes, grouping, analysisFileName,
+        addParentChildRelations(allAttributes, grouping, analysisFileName,
             classLocations, xmlData, parentInfo, fileAnalysisMap, dataMap);
     }
 
