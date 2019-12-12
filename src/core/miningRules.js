@@ -214,7 +214,7 @@ export const mineRulesFromXmlFiles = (xmlFiles, support, metaData, ws) => {
     for (const group of groupList.keys()){
         let grouping = groupList.get(group);
         addParentChildRelations(allAttributes, grouping, analysisFileName,
-            classLocations, xmlData, parentInfo, fileAnalysisMap, dataMap);
+            classLocations, xmlFiles, parentInfo, fileAnalysisMap, dataMap);
     }
 
     outputDataBases(dataMap, ws);
@@ -265,7 +265,9 @@ const outputDataBases = (dataMap, ws) => {
     //[ ["nameOfFile.txt", "data that is going to be written into file"],
     // ["nextFile.txt", "some other data"]]
     let databases = Array.from(dataMap.entries());
-
-    Utilities.sendToServer(ws, "LEARN_RULES_DATABASES", databases)
+    // websocket seems to fail in sending large messages. Instead of sending the database as a whole, we send messages in patches.
+    databases.forEach((d => {
+        Utilities.sendToServer(ws, "LEARN_RULES_DATABASES", [d])
+    }))
 
 };

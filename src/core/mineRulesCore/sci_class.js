@@ -218,7 +218,7 @@ export const findParentChildRelations = (id_start, classGroupings, attributeList
 
 
 export const addParentChildRelations = (allAttributes, classGroupings,
-                                            analysisFileName, classLocations, xmlData,
+                                            analysisFileName, classLocations, xmlFiles,
                                             parentInfo, fileAnalysisMap, dataMap) => {
 
     let parentClass = classGroupings[classGroupings.length-1];
@@ -235,8 +235,21 @@ export const addParentChildRelations = (allAttributes, classGroupings,
 
     for(let i = 0; i < classGroupings.length; i++){
 
-        classTree = et.parse(xmlData[i]);
         let f = classLocations[classGroupings[i]];
+
+        if (f !== undefined) {
+            f = f.split("\\")[(f.split("\\")).length - 1];
+            f = f.split(".")[0] + ".java";
+            let filtered = xmlFiles.filter(d => d["filePath"].endsWith(f));
+            if (filtered.length > 0)
+                classTree = et.parse(filtered[0]["xml"]);
+            if (filtered.length === 0) {
+                console.log("file not found: ", f);
+                continue;
+            }
+        } else {
+            continue;
+        }
 
         let attributes = [];
         let subCL = classTree.findall('.//class');

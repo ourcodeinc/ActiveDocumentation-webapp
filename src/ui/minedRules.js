@@ -22,7 +22,7 @@ class MinedRules extends Component {
         };
     }
 
-    render() { console.log(this.state.minedRules);
+    render() { //console.log(this.state.minedRules);
         return (
             <div>
                 <div style={{paddingBottom: "10px"}}>
