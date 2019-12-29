@@ -122,7 +122,7 @@ class RulePanel extends Component {
     }
 
     //componentDidUpdate doesn"t work
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
 
         if (nextProps.message === "HASH")
         {

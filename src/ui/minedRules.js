@@ -75,7 +75,7 @@ class MinedRules extends Component {
         this.setState({minedRules: []});
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.message === "UPDATE_MINED_RULES") {
             this.setState({minedRules: nextProps.minedRules})
         }
