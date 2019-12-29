@@ -121,8 +121,6 @@ export const mineRulesFromXmlFiles = (xmlFiles, support, metaData, ws) => {
         }
     }
 
-    let xmlData = xmlFiles.map(d => d["xml"]);
-
     // This is a global variable that controls how "deep" the chlid-parent
     // relationships can extend
     let DEPTH = 2;
@@ -203,7 +201,7 @@ export const mineRulesFromXmlFiles = (xmlFiles, support, metaData, ws) => {
 
         allAttributes = new Map(allAttributes,
             findParentChildRelations(id_start, groupList.get(group),
-                allAttributes, xmlData, parentInfo, queryMap));
+                allAttributes, classLocations, parentInfo, queryMap, xmlFiles));
 
     }
 
@@ -214,7 +212,7 @@ export const mineRulesFromXmlFiles = (xmlFiles, support, metaData, ws) => {
     for (const group of groupList.keys()){
         let grouping = groupList.get(group);
         addParentChildRelations(allAttributes, grouping, analysisFileName,
-            classLocations, xmlFiles, parentInfo, fileAnalysisMap, dataMap);
+            classLocations, parentInfo, fileAnalysisMap, dataMap, xmlFiles);
     }
 
     outputDataBases(dataMap, ws);

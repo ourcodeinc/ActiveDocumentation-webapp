@@ -53,14 +53,27 @@ class Utilities {
                     break;
 
                 case "LEARN_RULES_META_DATA":
+                    if (data.content.length > 20000) {
+                        this.sendChunkedData(messageJson, data.content.slice(0), data.fileName, ws);
+                        return;
+                    }
                     messageJson['data'] = [[data.fileName, data.content]];
                     break;
 
                 case "LEARN_RULES_FILE_LOCATIONS":
+                    if (data.content.length > 20000) {
+                        this.sendChunkedData(messageJson, data.content.slice(0), data.fileName, ws);
+                        return;
+                    }
                     messageJson['data'] = [[data.fileName, data.content]];
                     break;
 
-                case "LEARN_RULES_DATABASES":
+                case "LEARN_RULES_DATABASES": console.log("send database", data[0][0]);
+                    if (data[0][1].length > 20000) {
+                        this.sendChunkedData(messageJson, data[0][1].slice(0), data[0][0], ws);
+                        return;
+                    }
+
                     messageJson['data'] = data; // array of arrays: [["file_name.txt", "data to be written"]]
                     break;
 
@@ -82,6 +95,26 @@ class Utilities {
             }
 
             ws.send(JSON.stringify(messageJson));
+        }
+    }
+
+    /**
+     * websocket cannot send data larger than 64KB. Here the function
+     * break the data to smaller pieces for transfer
+     * @param messageJson  data: [[fileName, initData]]
+     * @param initData
+     * @param fileName
+     * @param ws
+     */
+    static sendChunkedData (messageJson, initData, fileName, ws) {
+        // console.log(fileName, initData);
+        messageJson["command"] += "_APPEND";
+        let start = 0;
+        while (start < initData.length) {
+            messageJson['data'] = [[fileName, initData.substring(start, Math.min(start + 20000, initData.length))]];
+            // console.log(messageJson['command'], messageJson['data']);
+            ws.send(JSON.stringify(messageJson));
+            start += 20000;
         }
     }
 

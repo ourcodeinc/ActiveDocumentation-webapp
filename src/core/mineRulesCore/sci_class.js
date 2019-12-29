@@ -3,6 +3,7 @@
  * Edited by Sahar Mehrpour
  * Nov 2019
  */
+/* eslint-disable */
 
 import {addClassAnnotations, addClsFunctions, addConstructors, addImplementations,
     addMemberVars, findClassAnnotations, findClsFunctions, findConstructors,
@@ -22,33 +23,33 @@ export const makePairsList = (classRoot, childParent, classLocations) => {
         // Figure out what the child class's name is
         let chName = cls[i].find('name');
         //console.log(chName);
-        if(chName === null){
+        if (chName == null) {
             continue;
         }
 
-        if(chName.text === null){
+        if (chName.text == null) {
             childName = (chName.find('name')).text
         }
         else{
             childName = chName.text;
 
-            if(childName !== ''){
+            if (childName != '') {
                 classLocations[childName] = classRoot.find('[@filename]').get('filename');
             }
 
         }
         // If we can't find a name, then we go on to the next class in
         // the srcML file
-        if(childName === ''){
+        if (childName == '') {
             continue;
         }
 
         let ext = cls[i].find(".//super/extends");
-        if (ext !== null){
+        if (ext != null) {
 
             let ptName = ext.find('name');
 
-            if(ptName.text === ''){
+            if (ptName.text == '') {
                 parentName = (ptName.find('name')).text;
             }
             else{
@@ -57,7 +58,7 @@ export const makePairsList = (classRoot, childParent, classLocations) => {
 
             // If we can't find the parent name, then we go ahead append
             // and skip past this case
-            if (parentName === null){
+            if (parentName == null) {
                 continue;
             }
 
@@ -97,7 +98,9 @@ export const addChildren = (parent, childParent, groupID, currDepth, groupList) 
 };
 
 
-export const findParentChildRelations = (id_start, classGroupings, attributeList, xmlData, parentInfo, queryMap) => {
+export const findParentChildRelations = (id_start, classGroupings,
+                                         attributeList, classLocations,
+                                         parentInfo, queryMap, xmlFiles) => {
 
     let parentClass = classGroupings[classGroupings.length-1];
     let subCLfncs = [];
@@ -111,7 +114,21 @@ export const findParentChildRelations = (id_start, classGroupings, attributeList
 
     for(let i = 0; i < classGroupings.length; i++){
 
-        classTree = et.parse(xmlData[i]);
+        let f = classLocations[classGroupings[i]];
+
+        if (f != undefined) {
+            f = f.split("\\")[(f.split("\\")).length - 1];
+            f = f.split(".")[0] + ".java";
+            let filtered = xmlFiles.filter(d => d["filePath"].endsWith(f));
+            if (filtered.length > 0)
+                classTree = et.parse(filtered[0]["xml"]);
+            if (filtered.length === 0) {
+                console.log("file not found: ", f);
+                continue;
+            }
+        } else {
+            continue;
+        }
 
         let subCL = classTree.findall('.//class');
         let childName;
@@ -119,11 +136,11 @@ export const findParentChildRelations = (id_start, classGroupings, attributeList
             // Figure out what the child class's name is
             let chName = subCL[j].find('name');
 
-            if(chName === null){
+            if (chName == null) {
                 continue;
             }
 
-            if(chName.text === null){
+            if (chName.text == null) {
                 childName = (chName.find('name')).text
             }
             else{
@@ -131,7 +148,7 @@ export const findParentChildRelations = (id_start, classGroupings, attributeList
             }
             // If we can't find a name, then we go on to the next class in
             // the srcML file
-            if(childName === ''){
+            if (childName == '') {
                 continue;
             }
 
@@ -140,12 +157,12 @@ export const findParentChildRelations = (id_start, classGroupings, attributeList
             // we need to check that the filename is in classGroupings
             if(classGroupings.includes(childName)){
 
-                if(parentInfo.get(parentClass) !== undefined){
+                if (parentInfo.get(parentClass) != undefined) {
 
                     // This will contain a list of functions that are present in both
                     // the parent class and the child class.
-                    let matchingFunctions = null;
-                    if (parentClass !== childName){
+                    let matchingFunctions;
+                    if (parentClass != childName) {
 
                         // First get a list of all the child functions
                         let fncs = subCL[j].findall('block/function');
@@ -166,7 +183,7 @@ export const findParentChildRelations = (id_start, classGroupings, attributeList
                     }
                     // Come here and output attribute about parent functions matching
                     // Clear out matching functions here as well
-                    if(matchingFunctions){
+                    if (matchingFunctions != null) {
                         for (let m = 0; m < matchingFunctions.length; m++){
 
                             let name = "class overrides function of name \""
@@ -218,12 +235,22 @@ export const findParentChildRelations = (id_start, classGroupings, attributeList
 
 
 export const addParentChildRelations = (allAttributes, classGroupings,
-                                            analysisFileName, classLocations, xmlFiles,
-                                            parentInfo, fileAnalysisMap, dataMap) => {
+                                            analysisFileName, classLocations,
+                                            parentInfo, fileAnalysisMap, dataMap, xmlFiles) => {
 
     let parentClass = classGroupings[classGroupings.length-1];
     let subCLfncs = [];
     let classTree;
+
+    // Empty the analysisFile first in case anything has been written before
+    /*
+    fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
+    let d = "";
+    fs.writeFile(fileN, d, (err) => {
+    // In case of a error throw err.
+    if (err) throw err;
+    });
+    */
 
     // Used to keep track of all the files we have accessed
     let listOfFiles = [];
@@ -237,7 +264,7 @@ export const addParentChildRelations = (allAttributes, classGroupings,
 
         let f = classLocations[classGroupings[i]];
 
-        if (f !== undefined) {
+        if (f != undefined) {
             f = f.split("\\")[(f.split("\\")).length - 1];
             f = f.split(".")[0] + ".java";
             let filtered = xmlFiles.filter(d => d["filePath"].endsWith(f));
@@ -256,18 +283,18 @@ export const addParentChildRelations = (allAttributes, classGroupings,
         let childName;
 
         let removeDuplicateMethod = (elem, pos) => {
-            return attributes.indexOf(elem) === pos;
+            return attributes.indexOf(elem) == pos;
         };
 
         for(let j = 0; j < subCL.length; j++){
             // Figure out what the child class's name is
             let chName = subCL[j].find('name');
 
-            if(chName === null){
+            if (chName == null) {
                 continue;
             }
 
-            if(chName.text === null){
+            if (chName.text == null) {
                 childName = (chName.find('name')).text
             }
             else{
@@ -275,7 +302,7 @@ export const addParentChildRelations = (allAttributes, classGroupings,
             }
             // If we can't find a name, then we go on to the next class in
             // the srcML file
-            if(childName === ''){
+            if (childName == '') {
                 continue;
             }
 
@@ -284,12 +311,12 @@ export const addParentChildRelations = (allAttributes, classGroupings,
             // we need to check that the filename is in classGroupings
             if(classGroupings.includes(childName)){
 
-                if(parentInfo.get(parentClass) !== undefined){
+                if (parentInfo.get(parentClass) != undefined) {
 
                     // This will contain a list of functions that are present in both
                     // the parent class and the child class.
-                    let matchingFunctions = null;
-                    if (parentClass !== childName){
+                    let matchingFunctions;
+                    if (parentClass != childName) {
 
                         // First get a list of all the child functions
                         let fncs = subCL[j].findall('block/function');
@@ -312,7 +339,7 @@ export const addParentChildRelations = (allAttributes, classGroupings,
                     }
                     // Come here and output attribute about parent functions matching
                     // Clear out matching functions here as well
-                    if(matchingFunctions){
+                    if (matchingFunctions != null) {
                         for (let m = 0; m < matchingFunctions.length; m++){
 
                             let name = "class overrides function of name \""
@@ -347,13 +374,14 @@ export const addParentChildRelations = (allAttributes, classGroupings,
                 addClsFunctions(subCL[j], attributes, allAttributes);
 
                 // This is the file we will be outputting to
-                let fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
+                fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
 
                 // Output attributes found to database
                 // Current FP Growth implementation will stop when it reads a newline
                 // so we don't want it to output newlines when attributes is empty
                 if(attributes.length > 0){
                     // Remove duplicate elements from attributes
+                    // Sahar: Extract callback function
                     let finalList = attributes.filter(removeDuplicateMethod);
 
                     // By default the JavaScript sort() method will sort values as strings
@@ -361,6 +389,7 @@ export const addParentChildRelations = (allAttributes, classGroupings,
                     // then "6" is bigger than "542", so we have to supply a sort function
                     // that we define
                     // Sort the attributes we found in ascending order
+                    // Sahar: callback function added here
                     finalList.sort((a,b)=> a-b);
 
                     //console.log(finalList);
@@ -381,6 +410,11 @@ export const addParentChildRelations = (allAttributes, classGroupings,
                         dataMap.set(fileN, data);
                     }
 
+                    /*
+                   let stream = fs.createWriteStream(fileN, {flags:'a'});
+                   stream.write(data);
+                   stream.end();
+                   */
                 }
 
                 attributes.length = 0;
