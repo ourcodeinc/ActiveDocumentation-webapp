@@ -3,10 +3,10 @@
  */
 
 
-import React, {Component} from 'react';
-import posTagger from 'wink-pos-tagger';
-import * as monaco from 'monaco-editor';
-import * as diff from 'diff';
+import React, {Component} from "react";
+import posTagger from "wink-pos-tagger";
+import * as monaco from "monaco-editor";
+import * as diff from "diff";
 
 import {
     documentations_IMarkdownString,
@@ -103,20 +103,20 @@ class RuleGeneratorText extends Component {
      * For configuring monaco editor
      */
     componentDidMount() {
-        window.addEventListener('resize', () => this.editor.layout());
+        window.addEventListener("resize", () => this.editor.layout());
 
-        monaco.languages.register({id: 'mySpecialLanguage'});
+        monaco.languages.register({id: "mySpecialLanguage"});
         monaco.languages.setMonarchTokensProvider("mySpecialLanguage", LANGUAGE_FORMAT);
         monaco.editor.defineTheme("draco-light", LANGUAGE_THEME);
 
         this.editor = monaco.editor.create(this.monacoEditorContainer, {
             value: this.autoCompleteArray.map(a => a.text).join(" "),
-            language: 'mySpecialLanguage',
+            language: "mySpecialLanguage",
             ...EDITOR_OPTION
         });
 
         // on hover information
-        this.hoverProvider = monaco.languages.registerHoverProvider('mySpecialLanguage', {
+        this.hoverProvider = monaco.languages.registerHoverProvider("mySpecialLanguage", {
             provideHover: (model, position, token) => {
                 let range = new monaco.Range(1, 1, position.lineNumber, position.column);
                 let arrayIndex = model.getValueInRange(range).split(" ").length - 1;
@@ -160,8 +160,8 @@ class RuleGeneratorText extends Component {
         });
 
         // auto complete suggestions
-        this.completionProvider = monaco.languages.registerCompletionItemProvider('mySpecialLanguage', {
-            triggerCharacters: [' '].concat('abcdefghijklmnopqrstuvwxyz'.split('')), // if removed the suggestions won't be updated for the first word
+        this.completionProvider = monaco.languages.registerCompletionItemProvider("mySpecialLanguage", {
+            triggerCharacters: [" "].concat("abcdefghijklmnopqrstuvwxyz".split("")), // if removed the suggestions won't be updated for the first word
             provideCompletionItems: (model, position, context, token) => {
                 let resultSuggestion = [];
 
@@ -171,7 +171,7 @@ class RuleGeneratorText extends Component {
                         documentation: item.documentation,
                         insertText: item.insertText + " ",
                         kind: monaco.languages.CompletionItemKind[item.kind === "suggestion" ? "Customcolor" : "Event"],
-                        command: {id: 'editor.action.triggerSuggest', title: 123}
+                        command: {id: "editor.action.triggerSuggest", title: 123}
                         // detail: item.detail
                     };
                     if (!item.documentation) delete CompletionItem.documentation;
@@ -210,7 +210,7 @@ class RuleGeneratorText extends Component {
         this.editor.onDidFocusEditorText(() => {
             this.setState({focusStatus: "focused"});
             // always display suggestion widget
-            this.editor.trigger('anything', 'editor.action.triggerSuggest');
+            this.editor.trigger("anything", "editor.action.triggerSuggest");
         });
 
         this.editor.onDidBlurEditorText(() => {
@@ -315,7 +315,7 @@ class RuleGeneratorText extends Component {
             });
 
             let stringReplaceAll = (string, search, replacement) => {
-                return string.replace(new RegExp(search, 'g'), replacement);
+                return string.replace(new RegExp(search, "g"), replacement);
             };
 
             let str = lemmatized.join(" ");

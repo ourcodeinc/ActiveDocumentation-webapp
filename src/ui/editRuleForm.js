@@ -2,32 +2,32 @@
  * Created by saharmehrpour on 2/23/18.
  */
 
-import React, {Component, Fragment} from 'react';
+import React, {Component, Fragment} from "react";
 import {connect} from "react-redux";
-import '../App.css';
+import "../App.css";
 import {
     Alert, MenuItem, Button, FormGroup, ButtonToolbar, Label, FormControl,
     Modal, Dropdown, Tabs, Tab, Badge
-} from 'react-bootstrap';
+} from "react-bootstrap";
 import {RootCloseWrapper} from "react-overlays";
-import MdEdit from 'react-icons/lib/md/edit';
-import MdAddBox from 'react-icons/lib/md/add-box';
-import MdStar from 'react-icons/lib/md/star';
-import TiDelete from 'react-icons/lib/ti/delete';
-import TiArrowMaximise from 'react-icons/lib/ti/arrow-maximise';
-import TiPinOutline from 'react-icons/lib/ti/pin-outline';
-import GoAlert from 'react-icons/lib/go/alert';
-import GoPin from 'react-icons/lib/go/pin';
-import FaTag from 'react-icons/lib/fa/tag';
-import FaMinusCircle from 'react-icons/lib/fa/minus-circle';
-import FaTimesCircle from 'react-icons/lib/fa/times-circle';
-import FaCheckSquareO from 'react-icons/lib/fa/check-square-o';
-import FaQuestionCircle from 'react-icons/lib/fa/question-circle'
+import MdEdit from "react-icons/lib/md/edit";
+import MdAddBox from "react-icons/lib/md/add-box";
+import MdStar from "react-icons/lib/md/star";
+import TiDelete from "react-icons/lib/ti/delete";
+import TiArrowMaximise from "react-icons/lib/ti/arrow-maximise";
+import TiPinOutline from "react-icons/lib/ti/pin-outline";
+import GoAlert from "react-icons/lib/go/alert";
+import GoPin from "react-icons/lib/go/pin";
+import FaTag from "react-icons/lib/fa/tag";
+import FaMinusCircle from "react-icons/lib/fa/minus-circle";
+import FaTimesCircle from "react-icons/lib/fa/times-circle";
+import FaCheckSquareO from "react-icons/lib/fa/check-square-o";
+import FaQuestionCircle from "react-icons/lib/fa/question-circle"
 import marked from "marked";
-import Joyride, {ACTIONS, EVENTS} from 'react-joyride';
-import ReactToolTip from 'react-tooltip';
+import Joyride, {ACTIONS, EVENTS} from "react-joyride";
+import ReactToolTip from "react-tooltip";
 
-import RuleGeneratorGui from './ruleGenerationGUI/ruleGeneratorGui';
+import RuleGeneratorGui from "./ruleGenerationGUI/ruleGeneratorGui";
 import verifyTextBasedOnGrammar from "./ruleGenerationText/languageProcessing";
 import {
     matchMessages, receiveGuiTree, clearNewRuleForm,
@@ -35,27 +35,27 @@ import {
 } from "../actions";
 import {generateGuiTrees} from "./ruleGenerationText/generateGuiTree";
 import RuleGeneratorText from "./ruleGenerationText/ruleGeneratorText";
-import Utilities from '../core/utilities';
+import Utilities from "../core/utilities";
 import {error_messages_IMarkdownString} from "./ruleGenerationText/textConstant";
 
-import title_description_filled from '../resources/title_description_filled.png';
-import visibility_class_declaration from '../resources/visibility_class_declaration.png';
-import visibility_class_declaration_code from '../resources/visibility_class_declaration_code.png';
-import hidden_element_interaction from '../resources/hidden_element_interaction.png';
-import constraint_example from '../resources/constraint_example.png';
-import EoI_GUI_example_1 from '../resources/EoI_GUI_example_1.png';
-import EoI_GUI_example_2 from '../resources/EoI_GUI_example_2.png';
-import EoI_TE_example_1 from '../resources/EoI_TE_example_1.png';
-import EoI_TE_example_2 from '../resources/EoI_TE_example_2.png';
-import auto_complete_filled from '../resources/auto_complete_filled.png';
-import auto_complete_info_icon from '../resources/auto_complete_info_icon.png';
-import auto_complete_info from '../resources/auto_complete_info.png';
-import auto_complete_example from '../resources/auto_complete_example.png';
-import files_folders from '../resources/files_folders.png';
-import tags from '../resources/tags.png';
-import new_tag from '../resources/new_tag.png';
-import feedback_snippet_1 from '../resources/feedback_snippet_1.png';
-import matching_code from '../resources/matching_code.png';
+import title_description_filled from "../resources/title_description_filled.png";
+import visibility_class_declaration from "../resources/visibility_class_declaration.png";
+import visibility_class_declaration_code from "../resources/visibility_class_declaration_code.png";
+import hidden_element_interaction from "../resources/hidden_element_interaction.png";
+import constraint_example from "../resources/constraint_example.png";
+import EoI_GUI_example_1 from "../resources/EoI_GUI_example_1.png";
+import EoI_GUI_example_2 from "../resources/EoI_GUI_example_2.png";
+import EoI_TE_example_1 from "../resources/EoI_TE_example_1.png";
+import EoI_TE_example_2 from "../resources/EoI_TE_example_2.png";
+import auto_complete_filled from "../resources/auto_complete_filled.png";
+import auto_complete_info_icon from "../resources/auto_complete_info_icon.png";
+import auto_complete_info from "../resources/auto_complete_info.png";
+import auto_complete_example from "../resources/auto_complete_example.png";
+import files_folders from "../resources/files_folders.png";
+import tags from "../resources/tags.png";
+import new_tag from "../resources/new_tag.png";
+import feedback_snippet_1 from "../resources/feedback_snippet_1.png";
+import matching_code from "../resources/matching_code.png";
 
 import {checkRulesForAll} from "../core/ruleExecutor";
 import ProjectHierarchy from "./projectHierarchy";
@@ -79,7 +79,7 @@ class EditRuleForm extends Component {
         this.tourGuideSteps = [
             {
                 target: `#title_description_div_${this.ruleIndex}`,
-                title: 'Rule Title and Description',
+                title: "Rule Title and Description",
                 content: <span style={{textAlign: "left"}}>
                     <p>Each design rule should have a title by which it is displayed in the tool.
                         Design rule titles are often single-line statements about the rule.</p>
@@ -93,7 +93,7 @@ class EditRuleForm extends Component {
 
             {
                 target: `#gui_div_${this.ruleIndex}>.generateRuleGuiDiv`,
-                title: 'Graphical Editor for Writing Code',
+                title: "Graphical Editor for Writing Code",
                 content: <span style={{textAlign: "left"}}>
                     <p>The Graphical Editor enables you to write code you want to match.</p>
                     <p>The Graphical Editor includes elements whose attributes can be modified. These elements corresponds to Java pieces of code.</p>
@@ -102,7 +102,7 @@ class EditRuleForm extends Component {
             },  //1
             {
                 target: `#gui_div_${this.ruleIndex}>.generateRuleGuiDiv`,
-                title: 'The Graphical Editor Elements',
+                title: "The Graphical Editor Elements",
                 content: <span style={{textAlign: "left"}}>
                     <p>For example, you can match the <strong>visibility</strong> property for class declaration statement.</p>
                     <div>
@@ -123,7 +123,7 @@ class EditRuleForm extends Component {
 
             {
                 target: `#id__${this.ruleIndex}__0-7-0`,
-                title: 'The Graphical Editor Elements',
+                title: "The Graphical Editor Elements",
                 content: <span style={{textAlign: "left"}}>
                     <p>Some properties are hidden under an overlaying box.</p>
                     <p>Moving the cursor over the hidden element, make the element visible.</p>
@@ -133,7 +133,7 @@ class EditRuleForm extends Component {
             }, //3
             {
                 target: `#gui_div_${this.ruleIndex}>.generateRuleGuiDiv`,
-                title: 'Graphical Editor - Writing the Matching Code',
+                title: "Graphical Editor - Writing the Matching Code",
                 content: <span style={{textAlign: "left"}}>
                     <p>Assume the following snippet is a pattern describing a commonality in the code:</p>
                     <code style={{float: "left", color: "#000"}}><span style={{color: "#666666"}}>package</span> <span
@@ -155,7 +155,7 @@ class EditRuleForm extends Component {
             },//4
             {
                 target: `#gui_div_${this.ruleIndex}>.generateRuleGuiDiv`,
-                title: 'Graphical Editor - Constraint Elements',
+                title: "Graphical Editor - Constraint Elements",
                 content: <span style={{textAlign: "left"}}>
                     <p>In the next step, define <strong>what must be true</strong> and <strong>how</strong> the rule is satisfied.</p>
                     <code style={{float: "left", color: "#000"}}>package com.bankapplication.controllers;<br/>
@@ -197,7 +197,7 @@ class EditRuleForm extends Component {
             }, //5
             {
                 target: `#gui_div_${this.ruleIndex}>.generateRuleGuiDiv`,
-                title: 'The Graphical Editor - Element of Interest',
+                title: "The Graphical Editor - Element of Interest",
                 content: <span style={{textAlign: "left"}}>
                     <p>In every design rule, one element is the most interesting element of the rule that is called <em>Element of Interest (EoI).</em>.</p>
                     <div>The Graphical Editor will select an EoI automatically (Marked by <div className={"MdStar selectedElement"} style={{display: "inline"}}><MdStar size={20}/></div>).
@@ -266,7 +266,7 @@ class EditRuleForm extends Component {
                     <p>New tags can be generated here as well.</p>
                     <img className={"tutorialImage"} src={new_tag} alt={"New Tag Example"}/>
                 </span>,
-                title: 'Rule Tags',
+                title: "Rule Tags",
                 disableBeacon: true
             }, //10
             {
@@ -276,7 +276,7 @@ class EditRuleForm extends Component {
                     <span style={{color: "#7b611d"}}> com.bankapplication.controllers</span>. The respective path of this package in the project is specified here:</p>
                     <img style={{marginBottom: "20px"}} src={files_folders} className={"tutorialImage"} alt={"Specific file and folders"}/>
                 </span>,
-                title: 'Specifying Files and Folders',
+                title: "Specifying Files and Folders",
                 disableBeacon: true
             }, //11
 
@@ -289,7 +289,7 @@ class EditRuleForm extends Component {
                          style={{width: "50%"}}
                          alt={"Feedback Snippets Example 1"}/>
                 </span>,
-                title: 'FeedBack',
+                title: "FeedBack",
                 disableBeacon: true
             }, //12
         ];
@@ -395,7 +395,7 @@ class EditRuleForm extends Component {
     render() {
         return (
             <div className={"rulePanelDiv" + (this.ruleIndex === -1 ? " edit-bg" : "")}>
-                <div style={{float: 'right'}}>
+                <div style={{float: "right"}}>
                     <FaQuestionCircle size={20} className={"faQuestionCircle"}
                                       onClick={() => this.setState({
                                           tourShouldRun: true,
@@ -448,8 +448,8 @@ class EditRuleForm extends Component {
                                      this.setState({title: e.target.value});
                                  }}
                                  onKeyUp={(e) => {
-                                     e.target.style.cssText = 'height:0';
-                                     e.target.style.cssText = 'overflow:hidden;height:' + e.target.scrollHeight + 'px';
+                                     e.target.style.cssText = "height:0";
+                                     e.target.style.cssText = `overflow:hidden;height: ${e.target.scrollHeight} px`;
                                  }}
                                  onBlur={() => this.onEditNewRuleForm()}/>
                 </FormGroup>
@@ -462,8 +462,8 @@ class EditRuleForm extends Component {
                                      this.setState({description: e.target.value})
                                  }}
                                  onKeyUp={(e) => {
-                                     e.target.style.cssText = 'height:0';
-                                     e.target.style.cssText = 'overflow:hidden;height:' + e.target.scrollHeight + 'px';
+                                     e.target.style.cssText = "height:0";
+                                     e.target.style.cssText = `overflow:hidden;height: ${e.target.scrollHeight} px`;
                                  }}
                                  onBlur={() => this.onEditNewRuleForm()}/>
                 </FormGroup>
@@ -477,7 +477,7 @@ class EditRuleForm extends Component {
      */
     renderTags() {
         return (
-            <div style={{paddingTop: '10px', clear: 'both'}} id={`tag_div_${this.ruleIndex}`}>
+            <div style={{paddingTop: "10px", clear: "both"}} id={`tag_div_${this.ruleIndex}`}>
                 {this.state.ruleTags.map((d, i) => {
                     return (
                         <div className={"tagLabel"} key={i}>
@@ -623,7 +623,7 @@ class EditRuleForm extends Component {
      */
     renderTextUI() {
         return (
-            <div style={{paddingTop: '10px', clear: 'both'}} id={`text_ui_div_${this.ruleIndex}`}>
+            <div style={{paddingTop: "10px", clear: "both"}} id={`text_ui_div_${this.ruleIndex}`}>
                 <RuleGeneratorText autoCompleteArray={this.state.autoCompleteArray}
                                    ruleIndex={this.ruleIndex}
                                    errorPoint={this.state.errorPoint}
@@ -782,8 +782,8 @@ class EditRuleForm extends Component {
                                          this.setState({tagName: e.target.value})
                                      }}
                                      onKeyUp={(e) => {
-                                         e.target.style.cssText = 'height:auto; padding:0';
-                                         e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
+                                         e.target.style.cssText = "height:auto; padding:0";
+                                         e.target.style.cssText = `height: ${this.scrollHeight} px`;
                                      }}/>
                     </FormGroup>
                     <FormGroup validationState={(this.state.tagDetail === "") ? "error" : "success"}>
@@ -794,8 +794,8 @@ class EditRuleForm extends Component {
                                          this.setState({tagDetail: e.target.value})
                                      }}
                                      onKeyUp={(e) => {
-                                         e.target.style.cssText = 'height:auto; padding:0';
-                                         e.target.style.cssText = 'height:' + this.scrollHeight + 'px';
+                                         e.target.style.cssText = "height:auto; padding:0";
+                                         e.target.style.cssText = `height: ${this.scrollHeight} px`;
                                      }}/>
                     </FormGroup>
                 </Modal.Body>
@@ -874,7 +874,7 @@ class EditRuleForm extends Component {
 
                 styles={{
                     options: {
-                        primaryColor: '#000',
+                        primaryColor: "#000",
                         width: 900,
                         zIndex: 1000,
                     }
@@ -886,7 +886,7 @@ class EditRuleForm extends Component {
 
     renderFeedbackSnippet() {
         return (
-            <div style={{paddingTop: '10px', clear: 'both'}} id={`feedback_snippet_div_${this.ruleIndex}`}>
+            <div style={{paddingTop: "10px", clear: "both"}} id={`feedback_snippet_div_${this.ruleIndex}`}>
                 <Tabs animation={true} id={"edit_rule_000"}
                       activeKey={this.state.activeTab}
                       onSelect={(key) => {
@@ -896,10 +896,10 @@ class EditRuleForm extends Component {
                               this.setState({activeTab: key});
                       }}>
                     <Tab eventKey={0} disabled/>
-                    <Tab eventKey={'satisfied'}
-                         title={this.renderTabHeader('satisfied')}>{this.renderListOfSnippets('satisfied')}</Tab>
-                    <Tab eventKey={'violated'}
-                         title={this.renderTabHeader('violated')}>{this.renderListOfSnippets('violated')}</Tab>
+                    <Tab eventKey={"satisfied"}
+                         title={this.renderTabHeader("satisfied")}>{this.renderListOfSnippets("satisfied")}</Tab>
+                    <Tab eventKey={"violated"}
+                         title={this.renderTabHeader("violated")}>{this.renderListOfSnippets("violated")}</Tab>
                 </Tabs>
             </div>
         )
@@ -913,24 +913,24 @@ class EditRuleForm extends Component {
         // sum up the number of satisfied and violated
         let totalSatisfied = 0, totalViolated = 0;
         for (let i = 0; i < this.state.xPathQueryResult.length; i++) {
-            totalSatisfied += this.state.xPathQueryResult[i]['data']['satisfied'];
-            totalViolated += this.state.xPathQueryResult[i]['data']['violated']
+            totalSatisfied += this.state.xPathQueryResult[i]["data"]["satisfied"];
+            totalViolated += this.state.xPathQueryResult[i]["data"]["violated"]
         }
 
         switch (group) {
-            case 'all':
+            case "all":
                 return (
                     <span className="rulePanelGeneralTab">Matches
                             <Badge className="forAll">{totalSatisfied + totalViolated}</Badge>
                         <Badge className="forFile hidden">{}</Badge>
                     </span>);
-            case 'satisfied':
+            case "satisfied":
                 return (
                     <span className="rulePanelSatisfiedTab">Examples
                             <Badge className="forAll">{totalSatisfied}</Badge>
                         <Badge className="forFile hidden">{}</Badge>
                     </span>);
-            case 'violated':
+            case "violated":
                 return (
                     <span className="rulePanelViolatedTab">Violated
                             <Badge className="forAll">{totalViolated}</Badge>
@@ -951,7 +951,7 @@ class EditRuleForm extends Component {
         let filesList = [];
         let res = group === "satisfied" ? "satisfiedResult" : group === "violated" ? "violatedResult" : "quantifierResult";
         for (let i = 0; i < this.state.xPathQueryResult.length; i++) {
-            filesList = filesList.concat(this.state.xPathQueryResult[i]['data'][res])
+            filesList = filesList.concat(this.state.xPathQueryResult[i]["data"][res])
         }
 
         if (filesList.length === 0)
@@ -961,12 +961,12 @@ class EditRuleForm extends Component {
             <div>
                 {filesList.map((d, i) => {
                     return (
-                        <div data-file-path={d['filePath']} className="snippetDiv" key={i}>
+                        <div data-file-path={d["filePath"]} className="snippetDiv" key={i}>
                             <pre className="link" onClick={() => {
                                 this.props.onIgnoreFile(true);
-                                Utilities.sendToServer(this.props.ws, "XML_RESULT", d['xml'])
+                                Utilities.sendToServer(this.props.ws, "XML_RESULT", d["xml"])
                             }}>
-                                <div className="content" dangerouslySetInnerHTML={{__html: d['snippet']}}/>
+                                <div className="content" dangerouslySetInnerHTML={{__html: d["snippet"]}}/>
                             </pre>
                         </div>
                     )
@@ -1157,7 +1157,7 @@ class EditRuleForm extends Component {
         let parser = new DOMParser();
 
         function nsResolver(prefix) {
-            let ns = {'src': 'http://www.srcML.org/srcML/src'};
+            let ns = {"src": "http://www.srcML.org/srcML/src"};
             return ns[prefix] || null;
         }
 
@@ -1189,13 +1189,13 @@ class EditRuleForm extends Component {
 
                 if (children[i].nodeName === "#text") {
                     if (children.length === 1)
-                        res.push("text()=\"" + children[i].nodeValue + "\"");
+                        res.push(`text()="${children[i].nodeValue}"`);
                 }
                 else {
                     res.push(traverseChildren(children[i]));
                 }
             }
-            return "src:" + parentNode.nodeName + "[" + res.join(' and ') + "]";
+            return "src:" + parentNode.nodeName + "[" + res.join(" and ") + "]";
         };
 
         // result xpath: 'src:expr[....]' where 'src:expr[' and the final ']' is extra.
@@ -1270,7 +1270,7 @@ class EditRuleForm extends Component {
                         editorError: {
                             errorType: "Grammar Error",
                             message: "The input text after the following sub-text is NOT according to the grammar:",
-                            inputText: "\"" + error.inputText.slice(0, grammarError.col) + "\"",
+                            inputText: `"${error.inputText.slice(0, grammarError.col)}"`,
                             alertType: "danger"
                         },
                         errorPoint: grammarError.col
@@ -1347,8 +1347,7 @@ class EditRuleForm extends Component {
         if (this.props.numberOfSentMessages !== 0) {
             this.setState({
                 errorTitle: "Error in Submitting the Rule",
-                errorMessage: "Please wait for the server to respond to " + this.props.numberOfSentMessages + " sent messages. " +
-                "If the error appeared by mistake, reset the form by 'clear' button.",
+                errorMessage: `Please wait for the server to respond to ${this.props.numberOfSentMessages} sent messages. If the error appeared by mistake, reset the form by 'clear' button.`,
                 showError: true
             });
             return;
@@ -1419,8 +1418,7 @@ class EditRuleForm extends Component {
         if (this.props.numberOfSentMessages !== 0) {
             this.setState({
                 errorTitle: "Error in Submitting the new Rule",
-                errorMessage: "Please wait for the server to respond to " + this.props.numberOfSentMessages + " sent messages for retrieving XPath. " +
-                "If the error appeared by mistake, reset the form by 'clear' button.",
+                errorMessage: `Please wait for the server to respond to ${this.props.numberOfSentMessages} sent messages for retrieving XPath. If the error appeared by mistake, reset the form by 'clear' button.`,
                 showError: true
             });
             return;

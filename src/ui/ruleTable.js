@@ -2,13 +2,13 @@
  * Created by saharmehrpour on 9/6/17.
  */
 
-import React, {Component, Fragment} from 'react';
-import '../App.css';
+import React, {Component, Fragment} from "react";
+import "../App.css";
 
-import RulePanel from './rulePanel';
+import RulePanel from "./rulePanel";
 import {connect} from "react-redux";
 import {Button} from "react-bootstrap";
-import MdPlaylistAdd from 'react-icons/lib/md/playlist-add';
+import MdPlaylistAdd from "react-icons/lib/md/playlist-add";
 import {changeEditMode} from "../actions";
 
 class RuleTable extends Component {
@@ -27,7 +27,7 @@ class RuleTable extends Component {
             <Fragment>
                 {this.state.hash0 === "rules" ?
                     (!this.state.newRule ? (
-                        <div style={{paddingBottom: '10px', clear: 'both'}}>
+                        <div style={{paddingBottom: "10px", clear: "both"}}>
                             <Button onClick={() => this.props.onChangeEditMode()} style={{padding: "0 5px"}}>
                                 <MdPlaylistAdd size={35}/>
                                 Add a New Rule
@@ -55,7 +55,7 @@ class RuleTable extends Component {
         );
     }
 
-    //componentDidUpdate doesn't work
+    //componentDidUpdate doesn"t work
     componentWillReceiveProps(nextProps) {
         this.setState(nextProps);
     }
@@ -74,12 +74,12 @@ function mapStateToProps(state) {
 
     if (state.hash[0] === "tag")
         props.indicesOfRulesToDisplay = state.ruleTable
-            .filter((d) => d['tags'].indexOf(state.hash[1]) !== -1)
+            .filter((d) => d["tags"].indexOf(state.hash[1]) !== -1)
             .map(d => d.index);
 
     else if (state.hash[0] === "violatedRules")
         props.indicesOfRulesToDisplay = state.ruleTable
-            .filter(d => d['xPathQueryResult'].map(dd => dd['data'].violated).reduce((a, b) => { return a + b }, 0) !== 0)
+            .filter(d => d["xPathQueryResult"].map(dd => dd["data"].violated).reduce((a, b) => { return a + b }, 0) !== 0)
             .map(d => d.index);
 
     return props;

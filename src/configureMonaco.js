@@ -6,18 +6,18 @@
 
 const defaultMonacoConf = {
     publicURL: process.env.PUBLIC_URL,// set in index.html's head
-    basePath: '',
+    basePath: "",
     isCdn: false,// load from external site, uncomment script in index.html
-    builtType: process.env.NODE_ENV === 'production' ? 'min' : 'dev',
+    builtType: process.env.NODE_ENV === "production" ? "min" : "dev",
     monacoUrl: null,
-    monacoBuild: '0.12.0',
+    monacoBuild: "0.12.0",
 };
 
 
 //from MDN
 const importScript = (sSrc, onloadFunc, onerrorFunc) => {
-    const oScript = document.createElement('script');
-    oScript.type = 'text/javascript';
+    const oScript = document.createElement("script");
+    oScript.type = "text/javascript";
     if (onloadFunc) {
         oScript.onload = onloadFunc;
     }
@@ -29,8 +29,8 @@ const importScript = (sSrc, onloadFunc, onerrorFunc) => {
 };
 
 const loadMonaco = (monacoConf) => {
-    window.require.config({paths: {'vs': monacoConf.monacoUrl}});
-    window.require(['vs/editor/editor.main']);
+    window.require.config({paths: {"vs": monacoConf.monacoUrl}});
+    window.require(["vs/editor/editor.main"]);
 };
 
 const initMonacoLoader = (monacoConf = defaultMonacoConf) => { // uses window.monacoConf defined in
@@ -42,7 +42,7 @@ const initMonacoLoader = (monacoConf = defaultMonacoConf) => { // uses window.mo
         // a web worker through a same-domain script
         window.MonacoEnvironment = {
             getWorkerUrl: function (/* workerId, label */) {
-                if (monacoConf.builtType === 'min') {
+                if (monacoConf.builtType === "min") {
                     return `${monacoConf.publicURL + monacoConf.basePath}/monaco-worker-loader-proxy.js`;
                 } else {
                     return `${monacoConf.publicURL + monacoConf.basePath}/monaco-worker-loader-proxy.dev.js`;

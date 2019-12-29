@@ -15,38 +15,38 @@ class Utilities {
 
         if (ws) {
             switch (command) {
-                case 'MODIFIED_RULE':
-                    messageJson['data'] = {
+                case "MODIFIED_RULE":
+                    messageJson["data"] = {
                         "index": data.index,
                         "ruleText": data
                     };
                     break;
-                case 'MODIFIED_TAG':
-                    messageJson['data'] = {
+                case "MODIFIED_TAG":
+                    messageJson["data"] = {
                         "tagName": data.tagName,
                         "tagText": data
                     };
                     break;
-                case 'XML_RESULT':
-                    messageJson['data'] = data;
+                case "XML_RESULT":
+                    messageJson["data"] = data;
                     break;
 
-                case 'EXPR_STMT':
-                    messageJson['data'] = data; // {codeText: "", messageID: ""}
+                case "EXPR_STMT":
+                    messageJson["data"] = data; // {codeText: "", messageID: ""}
                     break;
 
-                case 'DECL_STMT':
-                    messageJson['data'] = data;
+                case "DECL_STMT":
+                    messageJson["data"] = data;
                     break;
 
-                case 'NEW_RULE':
-                    messageJson['data'] = {
+                case "NEW_RULE":
+                    messageJson["data"] = {
                         "index": data.index,
                         "ruleText": data
                     };
                     break;
-                case 'NEW_TAG':
-                    messageJson['data'] = {
+                case "NEW_TAG":
+                    messageJson["data"] = {
                         "tagName": data.tagName,
                         "tagText": data
                     };
@@ -57,7 +57,7 @@ class Utilities {
                         this.sendChunkedData(messageJson, data.content.slice(0), data.fileName, ws);
                         return;
                     }
-                    messageJson['data'] = [[data.fileName, data.content]];
+                    messageJson["data"] = [[data.fileName, data.content]];
                     break;
 
                 case "LEARN_RULES_FILE_LOCATIONS":
@@ -65,7 +65,7 @@ class Utilities {
                         this.sendChunkedData(messageJson, data.content.slice(0), data.fileName, ws);
                         return;
                     }
-                    messageJson['data'] = [[data.fileName, data.content]];
+                    messageJson["data"] = [[data.fileName, data.content]];
                     break;
 
                 case "LEARN_RULES_DATABASES": console.log("send database", data[0][0]);
@@ -74,16 +74,16 @@ class Utilities {
                         return;
                     }
 
-                    messageJson['data'] = data; // array of arrays: [["file_name.txt", "data to be written"]]
+                    messageJson["data"] = data; // array of arrays: [["file_name.txt", "data to be written"]]
                     break;
 
                 case "EXECUTE_FP_MAX":
-                    messageJson['data'] = data; // support
+                    messageJson["data"] = data; // support
                     break;
 
                 case "OPEN_FILE":
-                    messageJson['command'] = 'XML_RESULT'; // there is no separate command in the server
-                    messageJson['data'] = {
+                    messageJson["command"] = "XML_RESULT"; // there is no separate command in the server
+                    messageJson["data"] = {
                         fileName: data,
                         xml: "<unit xmlns=\"http://www.srcML.org/srcML/src\" revision=\"0.9.5\" language=\"Java\">\n" +
                             "</unit>"
@@ -111,8 +111,8 @@ class Utilities {
         messageJson["command"] += "_APPEND";
         let start = 0;
         while (start < initData.length) {
-            messageJson['data'] = [[fileName, initData.substring(start, Math.min(start + 20000, initData.length))]];
-            // console.log(messageJson['command'], messageJson['data']);
+            messageJson["data"] = [[fileName, initData.substring(start, Math.min(start + 20000, initData.length))]];
+            // console.log(messageJson["command"], messageJson["data"]);
             ws.send(JSON.stringify(messageJson));
             start += 20000;
         }

@@ -2,7 +2,7 @@
  * Created by saharmehrpour on 9/5/17.
  */
 
-import Utilities from './utilities';
+import Utilities from "./utilities";
 
 /**
  * verify the rules for all xml files
@@ -25,47 +25,47 @@ export const checkRulesForAll = (xmlFiles, ruleTable) => {
 export const checkRulesForFile = (xmlFiles, ruleTable, filePath) => {
 
     let targetXml = xmlFiles.filter((d) => {
-        return d['filePath'] === filePath
+        return d["filePath"] === filePath
     });
 
     for (let i = 0; i < ruleTable.length; i++) {
 
-        if (ruleTable[i]['xPathQueryResult'].filter((d) => {
-                return d['filePath'] === filePath || d['filePath'] === "MIXED";
+        if (ruleTable[i]["xPathQueryResult"].filter((d) => {
+                return d["filePath"] === filePath || d["filePath"] === "MIXED";
             }).length === 0)
             continue;
 
-        let ruleResultI = ruleTable[i]['xPathQueryResult'].filter((d) => {
-            return d['filePath'] === filePath || d['filePath'] === "MIXED";
-        })[0]['data'];
+        let ruleResultI = ruleTable[i]["xPathQueryResult"].filter((d) => {
+            return d["filePath"] === filePath || d["filePath"] === "MIXED";
+        })[0]["data"];
 
         // console.log(ruleResultI);
 
-        let prevQuantifierResult = ruleResultI['quantifierResult'].slice(0);
-        let prevSatisfiedResult = ruleResultI['satisfiedResult'].slice(0);
-        let prevSatisfied = ruleResultI['satisfied'];
-        let prevViolated = ruleResultI['violated'];
+        let prevQuantifierResult = ruleResultI["quantifierResult"].slice(0);
+        let prevSatisfiedResult = ruleResultI["satisfiedResult"].slice(0);
+        let prevSatisfied = ruleResultI["satisfied"];
+        let prevViolated = ruleResultI["violated"];
 
         // console.log(prevSatisfied, prevViolated);
-        ruleTable[i] = runRulesByTypes(ruleTable[i]['xPathQueryResult'][0]['filePath'] === "MIXED" ? xmlFiles : targetXml, ruleTable[i]);
+        ruleTable[i] = runRulesByTypes(ruleTable[i]["xPathQueryResult"][0]["filePath"] === "MIXED" ? xmlFiles : targetXml, ruleTable[i]);
 
-        ruleResultI = ruleTable[i]['xPathQueryResult'].filter((d) => {
-            return d['filePath'] === filePath || d['filePath'] === "MIXED";
-        })[0]['data'];
+        ruleResultI = ruleTable[i]["xPathQueryResult"].filter((d) => {
+            return d["filePath"] === filePath || d["filePath"] === "MIXED";
+        })[0]["data"];
 
         // console.log(ruleResultI);
 
-        ruleResultI['changed'] = (!Utilities.ResultArraysEqual(prevQuantifierResult, ruleResultI['quantifierResult']) ||
-            !Utilities.ResultArraysEqual(prevSatisfiedResult, ruleResultI['satisfiedResult']) ||
-            prevSatisfied !== ruleResultI['satisfied'] ||
-            prevViolated !== ruleResultI['violated']);
+        ruleResultI["changed"] = (!Utilities.ResultArraysEqual(prevQuantifierResult, ruleResultI["quantifierResult"]) ||
+            !Utilities.ResultArraysEqual(prevSatisfiedResult, ruleResultI["satisfiedResult"]) ||
+            prevSatisfied !== ruleResultI["satisfied"] ||
+            prevViolated !== ruleResultI["violated"]);
 
-        ruleResultI['violatedChanged'] = (prevViolated < ruleResultI['violated'] ? 'greater' :
-            prevViolated > ruleResultI['violated'] ? 'smaller' : 'none');
-        ruleResultI['satisfiedChanged'] = (prevSatisfied < ruleResultI['satisfied'] ? 'greater' :
-            prevSatisfied > ruleResultI['satisfied'] ? 'smaller' : 'none');
-        ruleResultI['allChanged'] = ((prevSatisfied + prevViolated) < (ruleResultI['violated'] + ruleResultI['satisfied']) ? 'greater' :
-            (prevSatisfied + prevViolated) > (ruleResultI['violated'] + ruleResultI['satisfied']) ? 'smaller' : 'none');
+        ruleResultI["violatedChanged"] = (prevViolated < ruleResultI["violated"] ? "greater" :
+            prevViolated > ruleResultI["violated"] ? "smaller" : "none");
+        ruleResultI["satisfiedChanged"] = (prevSatisfied < ruleResultI["satisfied"] ? "greater" :
+            prevSatisfied > ruleResultI["satisfied"] ? "smaller" : "none");
+        ruleResultI["allChanged"] = ((prevSatisfied + prevViolated) < (ruleResultI["violated"] + ruleResultI["satisfied"]) ? "greater" :
+            (prevSatisfied + prevViolated) > (ruleResultI["violated"] + ruleResultI["satisfied"]) ? "smaller" : "none");
 
     }
     return ruleTable;
@@ -73,8 +73,8 @@ export const checkRulesForFile = (xmlFiles, ruleTable, filePath) => {
 
 
 /**
- * find relevant xml files based on the rule 'checkFor' property
- * and call respective methods based on 'ruleType' property of the rule.
+ * find relevant xml files based on the rule "checkFor" property
+ * and call respective methods based on "ruleType" property of the rule.
  * @param xmlFiles
  * @param ruleI
  * @returns ruleI
@@ -82,27 +82,27 @@ export const checkRulesForFile = (xmlFiles, ruleTable, filePath) => {
 export const runRulesByTypes = (xmlFiles, ruleI) => {
 
     let xmlFilesToVerify = [];
-    let checkForFiles = ruleI['ruleType']['checkFor'].slice(0); // deep copy
+    let checkForFiles = ruleI["ruleType"]["checkFor"].slice(0); // deep copy
 
 
-    switch (ruleI['ruleType']['constraint']) {
-        case 'NONE':
+    switch (ruleI["ruleType"]["constraint"]) {
+        case "NONE":
             xmlFilesToVerify = xmlFiles.slice(0); // deep copy
             break;
 
-        case 'SOME':
+        case "SOME":
             for (let j = 0; j < checkForFiles.length; j++)
                 // Warning
                 // This can lead to error if fileName is saved as X.java in ruleJson.txt and there exists also aX.java
-                xmlFilesToVerify = xmlFilesToVerify.concat(xmlFiles.filter((d) => d['filePath'].endsWith(checkForFiles[j])));
+                xmlFilesToVerify = xmlFilesToVerify.concat(xmlFiles.filter((d) => d["filePath"].endsWith(checkForFiles[j])));
             break;
 
-        case 'EXCEPT':
+        case "EXCEPT":
             xmlFilesToVerify = xmlFiles.filter((d) => {
                 for (let j = 0; j < checkForFiles.length; j++)
                     // Warning
                     // This can lead to error if fileName is saved as X.java in ruleJson.txt and there exists also aX.java
-                    if (d['filePath'].endsWith(checkForFiles[j])) {
+                    if (d["filePath"].endsWith(checkForFiles[j])) {
                         checkForFiles.splice(j, 1);
                         return false;
                     }
@@ -110,64 +110,64 @@ export const runRulesByTypes = (xmlFiles, ruleI) => {
             });
             break;
 
-        case 'FOLDER':
+        case "FOLDER":
             for (let j = 0; j < checkForFiles.length; j++)
                 // Warning
                 // This can lead to error if the target folder is X in ruleJson.txt and there exists also a folder Xy
-                xmlFilesToVerify = xmlFilesToVerify.concat(xmlFiles.filter((d) => d['filePath'].indexOf(checkForFiles[j]) !== -1));
+                xmlFilesToVerify = xmlFilesToVerify.concat(xmlFiles.filter((d) => d["filePath"].indexOf(checkForFiles[j]) !== -1));
             break;
 
-        case 'FOLDER EXCEPT':
+        case "FOLDER EXCEPT":
             for (let j = 0; j < checkForFiles[0].length; j++)
                 // Warning
                 // This can lead to error if the target folder is X in ruleJson.txt and there exists also a folder Xy
-                xmlFilesToVerify = xmlFilesToVerify.concat(xmlFiles.filter((d) => d['filePath'].indexOf(checkForFiles[0][j]) !== -1));
+                xmlFilesToVerify = xmlFilesToVerify.concat(xmlFiles.filter((d) => d["filePath"].indexOf(checkForFiles[0][j]) !== -1));
 
             xmlFilesToVerify = xmlFilesToVerify.filter((d) => {
                 for (let j = 0; j < checkForFiles[1].length; j++)
                     // Warning
                     // This can lead to error if fileName is saved as X.java in ruleJson.txt and there exists also aX.java
-                    if (d['filePath'].endsWith(checkForFiles[1][j]))
+                    if (d["filePath"].endsWith(checkForFiles[1][j]))
                         return false;
                 return true;
             });
             break;
 
-        case 'FOLDER SOME':
+        case "FOLDER SOME":
             for (let j = 0; j < checkForFiles[0].length; j++)
                 // Warning
                 // This can lead to error if the target folder is X in ruleJson.txt and there exists also a folder Xy
-                xmlFilesToVerify = xmlFilesToVerify.concat(xmlFiles.filter((d) => d['filePath'].indexOf(checkForFiles[0][j]) !== -1));
+                xmlFilesToVerify = xmlFilesToVerify.concat(xmlFiles.filter((d) => d["filePath"].indexOf(checkForFiles[0][j]) !== -1));
 
             xmlFilesToVerify = xmlFilesToVerify.filter((d) => {
                 for (let j = 0; j < checkForFiles[1].length; j++)
                     // Warning
                     // This can lead to error if fileName is saved as X.java in ruleJson.txt and there exists also aX.java
-                    if (d['filePath'].endsWith(checkForFiles[1][j]))
+                    if (d["filePath"].endsWith(checkForFiles[1][j]))
                         return true;
                 return false;
             });
             break;
 
         default:
-            console.log('error in XML: ruleTable[index=' + ruleI['index'] + '][\'constraint\']');
+            console.log("error in XML: ruleTable[index=" + ruleI["index"] + "]['constraint']");
             return ruleI;
     }
 
 
-    if (ruleI['ruleType']['type'] === 'WITHIN') {
+    if (ruleI["ruleType"]["type"] === "WITHIN") {
         for (let j = 0; j < xmlFilesToVerify.length; j++)
             ruleI = runXPathQueryWithin(xmlFilesToVerify[j], ruleI);
     }
-    else if (ruleI['ruleType']['type'] === 'BETWEEN') {
+    else if (ruleI["ruleType"]["type"] === "BETWEEN") {
         ruleI = runXpathQueryBetween(xmlFilesToVerify, ruleI);
     }
-    else if (ruleI['ruleType']['type'] === 'MIXED') {
+    else if (ruleI["ruleType"]["type"] === "MIXED") {
         ruleI = runXpathQueryMixed(xmlFilesToVerify, ruleI);
     }
 
     // if the file and folders are not valid, this property is not created
-    if (!ruleI['xPathQueryResult']) ruleI['xPathQueryResult'] = [];
+    if (!ruleI["xPathQueryResult"]) ruleI["xPathQueryResult"] = [];
 
     return ruleI;
 };
@@ -181,36 +181,36 @@ export const runRulesByTypes = (xmlFiles, ruleI) => {
  */
 const runXPathQueryWithin = (xmlFile, ruleI) => {
 
-    let quantifierResult = runXPathQuery(xmlFile, ruleI, 'quantifier');
-    let satisfiedResult = runXPathQuery(xmlFile, ruleI, 'constraint');
+    let quantifierResult = runXPathQuery(xmlFile, ruleI, "quantifier");
+    let satisfiedResult = runXPathQuery(xmlFile, ruleI, "constraint");
 
     // compare results
     let violatedResult = violatedResults(quantifierResult, satisfiedResult);
 
     let resultData = {
-        'quantifierResult': quantifierResult,
-        'satisfiedResult': satisfiedResult,
-        'violatedResult': violatedResult,
-        'satisfied': quantifierResult.length - violatedResult.length,
-        'violated': violatedResult.length
+        "quantifierResult": quantifierResult,
+        "satisfiedResult": satisfiedResult,
+        "violatedResult": violatedResult,
+        "satisfied": quantifierResult.length - violatedResult.length,
+        "violated": violatedResult.length
     };
 
-    if (!ruleI.hasOwnProperty('xPathQueryResult'))
-        ruleI['xPathQueryResult'] = [];
+    if (!ruleI.hasOwnProperty("xPathQueryResult"))
+        ruleI["xPathQueryResult"] = [];
 
-    let resultArray = ruleI['xPathQueryResult'].filter((d) => {
-        return d['filePath'] === xmlFile['filePath']
+    let resultArray = ruleI["xPathQueryResult"].filter((d) => {
+        return d["filePath"] === xmlFile["filePath"]
     });
 
     if (resultArray.length === 0)
-        ruleI['xPathQueryResult'].push({'filePath': xmlFile['filePath'], 'data': resultData});
+        ruleI["xPathQueryResult"].push({"filePath": xmlFile["filePath"], "data": resultData});
     else {
-        if (ruleI['xPathQueryResult'].filter((d) => {
-                return d['filePath'] === xmlFile['filePath']
+        if (ruleI["xPathQueryResult"].filter((d) => {
+                return d["filePath"] === xmlFile["filePath"]
             }).length > 0)
-            ruleI['xPathQueryResult'].filter((d) => {
-                return d['filePath'] === xmlFile['filePath']
-            })[0]['data'] = resultData;
+            ruleI["xPathQueryResult"].filter((d) => {
+                return d["filePath"] === xmlFile["filePath"]
+            })[0]["data"] = resultData;
     }
 
     return ruleI;
@@ -230,24 +230,24 @@ const runXpathQueryBetween = (xmlFiles, ruleI) => {
     let quantifierResult = [];
     let constraintResult = [];
     for (let j = 0; j < xmlFiles.length; j++) {
-        quantifierResult = quantifierResult.concat(runXPathQuery(xmlFiles[j], ruleI, 'quantifier'));
-        constraintResult = constraintResult.concat(runXPathQuery(xmlFiles[j], ruleI, 'constraint'));
+        quantifierResult = quantifierResult.concat(runXPathQuery(xmlFiles[j], ruleI, "quantifier"));
+        constraintResult = constraintResult.concat(runXPathQuery(xmlFiles[j], ruleI, "constraint"));
     }
     // compare results
     let violatedResult = violatedResults(quantifierResult, constraintResult);
 
     let resultData = {
-        'quantifierResult': quantifierResult,
-        'satisfiedResult': constraintResult,
-        'violatedResult': violatedResult,
-        'satisfied': quantifierResult.length - violatedResult.length,
-        'violated': violatedResult.length
+        "quantifierResult": quantifierResult,
+        "satisfiedResult": constraintResult,
+        "violatedResult": violatedResult,
+        "satisfied": quantifierResult.length - violatedResult.length,
+        "violated": violatedResult.length
     };
 
-    if (!ruleI.hasOwnProperty('xPathQueryResult'))
-        ruleI['xPathQueryResult'] = [];
+    if (!ruleI.hasOwnProperty("xPathQueryResult"))
+        ruleI["xPathQueryResult"] = [];
 
-    ruleI['xPathQueryResult'] = [{'filePath': 'BETWEEN', 'data': resultData}];
+    ruleI["xPathQueryResult"] = [{"filePath": "BETWEEN", "data": resultData}];
 
     return ruleI;
 
@@ -265,43 +265,43 @@ const runXpathQueryMixed = (xmlFiles, ruleI) => {
     let quantifierResult = [];
     let constraintResult = [];
 
-    if (ruleI['quantifier'].hasOwnProperty('type') && ruleI['quantifier']['type'] === 'FIND_FROM_TEXT')
-        quantifierResult = findFromText(xmlFiles, ruleI, 'quantifier');
-    else if (ruleI['quantifier'].hasOwnProperty('type') && ruleI['quantifier']['type'] === 'RETURN_TO_BASE')
-        quantifierResult = findAndReturnToBase(xmlFiles, ruleI, 'quantifier');
+    if (ruleI["quantifier"].hasOwnProperty("type") && ruleI["quantifier"]["type"] === "FIND_FROM_TEXT")
+        quantifierResult = findFromText(xmlFiles, ruleI, "quantifier");
+    else if (ruleI["quantifier"].hasOwnProperty("type") && ruleI["quantifier"]["type"] === "RETURN_TO_BASE")
+        quantifierResult = findAndReturnToBase(xmlFiles, ruleI, "quantifier");
     else
         for (let j = 0; j < xmlFiles.length; j++)
-            quantifierResult = quantifierResult.concat(runXPathQuery(xmlFiles[j], ruleI, 'quantifier'));
+            quantifierResult = quantifierResult.concat(runXPathQuery(xmlFiles[j], ruleI, "quantifier"));
 
 
-    if (ruleI['constraint'].hasOwnProperty('type') && ruleI['constraint']['type'] === 'FIND_FROM_TEXT')
-        constraintResult = findFromText(xmlFiles, ruleI, 'constraint');
-    else if (ruleI['constraint'].hasOwnProperty('type') && ruleI['constraint']['type'] === 'RETURN_TO_BASE')
-        constraintResult = findAndReturnToBase(xmlFiles, ruleI, 'constraint');
+    if (ruleI["constraint"].hasOwnProperty("type") && ruleI["constraint"]["type"] === "FIND_FROM_TEXT")
+        constraintResult = findFromText(xmlFiles, ruleI, "constraint");
+    else if (ruleI["constraint"].hasOwnProperty("type") && ruleI["constraint"]["type"] === "RETURN_TO_BASE")
+        constraintResult = findAndReturnToBase(xmlFiles, ruleI, "constraint");
     else
         for (let j = 0; j < xmlFiles.length; j++)
-            constraintResult = constraintResult.concat(runXPathQuery(xmlFiles[j], ruleI, 'constraint'));
+            constraintResult = constraintResult.concat(runXPathQuery(xmlFiles[j], ruleI, "constraint"));
 
 
-    // console.log(ruleI['quantifier'], quantifierResult);
-    // console.log(ruleI['constraint'], constraintResult);
+    // console.log(ruleI["quantifier"], quantifierResult);
+    // console.log(ruleI["constraint"], constraintResult);
 
 
     // compare results
     let violatedResult = containResults(constraintResult, quantifierResult);
 
     let resultData = {
-        'quantifierResult': quantifierResult,
-        'satisfiedResult': constraintResult,
-        'violatedResult': violatedResult,
-        'satisfied': quantifierResult.length - violatedResult.length,
-        'violated': violatedResult.length
+        "quantifierResult": quantifierResult,
+        "satisfiedResult": constraintResult,
+        "violatedResult": violatedResult,
+        "satisfied": quantifierResult.length - violatedResult.length,
+        "violated": violatedResult.length
     };
 
-    if (!ruleI.hasOwnProperty('xPathQueryResult'))
-        ruleI['xPathQueryResult'] = [];
+    if (!ruleI.hasOwnProperty("xPathQueryResult"))
+        ruleI["xPathQueryResult"] = [];
 
-    ruleI['xPathQueryResult'] = [{'filePath': 'MIXED', 'data': resultData}];
+    ruleI["xPathQueryResult"] = [{"filePath": "MIXED", "data": resultData}];
 
     return ruleI;
 
@@ -319,13 +319,13 @@ const findFromText = (xmlFiles, ruleIOrg, group) => {
     let result1 = [], result2 = [];
     let ruleI = Utilities.cloneJSON(ruleIOrg);
 
-    ruleI[group]['command'] = ruleI[group]['command1'];
+    ruleI[group]["command"] = ruleI[group]["command1"];
     for (let j = 0; j < xmlFiles.length; j++) {
         result1 = result1.concat(runXPathQuery(xmlFiles[j], ruleI, group));
     }
 
     for (let i = 0; i < result1.length; i++) {
-        ruleI[group]['command'] = ruleI[group]['command2'].replace('<TEMP>', result1[i].snippet);
+        ruleI[group]["command"] = ruleI[group]["command2"].replace("<TEMP>", result1[i].snippet);
         for (let j = 0; j < xmlFiles.length; j++) {
             result2 = result2.concat(runXPathQuery(xmlFiles[j], ruleI, group));
         }
@@ -346,16 +346,16 @@ const findAndReturnToBase = (xmlFiles, ruleIOrg, group) => {
     let ruleI = Utilities.cloneJSON(ruleIOrg);
 
     for (let base = 0; base < xmlFiles.length; base++) {
-        ruleI[group]['command'] = ruleI[group]['command1'];
+        ruleI[group]["command"] = ruleI[group]["command1"];
         result1 = runXPathQuery(xmlFiles[base], ruleI, group);
 
         for (let i = 0; i < result1.length; i++) {
             for (let j = 0; j < xmlFiles.length; j++) {
-                ruleI[group]['command'] = ruleI[group]['command2'].replace(new RegExp('<TEMP>', 'g'), result1[i].snippet);
+                ruleI[group]["command"] = ruleI[group]["command2"].replace(new RegExp("<TEMP>", "g"), result1[i].snippet);
                 result2 = runXPathQuery(xmlFiles[j], ruleI, group);
 
                 for (let k = 0; k < result2.length; k++) {
-                    ruleI[group]['command'] = ruleI[group]['command3'].replace('<TEMP>', result2[k].snippet);
+                    ruleI[group]["command"] = ruleI[group]["command3"].replace("<TEMP>", result2[k].snippet);
                     result3 = result3.concat(runXPathQuery(xmlFiles[base], ruleI, group));
                 }
 
@@ -370,34 +370,34 @@ const findAndReturnToBase = (xmlFiles, ruleIOrg, group) => {
  * runs the XPath query and compare results
  * @param xmlFile
  * @param ruleI
- * @param group either 'quantifier' or 'constraint'
+ * @param group either "quantifier" or "constraint"
  */
 const runXPathQuery = (xmlFile, ruleI, group) => {
     let parser = new DOMParser();
     let result = [];
 
     function nsResolver(prefix) {
-        let ns = {'src': 'http://www.srcML.org/srcML/src'};
+        let ns = {"src": "http://www.srcML.org/srcML/src"};
         return ns[prefix] || null;
     }
 
     // checks validity of the XML
-    let xml = parser.parseFromString(xmlFile['xml'], "text/xml");
+    let xml = parser.parseFromString(xmlFile["xml"], "text/xml");
     if (!xml.evaluate) {
-        console.log('error in xml.evaluate');
+        console.log("error in xml.evaluate");
         return;
     }
 
     // run xpath queries
-    let quantifierNodes = xml.evaluate(ruleI[group]['command'], xml, nsResolver, XPathResult.ANY_TYPE, null);
-    // let quantifierNameNodes = xml.evaluate(ruleI[group]['command'], xml, nsResolver, XPathResult.ANY_TYPE, null);
+    let quantifierNodes = xml.evaluate(ruleI[group]["command"], xml, nsResolver, XPathResult.ANY_TYPE, null);
+    // let quantifierNameNodes = xml.evaluate(ruleI[group]["command"], xml, nsResolver, XPathResult.ANY_TYPE, null);
     let resultQNode = quantifierNodes.iterateNext();
     // let resultQNameNode = quantifierNameNodes.iterateNext();
     let index = 0;
     while (resultQNode) {
-        let xmlAndText = getXmlData(xml, ruleI[group]['command'], index);
+        let xmlAndText = getXmlData(xml, ruleI[group]["command"], index);
         result.push({
-            "filePath": xmlFile['filePath'],
+            "filePath": xmlFile["filePath"],
             // "result": new XMLSerializer().serializeToString(resultQNode),
             "xml": xmlAndText.xmlJson,
             // "xmlText": xmlAndText.xmlText,
@@ -429,7 +429,7 @@ const violatedResults = (quantifierResult, satisfiedResult) => {
         let found = false;
         for (let j = 0; j < sliceArr.length; j++) {
             // TODO find a better comparison measures
-            if (quantifierResult[i]['snippet'] === sliceArr[j]['snippet']) {
+            if (quantifierResult[i]["snippet"] === sliceArr[j]["snippet"]) {
                 matches.push(quantifierResult[i]);
                 sliceArr.splice(j, 1);
                 found = true;
@@ -460,7 +460,7 @@ const containResults = (containerResult, sampleResult) => {
         let found = false;
         for (let j = 0; j < containerResult.length; j++) {
             // TODO find a better comparison measures
-            if (sampleResult[i]['snippet'] === containerResult[j]['snippet']) {
+            if (sampleResult[i]["snippet"] === containerResult[j]["snippet"]) {
                 matches.push(sampleResult[i]);
                 found = true;
                 break;
@@ -490,7 +490,7 @@ const getXmlData = (mainXml, query, index) => {
     let xml = Utilities.cloneXML(mainXml);
 
     function nsResolver(prefix) {
-        let ns = {'src': 'http://www.srcML.org/srcML/src'};
+        let ns = {"src": "http://www.srcML.org/srcML/src"};
         return ns[prefix] || null;
     }
 
@@ -505,7 +505,7 @@ const getXmlData = (mainXml, query, index) => {
     // TODO extract better snippet
     // get the first two line
     let resTextArray = new XMLSerializer().serializeToString(res).split(/\r?\n/);
-    let resText = resTextArray.length > 1 ? resTextArray[0] + '\n' + resTextArray[1] : resTextArray[0];
+    let resText = resTextArray.length > 1 ? resTextArray[0] + "\n" + resTextArray[1] : resTextArray[0];
 
 
     /**
@@ -514,7 +514,7 @@ const getXmlData = (mainXml, query, index) => {
      * @returns {*}
      */
     function removeSib(node) {
-        if (node.nodeName === 'unit')
+        if (node.nodeName === "unit")
             return node;
         let sib = node.nextSibling;
         while (sib && sib.nodeType !== -1) {
@@ -529,7 +529,7 @@ const getXmlData = (mainXml, query, index) => {
     if (res.children) {
 
         for (nameIndex = 0; nameIndex < res.children.length; nameIndex++)
-            if (res.children[nameIndex].tagName.toString() === 'name') {
+            if (res.children[nameIndex].tagName.toString() === "name") {
                 break;
             }
 
@@ -546,12 +546,12 @@ const getXmlData = (mainXml, query, index) => {
 
     let temp = new XMLSerializer().serializeToString(par);
     return {
-        'xmlJson': {
-            'fileName': fileName,
-            'xml': temp
+        "xmlJson": {
+            "fileName": fileName,
+            "xml": temp
         },
-        'xmlText': new XMLSerializer().serializeToString(par),
-        'snippet': resText
+        "xmlText": new XMLSerializer().serializeToString(par),
+        "snippet": resText
     };
 
 };

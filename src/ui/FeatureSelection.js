@@ -2,9 +2,9 @@
 * Created by saharmehrpour on 12/29/17.
 */
 
-import React, {Component} from 'react';
-import '../App.css';
-import {connect} from 'react-redux';
+import React, {Component} from "react";
+import "../App.css";
+import {connect} from "react-redux";
 
 class FeatureSelection extends Component {
 

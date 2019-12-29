@@ -1,7 +1,7 @@
-import antlr4 from 'antlr4/index';
-import posTagger from 'wink-pos-tagger';
+import antlr4 from "antlr4/index";
+import posTagger from "wink-pos-tagger";
 
-import Traverse from './generateXpath';
+import Traverse from "./generateXpath";
 
 
 /**
@@ -82,7 +82,7 @@ const lemmatize = (input) => {
  * @returns {string|XML|*|void}
  */
 // const stringReplaceAll = (str, search, replacement) => {
-//     return str.replace(new RegExp(search, 'g'), replacement);
+//     return str.replace(new RegExp(search, "g"), replacement);
 // };
 
 /**
@@ -93,8 +93,8 @@ const lemmatize = (input) => {
 const antlr = (input) => {
 
     let inputText = input + "";
-    let MyGrammarLexerModule = require('../generated-parser/myGrammarLexer');
-    let MyGrammarParserModule = require('../generated-parser/myGrammarParser');
+    let MyGrammarLexerModule = require("../generated-parser/myGrammarLexer");
+    let MyGrammarParserModule = require("../generated-parser/myGrammarParser");
 
     let ErrorListener = function (errors) {
         antlr4.error.ErrorListener.call(this);

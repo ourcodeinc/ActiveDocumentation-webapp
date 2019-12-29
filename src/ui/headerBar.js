@@ -3,13 +3,13 @@
  */
 
 
-import React, {Component} from 'react';
-import '../App.css';
-import Utilities from '../core/utilities';
+import React, {Component} from "react";
+import "../App.css";
+import Utilities from "../core/utilities";
 
-import {FormControl} from 'react-bootstrap';
+import {FormControl} from "react-bootstrap";
 import {connect} from "react-redux";
-import GoAlert from 'react-icons/lib/go/alert';
+import GoAlert from "react-icons/lib/go/alert";
 import {updateTagTable} from "../actions";
 
 
@@ -31,7 +31,7 @@ export class HeaderBar extends Component {
 
     renderHeader() {
         switch (this.props.hash[0]) {
-            case 'tag':
+            case "tag":
                 return (
                     <div>
                         <span className="text-16 primary">Rules related to tag: </span><br/>
@@ -40,12 +40,12 @@ export class HeaderBar extends Component {
                                      onBlur={(e) => this.props.onUpdateTag(this.props, e.target.value)} key={new Date()}
                                      placeholder="Information about tag"
                                      onClick={(e) => {
-                                         e.target.style.cssText = 'height:0';
-                                         e.target.style.cssText = 'overflow:hidden;height:' + e.target.scrollHeight + 'px';
+                                         e.target.style.cssText = "height:0";
+                                         e.target.style.cssText = `overflow:hidden;height:${e.target.scrollHeight}px`;
                                      }}/>
                     </div>
                 );
-            case 'rule':
+            case "rule":
                 return (
                     <div>
                         <span className="text-16 primary">Rule Index: </span>
@@ -53,7 +53,7 @@ export class HeaderBar extends Component {
                             className="text-24 important">{this.props.title.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
                     </div>
                 );
-            case 'codeChanged':
+            case "codeChanged":
                 return (
                     <div>
                         <span className="text-16 primary">Code Changed in File:</span><br/>
@@ -61,19 +61,19 @@ export class HeaderBar extends Component {
                             className="text-24 important">{this.props.content.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
                     </div>
                 );
-            case 'ruleChanged':
+            case "ruleChanged":
                 return (
                     <div>
                         <h3>Rule {this.props.title} is changed.</h3>
                     </div>
                 );
-            case 'genRule':
+            case "genRule":
                 return (
                     <div>
                         <h3>{this.props.title}</h3>
                     </div>
                 );
-            case 'rulesForFile':
+            case "rulesForFile":
                 return (
                     <div>
                         <span className="text-16 primary">Rules applicable for File:</span><br/>
@@ -104,16 +104,16 @@ function mapStateToProps(state) {
     };
 
     switch (state["hash"][0]) {
-        case 'tag':
-            props["tag"] = state["tagTable"].filter((d) => d['tagName'] === state["hash"][1])[0]; // can throw errors
+        case "tag":
+            props["tag"] = state["tagTable"].filter((d) => d["tagName"] === state["hash"][1])[0]; // can throw errors
             props["title"] = state["hash"][1];
             props["content"] = props["tag"]["detail"];
             break;
-        case 'rule':
+        case "rule":
             props["title"] = state["hash"][1];
             props["content"] = "";
             break;
-        case 'rules':
+        case "rules":
             props["title"] = "All Rules";
             props["content"] = "";
             break;

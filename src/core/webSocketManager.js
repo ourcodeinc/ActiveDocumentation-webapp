@@ -2,14 +2,14 @@
  * Created by saharmehrpour on 9/5/17.
  */
 
-import {Component} from 'react';
+import {Component} from "react";
 import {connect} from "react-redux";
 
 import {
     receiveExpressionStatementXML, ignoreFile, updateFilePath, updateRuleTable, updateTagTable,
     updateWS, updateXmlFiles, updateProjectHierarchyData, updatedMinedRules, updateFeatureSelection
 } from "../actions";
-import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from './ruleExecutor';
+import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from "./ruleExecutor";
 import {parseGrouping} from "./mineRulesCore/parseGrouping";
 import {getXpathForFeature} from "./findingFeature";
 
@@ -25,11 +25,11 @@ class WebSocketManager extends Component {
         let ws = new WebSocket("ws://localhost:8887");
         let filtered;
 
-        // PubSub.publish('NEW_WS', [ws]);
+        // PubSub.publish("NEW_WS", [ws]);
         this.props.onUpdateWS(ws);
 
         ws.onopen = function () {
-            // PubSub.publish('NEW_CONNECTION', []);
+            // PubSub.publish("NEW_CONNECTION", []);
         };
 
 
@@ -41,7 +41,7 @@ class WebSocketManager extends Component {
 
             let message = JSON.parse(e.data);
 
-            // if (message.command !== 'XML')
+            // if (message.command !== "XML")
             //     console.log(message);
 
             switch (message.command) {
@@ -76,11 +76,11 @@ class WebSocketManager extends Component {
 
                 // followed by CHECK_RULES_FOR_FILE
                 case "UPDATE_XML":
-                    filtered = xml.filter((d) => d.filePath === message.data['filePath']);
+                    filtered = xml.filter((d) => d.filePath === message.data["filePath"]);
                     if (filtered.length === 0)
-                        xml.push({'filePath': message.data['filePath'], 'xml': message.data['xml']});
+                        xml.push({"filePath": message.data["filePath"], "xml": message.data["xml"]});
                     else
-                        filtered[0].xml = message.data['xml'];
+                        filtered[0].xml = message.data["xml"];
                     this.props.onUpdateXmlFiles(xml);
                     break;
 
@@ -89,7 +89,7 @@ class WebSocketManager extends Component {
                     let filePath = message.data;
                     // received by RuleExecutor
                     ruleTable = checkRulesForFile(xml, ruleTable, filePath);
-                    this.props.onFilePathChange(filePath.replace('/Users/saharmehrpour/Documents/Workspace/', ''));
+                    this.props.onFilePathChange(filePath.replace("/Users/saharmehrpour/Documents/Workspace/", ""));
                     this.props.onUpdateRuleTable(ruleTable);
                     window.location.hash = "#/codeChanged";
                     break;
@@ -97,19 +97,19 @@ class WebSocketManager extends Component {
                 // tagName and tag
                 case "UPDATE_TAG":
                     let newTag = JSON.parse(message.data);
-                    filtered = tagTable.filter((d) => d.tagName === newTag['tagName']);
+                    filtered = tagTable.filter((d) => d.tagName === newTag["tagName"]);
                     if (filtered.length === 0)
                         tagTable.push(newTag);
                     else
-                        tagTable.filter((d) => d.tagName === newTag['tagName'])[0].detail = newTag['detail'];
-                    window.location.hash = "#/tag/" + newTag['tagName'];
+                        tagTable.filter((d) => d.tagName === newTag["tagName"])[0].detail = newTag["detail"];
+                    window.location.hash = "#/tag/" + newTag["tagName"];
 
                     break;
 
                 // Followed after sending MODIFIED_RULE
                 // ruleIndex and rule
                 case "UPDATE_RULE":
-                    let updatedRule = JSON.parse(message.data['rule']);
+                    let updatedRule = JSON.parse(message.data["rule"]);
                     try {
                         let ruleIndex = -1;
                         ruleTable.forEach((d, i) => +d.index === +updatedRule.index ? ruleIndex = i : "");
@@ -137,7 +137,7 @@ class WebSocketManager extends Component {
                     break;
 
                 case "NEW_RULE":
-                    let newAddedRule = JSON.parse(message.data['rule']);
+                    let newAddedRule = JSON.parse(message.data["rule"]);
                     ruleTable.push(newAddedRule);
                     // received by RuleExecutor
                     ruleTable[ruleTable.length - 1] = runRulesByTypes(xml, newAddedRule);
@@ -146,17 +146,17 @@ class WebSocketManager extends Component {
 
 
                 case "NEW_TAG":
-                    let newAddedTag = JSON.parse(message.data['tag']);
+                    let newAddedTag = JSON.parse(message.data["tag"]);
                     tagTable.push(newAddedTag);
                     this.props.onUpdateTagTable(tagTable);
                     break;
 
                 // after sending a piece of code DECL_STMT
                 case "SHOW_RULES_FOR_FILE":
-                    let focusedFilePath = message.data.replace('/Users/saharmehrpour/Documents/Workspace/', '');
+                    let focusedFilePath = message.data.replace("/Users/saharmehrpour/Documents/Workspace/", "");
                     if (!this.props.ignoreFile) {
                         this.props.onFilePathChange(focusedFilePath);
-                        window.location.hash = "#/rulesForFile/" + focusedFilePath.replace(/\//g, '%2F');
+                        window.location.hash = "#/rulesForFile/" + focusedFilePath.replace(/\//g, "%2F");
                     } else
                         this.props.onFalsifyIgnoreFile();
 

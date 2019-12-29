@@ -2,8 +2,8 @@
  * Created by saharmehrpour on 2/23/18.
  */
 
-import React, {Component} from 'react';
-import '../../App.css';
+import React, {Component} from "react";
+import "../../App.css";
 
 import {connect} from "react-redux";
 
@@ -687,14 +687,14 @@ class RuleGeneratorGui extends Component {
                         };
 
                         let childrenGroup = guiTree[job["elementId"]].children[childGroup];
-                        if (job["value"].startsWith("body")) childrenGroup = guiTree[job["elementId"]].children[childGroup][+(job["value"].split(',')[1])];
+                        if (job["value"].startsWith("body")) childrenGroup = guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])];
 
                         let newElementConditionName = guiElements[childrenGroup[0]].conditionName;
                         if (job["task"] === "REMOVE_EXTRA") {
                             // remove all inactive elements
                             if (job["value"].startsWith("body"))
-                                guiTree[job["elementId"]].children[childGroup][+(job["value"].split(',')[1])] =
-                                    guiTree[job["elementId"]].children[childGroup][+(job["value"].split(',')[1])].filter((id) => filterFunction(id));
+                                guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])] =
+                                    guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])].filter((id) => filterFunction(id));
                             else
                                 guiTree[job["elementId"]].children[childGroup] =
                                     guiTree[job["elementId"]].children[childGroup].filter((id) => filterFunction(id));
@@ -703,7 +703,7 @@ class RuleGeneratorGui extends Component {
                         let newElementsData = generateTreeForElement(newElementConditionName, newElementId, job["elementId"]);
                         // updating the existing tree
                         if (job["value"].startsWith("body"))
-                            guiTree[job["elementId"]].children[childGroup][+(job["value"].split(',')[1])].push(newElementId);
+                            guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])].push(newElementId);
                         else
                             guiTree[job["elementId"]].children[childGroup].push(newElementId);
                         // adding new trees

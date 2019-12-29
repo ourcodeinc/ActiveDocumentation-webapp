@@ -2,9 +2,9 @@
  * Created by saharmehrpour on 9/5/17.
  */
 
-import React, {Component} from 'react';
-import '../App.css';
-import {connect} from 'react-redux';
+import React, {Component} from "react";
+import "../App.css";
+import {connect} from "react-redux";
 import {Button} from "react-bootstrap";
 import {MdPlaylistAdd} from "react-icons/lib/md/index";
 
@@ -35,8 +35,8 @@ class TableOfContent extends Component {
                         (<li key={i}
                              style={{display: this.selectAlphabet(tag)}}
                              onClick={(d) =>
-                                 window.location.hash = '#/tag/' + tag['tagName']
-                             }>{tag['tagName']}</li>)
+                                 window.location.hash = "#/tag/" + tag["tagName"]
+                             }>{tag["tagName"]}</li>)
                     )}
                 </ul>
 
@@ -48,12 +48,12 @@ class TableOfContent extends Component {
                         <tbody>
                         {this.props.rules.map((rule, i) =>
                             <tr key={i}>
-                                <td className={"list-group-item"}>{rule['title']}</td>
+                                <td className={"list-group-item"}>{rule["title"]}</td>
                             </tr>
                         )}
                         </tbody>
                     </table>
-                    <div style={{padding: '10px 0 10px 0', clear: 'both'}}>
+                    <div style={{padding: "10px 0 10px 0", clear: "both"}}>
                         <Button style={{padding: "0 5px"}}
                                 onClick={() => {
                                     window.location.hash = "#/rules";
@@ -87,8 +87,8 @@ class TableOfContent extends Component {
      */
     createAlphabetIndex() {
 
-        let alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-        alphabet.push('All');
+        let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+        alphabet.push("All");
 
         return alphabet.map((d, i) => {
             return (

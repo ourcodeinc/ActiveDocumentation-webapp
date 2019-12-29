@@ -1,16 +1,16 @@
-import React, {Component} from 'react';
-import './App.css';
-import './index.css';
+import React, {Component} from "react";
+import "./App.css";
+import "./index.css";
 
-import {connect} from 'react-redux';
+import {connect} from "react-redux";
 
-import WebSocketManager from './core/webSocketManager';
+import WebSocketManager from "./core/webSocketManager";
 import {hashChange} from "./actions";
 
-import TableOfContent from './ui/tableOfContent';
-import RuleTable from './ui/ruleTable';
-import NavBar from './ui/navBar';
-import HeaderBar from './ui/headerBar';
+import TableOfContent from "./ui/tableOfContent";
+import RuleTable from "./ui/ruleTable";
+import NavBar from "./ui/navBar";
+import HeaderBar from "./ui/headerBar";
 import MinedRules from "./ui/minedRules";
 import FeatureSelection from "./ui/FeatureSelection";
 
@@ -31,7 +31,7 @@ class App extends Component {
 
         if ("onhashchange" in window) { // event supported?
             window.onhashchange = function () {
-                let hash = window.location.hash.split('/');
+                let hash = window.location.hash.split("/");
                 hash.splice(0, 1); // remove #
                 props.onHashChange(hash);
             }
@@ -41,7 +41,7 @@ class App extends Component {
             window.setInterval(function () {
                 if (window.location.hash !== storedHash) {
                     storedHash = window.location.hash;
-                    let hash = storedHash.split('/');
+                    let hash = storedHash.split("/");
                     hash.splice(0, 1); // remove #
                     props.onHashChange(hash);
                 }
@@ -64,25 +64,25 @@ class App extends Component {
                     </div>
                     <div id={"tableOfContent"}
                          className={
-                             (['index', 'tagJsonChanged', 'ruleJsonChanged'].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
+                             (["index", "tagJsonChanged", "ruleJsonChanged"].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
                          }>
                         <TableOfContent/>
                     </div>
                     <div id={"ruleResults"}
                          className={
-                             (['rules', 'tag', 'codeChanged', 'rulesForFile', 'violatedRules'].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
+                             (["rules", "tag", "codeChanged", "rulesForFile", "violatedRules"].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
                          }>
                         <RuleTable/>
                     </div>
                     <div id={"minedRules"}
                          className={
-                             (['minedRules'].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
+                             (["minedRules"].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
                          }>
                         <MinedRules/>
                     </div>
                     <div id={"featureSelection"}
                          className={
-                             (['featureSelection'].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
+                             (["featureSelection"].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
                          }>
                         <FeatureSelection/>
                     </div>

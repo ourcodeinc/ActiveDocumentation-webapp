@@ -1,8 +1,8 @@
 /**
- * Dependant on Grammar: OfContext, ExpressionContext, ..sContext, ConditionContext and 'subclass'
+ * Dependant on Grammar: OfContext, ExpressionContext, ..sContext, ConditionContext and "subclass"
  */
 
-import pluralize from 'pluralize';
+import pluralize from "pluralize";
 
 import {generateTreeForElement, getConditionByName} from "../ruleGenerationGUI/guiConstants";
 import {grammar_keywords, special_word} from "./textConstant";
@@ -386,7 +386,7 @@ const createGuiElementTree = (parseTree) => {
                     newNode.child = childId
                 }
 
-                // for each node in 'withChildren' check if they exist. If not continue the search
+                // for each node in "withChildren" check if they exist. If not continue the search
                 let found = true;
                 if (node.withChildren) {
                     newNode.withChildren = [];

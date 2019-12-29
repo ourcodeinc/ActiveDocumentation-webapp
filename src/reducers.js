@@ -1,4 +1,4 @@
-import {initial_state, default_rulePanelState} from './initialState';
+import {initial_state, default_rulePanelState} from "./initialState";
 import {generateTreeForElement} from "./ui/ruleGenerationGUI/guiConstants";
 
 
@@ -55,7 +55,7 @@ import {generateTreeForElement} from "./ui/ruleGenerationGUI/guiConstants";
  * @returns {*} new state
  */
 const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
-    // console.log('reducer running', action);
+    // console.log("reducer running", action);
 
     // Using Object.assign({}, state) has a flaw that it only does a shallow copy.
     // It means that nested properties are still going to be copied by reference.
@@ -405,14 +405,14 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                             };
 
                             let childrenGroup = array.guiTree[job["elementId"]].children[childGroup];
-                            if (job["value"].startsWith("body")) childrenGroup = array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(',')[1])];
+                            if (job["value"].startsWith("body")) childrenGroup = array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])];
 
                             let newElementConditionName = array.guiElements[childrenGroup[0]].conditionName;
                             if (job["task"] === "REMOVE_EXTRA") {
                                 // remove all inactive elements
                                 if (job["value"].startsWith("body"))
-                                    array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(',')[1])] =
-                                        array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(',')[1])].filter((id) => filterFunction(array, id));
+                                    array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])] =
+                                        array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])].filter((id) => filterFunction(array, id));
                                 else
                                     array.guiTree[job["elementId"]].children[childGroup] =
                                         array.guiTree[job["elementId"]].children[childGroup].filter((id) => filterFunction(array, id));
@@ -421,7 +421,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                             let newElementsData = generateTreeForElement(newElementConditionName, newElementId, job["elementId"]);
                             // updating the existing tree
                             if (job["value"].startsWith("body"))
-                                array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(',')[1])].push(newElementId);
+                                array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])].push(newElementId);
                             else
                                 array.guiTree[job["elementId"]].children[childGroup].push(newElementId);
                             // adding new trees

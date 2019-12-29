@@ -2,9 +2,9 @@
  * Created by saharmehrpour on 11/1/17.
  */
 
-import React, {Component} from 'react';
-import '../App.css';
-import {connect} from 'react-redux';
+import React, {Component} from "react";
+import "../App.css";
+import {connect} from "react-redux";
 import {Button} from "react-bootstrap";
 
 import {mineRulesFromXmlFiles} from "../core/miningRules";

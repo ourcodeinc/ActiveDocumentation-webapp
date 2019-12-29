@@ -3,16 +3,16 @@
  *
  */
 
-import React, {Component, Fragment} from 'react';
-import MdStar from 'react-icons/lib/md/star';
-import MdClose from 'react-icons/lib/md/close';
+import React, {Component, Fragment} from "react";
+import MdStar from "react-icons/lib/md/star";
+import MdClose from "react-icons/lib/md/close";
 import FaEraser from "react-icons/lib/fa/eraser";
 import FaCheckSquareO from "react-icons/lib/fa/check-circle-o";
 import FaSquareO from "react-icons/lib/fa/square-o";
-import {Button, MenuItem, Dropdown, Modal} from 'react-bootstrap';
-import {RootCloseWrapper} from 'react-overlays';
-import * as marked from 'marked';
-import ReactToolTip from 'react-tooltip';
+import {Button, MenuItem, Dropdown, Modal} from "react-bootstrap";
+import {RootCloseWrapper} from "react-overlays";
+import * as marked from "marked";
+import ReactToolTip from "react-tooltip";
 
 import {getConditionByName} from "./guiConstants";
 import {documentations_IMarkdownString} from "../ruleGenerationText/textConstant";
