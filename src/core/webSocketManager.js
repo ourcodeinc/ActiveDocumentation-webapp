@@ -7,10 +7,11 @@ import {connect} from "react-redux";
 
 import {
     receiveExpressionStatementXML, ignoreFile, updateFilePath, updateRuleTable, updateTagTable,
-    updateWS, updateXmlFiles, updateProjectHierarchyData, updatedMinedRules
+    updateWS, updateXmlFiles, updateProjectHierarchyData, updatedMinedRules, updateFeatureSelection
 } from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from './ruleExecutor';
 import {parseGrouping} from "./mineRulesCore/parseGrouping";
+import {getXpathForFeature} from "./findingFeature";
 
 class WebSocketManager extends Component {
 
@@ -114,8 +115,7 @@ class WebSocketManager extends Component {
                         ruleTable.forEach((d, i) => +d.index === +updatedRule.index ? ruleIndex = i : "");
                         ruleTable[ruleIndex] = runRulesByTypes(xml, updatedRule);
                         this.props.onUpdateRuleTable(ruleTable);
-                    }
-                    catch (e) {
+                    } catch (e) {
                         console.log(e);
                     }
                     break;
@@ -157,8 +157,7 @@ class WebSocketManager extends Component {
                     if (!this.props.ignoreFile) {
                         this.props.onFilePathChange(focusedFilePath);
                         window.location.hash = "#/rulesForFile/" + focusedFilePath.replace(/\//g, '%2F');
-                    }
-                    else
+                    } else
                         this.props.onFalsifyIgnoreFile();
 
                     break;
@@ -171,6 +170,15 @@ class WebSocketManager extends Component {
 
                 case "PROJECT":
                     // console.log(message);
+                    break;
+
+                case "FEATURE_SELECTION":
+                    let selected = xml.filter(d => d.filePath === message.data.path);
+                    if (selected.length > 0) {
+                        let xpathAndText = getXpathForFeature(selected[0].xml, message.data.start, message.data.end);
+                        window.location.hash = "#/featureSelection";
+                        this.props.onUpdateFeatureSelection(message.data.path, message.data.start, message.data.end, xpathAndText.xpath, xpathAndText.selectedText);
+                    }
                     break;
 
                 case "ENTER":
@@ -208,7 +216,8 @@ function mapDispatchToProps(dispatch) {
         onFalsifyIgnoreFile: () => dispatch(ignoreFile(false)),
         onReceiveExprStmtXML: (data) => dispatch(receiveExpressionStatementXML(data)),
         onUpdateXmlFiles: (xmlFiles) => dispatch(updateXmlFiles(xmlFiles)),
-        onUpdateMinedRules: (modifiedOutput) => dispatch(updatedMinedRules(modifiedOutput))
+        onUpdateMinedRules: (modifiedOutput) => dispatch(updatedMinedRules(modifiedOutput)),
+        onUpdateFeatureSelection: (filePath, startIndex, endIndex, xpath, selectedText) => dispatch(updateFeatureSelection(filePath, startIndex, endIndex, xpath, selectedText))
     }
 }
 

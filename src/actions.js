@@ -157,3 +157,14 @@ export const updatedMinedRules = (minedRules) => {
         minedRules: minedRules
     }
 };
+
+export const updateFeatureSelection = (filePath, startIndex, endIndex, xpath, selectedText) => {
+    return {
+        type: "UPDATE_FEATURE_SELECTION",
+        filePath: filePath,
+        startIndex: startIndex,
+        endIndex: endIndex,
+        xpath: xpath,
+        selectedText: selectedText
+    }
+};

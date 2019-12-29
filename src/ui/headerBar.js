@@ -81,12 +81,6 @@ export class HeaderBar extends Component {
                             className="text-24 important">{this.props.content.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
                     </div>
                 );
-            case 'minedRules':
-                return (
-                    <div>
-                        <span className="text-16 primary">Mined Design Rules</span><br/>
-                    </div>
-                );
             default:
                 return (
                     <div>
@@ -154,6 +148,14 @@ function mapStateToProps(state) {
         case "codeChanged":
             props["title"] = "Code changed in";
             props["content"] = state["filePath"];
+            break;
+        case "minedRules":
+            props["title"] = "Mining Rules";
+            props["content"] = "";
+            break;
+        case "featureSelection":
+            props["title"] = "Feature Selection";
+            props["content"] = "";
             break;
         default:
             props["title"] = "";

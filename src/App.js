@@ -1,9 +1,5 @@
 import React, {Component} from 'react';
 import './App.css';
-
-// import 'bootstrap/dist/css/bootstrap.css';
-// import 'bootstrap/dist/css/bootstrap-theme.css';
-
 import './index.css';
 
 import {connect} from 'react-redux';
@@ -16,7 +12,7 @@ import RuleTable from './ui/ruleTable';
 import NavBar from './ui/navBar';
 import HeaderBar from './ui/headerBar';
 import MinedRules from "./ui/minedRules";
-// import ProjectHierarchy from './ui/projectHierarchy';
+import FeatureSelection from "./ui/FeatureSelection";
 
 class App extends Component {
 
@@ -83,6 +79,12 @@ class App extends Component {
                              (['minedRules'].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
                          }>
                         <MinedRules/>
+                    </div>
+                    <div id={"featureSelection"}
+                         className={
+                             (['featureSelection'].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
+                         }>
+                        <FeatureSelection/>
                     </div>
                     <div style={{width: "100%", height: "100px"}}/>
                 </div>

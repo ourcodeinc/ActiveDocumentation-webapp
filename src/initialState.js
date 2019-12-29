@@ -309,6 +309,13 @@ export const initial_state = {
     minedRulesState: {
         metaData: {},
         minedRules: []
+    },
+    featureSelection: {
+        filePath: "",
+        startIndex: "",
+        endIndex: "",
+        xpath: "",
+        selectedText: ""
     }
 };
 
