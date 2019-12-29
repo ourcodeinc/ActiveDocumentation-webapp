@@ -4,6 +4,7 @@
 
 class Utilities {
 
+    static BREAK_LINE = 9000;
     /**
      * send the message to the server
      * @param ws web socket
@@ -68,12 +69,11 @@ class Utilities {
                     messageJson["data"] = [[data.fileName, data.content]];
                     break;
 
-                case "LEARN_RULES_DATABASES": console.log("send database", data[0][0]);
-                    if (data[0][1].length > 20000) {
+                case "LEARN_RULES_DATABASES":
+                    if (data[0][1].length > this.BREAK_LINE) {
                         this.sendChunkedData(messageJson, data[0][1].slice(0), data[0][0], ws);
                         return;
                     }
-
                     messageJson["data"] = data; // array of arrays: [["file_name.txt", "data to be written"]]
                     break;
 
@@ -107,14 +107,12 @@ class Utilities {
      * @param ws
      */
     static sendChunkedData (messageJson, initData, fileName, ws) {
-        // console.log(fileName, initData);
         messageJson["command"] += "_APPEND";
         let start = 0;
         while (start < initData.length) {
-            messageJson["data"] = [[fileName, initData.substring(start, Math.min(start + 20000, initData.length))]];
-            // console.log(messageJson["command"], messageJson["data"]);
+            messageJson["data"] = [[fileName, initData.substring(start, Math.min(start + this.BREAK_LINE, initData.length))]];
             ws.send(JSON.stringify(messageJson));
-            start += 20000;
+            start += this.BREAK_LINE;
         }
     }
 
