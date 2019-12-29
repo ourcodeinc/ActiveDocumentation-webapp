@@ -24,6 +24,7 @@ class WebSocketManager extends Component {
         let tagTable = []; // retrieved from tagJson.txt
         let ws = new WebSocket("ws://localhost:8887");
         let filtered;
+        let projectPath = "";
 
         // PubSub.publish("NEW_WS", [ws]);
         this.props.onUpdateWS(ws);
@@ -66,6 +67,7 @@ class WebSocketManager extends Component {
                 case "PROJECT_HIERARCHY":
                     // received by projectHierarchy
                     this.props.onProjectHierarchy(message.data);
+                    projectPath = message.data.properties["canonicalPath"];
                     break;
 
                 case "VERIFY_RULES":
@@ -89,7 +91,7 @@ class WebSocketManager extends Component {
                     let filePath = message.data;
                     // received by RuleExecutor
                     ruleTable = checkRulesForFile(xml, ruleTable, filePath);
-                    this.props.onFilePathChange(filePath.replace("/Users/saharmehrpour/Documents/Workspace/", ""));
+                    this.props.onFilePathChange(filePath.replace(projectPath, ""));
                     this.props.onUpdateRuleTable(ruleTable);
                     window.location.hash = "#/codeChanged";
                     break;
@@ -153,7 +155,7 @@ class WebSocketManager extends Component {
 
                 // after sending a piece of code DECL_STMT
                 case "SHOW_RULES_FOR_FILE":
-                    let focusedFilePath = message.data.replace("/Users/saharmehrpour/Documents/Workspace/", "");
+                    let focusedFilePath = message.data.replace(projectPath, "");
                     if (!this.props.ignoreFile) {
                         this.props.onFilePathChange(focusedFilePath);
                         window.location.hash = "#/rulesForFile/" + focusedFilePath.replace(/\//g, "%2F");

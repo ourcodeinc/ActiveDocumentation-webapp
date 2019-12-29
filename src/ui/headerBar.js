@@ -50,7 +50,7 @@ export class HeaderBar extends Component {
                     <div>
                         <span className="text-16 primary">Rule Index: </span>
                         <span
-                            className="text-24 important">{this.props.title.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
+                            className="text-24 important">{this.props.title.replace(this.props.projectPath, "")}</span>
                     </div>
                 );
             case "codeChanged":
@@ -58,7 +58,7 @@ export class HeaderBar extends Component {
                     <div>
                         <span className="text-16 primary">Code Changed in File:</span><br/>
                         <span
-                            className="text-24 important">{this.props.content.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
+                            className="text-24 important">{this.props.content.replace(this.props.projectPath, "")}</span>
                     </div>
                 );
             case "ruleChanged":
@@ -78,7 +78,7 @@ export class HeaderBar extends Component {
                     <div>
                         <span className="text-16 primary">Rules applicable for File:</span><br/>
                         <span
-                            className="text-24 important">{this.props.content.replace("/Users/saharmehrpour/Documents/Workspace/", "")}</span>
+                            className="text-24 important">{this.props.content.replace(this.props.projectPath, "")}</span>
                     </div>
                 );
             default:
@@ -95,12 +95,17 @@ export class HeaderBar extends Component {
 
 // map state to props
 function mapStateToProps(state) {
-
+    let path = "";
+    try {
+        path = state["projectHierarchy"]["properties"]["canonicalPath"];
+    } catch (e) {
+    }
     let props = {
         tags: state["tagTable"],
         hash: state["hash"],
         ws: state["ws"],
-        ignoreFile: state["ignoreFile"]
+        ignoreFile: state["ignoreFile"],
+        projectPath: path
     };
 
     switch (state["hash"][0]) {

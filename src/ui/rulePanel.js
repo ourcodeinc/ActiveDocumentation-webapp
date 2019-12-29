@@ -404,8 +404,7 @@ function mapStateToProps(state) {
         rules: state.ruleTable,
         tags: state.tagTable,
         codeChanged: state.hash[0] === "codeChanged",
-        filePath: ["rulesForFile", "codeChanged"].indexOf(state.hash[0]) !== -1 ?
-            ("/Users/saharmehrpour/Documents/Workspace/" + state.filePath) : "none",
+        filePath: ["rulesForFile", "codeChanged"].indexOf(state.hash[0]) !== -1 ? state.filePath : "none",
         ws: state.ws,
         message: state.message
     };
