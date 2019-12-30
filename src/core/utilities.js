@@ -54,7 +54,7 @@ class Utilities {
                     break;
 
                 case "LEARN_RULES_META_DATA":
-                    if (data.content.length > 20000) {
+                    if (data.content.length > this.BREAK_LINE) {
                         this.sendChunkedData(messageJson, data.content.slice(0), data.fileName, ws);
                         return;
                     }
@@ -62,7 +62,7 @@ class Utilities {
                     break;
 
                 case "LEARN_RULES_FILE_LOCATIONS":
-                    if (data.content.length > 20000) {
+                    if (data.content.length > this.BREAK_LINE) {
                         this.sendChunkedData(messageJson, data.content.slice(0), data.fileName, ws);
                         return;
                     }
@@ -108,9 +108,10 @@ class Utilities {
      */
     static sendChunkedData (messageJson, initData, fileName, ws) {
         messageJson["command"] += "_APPEND";
-        let start = 0;
+        let start = 0; let cnt = 0;
         while (start < initData.length) {
             messageJson["data"] = [[fileName, initData.substring(start, Math.min(start + this.BREAK_LINE, initData.length))]];
+            messageJson["part"] = cnt; // only for debugging
             ws.send(JSON.stringify(messageJson));
             start += this.BREAK_LINE;
         }
