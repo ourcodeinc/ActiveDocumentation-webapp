@@ -11,7 +11,8 @@ class FeatureSelection extends Component {
     render () {
         return (
             <div>
-                <p>{this.props.filePath}</p>
+                <p>{this.props.filePath.replace(this.props.projectPath.slice, "")
+                    .replace(this.props.projectPath.slice(1), "")}</p>
                 <p>starting offset: {this.props.startIndex}</p>
                 <p>ending offset: {this.props.endIndex}</p>
                 <p>{this.props.xpath}</p>
@@ -23,13 +24,20 @@ class FeatureSelection extends Component {
 }
 
 function mapStateToProps(state) {
+    // copied from headerBar.js
+    let path = "";
+    try {
+        path = state["projectHierarchy"]["properties"]["canonicalPath"];
+    } catch (e) {
+    }
     return {
         message: state.message,
         filePath: state.featureSelection.filePath,
         startIndex: state.featureSelection.startIndex,
         endIndex: state.featureSelection.endIndex,
         xpath: state.featureSelection.xpath,
-        selectedText: state.featureSelection.selectedText
+        selectedText: state.featureSelection.selectedText,
+        projectPath: path
     }
 }
 

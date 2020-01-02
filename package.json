@@ -24,7 +24,10 @@
     "react-tooltip": "^3.11.1",
     "redux": "^4.0.5",
     "wink-lemmatizer": "^2.0.0",
-    "wink-pos-tagger": "^1.5.0"
+    "wink-pos-tagger": "^1.5.0",
+    "rc-slider": "^8.7.1",
+    "rc-tooltip": "^4.0.0-alpha.3",
+    "three-dots": "^0.1.2"
   },
   "scripts": {
     "start": "PORT=9010 react-scripts start",
