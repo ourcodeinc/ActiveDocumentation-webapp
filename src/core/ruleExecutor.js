@@ -10,8 +10,14 @@ import Utilities from "./utilities";
  * @param ruleTable retrieved from ruleJson.txt
  */
 export const checkRulesForAll = (xmlFiles, ruleTable) => {
-    for (let i = 0; i < ruleTable.length; i++)
-        ruleTable[i] = runRulesByTypes(xmlFiles, ruleTable[i]);
+    for (let i = 0; i < ruleTable.length; i++) {
+        if(!isValidXPathQueries(ruleTable[i])) {
+            ruleTable[i]["xPathQueryResult"] = [];
+            ruleTable[i]["description"] += " <XPATH query is not valid. Check out the XPATH in ruleJson.txt>";
+        }
+        else
+            ruleTable[i] = runRulesByTypes(xmlFiles, ruleTable[i]);
+    }
 
     return ruleTable;
 };
@@ -554,4 +560,34 @@ const getXmlData = (mainXml, query, index) => {
         "snippet": resText
     };
 
+};
+
+
+/**
+ * validate the xpath queries in ruleI
+ * @param ruleI
+ * @return {boolean}
+ */
+const isValidXPathQueries = (ruleI) => {
+    let parser = new DOMParser();
+    let xml = parser.parseFromString("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<unit xmlns=\"http://www.srcML.org/srcML/src\" revision=\"0.9.5\" language=\"Java\" filename=\"validate.java\"/>", "text/xml");
+
+    function nsResolver(prefix) {
+        let ns = {"src": "http://www.srcML.org/srcML/src"};
+        return ns[prefix] || null;
+    }
+    try {
+        let listOfCommandsQ = Object.keys(ruleI["quantifier"]).filter(d => d.startsWith("command"));
+        for (let li of listOfCommandsQ)
+            xml.evaluate(ruleI["quantifier"][li], xml, nsResolver, XPathResult.ANY_TYPE, null);
+
+        let listOfCommandsC = Object.keys(ruleI["quantifier"]).filter(d => d.startsWith("command"));
+        for (let li of listOfCommandsC)
+            xml.evaluate(ruleI["constraint"][li], xml, nsResolver, XPathResult.ANY_TYPE, null);
+
+    } catch (XPathException) {
+        return false;
+    }
+    return true;
 };
