@@ -5,7 +5,6 @@
  */
 
 /*
-
 creates the attributes and analyzes the XML files.
  -> Requirements: xml files that are to be analyzed must be in same directory
  -> Output:
@@ -54,10 +53,10 @@ by the FPGrowth algorithm. It does the following steps:
       global list of attributes made in the first step.
 -> "sci_class.js" and "sci_functions.js" contain functions that are used
 in this process.
-
  */
 
-import {addChildren, addParentChildRelations, findParentChildRelations, makePairsList} from "./mineRulesCore/sci_class";
+import {addChildren, addParentChildRelations, findParentChildRelations,
+        makePairsList, findCustomRelations, addCustomRelations} from "./mineRulesCore/sci_class";
 
 import et from 'elementtree';
 import Utilities from "./utilities";
@@ -90,6 +89,10 @@ export const mineRulesFromXmlFiles = (xmlFiles, support, metaData, ws) => {
 
     // Used to keep track of what xml files were used to create what databases
     let fileAnalysisMap = new Map();
+
+    // List of custom queries that should be searched for
+    var customQueries = new Array();
+    customQueries.push(".//name");
 
     // To check if a class is a parentClass we can simply check to see if
     // childParent[parentName] === undefined; if so, then it is not a parent;
@@ -205,6 +208,9 @@ export const mineRulesFromXmlFiles = (xmlFiles, support, metaData, ws) => {
 
     }
 
+    // Add any custom attributes
+    findCustomRelations(id_start, customQueries, allAttributes, queryMap);
+
     // Output the metadata to a file
     outputMetaData(allAttributes, queryMap, metaData, ws);
 
@@ -213,6 +219,13 @@ export const mineRulesFromXmlFiles = (xmlFiles, support, metaData, ws) => {
         let grouping = groupList.get(group);
         addParentChildRelations(allAttributes, grouping, analysisFileName,
             classLocations, parentInfo, fileAnalysisMap, dataMap, xmlFiles);
+    }
+
+    // Now look for customRelations
+    for (const group of groupList.keys()){
+      var grouping = groupList.get(group);
+      addCustomRelations(allAttributes, customQueries, grouping, analysisFileName,
+                                   classLocations, parentInfo, fileAnalysisMap, dataMap);
     }
 
     outputDataBases(dataMap, ws);
@@ -263,9 +276,40 @@ const outputDataBases = (dataMap, ws) => {
     //[ ["nameOfFile.txt", "data that is going to be written into file"],
     // ["nextFile.txt", "some other data"]]
     let databases = Array.from(dataMap.entries());
+    let finalFormat = formatDatabases(databases);
     // websocket seems to fail in sending large messages. Instead of sending the database as a whole, we send messages in patches.
-    databases.forEach((d => {
+    finalFormat.forEach((d => {
         Utilities.sendToServer(ws, "LEARN_RULES_DATABASES", [d])
     }))
 
+};
+
+const formatDatabases = (databases) => {
+
+  // Write new contents
+  var finalFormat = new Array();
+  for (var x = 0; x < databases.length; x++){
+
+    var table = new Array();
+    // nameFile.txt
+    var fileN = databases[x][0];
+    table.push(fileN);
+
+    var dataWritten = "";
+    for(var y = 0; y < databases[x].length; y++){
+      var data = databases[x][y];
+
+      if(data != fileN){
+        for(const arr of data){
+          for(const num of arr){
+            dataWritten = dataWritten + num + " ";
+          }
+          dataWritten += "\n";
+        }
+        table.push(dataWritten);
+      }
+    }
+    finalFormat.push(table);
+  }
+  return finalFormat;
 };
