@@ -97,6 +97,117 @@ export const addChildren = (parent, childParent, groupID, currDepth, groupList) 
     return parent;
 };
 
+// Note: the xPath queries provided in customQueries double as the
+// attribute description and command
+export const findCustomRelations = (id_start, customQueries, attributeList, queryMap) => {
+
+  for (var i = 0; i < customQueries.length; i++){
+
+    if(!attributeList.has(customQueries[i])){
+
+      attributeList.set(customQueries[i], id_start.id);
+      queryMap.set(customQueries[i], id_start.id);
+
+      id_start.id += 1;
+    }
+  }
+}
+
+
+export const addCustomRelations = (allAttributes, customQueries, classGroupings,
+                                            analysisFileName, classLocations,
+                                            parentInfo, fileAnalysisMap, dataMap) => {
+
+  var parentClass = classGroupings[classGroupings.length-1];
+  var classTree;
+
+  // Used to keep track of the children classes about which we've already
+  // collected data
+  var classesVisited = [];
+
+  var index = 0;
+
+  for(var i = 0; i < classGroupings.length; i++){
+
+    var f = classLocations[classGroupings[i]];
+
+    if(f != undefined){
+      f = f.split("\\")[(f.split("\\")).length - 1]
+      f = f.split(".")[0] + ".xml";
+
+      var data = fs.readFileSync(f).toString();
+      classTree = et.parse(data);
+
+    }
+    else{
+      continue;
+    }
+
+
+    var subCL = classTree.findall('.//class');
+
+
+    var childName;
+    for(var j = 0; j < subCL.length; j++){
+
+      // Figure out what the child class's name is
+      var chName = subCL[j].find('name');
+
+      if(chName == null){
+        continue;
+      }
+
+      if(chName.text == null){
+        childName = (chName.find('name')).text
+      }
+      else{
+        childName = chName.text;
+      }
+      // If we can't find a name, then we go on to the next class in
+      // the srcML file
+      if(childName == ''){
+        continue;
+      }
+
+      // Each xml file might contain multiple classes, so just because a class
+      // is in the file, doesn't mean that it is the one that we want, so
+      // we need to check that the filename is in classGroupings
+      if(classGroupings.includes(childName) && !classesVisited.includes(childName)){
+        classesVisited.push(childName);
+
+        // Get the list of attributes for this class
+        let fileN = analysisFileName + "_subClassOf" + parentClass + ".txt";
+        var entry = (dataMap.get(fileN));
+
+        // Go through each of the customQueries. If the customQuery is present
+        // in this class, then add its attribute id to the list of attributes
+        // for the class
+        for (var k = 0; k < customQueries.length; k++){
+          let query = subCL[j].findall(customQueries[k]);
+
+          // If we found this customQuery, then we add it to the list of
+          // attribute for this class
+          if(query != null && index < entry.length){
+
+            if(allAttributes.has(customQueries[k]) &&
+                 !entry[index].includes(allAttributes.get(customQueries[k]))){
+
+                 entry[index].push(allAttributes.get(customQueries[k]));
+                 dataMap.set(fileN, entry);
+                 entry = dataMap.get(fileN);
+
+               }
+             }
+          }
+          // Increment index into set of entries for this database
+          index++;
+        }
+
+      }
+    }
+
+}
+
 
 export const findParentChildRelations = (id_start, classGroupings,
                                          attributeList, classLocations,
@@ -239,6 +350,10 @@ export const addParentChildRelations = (allAttributes, classGroupings,
                                             parentInfo, fileAnalysisMap, dataMap, xmlFiles) => {
 
     let parentClass = classGroupings[classGroupings.length-1];
+    // This array is to keep track of what functions are overridden in
+    // the child class; we assume they are overridden, but once we
+    // find a class that doesn't override a parent function we set that
+    // element to False
     let subCLfncs = [];
     let classTree;
 
@@ -255,10 +370,9 @@ export const addParentChildRelations = (allAttributes, classGroupings,
     // Used to keep track of all the files we have accessed
     let listOfFiles = [];
 
-    // This array is to keep track of what functions are overridden in
-    // the child class; we assume they are overridden, but once we
-    // find a class that doesn't override a parent function we set that
-    // element to False
+    // Used to keep track of the children classes about which we've already
+    // collected data
+    var classesVisited = [];
 
     for(let i = 0; i < classGroupings.length; i++){
 
@@ -309,7 +423,8 @@ export const addParentChildRelations = (allAttributes, classGroupings,
             // Each xml file might contain multiple classes, so just because setInterval(function () {
             // is in the file, doesn't mean that it is the one that we want, so
             // we need to check that the filename is in classGroupings
-            if(classGroupings.includes(childName)){
+            if(classGroupings.includes(childName) && !classesVisited.includes(childName)){
+                classesVisited.push(childName);
 
                 if (parentInfo.get(parentClass) != undefined) {
 
@@ -400,14 +515,17 @@ export const addParentChildRelations = (allAttributes, classGroupings,
                     // If we already have an entry for this database, then we just
                     // append the new information
                     if (dataMap.has(fileN)){
-                        let entry = dataMap.get(fileN);
-                        entry = entry + data;
-                        dataMap.set(fileN, entry);
-                    }
+                       var entry = dataMap.get(fileN);
+
+                       entry.push(finalList);
+                       dataMap.set(fileN, entry);
+                     }
                     // However, if we haven't yet had any entries for this database,
                     // then we just set this data as the first entry
                     else{
-                        dataMap.set(fileN, data);
+                      var entry  = new Array();
+                      entry[0] = finalList;
+                      dataMap.set(fileN, entry);
                     }
 
                     /*
@@ -432,6 +550,5 @@ export const addParentChildRelations = (allAttributes, classGroupings,
     let newStuff = listOfFiles.join("\n");
 
     fileAnalysisMap.set(fileN, newStuff);
-
 
 };
