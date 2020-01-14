@@ -114,6 +114,7 @@ class Utilities {
             messageJson["part"] = cnt; // only for debugging
             ws.send(JSON.stringify(messageJson));
             start += this.BREAK_LINE;
+            cnt ++;
         }
     }
 
