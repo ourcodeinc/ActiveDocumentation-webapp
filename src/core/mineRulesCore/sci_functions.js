@@ -19,7 +19,7 @@ export const findClassAnnotations = (subCL, attributeList, id_start, queryMap) =
 
       let annotArgs = clsAnnot.findall('.//argument/expr');
 
-      let clsAnnotName = "class with annotation of \"@"
+      let clsAnnotName = "class conttaining annotation of \"@"
                           + (clsAnnot.find('name').text)
                           + "\"";
 
@@ -90,7 +90,7 @@ export const findConstructors = (subCL, attributeList, id_start, queryMap) => {
         let constrBodyList = constructorBody.find(".*");
         if(constrBodyList != undefined){
 
-          name = "class with non-empty constructor";
+          name = "class containing non-empty constructor";
 
           // Check if attribute has been seen globally
           if(!attributeList.has(name)){
@@ -152,7 +152,7 @@ export const findConstructors = (subCL, attributeList, id_start, queryMap) => {
             //name = "constructor must set " + augmentedMemVarSet.join(" and ");
 
             // New name
-            name = "class must have constructor with ( "
+            name = "class with constructor with ( "
                     + augmentedMemVarSet.join(" and ") + " )";
 
             // Check if attribute has been seen globally
@@ -185,7 +185,7 @@ export const findConstructors = (subCL, attributeList, id_start, queryMap) => {
               // Old Name
               //name = "constructor must call constructor of class \"" + call.text + "\" ";
               // New Name
-              name = "class must have constructor with expression statement \"new "
+              name = "class with constructor with expression statement \"new "
                      + call.text + "\"";
 
               if(!attributeList.has(name)){
@@ -215,7 +215,7 @@ export const findConstructors = (subCL, attributeList, id_start, queryMap) => {
         // If the constructor didn't have a body, then we create an
         // attribute saying so
         else{
-          name = "class has empty-body constructor";
+          name = "class containing empty-body constructor";
           // Check if this attribute has been seen globally
           if(!attributeList.has(name)){
 
@@ -294,7 +294,7 @@ export const findConstructors = (subCL, attributeList, id_start, queryMap) => {
         else{
           // If the constructor has parameters and all of them were stored
           if(allParamsStored == true){
-            name = "class with constructor that stores all parameters as member variables";
+            name = "class containing constructor that stores all parameters as member variables";
             // Check if this attribute has been seen globally
             if(!attributeList.has(name)){
               // logic: class[count(argument in statements) = count(arguments)]
@@ -317,7 +317,7 @@ export const findConstructors = (subCL, attributeList, id_start, queryMap) => {
     // If the class doesn't define a constructor, then we add that as an
     // attribute
     else{
-      name = "class does not define constructor";
+      name = "class not containing defined constructor";
       // Check if this attribute has been seen globally
       if(!attributeList.has(name)){
 
@@ -359,7 +359,7 @@ export const findMemberVars = (subCL, attributeList, id_start, queryMap) => {
       if(memberVarName.text != null){
 
         // New name
-        name = "class must have declaration statement with name \""
+        name = "class with declaration statement with name \""
               + memberVarName.text + "\"";
         // Old Name
         //name = "class has member field with name \"" + memberVarName.text + "\"";
@@ -389,7 +389,7 @@ export const findMemberVars = (subCL, attributeList, id_start, queryMap) => {
           let annot = memberVarAnnotations[q];
           let annotName = annot.find('name');
           // New name
-          let memberVarAnnotAttr = "class must have declaration statement with ( "
+          let memberVarAnnotAttr = "class with declaration statement with ( "
            + "annotation \"" + annotName.text + " and name \"" + memberVarName.text + " )";
           // Old name
           /*let memberVarAnnotAttr = "class has member field with name \""
@@ -457,7 +457,7 @@ export const findMemberVars = (subCL, attributeList, id_start, queryMap) => {
         }
 
         // New name
-        name = "class must have declaration statement with type \""
+        name = "class with declaration statement with type \""
                + memberVarType.text + "\"";
         // Old name
         //name = "class has member field of type \""
@@ -484,7 +484,7 @@ export const findMemberVars = (subCL, attributeList, id_start, queryMap) => {
           }
 
           // New name
-          name  = "class must have declaration statement with ( type \""
+          name  = "class with declaration statement with ( type \""
           + memberVarType.text + "\" and name \"" + memberVarName.text + "\" )";
 
           // Old Name
@@ -521,7 +521,7 @@ export const findImplements = (subCL, attributeList, id_start, queryMap) => {
   let classImplements = subCL.find('super/implements');
   if (classImplements != null){
     // New name
-    name = "class must have implementation of \""
+    name = "class with implementation of \""
            + (classImplements.find('name')).text + "\"";
 
     // Old name
@@ -561,7 +561,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
     }
 
     // New name
-    name = "class must have visibility \"" + clsSpecificity + "\"";
+    name = "class with visibility \"" + clsSpecificity + "\"";
     // Old name
     //name = "is " + clsSpecificity + " class";
 
@@ -638,7 +638,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
       }
 
       // New name
-      name = "class must have function with ( visibility \""
+      name = "class with function with ( visibility \""
              + fncSpecType
              + "\"  and name \""
              + fncName.text + "\" )";
@@ -686,7 +686,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
                  + call.text + "\"";
         */
         // New name
-        name = "class must have function with ( name \""
+        name = "class with function with ( name \""
               + fncName.text + "\" and expression statement \"new "
               + call.text + "\" )";
 
@@ -735,7 +735,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
                   + call.text + "\"";
           */
           // New name
-          name = "class must have function with ( name \""
+          name = "class with function with ( name \""
                  + fncName.text + "\" and return value \"new "
                  + call.text + "\" )";
 
@@ -776,7 +776,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
                    + call.text + "\"";
           */
           // New name
-          name = "class must have function with ( name \""
+          name = "class with function with ( name \""
                   + fncName.text + "\" and return value \""
                   + callName.text + "()\" )";
 
@@ -802,7 +802,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
      let fncTypes = [];
 
      if (fncParams == null){
-       name = "function of name \"" + fncName.text + "\" has no parameters";
+       name = " class containing function of name \"" + fncName.text + "\" with no parameters";
        // Check whether attribute has been seen globally
        if(!attributeList.has(name)){
 
@@ -848,7 +848,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
 
        if (allFncParamTypes != ""){
          // New name
-         name = "class must have function with ( name \""
+         name = "class with function with ( name \""
                 + fncName.text + "\" and " + allFncParamTypes + ")";
          // Old Name
          /*
@@ -894,9 +894,9 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
          if (attrName!= null && attrName.text == "this" && op != null && op.text == "="
              && call != null){
 
-           name = "function of name \""
+           name = "class containing function of name \""
                   + fncName.text
-                  + "\" modifies member variable of name \""
+                  + "\" that modifies member variable of name \""
                   + call.text + "\"";
 
            // Check whether attribute has been seen globally
@@ -929,7 +929,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
        // (1) Is void
        if (returnType.text == "void"){
          // New name
-         name =  "class must have function with ( type \"void\" and name \""
+         name =  "class with function with ( type \"void\" and name \""
                   + fncName.text + "\" )";
          // Old Name
          /*
@@ -954,7 +954,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
        else{
 
          // New name
-         name =  "class must have function with ( type \"" + returnType.text + "\" and name \""
+         name =  "class with function with ( type \"" + returnType.text + "\" and name \""
                   + fncName.text + "\" )";
 
          // Old name
@@ -988,7 +988,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
 
          let fncAnnot = fncAnnotCandidate[g];
          // New name
-         name = "class must have function with ( annotation \""
+         name = "class with function with ( annotation \""
                 + (fncAnnot.find('name')).text + "\" and name \""
                 + fncName.text + "\" )";
 
@@ -1069,7 +1069,7 @@ export const addClassAnnotations = (subCL, attributes, allAttributes) => {
             //console.log(clsAnnot);
             let annotArgs = clsAnnot.findall('.//argument/expr');
             //console.log(annotArgs);
-            name = "class with annotation of \"@"
+            name = "class containing annotation of \"@"
                 + (clsAnnot.find('name').text)
                 + "\"";
 
@@ -1128,7 +1128,7 @@ export const addConstructors = (subCL, attributes, allAttributes) => {
         let constrBodyList = constructorBody.find(".*");
         if(constrBodyList != undefined){
 
-          name = "class with non-empty constructor";
+          name = "class containing non-empty constructor";
 
           if(allAttributes.has(name)){
             attributes.push(allAttributes.get(name));
@@ -1184,7 +1184,7 @@ export const addConstructors = (subCL, attributes, allAttributes) => {
             //name = "constructor must set " + augmentedMemVarSet.join(" and ");
 
             // New name
-            name = "class must have constructor with ( "
+            name = "class with constructor with ( "
                     + augmentedMemVarSet.join(" and ") + " )";
 
             // Check if attribute has been seen globally
@@ -1206,7 +1206,7 @@ export const addConstructors = (subCL, attributes, allAttributes) => {
               // Old Name
               //name = "constructor must call constructor of class \"" + call.text + "\" ";
               // New Name
-              name = "class must have constructor with expression statement \"new "
+              name = "class with constructor with expression statement \"new "
                      + call.text + "\"";
 
               if(allAttributes.has(name)){
@@ -1219,7 +1219,7 @@ export const addConstructors = (subCL, attributes, allAttributes) => {
         // If the constructor didn't have a body, then we create an
         // attribute saying so
         else{
-          name = "class has empty-body constructor";
+          name = "class containing empty-body constructor";
 
           // Check if this attribute has been seen globally
           if(allAttributes.has(name)){
@@ -1270,7 +1270,7 @@ export const addConstructors = (subCL, attributes, allAttributes) => {
 
 
         if(allParamTypes != ""){
-          name = "class with constructor with parameters of type " + allParamTypes;
+          name = "class containing constructor with parameters of type " + allParamTypes;
           // Check if this attribute has been seen globally
           if(allAttributes.has(name)){
             attributes.push(allAttributes.get(name));
@@ -1280,7 +1280,7 @@ export const addConstructors = (subCL, attributes, allAttributes) => {
         else{
           // If the constructor has parameters and all of them were stored
           if(allParamsStored == true){
-            name = "class with constructor that stores all parameters as member variables";
+            name = "class containing constructor that stores all parameters as member variables";
             // Check if this attribute has been seen globally
             if(allAttributes.has(name)){
               attributes.push(allAttributes.get(name));
@@ -1293,7 +1293,7 @@ export const addConstructors = (subCL, attributes, allAttributes) => {
     // If the class doesn't define a constructor, then we add that as an
     // attribute
     else{
-      name = "class does not define constructor";
+      name = "class not containing defined constructor";
       // Check if this attribute has been seen globally
       if(allAttributes.has(name)){
         attributes.push(allAttributes.get(name));
@@ -1332,7 +1332,7 @@ export const addMemberVars = (subCL, attributes, allAttributes) => {
         if(memberVarName.text != null){
 
           // New name
-          name = "class must have declaration statement with name \""
+          name = "class with declaration statement with name \""
                 + memberVarName.text + "\"";
           // Old Name
           //name = "class has member field with name \"" + memberVarName.text + "\"";
@@ -1354,7 +1354,7 @@ export const addMemberVars = (subCL, attributes, allAttributes) => {
             let annot = memberVarAnnotations[q];
             let annotName = annot.find('name');
             // New name
-            let memberVarAnnotAttr = "class must have declaration statement with ( "
+            let memberVarAnnotAttr = "class with declaration statement with ( "
              + "annotation \"" + annotName.text + " and name \"" + memberVarName.text + " )";
             // Old name
             /*let memberVarAnnotAttr = "class has member field with name \""
@@ -1413,7 +1413,7 @@ export const addMemberVars = (subCL, attributes, allAttributes) => {
             }
 
             // New name
-            name = "class must have declaration statement with type \""
+            name = "class with declaration statement with type \""
                    + memberVarType.text + "\"";
             // Old name
             //name = "class has member field of type \""
@@ -1433,7 +1433,7 @@ export const addMemberVars = (subCL, attributes, allAttributes) => {
                 memberVarType = memberVarType.find('name');
               }
               // New name
-              name  = "class must have declaration statement with ( type \""
+              name  = "class with declaration statement with ( type \""
               + memberVarType.text + "\" and name \"" + memberVarName.text + "\" )";
 
               // Old Name
@@ -1460,7 +1460,7 @@ export const addImplementations = (subCL, attributes, allAttributes) => {
   let classImplements = subCL.find('super/implements');
   if (classImplements != null){
       // New name
-      name = "class must have implementation of \""
+      name = "class with implementation of \""
              + (classImplements.find('name')).text + "\"";
 
       // Old name
@@ -1490,7 +1490,7 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
     }
 
     // New name
-    let classSpecName = "class must have visibility \"" + clsSpecificity + "\"";
+    let classSpecName = "class with visibility \"" + clsSpecificity + "\"";
     // Old name
     //let classSpecName = "is " + clsSpecificity + " class";
 
@@ -1553,7 +1553,7 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
       }
 
       // New name
-      name = "class must have function with ( visibility \""
+      name = "class with function with ( visibility \""
              + fncSpecType
              + "\"  and name \""
              + fncName.text + "\" )";
@@ -1587,7 +1587,7 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
            call = call.find('name');
          }
 
-         name = "function of name \""
+         name = "class containing function of name \""
                  + fncName.text
                  + "\" must call constructor of name \""
                  + call.text + "\"";
@@ -1625,7 +1625,7 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
 
         */
         // New name
-        name = "class must have function with ( name \""
+        name = "class with function with ( name \""
                + fncName.text + "\" and return value \"new "
                + call.text + "\" )";
 
@@ -1640,7 +1640,7 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
        // (2) Returns output from function call (expandable)
        let retOutputFromFncCall = fncReturnInfo.find('call');
        if (retOutputFromFncCall != null){
-         name = "function of name \"" + fncName.text
+         name = "class containing function of name \"" + fncName.text
                  + "\" must return output from function";
 
          if(allAttributes.has(name)){
@@ -1662,7 +1662,7 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
                   + call.text + "\"";
          */
          // New name
-         name = "class must have function with ( name \""
+         name = "class with function with ( name \""
                  + fncName.text + "\" and return value \""
                  + callName.text + "()\" )";
 
@@ -1719,7 +1719,7 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
        if (allFncParamTypes != ""){
 
          // New name
-         name = "class must have function with ( name \""
+         name = "class with function with ( name \""
                 + fncName.text + "\" and " + allFncParamTypes + ")";
          // Old Name
          /*
@@ -1752,9 +1752,9 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
          if (attrName != null && attrName.text == "this" && op != null && op.text == "="
              && call != null){
 
-           name = "function of name \""
+           name = "class containing function of name \""
                   + fncName.text
-                  + "\" modifies member variable of name \""
+                  + "\" that modifies member variable of name \""
                   + call.text + "\"";
 
            if(allAttributes.has(name)){
@@ -1776,7 +1776,7 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
        // (1) Is void
        if (returnType.text == "void"){
          // New name
-         name =  "class must have function with ( type \"void\" and name \""
+         name =  "class with function with ( type \"void\" and name \""
                   + fncName.text + "\" )";
          // Old Name
          /*
@@ -1793,7 +1793,7 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
        else{
 
          // New name
-         name =  "class must have function with ( type \"" + returnType.text + "\" and name \""
+         name =  "class with function with ( type \"" + returnType.text + "\" and name \""
                   + fncName.text + "\" )";
 
          // Old name
@@ -1819,7 +1819,7 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
 
          let fncAnnot = fncAnnotCandidate[h];
          // New name
-         name = "class must have function with ( annotation \""
+         name = "class with function with ( annotation \""
                 + (fncAnnot.find('name')).text + "\" and name \""
                 + fncName.text + "\" )";
 
