@@ -225,7 +225,7 @@ export const mineRulesFromXmlFiles = (xmlFiles, support, metaData, ws) => {
     for (const group of groupList.keys()){
       var grouping = groupList.get(group);
       addCustomRelations(allAttributes, customQueries, grouping, analysisFileName,
-                                   classLocations, parentInfo, fileAnalysisMap, dataMap);
+                                   classLocations, parentInfo, fileAnalysisMap, dataMap, xmlFiles);
     }
 
     outputDataBases(dataMap, ws);
