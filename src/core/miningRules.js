@@ -91,7 +91,7 @@ export const mineRulesFromXmlFiles = (xmlFiles, support, metaData, ws) => {
     let fileAnalysisMap = new Map();
 
     // List of custom queries that should be searched for
-    var customQueries = new Array();
+    var customQueries = [];
     customQueries.push(".//name");
 
     // To check if a class is a parentClass we can simply check to see if
@@ -287,10 +287,10 @@ const outputDataBases = (dataMap, ws) => {
 const formatDatabases = (databases) => {
 
   // Write new contents
-  var finalFormat = new Array();
+  var finalFormat = [];
   for (var x = 0; x < databases.length; x++){
 
-    var table = new Array();
+    var table = [];
     // nameFile.txt
     var fileN = databases[x][0];
     table.push(fileN);
@@ -299,7 +299,7 @@ const formatDatabases = (databases) => {
     for(var y = 0; y < databases[x].length; y++){
       var data = databases[x][y];
 
-      if(data != fileN){
+      if(data !== fileN){
         for(const arr of data){
           for(const num of arr){
             dataWritten = dataWritten + num + " ";
