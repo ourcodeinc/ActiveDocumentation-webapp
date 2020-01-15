@@ -141,3 +141,43 @@ const antlr = (input) => {
         return {xpathTraverseErrors: error};
     }
 };
+
+
+/**
+ * parse the input text without constraint
+ * used in minedRules
+ * @param input text based on grammar without constraint only from "classes" tokens
+ * @return {{grammarTree: *}|{grammarErrors: Array, inputText: string}}
+ */
+export const verifyPartialTextBasedOnGrammar = (input) => {
+
+    let MyGrammarLexerModule = require("./generated-parser/myGrammarLexer");
+    let MyGrammarParserModule = require("./generated-parser/myGrammarParser");
+
+    let ErrorListener = function (errors) {
+        antlr4.error.ErrorListener.call(this);
+        this.errors = errors;
+        return this;
+    };
+
+    ErrorListener.prototype = Object.create(antlr4.error.ErrorListener.prototype);
+    ErrorListener.prototype.constructor = ErrorListener;
+    ErrorListener.prototype.syntaxError = function (rec, sym, line, col, msg, e) {
+        this.errors.push({rec: rec, sym: sym, line: line, col: col, msg: msg, e: e});
+    };
+
+    let errors = [];
+    let listener = new ErrorListener(errors);
+
+    let orgParser = new MyGrammarParserModule.myGrammarParser(new antlr4.CommonTokenStream(new MyGrammarLexerModule.myGrammarLexer(new antlr4.InputStream(input))));
+    orgParser.buildParseTrees = true;
+    orgParser.removeErrorListeners();
+    orgParser.addErrorListener(listener);
+    let orgTree = orgParser.classes();
+
+    if (errors.length !== 0)
+        return {grammarErrors: errors, error: true, listOfErrors: errors};
+
+    return {grammarTree: orgTree, error: false};
+
+};

@@ -12,9 +12,12 @@ import "rc-slider/assets/index.css";
 import "three-dots"
 
 
-import {mineRulesFromXmlFiles} from "../core/miningRules";
+import {mineRulesFromXmlFiles} from "../miningRulesCore/miningRules";
 import {ignoreFile, updateMetaData} from "../actions";
 import Utilities from "../core/utilities";
+import MinedRulePad from "./minedRulePad";
+import {verifyPartialTextBasedOnGrammar} from "../core/languageProcessing";
+import {generateGuiTrees} from "./ruleGenerationText/generateGuiTree";
 
 
 class MinedRules extends Component {
@@ -27,7 +30,11 @@ class MinedRules extends Component {
             displayedMinedRules: [],
             loading: false, // for loading icons when mining rules
             minComplexity: 0,
-            maxComplexity: 100
+            maxComplexity: 100,
+
+            renderTree: false,
+            guiElements: {},
+            guiTree: {}
         };
     }
 
@@ -35,62 +42,22 @@ class MinedRules extends Component {
         // console.log(this.state);
         return (
             <div>
+
                 {this.renderButtonsAndSliders()}
-                {this.state.loading ? (
-                    <div style={{
-                        padding: "20%",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        margin: "0 -5%",
-                        overflow: "hidden"
-                    }}>
-                        <div className="dot-elastic"/>
-                    </div>
-                ) : null}
-                <div>
-                    {this.state.displayedMinedRules.map((group, index) => {
-                        return (
-                            <div className={"minedFrequentItemSetContainer"} key={index}>{
-                                group["attributes"].map((list, i) => {
-                                    return (
-                                        <div key={i} className={"minedFrequentItemSet"}>
-                                            <h4 style={{backgroundColor: "lightgrey", padding: "5px"}}>Number of Attributes: {list.length}</h4>
-                                            {list.map((attr, j) => {
-                                                return (<div className={"attrRowContainer"} key={j}>
-                                                    <div className={"attrId"}>{attr["id"]}</div>
-                                                    <div className={"attrDesc"}>{attr["attr"]}</div>
-                                                    <div className={"attrQuery"}>{attr["query"]}</div>
-                                                </div>)
-                                            })}
-                                            <h4 style={{backgroundColor: "lightgrey", padding: "5px"}}>Number of Files: {group["files"].length}</h4>
-                                            <div className={"minedFrequentItemSetFiles"}>{
-                                                group["files"].map((fileName, i) => {
-                                                    return (<div key={i} className={"ruleLink"}
-                                                                 onClick={() => {
-                                                                     this.props.onIgnoreFile(true);
-                                                                     Utilities.sendToServer(this.props.ws, "OPEN_FILE", fileName)
-                                                                 }}
-                                                    >{fileName.replace(this.props.projectPath.slice, "")
-                                                        .replace(this.props.projectPath.slice(1), "")}</div>)
-                                                })}
-                                            </div>
-                                        </div>
-                                    )
-                                })
-                            }
-                            </div>)
-                    })}
-                </div>
+                {this.renderLoading()}
+                {this.renderMinedRulePad()}
+                {/*{this.renderAllRawItemSets()}*/}
+
             </div>
         )
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
+        console.clear();
         if (nextProps.message === "UPDATE_MINED_RULES") {
             // calculate the max and min number of attributes in mined rules
             let min = Infinity;
-            let max = -1*Infinity;
+            let max = -1 * Infinity;
             nextProps.minedRules.forEach(group => {
                 group["attributes"].forEach(list => {
                     min = Math.min(list.length, min);
@@ -98,13 +65,16 @@ class MinedRules extends Component {
                 })
             });
 
-            this.setState({
-                minedRules: nextProps.minedRules,
-                displayedMinedRules: nextProps.minedRules,
-                loading: false,
-                minComplexity: min,
-                maxComplexity: max
-            })
+            Promise.all(this.processRawMinedRulesPromises(nextProps.minedRules))
+                .then(processedMinedRules => {
+                    this.setState({
+                        minedRules: processedMinedRules,
+                        displayedMinedRules: processedMinedRules,
+                        loading: false,
+                        minComplexity: min,
+                        maxComplexity: max,
+                    })
+                })
         }
     }
 
@@ -116,18 +86,18 @@ class MinedRules extends Component {
     renderButtonsAndSliders() {
         // create marks for support slider
         let marksSupport = {};
-        for (let i=10; i<=100; i+=10)
+        for (let i = 10; i <= 100; i += 10)
             marksSupport[i] = i;
 
         // calculate the max and min number of attributes in mined rules
         let minNumberOfAttributes = Infinity;
-        let maxNumberOfAttributes = -1*Infinity;
+        let maxNumberOfAttributes = -1 * Infinity;
         this.state.minedRules.forEach(group => {
-            group["attributes"].forEach(list => {
-                minNumberOfAttributes = Math.min(list.length, minNumberOfAttributes);
-                maxNumberOfAttributes = Math.max(list.length, maxNumberOfAttributes);
-                })
-            });
+            group["rules"].forEach(obj => {
+                minNumberOfAttributes = Math.min(obj["attributes"].length, minNumberOfAttributes);
+                maxNumberOfAttributes = Math.max(obj["attributes"].length, maxNumberOfAttributes);
+            })
+        });
 
         // create marks for complexity slider IF there are mined rules
         let marksComplexity = {};
@@ -153,7 +123,7 @@ class MinedRules extends Component {
                                 onChange={(value) => this.setState({support: value})}
                                 handle={(props) => {
                                     // copied from rc-slider website
-                                    const { value, dragging, index, ...restProps } = props;
+                                    const {value, dragging, index, ...restProps} = props;
                                     return (
                                         <Tooltip
                                             prefixCls="rc-slider-tooltip"
@@ -191,7 +161,10 @@ class MinedRules extends Component {
                                 <Slider.Range
                                     step={1}
                                     defaultValue={[minNumberOfAttributes, maxNumberOfAttributes]}
-                                    onAfterChange={(value)=> this.setState({minComplexity: value[0], maxComplexity: value[1]})}
+                                    onAfterChange={(value) => this.setState({
+                                        minComplexity: value[0],
+                                        maxComplexity: value[1]
+                                    })}
                                     min={minNumberOfAttributes}
                                     max={maxNumberOfAttributes}
                                     marks={marksComplexity}
@@ -212,16 +185,16 @@ class MinedRules extends Component {
                                     }}
                                 />
                             </Col>
-                            <Col xs={1} md={1}>
+                            <Col xs={6} md={6}>
                                 Min: {this.state.minComplexity}, max: {this.state.maxComplexity}
                             </Col>
-                            <Col xs={6} md={5}>
-                                <div style={{float: "right"}}>
-                                    <Button onClick={() => this.filterRules()} style={{padding: "0 5px"}}>
-                                        Update Complexity of Rules Now!
-                                    </Button>
-                                </div>
-                            </Col>
+                            {/*<Col xs={6} md={5}>*/}
+                            {/*    <div style={{float: "right"}}>*/}
+                            {/*        <Button onClick={() => this.filterRules()} style={{padding: "0 5px"}}>*/}
+                            {/*            Update Complexity of Rules Now!*/}
+                            {/*        </Button>*/}
+                            {/*    </div>*/}
+                            {/*</Col>*/}
                         </Row>
                     </div>
                 ) : null}
@@ -230,27 +203,215 @@ class MinedRules extends Component {
     }
 
     /**
+     * render loading gif
+     * @return {null}
+     */
+    renderLoading() {
+        return this.state.loading ? (
+            <div style={{
+                padding: "20%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                margin: "0 -5%",
+                overflow: "hidden"
+            }}>
+                <div className="dot-elastic"/>
+            </div>
+        ) : null;
+    }
+
+
+    /**
+     * render All frequent item sets as a list
+     * @return {*}
+     */
+    renderAllRawItemSets() {
+        return (
+            <div>
+                {this.state.displayedMinedRules.map((group, i) => {
+                    return (
+                        <div className={"minedFrequentItemSetContainer"} key={i}>{
+                            group["rules"].map((ruleObj, j) => {
+                                return this.renderRawItemSet(ruleObj["attributes"], group["files"], `${i}_${j}`)
+                            })
+                        }
+                        </div>)
+                })}
+            </div>
+        )
+    }
+
+    /**
+     * render each of the frequent item sets
+     * @param attributes  [{id: "", attr:"", query: ""}, {id: "", attr:"", query: ""}]
+     * @param files   list of files
+     * @param key     a key for the gui component
+     * @param className
+     * @param ruleGrammar
+     * @return {*}
+     */
+    renderRawItemSet(attributes, files, key, className = "", ruleGrammar = "") {
+        return (
+            <div key={key} className={className}>
+                {ruleGrammar=== "" ? null : (<h4>{ruleGrammar}</h4>)}
+                <h4 style={{backgroundColor: "lightgrey", padding: "5px"}}>Number of
+                    Attributes: {attributes.length}</h4>
+                {attributes.map((attr, j) => {
+                    return (<div className={"attrRowContainer"} key={j}>
+                        <div className={"attrId"}>{attr["id"]}</div>
+                        <div className={"attrDesc"}>{attr["attr"]}</div>
+                        {/*<div className={"attrQuery"}>{attr["query"]}</div>*/}
+                    </div>)
+                })}
+                <h4 style={{backgroundColor: "lightgrey", padding: "5px"}}>Number of
+                    Files: {files.length}</h4>
+                <div className={"minedFrequentItemSetFiles"}>{
+                    files.map((fileName, i) => {
+                        return (<div key={i} className={"ruleLink"}
+                                     onClick={() => {
+                                         this.props.onIgnoreFile(true);
+                                         Utilities.sendToServer(this.props.ws, "OPEN_FILE", fileName)
+                                     }}
+                        >{fileName.replace(this.props.projectPath.slice, "")
+                            .replace(this.props.projectPath.slice(1), "")}</div>)
+                    })}
+                </div>
+            </div>
+        )
+
+    }
+
+    /**
+     * render each rule through either RulePad or simple rendering
+     * @return {*}
+     */
+    renderMinedRulePad() {
+        return this.state.displayedMinedRules.map((group, i) =>
+            group["rules"].map((rule, j) => {
+                    if (rule["attributes"].length < this.state.minComplexity || rule["attributes"].length > this.state.maxComplexity)
+                        return null;
+
+                    if (Object.keys(rule.rulePadState.guiTree).length === 0)
+                        return this.renderRawItemSet(rule["attributes"], group["files"], `${i}_${j}`, "minedFrequentItemSet", rule["grammar"]);
+
+                    return (
+                        <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"} key={`${i}_${j}`}>
+                            <h4>{rule["grammar"]}</h4>
+                            <MinedRulePad key={new Date()} elementId={"0"} root
+                                          rootTree={rule.rulePadState.guiTree}
+                                          guiElements={rule.rulePadState.guiElements}
+                            />
+
+                            {this.renderRawItemSet(rule["nonDisplayableAttr"], group["files"], `${i}_${j}`, "", "")}
+                        </div>
+                    )
+                }
+            ));
+    }
+
+    /**
      * send command to mine rules
      */
     mineRules() {
         let metaData = {};
+        this.setState({minedRules: [], displayedMinedRules: [], loading: true});
         mineRulesFromXmlFiles(this.props.xmlFiles, this.state.support, metaData, this.props.ws);
         this.props.onUpdateMetaData(metaData);
-        this.setState({minedRules: [], displayedMinedRules: [], loading: true});
     }
 
     /**
-     * filter mined rules based on complexity
+     * compute the GUI states of received mined itemSets
+     * @param rawRules
+     * [{
+     *    attributes: [
+     *          [{id: "", attr:"", query: ""}, {id: "", attr:"", query: ""}] ,
+     *          [{id: "", attr:"", query: ""}, {id: "", attr:"", query: ""}]
+     *          ]
+     *    files: ["file1", "file2]
+     * }]
+     * returns array of Promises
+     * [{
+     *     rules: [
+     *         {
+     *              attributes: [],
+     *              grammar: "",
+     *              displayableAttr:[],
+     *              nonDisplayableAttr: [],
+     *              rulePadState: {guiTree: {}, guiElements: {}}
+     *         },
+     *         {
+     *              attributes: [],
+     *              grammar: "",
+     *              displayableAttr:[],
+     *              nonDisplayableAttr: [],
+     *              rulePadState: {guiTree: {}, guiElements: {}}
+     *         }
+     *     ],
+     *     files: ["file1", "file2]
+     * }]
      */
-    filterRules() {
-        let newDisplayedList = this.state.minedRules.filter((group) => {
-            let fil = group["attributes"].filter((list) => {
-                return (list.length >= this.state.minComplexity && list.length <= this.state.maxComplexity)
-            });
-            return fil.length !== 0
-        });
+    processRawMinedRulesPromises(rawRules) {
+        return rawRules.map(group => {
+            return Promise.all(group["attributes"].map(attrArray => {
+                let arrayDisplayable = [], arrayNonDisplayable = [];
+                for (let attr of attrArray) {
+                    if (attr["attr"].startsWith("class with"))
+                        arrayDisplayable.push(attr["attr"].substring(10));
+                    else
+                        arrayNonDisplayable.push(attr);
+                }
 
-        this.setState({displayedMinedRules: newDisplayedList})
+
+                let text = "class with " + arrayDisplayable.join(" and");
+                text = text.replace(/ {2}/g, " ")
+                    .replace(/\)/g, " )")
+                    .replace(/\( /g, "(")
+                    .replace(/\) /g, ")")
+                    .replace(/ {2}/g, " ");
+
+                return this.grammarTextToRulePadGUI(text)
+                    .then(rulePadState => {
+                        return {
+                            attributes: attrArray,
+                            grammar: text,
+                            displayableAttr: arrayDisplayable,
+                            nonDisplayableAttr: arrayNonDisplayable, // subset of attributes
+                            rulePadState: rulePadState // {guiTree: {}, guiElements: {}}
+                        }
+                    });
+            })).then(rules => {
+                return {
+                    rules: rules,
+                    files: group["files"]
+                }
+            })
+
+        })
+    }
+
+
+    /**
+     * @param grammarText
+     * @return {Promise<T | {guiTree: {}, guiElements: {}}>|Promise<{guiTree: {}, guiElements: {}}>}
+     */
+    grammarTextToRulePadGUI(grammarText) {
+        // the "classes" token must have an space at the end
+        let result = verifyPartialTextBasedOnGrammar(grammarText + " ");
+        if (result.error) {
+            console.log("error happened in parsing");//, grammarText);//, result.listOfErrors);
+            console.log(result.listOfErrors);
+            return Promise.resolve({guiTree: {}, guiElements: {}});
+        }
+
+        return generateGuiTrees(result.grammarTree)
+            .then((tree) => {
+                return {guiTree: tree.guiTree, guiElements: tree.guiElements}
+            })
+            .catch((error) => {
+                console.error("error happened in creating the guiTree", grammarText, error);
+                return {guiTree: {}, guiElements: {}}
+            });
     }
 
 }
