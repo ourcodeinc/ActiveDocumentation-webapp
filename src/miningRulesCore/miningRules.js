@@ -56,10 +56,10 @@ in this process.
  */
 
 import {addChildren, addParentChildRelations, findParentChildRelations,
-        makePairsList, findCustomRelations, addCustomRelations} from "./mineRulesCore/sci_class";
+        makePairsList, findCustomRelations, addCustomRelations} from "./sci_class";
 
 import et from 'elementtree';
-import Utilities from "./utilities";
+import Utilities from "../core/utilities";
 
 /**
  *
