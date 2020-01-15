@@ -976,7 +976,7 @@ class EditRuleForm extends Component {
 
 
     //componentDidUpdate doesn't work
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.message === "SEND_EXPR_STMT_XML") return;
         if (nextProps.message === "CHANGE_GUI_ELEMENT") return;
 
@@ -1601,7 +1601,7 @@ class CustomDropDown extends Component {
         )
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         this.setState({
             menuItems: nextProps.menuItems,
             onSelectFunction: nextProps.onSelectFunction,

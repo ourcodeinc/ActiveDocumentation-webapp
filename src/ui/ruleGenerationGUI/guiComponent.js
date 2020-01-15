@@ -107,7 +107,7 @@ class GuiComponent extends Component {
     }
 
     //componentDidUpdate doesn't work
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         let hoverCheckbox = {element: false};
         // recover texts:
         let texts = {};
@@ -1054,7 +1054,7 @@ class CustomDropDown extends Component {
         )
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         this.setState({
             menuItemsText: nextProps.menuItemsText,
             menuItemsEvent: nextProps.menuItemsEvent,

@@ -64,7 +64,7 @@ class RuleGeneratorGui extends Component {
     }
 
     //componentDidUpdate doesn't work
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (this.ruleIndex !== -1) {
             let indices = nextProps.rules.map(d => d.index);
             let arrayIndex = indices.indexOf(this.ruleIndex);

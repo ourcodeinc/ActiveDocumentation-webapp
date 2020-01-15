@@ -55,7 +55,7 @@ class RuleGeneratorText extends Component {
     }
 
     //componentDidUpdate doesn't work
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         let changedArray = false;
         if (this.autoCompleteArray.length !== nextProps.autoCompleteArray.length) changedArray = true;
         else this.autoCompleteArray.forEach((a, i) => {
