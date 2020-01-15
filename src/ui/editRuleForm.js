@@ -28,7 +28,7 @@ import Joyride, {ACTIONS, EVENTS} from "react-joyride";
 import ReactToolTip from "react-tooltip";
 
 import RuleGeneratorGui from "./ruleGenerationGUI/ruleGeneratorGui";
-import verifyTextBasedOnGrammar from "./ruleGenerationText/languageProcessing";
+import verifyTextBasedOnGrammar from "../core/languageProcessing";
 import {
     matchMessages, receiveGuiTree, clearNewRuleForm,
     editRuleForm, submitNewRule, submitNewTag, updateRule, updateXPaths, updateDisplayEditTutorial, ignoreFile

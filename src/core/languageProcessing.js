@@ -93,8 +93,8 @@ const lemmatize = (input) => {
 const antlr = (input) => {
 
     let inputText = input + "";
-    let MyGrammarLexerModule = require("../generated-parser/myGrammarLexer");
-    let MyGrammarParserModule = require("../generated-parser/myGrammarParser");
+    let MyGrammarLexerModule = require("./generated-parser/myGrammarLexer");
+    let MyGrammarParserModule = require("./generated-parser/myGrammarParser");
 
     let ErrorListener = function (errors) {
         antlr4.error.ErrorListener.call(this);

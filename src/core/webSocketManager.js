@@ -10,8 +10,8 @@ import {
     updateWS, updateXmlFiles, updateProjectHierarchyData, updatedMinedRules, updateFeatureSelection
 } from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from "./ruleExecutor";
-import {parseGrouping} from "./mineRulesCore/parseGrouping";
-import {getXpathForFeature} from "./findingFeature";
+import {parseGrouping} from "../miningRulesCore/parseGrouping";
+import {getXpathForFeature} from "../miningRulesCore/findingFeature";
 
 class WebSocketManager extends Component {
 

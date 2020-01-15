@@ -3,9 +3,9 @@
  */
 
 import {TerminalNodeImpl} from "antlr4/tree/Tree";
-import Utilities from "../../core/utilities";
-import store from "../../reduxStore";
-import {sendExpressionStatementXML} from "../../actions";
+import Utilities from "./utilities";
+import store from "../reduxStore";
+import {sendExpressionStatementXML} from "../actions";
 
 class GenerateXpath {
 
