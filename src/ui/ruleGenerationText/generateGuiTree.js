@@ -334,7 +334,7 @@ const createGuiElementTree = (parseTree) => {
                     neighbor = elem_id;
 
                     // create a new element
-                    let newElementId = Math.floor(new Date().getTime() / 10).toString();
+                    let newElementId = Math.random().toString(36).substr(2, 16);
                     let newElementsData = generateTreeForElement(newGuiElements[elem_id].conditionName, newElementId, parent_id);
 
                     // look for childGroup/subGroup for guiNode.elementId using parentId
