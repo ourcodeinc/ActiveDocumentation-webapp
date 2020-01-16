@@ -614,16 +614,16 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
         if(fncSpec[0].text != "public" &&
            fncSpec[0].text != "private" &&
            fncSpec[0].text != "protected"){
-             fncSpecType = clsSpecificity;
+             fncSpecType = "\"" + clsSpecificity + "\"";
            }
         // If the visibielity specifier is listed for this function, that is
         // what we use
         else{
-          fncSpecType = fncSpec[0].text;
+          fncSpecType = "\"" + fncSpec[0].text + "\"";
         }
 
         if(fncSpecType == ""){
-          fncSpecType = "public";
+          fncSpecType = "\"public\"";
         }
 
         // Check for other keywords such as abstract or static
@@ -632,7 +632,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
           // If statement here to avoid adding the visbility specifier
           // twice
           if (spec.text != fncSpecType){
-            fncSpecType = fncSpecType + " " + spec.text;
+            fncSpecType = fncSpecType + " and specifier \"" + spec.text + "\"";
           }
         }
       }
@@ -1534,22 +1534,28 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
         if(fncSpec[0].text != "public" &&
            fncSpec[0].text != "private" &&
            fncSpec[0].text != "protected"){
-             fncSpecType = clsSpecificity;
+             fncSpecType = "\"" + clsSpecificity + "\"";
            }
-        // If the visibielity specifier is listed for this function, that is
-        // what we use
-        else{
-          fncSpecType = fncSpec[0].text;
-        }
-        // Check for other keywords such as abstract or static
-        for(let n = 0; n < fncSpec.length; n++){
-          let spec = fncSpec[n];
-          // If statement here to avoid adding the visbility specifier
-          // twice
-          if (spec.text != fncSpecType){
-            fncSpecType = fncSpecType + " " + spec.text;
-          }
-        }
+           
+       // If the visibility specifier is listed for this function, that is
+       // what we use
+       else{
+         fncSpecType = "\"" + fncSpec[0].text + "\"";
+       }
+
+       if(fncSpecType == ""){
+         fncSpecType = "\"public\"";
+       }
+
+       // Check for other keywords such as abstract or static
+       for(let n = 0; n < fncSpec.length; n++){
+         let spec = fncSpec[n];
+         // If statement here to avoid adding the visbility specifier
+         // twice
+         if (spec.text != fncSpecType){
+           fncSpecType = fncSpecType + " and specifier \"" + spec.text + "\"";
+         }
+       }
       }
 
       // New name
