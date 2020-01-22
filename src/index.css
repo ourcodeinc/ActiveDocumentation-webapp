@@ -764,6 +764,10 @@ img.tutorialSmallImage {
     margin-top: 20px;
 }
 
-.minedRuleBoundingBox .overlayContainer {
-    width: 95% !important;
+.minedRuleBoundingBox .rootContainer {
+    width: 70% !important;
+}
+
+.generateRuleGui .minedRules.inputText {
+    padding: 3px;
 }

@@ -69,7 +69,7 @@ class MinedRulePad extends Component {
 
     render() {
         return (
-            <div className={"overlayContainer"}>
+            <div className={"overlayContainer " + this.props["styleClass"]}>
                 <div
                     className={"mainDiv-overlay elementDiv" + (this.state.thisElement.activeElement ? " activeElement" : "")
                     + (this.state.thisElement.selectedElement ? " selectedElement" : "")
@@ -231,14 +231,8 @@ class MinedRulePad extends Component {
                 <div>
                     <div className={"rowItem" + (childElement.activeElement ? "" : " inactiveText")}><b>{childCondition.pre}</b></div>
                     <div className={"inputTextDiv rowItem " + (childCondition.type === "wideText" ? "wideText" : "")}>
-                        <form>
-                            <input type={"text"}
-                                   disabled
-                                   className={"inputText" + (childElement.activeElement ? " activeElement " : "")}
-                                   value={childElement.text}
-                                   placeholder={childCondition.placeholder}
-                            />
-                        </form>
+                        <span className={"minedRules inputText" + (childElement.activeElement ? " activeElement " : "")}>
+                            {childElement.text ? childElement.text : childCondition.placeholder}</span>
                     </div>
                     <div className={"informationDiv rowGroup"}>
                     </div>

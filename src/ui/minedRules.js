@@ -276,6 +276,7 @@ class MinedRules extends Component {
                             <MinedRulePad key={new Date()} elementId={"0"} root
                                           rootTree={rule.rulePadState.guiTree}
                                           guiElements={rule.rulePadState.guiElements}
+                                          styleClass={"rootContainer"}
                             />
 
                             {this.renderRawItemSet(rule["nonDisplayableAttr"], group["files"], `${i}_${j}`, "", "")}
