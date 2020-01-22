@@ -1276,7 +1276,7 @@ export const addImplementations = (subCL, attributes, allAttributes) => {
   let classImplements = subCL.find('super/implements');
   if (classImplements != null){
       // New name
-      name = "class with implementation of \""
+      let name = "class with implementation of \""
              + (classImplements.find('name')).text + "\"";
 
      // Check whether attribute has been seen globally
