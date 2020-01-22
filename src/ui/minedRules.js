@@ -14,7 +14,6 @@ import "three-dots"
 
 import {mineRulesFromXmlFiles} from "../miningRulesCore/miningRules";
 import {ignoreFile, updateMetaData} from "../actions";
-import Utilities from "../core/utilities";
 import MinedRulePad from "./minedRulePad";
 import {verifyPartialTextBasedOnGrammar} from "../core/languageProcessing";
 import {generateGuiTrees} from "./ruleGenerationText/generateGuiTree";
@@ -39,7 +38,6 @@ class MinedRules extends Component {
     }
 
     render() {
-        // console.log(this.state);
         return (
             <div>
 
@@ -53,7 +51,6 @@ class MinedRules extends Component {
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
-        console.clear();
         if (nextProps.message === "UPDATE_MINED_RULES") {
             // calculate the max and min number of attributes in mined rules
             let min = Infinity;
@@ -188,13 +185,6 @@ class MinedRules extends Component {
                             <Col xs={6} md={6}>
                                 Min: {this.state.minComplexity}, max: {this.state.maxComplexity}
                             </Col>
-                            {/*<Col xs={6} md={5}>*/}
-                            {/*    <div style={{float: "right"}}>*/}
-                            {/*        <Button onClick={() => this.filterRules()} style={{padding: "0 5px"}}>*/}
-                            {/*            Update Complexity of Rules Now!*/}
-                            {/*        </Button>*/}
-                            {/*    </div>*/}
-                            {/*</Col>*/}
                         </Row>
                     </div>
                 ) : null}
@@ -223,26 +213,6 @@ class MinedRules extends Component {
 
 
     /**
-     * render All frequent item sets as a list
-     * @return {*}
-     */
-    renderAllRawItemSets() {
-        return (
-            <div>
-                {this.state.displayedMinedRules.map((group, i) => {
-                    return (
-                        <div className={"minedFrequentItemSetContainer"} key={i}>{
-                            group["rules"].map((ruleObj, j) => {
-                                return this.renderRawItemSet(ruleObj["attributes"], group["files"], `${i}_${j}`)
-                            })
-                        }
-                        </div>)
-                })}
-            </div>
-        )
-    }
-
-    /**
      * render each of the frequent item sets
      * @param attributes  [{id: "", attr:"", query: ""}, {id: "", attr:"", query: ""}]
      * @param files   list of files
@@ -255,8 +225,8 @@ class MinedRules extends Component {
         return (
             <div key={key} className={className}>
                 {ruleGrammar=== "" ? null : (<h4>{ruleGrammar}</h4>)}
-                <h4 style={{backgroundColor: "lightgrey", padding: "5px"}}>Number of
-                    Attributes: {attributes.length}</h4>
+                {/*<h4 style={{backgroundColor: "lightgrey", padding: "5px"}}>Number of*/}
+                {/*    Attributes: {attributes.length}</h4>*/}
                 {attributes.map((attr, j) => {
                     return (<div className={"attrRowContainer"} key={j}>
                         <div className={"attrId"}>{attr["id"]}</div>
@@ -266,17 +236,17 @@ class MinedRules extends Component {
                 })}
                 <h4 style={{backgroundColor: "lightgrey", padding: "5px"}}>Number of
                     Files: {files.length}</h4>
-                <div className={"minedFrequentItemSetFiles"}>{
-                    files.map((fileName, i) => {
-                        return (<div key={i} className={"ruleLink"}
-                                     onClick={() => {
-                                         this.props.onIgnoreFile(true);
-                                         Utilities.sendToServer(this.props.ws, "OPEN_FILE", fileName)
-                                     }}
-                        >{fileName.replace(this.props.projectPath.slice, "")
-                            .replace(this.props.projectPath.slice(1), "")}</div>)
-                    })}
-                </div>
+                {/*<div className={"minedFrequentItemSetFiles"}>{*/}
+                {/*    files.map((fileName, i) => {*/}
+                {/*        return (<div key={i} className={"ruleLink"}*/}
+                {/*                     onClick={() => {*/}
+                {/*                         this.props.onIgnoreFile(true);*/}
+                {/*                         Utilities.sendToServer(this.props.ws, "OPEN_FILE", fileName)*/}
+                {/*                     }}*/}
+                {/*        >{fileName.replace(this.props.projectPath.slice, "")*/}
+                {/*            .replace(this.props.projectPath.slice(1), "")}</div>)*/}
+                {/*    })}*/}
+                {/*</div>*/}
             </div>
         )
 
@@ -298,6 +268,7 @@ class MinedRules extends Component {
                     return (
                         <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"} key={`${i}_${j}`}>
                             <h4>{rule["grammar"]}</h4>
+                            <h4>Total attributes: {rule["attributes"].length}, displayed attributes: {rule["displayableAttr"].length}</h4>
                             <MinedRulePad key={new Date()} elementId={"0"} root
                                           rootTree={rule.rulePadState.guiTree}
                                           guiElements={rule.rulePadState.guiElements}
