@@ -66,15 +66,6 @@ class MinedRulePad extends Component {
         this.state.elementNode = props["rootTree"][this.state.elementId];
     }
 
-    UNSAFE_omponentWillReceiveProps(nextProps) {
-        this.setState({
-            guiElements: nextProps.guiElements,
-            elementId: nextProps.elementId,
-            elementNode: nextProps["rootTree"][nextProps.elementId],
-            elementCondition: getConditionByName(nextProps.guiElements[nextProps.elementId].conditionName)
-        });
-    }
-
 
     render() {
         return (
@@ -94,26 +85,30 @@ class MinedRulePad extends Component {
                         {this.renderGroup("before_2")}
                         {this.renderPrePost("pre_before_3")}
                         {this.renderGroup("before_3")}
-
                         {this.renderPrePost("pre_after_1")}
                         {this.renderGroup("after_1")}
-                        {this.renderPrePost("pre_after_2")}
-                        {this.renderGroup("after_2")}
-                        {this.renderPrePost("pre_after_3")}
+
+                        {this.renderEmptyParamArgList()}
+                        {this.renderAfter2()}
+
                         {this.renderGroup("after_3")}
                         {this.renderPrePost("post_after_3")}
+
+                        {this.renderEmptyBody()}
                     </div>
-                    {this.renderPrePost("pre_body")}
                     {this.renderBody()}
-                    {this.renderPrePost("post_body")}
                 </div>
-                {this.renderOverlayDiv()}
             </div>
         )
     }
 
 
     renderGroup(group) {
+        // remove empty top (its only annotation yet)
+        if (group === "top" &&
+            this.state.elementNode.children[group].filter(id => this.state.guiElements[id].activeElement).length === 0)
+            return null;
+
         return this.state.elementNode.children[group].map((childId, i) => {
             let childElement = this.state.guiElements[childId];
             let childCondition = getConditionByName(childElement.conditionName);
@@ -124,11 +119,9 @@ class MinedRulePad extends Component {
 
                 case "wideText":
                 case "smallText":
+                case "dropdown":
                 case "text":
                     return this.renderTextChild(group, null, i, childId, childElement, childCondition);
-
-                case "dropdown":
-                    return this.renderDropDownChild(group, null, i, childId, childElement, childCondition);
 
                 default:
                     return null;
@@ -136,37 +129,86 @@ class MinedRulePad extends Component {
         });
     }
 
+    renderEmptyParamArgList() {
+        if (this.state.elementCondition["pre_after_2"] === "(" && this.state.elementCondition["pre_after_3"] === ")") {
+            if (this.state.elementNode.children["after_2"].filter(id => this.state.guiElements[id].activeElement).length === 0)
+                return (
+                    <div className={"rowItem"}>
+                        <b> {this.state.elementCondition["pre_after_2"]} ... {this.state.elementCondition["pre_after_3"]}</b>
+                    </div>);
+        }
+        return null;
+    }
+
+    renderAfter2() {
+        if (this.state.elementCondition["pre_after_2"] === "(" && this.state.elementCondition["pre_after_3"] === ")") {
+            if (this.state.elementNode.children["after_2"].filter(id => this.state.guiElements[id].activeElement).length === 0)
+                return null;
+        }
+
+        return (
+            <Fragment>
+                {this.renderPrePost("pre_after_2")}
+                {this.renderGroup("after_2")}
+                {this.renderPrePost("pre_after_3")}
+            </Fragment>
+        )
+    }
+
+    renderEmptyBody() {
+        if (this.state.elementNode.children["body"].filter(ids => ids.filter(id => this.state.guiElements[id].activeElement).length > 0).length === 0) {
+            if (this.state.elementCondition["pre_body"] !== "")
+                return (
+                    <div className={"rowItem"}>
+                        <b> {this.state.elementCondition["pre_body"]} ... {this.state.elementCondition["post_body"]}</b>
+                    </div>);
+        }
+    }
+
     renderBody() {
-        return this.state.elementNode.children["body"].map((ids, i) =>
-            (<div className={"bodyChildrenContainer"} key={i}>
-                {
-                    ids.map((childId, j) => {
-                        let childElement = this.state.guiElements[childId];
-                        let childCondition = getConditionByName(childElement.conditionName);
+        // remove empty body
+        if (this.state.elementNode.children["body"].filter(ids => ids.filter(id => this.state.guiElements[id].activeElement).length > 0).length === 0)
+            return null;
 
-                        switch (childCondition.type) {
-                            case "element":
-                                return this.renderElementChild("body", i, j, childId);
+        return (
+            <Fragment>
+                {this.renderPrePost("pre_body")}
+                {this.state.elementNode.children["body"].map((ids, i) => {
+                        // remove empty child
+                        if (ids.filter(id => this.state.guiElements[id].activeElement).length === 0) return null;
 
-                            case "wideText":
-                            case "smallText":
-                            case "text":
-                                return this.renderTextChild("body", i, j, childId, childElement, childCondition);
+                        return (<div className={"bodyChildrenContainer"} key={i}>
+                            {
+                                ids.map((childId, j) => {
+                                    let childElement = this.state.guiElements[childId];
+                                    let childCondition = getConditionByName(childElement.conditionName);
 
-                            case "dropdown":
-                                return this.renderDropDownChild("body", i, j, childId, childElement, childCondition);
+                                    switch (childCondition.type) {
+                                        case "element":
+                                            return this.renderElementChild("body", i, j, childId);
 
-                            default:
-                                return null;
-                        }
-                    })
-                }
-            </div>)
-        );
+                                        case "wideText":
+                                        case "smallText":
+                                        case "dropdown":
+                                        case "text":
+                                            return this.renderTextChild("body", i, j, childId, childElement, childCondition);
+
+                                        default:
+                                            return null;
+                                    }
+                                })
+                            }
+                        </div>)
+                    }
+                )}
+                {this.renderPrePost("post_body")}
+            </Fragment>)
     }
 
     renderElementChild(group, innerIndex, index, childId) {
+        // remove empty child
         if (!this.state.guiElements[childId].activeElement) return null;
+
         return (
             <Fragment key={index}>
                 <div className={group === "body" ? "rowGroup" : "rowItem"}>
@@ -206,30 +248,6 @@ class MinedRulePad extends Component {
         )
     }
 
-    renderDropDownChild(group, innerIndex, index, childId, childElement, childCondition) {
-
-        return (
-            <div
-                className={"inputTextContainer smallText rowItem"} key={index}
-                id={`id__${this.props.ruleIndex}__${childId}`}>
-                <div className={"inputTextDiv rowItem"}>
-                    <form>
-                        <input type={"text"}
-                               disabled
-                               className={"inputText" + (childElement.activeElement ? " activeElement " : "")}
-                               value={childElement.text}
-                               placeholder={childCondition.placeholder}
-                        />
-                    </form>
-                </div>
-
-                {/*<span>*/}
-                {/*    {childElement.text && childCondition.items.indexOf(childElement.text) !== -1 ? childElement.text : childCondition.placeholder}*/}
-                {/*</span>*/}
-            </div>
-        )
-    }
-
     renderPrePost(category) {
         if (this.state.elementCondition[category] === "") return null;
         if (category === "pre_body" || category === "post_body")
@@ -243,20 +261,6 @@ class MinedRulePad extends Component {
                 <b>
                     {this.state.elementCondition[category]}
                 </b>
-            </div>
-        )
-    }
-
-    renderOverlayDiv() {
-        return (
-            <div className={"overlay"}
-                 id={`overlay__${this.props.ruleIndex}__${this.state.elementId}`}
-                 style={{display: this.props.root || this.state.thisElement.activeElement ? "none" : "block"}}>
-                <div className={"messageDivContainer"}>
-                    <div className={"messageDiv"}>
-                        <strong>Specify {this.state.elementCondition.grammar}</strong>
-                    </div>
-                </div>
             </div>
         )
     }
