@@ -144,14 +144,13 @@ const combineWordsNode = (node) => {
             if (node.children[i].nodeType === "TerminalNodeImpl")
                 word += node.children[i].text;
             else
-                word += node.children[i].children.map(child => child.text).join("");
+                word += node.children[i].children.map(child => child.text === "" ? " " : child.text).join("");
         }
-
         // let word = node.children.map(child => child.text !== "\"" ? child.text : null).join("");
         return {nodeType: "word", text: word}
     }
     if (node.nodeType === "CombinatorialWordsContext") {
-        let word = node.children.map(child => child.text !== "\"" ? child.text : null).join("");
+        let word = node.children.map(child => child.text !== "\"" ? (child.text === "" ? " " : child.text) : null).join("");
         return {nodeType: "word", text: word}
     }
 
