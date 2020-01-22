@@ -7,11 +7,13 @@ import {connect} from "react-redux";
 
 import {
     receiveExpressionStatementXML, ignoreFile, updateFilePath, updateRuleTable, updateTagTable,
-    updateWS, updateXmlFiles, updateProjectHierarchyData, updatedMinedRules, updateFeatureSelection
+    updateWS, updateXmlFiles, updateProjectHierarchyData, updatedMinedRules, updateFeatureSelection,
+    updateDangerousMinedRules
 } from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from "./ruleExecutor";
 import {parseGrouping} from "../miningRulesCore/parseGrouping";
 import {getXpathForFeature} from "../miningRulesCore/findingFeature";
+import {dangerousParseMetaDataFile} from "../miningRulesCore/miningRules";
 
 class WebSocketManager extends Component {
 
@@ -165,7 +167,7 @@ class WebSocketManager extends Component {
                     break;
 
                 case "FP_MAX_OUTPUT":
-                    // message.data = {"fpMaxOutput" : {0: "content od output0", ...}}
+                    // message.data = {"fpMaxOutput" : {0: "content of output0", ...}}
                     let modifiedOutput = parseGrouping(Object.values(message.data["fpMaxOutput"]), this.props.minedRuleMetaData);
                     this.props.onUpdateMinedRules(modifiedOutput);
                     break;
@@ -181,6 +183,14 @@ class WebSocketManager extends Component {
                         window.location.hash = "#/featureSelection";
                         this.props.onUpdateFeatureSelection(message.data.path, message.data.start, message.data.end, xpathAndText.xpath, xpathAndText.selectedText);
                     }
+                    break;
+
+                // dangerously read output files and meta data.
+                case "DANGEROUS_READ_MINED_RULES":
+                    let metaData = dangerousParseMetaDataFile(JSON.parse(message.data["metaData"]));
+                    let outputFiles = JSON.parse(JSON.parse(message.data["outputFiles"]));
+                    let output = parseGrouping(outputFiles, metaData);
+                    this.props.onUpdateDangerousMinedRules(metaData, output);
                     break;
 
                 case "ENTER":
@@ -219,7 +229,8 @@ function mapDispatchToProps(dispatch) {
         onReceiveExprStmtXML: (data) => dispatch(receiveExpressionStatementXML(data)),
         onUpdateXmlFiles: (xmlFiles) => dispatch(updateXmlFiles(xmlFiles)),
         onUpdateMinedRules: (modifiedOutput) => dispatch(updatedMinedRules(modifiedOutput)),
-        onUpdateFeatureSelection: (filePath, startIndex, endIndex, xpath, selectedText) => dispatch(updateFeatureSelection(filePath, startIndex, endIndex, xpath, selectedText))
+        onUpdateFeatureSelection: (filePath, startIndex, endIndex, xpath, selectedText) => dispatch(updateFeatureSelection(filePath, startIndex, endIndex, xpath, selectedText)),
+        onUpdateDangerousMinedRules: (metaData, minedRules) => dispatch(updateDangerousMinedRules(metaData, minedRules))
     }
 }
 

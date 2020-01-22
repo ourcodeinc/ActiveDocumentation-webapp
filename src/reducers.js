@@ -650,6 +650,15 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 }
             });
 
+        case "DANGEROUS_MINED_RULES":
+            return Object.assign({}, state, {
+                message: "UPDATE_MINED_RULES",
+                minedRulesState: {
+                    metaData: action["metaData"],
+                    minedRules: action["minedRules"]
+                }
+            });
+
         default:
             return Object.assign({}, state);
     }

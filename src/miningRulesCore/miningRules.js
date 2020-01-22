@@ -313,3 +313,18 @@ const formatDatabases = (databases) => {
   }
   return finalFormat;
 };
+
+
+export const dangerousParseMetaDataFile = (metaData) => {
+    let metaDataObject = {};
+    let lines = metaData.split("\n");
+
+    for (let i = 0; i < lines.length; i += 2) {
+        if (lines[i] === "") break;
+        let id = lines[i].split(" ")[0];  console.log(id);
+        let attr = lines[i].substring(lines[i].indexOf(" ") + 1);
+        let query = lines[i + 1];
+        metaDataObject[id] = {attr: attr, query: query};
+    }
+    return metaDataObject;
+};

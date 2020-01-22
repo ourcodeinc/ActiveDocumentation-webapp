@@ -90,6 +90,10 @@ class Utilities {
                     };
                     break;
 
+                case "DANGEROUS_READ_MINED_RULES":
+                    messageJson["command"] = "DANGEROUS_READ_MINED_RULES";
+                    break;
+
                 default:
                     break;
             }

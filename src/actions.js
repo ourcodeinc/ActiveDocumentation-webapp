@@ -168,3 +168,12 @@ export const updateFeatureSelection = (filePath, startIndex, endIndex, xpath, se
         selectedText: selectedText
     }
 };
+
+// not recommended
+export const updateDangerousMinedRules = (metaData, minedRules) => {
+    return {
+        type: "DANGEROUS_MINED_RULES",
+        metaData: metaData,
+        minedRules: minedRules
+    }
+};
