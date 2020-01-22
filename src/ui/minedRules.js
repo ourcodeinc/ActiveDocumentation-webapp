@@ -17,6 +17,7 @@ import {ignoreFile, updateMetaData} from "../actions";
 import MinedRulePad from "./minedRulePad";
 import {verifyPartialTextBasedOnGrammar} from "../core/languageProcessing";
 import {generateGuiTrees} from "./ruleGenerationText/generateGuiTree";
+import Utilities from "../core/utilities";
 
 
 class MinedRules extends Component {
@@ -143,6 +144,9 @@ class MinedRules extends Component {
                                 <Button onClick={() => this.mineRules()} style={{padding: "0 5px"}}>
                                     Mine Rules Now!
                                 </Button>
+                                {/*<Button onClick={() => this.ShowMinedRules()} style={{padding: "0 5px"}}>*/}
+                                {/*    Show Mined Rules (Dangerous!)!*/}
+                                {/*</Button>*/}
                             </div>
                         </Col>
                     </Row>
@@ -289,6 +293,13 @@ class MinedRules extends Component {
         this.setState({minedRules: [], displayedMinedRules: [], loading: true});
         mineRulesFromXmlFiles(this.props.xmlFiles, this.state.support, metaData, this.props.ws);
         this.props.onUpdateMetaData(metaData);
+    }
+
+    /**
+     * request for reading the existing data from file
+     */
+    ShowMinedRules() {
+        Utilities.sendToServer(this.props.ws, "DANGEROUS_READ_MINED_RULES");
     }
 
     /**
