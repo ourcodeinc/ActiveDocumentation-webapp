@@ -20,7 +20,7 @@ import {generateGuiTrees} from "./ruleGenerationText/generateGuiTree";
 import Utilities from "../core/utilities";
 
 
-class MinedRules extends Component {
+class MinedRulesComponent extends Component {
 
     constructor(props) {
         super(props);
@@ -508,4 +508,4 @@ function mapDispatchToProps(dispatch) {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(MinedRules);
+export default connect(mapStateToProps, mapDispatchToProps)(MinedRulesComponent);
