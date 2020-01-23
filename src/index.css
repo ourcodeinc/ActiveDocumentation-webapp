@@ -706,30 +706,21 @@ img.tutorialSmallImage {
 /*  mining rules  */
 
 .attrRowContainer {
-    width: 100%;
     display: flex;
 }
 
 .attrId {
-    float: left;
-    width: 5%;
     font-family: cursive;
 }
 
-
 .attrDesc {
-    float: left;
-    width: 40%;
     font-weight: 600;
 }
 
 .attrQuery {
-    float: right;
-    width: 50%;
     font-family: monospace;
     font-size: small;
     color: gray;
-    padding-left: 10px;
 }
 
 .ruleLink {

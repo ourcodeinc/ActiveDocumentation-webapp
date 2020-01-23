@@ -385,11 +385,12 @@ class MinedRulesComponent extends Component {
                                 <div key={`${i}_${j}`} className={"minedFrequentItemSetRawDisplay"}>
                                     <h4>{rule["grammar"]}</h4>
                                     {rule["attributes"].map((attr, j) => {
-                                        return (<div className={"attrRowContainer"} key={j}>
-                                            <div className={"attrId"}>{attr["id"]}</div>
-                                            <div className={"attrDesc"}>{attr["attr"]}</div>
-                                            {/*<div className={"attrQuery"}>{attr["query"]}</div>*/}
-                                        </div>)
+                                        return (
+                                            <Row className={"attrRowContainer"} key={j}>
+                                                <Col className={"attrId"} md={1}>{attr["id"]}</Col>
+                                                <Col className={"attrDesc"} md={9}>{attr["attr"]}</Col>
+                                                {/*<div className={"attrQuery"}>{attr["query"]}</div>*/}
+                                            </Row>)
                                     })}
                                     <h4 style={{backgroundColor: "lightgrey", padding: "5px"}}>Number of
                                         Files: {group["files"].length}</h4>
@@ -408,11 +409,12 @@ class MinedRulesComponent extends Component {
                                         />
                                         <div style={{paddingTop: "10px"}}>
                                             {rule["nonDisplayableAttr"].map((attr, j) => {
-                                                return (<div className={"attrRowContainer"} key={j}>
-                                                    <div className={"attrId"}>{attr["id"]}</div>
-                                                    <div className={"attrDesc"}>{attr["attr"]}</div>
-                                                    {/*<div className={"attrQuery"}>{attr["query"]}</div>*/}
-                                                </div>)
+                                                return (
+                                                    <Row className={"attrRowContainer"} key={j}>
+                                                        <Col className={"attrId"} md={1}>{attr["id"]}</Col>
+                                                        <Col className={"attrDesc"} md={9}>{attr["attr"]}</Col>
+                                                        {/*<div className={"attrQuery"}>{attr["query"]}</div>*/}
+                                                    </Row>)
                                             })}
                                         </div>
                                     </Col>
