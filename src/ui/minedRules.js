@@ -48,12 +48,9 @@ class MinedRules extends Component {
     render() {
         return (
             <div>
-
                 {this.renderButtonsAndSliders()}
                 {this.renderLoading()}
                 {this.renderMinedRulePad()}
-                {/*{this.renderAllRawItemSets()}*/}
-
             </div>
         )
     }
@@ -120,8 +117,8 @@ class MinedRules extends Component {
                                     active={this.state.algorithm === "FP_MAX"}>FP_MAX</Button>
                             <Button onClick={() => this.setState({algorithm: "TNR"})}
                                     active={this.state.algorithm === "TNR"}>TNR</Button>
-                            <Button onClick={() => this.setState({algorithm: "NONE"})}
-                                    active={this.state.algorithm === "TNR"}>View Existing Mined Rules</Button>
+                            {/*<Button onClick={() => this.setState({algorithm: "NONE"})}*/}
+                            {/*        active={this.state.algorithm === "TNR"}>View Existing Mined Rules</Button>*/}
                         </ButtonGroup>
                     </Row>
                     {this.state.algorithm === "FP_MAX" ? (

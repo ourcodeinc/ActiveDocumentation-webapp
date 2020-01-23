@@ -238,7 +238,7 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws,
     outputFileAnalysisData(fileAnalysisMap, ws);
 
     if (algorithm === "FP_MAX")
-        Utilities.sendToServer(ws, "EXECUTE_PF_MAX", {fpMaxSupport});
+        Utilities.sendToServer(ws, "EXECUTE_FP_MAX", {fpMaxSupport});
     else if (algorithm === "TNR")
         Utilities.sendToServer(ws, "EXECUTE_TNR", {tnrConfidence, tnrK, tnrDelta});
 
