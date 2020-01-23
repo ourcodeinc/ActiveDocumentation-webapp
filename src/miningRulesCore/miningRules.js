@@ -64,11 +64,16 @@ import Utilities from "../core/utilities";
 /**
  *
  * @param xmlFiles is an array of objects: {filePath:"", xml: ""}
- * @param support
  * @param metaData {key: {attr: "", query: ""}}
  * @param ws
+ * @param algorithm TNR or FP_MAX
+ * @param fpMaxSupport
+ * @param tnrConfidence
+ * @param tnrK
+ * @param tnrDelta
  */
-export const mineRulesFromXmlFiles = (xmlFiles, support, metaData, ws) => {
+export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws,
+                                      algorithm, fpMaxSupport, tnrConfidence, tnrK, tnrDelta) => {
 
     let analysisFileName = "AttributeEncoding";
 
@@ -232,7 +237,10 @@ export const mineRulesFromXmlFiles = (xmlFiles, support, metaData, ws) => {
 
     outputFileAnalysisData(fileAnalysisMap, ws);
 
-    Utilities.sendToServer(ws, "EXECUTE_FP_MAX", support);
+    if (algorithm === "FP_MAX")
+        Utilities.sendToServer(ws, "EXECUTE_PF_MAX", {fpMaxSupport});
+    else if (algorithm === "TNR")
+        Utilities.sendToServer(ws, "EXECUTE_TNR", {tnrConfidence, tnrK, tnrDelta});
 
 };
 

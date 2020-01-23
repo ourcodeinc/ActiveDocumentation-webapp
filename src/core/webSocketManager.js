@@ -166,6 +166,10 @@ class WebSocketManager extends Component {
 
                     break;
 
+                case "TNR_OUTPUT":
+                    console.log(message.data);
+                    break;
+
                 case "FP_MAX_OUTPUT":
                     // message.data = {"fpMaxOutput" : {0: "content of output0", ...}}
                     let modifiedOutput = parseGrouping(Object.values(message.data["fpMaxOutput"]), this.props.minedRuleMetaData);

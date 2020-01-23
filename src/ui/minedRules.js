@@ -2,10 +2,10 @@
  * Created by saharmehrpour on 11/1/17.
  */
 
-import React, {Component} from "react";
+import React, {Component, Fragment} from "react";
 import "../App.css";
 import {connect} from "react-redux";
-import {Button, Row, Col} from "react-bootstrap";
+import {Button, Row, Col, ButtonGroup} from "react-bootstrap";
 import Slider from "rc-slider";
 import Tooltip from "rc-tooltip";
 import "rc-slider/assets/index.css";
@@ -25,10 +25,17 @@ class MinedRules extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            support: 60,
+            algorithm: "FP_MAX", // FP_MAX or TNR
+
+            fpMaxSupport: 60,
+            tnrConfidence: 60,
+            tnrK: 20,
+            tnrDelta: 2,
+
             minedRules: [],
             displayedMinedRules: [],
             loading: false, // for loading icons when mining rules
+
             minComplexity: 0,
             maxComplexity: 100,
 
@@ -82,10 +89,10 @@ class MinedRules extends Component {
      * @return {*}
      */
     renderButtonsAndSliders() {
-        // create marks for support slider
-        let marksSupport = {};
+        // create marks for fpMaxSupport slider
+        let marksHundred = {};
         for (let i = 10; i <= 100; i += 10)
-            marksSupport[i] = i;
+            marksHundred[i] = i;
 
         // calculate the max and min number of attributes in mined rules
         let minNumberOfAttributes = Infinity;
@@ -107,49 +114,129 @@ class MinedRules extends Component {
         return (
             <div>
                 <div>
-                    <Row className="show-grid">
-                        <Col xsHidden md={1}>
-                            Support
-                        </Col>
-                        <Col xs={5} md={5}>
-                            <Slider
-                                defaultValue={60}
-                                min={10}
-                                max={100}
-                                marks={marksSupport}
-                                included={false}
-                                onChange={(value) => this.setState({support: value})}
-                                handle={(props) => {
-                                    // copied from rc-slider website
-                                    const {value, dragging, index, ...restProps} = props;
-                                    return (
-                                        <Tooltip
-                                            prefixCls="rc-slider-tooltip"
-                                            overlay={value}
-                                            visible={dragging}
-                                            placement="top"
-                                            key={index}
-                                        >
-                                            <Slider.Handle value={value} {...restProps} />
-                                        </Tooltip>
-                                    );
-                                }}
-                            />
-                        </Col>
-                        <Col xs={1} md={1}>
-                            {this.state.support}%
-                        </Col>
-                        <Col xs={6} md={5}>
-                            <div style={{float: "right"}}>
-                                <Button onClick={() => this.mineRules()} style={{padding: "0 5px"}}>
-                                    Mine Rules Now!
-                                </Button>
-                                {/*<Button onClick={() => this.ShowMinedRules()} style={{padding: "0 5px"}}>*/}
-                                {/*    Show Mined Rules (Dangerous!)!*/}
-                                {/*</Button>*/}
-                            </div>
-                        </Col>
+                    <Row className="show-grid" style={{padding: "20px 0"}}>
+                        <ButtonGroup>
+                            <Button onClick={() => this.setState({algorithm: "FP_MAX"})}
+                                    active={this.state.algorithm === "FP_MAX"}>FP_MAX</Button>
+                            <Button onClick={() => this.setState({algorithm: "TNR"})}
+                                    active={this.state.algorithm === "TNR"}>TNR</Button>
+                            <Button onClick={() => this.setState({algorithm: "NONE"})}
+                                    active={this.state.algorithm === "TNR"}>View Existing Mined Rules</Button>
+                        </ButtonGroup>
                     </Row>
+                    {this.state.algorithm === "FP_MAX" ? (
+                        <Row className="show-grid">
+                            <Col xsHidden md={2}>
+                                FP_Max Support
+                            </Col>
+                            <Col xs={5} md={5}>
+                                <Slider
+                                    defaultValue={60}
+                                    min={10}
+                                    max={100}
+                                    marks={marksHundred}
+                                    included={false}
+                                    onChange={(value) => this.setState({fpMaxSupport: value})}
+                                    handle={(props) => {
+                                        // copied from rc-slider website
+                                        const {value, dragging, index, ...restProps} = props;
+                                        return (
+                                            <Tooltip
+                                                prefixCls="rc-slider-tooltip"
+                                                overlay={value}
+                                                visible={dragging}
+                                                placement="top"
+                                                key={index}
+                                            >
+                                                <Slider.Handle value={value} {...restProps} />
+                                            </Tooltip>
+                                        );
+                                    }}
+                                />
+                            </Col>
+                            <Col xs={1} md={1}>
+                                {this.state.fpMaxSupport}%
+                            </Col>
+                            <Col xs={6} md={4}>
+                                <div style={{float: "right"}}>
+                                    <Button onClick={() => this.mineRules("FP_MAX")} style={{padding: "0 5px"}}>
+                                        Mine Rules - FPMax
+                                    </Button>
+                                </div>
+                            </Col>
+                        </Row>
+                    ) : this.state.algorithm === "TNR" ? (
+                        <Fragment>
+                            <Row className="show-grid"  style={{padding: "20px 0"}}>
+                                <Col xsHidden md={2}>
+                                    TNR Confidence
+                                </Col>
+                                <Col xs={5} md={5}>
+                                    <Slider
+                                        defaultValue={60}
+                                        min={10}
+                                        max={100}
+                                        marks={marksHundred}
+                                        included={false}
+                                        onChange={(value) => this.setState({tnrConfidence: value})}
+                                        handle={(props) => {
+                                            // copied from rc-slider website
+                                            const {value, dragging, index, ...restProps} = props;
+                                            return (
+                                                <Tooltip
+                                                    prefixCls="rc-slider-tooltip"
+                                                    overlay={value}
+                                                    visible={dragging}
+                                                    placement="top"
+                                                    key={index}
+                                                >
+                                                    <Slider.Handle value={value} {...restProps} />
+                                                </Tooltip>
+                                            );
+                                        }}
+                                    />
+                                </Col>
+                                <Col xs={1} md={1}>
+                                    {this.state.tnrConfidence}%
+                                </Col>
+                                <Col xs={6} md={4}>
+                                    <div style={{float: "right"}}>
+                                        <Button onClick={() => this.mineRules("TNR")} style={{padding: "0 5px"}}>
+                                            Mine Rules - TNR
+                                        </Button>
+                                    </div>
+                                </Col>
+                            </Row>
+                            <Row className="show-grid">
+                                <Col xsHidden md={2}>
+                                    TNR K
+                                </Col>
+                                <Col xs={5} md={5}>
+                                    <input type={"text"} value={this.state.tnrK} onChange={(value) => this.setState({tnrK: value})}/>
+                                </Col>
+                                <Col xs={1} md={1}>
+                                    {this.state.tnrK}
+                                </Col>
+                            </Row>
+                            <Row className="show-grid">
+                                <Col xsHidden md={2}>
+                                    TNR Delta
+                                </Col>
+                                <Col xs={5} md={5}>
+                                    <input type={"text"} value={this.state.tnrDelta} onChange={(value) => this.setState({tnrDelta: value})}/>
+                                </Col>
+                                <Col xs={1} md={1}>
+                                    {this.state.tnrDelta}
+                                </Col>
+                            </Row>
+                        </Fragment>
+                    ) : null
+                        // (<Button onClick={() => this.ShowMinedRules()} style={{padding: "0 5px"}}>
+                        //     Show Mined Rules (Dangerous!)!
+                        // </Button>)
+                    }
+
+
                 </div>
 
                 {this.state.minedRules.length > 0 ? (
@@ -288,11 +375,14 @@ class MinedRules extends Component {
 
     /**
      * send command to mine rules
+     * @param algorithm FP_MAX or TNR
      */
-    mineRules() {
+    mineRules(algorithm) {
         let metaData = {};
         this.setState({minedRules: [], displayedMinedRules: [], loading: true});
-        mineRulesFromXmlFiles(this.props.xmlFiles, this.state.support, metaData, this.props.ws);
+        mineRulesFromXmlFiles(this.props.xmlFiles, metaData, this.props.ws, algorithm,
+            this.state.fpMaxSupport,
+            this.state.tnrConfidence, this.state.tnrK, this.state.tnrDelta);
         this.props.onUpdateMetaData(metaData);
     }
 

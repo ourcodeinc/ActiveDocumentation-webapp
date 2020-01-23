@@ -77,8 +77,16 @@ class Utilities {
                     messageJson["data"] = data; // array of arrays: [["file_name.txt", "data to be written"]]
                     break;
 
+                case "EXECUTE_TNR":
+                    messageJson["data"] = {
+                        confidence: data.tnrConfidence, // double
+                        k: data.tnrK, //int
+                        delta: data.tnrDelta // int
+                    };
+                    break;
+
                 case "EXECUTE_FP_MAX":
-                    messageJson["data"] = data; // support
+                    messageJson["data"] = data.fpMaxSupport; // support
                     break;
 
                 case "OPEN_FILE":
