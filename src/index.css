@@ -733,7 +733,6 @@ img.tutorialSmallImage {
 }
 
 .ruleLink {
-    padding-left: 5%;
     cursor: pointer;
     color: #337ab7
 }
@@ -742,32 +741,31 @@ img.tutorialSmallImage {
     color: #265a88;
 }
 
-.minedFrequentItemSetContainer {
-    padding: 20px;
-}
-
-.minedFrequentItemSet {
+.minedRulesComponent .minedFrequentItemSetRawDisplay {
     margin-top: 10px;
     padding: 10px;
     border-radius: 5px;
     box-shadow: 0 0 5px #99721c !important;
 }
 
-.minedFrequentItemSetFiles {
-    padding: 10px;
-}
-
-.minedRuleBoundingBox {
+.minedRulesComponent .minedRuleBoundingBox {
     padding: 10px;
     border-radius: 5px;
     background-color: antiquewhite;
     margin-top: 20px;
 }
 
-.minedRuleBoundingBox .rootContainer {
-    width: 70% !important;
+
+/* overriding RulePad styles*/
+
+.minedRulesComponent .generateRuleGui .minedRules.inputText {
+    padding: 3px;
 }
 
-.generateRuleGui .minedRules.inputText {
-    padding: 3px;
+.minedRulesComponent .generateRuleGui .minedRules.inputText:hover {
+    background-color: #f4f4f4 !important;
+}
+
+.minedRulesComponent .generateRuleGui .minedRules.inputText.activeElement:hover {
+    background-color: #c5c5c5 !important;
 }

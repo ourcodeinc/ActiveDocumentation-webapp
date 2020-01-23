@@ -46,7 +46,7 @@ class MinedRulesComponent extends Component {
 
     render() {
         return (
-            <div>
+            <div className={"minedRulesComponent"}>
                 {this.renderButtonsAndSliders()}
                 {this.renderLoading()}
                 {this.renderMinedRulePad()}
@@ -379,9 +379,10 @@ class MinedRulesComponent extends Component {
                         if (rule["attributes"].length < this.state.minComplexity || rule["attributes"].length > this.state.maxComplexity)
                             return null;
 
+                        // if RulePad is unable to visualize the rule
                         if (Object.keys(rule.rulePadState.guiTree).length === 0) {
                             return (
-                                <div key={`${i}_${j}`} className={"minedFrequentItemSet"}>
+                                <div key={`${i}_${j}`} className={"minedFrequentItemSetRawDisplay"}>
                                     <h4>{rule["grammar"]}</h4>
                                     {rule["attributes"].map((attr, j) => {
                                         return (<div className={"attrRowContainer"} key={j}>
@@ -395,27 +396,51 @@ class MinedRulesComponent extends Component {
                                 </div>)
                         }
 
+                        // rendering RulePad
                         return (
                             <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"} key={`${i}_${j}`}>
-                                <h4>{rule["grammar"]}</h4>
-                                <h4>Total attributes: {rule["attributes"].length}, displayed
-                                    attributes: {rule["displayableAttr"].length}</h4>
-                                <MinedRulePad key={new Date()} elementId={"0"} root
-                                              rootTree={rule.rulePadState.guiTree}
-                                              guiElements={rule.rulePadState.guiElements}
-                                              styleClass={"rootContainer"}
-                                />
-                                <div key={`${i}_${j}`}>
-                                    {rule["nonDisplayableAttr"].map((attr, j) => {
-                                        return (<div className={"attrRowContainer"} key={j}>
-                                            <div className={"attrId"}>{attr["id"]}</div>
-                                            <div className={"attrDesc"}>{attr["attr"]}</div>
-                                            {/*<div className={"attrQuery"}>{attr["query"]}</div>*/}
-                                        </div>)
-                                    })}
-                                    <h4 style={{backgroundColor: "lightgrey", padding: "5px"}}>Number of
-                                        Files: {group["files"].length}</h4>
-                                </div>
+                                <Row>
+                                    <Col md={7}>
+                                        <MinedRulePad key={new Date()} elementId={"0"} root
+                                                      rootTree={rule.rulePadState.guiTree}
+                                                      guiElements={rule.rulePadState.guiElements}
+                                                      styleClass={"rootContainer"}
+                                        />
+                                        <div style={{paddingTop: "10px"}}>
+                                            {rule["nonDisplayableAttr"].map((attr, j) => {
+                                                return (<div className={"attrRowContainer"} key={j}>
+                                                    <div className={"attrId"}>{attr["id"]}</div>
+                                                    <div className={"attrDesc"}>{attr["attr"]}</div>
+                                                    {/*<div className={"attrQuery"}>{attr["query"]}</div>*/}
+                                                </div>)
+                                            })}
+                                        </div>
+                                    </Col>
+                                    <Col md={5}>
+                                        <h5><strong>
+                                            Rule with {rule["displayableAttr"].length} out of {rule["attributes"].length} Attributes
+                                        </strong></h5>
+                                        {rule["grammar"]}
+
+                                        <h5><strong>
+                                            {group["files"].length > 10 ? "10 out of " : ""}
+                                            {group["files"].length} Matches in Code
+                                        </strong></h5>
+
+                                        {group["files"].filter((d, j) => j < 10).map((fileName, i) => (
+                                            <div key={i} className={"ruleLink"}
+                                                 onClick={() => {
+                                                     this.props.onIgnoreFile(true);
+                                                     Utilities.sendToServer(this.props.ws, "OPEN_FILE", fileName)
+                                                 }}>
+                                                {fileName
+                                                    .replace(this.props.projectPath.slice, "")
+                                                    .replace(this.props.projectPath.slice(1), "")}
+                                            </div>
+                                        ))}
+                                    </Col>
+                                </Row>
+
                             </div>
                         )
                     }
