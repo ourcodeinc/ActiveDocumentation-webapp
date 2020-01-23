@@ -37,11 +37,7 @@ class MinedRules extends Component {
             loading: false, // for loading icons when mining rules
 
             minComplexity: 0,
-            maxComplexity: 100,
-
-            renderTree: false,
-            guiElements: {},
-            guiTree: {}
+            maxComplexity: 100
         };
     }
 
@@ -117,8 +113,8 @@ class MinedRules extends Component {
                                     active={this.state.algorithm === "FP_MAX"}>FP_MAX</Button>
                             <Button onClick={() => this.setState({algorithm: "TNR"})}
                                     active={this.state.algorithm === "TNR"}>TNR</Button>
-                            {/*<Button onClick={() => this.setState({algorithm: "NONE"})}*/}
-                            {/*        active={this.state.algorithm === "TNR"}>View Existing Mined Rules</Button>*/}
+                            <Button onClick={() => this.setState({algorithm: "NONE"})}
+                                    active={this.state.algorithm === "TNR"}>View Existing Mined Rules</Button>
                         </ButtonGroup>
                     </Row>
                     {this.state.algorithm === "FP_MAX" ? (
@@ -198,7 +194,7 @@ class MinedRules extends Component {
                                 </Col>
                                 <Col xs={6} md={4}>
                                     <div style={{float: "right"}}>
-                                        <Button onClick={() => this.mineRules("TNR")} style={{padding: "0 5px"}}>
+                                        <Button disabled onClick={() => this.mineRules("TNR")} style={{padding: "0 5px"}}>
                                             Mine Rules - TNR
                                         </Button>
                                     </div>
@@ -227,11 +223,11 @@ class MinedRules extends Component {
                                 </Col>
                             </Row>
                         </Fragment>
-                    ) : null
-                        // (<Button onClick={() => this.ShowMinedRules()} style={{padding: "0 5px"}}>
-                        //     Show Mined Rules (Dangerous!)!
-                        // </Button>)
-                    }
+                    ) : (
+                        <Button onClick={() => this.ShowMinedRules()} style={{padding: "0 5px"}}>
+                            Show Mined Rules (Dangerous!)!
+                        </Button>
+                    )}
 
 
                 </div>
@@ -387,6 +383,7 @@ class MinedRules extends Component {
      * request for reading the existing data from file
      */
     ShowMinedRules() {
+        this.setState({minedRules: [], displayedMinedRules: [], loading: true});
         Utilities.sendToServer(this.props.ws, "DANGEROUS_READ_MINED_RULES");
     }
 

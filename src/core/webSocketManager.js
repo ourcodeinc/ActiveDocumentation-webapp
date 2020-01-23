@@ -192,7 +192,7 @@ class WebSocketManager extends Component {
                 // dangerously read output files and meta data.
                 case "DANGEROUS_READ_MINED_RULES":
                     let metaData = dangerousParseMetaDataFile(JSON.parse(message.data["metaData"]));
-                    let outputFiles = JSON.parse(JSON.parse(message.data["outputFiles"]));
+                    let outputFiles = Object.values(JSON.parse(JSON.parse(message.data["outputFiles"])));
                     let output = parseGrouping(outputFiles, metaData);
                     this.props.onUpdateDangerousMinedRules(metaData, output);
                     break;
