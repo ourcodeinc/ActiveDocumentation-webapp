@@ -27,7 +27,7 @@ export const findClassAnnotations = (subCL, attributeList, id_start, queryMap) =
                     + (clsAnnot.find('name').text) +"\"]]";
 
       if(annotArgs.length > 0){
-        clsAnnotName += " with \n";
+        clsAnnotName += " with ";
         for(let q = 0; q < annotArgs.length; q++){
 
           let node = annotArgs[q];
@@ -938,7 +938,7 @@ export const addClassAnnotations = (subCL, attributes, allAttributes) => {
                 + "\"";
 
             if (annotArgs.length > 0) {
-                name += " with \n";
+                name += " with ";
                 for (let q = 0; q < annotArgs.length; q++) {
 
                     let node = annotArgs[q];
