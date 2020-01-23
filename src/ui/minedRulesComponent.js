@@ -37,7 +37,10 @@ class MinedRulesComponent extends Component {
             loading: false, // for loading icons when mining rules
 
             minComplexity: 0,
-            maxComplexity: 100
+            maxComplexity: 100,
+
+            minFiles: 1,
+            maxFiles: 10
         };
     }
 
@@ -54,13 +57,21 @@ class MinedRulesComponent extends Component {
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.message === "UPDATE_MINED_RULES") {
             // calculate the max and min number of attributes in mined rules
-            let min = Infinity;
-            let max = -1 * Infinity;
+            let minAttr = Infinity;
+            let maxAttr = -1 * Infinity;
             nextProps.minedRules.forEach(group => {
                 group["attributes"].forEach(list => {
-                    min = Math.min(list.length, min);
-                    max = Math.max(list.length, max);
+                    minAttr = Math.min(list.length, minAttr);
+                    maxAttr = Math.max(list.length, maxAttr);
                 })
+            });
+
+            // calculate the max and min number of files in mined rules
+            let minFiles = Infinity;
+            let maxFiles = -1 * Infinity;
+            nextProps.minedRules.forEach(group => {
+                minFiles = Math.min(group["files"].length, minFiles);
+                maxFiles = Math.max(group["files"].length, maxFiles);
             });
 
             Promise.all(this.processRawMinedRulesPromises(nextProps.minedRules))
@@ -69,8 +80,10 @@ class MinedRulesComponent extends Component {
                         minedRules: processedMinedRules,
                         displayedMinedRules: processedMinedRules,
                         loading: false,
-                        minComplexity: min,
-                        maxComplexity: max,
+                        minComplexity: minAttr,
+                        maxComplexity: maxAttr,
+                        minFiles: minFiles,
+                        maxFiles: maxFiles
                     })
                 })
         }
@@ -103,6 +116,23 @@ class MinedRulesComponent extends Component {
             for (let i = minNumberOfAttributes; i <= maxNumberOfAttributes; i += Math.floor((maxNumberOfAttributes - minNumberOfAttributes) / 8))
                 marksComplexity[i] = i;
         }
+        marksComplexity[maxNumberOfAttributes] = maxNumberOfAttributes;
+
+        // calculate the max and min number of files in mined rules
+        let minNumberOfFiles = Infinity;
+        let maxNumberOfFiles = -1 * Infinity;
+        this.state.minedRules.forEach(group => {
+            minNumberOfFiles = Math.min(group["files"].length, minNumberOfFiles);
+            maxNumberOfFiles = Math.max(group["files"].length, maxNumberOfFiles);
+        });
+
+        // create marks for file slider IF there are mined rules
+        let marksFiles = {};
+        if (this.state.minedRules.length > 0) {
+            for (let i = minNumberOfFiles; i <= maxNumberOfFiles; i += Math.floor((maxNumberOfFiles - minNumberOfFiles) / 8))
+                marksFiles[i] = i;
+        }
+        marksFiles[maxNumberOfFiles] = maxNumberOfFiles;
 
         return (
             <div>
@@ -224,8 +254,8 @@ class MinedRulesComponent extends Component {
                             </Row>
                         </Fragment>
                     ) : (
-                        <Button onClick={() => this.ShowMinedRules()} style={{padding: "0 5px"}}>
-                            Show Mined Rules (Dangerous!)!
+                        <Button onClick={() => this.ShowMinedRules()} style={{padding: "0 5px", color: "red"}}>
+                            Show Mined Rules (Dangerous!)
                         </Button>
                     )}
 
@@ -233,44 +263,84 @@ class MinedRulesComponent extends Component {
                 </div>
 
                 {this.state.minedRules.length > 0 ? (
-                    <div style={{paddingTop: "25px"}}>
-                        <Row className="show-grid">
-                            <Col xsHidden md={1}>
-                                Complexity
-                            </Col>
-                            <Col xs={5} md={5}>
-                                <Slider.Range
-                                    step={1}
-                                    defaultValue={[minNumberOfAttributes, maxNumberOfAttributes]}
-                                    onAfterChange={(value) => this.setState({
-                                        minComplexity: value[0],
-                                        maxComplexity: value[1]
-                                    })}
-                                    min={minNumberOfAttributes}
-                                    max={maxNumberOfAttributes}
-                                    marks={marksComplexity}
-                                    handle={(props) => {
-                                        // copied from rc-slider website
-                                        const {value, dragging, index, ...restProps} = props;
-                                        return (
-                                            <Tooltip
-                                                prefixCls="rc-slider-tooltip"
-                                                overlay={value}
-                                                visible={dragging}
-                                                placement="top"
-                                                key={index}
-                                            >
-                                                <Slider.Handle value={value} {...restProps} />
-                                            </Tooltip>
-                                        );
-                                    }}
-                                />
-                            </Col>
-                            <Col xs={6} md={6}>
-                                Min: {this.state.minComplexity}, max: {this.state.maxComplexity}
-                            </Col>
-                        </Row>
-                    </div>
+                    <Fragment>
+                        <div style={{paddingTop: "25px"}}>
+                            <Row className="show-grid">
+                                <Col xsHidden md={2}>
+                                    Complexity
+                                </Col>
+                                <Col xs={5} md={5}>
+                                    <Slider.Range
+                                        step={1}
+                                        defaultValue={[minNumberOfAttributes, maxNumberOfAttributes]}
+                                        onAfterChange={(value) => this.setState({
+                                            minComplexity: value[0],
+                                            maxComplexity: value[1]
+                                        })}
+                                        min={minNumberOfAttributes}
+                                        max={maxNumberOfAttributes}
+                                        marks={marksComplexity}
+                                        handle={(props) => {
+                                            // copied from rc-slider website
+                                            const {value, dragging, index, ...restProps} = props;
+                                            return (
+                                                <Tooltip
+                                                    prefixCls="rc-slider-tooltip"
+                                                    overlay={value}
+                                                    visible={dragging}
+                                                    placement="top"
+                                                    key={index}
+                                                >
+                                                    <Slider.Handle value={value} {...restProps} />
+                                                </Tooltip>
+                                            );
+                                        }}
+                                    />
+                                </Col>
+                                <Col xs={6} md={5}>
+                                    Min: {this.state.minComplexity}, max: {this.state.maxComplexity}
+                                </Col>
+                            </Row>
+                        </div>
+                        <div style={{paddingTop: "25px"}}>
+                            <Row className="show-grid">
+                                <Col xsHidden md={2}>
+                                    Number of Files
+                                </Col>
+                                <Col xs={5} md={5}>
+                                    <Slider.Range
+                                        step={1}
+                                        defaultValue={[minNumberOfFiles, maxNumberOfFiles]}
+                                        onAfterChange={(value) => this.setState({
+                                            minFiles: value[0],
+                                            maxFiles: value[1]
+                                        })}
+                                        min={minNumberOfFiles}
+                                        max={maxNumberOfFiles}
+                                        marks={marksFiles}
+                                        handle={(props) => {
+                                            // copied from rc-slider website
+                                            const {value, dragging, index, ...restProps} = props;
+                                            return (
+                                                <Tooltip
+                                                    prefixCls="rc-slider-tooltip"
+                                                    overlay={value}
+                                                    visible={dragging}
+                                                    placement="top"
+                                                    key={index}
+                                                >
+                                                    <Slider.Handle value={value} {...restProps} />
+                                                </Tooltip>
+                                            );
+                                        }}
+                                    />
+                                </Col>
+                                <Col xs={6} md={5}>
+                                    Min: {this.state.minFiles}, max: {this.state.maxFiles}
+                                </Col>
+                            </Row>
+                        </div>
+                    </Fragment>
                 ) : null}
             </div>
         )
@@ -341,29 +411,35 @@ class MinedRulesComponent extends Component {
      * @return {*}
      */
     renderMinedRulePad() {
-        return this.state.displayedMinedRules.map((group, i) =>
-            group["rules"].map((rule, j) => {
-                    if (rule["attributes"].length < this.state.minComplexity || rule["attributes"].length > this.state.maxComplexity)
-                        return null;
+        return this.state.displayedMinedRules.map((group, i) => {
+                if (group["files"].length < this.state.minFiles || group["files"].length > this.state.maxFiles)
+                    return null;
 
-                    if (Object.keys(rule.rulePadState.guiTree).length === 0)
-                        return this.renderRawItemSet(rule["attributes"], group["files"], `${i}_${j}`, "minedFrequentItemSet", rule["grammar"]);
+                return group["rules"].map((rule, j) => {
+                        if (rule["attributes"].length < this.state.minComplexity || rule["attributes"].length > this.state.maxComplexity)
+                            return null;
 
-                    return (
-                        <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"} key={`${i}_${j}`}>
-                            <h4>{rule["grammar"]}</h4>
-                            <h4>Total attributes: {rule["attributes"].length}, displayed attributes: {rule["displayableAttr"].length}</h4>
-                            <MinedRulePad key={new Date()} elementId={"0"} root
-                                          rootTree={rule.rulePadState.guiTree}
-                                          guiElements={rule.rulePadState.guiElements}
-                                          styleClass={"rootContainer"}
-                            />
+                        if (Object.keys(rule.rulePadState.guiTree).length === 0)
+                            return this.renderRawItemSet(rule["attributes"], group["files"], `${i}_${j}`, "minedFrequentItemSet", rule["grammar"]);
 
-                            {this.renderRawItemSet(rule["nonDisplayableAttr"], group["files"], `${i}_${j}`, "", "")}
-                        </div>
-                    )
-                }
-            ));
+                        return (
+                            <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"} key={`${i}_${j}`}>
+                                <h4>{rule["grammar"]}</h4>
+                                <h4>Total attributes: {rule["attributes"].length}, displayed
+                                    attributes: {rule["displayableAttr"].length}</h4>
+                                <MinedRulePad key={new Date()} elementId={"0"} root
+                                              rootTree={rule.rulePadState.guiTree}
+                                              guiElements={rule.rulePadState.guiElements}
+                                              styleClass={"rootContainer"}
+                                />
+
+                                {this.renderRawItemSet(rule["nonDisplayableAttr"], group["files"], `${i}_${j}`, "", "")}
+                            </div>
+                        )
+                    }
+                )
+            }
+        );
     }
 
     /**
