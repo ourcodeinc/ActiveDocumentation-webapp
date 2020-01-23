@@ -18,23 +18,21 @@ export class NavBar extends Component {
         return (
             <Navbar inverse collapseOnSelect
                     style={{backgroundColor: "transparent", backgroundImage: "none", border: "none"}}>
-                <Navbar.Header>
-                    <Nav>
-                        <NavItem eventKey={1} className={this.props.backDisable} onClick={() => this.props.backClick(this.props)}>
-                            <FaArrowLeft size={20}/>
-                        </NavItem>
-                        <NavItem eventKey={2} className={this.props.forwardDisable} onClick={() => this.props.forwardClick(this.props)}>
-                            <FaArrowRight size={20}/>
-                        </NavItem>
-                    </Nav>
-                </Navbar.Header>
                 <Navbar.Toggle/>
                 <Navbar.Collapse>
                     <Nav
                         onSelect={key => {
-                            window.location.hash = (key === 1) ? "#/index" : (key === 2) ? "#/rules"
-                                : (key === 3) ? "#/violatedRules" : (key === 4) ? "#/minedRules" : "#/index"
+                            if (key > 0)
+                                window.location.hash = (key === 1) ? "#/index" : (key === 2) ? "#/rules"
+                                    : (key === 3) ? "#/violatedRules" : (key === 4) ? "#/minedRules" : "#/index"
                         }}>
+                        <NavItem eventKey={-1} className={this.props.backDisable} onClick={() => this.props.backClick(this.props)}>
+                            <FaArrowLeft size={20}/>
+                        </NavItem>
+                        <NavItem eventKey={-2} className={this.props.forwardDisable} onClick={() => this.props.forwardClick(this.props)}>
+                            <FaArrowRight size={20}/>
+                        </NavItem>
+
                         <NavItem eventKey={1}>
                             Table of Contents
                         </NavItem>
