@@ -182,7 +182,7 @@ class MinedRulesComponent extends Component {
                             </Col>
                             <Col xs={6} md={4}>
                                 <div style={{float: "right"}}>
-                                    <Button onClick={() => this.mineRules("FP_MAX")} style={{padding: "0 5px"}}>
+                                    <Button onClick={() => this.doMineRules("FP_MAX")} style={{padding: "0 5px"}}>
                                         Mine Rules - FPMax
                                     </Button>
                                 </div>
@@ -224,7 +224,7 @@ class MinedRulesComponent extends Component {
                                 </Col>
                                 <Col xs={6} md={4}>
                                     <div style={{float: "right"}}>
-                                        <Button disabled onClick={() => this.mineRules("TNR")} style={{padding: "0 5px"}}>
+                                        <Button disabled onClick={() => this.doMineRules("TNR")} style={{padding: "0 5px"}}>
                                             Mine Rules - TNR
                                         </Button>
                                     </div>
@@ -367,46 +367,6 @@ class MinedRulesComponent extends Component {
 
 
     /**
-     * render each of the frequent item sets
-     * @param attributes  [{id: "", attr:"", query: ""}, {id: "", attr:"", query: ""}]
-     * @param files   list of files
-     * @param key     a key for the gui component
-     * @param className
-     * @param ruleGrammar
-     * @return {*}
-     */
-    renderRawItemSet(attributes, files, key, className = "", ruleGrammar = "") {
-        return (
-            <div key={key} className={className}>
-                {ruleGrammar=== "" ? null : (<h4>{ruleGrammar}</h4>)}
-                {/*<h4 style={{backgroundColor: "lightgrey", padding: "5px"}}>Number of*/}
-                {/*    Attributes: {attributes.length}</h4>*/}
-                {attributes.map((attr, j) => {
-                    return (<div className={"attrRowContainer"} key={j}>
-                        <div className={"attrId"}>{attr["id"]}</div>
-                        <div className={"attrDesc"}>{attr["attr"]}</div>
-                        {/*<div className={"attrQuery"}>{attr["query"]}</div>*/}
-                    </div>)
-                })}
-                <h4 style={{backgroundColor: "lightgrey", padding: "5px"}}>Number of
-                    Files: {files.length}</h4>
-                {/*<div className={"minedFrequentItemSetFiles"}>{*/}
-                {/*    files.map((fileName, i) => {*/}
-                {/*        return (<div key={i} className={"ruleLink"}*/}
-                {/*                     onClick={() => {*/}
-                {/*                         this.props.onIgnoreFile(true);*/}
-                {/*                         Utilities.sendToServer(this.props.ws, "OPEN_FILE", fileName)*/}
-                {/*                     }}*/}
-                {/*        >{fileName.replace(this.props.projectPath.slice, "")*/}
-                {/*            .replace(this.props.projectPath.slice(1), "")}</div>)*/}
-                {/*    })}*/}
-                {/*</div>*/}
-            </div>
-        )
-
-    }
-
-    /**
      * render each rule through either RulePad or simple rendering
      * @return {*}
      */
@@ -419,8 +379,21 @@ class MinedRulesComponent extends Component {
                         if (rule["attributes"].length < this.state.minComplexity || rule["attributes"].length > this.state.maxComplexity)
                             return null;
 
-                        if (Object.keys(rule.rulePadState.guiTree).length === 0)
-                            return this.renderRawItemSet(rule["attributes"], group["files"], `${i}_${j}`, "minedFrequentItemSet", rule["grammar"]);
+                        if (Object.keys(rule.rulePadState.guiTree).length === 0) {
+                            return (
+                                <div key={`${i}_${j}`} className={"minedFrequentItemSet"}>
+                                    <h4>{rule["grammar"]}</h4>
+                                    {rule["attributes"].map((attr, j) => {
+                                        return (<div className={"attrRowContainer"} key={j}>
+                                            <div className={"attrId"}>{attr["id"]}</div>
+                                            <div className={"attrDesc"}>{attr["attr"]}</div>
+                                            {/*<div className={"attrQuery"}>{attr["query"]}</div>*/}
+                                        </div>)
+                                    })}
+                                    <h4 style={{backgroundColor: "lightgrey", padding: "5px"}}>Number of
+                                        Files: {group["files"].length}</h4>
+                                </div>)
+                        }
 
                         return (
                             <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"} key={`${i}_${j}`}>
@@ -432,8 +405,17 @@ class MinedRulesComponent extends Component {
                                               guiElements={rule.rulePadState.guiElements}
                                               styleClass={"rootContainer"}
                                 />
-
-                                {this.renderRawItemSet(rule["nonDisplayableAttr"], group["files"], `${i}_${j}`, "", "")}
+                                <div key={`${i}_${j}`}>
+                                    {rule["nonDisplayableAttr"].map((attr, j) => {
+                                        return (<div className={"attrRowContainer"} key={j}>
+                                            <div className={"attrId"}>{attr["id"]}</div>
+                                            <div className={"attrDesc"}>{attr["attr"]}</div>
+                                            {/*<div className={"attrQuery"}>{attr["query"]}</div>*/}
+                                        </div>)
+                                    })}
+                                    <h4 style={{backgroundColor: "lightgrey", padding: "5px"}}>Number of
+                                        Files: {group["files"].length}</h4>
+                                </div>
                             </div>
                         )
                     }
@@ -446,7 +428,7 @@ class MinedRulesComponent extends Component {
      * send command to mine rules
      * @param algorithm FP_MAX or TNR
      */
-    mineRules(algorithm) {
+    doMineRules(algorithm) {
         let metaData = {};
         this.setState({minedRules: [], displayedMinedRules: [], loading: true});
         mineRulesFromXmlFiles(this.props.xmlFiles, metaData, this.props.ws, algorithm,
