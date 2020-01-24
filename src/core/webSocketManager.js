@@ -192,7 +192,7 @@ class WebSocketManager extends Component {
                             message.data["startOffset"],
                             message.data["endOffset"],
                             message.data["startLineOffset"],
-                            message.data["line"],
+                            message.data["lineNumber"],
                             message.data["lineText"],
                             textXpathData.xpath,
                             textXpathData.selectedText,
