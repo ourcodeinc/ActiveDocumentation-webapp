@@ -653,8 +653,11 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 message: "UPDATE_FEATURE_SELECTION",
                 featureSelection: {
                     filePath: action["filePath"],
-                    startIndex: action["startIndex"],
-                    endIndex: action["endIndex"],
+                    startOffset: action["startOffset"],
+                    endOffset: action["endOffset"],
+                    startLineOffset: action["startLineOffset"],
+                    lineNumber: action["lineNumber"],
+                    lineText: action["lineText"],
                     xpath: action["xpath"],
                     selectedText: action["selectedText"]
                 }

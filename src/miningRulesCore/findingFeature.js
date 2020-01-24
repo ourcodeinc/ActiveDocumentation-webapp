@@ -6,11 +6,11 @@
 /**
  * finding the start and end xml nodes in srcML data
  * @param mainXml
- * @param start index
- * @param end index
+ * @param startOffset index
+ * @param endOffset index
  * @return {{xpath: string, selectedText: string}}
  */
-export const getXpathForFeature = (mainXml, start, end) => {
+export const getXpathForFeature = (mainXml, startOffset, endOffset) => {
     let xml = mainXml.slice(0); // copy of xml data
 
     let parser = new DOMParser();
@@ -18,7 +18,7 @@ export const getXpathForFeature = (mainXml, start, end) => {
 
     let str = "",        // string to keep track of the offset
         selectedText = "";
-    let offsetToCheck = start;
+    let offsetToCheck = startOffset;
     let startNode = null,
         endNode = null;
 
@@ -30,9 +30,9 @@ export const getXpathForFeature = (mainXml, start, end) => {
                     selectedText += node.childNodes[i].nodeValue;
 
                 if (str.length >= offsetToCheck) {
-                    if (offsetToCheck === start) {
+                    if (offsetToCheck === startOffset) {
                         startNode = node;
-                        offsetToCheck = end;
+                        offsetToCheck = endOffset;
                         selectedText += node.childNodes[i].nodeValue;
                     } else {
                         endNode = node;

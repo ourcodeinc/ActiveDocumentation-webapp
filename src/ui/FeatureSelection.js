@@ -13,8 +13,9 @@ class FeatureSelection extends Component {
             <div>
                 <p>{this.props.filePath.replace(this.props.projectPath.slice, "")
                     .replace(this.props.projectPath.slice(1), "")}</p>
-                <p>starting offset: {this.props.startIndex}</p>
-                <p>ending offset: {this.props.endIndex}</p>
+                <p>starting offset: {this.props.startOffset}</p>
+                <p>ending offset: {this.props.endOffset}</p>
+                <p>{this.props.lineText}</p>
                 <p>{this.props.xpath}</p>
                 <p>{this.props.selectedText}</p>
             </div>
@@ -33,18 +34,16 @@ function mapStateToProps(state) {
     return {
         message: state.message,
         filePath: state.featureSelection.filePath,
-        startIndex: state.featureSelection.startIndex,
-        endIndex: state.featureSelection.endIndex,
+        startOffset: state.featureSelection.startOffset,
+        endOffset: state.featureSelection.endOffset,
+        startLineOffset: state.featureSelection.startLineOffset,
+        lineNumber: state.featureSelection.lineNumber,
+        lineText: state.featureSelection.lineText,
         xpath: state.featureSelection.xpath,
         selectedText: state.featureSelection.selectedText,
         projectPath: path
     }
 }
-
-// function mapDispatchToProps(dispatch) {
-//     return {
-//     }
-// }
 
 
 export default connect(mapStateToProps, null)(FeatureSelection);

@@ -312,8 +312,11 @@ export const initial_state = {
     },
     featureSelection: {
         filePath: "",
-        startIndex: "",
-        endIndex: "",
+        startOffset: "",
+        endOffset: "",
+        startLineOffset: "",
+        lineNumber: "",
+        lineText: "",
         xpath: "",
         selectedText: ""
     }
