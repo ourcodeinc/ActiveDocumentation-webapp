@@ -184,14 +184,20 @@ class WebSocketManager extends Component {
                     console.log(message.data);
                     let selected = xml.filter(d => d.filePath === message.data["path"]);
                     if (selected.length > 0) {
-                        let xpathAndText = getXpathForFeature(selected[0].xml, message.data["startOffset"], message.data["endOffset"]);
+                        //  {{xpath: string, selectedText: string, idMap, displayTextArray: Array}}
+                        let textXpathData = getXpathForFeature(selected[0].xml, message.data["startOffset"], message.data["endOffset"]);
                         window.location.hash = "#/featureSelection";
                         this.props.onUpdateFeatureSelection(
                             message.data["path"],
-                            message.data["startOffset"], message.data["endOffset"],
+                            message.data["startOffset"],
+                            message.data["endOffset"],
                             message.data["startLineOffset"],
-                            message.data["line"], message.data["lineText"],
-                            xpathAndText.xpath, xpathAndText.selectedText);
+                            message.data["line"],
+                            message.data["lineText"],
+                            textXpathData.xpath,
+                            textXpathData.selectedText,
+                            textXpathData.idMap,
+                            textXpathData.displayTextArray);
                     }
                     break;
 
@@ -239,8 +245,10 @@ function mapDispatchToProps(dispatch) {
         onReceiveExprStmtXML: (data) => dispatch(receiveExpressionStatementXML(data)),
         onUpdateXmlFiles: (xmlFiles) => dispatch(updateXmlFiles(xmlFiles)),
         onUpdateMinedRules: (modifiedOutput) => dispatch(updatedMinedRules(modifiedOutput)),
-        onUpdateFeatureSelection: (filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText, xpath, selectedText) =>
-            dispatch(updateFeatureSelection(filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText, xpath, selectedText)),
+        onUpdateFeatureSelection: (filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText,
+                                   xpath, selectedText, idMap, displayTextArray) =>
+            dispatch(updateFeatureSelection(filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText,
+                xpath, selectedText, idMap, displayTextArray)),
         onUpdateDangerousMinedRules: (metaData, minedRules) => dispatch(updateDangerousMinedRules(metaData, minedRules))
     }
 }

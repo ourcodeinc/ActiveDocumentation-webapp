@@ -8,7 +8,7 @@ import {connect} from "react-redux";
 
 class FeatureSelection extends Component {
 
-    render () {
+    render () { console.log(this.props);
         return (
             <div>
                 <p>{this.props.filePath.replace(this.props.projectPath.slice, "")
@@ -41,6 +41,8 @@ function mapStateToProps(state) {
         lineText: state.featureSelection.lineText,
         xpath: state.featureSelection.xpath,
         selectedText: state.featureSelection.selectedText,
+        idMap: state.featureSelection.idMap,
+        displayTextArray: state.featureSelection.displayTextArray,
         projectPath: path
     }
 }

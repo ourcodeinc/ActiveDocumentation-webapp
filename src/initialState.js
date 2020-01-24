@@ -318,7 +318,9 @@ export const initial_state = {
         lineNumber: "",
         lineText: "",
         xpath: "",
-        selectedText: ""
+        selectedText: "",
+        idMap: {},
+        displayTextArray: []
     }
 };
 

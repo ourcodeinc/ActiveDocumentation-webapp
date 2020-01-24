@@ -8,7 +8,7 @@
  * @param mainXml
  * @param startOffset index
  * @param endOffset index
- * @return {{xpath: string, selectedText: string}}
+ * @return {{xpath: string, selectedText: string, idMap, displayTextArray: Array}}
  */
 export const getXpathForFeature = (mainXml, startOffset, endOffset) => {
     let xml = mainXml.slice(0); // copy of xml data
@@ -51,14 +51,22 @@ export const getXpathForFeature = (mainXml, startOffset, endOffset) => {
     };
 
     traverseNodes(xmlDoc);
-    return {xpath: lowestCommonAncestor(startNode, endNode), selectedText: selectedText};
+    let idMapDisplayTextArray = lowestCommonAncestor(startNode, endNode);
+    let xpath = computeXPath(idMapDisplayTextArray.idMap);
+
+    return {
+        xpath: xpath,
+        idMap: idMapDisplayTextArray.idMap,
+        displayTextArray: idMapDisplayTextArray.displayTextArray,
+        selectedText: selectedText
+    };
 };
 
 /**
  * finding the lowest common ancestor of two xml nodes
  * @param startNode
  * @param endNode
- * @return string xpath
+ * @return {{displayTextArray: Array, idMap}}
  */
 const lowestCommonAncestor = (startNode, endNode) => {
     let startNodePath = [startNode], endNodePath = [endNode];
@@ -92,100 +100,107 @@ const lowestCommonAncestor = (startNode, endNode) => {
         return "";
     }
 
-    return computeXpath(common, startNode, endNode);
-
+    return computeIdMapTree(common, startNode, endNode);
 };
 
+
 /**
- * computing the xpath query from commonNode including only the startNode and endNode
+ *
  * @param commonNode
  * @param startNode
  * @param endNode
- * @return string xpath
+ * @return {{displayTextArray: Array, idMap}}
  */
-const computeXpath = (commonNode, startNode, endNode) => {
+const computeIdMapTree = (commonNode, startNode, endNode) => {
 
-    let xpathObject = {};
-    let xpath = "";
+    let displayTextArray = [];
+    let idMap = {};
 
-    /**
-     * This recursive function create an array of objects for included elements in Xpath query
-     * Each object is key:nodeName value:[children]
-     * @param node
-     * @param obj
-     * @param included denotes whether the node is included or not: true | false (if some child is included, e.g. startNode, then the node is also included
-     * @return {boolean|*} true | false | "last" last node to be included (it contains endNode)
-     */
-    let traverseCommonNode = (node, obj, included) => {
+    let traverseCommonNode = (node, included, nodeId = "0", parentId = "u") => {
         if (node.nodeName === "#text") {
             if (included) {
                 if (!["", "(", ")", "{", "}", ";", "."].includes(node.nodeValue.trim())) {
-                    obj.key = "#text";
-                    obj.value = "text()=\"" + node.nodeValue + "\"";
+                    idMap[nodeId] = {parentId: parentId, children: [], text: node.nodeValue.trim(), type: "#text"};
+                    displayTextArray.push({id: nodeId, text: node.nodeValue.trim()});
                     return true;
                 }
+                if (node.nodeValue.trim() !== "")
+                    displayTextArray.push({id: "n", text: node.nodeValue.trim()});
+                else if (node.nodeValue.indexOf("\n") !== -1)
+                    displayTextArray.push({id: "n", text: "\n"});
             }
             return false;
         }
 
         let includeNode = included;
-        let arr = [];
+        let childrenIdArray = [];
 
         for (let i = 0; i < node.childNodes.length; i++) {
             if (node.childNodes[i] === startNode)
                 includeNode = true;
 
-            let tempObj = {};
-            let inc = traverseCommonNode(node.childNodes[i], tempObj, includeNode);
+            let inc = traverseCommonNode(node.childNodes[i], includeNode, nodeId + "_" + i, nodeId);
 
             if (inc === "last") {
-                arr.push(tempObj);
-                obj.key = node.nodeName;
-                obj.value = arr;
+                childrenIdArray.push(nodeId + "_" + i);
+                idMap[nodeId] = {parentId: parentId, children: childrenIdArray, text: "", type: node.nodeName};
+
                 return "last";
             }
             if (inc && node.childNodes[i] === endNode) {
-                arr.push(tempObj);
-                obj.key = node.nodeName;
-                obj.value = arr;
+                childrenIdArray.push(nodeId + "_" + i);
+                idMap[nodeId] = {parentId: parentId, children: childrenIdArray, text: "", type: node.nodeName};
+
                 return "last";
             }
             if (inc) {
-                arr.push(tempObj);
                 includeNode = true;
+                childrenIdArray.push(nodeId + "_" + i);
             }
         }
-        obj.key = node.nodeName;
-        obj.value = arr;
+
+        idMap[nodeId] = {parentId: parentId, children: childrenIdArray, text: "", type: node.nodeName};
         return included ? true : includeNode;
     };
 
+    traverseCommonNode(commonNode, false, "0");
+
+    return {displayTextArray, idMap};
+
+};
+
+
+/**
+ * compute the xpath from the xpath tree built by computeXpathTree
+ * @param idMap
+ * @return {string}
+ */
+export const computeXPath = (idMap) => {
+    let xpath = "";
 
     /**
      * traverse the object created by traverseCommonNode
      * @param obj
      */
     let traverseObject = (obj) => {
-        if (obj.key === "#text") {
-            xpath += obj.value;
+        if (obj.type === "#text" ) {
+            if(obj.text.trim() !== "")
+                xpath += "text()=\"" + obj.text + "\"";
         } else {
-            if (obj.value.length > 1) {
-                xpath += "src:" + obj.key + "[";
-                for (let i = 0; i < obj.value.length; i++) {
-                    traverseObject(obj.value[i]);
-                    xpath += (i < obj.value.length - 1) ? " and " : "";
+            if (obj.children.length > 1) {
+                xpath += "src:" + obj.type + "[";
+                for (let i = 0; i < obj.children.length; i++) {
+                    traverseObject(idMap[obj.children[i]]);
+                    xpath += (i < obj.children.length - 1) ? " and " : "";
                 }
                 xpath += "]";
-            } else if (obj.value.length === 1) {
-                xpath += "src:" + obj.key + "/";
-                traverseObject(obj.value[0]);
+            } else if (obj.children.length === 1) {
+                xpath += "src:" + obj.type + "/";
+                traverseObject(idMap[obj.children[0]]);
             }
         }
     };
 
-    traverseCommonNode(commonNode, xpathObject, false);
-    traverseObject(xpathObject);
-
+    traverseObject(idMap[0]);
     return xpath;
-
 };
