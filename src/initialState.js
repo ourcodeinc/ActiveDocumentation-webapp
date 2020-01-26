@@ -317,8 +317,9 @@ export const initial_state = {
         startLineOffset: "",
         lineNumber: "",
         lineText: "",
-        xpath: "",
         selectedText: "",
+        xpath: "",
+        modifiedSelectedText: "",
         idMap: {},
         displayTextArray: []
     }

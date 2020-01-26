@@ -658,8 +658,9 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     startLineOffset: action["startLineOffset"],
                     lineNumber: action["lineNumber"],
                     lineText: action["lineText"],
-                    xpath: action["xpath"],
                     selectedText: action["selectedText"],
+                    xpath: action["xpath"],
+                    modifiedSelectedText: action["modifiedSelectedText"],
                     idMap: action["idMap"],
                     displayTextArray: action["displayTextArray"]
                 }

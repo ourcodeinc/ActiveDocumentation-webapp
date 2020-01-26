@@ -746,6 +746,21 @@ img.tutorialSmallImage {
     margin-top: 20px;
 }
 
+.selectedTextEnv {
+    white-space: pre-wrap;
+}
+
+.editableText {
+    text-decoration: underline;
+}
+
+.highlightModifiedSelection{
+    background-color: #9ac1f7;
+}
+
+.highlightSelection {
+    background-color: #c4cce2;
+}
 
 /* overriding RulePad styles*/
 
@@ -759,4 +774,14 @@ img.tutorialSmallImage {
 
 .minedRulesComponent .generateRuleGui .minedRules.inputText.activeElement:hover {
     background-color: #c5c5c5 !important;
+}
+
+/*   Feature Selection  */
+
+.featureSelection .inputText {
+    border: none;
+}
+
+.featureSelection .inputText:hover , .featureSelection .inputText:focus {
+    background-color: #d9d9d9;
 }

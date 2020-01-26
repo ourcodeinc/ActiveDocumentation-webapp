@@ -194,6 +194,7 @@ class WebSocketManager extends Component {
                             message.data["startLineOffset"],
                             message.data["lineNumber"],
                             message.data["lineText"],
+                            message.data["text"],
                             textXpathData.xpath,
                             textXpathData.selectedText,
                             textXpathData.idMap,
@@ -245,10 +246,10 @@ function mapDispatchToProps(dispatch) {
         onReceiveExprStmtXML: (data) => dispatch(receiveExpressionStatementXML(data)),
         onUpdateXmlFiles: (xmlFiles) => dispatch(updateXmlFiles(xmlFiles)),
         onUpdateMinedRules: (modifiedOutput) => dispatch(updatedMinedRules(modifiedOutput)),
-        onUpdateFeatureSelection: (filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText,
-                                   xpath, selectedText, idMap, displayTextArray) =>
-            dispatch(updateFeatureSelection(filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText,
-                xpath, selectedText, idMap, displayTextArray)),
+        onUpdateFeatureSelection: (filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText, selectedText,
+                                   xpath, modifiedSelectedText, idMap, displayTextArray) =>
+            dispatch(updateFeatureSelection(filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText, selectedText,
+                xpath, modifiedSelectedText, idMap, displayTextArray)),
         onUpdateDangerousMinedRules: (metaData, minedRules) => dispatch(updateDangerousMinedRules(metaData, minedRules))
     }
 }
