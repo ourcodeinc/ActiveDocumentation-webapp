@@ -18,7 +18,7 @@ export const getXpathForFeature = (mainXml, startOffset, endOffset) => {
 
     let str = "",        // string to keep track of the offset
         selectedText = "";
-    let offsetToCheck = startOffset;
+    let offsetToCheck = +startOffset + 1;
     let startNode = null,
         endNode = null;
 
@@ -30,7 +30,7 @@ export const getXpathForFeature = (mainXml, startOffset, endOffset) => {
                     selectedText += node.childNodes[i].nodeValue;
 
                 if (str.length >= offsetToCheck) {
-                    if (offsetToCheck === startOffset) {
+                    if (offsetToCheck === (+startOffset + 1)) {
                         startNode = node;
                         offsetToCheck = endOffset;
                         selectedText += node.childNodes[i].nodeValue;
@@ -97,7 +97,7 @@ const lowestCommonAncestor = (startNode, endNode) => {
     // This should not happen, in the worst case the document node is the parent
     if (commonIndex < 0) {
         console.log("weird error!");
-        return "";
+        return {displayTextArray: [], idMap:{}};
     }
 
     return computeIdMapTree(common, startNode, endNode);
@@ -163,7 +163,7 @@ const computeIdMapTree = (commonNode, startNode, endNode) => {
         return included ? true : includeNode;
     };
 
-    traverseCommonNode(commonNode, false, "0");
+    traverseCommonNode(commonNode, commonNode === startNode, "0");
 
     return {displayTextArray, idMap};
 
