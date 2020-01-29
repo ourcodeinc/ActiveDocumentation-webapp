@@ -187,18 +187,19 @@ class WebSocketManager extends Component {
                         //  {{xpath: string, selectedText: string, idMap, displayTextArray: Array}}
                         let textXpathData = getXpathForFeature(selected[0].xml, message.data["startOffset"], message.data["endOffset"]);
                         window.location.hash = "#/featureSelection";
-                        this.props.onUpdateFeatureSelection(
-                            message.data["path"],
-                            message.data["startOffset"],
-                            message.data["endOffset"],
-                            message.data["startLineOffset"],
-                            message.data["lineNumber"],
-                            message.data["lineText"],
-                            message.data["text"],
-                            textXpathData.xpath,
-                            textXpathData.selectedText,
-                            textXpathData.idMap,
-                            textXpathData.displayTextArray);
+
+                        // filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText, selectedText,
+                        //         xpath, modifiedSelectedText, idMap, displayTextArray
+                        this.props.onUpdateFeatureSelection({
+                            ...message.data,
+                            filePath: message.data["path"],
+                            selectedText: message.data["text"],
+
+                            xpath: textXpathData.xpath,
+                            modifiedSelectedText: textXpathData.selectedText,
+                            idMap: textXpathData.idMap,
+                            displayTextArray: textXpathData.displayTextArray
+                        });
                     }
                     break;
 
@@ -246,10 +247,7 @@ function mapDispatchToProps(dispatch) {
         onReceiveExprStmtXML: (data) => dispatch(receiveExpressionStatementXML(data)),
         onUpdateXmlFiles: (xmlFiles) => dispatch(updateXmlFiles(xmlFiles)),
         onUpdateMinedRules: (modifiedOutput) => dispatch(updatedMinedRules(modifiedOutput)),
-        onUpdateFeatureSelection: (filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText, selectedText,
-                                   xpath, modifiedSelectedText, idMap, displayTextArray) =>
-            dispatch(updateFeatureSelection(filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText, selectedText,
-                xpath, modifiedSelectedText, idMap, displayTextArray)),
+        onUpdateFeatureSelection: (dataObject) => dispatch(updateFeatureSelection(dataObject)),
         onUpdateDangerousMinedRules: (metaData, minedRules) => dispatch(updateDangerousMinedRules(metaData, minedRules))
     }
 }

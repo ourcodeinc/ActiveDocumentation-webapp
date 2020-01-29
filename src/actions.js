@@ -158,12 +158,14 @@ export const updatedMinedRules = (minedRules) => {
     }
 };
 
-export const updateFeatureSelection = (filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText, selectedText,
-                                       xpath, modifiedSelectedText, idMap, displayTextArray) => {
+/**
+ * @param dataObject : filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText, selectedText,
+ *         xpath, modifiedSelectedText, idMap, displayTextArray
+ */
+export const updateFeatureSelection = (dataObject) => {
     return {
         type: "UPDATE_FEATURE_SELECTION",
-        filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText, selectedText,
-        xpath, modifiedSelectedText, idMap, displayTextArray
+        ...dataObject
     }
 };
 
