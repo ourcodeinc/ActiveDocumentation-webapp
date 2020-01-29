@@ -103,12 +103,13 @@ export const findCustomRelations = (id_start, customQueries, attributeList, quer
 
   for (var i = 0; i < customQueries.length; i++){
 
-    if(!attributeList.has(customQueries[i])){
+    if(!attributeList.has(customQueries[i].featureDescription)){
 
-      attributeList.set(customQueries[i], id_start.id);
-      queryMap.set(customQueries[i], id_start.id);
+      attributeList.set(customQueries[i].featureDescription, id_start.id);
+      queryMap.set(customQueries[i].featureXpath, id_start.id);
 
       id_start.id += 1;
+
     }
   }
 }
@@ -116,7 +117,7 @@ export const findCustomRelations = (id_start, customQueries, attributeList, quer
 
 export const addCustomRelations = (allAttributes, customQueries, classGroupings,
                                             analysisFileName, classLocations,
-                                            parentInfo, fileAnalysisMap, dataMap, xmlFiles) => {
+                                            parentInfo, fileAnalysisMap, dataMap) => {
 
   var parentClass = classGroupings[classGroupings.length-1];
   var classTree;
@@ -133,18 +134,10 @@ export const addCustomRelations = (allAttributes, customQueries, classGroupings,
 
     if(f != undefined){
       f = f.split("\\")[(f.split("\\")).length - 1]
-      f = f.split(".")[0] + ".java";
+      f = f.split(".")[0] + ".xml";
 
-      // var data = fs.readFileSync(f).toString();
-      // classTree = et.parse(data);
-
-        let filtered = xmlFiles.filter(d => d["filePath"].endsWith(f));
-        if (filtered.length > 0)
-            classTree = et.parse(filtered[0]["xml"]);
-        if (filtered.length === 0) {
-            console.log("file not found: ", f);
-            continue;
-        }
+      var data = fs.readFileSync(f).toString();
+      classTree = et.parse(data);
 
     }
     else{
@@ -184,23 +177,24 @@ export const addCustomRelations = (allAttributes, customQueries, classGroupings,
         classesVisited.push(childName);
 
         // Get the list of attributes for this class
-        let fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
+        let fileN = analysisFileName + "_subClassOf" + parentClass + ".txt";
         var entry = (dataMap.get(fileN));
 
         // Go through each of the customQueries. If the customQuery is present
         // in this class, then add its attribute id to the list of attributes
         // for the class
         for (var k = 0; k < customQueries.length; k++){
-          let query = subCL[j].findall(customQueries[k]);
+          // THIS NEEDS TO GET EDITED
+          let query = subCL[j].findall(customQueries[k].featureXpath);
 
           // If we found this customQuery, then we add it to the list of
           // attribute for this class
           if(query != null && index < entry.length){
 
-            if(allAttributes.has(customQueries[k]) &&
-                 !entry[index].includes(allAttributes.get(customQueries[k]))){
+            if(allAttributes.has(customQueries[k].featureDescription) &&
+                 !entry[index].includes(allAttributes.get(customQueries[k].featureDescription))){
 
-                 entry[index].push(allAttributes.get(customQueries[k]));
+                 entry[index].push(allAttributes.get(customQueries[k].featureDescription));
                  dataMap.set(fileN, entry);
                  entry = dataMap.get(fileN);
 
@@ -213,7 +207,7 @@ export const addCustomRelations = (allAttributes, customQueries, classGroupings,
 
       }
     }
-
+  //console.log(newMap);
 }
 
 

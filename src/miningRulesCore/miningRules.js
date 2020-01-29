@@ -56,24 +56,20 @@ in this process.
  */
 
 import {addChildren, addParentChildRelations, findParentChildRelations,
-        makePairsList, findCustomRelations, addCustomRelations} from "./sci_class";
+        makePairsList, findCustomRelations, addCustomRelations} from "./mineRulesCore/sci_class";
 
 import et from 'elementtree';
-import Utilities from "../core/utilities";
+import Utilities from "./utilities";
 
 /**
  *
  * @param xmlFiles is an array of objects: {filePath:"", xml: ""}
+ * @param support
  * @param metaData {key: {attr: "", query: ""}}
  * @param ws
- * @param algorithm TNR or FP_MAX
- * @param fpMaxSupport
- * @param tnrConfidence
- * @param tnrK
- * @param tnrDelta
+ * @param customQueries {{featureDescription: "", featureXpath: ""}}
  */
-export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws,
-                                      algorithm, fpMaxSupport, tnrConfidence, tnrK, tnrDelta) => {
+export const mineRulesFromXmlFiles = (xmlFiles, support, metaData, ws, customQueries) => {
 
     let analysisFileName = "AttributeEncoding";
 
@@ -94,10 +90,6 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws,
 
     // Used to keep track of what xml files were used to create what databases
     let fileAnalysisMap = new Map();
-
-    // List of custom queries that should be searched for
-    var customQueries = [];
-    customQueries.push(".//name");
 
     // To check if a class is a parentClass we can simply check to see if
     // childParent[parentName] === undefined; if so, then it is not a parent;
@@ -230,17 +222,14 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws,
     for (const group of groupList.keys()){
       var grouping = groupList.get(group);
       addCustomRelations(allAttributes, customQueries, grouping, analysisFileName,
-                                   classLocations, parentInfo, fileAnalysisMap, dataMap, xmlFiles);
+                                   classLocations, parentInfo, fileAnalysisMap, dataMap);
     }
 
     outputDataBases(dataMap, ws);
 
     outputFileAnalysisData(fileAnalysisMap, ws);
 
-    if (algorithm === "FP_MAX")
-        Utilities.sendToServer(ws, "EXECUTE_FP_MAX", {fpMaxSupport});
-    else if (algorithm === "TNR")
-        Utilities.sendToServer(ws, "EXECUTE_TNR", {tnrConfidence, tnrK, tnrDelta});
+    Utilities.sendToServer(ws, "EXECUTE_FP_MAX", support);
 
 };
 
@@ -295,10 +284,10 @@ const outputDataBases = (dataMap, ws) => {
 const formatDatabases = (databases) => {
 
   // Write new contents
-  var finalFormat = [];
+  var finalFormat = new Array();
   for (var x = 0; x < databases.length; x++){
 
-    var table = [];
+    var table = new Array();
     // nameFile.txt
     var fileN = databases[x][0];
     table.push(fileN);
@@ -307,7 +296,7 @@ const formatDatabases = (databases) => {
     for(var y = 0; y < databases[x].length; y++){
       var data = databases[x][y];
 
-      if(data !== fileN){
+      if(data != fileN){
         for(const arr of data){
           for(const num of arr){
             dataWritten = dataWritten + num + " ";
@@ -320,19 +309,4 @@ const formatDatabases = (databases) => {
     finalFormat.push(table);
   }
   return finalFormat;
-};
-
-
-export const dangerousParseMetaDataFile = (metaData) => {
-    let metaDataObject = {};
-    let lines = metaData.split("\n");
-
-    for (let i = 0; i < lines.length; i += 2) {
-        if (lines[i] === "") break;
-        let id = lines[i].split(" ")[0];
-        let attr = lines[i].substring(lines[i].indexOf(" ") + 1);
-        let query = lines[i + 1];
-        metaDataObject[id] = {attr: attr, query: query};
-    }
-    return metaDataObject;
 };
