@@ -666,6 +666,26 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 }
             });
 
+        case "RESET_FEATURE_SELECTION":
+            return Object.assign({}, state, {
+                message: "RESET_FEATURE_SELECTION",
+                featureSelection: {
+                    ...JSON.parse(JSON.stringify(initial_state.featureSelection))
+                }
+            });
+
+        case "SAVE_FEATURE_SELECTION":
+            return Object.assign({}, state, {
+                message: "SAVE_FEATURE_SELECTION",
+                featureSelection: {
+                    ...JSON.parse(JSON.stringify(initial_state.featureSelection))
+                },
+                customFeatures: state.customFeatures.concat([{
+                    featureDescription: action["featureDescription"],
+                    featureXpath: action["featureXpath"]
+                }])
+            });
+
         case "DANGEROUS_MINED_RULES":
             return Object.assign({}, state, {
                 message: "UPDATE_MINED_RULES",

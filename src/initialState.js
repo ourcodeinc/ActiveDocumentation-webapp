@@ -322,7 +322,8 @@ export const initial_state = {
         modifiedSelectedText: "",
         idMap: {},
         displayTextArray: []
-    }
+    },
+    customFeatures: []
 };
 
 // used for editing existing rule

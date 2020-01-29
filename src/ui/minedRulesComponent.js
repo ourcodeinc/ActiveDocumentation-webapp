@@ -581,7 +581,8 @@ function mapStateToProps(state) {
         xmlFiles: state.xmlFiles,
         metaData: state.minedRulesState.metaData,
         minedRules: state.minedRulesState.minedRules,
-        projectPath: path
+        projectPath: path,
+        customFeatures: state.customFeatures // custom features received from feature selection
     }
 }
 

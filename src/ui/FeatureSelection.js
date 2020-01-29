@@ -5,7 +5,10 @@
 import React, {Component} from "react";
 import "../App.css";
 import {connect} from "react-redux";
+import {ButtonToolbar, Button} from "react-bootstrap";
+
 import {computeXPath} from "../miningRulesCore/findingFeature";
+import {updateResetFeatureSelection, updateSaveFeatureSelection} from "../actions";
 
 class FeatureSelection extends Component {
 
@@ -39,6 +42,10 @@ class FeatureSelection extends Component {
                     .replace(this.props.projectPath.slice(1), "")}</p>
                 {this.state.editMode ? this.renderEditableFeature() : this.renderHighlightedText()}
                 <p>{this.state.xpath}</p>
+                <ButtonToolbar>
+                    <Button onClick={() => this.saveFeature()}>Save</Button>
+                    <Button onClick={() => this.resetFeature()}>Cancel</Button>
+                </ButtonToolbar>
             </div>
         )
     }
@@ -96,7 +103,8 @@ class FeatureSelection extends Component {
                 wholeText: nextProps.wholeText,
                 selectedText: nextProps.selectedText,
 
-                xpath: nextProps.xpath
+                xpath: nextProps.xpath,
+                editMode: false
             })
         }
     }
@@ -150,6 +158,32 @@ class FeatureSelection extends Component {
 
     }
 
+    resetFeature() {
+        this.setState({
+            editMode: false,
+            startModifiedSelectionIndex: 0,
+            startSelectionIndex: 0,
+            endSelectionIndex: 0,
+            endModifiedSelectionIndex: 0,
+            mappedText: [],
+            filePath: "",
+            wholeText: "",
+            selectedText: "",
+            xpath: ""
+        });
+        this.props.resetFeatureSelection();
+        window.location.hash = "#/index";
+    }
+
+    saveFeature() {
+        let featureDesc = this.state.mappedText
+            .map(d => d.text.trim())
+            .filter(d => d!=="")
+            .join("");
+        this.props.saveFeatureSelection(featureDesc, this.state.xpath);
+        window.location.hash = "#/minedRules";
+    }
+
 }
 
 function mapStateToProps(state) {
@@ -176,5 +210,11 @@ function mapStateToProps(state) {
     }
 }
 
+function mapDispatchToProps(dispatch) {
+    return {
+        resetFeatureSelection: () => dispatch(updateResetFeatureSelection()),
+        saveFeatureSelection: (featureDescription, featureXpath) => dispatch(updateSaveFeatureSelection(featureDescription, featureXpath))
+    }
+}
 
-export default connect(mapStateToProps, null)(FeatureSelection);
+export default connect(mapStateToProps, mapDispatchToProps)(FeatureSelection);

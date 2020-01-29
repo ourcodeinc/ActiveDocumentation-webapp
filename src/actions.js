@@ -169,6 +169,20 @@ export const updateFeatureSelection = (dataObject) => {
     }
 };
 
+export const updateResetFeatureSelection = () => {
+    return {
+        type: "RESET_FEATURE_SELECTION"
+    }
+};
+
+export const updateSaveFeatureSelection = (featureDescription, featureXpath) => {
+    return {
+        type: "SAVE_FEATURE_SELECTION",
+        featureDescription, featureXpath
+    }
+};
+
+
 // not recommended
 export const updateDangerousMinedRules = (metaData, minedRules) => {
     return {
