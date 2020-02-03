@@ -56,10 +56,10 @@ in this process.
  */
 
 import {addChildren, addParentChildRelations, findParentChildRelations,
-        makePairsList, findCustomRelations, addCustomRelations} from "./mineRulesCore/sci_class";
+        makePairsList, findCustomRelations, addCustomRelations} from "./sci_class";
 
 import et from 'elementtree';
-import Utilities from "./utilities";
+import Utilities from "../core/utilities";
 
 /**
  *
@@ -222,7 +222,7 @@ export const mineRulesFromXmlFiles = (xmlFiles, support, metaData, ws, customQue
     for (const group of groupList.keys()){
       var grouping = groupList.get(group);
       addCustomRelations(allAttributes, customQueries, grouping, analysisFileName,
-                                   classLocations, parentInfo, fileAnalysisMap, dataMap);
+                        classLocations, parentInfo, fileAnalysisMap, dataMap, xmlFiles);
     }
 
     outputDataBases(dataMap, ws);
@@ -284,10 +284,10 @@ const outputDataBases = (dataMap, ws) => {
 const formatDatabases = (databases) => {
 
   // Write new contents
-  var finalFormat = new Array();
+  var finalFormat = [];
   for (var x = 0; x < databases.length; x++){
 
-    var table = new Array();
+    var table = [];
     // nameFile.txt
     var fileN = databases[x][0];
     table.push(fileN);
@@ -309,4 +309,19 @@ const formatDatabases = (databases) => {
     finalFormat.push(table);
   }
   return finalFormat;
+};
+
+// Leave this function in for debugging purposes
+export const dangerousParseMetaDataFile = (metaData) => {
+  let metaDataObject = {};
+    let lines = metaData.split("\n");
+
+    for (let i = 0; i < lines.length; i += 2) {
+        if (lines[i] === "") break;
+        let id = lines[i].split(" ")[0];
+        let attr = lines[i].substring(lines[i].indexOf(" ") + 1);
+        let query = lines[i + 1];
+        metaDataObject[id] = {attr: attr, query: query};
+    }
+    return metaDataObject;
 };

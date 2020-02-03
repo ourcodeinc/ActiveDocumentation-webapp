@@ -134,10 +134,15 @@ export const addCustomRelations = (allAttributes, customQueries, classGroupings,
 
     if(f != undefined){
       f = f.split("\\")[(f.split("\\")).length - 1]
-      f = f.split(".")[0] + ".xml";
+      f = f.split(".")[0] + ".java";
 
-      var data = fs.readFileSync(f).toString();
-      classTree = et.parse(data);
+      let filtered = xmlFiles.filter(d => d["filePath"].endsWith(f));
+      if (filtered.length > 0)
+            classTree = et.parse(filtered[0]["xml"]);
+        if (filtered.length === 0) {
+            console.log("file not found: ", f);
+            continue;
+        }
 
     }
     else{
@@ -177,14 +182,13 @@ export const addCustomRelations = (allAttributes, customQueries, classGroupings,
         classesVisited.push(childName);
 
         // Get the list of attributes for this class
-        let fileN = analysisFileName + "_subClassOf" + parentClass + ".txt";
+        let fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
         var entry = (dataMap.get(fileN));
 
         // Go through each of the customQueries. If the customQuery is present
         // in this class, then add its attribute id to the list of attributes
         // for the class
         for (var k = 0; k < customQueries.length; k++){
-          // THIS NEEDS TO GET EDITED
           let query = subCL[j].findall(customQueries[k].featureXpath);
 
           // If we found this customQuery, then we add it to the list of
@@ -207,7 +211,6 @@ export const addCustomRelations = (allAttributes, customQueries, classGroupings,
 
       }
     }
-  //console.log(newMap);
 }
 
 
