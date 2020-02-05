@@ -71,9 +71,10 @@ import Utilities from "../core/utilities";
  * @param tnrConfidence
  * @param tnrK
  * @param tnrDelta
+ * @param customQueries
  */
 export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws,
-                                      algorithm, fpMaxSupport, tnrConfidence, tnrK, tnrDelta) => {
+                                      algorithm, fpMaxSupport, tnrConfidence, tnrK, tnrDelta, customQueries = []) => {
 
     let analysisFileName = "AttributeEncoding";
 
@@ -94,10 +95,6 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws,
 
     // Used to keep track of what xml files were used to create what databases
     let fileAnalysisMap = new Map();
-
-    // List of custom queries that should be searched for
-    var customQueries = [];
-    customQueries.push(".//name");
 
     // To check if a class is a parentClass we can simply check to see if
     // childParent[parentName] === undefined; if so, then it is not a parent;

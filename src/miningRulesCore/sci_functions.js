@@ -23,8 +23,8 @@ export const findClassAnnotations = (subCL, attributeList, id_start, queryMap) =
                           + (clsAnnot.find('name').text)
                           + "\"";
 
-      let command = "//src:class[src:annotation[src:name/text()=\""
-                    + (clsAnnot.find('name').text) +"\"]]";
+      let command = "src:annotation[src:name/text()=\""
+                    + (clsAnnot.find('name').text) +"\"]";
 
       if(annotArgs.length > 0){
         clsAnnotName += " with ";
@@ -56,7 +56,7 @@ export const findClassAnnotations = (subCL, attributeList, id_start, queryMap) =
         clsAnnotName = clsAnnotName.slice(0, -1);
       }
 
-      command = command + "]]";
+      command = command + "]";
 
       if(!attributeList.has(clsAnnotName)){
 
@@ -95,7 +95,7 @@ export const findConstructors = (subCL, attributeList, id_start, queryMap) => {
           // Check if attribute has been seen globally
           if(!attributeList.has(name)){
 
-            let command = "//src:class[count(src:block/src:constructor/src:block/*)>0]";
+            let command = "count(src:block/src:constructor/src:block/*)>0";
 
             attributeList.set(name, id_start.id);
             queryMap.set(command, id_start.id);
@@ -158,11 +158,11 @@ export const findConstructors = (subCL, attributeList, id_start, queryMap) => {
             // Check if attribute has been seen globally
             if(!attributeList.has(name)){
 
-              let command = "src:class[src:block/src:constructor[(src:parameter_list/src:parameter/src:decl[src:name[text()=\""
-                            + memVarSet[0] + "\"]]";
+              let command = "src:block/src:constructor[(src:parameter_list/src:parameter/src:decl[src:name[text()=\""
+                            + memVarSet[0] + "\"]";
               for (let x = 1; x < memVarSet.length; x++){
-                command = command + " and " + "src:class[src:block/src:constructor[(src:parameter_list/src:parameter/src:decl[src:name[text()=\""
-                              + memVarSet[x] + "\"]]";
+                command = command + " and " + "src:block/src:constructor[(src:parameter_list/src:parameter/src:decl[src:name[text()=\""
+                              + memVarSet[x] + "\"]";
               }
 
               attributeList.set(name, id_start.id);
@@ -219,7 +219,7 @@ export const findConstructors = (subCL, attributeList, id_start, queryMap) => {
           // Check if this attribute has been seen globally
           if(!attributeList.has(name)){
 
-            let command = "//src:class[count(src:block/src:constructor/src:block/*)=0]";
+            let command = "count(src:block/src:constructor/src:block/*)=0";
 
             attributeList.set(name, id_start.id);
             queryMap.set(command, id_start.id);
@@ -275,13 +275,13 @@ export const findConstructors = (subCL, attributeList, id_start, queryMap) => {
           if(!attributeList.has(name)){
 
             // Make query
-            let command = "src:class[src:block/src:constructor[(src:parameter_list/src:parameter/src:decl[src:type['"
-                          + constrParamTypes[0] + "']]";
+            let command = "src:block/src:constructor[(src:parameter_list/src:parameter/src:decl[src:type['"
+                          + constrParamTypes[0] + "']";
 
             for(let u = 1; u < constrParamTypes.length; u++){
               command = command + " and "
-                        + "src:class[src:block/src:constructor[(src:parameter_list/src:parameter/src:decl[src:type['"
-                        + constrParamTypes[u] + "']]";
+                        + "src:block/src:constructor[(src:parameter_list/src:parameter/src:decl[src:type['"
+                        + constrParamTypes[u] + "']";
             }
 
             attributeList.set(name, id_start.id);
@@ -298,11 +298,11 @@ export const findConstructors = (subCL, attributeList, id_start, queryMap) => {
             // Check if this attribute has been seen globally
             if(!attributeList.has(name)){
               // logic: class[count(argument in statements) = count(arguments)]
-              let command = "//src:class[count(src:block/src:constructor/src:parameter_list/src:parameter/"
+              let command = "count(src:block/src:constructor/src:parameter_list/src:parameter/"
                             + "src:decl/src:name[text()=ancestor::src:constructor/src:block//src:expr_stmt/"
                             + "src:expr[src:name[1]/src:name/text()=\"this\" and src:operator/text()=\"=\"]/"
                             + "src:name[2]/text()])=count(src:block/src:constructor/src:parameter_list/"
-                            + "src:parameter)]";
+                            + "src:parameter)";
 
               attributeList.set(name, id_start.id);
               queryMap.set(command, id_start.id);
@@ -321,7 +321,7 @@ export const findConstructors = (subCL, attributeList, id_start, queryMap) => {
       // Check if this attribute has been seen globally
       if(!attributeList.has(name)){
 
-        let command = "//src:class[count(src:block/src:constructor)=0]";
+        let command = "count(src:block/src:constructor)=0";
 
         attributeList.set(name, id_start.id);
         queryMap.set(command, id_start.id);
@@ -368,8 +368,8 @@ export const findMemberVars = (subCL, attributeList, id_start, queryMap) => {
         // Check if this attribute has been seen globally
         if(!attributeList.has(name)){
 
-          let command = "src:class[src:block/src:decl_stmt/src:decl/src:name[text()=\""
-                        + memberVarName.text + "\"]";
+          let command = "src:block/src:decl_stmt/src:decl/src:name[text()=\""
+                        + memberVarName.text + "\"";
 
           attributeList.set(name, id_start.id);
           queryMap.set(command, id_start.id);
@@ -395,10 +395,10 @@ export const findMemberVars = (subCL, attributeList, id_start, queryMap) => {
           // Check if this attribute has been seen globally
           if(!attributeList.has(memberVarAnnotAttr)){
 
-            let command = "//src::class[src:annotation/src:name/text()=\""
+            let command = "src:annotation/src:name/text()=\""
                           + annotName.text
                           + "\" and src:block/src:decl_stmt/src:decl/src:name/text()=\""
-                          + memberVarName.text + "\"]";
+                          + memberVarName.text + "\"";
 
             attributeList.set(memberVarAnnotAttr , id_start.id);
             queryMap.set(command, id_start.id);
@@ -424,8 +424,8 @@ export const findMemberVars = (subCL, attributeList, id_start, queryMap) => {
         // Check whether this attribute has been seen globally
         if(!attributeList.has(name) && memberVarType.text != ""){
 
-          let command = "src:class[descendant-or-self::src:decl_stmt/src:decl[src:type['"
-                        + memberVarType.text + "']]]";
+          let command = "descendant-or-self::src:decl_stmt/src:decl[src:type['"
+                        + memberVarType.text + "']]";
 
           attributeList.set(name, id_start.id);
           queryMap.set(command, id_start.id);
@@ -448,9 +448,9 @@ export const findMemberVars = (subCL, attributeList, id_start, queryMap) => {
             // Check whether attribute has been seen globally
             if(!attributeList.has(name)){
 
-              let command = "src:class[descendant-or-self::src:decl_stmt/src:decl[src:type['"
+              let command = "descendant-or-self::src:decl_stmt/src:decl[src:type['"
                             + memberVarType.text + "']]]" + " and src:name[text()=\""
-                            + memberVarName.text + "\"])]]";
+                            + memberVarName.text + "\"])]";
 
               attributeList.set(name, id_start.id);
               queryMap.set(command, id_start.id);
@@ -478,8 +478,8 @@ export const findImplements = (subCL, attributeList, id_start, queryMap) => {
      // Check whether attribute has been seen globally
      if(!attributeList.has(name)){
 
-       let command = "src:class[src:super/src:implements/src:name[text()=\""
-                     + (classImplements.find('name')).text + "\"]]";
+       let command = "src:super/src:implements/src:name[text()=\""
+                     + (classImplements.find('name')).text + "\"]";
 
        attributeList.set(name, id_start.id);
        queryMap.set(command, id_start.id);
@@ -513,7 +513,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
     // Check wether attribute has been seen globally
     if(!attributeList.has(name)){
 
-      let command = "src:class[src:specifier[text()=\"" + clsSpecificity + "\"]]";
+      let command = "src:specifier[text()=\"" + clsSpecificity + "\"]";
 
       attributeList.set(name, id_start.id);
       queryMap.set(command, id_start.id);
@@ -703,10 +703,10 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
         // Check if this attribute has been seen globally
         if(!attributeList.has(name)){
 
-          let command = "//src::class[src:annotation/src:name/text()=\""
+          let command = "src:annotation/src:name/text()=\""
                         + (fncAnnot.find('name')).text
                         + "\" and src:block/src:function/src:name/text()=\""
-                        + fncName.text + "\"]";
+                        + fncName.text + "\"";
 
           attributeList.set(name, id_start.id);
           queryMap.set(command, id_start.id);
@@ -815,7 +815,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
       if(!attributeList.has(name)){
         // Make the query/command
         // First portion is the portion of the command having to do with the name
-        let command = "src:class[src:block/src:function[(src:name[text()=\""
+        let command = "src:block/src:function[(src:name[text()=\""
                   + fncName.text + "\"]";
         // Next we add to it the part of the command having to do with visibility
         command = command + " and src:specifier[text()=\"" + fncSpecType + "\"]";
@@ -827,7 +827,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
           command = command + " and src:type['" + returnType.text + "']";
         }
         // Finally close off the parentheses and brackets
-        command = command + ")]]";
+        command = command + ")]";
 
         attributeList.set(name, id_start.id);
         queryMap.set(command, id_start.id);
@@ -883,7 +883,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
 
         // Make the query/command
         // First portion is the portion of the command having to do with the name
-        let command = "src:class[src:block/src:function[(src:name[text()=\""
+        let command = "src:block/src:function[(src:name[text()=\""
                   + fncName.text + "\"]";
         // Next we add to it the part of the command having to do with parameterTypes
         for (let m = 0; m < fncTypes.length; m++){
@@ -900,7 +900,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
           command = command + " and src:type['" + returnType.text + "']";
         }
         // Finally close off the parentheses and brackets
-        command = command + ")]]";
+        command = command + ")]";
 
         attributeList.set(name, id_start.id);
         queryMap.set(command, id_start.id);
