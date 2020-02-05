@@ -64,16 +64,12 @@ import Utilities from "../core/utilities";
 /**
  *
  * @param xmlFiles is an array of objects: {filePath:"", xml: ""}
+ * @param support
  * @param metaData {key: {attr: "", query: ""}}
  * @param ws
- * @param algorithm TNR or FP_MAX
- * @param fpMaxSupport
- * @param tnrConfidence
- * @param tnrK
- * @param tnrDelta
+ * @param customQueries {{featureDescription: "", featureXpath: ""}}
  */
-export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws,
-                                      algorithm, fpMaxSupport, tnrConfidence, tnrK, tnrDelta) => {
+export const mineRulesFromXmlFiles = (xmlFiles, support, metaData, ws, customQueries) => {
 
     let analysisFileName = "AttributeEncoding";
 
@@ -94,10 +90,6 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws,
 
     // Used to keep track of what xml files were used to create what databases
     let fileAnalysisMap = new Map();
-
-    // List of custom queries that should be searched for
-    var customQueries = [];
-    customQueries.push(".//name");
 
     // To check if a class is a parentClass we can simply check to see if
     // childParent[parentName] === undefined; if so, then it is not a parent;
@@ -230,17 +222,14 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws,
     for (const group of groupList.keys()){
       var grouping = groupList.get(group);
       addCustomRelations(allAttributes, customQueries, grouping, analysisFileName,
-                                   classLocations, parentInfo, fileAnalysisMap, dataMap, xmlFiles);
+                        classLocations, parentInfo, fileAnalysisMap, dataMap, xmlFiles);
     }
 
     outputDataBases(dataMap, ws);
 
     outputFileAnalysisData(fileAnalysisMap, ws);
 
-    if (algorithm === "FP_MAX")
-        Utilities.sendToServer(ws, "EXECUTE_FP_MAX", {fpMaxSupport});
-    else if (algorithm === "TNR")
-        Utilities.sendToServer(ws, "EXECUTE_TNR", {tnrConfidence, tnrK, tnrDelta});
+    Utilities.sendToServer(ws, "EXECUTE_FP_MAX", support);
 
 };
 
@@ -307,7 +296,7 @@ const formatDatabases = (databases) => {
     for(var y = 0; y < databases[x].length; y++){
       var data = databases[x][y];
 
-      if(data !== fileN){
+      if(data != fileN){
         for(const arr of data){
           for(const num of arr){
             dataWritten = dataWritten + num + " ";
@@ -322,9 +311,9 @@ const formatDatabases = (databases) => {
   return finalFormat;
 };
 
-
+// Leave this function in for debugging purposes
 export const dangerousParseMetaDataFile = (metaData) => {
-    let metaDataObject = {};
+  let metaDataObject = {};
     let lines = metaData.split("\n");
 
     for (let i = 0; i < lines.length; i += 2) {
