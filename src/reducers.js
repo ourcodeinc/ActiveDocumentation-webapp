@@ -17,6 +17,8 @@ import {generateTreeForElement} from "./ui/ruleGenerationGUI/guiConstants";
     NEW_RULE
     NEW_TAG
 
+    HIERARCHY_DATA
+
     IGNORE_FILE
 
     UPDATE_DISPLAY_EDIT_TUTORIAL
@@ -51,6 +53,9 @@ import {generateTreeForElement} from "./ui/ruleGenerationGUI/guiConstants";
 
     UPDATE_FEATURE_SELECTION
     DANGEROUS_MINED_RULES
+
+    RESET_FEATURE_SELECTION
+    SAVE_FEATURE_SELECTION
 
  */
 
@@ -666,6 +671,15 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 }
             });
 
+        case "DANGEROUS_MINED_RULES":
+            return Object.assign({}, state, {
+                message: "UPDATE_MINED_RULES",
+                minedRulesState: {
+                    metaData: action["metaData"],
+                    minedRules: action["minedRules"]
+                }
+            });
+
         case "RESET_FEATURE_SELECTION":
             return Object.assign({}, state, {
                 message: "RESET_FEATURE_SELECTION",
@@ -686,14 +700,6 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 }])
             });
 
-        case "DANGEROUS_MINED_RULES":
-            return Object.assign({}, state, {
-                message: "UPDATE_MINED_RULES",
-                minedRulesState: {
-                    metaData: action["metaData"],
-                    minedRules: action["minedRules"]
-                }
-            });
 
         default:
             return Object.assign({}, state);
