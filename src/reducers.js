@@ -1,5 +1,5 @@
 import {initial_state, default_rulePanelState} from "./initialState";
-import {generateTreeForElement} from "./ui/rulePadGraphicalEditor/guiConstants";
+import {generateTreeForElement} from "./ui/rulePadGraphicalEditor/graphicalEditorConstants";
 
 
 /*

@@ -7,13 +7,13 @@ import "../../App.css";
 
 import {connect} from "react-redux";
 
-import GuiComponent from "./guiComponent";
+import GraphicalComponent from "./graphicalComponent";
 import {changeAutoCompleteTextFromGUI, changeGuiElement} from "../../actions";
-import {generateTreeForElement, getConditionByName} from "./guiConstants";
-import {autoComplete_suggestion} from "../rulePadTextualEditor/textConstant";
+import {generateTreeForElement, getConditionByName} from "./graphicalEditorConstants";
+import {autoComplete_suggestion} from "../rulePadTextualEditor/textualEditorConstant";
 
 
-class RuleGeneratorGui extends Component {
+class GraphicalEditor extends Component {
 
     constructor(props) {
         super(props);
@@ -53,11 +53,11 @@ class RuleGeneratorGui extends Component {
     render() {
         return (
             <div className={this.class}>
-                <GuiComponent key={new Date()} ruleIndex={this.ruleIndex} elementId={"0"} root
-                              rootTree={this.state.guiTree}
-                              canBeStarredIDs={this.canBeStarredIDs}
-                              guiElements={this.state.guiElements}
-                              changeGuiElementJobs={(ruleIndex, jobs) => this.processJobsBeforeSubmit(jobs)}
+                <GraphicalComponent key={new Date()} ruleIndex={this.ruleIndex} elementId={"0"} root
+                                    rootTree={this.state.guiTree}
+                                    canBeStarredIDs={this.canBeStarredIDs}
+                                    guiElements={this.state.guiElements}
+                                    changeGuiElementJobs={(ruleIndex, jobs) => this.processJobsBeforeSubmit(jobs)}
                 />
             </div>
         );
@@ -838,4 +838,4 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(RuleGeneratorGui);
+export default connect(mapStateToProps, mapDispatchToProps)(GraphicalEditor);

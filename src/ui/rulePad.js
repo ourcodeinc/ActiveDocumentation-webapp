@@ -27,16 +27,16 @@ import marked from "marked";
 import Joyride, {ACTIONS, EVENTS} from "react-joyride";
 import ReactToolTip from "react-tooltip";
 
-import RuleGeneratorGui from "./rulePadGraphicalEditor/ruleGeneratorGui";
+import GraphicalEditor from "./rulePadGraphicalEditor/graphicalEditor";
 import verifyTextBasedOnGrammar from "../core/languageProcessing";
 import {
     matchMessages, receiveGuiTree, clearNewRuleForm,
     editRuleForm, submitNewRule, submitNewTag, updateRule, updateXPaths, updateDisplayEditTutorial, ignoreFile
 } from "../actions";
 import {generateGuiTrees} from "./rulePadTextualEditor/generateGuiTree";
-import RuleGeneratorText from "./rulePadTextualEditor/ruleGeneratorText";
+import TextualEditor from "./rulePadTextualEditor/textualEditor";
 import Utilities from "../core/utilities";
-import {error_messages_IMarkdownString} from "./rulePadTextualEditor/textConstant";
+import {error_messages_IMarkdownString} from "./rulePadTextualEditor/textualEditorConstant";
 
 import title_description_filled from "../resources/title_description_filled.png";
 import visibility_class_declaration from "../resources/visibility_class_declaration.png";
@@ -624,11 +624,11 @@ class RulePad extends Component {
     renderTextUI() {
         return (
             <div style={{paddingTop: "10px", clear: "both"}} id={`text_ui_div_${this.ruleIndex}`}>
-                <RuleGeneratorText autoCompleteArray={this.state.autoCompleteArray}
-                                   ruleIndex={this.ruleIndex}
-                                   errorPoint={this.state.errorPoint}
-                                   formStatus={this.state.monacoFormStatus}
-                                   onBlur={(newAutoCompleteText) => {
+                <TextualEditor autoCompleteArray={this.state.autoCompleteArray}
+                               ruleIndex={this.ruleIndex}
+                               errorPoint={this.state.errorPoint}
+                               formStatus={this.state.monacoFormStatus}
+                               onBlur={(newAutoCompleteText) => {
                                        verifyTextBasedOnGrammar(newAutoCompleteText)
                                            .then((data) => {
                                                if (this._mounted)
@@ -655,7 +655,7 @@ class RulePad extends Component {
                                                })
                                            });
                                    }}
-                                   onUpdate={(newAutoCompleteText) => {
+                               onUpdate={(newAutoCompleteText) => {
                                        if (this.state.autoCompleteArray.map(d => d.text).join(" ") !== newAutoCompleteText
                                            || this.state.constraintXPath === "" || this.state.quantifierXPath === "" || this.state.shouldUpdateSnippets)
                                            verifyTextBasedOnGrammar(newAutoCompleteText)
@@ -683,7 +683,7 @@ class RulePad extends Component {
                                                    })
                                                });
                                    }}
-                                   onError={(errorIndex) => this.processLanguageProcessingError("ERROR_INDEX", errorIndex)}
+                               onError={(errorIndex) => this.processLanguageProcessingError("ERROR_INDEX", errorIndex)}
                 />
                 {this.renderAutoCompleteError()}
             </div>
@@ -697,7 +697,7 @@ class RulePad extends Component {
         return (
             <div id={`gui_div_${this.ruleIndex}`}>
                 <div className={"generateRuleGuiDiv" + (this.state.guiError ? " has-error" : "")}>
-                    <RuleGeneratorGui ruleIndex={this.ruleIndex} className={"generateRuleGui"}
+                    <GraphicalEditor ruleIndex={this.ruleIndex} className={"generateRuleGui"}
                                       onError={(error) => error !== this.state.guiError ? this.setState({guiError: error}) : {}}
                                       onFilledGUI={(isFilled) => isFilled !== this.state.isFilledGUI ? this.setState({isFilledGUI: isFilled}) : {}}/>
                 </div>

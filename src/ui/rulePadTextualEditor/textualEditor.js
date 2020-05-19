@@ -16,10 +16,10 @@ import {
     grammar_keywords,
     sample_phrases,
     sample_phrase_hash
-} from "./textConstant";
+} from "./textualEditorConstant";
 import {LANGUAGE_FORMAT, LANGUAGE_THEME, EDITOR_OPTION} from "./monacoEditorConfig";
 
-class RuleGeneratorText extends Component {
+class TextualEditor extends Component {
     constructor(props) {
         super(props);
 
@@ -541,23 +541,23 @@ class RuleGeneratorText extends Component {
         if (isWord || isSpecialWord) {
             // "someWord["]
             if (!lastWord.endsWith("\"") && isWord)
-                return [RuleGeneratorText.createGrammarSuggestion(lastWord + "\"", "", "QUOTES")];
+                return [TextualEditor.createGrammarSuggestion(lastWord + "\"", "", "QUOTES")];
             // … [X] with name/annotation/etc. "someWord"
             xWord = selectXWord(lastWithIndex - 1);
             let space = isMiddleOfWord ? " " : "";
-            results.push(RuleGeneratorText.createGrammarSuggestion(space + "and", xWord, "AND_OR_PAREN"));
-            results.push(RuleGeneratorText.createGrammarSuggestion(space + "or", xWord, "AND_OR_PAREN"));
-            results.push(RuleGeneratorText.createGrammarSuggestion(space + "of", xWord, "OF"));
+            results.push(TextualEditor.createGrammarSuggestion(space + "and", xWord, "AND_OR_PAREN"));
+            results.push(TextualEditor.createGrammarSuggestion(space + "or", xWord, "AND_OR_PAREN"));
+            results.push(TextualEditor.createGrammarSuggestion(space + "of", xWord, "OF"));
 
             if (findUnResolvedParenthesis(wordsArray) > 0) {
                 xWord = selectXWord(lastWithIndex - 1);
                 if (xWord === "") return errorGenerator(303);
-                results.push(RuleGeneratorText.createGrammarSuggestion(space + ")", xWord + " (...", "AND_OR_PAREN"));
+                results.push(TextualEditor.createGrammarSuggestion(space + ")", xWord + " (...", "AND_OR_PAREN"));
             }
             else if (wordsArray.indexOf("must") === -1) {
                 xWord = selectXWord(0);
                 if (xWord === "") return errorGenerator(303);
-                results.push(RuleGeneratorText.createGrammarSuggestion(space + "must have", xWord, "MUST_HAVE"));
+                results.push(TextualEditor.createGrammarSuggestion(space + "must have", xWord, "MUST_HAVE"));
             }
             return results;
         }
@@ -579,7 +579,7 @@ class RuleGeneratorText extends Component {
                 // … [X] with (
                 suggText = (!isSecondWord && isMiddleOfWord ? "with " : "") + "(";
                 infoText = xWord + (!isSecondWord && isMiddleOfWord ? "" : " with");
-                results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
+                results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
 
                 // … [X] with …
                 beforeSuggText = !isSecondWord && isMiddleOfWord ? "with" : "";
@@ -669,7 +669,7 @@ class RuleGeneratorText extends Component {
 
                     suggText = "have";
                     infoText = xWord + " must";
-                    results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, "MUST_HAVE"));
+                    results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "MUST_HAVE"));
 
                     beforeSuggText = (isConnectorWord && isMiddleOfWord ? lastWord + " " : "") + "(";
                     infoText = xWord + " must have" + (isConnectorWord && isMiddleOfWord ? "" : " " + lastWord);
@@ -694,13 +694,13 @@ class RuleGeneratorText extends Component {
                 if (xWord !== "") {
                     suggText = "and (";
                     infoText = xWord + " with ...";
-                    results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
+                    results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
                     suggText = "or (";
-                    results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
+                    results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
 
                     // [X] with (…) of
                     suggText = "of";
-                    results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, "OF"));
+                    results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "OF"));
                 }
                 // [X] … must have ( )
                 else if (corrOpenParanIndex > 1 && wordsArray[corrOpenParanIndex - 2] === "must") {
@@ -709,9 +709,9 @@ class RuleGeneratorText extends Component {
 
                     suggText = "and (";
                     infoText = xWord + " must have ... ";
-                    results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
+                    results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
                     suggText = "or (";
-                    results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
+                    results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
                 }
                 else
                     return errorGenerator(302);
@@ -723,7 +723,7 @@ class RuleGeneratorText extends Component {
 
                     suggText = "must have";
                     infoText = xWord + " ...";
-                    results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, "MUST_HAVE"));
+                    results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "MUST_HAVE"));
                 }
 
                 break;
@@ -737,11 +737,11 @@ class RuleGeneratorText extends Component {
                 if (xWord !== "" && autoComplete_suggestion[xWord].preWord && autoComplete_suggestion[xWord].preWord === "of") {
                     suggText = (!isSecondWord && isMiddleOfWord ? "of " : "") + autoComplete_suggestion[xWord].placeholder;
                     infoText = xWord + (!isSecondWord && isMiddleOfWord ? "" : " of");
-                    results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, xWord));
+                    results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, xWord));
 
                     suggText = (!isSecondWord && isMiddleOfWord ? "of " : "") + "\"SOME_TEXT\"";
                     infoText = xWord + (!isSecondWord && isMiddleOfWord ? "" : " of");
-                    results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, xWord));
+                    results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, xWord));
                     break;
                 }
 
@@ -760,7 +760,7 @@ class RuleGeneratorText extends Component {
 
             case "": // not displayed
                 // results = results.concat(grammar_keywords
-                //     .map(d => RuleGeneratorText.createGrammarSuggestion(d, "", 100)));
+                //     .map(d => TextualEditor.createGrammarSuggestion(d, "", 100)));
                 break;
 
             default:
@@ -774,7 +774,7 @@ class RuleGeneratorText extends Component {
                         || autoComplete_suggestion[xWord].preWord !== wordsArray[lastWordIndex - 1]) break;
                     suggText = autoComplete_suggestion[xWord].placeholder;
                     infoText = xWord + " " + autoComplete_suggestion[xWord].preWord;
-                    results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, xWord));
+                    results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, xWord));
                 }
 
                 // after special word
@@ -792,46 +792,46 @@ class RuleGeneratorText extends Component {
                         if (lastWordIndex > 1 && findUnResolvedParenthesis(wordsArray) > 0) {
                             suggText = ")";
                             infoText = "";
-                            results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
+                            results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
                             suggText = "and";
-                            results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
+                            results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
                             suggText = "or";
-                            results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
+                            results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
                         }
                         // still typing the keyword
                         if (isMiddleOfWord && !isSecondWord)
-                            results.push(RuleGeneratorText.createGrammarSuggestion(d, "", d));
+                            results.push(TextualEditor.createGrammarSuggestion(d, "", d));
                         else {
                             if (!!autoComplete_suggestion[d].withClause) {
                                 suggText = (isMiddleOfWord && !isSecondWord ? d + " " : "" ) + "with";
                                 infoText = isMiddleOfWord && !isSecondWord ? "" : d;
-                                results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, "WITH"));
+                                results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "WITH"));
                             }
                             else {
                                 if (!!autoComplete_suggestion[d].preWord) {
                                     suggText = (isMiddleOfWord && !isSecondWord ? d + " " : "" )
                                         + autoComplete_suggestion[d].preWord + " " + autoComplete_suggestion[d].placeholder;
                                     infoText = isMiddleOfWord && !isSecondWord ? "" : d;
-                                    results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, d));
+                                    results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, d));
                                 }
 
 
                                 suggText = (isMiddleOfWord && !isSecondWord ? d + " " : "" )
                                     + (autoComplete_suggestion[d].preWord ? autoComplete_suggestion[d].preWord + " " : "") + "\"SOME_TEXT\"";
                                 infoText = isMiddleOfWord && !isSecondWord ? "" : d;
-                                results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, "QUOTES"));
+                                results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "QUOTES"));
                             }
 
                             if (autoComplete_suggestion[d].ofClause.length > 0) {
                                 suggText = (isMiddleOfWord && !isSecondWord ? d + " " : "") + "of";
                                 infoText = isMiddleOfWord && !isSecondWord ? "" : d;
-                                results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, "OF"));
+                                results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "OF"));
                             }
 
                             if (findUnResolvedParenthesis(wordsArray) === 0 && !isSecondWord && wordsArray.indexOf("must") === -1) {
                                 suggText = (!isMiddleOfWord ? "" : d + " ") + "must have";
                                 infoText = lastWordIndex !== 0 ? xWord : (isMiddleOfWord ? "" : d);
-                                results.push(RuleGeneratorText.createGrammarSuggestion(suggText, infoText, "MUST_HAVE"));
+                                results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "MUST_HAVE"));
                             }
                         }
                     });
@@ -841,9 +841,9 @@ class RuleGeneratorText extends Component {
             if (specialCase !== "") {
                 // special case for a and and
                 if (specialCase === "a" || specialCase === "an")
-                    results.push(RuleGeneratorText.createGrammarSuggestion("and", "and", "AND_OR_PAREN"));
+                    results.push(TextualEditor.createGrammarSuggestion("and", "and", "AND_OR_PAREN"));
                 if (specialCase === "o")
-                    results.push(RuleGeneratorText.createGrammarSuggestion("or", "or", "AND_OR_PAREN"));
+                    results.push(TextualEditor.createGrammarSuggestion("or", "or", "AND_OR_PAREN"));
             }
             else return errorGenerator(400);
         }
@@ -884,7 +884,7 @@ class RuleGeneratorText extends Component {
             if (intersection.length === 0) continue;
             /* eslint-disable */
             results = sample_phrases.filter((d, i) => intersection.includes(i))
-                .map(d => RuleGeneratorText.createPhraseSuggestion(d["replaceWordWith"], cnt));
+                .map(d => TextualEditor.createPhraseSuggestion(d["replaceWordWith"], cnt));
             /* eslint-enable */
         }
         return results;
@@ -908,7 +908,7 @@ class RuleGeneratorText extends Component {
             // check if filtering makes no result, ignore it
             if (result.filter(d => !doFilter ? true : d.startsWith(filterLetters)).length !== 0)
                 result = result.filter(d => !doFilter ? true : d.startsWith(filterLetters));
-            return result.map(d => RuleGeneratorText.createGrammarSuggestion(beforeSugText + (beforeSugText !== "" ? " " : "") + d, infoText, word));
+            return result.map(d => TextualEditor.createGrammarSuggestion(beforeSugText + (beforeSugText !== "" ? " " : "") + d, infoText, word));
         }
         return [];
     };
@@ -926,7 +926,7 @@ class RuleGeneratorText extends Component {
         if (grammar_keywords.includes(word)) {
             return autoComplete_suggestion[word].ofClause
                 .filter(d => !doFilter ? true : d.startsWith(filterLetters))
-                .map(d => RuleGeneratorText.createGrammarSuggestion(beforeSugText + (beforeSugText !== "" ? " " : "") + d, infoText, word));
+                .map(d => TextualEditor.createGrammarSuggestion(beforeSugText + (beforeSugText !== "" ? " " : "") + d, infoText, word));
         }
         return [];
     };
@@ -963,4 +963,4 @@ class RuleGeneratorText extends Component {
 
 }
 
-export default RuleGeneratorText;
+export default TextualEditor;
