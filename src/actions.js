@@ -59,25 +59,19 @@ export const updateRuleTable = (newRuleTable) => {
     };
 };
 
-/**
- * @param updatedRule
- * @return {{data: {updatedRule: *}, type: string}}
- */
-export const updateRule = (updatedRule) => {
-    return {
-        type: "UPDATE_RULE",
-        data: {updatedRule: updatedRule}
-    };
+
+export const updateRule = () => {
+    return {type: "UPDATE_RULE"};
 };
 
 
-export const submitNewRule = (newRuleProps) => {
-    return {type: "SUBMIT_NEW_RULE", value: newRuleProps}
+export const submitNewRule = () => {
+    return {type: "SUBMIT_NEW_RULE"}
 };
 
 
-export const submitNewTag = (newTagProps) => {
-    return {type: "SUBMIT_NEW_TAG", value: newTagProps}
+export const submitNewTag = () => {
+    return {type: "SUBMIT_NEW_TAG"}
 };
 
 /**

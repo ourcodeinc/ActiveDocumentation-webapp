@@ -1390,7 +1390,7 @@ class EditRuleForm extends Component {
             (rule.quantifier.command !== this.ruleI.quantifier.command);
 
         if (isChanged) {
-            this.props.onUpdateRule(rule);
+            this.props.onUpdateRule();
             Utilities.sendToServer(this.props.ws, "MODIFIED_RULE", rule);
         }
         this.changeEditMode();
@@ -1451,7 +1451,7 @@ class EditRuleForm extends Component {
             return;
         }
 
-        this.props.onSubmitNewRule(rule);
+        this.props.onSubmitNewRule();
         Utilities.sendToServer(this.props.ws, "NEW_RULE", rule);
         this.changeEditMode();
     }
@@ -1486,7 +1486,7 @@ class EditRuleForm extends Component {
         }
 
         let tag = {tagName: this.state.tagName, detail: this.state.tagDetail};
-        this.props.onSubmitNewTag(tag);
+        this.props.onSubmitNewTag();
         Utilities.sendToServer(this.props.ws, "NEW_TAG", tag);
     }
 
@@ -1539,9 +1539,9 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         onIgnoreFile: (shouldIgnore) => dispatch(ignoreFile(shouldIgnore)),
-        onSubmitNewRule: (newRule) => dispatch(submitNewRule(newRule)),
-        onUpdateRule: (updatedRule) => dispatch(updateRule(updatedRule)),
-        onSubmitNewTag: (newTag) => dispatch(submitNewTag(newTag)),
+        onSubmitNewRule: () => dispatch(submitNewRule()),
+        onUpdateRule: () => dispatch(updateRule()),
+        onSubmitNewTag: () => dispatch(submitNewTag()),
         onClearForm: () => dispatch(clearNewRuleForm()),
         onEditForm: (ruleIndex, title, description, ruleTags, folderConstraint, filesFolders) =>
             dispatch(editRuleForm(ruleIndex, title, description, ruleTags, folderConstraint, filesFolders)),
