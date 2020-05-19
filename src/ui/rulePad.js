@@ -27,16 +27,16 @@ import marked from "marked";
 import Joyride, {ACTIONS, EVENTS} from "react-joyride";
 import ReactToolTip from "react-tooltip";
 
-import RuleGeneratorGui from "./ruleGenerationGUI/ruleGeneratorGui";
+import RuleGeneratorGui from "./rulePadGraphicalEditor/ruleGeneratorGui";
 import verifyTextBasedOnGrammar from "../core/languageProcessing";
 import {
     matchMessages, receiveGuiTree, clearNewRuleForm,
     editRuleForm, submitNewRule, submitNewTag, updateRule, updateXPaths, updateDisplayEditTutorial, ignoreFile
 } from "../actions";
-import {generateGuiTrees} from "./ruleGenerationText/generateGuiTree";
-import RuleGeneratorText from "./ruleGenerationText/ruleGeneratorText";
+import {generateGuiTrees} from "./rulePadTextualEditor/generateGuiTree";
+import RuleGeneratorText from "./rulePadTextualEditor/ruleGeneratorText";
 import Utilities from "../core/utilities";
-import {error_messages_IMarkdownString} from "./ruleGenerationText/textConstant";
+import {error_messages_IMarkdownString} from "./rulePadTextualEditor/textConstant";
 
 import title_description_filled from "../resources/title_description_filled.png";
 import visibility_class_declaration from "../resources/visibility_class_declaration.png";
@@ -61,7 +61,7 @@ import {checkRulesForAll} from "../core/ruleExecutor";
 import ProjectHierarchy from "./projectHierarchy";
 
 
-class EditRuleForm extends Component {
+class RulePad extends Component {
 
     constructor(props) {
         super(props);
@@ -1554,7 +1554,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditRuleForm);
+export default connect(mapStateToProps, mapDispatchToProps)(RulePad);
 
 
 /* custom dropdown for tags */

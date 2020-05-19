@@ -15,7 +15,7 @@ import * as marked from "marked";
 import ReactToolTip from "react-tooltip";
 
 import {getConditionByName} from "./guiConstants";
-import {documentations_IMarkdownString} from "../ruleGenerationText/textConstant";
+import {documentations_IMarkdownString} from "../rulePadTextualEditor/textConstant";
 
 
 class GuiComponent extends Component {

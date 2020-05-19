@@ -4,7 +4,7 @@
 
 import pluralize from "pluralize";
 
-import {generateTreeForElement, getConditionByName} from "../ruleGenerationGUI/guiConstants";
+import {generateTreeForElement, getConditionByName} from "../rulePadGraphicalEditor/guiConstants";
 import {grammar_keywords, special_word} from "./textConstant";
 import {initial_elementTree, initial_guiElements} from "../../initialState";
 

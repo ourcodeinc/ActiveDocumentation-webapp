@@ -7,12 +7,12 @@ import {connect} from "react-redux";
 import WebSocketManager from "./core/webSocketManager";
 import {hashChange} from "./actions";
 
-import TableOfContent from "./ui/tableOfContent";
+import TableOfContents from "./ui/tableOfContents";
 import RuleTable from "./ui/ruleTable";
 import NavBar from "./ui/navBar";
 import HeaderBar from "./ui/headerBar";
 import MinedRulesComponent from "./ui/minedRulesComponent";
-import FeatureSelection from "./ui/FeatureSelection";
+import FeatureSelection from "./ui/featureSelection";
 
 class App extends Component {
 
@@ -66,7 +66,7 @@ class App extends Component {
                          className={
                              (["index", "tagJsonChanged", "ruleJsonChanged"].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
                          }>
-                        <TableOfContent/>
+                        <TableOfContents/>
                     </div>
                     <div id={"ruleResults"}
                          className={

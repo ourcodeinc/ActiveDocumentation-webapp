@@ -14,7 +14,7 @@ import MdEdit from "react-icons/lib/md/edit";
 
 import {changeEditMode, ignoreFile} from "../actions";
 import Utilities from "../core/utilities";
-import EditRuleForm from "./editRuleForm";
+import RulePad from "./rulePad";
 
 
 class RulePanel extends Component {
@@ -78,7 +78,7 @@ class RulePanel extends Component {
         if (!this.ruleI && !this.state.editMode) return null;
         if (this.state.editMode)
             return (
-                <EditRuleForm ruleIndex={this.ruleIndex}
+                <RulePad ruleIndex={this.ruleIndex}
                               changeEditMode={() => this.changeEditMode()}/>);
         return (
             <div className={this.state.className}>

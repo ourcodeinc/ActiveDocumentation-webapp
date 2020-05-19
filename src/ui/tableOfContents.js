@@ -10,7 +10,7 @@ import {MdPlaylistAdd} from "react-icons/lib/md/index";
 
 import {changeEditMode} from "../actions";
 
-class TableOfContent extends Component {
+class TableOfContents extends Component {
 
     constructor() {
         super();
@@ -119,4 +119,4 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TableOfContent);
+export default connect(mapStateToProps, mapDispatchToProps)(TableOfContents);

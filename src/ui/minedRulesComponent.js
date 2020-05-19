@@ -16,7 +16,7 @@ import {mineRulesFromXmlFiles} from "../miningRulesCore/miningRules";
 import {ignoreFile, updateMetaData} from "../actions";
 import MinedRulePad from "./minedRulePad";
 import {verifyPartialTextBasedOnGrammar} from "../core/languageProcessing";
-import {generateGuiTrees} from "./ruleGenerationText/generateGuiTree";
+import {generateGuiTrees} from "./rulePadTextualEditor/generateGuiTree";
 import Utilities from "../core/utilities";
 
 

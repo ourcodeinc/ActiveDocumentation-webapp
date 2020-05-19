@@ -10,7 +10,7 @@ import {connect} from "react-redux";
 import GuiComponent from "./guiComponent";
 import {changeAutoCompleteTextFromGUI, changeGuiElement} from "../../actions";
 import {generateTreeForElement, getConditionByName} from "./guiConstants";
-import {autoComplete_suggestion} from "../ruleGenerationText/textConstant";
+import {autoComplete_suggestion} from "../rulePadTextualEditor/textConstant";
 
 
 class RuleGeneratorGui extends Component {
