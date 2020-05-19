@@ -80,19 +80,19 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
         case "HASH":
             if (!state.hashManager.clicked) {
                 return Object.assign({}, state, {
-                    hash: action["value"],
+                    hash: action.data["hash"],
                     message: "HASH",
                     hashManager: {
-                        history: [...state.hashManager.history, "#/" + action["value"].join("/")],
+                        history: [...state.hashManager.history, "#/" + action.data["hash"].join("/")],
                         clicked: false,
                         activeHash: state.hashManager.activeHash + 1,
                         forwardDisable: "disabled",
-                        backDisable: state.hashManager.activeHash === 0
+                        backDisable: state.hashManager.activeHash === 0 ? "disabled" : ""
                     }
                 });
             }
             return Object.assign({}, state, {
-                hash: action["value"],
+                hash: action.data["hash"],
                 message: "HASH",
                 hashManager: {
                     history: state.hashManager.history,
@@ -104,16 +104,16 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             });
 
         case "NEW_WS":
-            return Object.assign({}, state, {ws: action["value"], message: "NEW_WS"});
+            return Object.assign({}, state, {ws: action.data["ws"], message: "NEW_WS"});
 
         case "UPDATE_XML_FILES":
-            return Object.assign({}, state, {xmlFiles: action["xmlFiles"], message: "UPDATE_XML_FILES"});
+            return Object.assign({}, state, {xmlFiles: action.data["xmlFiles"], message: "UPDATE_XML_FILES"});
 
         case "UPDATE_TAG_TABLE":
-            return Object.assign({}, state, {tagTable: action["value"], message: "UPDATE_TAG_TABLE"});
+            return Object.assign({}, state, {tagTable: action.data["tagTable"], message: "UPDATE_TAG_TABLE"});
 
         case "UPDATE_RULE_TABLE":
-            let rules = JSON.parse(JSON.stringify(action["ruleTable"]));
+            let rules = JSON.parse(JSON.stringify(action.data["ruleTable"]));
             rules = rules.map(rule =>
                 Object.assign({}, rule, {
                     rulePanelState: {
@@ -159,7 +159,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
         case "HIERARCHY_DATA":
             return Object.assign({}, state, {
-                projectHierarchy: action["hierarchyData"],
+                projectHierarchy: action.data["hierarchyData"],
                 message: "HIERARCHY_DATA"
             });
 
@@ -170,17 +170,17 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
         case "IGNORE_FILE":
             let editCount = state.ruleTable.reduce((count, element) => count + element.rulePanelState.editMode ? 1 : 0, 0);
             if (state.newOrEditRule.isEditMode || editCount > 0) return Object.assign({}, state);
-            return Object.assign({}, state, {ignoreFile: action["shouldIgnore"], message: "IGNORE_FILE"});
+            return Object.assign({}, state, {ignoreFile: action.data["shouldIgnore"], message: "IGNORE_FILE"});
 
         case "UPDATE_DISPLAY_EDIT_TUTORIAL":
             return Object.assign({}, state, {
-                displayEditRuleTutorial: action["shouldDisplay"],
+                displayEditRuleTutorial: action.data["shouldDisplay"],
                 message: "UPDATE_DISPLAY_EDIT_TUTORIAL"
             });
 
         case "FILE_PATH":
             if (state.ignoreFile) return Object.assign({}, state, {message: "FILE_PATH_UPDATED"});
-            return Object.assign({}, state, {filePath: action["value"], message: "FILE_PATH_UPDATED"});
+            return Object.assign({}, state, {filePath: action.data["filePath"], message: "FILE_PATH_UPDATED"});
 
         /*
          nav-bar navigation
@@ -211,8 +211,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             });
 
         /*
-         generate rule form
-          */
+            RulePad
+         */
 
         case "CLEAR_NEW_RULE_FORM":
             return Object.assign({}, state, {
@@ -224,16 +224,16 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             });
 
         case "EDIT_RULE_FORM":
-            if (action["ruleIndex"] !== -1) {
+            if (action.data["ruleIndex"] !== -1) {
                 let rules = JSON.parse(JSON.stringify(state.ruleTable));
                 rules = rules.map(d => {
                     let a = Object.assign({}, d);
-                    if (a.index !== action["ruleIndex"]) return a;
-                    a.rulePanelState.title = action["title"];
-                    a.rulePanelState.description = action["description"];
-                    a.rulePanelState.ruleTags = action["ruleTags"];
-                    a.rulePanelState.folderConstraint = action["folderConstraint"];
-                    a.rulePanelState.filesFolders = action["filesFolders"];
+                    if (a.index !== action.data["ruleIndex"]) return a;
+                    a.rulePanelState.title = action.data["title"];
+                    a.rulePanelState.description = action.data["description"];
+                    a.rulePanelState.ruleTags = action.data["ruleTags"];
+                    a.rulePanelState.folderConstraint = action.data["folderConstraint"];
+                    a.rulePanelState.filesFolders = action.data["filesFolders"];
                     return a;
                 });
                 return Object.assign({}, state, {
@@ -245,29 +245,29 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 return Object.assign({}, state, {
                     newOrEditRule: {
                         ...state.newOrEditRule,
-                        title: action["title"],
-                        description: action["description"],
-                        ruleTags: action["ruleTags"],
-                        folderConstraint: action["folderConstraint"],
-                        filesFolders: action["filesFolders"]
+                        title: action.data["title"],
+                        description: action.data["description"],
+                        ruleTags: action.data["ruleTags"],
+                        folderConstraint: action.data["folderConstraint"],
+                        filesFolders: action.data["filesFolders"]
                     },
                     message: "EDIT_RULE_FORM"
                 });
 
         case "CHANGE_EDIT_MODE":
-            if (action["ruleIndex"] !== -1) {
+            if (action.data["ruleIndex"] !== -1) {
                 let editCount = copiedState.ruleTable.reduce((count, element) => {
-                    if (element.index !== action["ruleIndex"]) return count + element.rulePanelState.editMode ? 1 : 0;
-                    return count + action["newEditMode"] ? 1 : 0;
+                    if (element.index !== action.data["ruleIndex"]) return count + element.rulePanelState.editMode ? 1 : 0;
+                    return count + action.data["newEditMode"] ? 1 : 0;
                 }, 0);
 
                 let rules = copiedState.ruleTable.map(d => {
                     let a = Object.assign({}, d);
-                    if (a.index === action["ruleIndex"]) {
-                        a.rulePanelState.editMode = action["newEditMode"];
+                    if (a.index === action.data["ruleIndex"]) {
+                        a.rulePanelState.editMode = action.data["newEditMode"];
 
                         // reset fields of the form after cancel editing
-                        if (!action["newEditMode"])
+                        if (!action.data["newEditMode"])
                             a.rulePanelState = {
                                 ...JSON.parse(JSON.stringify(default_rulePanelState)),
                                 title: d.title,
@@ -293,26 +293,26 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             }
             else
                 return Object.assign({}, state, {
-                    ignoreFile: (action["newEditMode"] || state.ruleTable.reduce((count, element) => count + element.rulePanelState.editMode ? 1 : 0, 0) > 0),
+                    ignoreFile: (action.data["newEditMode"] || state.ruleTable.reduce((count, element) => count + element.rulePanelState.editMode ? 1 : 0, 0) > 0),
                     newOrEditRule: {
                         ...state.newOrEditRule,
-                        isEditMode: action["newEditMode"]
+                        isEditMode: action.data["newEditMode"]
                     },
                     message: "CHANGE_EDIT_MODE"
                 });
 
         case "RECEIVE_GUI_TREE":
-            if (action["ruleIndex"] !== -1) {
+            if (action.data["ruleIndex"] !== -1) {
                 let rules = JSON.parse(JSON.stringify(state.ruleTable));
                 rules = rules.map(d => {
                     let a = Object.assign({}, d);
-                    if (a.index !== action["ruleIndex"]) return a;
-                    a.rulePanelState.quantifierXPath = action["quantifierXPath"];
-                    a.rulePanelState.constraintXPath = action["constraintXPath"];
-                    a.rulePanelState.autoCompleteArray = action["autoCompleteArray"];
+                    if (a.index !== action.data["ruleIndex"]) return a;
+                    a.rulePanelState.quantifierXPath = action.data["quantifierXPath"];
+                    a.rulePanelState.constraintXPath = action.data["constraintXPath"];
+                    a.rulePanelState.autoCompleteArray = action.data["autoCompleteArray"];
                     a.rulePanelState.guiState = {
                         ...a.rulePanelState.guiState,
-                        ...action["newTreeData"]
+                        ...action.data["newTreeData"]
                     };
                     return a;
                 });
@@ -326,12 +326,12 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     message: "RECEIVE_GUI_TREE",
                     newOrEditRule: {
                         ...state.newOrEditRule,
-                        quantifierXPath: action["quantifierXPath"],
-                        constraintXPath: action["constraintXPath"],
-                        autoCompleteArray: action["autoCompleteArray"],
+                        quantifierXPath: action.data["quantifierXPath"],
+                        constraintXPath: action.data["constraintXPath"],
+                        autoCompleteArray: action.data["autoCompleteArray"],
                         guiState: {
                             ...state.newOrEditRule.guiState,
-                            ...action["newTreeData"]
+                            ...action.data["newTreeData"]
                         }
                     }
                 });
@@ -340,7 +340,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             return Object.assign({}, state, {
                 newOrEditRule: {
                     ...state.newOrEditRule,
-                    sentMessages: state.newOrEditRule.sentMessages.concat([action["codeTextAndID"]])
+                    sentMessages: state.newOrEditRule.sentMessages.concat([action.data["codeTextAndID"]])
                 },
                 message: "SEND_EXPR_STMT_XML"
             });
@@ -349,19 +349,19 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             return Object.assign({}, state, {
                 newOrEditRule: {
                     ...state.newOrEditRule,
-                    receivedMessages: state.newOrEditRule.receivedMessages.concat([action["xmlData"]])
+                    receivedMessages: state.newOrEditRule.receivedMessages.concat([action.data["xmlData"]])
                 },
                 message: "RECEIVE_EXPR_STMT_XML"
             });
 
         case "MATCHED_MESSAGES":
-            if (action["ruleIndex"] !== -1) {
+            if (action.data["ruleIndex"] !== -1) {
                 let rules = JSON.parse(JSON.stringify(state.ruleTable));
                 rules = rules.map(d => {
                     let a = Object.assign({}, d);
-                    if (a.index !== action["ruleIndex"]) return a;
-                    a.rulePanelState.quantifierXPath = action["quantifierXPath"];
-                    a.rulePanelState.constraintXPath = action["constraintXPath"];
+                    if (a.index !== action.data["ruleIndex"]) return a;
+                    a.rulePanelState.quantifierXPath = action.data["quantifierXPath"];
+                    a.rulePanelState.constraintXPath = action.data["constraintXPath"];
                     return a;
                 });
                 return Object.assign({}, state, {
@@ -369,8 +369,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     ruleTable: rules,
                     newOrEditRule: {
                         ...state.newOrEditRule,
-                        sentMessages: action["sentMessages"],
-                        receivedMessages: action["receivedMessages"]
+                        sentMessages: action.data["sentMessages"],
+                        receivedMessages: action.data["receivedMessages"]
                     },
                 });
             }
@@ -378,10 +378,10 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 return Object.assign({}, state, {
                     newOrEditRule: {
                         ...state.newOrEditRule,
-                        quantifierXPath: action["quantifierXPath"],
-                        constraintXPath: action["constraintXPath"],
-                        sentMessages: action["sentMessages"],
-                        receivedMessages: action["receivedMessages"]
+                        quantifierXPath: action.data["quantifierXPath"],
+                        constraintXPath: action.data["constraintXPath"],
+                        sentMessages: action.data["sentMessages"],
+                        receivedMessages: action.data["receivedMessages"]
                     },
                     message: "MATCHED_MESSAGES"
                 });
@@ -397,7 +397,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
         case "CHANGE_GUI_ELEMENT":
             // There can be several jobs.
             // All changes are done on a copy
-            action["tasks"].forEach(job => {
+            action.data["tasks"].forEach(job => {
                 switch (job["task"]) {
                     // job = {elementId: "", task: "", value: `${childGroupName}`}
                     case "ADD_EXTRA":
@@ -448,9 +448,9 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         };
 
 
-                        if (action["ruleIndex"] !== -1)
+                        if (action.data["ruleIndex"] !== -1)
                             copiedState.ruleTable = copiedState.ruleTable.map(rule => {
-                                if (rule.index !== action["ruleIndex"]) return rule;
+                                if (rule.index !== action.data["ruleIndex"]) return rule;
                                 rule.rulePanelState.guiState = processFunc(rule.rulePanelState.guiState);
                                 return rule;
                             });
@@ -461,9 +461,9 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
                     // job = {elementId: "", task: "UPDATE_ELEMENT", value: {props: newValues}}
                     case "UPDATE_ELEMENT":
-                        if (action["ruleIndex"] !== -1) {
+                        if (action.data["ruleIndex"] !== -1) {
                             copiedState.ruleTable = copiedState.ruleTable.map(rule => {
-                                if (rule.index !== action["ruleIndex"]) return rule;
+                                if (rule.index !== action.data["ruleIndex"]) return rule;
                                 rule.rulePanelState.guiState.guiElements[job["elementId"]] = {
                                     ...rule.rulePanelState.guiState.guiElements[job["elementId"]],
                                     ...job["value"]
@@ -531,9 +531,9 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                             return array;
                         };
 
-                        if (action["ruleIndex"] !== -1)
+                        if (action.data["ruleIndex"] !== -1)
                             copiedState.ruleTable = copiedState.ruleTable.map(rule => {
-                                if (rule.index !== action["ruleIndex"]) return rule;
+                                if (rule.index !== action.data["ruleIndex"]) return rule;
                                 rule.rulePanelState.guiState = processRemoveElement(rule.rulePanelState.guiState);
                                 return rule;
                             });
@@ -561,9 +561,9 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                             return array;
                         };
 
-                        if (action["ruleIndex"] !== -1) {
+                        if (action.data["ruleIndex"] !== -1) {
                             copiedState.ruleTable = copiedState.ruleTable.map(rule => {
-                                if (rule.index !== action["ruleIndex"]) return rule;
+                                if (rule.index !== action.data["ruleIndex"]) return rule;
                                 rule.rulePanelState.guiState = processSelectElement(rule.rulePanelState.guiState);
                                 return rule;
                             });
@@ -585,14 +585,14 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             });
 
         case "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI":
-            if (action["ruleIndex"] !== -1) {
+            if (action.data["ruleIndex"] !== -1) {
                 let rules = JSON.parse(JSON.stringify(state.ruleTable));
                 rules = rules.map(d => {
-                    if (d.index !== action["ruleIndex"]) return d;
+                    if (d.index !== action.data["ruleIndex"]) return d;
                     return Object.assign({}, d, {
                         rulePanelState: {
                             ...d.rulePanelState,
-                            autoCompleteArray: action["newAutoCompleteArray"]
+                            autoCompleteArray: action.data["newAutoCompleteArray"]
                         }
                     });
                 });
@@ -605,19 +605,19 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 return Object.assign({}, state, {
                     newOrEditRule: {
                         ...state.newOrEditRule,
-                        autoCompleteArray: action["newAutoCompleteArray"]
+                        autoCompleteArray: action.data["newAutoCompleteArray"]
                     },
                     message: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI"
                 });
 
         case "UPDATE_XPATHS":
-            if (action["ruleIndex"] !== -1) {
+            if (action.data["ruleIndex"] !== -1) {
                 let rules = JSON.parse(JSON.stringify(state.ruleTable));
                 rules = rules.map(d => {
                     let a = Object.assign({}, d);
-                    if (a.index !== action["ruleIndex"]) return a;
-                    a.rulePanelState.quantifierXPath = action["quantifierXPath"];
-                    a.rulePanelState.constraintXPath = action["constraintXPath"];
+                    if (a.index !== action.data["ruleIndex"]) return a;
+                    a.rulePanelState.quantifierXPath = action.data["quantifierXPath"];
+                    a.rulePanelState.constraintXPath = action.data["constraintXPath"];
                     return a;
                 });
                 return Object.assign({}, state, {
@@ -629,17 +629,24 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 return Object.assign({}, state, {
                     newOrEditRule: {
                         ...state.newOrEditRule,
-                        quantifierXPath: action["quantifierXPath"],
-                        constraintXPath: action["constraintXPath"]
+                        quantifierXPath: action.data["quantifierXPath"],
+                        constraintXPath: action.data["constraintXPath"]
                     },
                     message: "UPDATE_XPATHS"
                 });
+
+
+
+            /*
+                Mining Rules
+             */
+
 
         case "UPDATE_META_DATA":
             return Object.assign({}, state, {
                 message: "UPDATE_META_DATA",
                 minedRulesState: {
-                    metaData: action["metaData"],
+                    metaData: action.data["metaData"],
                     minedRules: []
                 }
             });
@@ -649,7 +656,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 message: "UPDATE_MINED_RULES",
                 minedRulesState: {
                     ...JSON.parse(JSON.stringify(state.minedRulesState)),
-                    minedRules: action["minedRules"]
+                    minedRules: action.data["minedRules"]
                 }
             });
 
@@ -657,17 +664,17 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             return Object.assign({}, state, {
                 message: "UPDATE_FEATURE_SELECTION",
                 featureSelection: {
-                    filePath: action["filePath"],
-                    startOffset: action["startOffset"],
-                    endOffset: action["endOffset"],
-                    startLineOffset: action["startLineOffset"],
-                    lineNumber: action["lineNumber"],
-                    lineText: action["lineText"],
-                    selectedText: action["selectedText"],
-                    xpath: action["xpath"],
-                    modifiedSelectedText: action["modifiedSelectedText"],
-                    idMap: action["idMap"],
-                    displayTextArray: action["displayTextArray"]
+                    filePath: action.data["filePath"],
+                    startOffset: action.data["startOffset"],
+                    endOffset: action.data["endOffset"],
+                    startLineOffset: action.data["startLineOffset"],
+                    lineNumber: action.data["lineNumber"],
+                    lineText: action.data["lineText"],
+                    selectedText: action.data["selectedText"],
+                    xpath: action.data["xpath"],
+                    modifiedSelectedText: action.data["modifiedSelectedText"],
+                    idMap: action.data["idMap"],
+                    displayTextArray: action.data["displayTextArray"]
                 }
             });
 
@@ -675,8 +682,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             return Object.assign({}, state, {
                 message: "UPDATE_MINED_RULES",
                 minedRulesState: {
-                    metaData: action["metaData"],
-                    minedRules: action["minedRules"]
+                    metaData: action.data["metaData"],
+                    minedRules: action.data["minedRules"]
                 }
             });
 
@@ -695,8 +702,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     ...JSON.parse(JSON.stringify(initial_state.featureSelection))
                 },
                 customFeatures: state.customFeatures.concat([{
-                    featureDescription: action["featureDescription"],
-                    featureXpath: action["featureXpath"]
+                    featureDescription: action.data["featureDescription"],
+                    featureXpath: action.data["featureXpath"]
                 }])
             });
 

@@ -101,21 +101,21 @@ function mapStateToProps(state) {
     } catch (e) {
     }
     let props = {
-        tags: state["tagTable"],
-        hash: state["hash"],
-        ws: state["ws"],
-        ignoreFile: state["ignoreFile"],
+        tags: state.tagTable,
+        hash: state.hash,
+        ws: state.ws,
+        ignoreFile: state.ignoreFile,
         projectPath: path
     };
 
-    switch (state["hash"][0]) {
+    switch (state.hash[0]) {
         case "tag":
-            props["tag"] = state["tagTable"].filter((d) => d["tagName"] === state["hash"][1])[0]; // can throw errors
-            props["title"] = state["hash"][1];
+            props["tag"] = state.tagTable.filter((d) => d["tagName"] === state["hash"][1])[0]; // can throw errors
+            props["title"] = state.hash[1];
             props["content"] = props["tag"]["detail"];
             break;
         case "rule":
-            props["title"] = state["hash"][1];
+            props["title"] = state.hash[1];
             props["content"] = "";
             break;
         case "rules":
@@ -148,11 +148,11 @@ function mapStateToProps(state) {
             break;
         case "rulesForFile":
             props["title"] = "";
-            props["content"] = state["filePath"];
+            props["content"] = state.filePath;
             break;
         case "codeChanged":
             props["title"] = "Code changed in";
-            props["content"] = state["filePath"];
+            props["content"] = state.filePath;
             break;
         case "minedRules":
             props["title"] = "Mining Rules";
@@ -164,7 +164,7 @@ function mapStateToProps(state) {
             break;
         default:
             props["title"] = "";
-            props["content"] = "Error no page is found for: " + state["hash"][0];
+            props["content"] = "Error no page is found for: " + state.hash[0];
             break;
     }
 

@@ -56,10 +56,10 @@ export class NavBar extends Component {
 // map state to props
 function mapStateToProps(state) {
     return {
-        history: state["hashManager"]["history"],
-        activeHash: state["hashManager"]["activeHash"],
-        forwardDisable: state["hashManager"]["forwardDisable"],
-        backDisable: state["hashManager"]["backDisable"]
+        history: state.hashManager.history,
+        activeHash: state.hashManager.activeHash,
+        forwardDisable: state.hashManager.forwardDisable,
+        backDisable: state.hashManager.backDisable
     };
 }
 
