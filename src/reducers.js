@@ -78,28 +78,28 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
     switch (action.type) {
         case "HASH":
-            if (!state.hashManager.clicked) {
+            if (!state.hashManager.clickedOnButtons) {
                 return Object.assign({}, state, {
-                    hash: action.data["hash"],
+                    currentHash: action.data["currentHash"],
                     message: "HASH",
                     hashManager: {
-                        history: [...state.hashManager.history, "#/" + action.data["hash"].join("/")],
-                        clicked: false,
-                        activeHash: state.hashManager.activeHash + 1,
+                        history: [...state.hashManager.history, "#/" + action.data["currentHash"].join("/")],
+                        activeHashIndex: state.hashManager.activeHashIndex + 1,
                         forwardDisable: "disabled",
-                        backDisable: state.hashManager.activeHash === 0 ? "disabled" : ""
+                        backDisable: state.hashManager.activeHashIndex === 0 ? "disabled" : "",
+                        clickedOnButtons: false
                     }
                 });
             }
             return Object.assign({}, state, {
-                hash: action.data["hash"],
+                currentHash: action.data["currentHash"],
                 message: "HASH",
                 hashManager: {
                     history: state.hashManager.history,
-                    clicked: false,
-                    activeHash: state.hashManager.activeHash,
+                    activeHashIndex: state.hashManager.activeHashIndex,
                     forwardDisable: state.hashManager.forwardDisable,
-                    backDisable: state.hashManager.backDisable
+                    backDisable: state.hashManager.backDisable,
+                    clickedOnButtons: false
                 }
             });
 
@@ -124,8 +124,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         ruleTags: rule.tags,
                         folderConstraint: rule.ruleType.constraint,
                         filesFolders: rule.ruleType.checkFor,
-                        quantifierXPath: rule.quantifier.command,
-                        constraintXPath: rule.constraint.command,
+                        quantifierXPath: rule.quantifier.xpathQuery[0],
+                        constraintXPath: rule.constraint.xpathQuery[0],
                         // autoCompleteText: rule.grammar,
                         autoCompleteArray: rule.grammar && rule.grammar !== "" ? rule.grammar.split(" ").map(word => {
                             return {id: "", text: word}
@@ -145,8 +145,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
         case "SUBMIT_NEW_RULE":
             return Object.assign({}, state, {
-                newOrEditRule: {
-                    ...JSON.parse(JSON.stringify(initial_state.newOrEditRule)),
+                rulePadState: {
+                    ...JSON.parse(JSON.stringify(initial_state.rulePadState)),
                     isEditMode: false
                 },
                 message: "NEW_RULE"
@@ -169,8 +169,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
         case "IGNORE_FILE":
             let editCount = state.ruleTable.reduce((count, element) => count + element.rulePanelState.editMode ? 1 : 0, 0);
-            if (state.newOrEditRule.isEditMode || editCount > 0) return Object.assign({}, state);
-            return Object.assign({}, state, {ignoreFile: action.data["shouldIgnore"], message: "IGNORE_FILE"});
+            if (state.rulePadState.isEditMode || editCount > 0) return Object.assign({}, state);
+            return Object.assign({}, state, {ignoreFileChange: action.data["shouldIgnore"], message: "IGNORE_FILE"});
 
         case "UPDATE_DISPLAY_EDIT_TUTORIAL":
             return Object.assign({}, state, {
@@ -179,8 +179,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             });
 
         case "FILE_PATH":
-            if (state.ignoreFile) return Object.assign({}, state, {message: "FILE_PATH_UPDATED"});
-            return Object.assign({}, state, {filePath: action.data["filePath"], message: "FILE_PATH_UPDATED"});
+            if (state.ignoreFileChange) return Object.assign({}, state, {message: "FILE_PATH_UPDATED"});
+            return Object.assign({}, state, {openFilePath: action.data["openFilePath"], message: "FILE_PATH_UPDATED"});
 
         /*
          nav-bar navigation
@@ -190,10 +190,10 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             return Object.assign({}, state, {
                 hashManager: {
                     history: state.hashManager.history,
-                    clicked: true,
-                    activeHash: state.hashManager.activeHash + 1,
-                    forwardDisable: state.hashManager.activeHash === state.hashManager.history.length - 2 ? "disabled" : "",
-                    backDisable: ""
+                    activeHashIndex: state.hashManager.activeHashIndex + 1,
+                    forwardDisable: state.hashManager.activeHashIndex === state.hashManager.history.length - 2 ? "disabled" : "",
+                    backDisable: "",
+                    clickedOnButtons: true
                 },
                 message: "CLICKED_ON_FORWARD"
             });
@@ -202,10 +202,10 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             return Object.assign({}, state, {
                 hashManager: {
                     history: state.hashManager.history,
-                    clicked: true,
-                    activeHash: state.hashManager.activeHash - 1,
+                    activeHashIndex: state.hashManager.activeHashIndex - 1,
                     forwardDisable: "",
-                    backDisable: state.hashManager.activeHash === 1 ? "disabled" : ""
+                    backDisable: state.hashManager.activeHashIndex === 1 ? "disabled" : "",
+                    clickedOnButtons: true
                 },
                 message: "CLICKED_ON_BACK"
             });
@@ -216,8 +216,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
         case "CLEAR_NEW_RULE_FORM":
             return Object.assign({}, state, {
-                newOrEditRule: {
-                    ...JSON.parse(JSON.stringify(initial_state.newOrEditRule)),
+                rulePadState: {
+                    ...JSON.parse(JSON.stringify(initial_state.rulePadState)),
                     isEditMode: true
                 },
                 message: "CLEAR_NEW_RULE_FORM"
@@ -243,8 +243,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             }
             else
                 return Object.assign({}, state, {
-                    newOrEditRule: {
-                        ...state.newOrEditRule,
+                    rulePadState: {
+                        ...state.rulePadState,
                         title: action.data["title"],
                         description: action.data["description"],
                         ruleTags: action.data["ruleTags"],
@@ -275,8 +275,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                                 ruleTags: d.tags,
                                 folderConstraint: d.ruleType.constraint,
                                 filesFolders: d.ruleType.checkFor,
-                                quantifierXPath: d.quantifier.command,
-                                constraintXPath: d.constraint.command,
+                                quantifierXPath: d.quantifier.xpathQuery[0],
+                                constraintXPath: d.constraint.xpathQuery[0],
                                 // autoCompleteText: d.grammar,
                                 autoCompleteArray: d.grammar && d.grammar !== "" ? d.grammar.split(" ").map(word => {
                                     return {id: "", text: word}
@@ -286,16 +286,16 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     return a;
                 });
                 return Object.assign({}, state, {
-                    ignoreFile: (state.newOrEditRule.isEditMode || editCount > 0),
+                    ignoreFileChange: (state.rulePadState.isEditMode || editCount > 0),
                     ruleTable: rules,
                     message: "CHANGE_EDIT_MODE"
                 });
             }
             else
                 return Object.assign({}, state, {
-                    ignoreFile: (action.data["newEditMode"] || state.ruleTable.reduce((count, element) => count + element.rulePanelState.editMode ? 1 : 0, 0) > 0),
-                    newOrEditRule: {
-                        ...state.newOrEditRule,
+                    ignoreFileChange: (action.data["newEditMode"] || state.ruleTable.reduce((count, element) => count + element.rulePanelState.editMode ? 1 : 0, 0) > 0),
+                    rulePadState: {
+                        ...state.rulePadState,
                         isEditMode: action.data["newEditMode"]
                     },
                     message: "CHANGE_EDIT_MODE"
@@ -310,8 +310,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     a.rulePanelState.quantifierXPath = action.data["quantifierXPath"];
                     a.rulePanelState.constraintXPath = action.data["constraintXPath"];
                     a.rulePanelState.autoCompleteArray = action.data["autoCompleteArray"];
-                    a.rulePanelState.guiState = {
-                        ...a.rulePanelState.guiState,
+                    a.rulePanelState.graphicalEditorState = {
+                        ...a.rulePanelState.graphicalEditorState,
                         ...action.data["newTreeData"]
                     };
                     return a;
@@ -324,13 +324,13 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             else
                 return Object.assign({}, state, {
                     message: "RECEIVE_GUI_TREE",
-                    newOrEditRule: {
-                        ...state.newOrEditRule,
+                    rulePadState: {
+                        ...state.rulePadState,
                         quantifierXPath: action.data["quantifierXPath"],
                         constraintXPath: action.data["constraintXPath"],
                         autoCompleteArray: action.data["autoCompleteArray"],
-                        guiState: {
-                            ...state.newOrEditRule.guiState,
+                        graphicalEditorState: {
+                            ...state.rulePadState.graphicalEditorState,
                             ...action.data["newTreeData"]
                         }
                     }
@@ -338,18 +338,18 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
         case "SEND_EXPR_STMT_XML":
             return Object.assign({}, state, {
-                newOrEditRule: {
-                    ...state.newOrEditRule,
-                    sentMessages: state.newOrEditRule.sentMessages.concat([action.data["codeTextAndID"]])
+                rulePadState: {
+                    ...state.rulePadState,
+                    sentMessages: state.rulePadState.sentMessages.concat([action.data["codeTextAndID"]])
                 },
                 message: "SEND_EXPR_STMT_XML"
             });
 
         case "RECEIVE_EXPR_STMT_XML":
             return Object.assign({}, state, {
-                newOrEditRule: {
-                    ...state.newOrEditRule,
-                    receivedMessages: state.newOrEditRule.receivedMessages.concat([action.data["xmlData"]])
+                rulePadState: {
+                    ...state.rulePadState,
+                    receivedMessages: state.rulePadState.receivedMessages.concat([action.data["xmlData"]])
                 },
                 message: "RECEIVE_EXPR_STMT_XML"
             });
@@ -367,8 +367,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 return Object.assign({}, state, {
                     message: "MATCHED_MESSAGES",
                     ruleTable: rules,
-                    newOrEditRule: {
-                        ...state.newOrEditRule,
+                    rulePadState: {
+                        ...state.rulePadState,
                         sentMessages: action.data["sentMessages"],
                         receivedMessages: action.data["receivedMessages"]
                     },
@@ -376,8 +376,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             }
             else
                 return Object.assign({}, state, {
-                    newOrEditRule: {
-                        ...state.newOrEditRule,
+                    rulePadState: {
+                        ...state.rulePadState,
                         quantifierXPath: action.data["quantifierXPath"],
                         constraintXPath: action.data["constraintXPath"],
                         sentMessages: action.data["sentMessages"],
@@ -451,11 +451,11 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         if (action.data["ruleIndex"] !== -1)
                             copiedState.ruleTable = copiedState.ruleTable.map(rule => {
                                 if (rule.index !== action.data["ruleIndex"]) return rule;
-                                rule.rulePanelState.guiState = processFunc(rule.rulePanelState.guiState);
+                                rule.rulePanelState.graphicalEditorState = processFunc(rule.rulePanelState.graphicalEditorState);
                                 return rule;
                             });
                         else
-                            copiedState.newOrEditRule.guiState = processFunc(copiedState.newOrEditRule.guiState);
+                            copiedState.rulePadState.graphicalEditorState = processFunc(copiedState.rulePadState.graphicalEditorState);
 
                         break;
 
@@ -464,8 +464,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         if (action.data["ruleIndex"] !== -1) {
                             copiedState.ruleTable = copiedState.ruleTable.map(rule => {
                                 if (rule.index !== action.data["ruleIndex"]) return rule;
-                                rule.rulePanelState.guiState.guiElements[job["elementId"]] = {
-                                    ...rule.rulePanelState.guiState.guiElements[job["elementId"]],
+                                rule.rulePanelState.graphicalEditorState.guiElements[job["elementId"]] = {
+                                    ...rule.rulePanelState.graphicalEditorState.guiElements[job["elementId"]],
                                     ...job["value"]
                                 };
 
@@ -473,8 +473,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                             });
                         }
                         else {
-                            copiedState.newOrEditRule.guiState.guiElements[job["elementId"]] = {
-                                ...copiedState.newOrEditRule.guiState.guiElements[job["elementId"]],
+                            copiedState.rulePadState.graphicalEditorState.guiElements[job["elementId"]] = {
+                                ...copiedState.rulePadState.graphicalEditorState.guiElements[job["elementId"]],
                                 ...job["value"]
                             };
                         }
@@ -484,12 +484,12 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     case "REMOVE_ELEMENT":
 
                         // search in parent children and remove elementId
-                        // toBeDeletedIDs=[] to be removed from ...guiState.${group}.guiElements and ....guiState["quantifier/constraint"]
+                        // toBeDeletedIDs=[] to be removed from ...graphicalEditorState.${group}.guiElements and ....graphicalEditorState["quantifier/constraint"]
                         // build a stack=[elementId] for going through tree of elementId
                         // while stack.size()>0
                         //  pop one newId, add it to storeIDs
                         //  add ids of children of the popped id tree to the stack
-                        // delete toBeDeletedIDs from ...guiState.${group}.guiElements and ....guiState["quantifier/constraint"]
+                        // delete toBeDeletedIDs from ...graphicalEditorState.${group}.guiElements and ....graphicalEditorState["quantifier/constraint"]
                         let processRemoveElement = (array) => {
                             let parentTree = array.guiTree[job["value"]["parentId"]];
                             Object.keys(parentTree.children).forEach(childGroup => {
@@ -534,11 +534,11 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         if (action.data["ruleIndex"] !== -1)
                             copiedState.ruleTable = copiedState.ruleTable.map(rule => {
                                 if (rule.index !== action.data["ruleIndex"]) return rule;
-                                rule.rulePanelState.guiState = processRemoveElement(rule.rulePanelState.guiState);
+                                rule.rulePanelState.graphicalEditorState = processRemoveElement(rule.rulePanelState.graphicalEditorState);
                                 return rule;
                             });
                         else
-                            copiedState.newOrEditRule.guiState = processRemoveElement(copiedState.newOrEditRule.guiState);
+                            copiedState.rulePadState.graphicalEditorState = processRemoveElement(copiedState.rulePadState.graphicalEditorState);
 
                         break;
 
@@ -564,12 +564,12 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         if (action.data["ruleIndex"] !== -1) {
                             copiedState.ruleTable = copiedState.ruleTable.map(rule => {
                                 if (rule.index !== action.data["ruleIndex"]) return rule;
-                                rule.rulePanelState.guiState = processSelectElement(rule.rulePanelState.guiState);
+                                rule.rulePanelState.graphicalEditorState = processSelectElement(rule.rulePanelState.graphicalEditorState);
                                 return rule;
                             });
                         }
                         else
-                            copiedState.newOrEditRule.guiState = processSelectElement(copiedState.newOrEditRule.guiState);
+                            copiedState.rulePadState.graphicalEditorState = processSelectElement(copiedState.rulePadState.graphicalEditorState);
 
                         break;
 
@@ -580,7 +580,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
             return Object.assign({}, state, {
                 ruleTable: copiedState.ruleTable,
-                newOrEditRule: copiedState.newOrEditRule,
+                rulePadState: copiedState.rulePadState,
                 message: "CHANGE_GUI_ELEMENT"
             });
 
@@ -603,8 +603,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             }
             else
                 return Object.assign({}, state, {
-                    newOrEditRule: {
-                        ...state.newOrEditRule,
+                    rulePadState: {
+                        ...state.rulePadState,
                         autoCompleteArray: action.data["newAutoCompleteArray"]
                     },
                     message: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI"
@@ -627,8 +627,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             }
             else
                 return Object.assign({}, state, {
-                    newOrEditRule: {
-                        ...state.newOrEditRule,
+                    rulePadState: {
+                        ...state.rulePadState,
                         quantifierXPath: action.data["quantifierXPath"],
                         constraintXPath: action.data["constraintXPath"]
                     },

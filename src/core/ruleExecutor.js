@@ -187,8 +187,8 @@ export const runRulesByTypes = (xmlFiles, ruleI) => {
  */
 const runXPathQueryWithin = (xmlFile, ruleI) => {
 
-    let quantifierResult = runXPathQuery(xmlFile, ruleI, "quantifier");
-    let satisfiedResult = runXPathQuery(xmlFile, ruleI, "constraint");
+    let quantifierResult = runXPathQuery(xmlFile, ruleI["quantifier"]["xpathQuery"][0]);
+    let satisfiedResult = runXPathQuery(xmlFile, ruleI["constraint"]["xpathQuery"][0]);
 
     // compare results
     let violatedResult = violatedResults(quantifierResult, satisfiedResult);
@@ -236,8 +236,8 @@ const runXpathQueryBetween = (xmlFiles, ruleI) => {
     let quantifierResult = [];
     let constraintResult = [];
     for (let j = 0; j < xmlFiles.length; j++) {
-        quantifierResult = quantifierResult.concat(runXPathQuery(xmlFiles[j], ruleI, "quantifier"));
-        constraintResult = constraintResult.concat(runXPathQuery(xmlFiles[j], ruleI, "constraint"));
+        quantifierResult = quantifierResult.concat(runXPathQuery(xmlFiles[j], ruleI["quantifier"]["xpathQuery"][0]));
+        constraintResult = constraintResult.concat(runXPathQuery(xmlFiles[j], ruleI["constraint"]["xpathQuery"][0]));
     }
     // compare results
     let violatedResult = violatedResults(quantifierResult, constraintResult);
@@ -261,7 +261,7 @@ const runXpathQueryBetween = (xmlFiles, ruleI) => {
 
 
 /**
- * run Xpath query when a group has multiple commands
+ * run Xpath query when a group has multiple XPath queries
  * @param xmlFiles
  * @param ruleI
  * @returns {*}
@@ -272,25 +272,21 @@ const runXpathQueryMixed = (xmlFiles, ruleI) => {
     let constraintResult = [];
 
     if (ruleI["quantifier"].hasOwnProperty("type") && ruleI["quantifier"]["type"] === "FIND_FROM_TEXT")
-        quantifierResult = findFromText(xmlFiles, ruleI, "quantifier");
+        quantifierResult = findFromText(xmlFiles, ruleI["quantifier"]["xpathQuery"]);
     else if (ruleI["quantifier"].hasOwnProperty("type") && ruleI["quantifier"]["type"] === "RETURN_TO_BASE")
-        quantifierResult = findAndReturnToBase(xmlFiles, ruleI, "quantifier");
+        quantifierResult = findAndReturnToBase(xmlFiles, ruleI["quantifier"]["xpathQuery"]);
     else
         for (let j = 0; j < xmlFiles.length; j++)
-            quantifierResult = quantifierResult.concat(runXPathQuery(xmlFiles[j], ruleI, "quantifier"));
+            quantifierResult = quantifierResult.concat(runXPathQuery(xmlFiles[j], ruleI["quantifier"]["xpathQuery"][0]));
 
 
     if (ruleI["constraint"].hasOwnProperty("type") && ruleI["constraint"]["type"] === "FIND_FROM_TEXT")
-        constraintResult = findFromText(xmlFiles, ruleI, "constraint");
+        constraintResult = findFromText(xmlFiles, ruleI["constraint"]["xpathQuery"]);
     else if (ruleI["constraint"].hasOwnProperty("type") && ruleI["constraint"]["type"] === "RETURN_TO_BASE")
-        constraintResult = findAndReturnToBase(xmlFiles, ruleI, "constraint");
+        constraintResult = findAndReturnToBase(xmlFiles, ruleI["constraint"]["xpathQuery"]);
     else
         for (let j = 0; j < xmlFiles.length; j++)
-            constraintResult = constraintResult.concat(runXPathQuery(xmlFiles[j], ruleI, "constraint"));
-
-
-    // console.log(ruleI["quantifier"], quantifierResult);
-    // console.log(ruleI["constraint"], constraintResult);
+            constraintResult = constraintResult.concat(runXPathQuery(xmlFiles[j], ruleI["constraint"]["xpathQuery"][0]));
 
 
     // compare results
@@ -315,54 +311,51 @@ const runXpathQueryMixed = (xmlFiles, ruleI) => {
 
 
 /**
- * When a group consists of two commands, the first command
+ * When a group consists of two XPath queries, the first query
  * @param xmlFiles
- * @param ruleIOrg
- * @param group
+ * @param xpathQueries
  * @returns {Array}
  */
-const findFromText = (xmlFiles, ruleIOrg, group) => {
+const findFromText = (xmlFiles, xpathQueries) => {
     let result1 = [], result2 = [];
-    let ruleI = Utilities.cloneJSON(ruleIOrg);
 
-    ruleI[group]["command"] = ruleI[group]["command1"];
+    let xpathQuery = xpathQueries[0];
     for (let j = 0; j < xmlFiles.length; j++) {
-        result1 = result1.concat(runXPathQuery(xmlFiles[j], ruleI, group));
+        result1 = result1.concat(runXPathQuery(xmlFiles[j], xpathQuery));
     }
 
     for (let i = 0; i < result1.length; i++) {
-        ruleI[group]["command"] = ruleI[group]["command2"].replace("<TEMP>", result1[i].snippet);
+        xpathQuery = xpathQueries[1].replace("<TEMP>", result1[i].snippet);
         for (let j = 0; j < xmlFiles.length; j++) {
-            result2 = result2.concat(runXPathQuery(xmlFiles[j], ruleI, group));
+            result2 = result2.concat(runXPathQuery(xmlFiles[j], xpathQuery));
         }
     }
     return result2;
 };
 
 
+
 /**
- * When a group consists of tree commands, the first and last command is on the same file
+ * When a group consists of 3 queries, the first and last queries are executed on the same file
  * @param xmlFiles
- * @param ruleIOrg
- * @param group
+ * @param xpathQueries
  * @returns {Array}
  */
-const findAndReturnToBase = (xmlFiles, ruleIOrg, group) => {
+const findAndReturnToBase = (xmlFiles, xpathQueries) => {
     let result1, result2, result3 = [];
-    let ruleI = Utilities.cloneJSON(ruleIOrg);
 
     for (let base = 0; base < xmlFiles.length; base++) {
-        ruleI[group]["command"] = ruleI[group]["command1"];
-        result1 = runXPathQuery(xmlFiles[base], ruleI, group);
+        let xpathQuery = xpathQueries[0];
+        result1 = runXPathQuery(xmlFiles[base], xpathQuery);
 
         for (let i = 0; i < result1.length; i++) {
             for (let j = 0; j < xmlFiles.length; j++) {
-                ruleI[group]["command"] = ruleI[group]["command2"].replace(new RegExp("<TEMP>", "g"), result1[i].snippet);
-                result2 = runXPathQuery(xmlFiles[j], ruleI, group);
+                xpathQuery = xpathQueries[1].replace(new RegExp("<TEMP>", "g"), result1[i].snippet);
+                result2 = runXPathQuery(xmlFiles[j], xpathQuery);
 
                 for (let k = 0; k < result2.length; k++) {
-                    ruleI[group]["command"] = ruleI[group]["command3"].replace("<TEMP>", result2[k].snippet);
-                    result3 = result3.concat(runXPathQuery(xmlFiles[base], ruleI, group));
+                    xpathQuery = xpathQueries[2].replace("<TEMP>", result2[k].snippet);
+                    result3 = result3.concat(runXPathQuery(xmlFiles[base], xpathQuery));
                 }
 
             }
@@ -375,10 +368,9 @@ const findAndReturnToBase = (xmlFiles, ruleIOrg, group) => {
 /**
  * runs the XPath query and compare results
  * @param xmlFile
- * @param ruleI
- * @param group either "quantifier" or "constraint"
+ * @param xpathQuery
  */
-const runXPathQuery = (xmlFile, ruleI, group) => {
+const runXPathQuery = (xmlFile, xpathQuery) => {
     let parser = new DOMParser();
     let result = [];
 
@@ -395,23 +387,17 @@ const runXPathQuery = (xmlFile, ruleI, group) => {
     }
 
     // run xpath queries
-    let quantifierNodes = xml.evaluate(ruleI[group]["command"], xml, nsResolver, XPathResult.ANY_TYPE, null);
-    // let quantifierNameNodes = xml.evaluate(ruleI[group]["command"], xml, nsResolver, XPathResult.ANY_TYPE, null);
-    let resultQNode = quantifierNodes.iterateNext();
-    // let resultQNameNode = quantifierNameNodes.iterateNext();
+    let foundNodes = xml.evaluate(xpathQuery, xml, nsResolver, XPathResult.ANY_TYPE, null);
+    let node = foundNodes.iterateNext();
     let index = 0;
-    while (resultQNode) {
-        let xmlAndText = getXmlData(xml, ruleI[group]["command"], index);
+    while (node) {
+        let xmlAndText = getXmlData(xml, xpathQuery, index);
         result.push({
             "filePath": xmlFile["filePath"],
-            // "result": new XMLSerializer().serializeToString(resultQNode),
             "xml": xmlAndText.xmlJson,
-            // "xmlText": xmlAndText.xmlText,
-            // "name": resultQNameNode ? new XMLSerializer().serializeToString(resultQNameNode) : "error in xpath",
             "snippet": xmlAndText.snippet
         });
-        resultQNode = quantifierNodes.iterateNext();
-        // resultQNameNode = quantifierNameNodes.iterateNext();
+        node = foundNodes.iterateNext();
         index += 1;
     }
 
@@ -578,13 +564,11 @@ const isValidXPathQueries = (ruleI) => {
         return ns[prefix] || null;
     }
     try {
-        let listOfCommandsQ = Object.keys(ruleI["quantifier"]).filter(d => d.startsWith("command"));
-        for (let li of listOfCommandsQ)
-            xml.evaluate(ruleI["quantifier"][li], xml, nsResolver, XPathResult.ANY_TYPE, null);
+        for (let i=0; i< ruleI["quantifier"]["xpathQuery"].length; i++)
+            xml.evaluate(ruleI["quantifier"]["xpathQuery"][i], xml, nsResolver, XPathResult.ANY_TYPE, null);
 
-        let listOfCommandsC = Object.keys(ruleI["quantifier"]).filter(d => d.startsWith("command"));
-        for (let li of listOfCommandsC)
-            xml.evaluate(ruleI["constraint"][li], xml, nsResolver, XPathResult.ANY_TYPE, null);
+        for (let i=0; i< ruleI["constraint"]["xpathQuery"].length; i++)
+            xml.evaluate(ruleI["constraint"]["xpathQuery"][i], xml, nsResolver, XPathResult.ANY_TYPE, null);
 
     } catch (XPathException) {
         return false;

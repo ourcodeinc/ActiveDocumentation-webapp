@@ -9,7 +9,7 @@ export const hashChange = (hash) => {
     return {
         type: "HASH",
         data:
-            {hash: hash}
+            {currentHash: hash}
     };
 };
 
@@ -115,12 +115,12 @@ export const updateDisplayEditTutorial = (shouldDisplay) => {
 
 /**
  * @param filePath
- * @return {{data: {filePath: string}, type: string}}
+ * @return {{data: {openFilePath: string}, type: string}}
  */
 export const updateFilePath = (filePath) => {
     return {
         type: "FILE_PATH",
-        data: {filePath: filePath}
+        data: {openFilePath: filePath}
     };
 };
 

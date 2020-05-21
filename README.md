@@ -32,11 +32,11 @@ It is mandatory but is generated for newly added rules. Here is an example for t
         },
         "quantifier": {
             "detail": "JButtons",
-            "command": "src:unit/src:class/src:block//src:decl_stmt/src:decl[src:type/src:name/text()=\"JButton\"]"
+            "xpathQuery": ["src:unit/src:class/src:block//src:decl_stmt/src:decl[src:type/src:name/text()=\"JButton\"]"]
         },
         "constraint": {
             "detail": "JButtons with labels in constructor",
-            "command": "src:unit/src:class/src:block//src:decl_stmt/src:decl[src:type/src:name/text()=\"JButton\" and count(src:init/src:expr/src:call/src:argument_list/src:argument)>0]"
+            "xpathQuery": ["src:unit/src:class/src:block//src:decl_stmt/src:decl[src:type/src:name/text()=\"JButton\" and count(src:init/src:expr/src:call/src:argument_list/src:argument)>0]"]
         }
     },
     {
@@ -59,15 +59,15 @@ It is mandatory but is generated for newly added rules. Here is an example for t
        "quantifier": {
             "type": "FIND_FROM_TEXT",
             "detail": "Calling constructors of all entity objects",
-            "command1": "//src:unit/src:class[(src:annotation/src:name[text()=\"Entity\"] or src:annotation/src:name[text()=\"Subclass\"])]/src:name/text()",
-            "command2": "//src:unit/src:class[src:super/src:extends/src:name/text()=\"Command\"]/src:block/src:class/src:block/descendant-or-self::src:decl_stmt/src:decl[src:init/src:expr/src:call/src:name/text()=\"<TEMP>\"]"
+            "xpathQuery": ["//src:unit/src:class[(src:annotation/src:name[text()=\"Entity\"] or src:annotation/src:name[text()=\"Subclass\"])]/src:name/text()",
+                "//src:unit/src:class[src:super/src:extends/src:name/text()=\"Command\"]/src:block/src:class/src:block/descendant-or-self::src:decl_stmt/src:decl[src:init/src:expr/src:call/src:name/text()=\"<TEMP>\"]"]
        },
        "constraint": {
             "type": "RETURN_TO_BASE",
             "detail": "Calling constructors of allowed entity objects",
-            "command1": "//src:unit/src:class/src:block/src:function_decl[src:name/text()=\"execute\"]/src:parameter_list/src:parameter/src:decl/src:type/src:name[not(text()=\"String\")]/text()",
-            "command2": "//src:unit/src:class[src:name/text()=\"<TEMP>\" or (src:super/src:extends/src:name/text()=\"<TEMP>\")]/src:name/text()",
-            "command3": "//src:unit/src:class[src:super/src:extends/src:name/text()=\"Command\"]/src:block/src:class/src:block/descendant-or-self::src:decl_stmt/src:decl[src:init/src:expr/src:call/src:name/text()=\"<TEMP>\"]"
+            "xpathQuery": ["//src:unit/src:class/src:block/src:function_decl[src:name/text()=\"execute\"]/src:parameter_list/src:parameter/src:decl/src:type/src:name[not(text()=\"String\")]/text()",
+                "//src:unit/src:class[src:name/text()=\"<TEMP>\" or (src:super/src:extends/src:name/text()=\"<TEMP>\")]/src:name/text()",
+                "//src:unit/src:class[src:super/src:extends/src:name/text()=\"Command\"]/src:block/src:class/src:block/descendant-or-self::src:decl_stmt/src:decl[src:init/src:expr/src:call/src:name/text()=\"<TEMP>\"]"]
        }
     },
     {
@@ -87,13 +87,13 @@ It is mandatory but is generated for newly added rules. Here is an example for t
         },
         "quantifier": {
             "detail": "Entity classes",
-            "command": "//src:unit/src:class[(src:annotation/src:name[text()=\"Entity\"] or src:annotation/src:name[text()=\"Subclass\"])]"
+            "xpathQuery": ["//src:unit/src:class[(src:annotation/src:name[text()=\"Entity\"] or src:annotation/src:name[text()=\"Subclass\"])]"]
         },
         "constraint": {
             "type": "FIND_FROM_TEXT",
             "detail": "Registered classes",
-            "command1": "//src:unit/src:class[src:name/text()=\"CrowdServlet\"]//src:expr_stmt/src:expr/src:call[src:name/src:name/text()=\"ObjectifyService\" and src:name/src:name/text()=\"register\"]/src:argument_list/src:argument/src:expr/src:name/src:name[1]/text()",
-            "command2": "//src:unit/src:class[src:name/text()=\"<TEMP>\"]"
+            "xpathQuery": ["//src:unit/src:class[src:name/text()=\"CrowdServlet\"]//src:expr_stmt/src:expr/src:call[src:name/src:name/text()=\"ObjectifyService\" and src:name/src:name/text()=\"register\"]/src:argument_list/src:argument/src:expr/src:name/src:name[1]/text()",
+                "//src:unit/src:class[src:name/text()=\"<TEMP>\"]"]
         }
     }
 ]

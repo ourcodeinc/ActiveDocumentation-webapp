@@ -42,8 +42,8 @@ class GraphicalEditor extends Component {
             else {
                 this.ruleI = props.rules[arrayIndex];
                 // updating the rule
-                this.state.guiTree = this.ruleI.rulePanelState.guiState.guiTree;
-                this.state.guiElements = this.ruleI.rulePanelState.guiState.guiElements;
+                this.state.guiTree = this.ruleI.rulePanelState.graphicalEditorState.guiTree;
+                this.state.guiElements = this.ruleI.rulePanelState.graphicalEditorState.guiElements;
                 this.state.autoCompleteArray = this.ruleI.rulePanelState.autoCompleteArray;
             }
         }
@@ -77,8 +77,8 @@ class GraphicalEditor extends Component {
                 this.setState(
                     {
                         ws: nextProps.ws,
-                        guiTree: this.ruleI.rulePanelState.guiState.guiTree,
-                        guiElements: this.ruleI.rulePanelState.guiState.guiElements,
+                        guiTree: this.ruleI.rulePanelState.graphicalEditorState.guiTree,
+                        guiElements: this.ruleI.rulePanelState.graphicalEditorState.guiElements,
                         autoCompleteArray: this.ruleI.rulePanelState.autoCompleteArray
                     }, this.receiveStateData);
             }
@@ -731,12 +731,12 @@ class GraphicalEditor extends Component {
                     case "REMOVE_ELEMENT":
 
                         // search in parent children and remove elementId
-                        // toBeDeletedIDs=[] to be removed from ...guiState.${group}.guiElements and ....guiState["quantifier/constraint"]
+                        // toBeDeletedIDs=[] to be removed from ...graphicalEditorState.${group}.guiElements and ....graphicalEditorState["quantifier/constraint"]
                         // build a stack=[elementId] for going through tree of elementId
                         // while stack.size()>0
                         //  pop one newId, add it to storeIDs
                         //  add ids of children of the popped id tree to the stack
-                        // delete toBeDeletedIDs from ...guiState.${group}.guiElements and ....guiState["quantifier/constraint"]
+                        // delete toBeDeletedIDs from ...graphicalEditorState.${group}.guiElements and ....graphicalEditorState["quantifier/constraint"]
 
                         let parentTree = guiTree[job["value"]["parentId"]];
                         Object.keys(parentTree.children).forEach(childGroup => {
@@ -825,9 +825,9 @@ function mapStateToProps(state) {
         rules: state.ruleTable,
         ws: state.ws,
 
-        guiTree: state.newOrEditRule.guiState.guiTree,
-        guiElements: state.newOrEditRule.guiState.guiElements,
-        autoCompleteArray: state.newOrEditRule.autoCompleteArray,
+        guiTree: state.rulePadState.graphicalEditorState.guiTree,
+        guiElements: state.rulePadState.graphicalEditorState.guiElements,
+        autoCompleteArray: state.rulePadState.autoCompleteArray,
     };
 }
 

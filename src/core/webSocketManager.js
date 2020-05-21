@@ -158,7 +158,7 @@ class WebSocketManager extends Component {
                 // after sending a piece of code DECL_STMT
                 case "SHOW_RULES_FOR_FILE":
                     let focusedFilePath = message.data.replace(projectPath, "");
-                    if (!this.props.ignoreFile) {
+                    if (!this.props.ignoreFileChange) {
                         this.props.onFilePathChange(focusedFilePath);
                         window.location.hash = "#/rulesForFile/" + focusedFilePath.replace(/\//g, "%2F");
                     } else
@@ -228,7 +228,7 @@ class WebSocketManager extends Component {
 // map state to props
 function mapStateToProps(state) {
     return {
-        ignoreFile: state.ignoreFile,
+        ignoreFileChange: state.ignoreFileChange,
         message: state.message,
         minedRuleMetaData: state.minedRulesState.metaData
     };

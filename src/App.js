@@ -64,25 +64,25 @@ class App extends Component {
                     </div>
                     <div id={"tableOfContent"}
                          className={
-                             (["index", "tagJsonChanged", "ruleJsonChanged"].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
+                             (["index", "tagJsonChanged", "ruleJsonChanged"].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
                          }>
                         <TableOfContents/>
                     </div>
                     <div id={"ruleResults"}
                          className={
-                             (["rules", "tag", "codeChanged", "rulesForFile", "violatedRules"].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
+                             (["rules", "tag", "codeChanged", "rulesForFile", "violatedRules"].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
                          }>
                         <RuleTable/>
                     </div>
                     <div id={"minedRules"}
                          className={
-                             (["minedRules"].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
+                             (["minedRules"].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
                          }>
                         <MinedRulesComponent/>
                     </div>
                     <div id={"featureSelection"}
                          className={
-                             (["featureSelection"].indexOf(this.props.hash[0]) === -1 ) ? "main container hidden" : "main container"
+                             (["featureSelection"].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
                          }>
                         <FeatureSelection/>
                     </div>
@@ -97,7 +97,7 @@ class App extends Component {
 // map state to props
 function mapStateToProps(state) {
     return {
-        hash: state["hash"]
+        currentHash: state.currentHash
     }
 }
 

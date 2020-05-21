@@ -399,12 +399,12 @@ class RulePanel extends Component {
 }
 
 // map state to props
-function mapStateToProps(state) {
+function mapStateToProps(state) {console.log(state);
     return {
         rules: state.ruleTable,
         tags: state.tagTable,
-        codeChanged: state.hash[0] === "codeChanged",
-        filePath: ["rulesForFile", "codeChanged"].indexOf(state.hash[0]) !== -1 ? state.filePath : "none",
+        codeChanged: state.currentHash[0] === "codeChanged",
+        filePath: ["rulesForFile", "codeChanged"].indexOf(state.currentHash[0]) !== -1 ? state.openFilePath : "none",
         ws: state.ws,
         message: state.message
     };

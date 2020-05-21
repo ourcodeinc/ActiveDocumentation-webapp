@@ -109,7 +109,7 @@ function mapStateToProps(state) {
     return {
         rules: state.ruleTable,
         tags: state.tagTable,
-        hash: state.hash
+        currentHash: state.currentHash
     }
 }
 

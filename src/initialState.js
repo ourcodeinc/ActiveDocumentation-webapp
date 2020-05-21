@@ -1,69 +1,69 @@
-const element_attributes = {
+// the attributes of each element in the Graphical Editor of RulePad
+const graphicalElementAttributes = {
     activeElement: false, // if the element has at least one child
     selectedElement: false, // if the element is the root of the XPath (unique)
     isConstraint: false // if the element is for the constraint query
-    // text: string (for storing values)
 };
 
-export const initial_guiElements = {
-    "0": {conditionName: "class_el", ...element_attributes},
-    "0-0-0": {conditionName: "annotation", ...element_attributes},
-    "0-1-0": {conditionName: "visibility", ...element_attributes},
-    "0-2-0": {conditionName: "specifier", ...element_attributes},
-    "0-4-0": {conditionName: "class_name", ...element_attributes},
-    "0-5-0": {conditionName: "class_implements", ...element_attributes},
-    "0-6-0": {conditionName: "class_extends", ...element_attributes},
-    "0-7-0": {conditionName: "declaration_statement_el", ...element_attributes},
-    "0-7-0-0-0": {conditionName: "annotation", ...element_attributes},
-    "0-7-0-1-0": {conditionName: "visibility", ...element_attributes},
-    "0-7-0-2-0": {conditionName: "specifier", ...element_attributes},
-    "0-7-0-3-0": {conditionName: "declaration_statement_type", ...element_attributes},
-    "0-7-0-4-0": {conditionName: "declaration_statement_name", ...element_attributes},
-    "0-7-0-5-0": {conditionName: "declaration_statement_initialization", ...element_attributes},
-    "0-7-1": {conditionName: "constructor_el", ...element_attributes},
-    "0-7-1-0-0": {conditionName: "annotation", ...element_attributes},
-    "0-7-1-2-0": {conditionName: "visibility", ...element_attributes},
-    "0-7-1-5-0": {conditionName: "parameter_el", ...element_attributes},
-    "0-7-1-5-0-1-0": {conditionName: "parameter_type", ...element_attributes},
-    "0-7-1-5-0-4-0": {conditionName: "parameter_name", ...element_attributes},
-    "0-7-1-7-0": {conditionName: "constructor_expression_statement", ...element_attributes},
-    "0-7-1-7-1": {conditionName: "declaration_statement_el", ...element_attributes},
-    "0-7-1-7-1-0-0": {conditionName: "annotation", ...element_attributes},
-    "0-7-1-7-1-1-0": {conditionName: "visibility", ...element_attributes},
-    "0-7-1-7-1-2-0": {conditionName: "specifier", ...element_attributes},
-    "0-7-1-7-1-3-0": {conditionName: "declaration_statement_type", ...element_attributes},
-    "0-7-1-7-1-4-0": {conditionName: "declaration_statement_name", ...element_attributes},
-    "0-7-1-7-1-5-0": {conditionName: "declaration_statement_initialization", ...element_attributes},
-    "0-7-2": {conditionName: "function_el", ...element_attributes},
-    "0-7-2-0-0": {conditionName: "annotation", ...element_attributes},
-    "0-7-2-1-0": {conditionName: "visibility", ...element_attributes},
-    "0-7-2-2-0": {conditionName: "specifier", ...element_attributes},
-    "0-7-2-3-0": {conditionName: "function_return_type", ...element_attributes},
-    "0-7-2-4-0": {conditionName: "function_name", ...element_attributes},
-    "0-7-2-5-0": {conditionName: "parameter_el", ...element_attributes},
-    "0-7-2-5-0-1-0": {conditionName: "parameter_type", ...element_attributes},
-    "0-7-2-5-0-4-0": {conditionName: "parameter_name", ...element_attributes},
-    "0-7-2-7-0": {conditionName: "declaration_statement_el", ...element_attributes},
-    "0-7-2-7-0-0-0": {conditionName: "annotation", ...element_attributes},
-    "0-7-2-7-0-1-0": {conditionName: "visibility", ...element_attributes},
-    "0-7-2-7-0-2-0": {conditionName: "specifier", ...element_attributes},
-    "0-7-2-7-0-3-0": {conditionName: "declaration_statement_type", ...element_attributes},
-    "0-7-2-7-0-4-0": {conditionName: "declaration_statement_name", ...element_attributes},
-    "0-7-2-7-0-5-0": {conditionName: "declaration_statement_initialization", ...element_attributes},
-    "0-7-2-7-1": {conditionName: "function_expression_statement", ...element_attributes},
-    "0-7-2-7-2": {conditionName: "function_return_value", ...element_attributes},
-    "0-7-3": {conditionName: "abstract_function_el", ...element_attributes},
-    "0-7-3-0-0": {conditionName: "annotation", ...element_attributes},
-    "0-7-3-1-0": {conditionName: "visibility", ...element_attributes},
-    "0-7-3-2-0": {conditionName: "specifier", ...element_attributes},
-    "0-7-3-3-0": {conditionName: "abstract_function_return_type", ...element_attributes},
-    "0-7-3-4-0": {conditionName: "abstract_function_name", ...element_attributes},
-    "0-7-3-5-0": {conditionName: "parameter_el", ...element_attributes},
-    "0-7-3-5-0-1-0": {conditionName: "parameter_type", ...element_attributes},
-    "0-7-3-5-0-4-0": {conditionName: "parameter_name", ...element_attributes}
+export const initial_graphicalElements = {
+    "0": {conditionName: "class_el", ...graphicalElementAttributes},
+    "0-0-0": {conditionName: "annotation", ...graphicalElementAttributes},
+    "0-1-0": {conditionName: "visibility", ...graphicalElementAttributes},
+    "0-2-0": {conditionName: "specifier", ...graphicalElementAttributes},
+    "0-4-0": {conditionName: "class_name", ...graphicalElementAttributes},
+    "0-5-0": {conditionName: "class_implements", ...graphicalElementAttributes},
+    "0-6-0": {conditionName: "class_extends", ...graphicalElementAttributes},
+    "0-7-0": {conditionName: "declaration_statement_el", ...graphicalElementAttributes},
+    "0-7-0-0-0": {conditionName: "annotation", ...graphicalElementAttributes},
+    "0-7-0-1-0": {conditionName: "visibility", ...graphicalElementAttributes},
+    "0-7-0-2-0": {conditionName: "specifier", ...graphicalElementAttributes},
+    "0-7-0-3-0": {conditionName: "declaration_statement_type", ...graphicalElementAttributes},
+    "0-7-0-4-0": {conditionName: "declaration_statement_name", ...graphicalElementAttributes},
+    "0-7-0-5-0": {conditionName: "declaration_statement_initialization", ...graphicalElementAttributes},
+    "0-7-1": {conditionName: "constructor_el", ...graphicalElementAttributes},
+    "0-7-1-0-0": {conditionName: "annotation", ...graphicalElementAttributes},
+    "0-7-1-2-0": {conditionName: "visibility", ...graphicalElementAttributes},
+    "0-7-1-5-0": {conditionName: "parameter_el", ...graphicalElementAttributes},
+    "0-7-1-5-0-1-0": {conditionName: "parameter_type", ...graphicalElementAttributes},
+    "0-7-1-5-0-4-0": {conditionName: "parameter_name", ...graphicalElementAttributes},
+    "0-7-1-7-0": {conditionName: "constructor_expression_statement", ...graphicalElementAttributes},
+    "0-7-1-7-1": {conditionName: "declaration_statement_el", ...graphicalElementAttributes},
+    "0-7-1-7-1-0-0": {conditionName: "annotation", ...graphicalElementAttributes},
+    "0-7-1-7-1-1-0": {conditionName: "visibility", ...graphicalElementAttributes},
+    "0-7-1-7-1-2-0": {conditionName: "specifier", ...graphicalElementAttributes},
+    "0-7-1-7-1-3-0": {conditionName: "declaration_statement_type", ...graphicalElementAttributes},
+    "0-7-1-7-1-4-0": {conditionName: "declaration_statement_name", ...graphicalElementAttributes},
+    "0-7-1-7-1-5-0": {conditionName: "declaration_statement_initialization", ...graphicalElementAttributes},
+    "0-7-2": {conditionName: "function_el", ...graphicalElementAttributes},
+    "0-7-2-0-0": {conditionName: "annotation", ...graphicalElementAttributes},
+    "0-7-2-1-0": {conditionName: "visibility", ...graphicalElementAttributes},
+    "0-7-2-2-0": {conditionName: "specifier", ...graphicalElementAttributes},
+    "0-7-2-3-0": {conditionName: "function_return_type", ...graphicalElementAttributes},
+    "0-7-2-4-0": {conditionName: "function_name", ...graphicalElementAttributes},
+    "0-7-2-5-0": {conditionName: "parameter_el", ...graphicalElementAttributes},
+    "0-7-2-5-0-1-0": {conditionName: "parameter_type", ...graphicalElementAttributes},
+    "0-7-2-5-0-4-0": {conditionName: "parameter_name", ...graphicalElementAttributes},
+    "0-7-2-7-0": {conditionName: "declaration_statement_el", ...graphicalElementAttributes},
+    "0-7-2-7-0-0-0": {conditionName: "annotation", ...graphicalElementAttributes},
+    "0-7-2-7-0-1-0": {conditionName: "visibility", ...graphicalElementAttributes},
+    "0-7-2-7-0-2-0": {conditionName: "specifier", ...graphicalElementAttributes},
+    "0-7-2-7-0-3-0": {conditionName: "declaration_statement_type", ...graphicalElementAttributes},
+    "0-7-2-7-0-4-0": {conditionName: "declaration_statement_name", ...graphicalElementAttributes},
+    "0-7-2-7-0-5-0": {conditionName: "declaration_statement_initialization", ...graphicalElementAttributes},
+    "0-7-2-7-1": {conditionName: "function_expression_statement", ...graphicalElementAttributes},
+    "0-7-2-7-2": {conditionName: "function_return_value", ...graphicalElementAttributes},
+    "0-7-3": {conditionName: "abstract_function_el", ...graphicalElementAttributes},
+    "0-7-3-0-0": {conditionName: "annotation", ...graphicalElementAttributes},
+    "0-7-3-1-0": {conditionName: "visibility", ...graphicalElementAttributes},
+    "0-7-3-2-0": {conditionName: "specifier", ...graphicalElementAttributes},
+    "0-7-3-3-0": {conditionName: "abstract_function_return_type", ...graphicalElementAttributes},
+    "0-7-3-4-0": {conditionName: "abstract_function_name", ...graphicalElementAttributes},
+    "0-7-3-5-0": {conditionName: "parameter_el", ...graphicalElementAttributes},
+    "0-7-3-5-0-1-0": {conditionName: "parameter_type", ...graphicalElementAttributes},
+    "0-7-3-5-0-4-0": {conditionName: "parameter_name", ...graphicalElementAttributes}
 };
 
-export const initial_elementTree = {
+export const initial_graphicalElementTree = {
     selectedElementID: "",
     "0": {
         parentId: "",
@@ -252,8 +252,8 @@ export const initial_state = {
     tags: []
     grammar: ""
     ruleType: {constraint: "NONE", checkFor: [], type: "WITHIN"}
-    quantifier: {detail: "", command: ""}
-    constraint: {detail: "", command: ""}
+    quantifier: {detail: "", xpathQuery: [""]}
+    constraint: {detail: "", xpathQuery: [""]}
     rulePanelState: {
         editMode: false
         title: ""
@@ -264,29 +264,37 @@ export const initial_state = {
         constraintXPath: ""
         quantifierXPath: ""
         autoCompleteArray: []
-        activeTab: 0
-        guiState: {guiTree: {...initial_elementTree}, guiElements: {...initial_guiElements}, ruleType: ""}
+        graphicalEditorState: {guiTree: {...initial_graphicalElementTree}, guiElements: {...initial_graphicalElements}, ruleType: ""}
     }
-    xPathQueryResult: []
+    xPathQueryResult: [
+        data: {
+            quantifierResult: [{filePath: "", snippet: "", xml: {fileName: "", xml: ""}}]
+            satisfied: 0
+            satisfiedResult: []
+            violated: 0
+            violatedResult: []
+        }
+        filePath: ""
+     ]
      */
     ruleTable: [],
     tagTable: [],
     xmlFiles: [],
     projectHierarchy: {},
-    hash: ["index"],
-    ignoreFile: false,
+    currentHash: ["index"],
+    ignoreFileChange: false, // ignore the file switching in the IDE
     displayEditRuleTutorial: true, // display the tour guide for edit rule
     message: "init",
-    filePath: "",
+    openFilePath: "",
     hashManager: {
         history: ["#/index"],
-        clicked: false,
-        activeHash: 0,
+        activeHashIndex: 0,
         forwardDisable: "disabled",
-        backDisable: "disabled"
+        backDisable: "disabled",
+        clickedOnButtons: false
     },
-    // used for new rule form
-    newOrEditRule: {
+
+    rulePadState: {
         isEditMode: false,
         title: "",
         description: "",
@@ -300,12 +308,14 @@ export const initial_state = {
         sentMessages: [],
         receivedMessages: [],
 
-        guiState: {
+        graphicalEditorState: {
             ruleType: "", // "Must" or "MustBeEqualTo"
-            guiTree: {...initial_elementTree},
-            guiElements: {...initial_guiElements}
+            guiTree: {...initial_graphicalElementTree},
+            guiElements: {...initial_graphicalElements}
         }
     },
+
+    // mining Rules
     minedRulesState: {
         metaData: {},
         minedRules: []
@@ -340,9 +350,9 @@ export const default_rulePanelState = {
     quantifierXPath: "", // only produced by autoComplete grammar
     constraintXPath: "", // only produced by autoComplete grammar
 
-    guiState: {
+    graphicalEditorState: {
         ruleType: "", // "Must" or "MustBeEqualTo"
-        guiTree: {...initial_elementTree},
-        guiElements: {...initial_guiElements}
+        guiTree: {...initial_graphicalElementTree},
+        guiElements: {...initial_graphicalElements}
     }
 };

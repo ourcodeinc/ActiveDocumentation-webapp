@@ -6,7 +6,7 @@ import pluralize from "pluralize";
 
 import {generateTreeForElement, getConditionByName} from "../rulePadGraphicalEditor/graphicalEditorConstants";
 import {grammar_keywords, special_word} from "./textualEditorConstant";
-import {initial_elementTree, initial_guiElements} from "../../initialState";
+import {initial_graphicalElementTree, initial_graphicalElements} from "../../initialState";
 
 /**
  * create the quantifier and the constraint guiTree based on the grammar parse tree
@@ -18,7 +18,7 @@ export async function generateGuiTrees(grammarTree) {
     // console.log(trees);
     if (Object.entries(trees).length === 0)
         return null;
-    // // match with redux state: newOrEditRule.guiState
+    // // match with redux state: rulePadState.graphicalEditorState
     return {
         guiTree: trees.newElementTree,
         guiElements: trees.newGuiElements
@@ -307,12 +307,12 @@ const reverseParentChildOrder = (node) => {
 /**
  * build a tree from GUI element IDs
  * @param parseTree
- * @return false/a tree of ids corresponding to the input tree
+ * return false or a tree of ids corresponding to the input tree
  */
 const createGuiElementTree = (parseTree) => {
 
-    let newGuiElements = JSON.parse(JSON.stringify(initial_guiElements));
-    let newElementTree = JSON.parse(JSON.stringify(initial_elementTree));
+    let newGuiElements = JSON.parse(JSON.stringify(initial_graphicalElements));
+    let newElementTree = JSON.parse(JSON.stringify(initial_graphicalElementTree));
 
     let visitedIDs = [];
 
@@ -431,8 +431,8 @@ const createGuiElementTree = (parseTree) => {
  */
 const updateGuiElements = (grammarTree, guiTree) => {
     if (!guiTree) return {};
-    let newGuiElements = JSON.parse(JSON.stringify(initial_guiElements));
-    let newElementTree = JSON.parse(JSON.stringify(initial_elementTree));
+    let newGuiElements = JSON.parse(JSON.stringify(initial_graphicalElements));
+    let newElementTree = JSON.parse(JSON.stringify(initial_graphicalElementTree));
 
 
     let checkNode = (grammarNode, guiNode) => {

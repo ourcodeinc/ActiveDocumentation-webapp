@@ -1311,8 +1311,8 @@ class RulePad extends Component {
                     checkFor: filesFolders.filter((d) => d !== ""),
                     type: "WITHIN"
                 },
-                quantifier: {command: quantifierXPath.startsWith("src:unit/") ? quantifierXPath: "src:unit/" + quantifierXPath},
-                constraint: {command: constraintXPath.startsWith("src:unit/") ? constraintXPath: "src:unit/" + constraintXPath},
+                quantifier: {xpathQuery: [quantifierXPath.startsWith("src:unit/") ? quantifierXPath: "src:unit/" + quantifierXPath]},
+                constraint: {xpathQuery: [constraintXPath.startsWith("src:unit/") ? constraintXPath: "src:unit/" + constraintXPath]},
             }
         ];
         try {
@@ -1339,8 +1339,8 @@ class RulePad extends Component {
                 checkFor: this.state.filesFolders.filter((d) => d !== ""),
                 type: "WITHIN"
             },
-            quantifier: {detail: "", command: "src:unit/" + this.state.quantifierXPath},
-            constraint: {detail: "", command: "src:unit/" + this.state.constraintXPath},
+            quantifier: {detail: "", xpathQuery: ["src:unit/" + this.state.quantifierXPath]},
+            constraint: {detail: "", xpathQuery: ["src:unit/" + this.state.constraintXPath]},
             grammar: this.ruleI.rulePanelState.autoCompleteArray.map(d => d.text).join(" ")
         };
 
@@ -1386,8 +1386,8 @@ class RulePad extends Component {
             (rule.ruleType.constraint !== this.ruleI.ruleType.constraint) ||
             (JSON.stringify(rule.ruleType.checkFor) !== JSON.stringify(this.ruleI.ruleType.checkFor)) ||
             (rule.grammar !== this.ruleI.grammar) ||
-            (rule.constraint.command !== this.ruleI.constraint.command) ||
-            (rule.quantifier.command !== this.ruleI.quantifier.command);
+            (rule.constraint.xpathQuery[0] !== this.ruleI.constraint.xpathQuery[0]) ||
+            (rule.quantifier.xpathQuery[0] !== this.ruleI.quantifier.xpathQuery[0]);
 
         if (isChanged) {
             this.props.onUpdateRule();
@@ -1410,8 +1410,8 @@ class RulePad extends Component {
                 checkFor: this.state.filesFolders.filter((d) => d !== ""),
                 type: "WITHIN"
             },
-            quantifier: {detail: "", command: "src:unit/" + this.state.quantifierXPath},
-            constraint: {detail: "", command: "src:unit/" + this.state.constraintXPath},
+            quantifier: {detail: "", xpathQuery: ["src:unit/" + this.state.quantifierXPath]},
+            constraint: {detail: "", xpathQuery: ["src:unit/" + this.state.constraintXPath]},
             grammar: this.props.autoCompleteArray.map(d => d.text).join(" ")
         };
 
@@ -1516,21 +1516,21 @@ function mapStateToProps(state) {
         projectHierarchy: state.projectHierarchy,
 
         // for new rule
-        title: state.newOrEditRule.title,
-        description: state.newOrEditRule.description,
-        ruleTags: state.newOrEditRule.ruleTags,
-        folderConstraint: state.newOrEditRule.folderConstraint,
-        filesFolders: state.newOrEditRule.filesFolders,
+        title: state.rulePadState.title,
+        description: state.rulePadState.description,
+        ruleTags: state.rulePadState.ruleTags,
+        folderConstraint: state.rulePadState.folderConstraint,
+        filesFolders: state.rulePadState.filesFolders,
 
-        autoCompleteArray: state.newOrEditRule.autoCompleteArray,
-        quantifierXPath: state.newOrEditRule.quantifierXPath,
-        constraintXPath: state.newOrEditRule.constraintXPath,
+        autoCompleteArray: state.rulePadState.autoCompleteArray,
+        quantifierXPath: state.rulePadState.quantifierXPath,
+        constraintXPath: state.rulePadState.constraintXPath,
         message: state.message,
 
-        sentMessages: state.newOrEditRule.sentMessages,
-        receivedMessages: state.newOrEditRule.receivedMessages,
+        sentMessages: state.rulePadState.sentMessages,
+        receivedMessages: state.rulePadState.receivedMessages,
         // for submitting the rule
-        numberOfSentMessages: state.newOrEditRule.sentMessages.length,
+        numberOfSentMessages: state.rulePadState.sentMessages.length,
 
         displayEditRuleTutorial: state.displayEditRuleTutorial
     };
