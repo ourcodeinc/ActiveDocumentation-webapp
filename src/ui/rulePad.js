@@ -301,7 +301,7 @@ class RulePad extends Component {
             GUI_STAR: 6,
             TEXT_UI: 7,
             TAGS: 10,
-            FILE_INCLUDE: 11,
+            FILE_FOLDER: 11,
         };
 
         this.state = {
