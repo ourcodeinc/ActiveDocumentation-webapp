@@ -246,24 +246,30 @@ export const initial_state = {
     ws: null,
 
     /*
-    index: 1545798262
-    title: ""
-    description: ""
-    tags: []
-    grammar: ""
-    ruleType: {constraint: "NONE", checkFor: [], type: "WITHIN"}
-    quantifier: {detail: "", xpathQuery: [""]}
-    constraint: {detail: "", xpathQuery: [""]}
+    index: 1545798262,
+    title: "",
+    description: "",
+    tags: [],
+    grammar: "",
+    checkForFilesFolders: [""],
+    checkForFilesFoldersConstraints: "INCLUDE", // or EXCLUDE
+    processFilesFolders: "WITHIN",
+    quantifierXPathQuery: [],
+    constraintXPathQuery: [],
+
+    quantifierQueryType: "",
+    constraintQueryType: "",
+
     rulePanelState: {
-        editMode: false
-        title: ""
-        description: ""
-        ruleTags: []
-        folderConstraint: ""
-        filesFolders: []
-        constraintXPath: ""
-        quantifierXPath: ""
-        autoCompleteArray: []
+        editMode: false,
+        title: "",
+        description: "",
+        ruleTags: [],
+        folderConstraint: "",
+        filesFolders: [],
+        constraintXPath: "",
+        quantifierXPath: "",
+        autoCompleteArray: [],
         graphicalEditorState: {guiTree: {...initial_graphicalElementTree}, guiElements: {...initial_graphicalElements}, ruleType: ""}
     }
     xPathQueryResult: [

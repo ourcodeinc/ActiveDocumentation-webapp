@@ -55,8 +55,8 @@ class RulePanel extends Component {
                 this.state.title = this.ruleI.title;
                 this.state.description = this.ruleI.description;
                 this.state.ruleTags = this.ruleI.tags;
-                this.state.folderConstraint = this.ruleI.ruleType.constraint;
-                this.state.filesFolders = this.ruleI.ruleType.checkFor;
+                this.state.folderConstraint = this.ruleI.checkForFilesFoldersConstraints;
+                this.state.filesFolders = this.ruleI.checkForFilesFolders;
                 this.state.tags = props.tags;
 
                 this.state.editMode = this.ruleI.rulePanelState.editMode;
@@ -166,8 +166,8 @@ class RulePanel extends Component {
                         title: this.ruleI.title,
                         description: this.ruleI.description,
                         ruleTags: this.ruleI.tags,
-                        folderConstraint: this.ruleI.ruleType.constraint,
-                        filesFolders: this.ruleI.ruleType.checkFor,
+                        folderConstraint: this.ruleI.checkForFilesFoldersConstraints,
+                        filesFolders: this.ruleI.checkForFilesFolders,
                         editMode: false,
 
                         className: panelState.className,

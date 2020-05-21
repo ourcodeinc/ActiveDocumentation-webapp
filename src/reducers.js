@@ -122,10 +122,10 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         title: rule.title,
                         description: rule.description,
                         ruleTags: rule.tags,
-                        folderConstraint: rule.ruleType.constraint,
-                        filesFolders: rule.ruleType.checkFor,
-                        quantifierXPath: rule.quantifier.xpathQuery[0],
-                        constraintXPath: rule.constraint.xpathQuery[0],
+                        folderConstraint: rule.checkForFilesFoldersConstraints,
+                        filesFolders: rule.checkForFilesFolders,
+                        quantifierXPath: rule.quantifierXPathQuery[0],
+                        constraintXPath: rule.constraintXPathQuery[0],
                         // autoCompleteText: rule.grammar,
                         autoCompleteArray: rule.grammar && rule.grammar !== "" ? rule.grammar.split(" ").map(word => {
                             return {id: "", text: word}
@@ -273,10 +273,10 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                                 title: d.title,
                                 description: d.description,
                                 ruleTags: d.tags,
-                                folderConstraint: d.ruleType.constraint,
-                                filesFolders: d.ruleType.checkFor,
-                                quantifierXPath: d.quantifier.xpathQuery[0],
-                                constraintXPath: d.constraint.xpathQuery[0],
+                                folderConstraint: d.checkForFilesFoldersConstraints,
+                                filesFolders: d.checkForFilesFolders,
+                                quantifierXPath: d.quantifierXPathQuery[0],
+                                constraintXPath: d.constraintXPathQuery[0],
                                 // autoCompleteText: d.grammar,
                                 autoCompleteArray: d.grammar && d.grammar !== "" ? d.grammar.split(" ").map(word => {
                                     return {id: "", text: word}

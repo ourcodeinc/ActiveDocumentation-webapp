@@ -14,7 +14,7 @@ This file is required for FPMax algorithm (for mining design rules) to execute. 
 There must be a file name `ruleJson.txt` in the project folder in which all rules are stored. `grammar` field is recently added for each rule. 
 It is mandatory but is generated for newly added rules. Here is an example for this file:
 
-```
+```javascript
 [
     {
         "index": 1,
@@ -23,21 +23,15 @@ It is mandatory but is generated for newly added rules. Here is an example for t
         "tags": [
             "Labeling"
         ],
-        "ruleType": {
-            "constraint": "FOLDER",
-            "checkFor": [
-                "src"
-            ],
-            "type": "WITHIN"
-        },
-        "quantifier": {
-            "detail": "JButtons",
-            "xpathQuery": ["src:unit/src:class/src:block//src:decl_stmt/src:decl[src:type/src:name/text()=\"JButton\"]"]
-        },
-        "constraint": {
-            "detail": "JButtons with labels in constructor",
-            "xpathQuery": ["src:unit/src:class/src:block//src:decl_stmt/src:decl[src:type/src:name/text()=\"JButton\" and count(src:init/src:expr/src:call/src:argument_list/src:argument)>0]"]
-        }
+        "checkForFilesFolders": [
+            "src"
+        ],
+        "checkForFilesFoldersConstraints": "INCLUDE",
+        "processFilesFolders": "WITHIN",
+        // JButtons
+        "quantifierXPathQuery": ["src:unit/src:class/src:block//src:decl_stmt/src:decl[src:type/src:name/text()=\"JButton\"]"],
+        // JButtons with labels in constructor
+        "constraintXPathQuery": ["src:unit/src:class/src:block//src:decl_stmt/src:decl[src:type/src:name/text()=\"JButton\" and count(src:init/src:expr/src:call/src:argument_list/src:argument)>0]"]
     },
     {
        "index": 6,
@@ -49,26 +43,20 @@ It is mandatory but is generated for newly added rules. Here is an example for t
             "Entity",
             "Persistence"
        ],
-       "ruleType": {
-            "constraint": "FOLDER",
-            "checkFor": [
-                "src/com/crowdcoding/commands", "src/com/crowdcoding/entities"
-            ],
-            "type": "MIXED"
-       },
-       "quantifier": {
-            "type": "FIND_FROM_TEXT",
-            "detail": "Calling constructors of all entity objects",
-            "xpathQuery": ["//src:unit/src:class[(src:annotation/src:name[text()=\"Entity\"] or src:annotation/src:name[text()=\"Subclass\"])]/src:name/text()",
+       "checkForFilesFolders": [
+           "src/com/crowdcoding/commands", "src/com/crowdcoding/entities"
+       ],
+       "checkForFilesFoldersConstraints": "INCLUDE",
+       "processFilesFolders": "MIXED",       
+       "quantifierQueryType": "FIND_FROM_TEXT",
+       // Calling constructors of all entity objects
+       "quantifierXPathQuery": ["//src:unit/src:class[(src:annotation/src:name[text()=\"Entity\"] or src:annotation/src:name[text()=\"Subclass\"])]/src:name/text()",
                 "//src:unit/src:class[src:super/src:extends/src:name/text()=\"Command\"]/src:block/src:class/src:block/descendant-or-self::src:decl_stmt/src:decl[src:init/src:expr/src:call/src:name/text()=\"<TEMP>\"]"]
-       },
-       "constraint": {
-            "type": "RETURN_TO_BASE",
-            "detail": "Calling constructors of allowed entity objects",
-            "xpathQuery": ["//src:unit/src:class/src:block/src:function_decl[src:name/text()=\"execute\"]/src:parameter_list/src:parameter/src:decl/src:type/src:name[not(text()=\"String\")]/text()",
+       "constraintQueryType": "RETURN_TO_BASE",
+       // Calling constructors of allowed entity objects",
+       "constraintXPathQuery": ["//src:unit/src:class/src:block/src:function_decl[src:name/text()=\"execute\"]/src:parameter_list/src:parameter/src:decl/src:type/src:name[not(text()=\"String\")]/text()",
                 "//src:unit/src:class[src:name/text()=\"<TEMP>\" or (src:super/src:extends/src:name/text()=\"<TEMP>\")]/src:name/text()",
                 "//src:unit/src:class[src:super/src:extends/src:name/text()=\"Command\"]/src:block/src:class/src:block/descendant-or-self::src:decl_stmt/src:decl[src:init/src:expr/src:call/src:name/text()=\"<TEMP>\"]"]
-       }
     },
     {
         "index": 11,
@@ -77,24 +65,17 @@ It is mandatory but is generated for newly added rules. Here is an example for t
         "tags": [
             "Entity", "Objectify", "Persistence"
         ],
-        "ruleType": {
-            "constraint": "FOLDER",
-            "checkFor": [
-                "src/com/crowdcoding/entities",
-                "src/com/crowdcoding/servlets"
-            ],
-            "type": "MIXED"
-        },
-        "quantifier": {
-            "detail": "Entity classes",
-            "xpathQuery": ["//src:unit/src:class[(src:annotation/src:name[text()=\"Entity\"] or src:annotation/src:name[text()=\"Subclass\"])]"]
-        },
-        "constraint": {
-            "type": "FIND_FROM_TEXT",
-            "detail": "Registered classes",
-            "xpathQuery": ["//src:unit/src:class[src:name/text()=\"CrowdServlet\"]//src:expr_stmt/src:expr/src:call[src:name/src:name/text()=\"ObjectifyService\" and src:name/src:name/text()=\"register\"]/src:argument_list/src:argument/src:expr/src:name/src:name[1]/text()",
+        "checkForFilesFolders": [
+           "src/com/crowdcoding/entities", "src/com/crowdcoding/servlets"
+        ],
+        "checkForFilesFoldersConstraints": "INCLUDE",
+        "processFilesFolders": "MIXED",              
+        // Entity classes
+        "quantifierXPathQuery": ["//src:unit/src:class[(src:annotation/src:name[text()=\"Entity\"] or src:annotation/src:name[text()=\"Subclass\"])]"]
+        "constraintQueryType": "FIND_FROM_TEXT",
+        // Registered classes
+        "constraintXPathQuery": ["//src:unit/src:class[src:name/text()=\"CrowdServlet\"]//src:expr_stmt/src:expr/src:call[src:name/src:name/text()=\"ObjectifyService\" and src:name/src:name/text()=\"register\"]/src:argument_list/src:argument/src:expr/src:name/src:name[1]/text()",
                 "//src:unit/src:class[src:name/text()=\"<TEMP>\"]"]
-        }
     }
 ]
 ```
@@ -104,7 +85,7 @@ It is mandatory but is generated for newly added rules. Here is an example for t
 
 There is also another json file named `tagJson.txt`. In this file we store information about tags. Here is an example for this file:
 
-```
+```javascript
 [
     {
         "tagName": "Labeling",

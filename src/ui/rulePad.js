@@ -301,7 +301,7 @@ class RulePad extends Component {
             GUI_STAR: 6,
             TEXT_UI: 7,
             TAGS: 10,
-            FILE_FOLDER: 11,
+            FILE_INCLUDE: 11,
         };
 
         this.state = {
@@ -309,7 +309,7 @@ class RulePad extends Component {
             title: props.title,
             description: props.description,
             ruleTags: props.ruleTags,
-            folderConstraint: props.folderConstraint ? props.folderConstraint : "FOLDER",
+            folderConstraint: props.folderConstraint ? props.folderConstraint : "INCLUDE",
             filesFolders: props.filesFolders,
             tags: props.tags,
             projectHierarchy: props.projectHierarchy,
@@ -365,7 +365,7 @@ class RulePad extends Component {
                 this.state.title = this.ruleI.rulePanelState.title;
                 this.state.description = this.ruleI.rulePanelState.description;
                 this.state.ruleTags = this.ruleI.rulePanelState.ruleTags;
-                this.state.folderConstraint = this.ruleI.rulePanelState.folderConstraint ? this.ruleI.rulePanelState.folderConstraint : "FOLDER";
+                this.state.folderConstraint = this.ruleI.rulePanelState.folderConstraint ? this.ruleI.rulePanelState.folderConstraint : "INCLUDE";
                 this.state.filesFolders = this.ruleI.rulePanelState.filesFolders;
                 this.state.tags = props.tags;
                 // updating the rule
@@ -381,7 +381,7 @@ class RulePad extends Component {
             this.state.title = props.title;
             this.state.description = props.description;
             this.state.ruleTags = props.ruleTags;
-            this.state.folderConstraint = props.folderConstraint ? props.folderConstraint : "FOLDER";
+            this.state.folderConstraint = props.folderConstraint ? props.folderConstraint : "INCLUDE";
             this.state.filesFolders = props.filesFolders;
             this.state.tags = props.tags;
 
@@ -536,7 +536,7 @@ class RulePad extends Component {
                     )
                 })}
                 {Object.entries(this.state.projectHierarchy).length !== 0 ? (
-                    <div className={"projectHierarchy" + (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0 ? " has-error" : "")}>
+                    <div className={"projectHierarchy" + (this.state.folderConstraint === "INCLUDE" && this.state.filesFolders.length === 0 ? " has-error" : "")}>
                         <ProjectHierarchy projectHierarchy={this.state.projectHierarchy}
                                           onSubmit={(newPath) => {
                                               const filesFolders = this.state.filesFolders;
@@ -1008,7 +1008,7 @@ class RulePad extends Component {
                     title: this.ruleI.rulePanelState.title,
                     description: this.ruleI.rulePanelState.description,
                     ruleTags: this.ruleI.rulePanelState.ruleTags,
-                    folderConstraint: this.ruleI.rulePanelState.folderConstraint ? this.ruleI.rulePanelState.folderConstraint : "FOLDER",
+                    folderConstraint: this.ruleI.rulePanelState.folderConstraint ? this.ruleI.rulePanelState.folderConstraint : "INCLUDE",
                     filesFolders: this.ruleI.rulePanelState.filesFolders,
                     tags: this.ruleI.rulePanelState.tags,
 
@@ -1027,13 +1027,13 @@ class RulePad extends Component {
             // new rule
             else {
                 let xPathQueryResult = this.updateFeedbackSnippet(nextProps.quantifierXPath, nextProps.constraintXPath,
-                    nextProps.folderConstraint ? nextProps.folderConstraint : "FOLDER", nextProps.filesFolders);
+                    nextProps.folderConstraint ? nextProps.folderConstraint : "INCLUDE", nextProps.filesFolders);
 
                 this.setState({
                     title: nextProps.title,
                     description: nextProps.description,
                     ruleTags: nextProps.ruleTags,
-                    folderConstraint: nextProps.folderConstraint ? nextProps.folderConstraint : "FOLDER",
+                    folderConstraint: nextProps.folderConstraint ? nextProps.folderConstraint : "INCLUDE",
                     filesFolders: nextProps.filesFolders,
                     tags: nextProps.tags,
 
@@ -1300,19 +1300,17 @@ class RulePad extends Component {
 
     updateFeedbackSnippet(quantifierXPath, constraintXPath, folderConstraint, filesFolders) {
         if (quantifierXPath === "" || constraintXPath === "" || folderConstraint === ""
-            || (folderConstraint === "FOLDER" && filesFolders.filter((d) => d !== "").length === 0))
+            || (folderConstraint === "INCLUDE" && filesFolders.filter((d) => d !== "").length === 0))
             return [];
 
         let ruleInArray = [
             {
                 index: "000",
-                ruleType: {
-                    constraint: folderConstraint,
-                    checkFor: filesFolders.filter((d) => d !== ""),
-                    type: "WITHIN"
-                },
-                quantifier: {xpathQuery: [quantifierXPath.startsWith("src:unit/") ? quantifierXPath: "src:unit/" + quantifierXPath]},
-                constraint: {xpathQuery: [constraintXPath.startsWith("src:unit/") ? constraintXPath: "src:unit/" + constraintXPath]},
+                checkForFilesFoldersConstraints: folderConstraint,
+                checkForFilesFolders: filesFolders.filter((d) => d !== ""),
+                processFilesFolders: "WITHIN",
+                quantifierXPathQuery: [quantifierXPath.startsWith("src:unit/") ? quantifierXPath: "src:unit/" + quantifierXPath],
+                constraintXPathQuery: [constraintXPath.startsWith("src:unit/") ? constraintXPath: "src:unit/" + constraintXPath]
             }
         ];
         try {
@@ -1334,13 +1332,11 @@ class RulePad extends Component {
             title: this.state.title,
             description: this.state.description,
             tags: this.state.ruleTags,
-            ruleType: {
-                constraint: this.state.folderConstraint,
-                checkFor: this.state.filesFolders.filter((d) => d !== ""),
-                type: "WITHIN"
-            },
-            quantifier: {detail: "", xpathQuery: ["src:unit/" + this.state.quantifierXPath]},
-            constraint: {detail: "", xpathQuery: ["src:unit/" + this.state.constraintXPath]},
+            checkForFilesFoldersConstraints: this.state.folderConstraint,
+            checkForFilesFolders: this.state.filesFolders.filter((d) => d !== ""),
+            processFilesFolders: "WITHIN",
+            quantifierXPathQuery: ["src:unit/" + this.state.quantifierXPath],
+            constraintXPathQuery: ["src:unit/" + this.state.constraintXPath],
             grammar: this.ruleI.rulePanelState.autoCompleteArray.map(d => d.text).join(" ")
         };
 
@@ -1362,7 +1358,7 @@ class RulePad extends Component {
             return;
         }
 
-        if (rule.ruleType.constraint === "" || (rule.ruleType.constraint === "FOLDER" && rule.ruleType.checkFor.length === 0)) {
+        if (rule.checkForFilesFoldersConstraints === "" || (rule.checkForFilesFoldersConstraints === "INCLUDE" && rule.checkForFilesFolders.length === 0)) {
             this.setState({
                 errorTitle: "Error in Submitting the updated Rule",
                 errorMessage: "Make sure to specify the folders/files on which the rule is applied on.",
@@ -1383,11 +1379,11 @@ class RulePad extends Component {
         let isChanged = (rule.title !== this.ruleI.title) ||
             (rule.description !== this.ruleI.description) ||
             (JSON.stringify(rule.tags) !== JSON.stringify(this.ruleI.tags)) ||
-            (rule.ruleType.constraint !== this.ruleI.ruleType.constraint) ||
-            (JSON.stringify(rule.ruleType.checkFor) !== JSON.stringify(this.ruleI.ruleType.checkFor)) ||
+            (rule.checkForFilesFoldersConstraints !== this.ruleI.checkForFilesFoldersConstraints) ||
+            (JSON.stringify(rule.checkForFilesFolders) !== JSON.stringify(this.ruleI.checkForFilesFolders)) ||
             (rule.grammar !== this.ruleI.grammar) ||
-            (rule.constraint.xpathQuery[0] !== this.ruleI.constraint.xpathQuery[0]) ||
-            (rule.quantifier.xpathQuery[0] !== this.ruleI.quantifier.xpathQuery[0]);
+            (rule.constraintXPathQuery[0] !== this.ruleI.constraintXPathQuery[0]) ||
+            (rule.quantifierXPathQuery[0] !== this.ruleI.quantifierXPathQuery[0]);
 
         if (isChanged) {
             this.props.onUpdateRule();
@@ -1405,13 +1401,11 @@ class RulePad extends Component {
             title: this.state.title,
             description: this.state.description,
             tags: this.state.ruleTags,
-            ruleType: {
-                constraint: this.state.folderConstraint,
-                checkFor: this.state.filesFolders.filter((d) => d !== ""),
-                type: "WITHIN"
-            },
-            quantifier: {detail: "", xpathQuery: ["src:unit/" + this.state.quantifierXPath]},
-            constraint: {detail: "", xpathQuery: ["src:unit/" + this.state.constraintXPath]},
+            checkForFilesFoldersConstraints: this.state.folderConstraint,
+            checkForFilesFolders: this.state.filesFolders.filter((d) => d !== ""),
+            processFilesFolders: "WITHIN",
+            quantifierXPathQuery: ["src:unit/" + this.state.quantifierXPath],
+            constraintXPathQuery: ["src:unit/" + this.state.constraintXPath],
             grammar: this.props.autoCompleteArray.map(d => d.text).join(" ")
         };
 
@@ -1433,7 +1427,7 @@ class RulePad extends Component {
             return;
         }
 
-        if (rule.ruleType.constraint === "" || (rule.ruleType.constraint === "FOLDER" && rule.ruleType.checkFor.length === 0)) {
+        if (rule.checkForFilesFoldersConstraints === "" || (rule.checkForFilesFoldersConstraints === "INCLUDE" && rule.checkForFilesFolders.length === 0)) {
             this.setState({
                 errorTitle: "Error in Submitting the new Rule",
                 errorMessage: "Make sure to specify the folders/files on which the rule is applied on.",
