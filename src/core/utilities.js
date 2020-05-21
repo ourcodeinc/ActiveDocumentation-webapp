@@ -163,7 +163,7 @@ class Utilities {
     }
 
     /**
-     * deep copy of an xml variable
+     * deep copy of an xml data
      * @param xml
      * @returns {Document}
      */
@@ -183,7 +183,7 @@ class Utilities {
     }
 
     /**
-     * deep copy of a JSON variable
+     * deep copy of a JSON data
      * @param json
      * @returns
      */
@@ -197,7 +197,7 @@ class Utilities {
     }
 
     /**
-     * check whether one arrays contains all elements of the other array
+     * check whether one array contains all elements of the other array
      * @param container
      * @param arr
      * @returns {boolean}

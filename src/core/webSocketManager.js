@@ -98,7 +98,7 @@ class WebSocketManager extends Component {
                     window.location.hash = "#/codeChanged";
                     break;
 
-                // tagName and tag
+                // tagName and detail
                 case "UPDATE_TAG":
                     let newTag = JSON.parse(message.data);
                     filtered = tagTable.filter((d) => d.tagName === newTag["tagName"]);
@@ -166,6 +166,8 @@ class WebSocketManager extends Component {
 
                     break;
 
+                    /* Mining Rules */
+
                 case "TNR_OUTPUT":
                     console.log(message.data);
                     break;
@@ -174,10 +176,6 @@ class WebSocketManager extends Component {
                     // message.data = {"fpMaxOutput" : {0: "content of output0", ...}}
                     let modifiedOutput = parseGrouping(Object.values(message.data["fpMaxOutput"]), this.props.minedRuleMetaData);
                     this.props.onUpdateMinedRules(modifiedOutput);
-                    break;
-
-                case "PROJECT":
-                    // console.log(message);
                     break;
 
                 case "FEATURE_SELECTION":

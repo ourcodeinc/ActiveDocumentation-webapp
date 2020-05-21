@@ -7,7 +7,7 @@ import Utilities from "./utilities";
 import store from "../reduxStore";
 import {sendExpressionStatementXML} from "../actions";
 
-class GenerateXpath {
+class GenerateXPath {
 
     /**
      * @param Tree: tree produced by ANTLR parser
@@ -916,4 +916,4 @@ class GenerateXpath {
     }
 }
 
-export default GenerateXpath;
+export default GenerateXPath;
