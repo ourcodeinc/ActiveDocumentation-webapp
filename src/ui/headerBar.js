@@ -37,7 +37,7 @@ export class HeaderBar extends Component {
                         <span className="text-16 primary">Rules related to tag: </span><br/>
                         <span className="text-24 important">{this.props.title}</span>
                         <FormControl componentClass="textarea" defaultValue={this.props.content} style={{resize: "vertical"}}
-                                     onBlur={(e) => this.props.onUpdateTag(this.props, e.target.value)} key={new Date()}
+                                     onBlur={(e) => this.props.onUpdateTag(this.props.ws, this.props.tagTable, this.props.tag, e.target.value)} key={new Date()}
                                      placeholder="Information about tag"
                                      onClick={(e) => {
                                          e.target.style.cssText = "height:0";
@@ -101,70 +101,63 @@ function mapStateToProps(state) {
     } catch (e) {
     }
     let props = {
-        tags: state.tagTable,
+        tagTable: state.tagTable,
         currentHash: state.currentHash,
         ws: state.ws,
-        ignoreFileChange: state.ignoreFileChange,
-        projectPath: path
+        projectPath: path,
+        tag: "",
+        title: "",
+        content: ""
     };
 
     switch (state.currentHash[0]) {
         case "tag":
-            props["tag"] = state.tagTable.filter((d) => d["tagName"] === state.currentHash[1])[0]; // can throw errors
-            props["title"] = state.currentHash[1];
-            props["content"] = props["tag"]["detail"];
+            try {
+                props.tag = state.tagTable.filter((d) => d["tagName"] === state.currentHash[1])[0];
+            } catch {
+            }
+            props.title = state.currentHash[1];
+            props.content = props["tag"]["detail"];
             break;
-        case "rule":
-            props["title"] = state.currentHash[1];
-            props["content"] = "";
-            break;
+        // case "rule":
+        //     props.title = state.currentHash[1];
+        //     break;
         case "rules":
-            props["title"] = "All Rules";
-            props["content"] = "";
+            props.title = "All Rules";
             break;
         case "tagJsonChanged":
-            props["title"] = "tagJson.txt is changed.";
-            props["content"] = "";
+            props.title = "tagJson.txt is changed.";
             break;
         case "ruleJsonChanged":
-            props["title"] = "ruleJson.txt is changed.";
-            props["content"] = "";
+            props.title = "ruleJson.txt is changed.";
             break;
         case "hierarchy":
-            props["title"] = "Project Hierarchy";
-            props["content"] = "";
+            props.title = "Project Hierarchy";
             break;
         case "index":
-            props["title"] = "Active Documentation";
-            props["content"] = "";
+            props.title = "Active Documentation";
             break;
         case "genRule":
-            props["title"] = "New Rule";
-            props["content"] = "";
+            props.title = "New Rule";
             break;
         case "violatedRules":
-            props["title"] = "Violated Rules";
-            props["content"] = "";
+            props.title = "Violated Rules";
             break;
         case "rulesForFile":
-            props["title"] = "";
-            props["content"] = state.openFilePath;
+            props.content = state.openFilePath;
             break;
         case "codeChanged":
-            props["title"] = "Code changed in";
-            props["content"] = state.openFilePath;
+            props.title = "Code changed in";
+            props.content = state.openFilePath;
             break;
         case "minedRules":
-            props["title"] = "Mining Rules";
-            props["content"] = "";
+            props.title = "Mining Rules";
             break;
         case "featureSelection":
-            props["title"] = "Feature Selection";
-            props["content"] = "";
+            props.title = "Feature Selection";
             break;
         default:
-            props["title"] = "";
-            props["content"] = "Error no page is found for: " + state.currentHash[0];
+            props.content = "Error no page is found for: " + state.currentHash[0];
             break;
     }
 
@@ -174,11 +167,14 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        onUpdateTag: (props, newValue) => {
-            if (newValue !== props["tag"]["detail"]) {
-                props["tags"].filter((d) => d["tagName"] === props["currentHash"][1])[0]["detail"] = newValue; // can throw errors
-                Utilities.sendToServer(props["ws"], "MODIFIED_TAG", props["tag"]);
-                dispatch(updateTagTable(props["tags"]));
+        onUpdateTag: (ws, tagTable, tag, newValue) => {
+            if (newValue !== tag["detail"]) {
+                let filtered = tagTable.filter((d) => d["tagName"] === tag["tagName"]);
+                if (filtered.length === 1) {
+                    tagTable.filter((d) => d["tagName"] === tag["tagName"])[0]["detail"] = newValue;
+                    Utilities.sendToServer(ws, "MODIFIED_TAG", tag);
+                    dispatch(updateTagTable(tagTable));
+                }
             }
         }
     }

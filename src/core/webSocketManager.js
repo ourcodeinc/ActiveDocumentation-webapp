@@ -226,10 +226,10 @@ class WebSocketManager extends Component {
 
 
 // map state to props
-function mapStateToProps(state) {
+function mapStateToProps(state) {console.log(state);
     return {
         ignoreFileChange: state.ignoreFileChange,
-        message: state.message,
+
         minedRuleMetaData: state.minedRulesState.metaData
     };
 }
