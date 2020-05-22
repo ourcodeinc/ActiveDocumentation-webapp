@@ -74,7 +74,7 @@ class RulePanel extends Component {
         };
     }
 
-    render() {
+    render() {console.log(this.state.openPanel);
         if (!this.ruleI && !this.state.editMode) return null;
         if (this.state.editMode)
             return (
@@ -399,7 +399,7 @@ class RulePanel extends Component {
 }
 
 // map state to props
-function mapStateToProps(state) {console.log(state);
+function mapStateToProps(state) {
     return {
         rules: state.ruleTable,
         tags: state.tagTable,
