@@ -18,6 +18,7 @@ import {generateTreeForElement} from "./ui/rulePadGraphicalEditor/graphicalEdito
     NEW_TAG
 
     HIERARCHY_DATA
+    PROJECT_PATH
 
     IGNORE_FILE
 
@@ -161,6 +162,12 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             return Object.assign({}, state, {
                 projectHierarchy: action.data["hierarchyData"],
                 message: "HIERARCHY_DATA"
+            });
+
+        case "PROJECT_PATH":
+            return Object.assign({}, state, {
+                projectPath: action.data["projectPath"],
+                message: "PROJECT_PATH"
             });
 
         /*

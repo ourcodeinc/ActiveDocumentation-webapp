@@ -95,16 +95,11 @@ export class HeaderBar extends Component {
 
 // map state to props
 function mapStateToProps(state) {
-    let path = "";
-    try {
-        path = state["projectHierarchy"]["properties"]["canonicalPath"];
-    } catch (e) {
-    }
     let props = {
         tagTable: state.tagTable,
         currentHash: state.currentHash,
         ws: state.ws,
-        projectPath: path,
+        projectPath: state.projectPath,
         tag: "",
         title: "",
         content: ""
@@ -119,9 +114,6 @@ function mapStateToProps(state) {
             props.title = state.currentHash[1];
             props.content = props["tag"]["detail"];
             break;
-        // case "rule":
-        //     props.title = state.currentHash[1];
-        //     break;
         case "rules":
             props.title = "All Rules";
             break;
@@ -131,14 +123,8 @@ function mapStateToProps(state) {
         case "ruleJsonChanged":
             props.title = "ruleJson.txt is changed.";
             break;
-        case "hierarchy":
-            props.title = "Project Hierarchy";
-            break;
         case "index":
             props.title = "Active Documentation";
-            break;
-        case "genRule":
-            props.title = "New Rule";
             break;
         case "violatedRules":
             props.title = "Violated Rules";

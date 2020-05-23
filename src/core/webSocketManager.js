@@ -8,7 +8,7 @@ import {connect} from "react-redux";
 import {
     receiveExpressionStatementXML, ignoreFile, updateFilePath, updateRuleTable, updateTagTable,
     updateWS, updateXmlFiles, updateProjectHierarchyData, updatedMinedRules, updateFeatureSelection,
-    updateDangerousMinedRules
+    updateDangerousMinedRules, updateProjectPath
 } from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from "./ruleExecutor";
 import {parseGrouping} from "../miningRulesCore/parseGrouping";
@@ -21,19 +21,15 @@ class WebSocketManager extends Component {
         super(props);
 
 
-        let xml = []; // object of `filePath` and `xml`
-        let ruleTable = []; // retrieved from ruleJson.txt
-        let tagTable = []; // retrieved from tagJson.txt
+        let xml = []; // [{filePath: "", xml: ""}]
+        let ruleTable = [];
+        let tagTable = [];
         let ws = new WebSocket("ws://localhost:8887");
-        let filtered;
         let projectPath = "";
 
-        // PubSub.publish("NEW_WS", [ws]);
         this.props.onUpdateWS(ws);
 
-        ws.onopen = function () {
-            // PubSub.publish("NEW_CONNECTION", []);
-        };
+        ws.onopen = function () {};
 
 
         if (!window.WebSocket) {
@@ -44,75 +40,81 @@ class WebSocketManager extends Component {
 
             let message = JSON.parse(e.data);
 
-            // if (message.command !== "XML")
-            //     console.log(message);
+            if (message.command !== "XML")
+                console.log(message);
 
             switch (message.command) {
 
-                // send initially on open
                 case "XML":
+                    // data: {filePath: "", xml: ""}
                     xml.push(message.data);
                     break;
 
-                // send initially on open, when the ruleJson.txt is changed, followed by VERIFY_RULES
                 case "RULE_TABLE":
+                    // data: [ruleTable]
                     ruleTable = JSON.parse(message.data);
                     this.props.onUpdateXmlFiles(xml);
                     break;
 
-                // send initially on open, when the tagJson.txt is changed, followed by VERIFY_RULES
                 case "TAG_TABLE":
+                    // data: [tagTable]
                     tagTable = JSON.parse(message.data);
                     this.props.onUpdateTagTable(tagTable);
                     break;
 
                 case "PROJECT_HIERARCHY":
-                    // received by projectHierarchy
+                    // data: {projectHierarchy}
                     this.props.onProjectHierarchy(message.data);
-                    projectPath = message.data.properties["canonicalPath"];
+                    break;
+
+                case "PROJECT_PATH":
+                    // data: projectPath
+                    projectPath = message.data;
+                    this.props.onProjectPathUpdate(projectPath);
                     break;
 
                 case "VERIFY_RULES":
-                    // received by RuleExecutor
+                    // data: ""
                     ruleTable = checkRulesForAll(xml, ruleTable);
                     this.props.onUpdateRuleTable(ruleTable);
                     break;
 
-                // followed by CHECK_RULES_FOR_FILE
                 case "UPDATE_XML":
-                    filtered = xml.filter((d) => d.filePath === message.data["filePath"]);
-                    if (filtered.length === 0)
+                    // data: {filePath: "", xml: ""}
+                    let filteredXML = xml.filter((d) => d.filePath === message.data["filePath"]);
+                    if (filteredXML.length === 0)
                         xml.push({"filePath": message.data["filePath"], "xml": message.data["xml"]});
                     else
-                        filtered[0].xml = message.data["xml"];
+                        filteredXML[0].xml = message.data["xml"];
                     this.props.onUpdateXmlFiles(xml);
                     break;
 
-                // when the code changes, after UPDATE_XML
                 case "CHECK_RULES_FOR_FILE":
+                    // data: "filePath"
                     let filePath = message.data;
-                    // received by RuleExecutor
                     ruleTable = checkRulesForFile(xml, ruleTable, filePath);
                     this.props.onFilePathChange(filePath.replace(projectPath, ""));
                     this.props.onUpdateRuleTable(ruleTable);
                     window.location.hash = "#/codeChanged";
                     break;
 
-                // tagName and detail
                 case "UPDATE_TAG":
+                    // data: {tagID: longNumber, tagInfo: {...}}
                     let newTag = JSON.parse(message.data);
-                    filtered = tagTable.filter((d) => d.tagName === newTag["tagName"]);
-                    if (filtered.length === 0)
+                    let filteredTag = tagTable.filter((d) => d.tagName === newTag["tagName"]);
+                    if (filteredTag.length === 0)
                         tagTable.push(newTag);
                     else
                         tagTable.filter((d) => d.tagName === newTag["tagName"])[0].detail = newTag["detail"];
                     window.location.hash = "#/tag/" + newTag["tagName"];
 
                     break;
+                case "FAILED_UPDATE_TAG":
+                    // data: {tagID: longNumber, tagInfo: {...}}
+                    break;
 
-                // Followed after sending MODIFIED_RULE
-                // ruleIndex and rule
                 case "UPDATE_RULE":
+                    // data: {ruleID: longNumber, ruleInfo: {...}}
                     let updatedRule = JSON.parse(message.data["rule"]);
                     try {
                         let ruleIndex = -1;
@@ -124,23 +126,17 @@ class WebSocketManager extends Component {
                     }
                     break;
 
-                // when the tagJson.txt changes, after TAG_TABLE
-                case "UPDATE_TAG_TABLE":
-                    this.props.onUpdateTagTable(tagTable);
-                    window.location.hash = "#/tagJsonChanged";
+                case "FAILED_UPDATE_RULE":
+                    // data: {ruleID: longNumber, ruleInfo: {...}}
                     break;
 
-                // when the ruleJson.txt changes, after RULE_TABLE
-                case "UPDATE_RULE_TABLE":
-                    window.location.hash = "#/ruleJsonChanged";
-                    break;
-
-                // after sending a piece of code EXPR_STMT
                 case "EXPR_STMT_XML":
-                    this.props.onReceiveExprStmtXML(message.data); // {xmlText: "", messageID: ""}
+                    // data: {xmlText: "", messageID: ""}
+                    this.props.onReceiveExprStmtXML(message.data);
                     break;
 
                 case "NEW_RULE":
+                    // data: {ruleID: longNumber, rule: {...}}
                     let newAddedRule = JSON.parse(message.data["rule"]);
                     ruleTable.push(newAddedRule);
                     // received by RuleExecutor
@@ -148,15 +144,23 @@ class WebSocketManager extends Component {
                     this.props.onUpdateRuleTable(ruleTable);
                     break;
 
+                case "FAILED_NEW_RULE":
+                    // data: {ruleID: longNumber, rule: {...}}
+                    break;
 
                 case "NEW_TAG":
+                    // data: {tagID: longNumber, tag: {...}}
                     let newAddedTag = JSON.parse(message.data["tag"]);
                     tagTable.push(newAddedTag);
                     this.props.onUpdateTagTable(tagTable);
                     break;
 
-                // after sending a piece of code DECL_STMT
-                case "SHOW_RULES_FOR_FILE":
+                case "FAILED_NEW_TAG":
+                    // data: {tagID: longNumber, tag: {...}}
+                    break;
+
+                case "FILE_CHANGE":
+                    // data: "filePath"
                     let focusedFilePath = message.data.replace(projectPath, "");
                     if (!this.props.ignoreFileChange) {
                         this.props.onFilePathChange(focusedFilePath);
@@ -238,12 +242,14 @@ function mapDispatchToProps(dispatch) {
     return {
         onUpdateWS: (ws) => dispatch(updateWS(ws)),
         onProjectHierarchy: (hierarchyData) => dispatch(updateProjectHierarchyData(hierarchyData)),
+        onProjectPathUpdate: (projectPath) => dispatch(updateProjectPath(projectPath)),
         onUpdateRuleTable: (ruleTable) => dispatch(updateRuleTable(ruleTable)),
         onUpdateTagTable: (tagTable) => dispatch(updateTagTable(tagTable)),
         onFilePathChange: (filePath) => dispatch(updateFilePath(filePath)),
         onFalsifyIgnoreFile: () => dispatch(ignoreFile(false)),
         onReceiveExprStmtXML: (data) => dispatch(receiveExpressionStatementXML(data)),
         onUpdateXmlFiles: (xmlFiles) => dispatch(updateXmlFiles(xmlFiles)),
+
         onUpdateMinedRules: (modifiedOutput) => dispatch(updatedMinedRules(modifiedOutput)),
         onUpdateFeatureSelection: (dataObject) => dispatch(updateFeatureSelection(dataObject)),
         onUpdateDangerousMinedRules: (metaData, minedRules) => dispatch(updateDangerousMinedRules(metaData, minedRules))

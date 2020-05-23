@@ -287,6 +287,7 @@ export const initial_state = {
     tagTable: [],
     xmlFiles: [],
     projectHierarchy: {},
+    projectPath: "",
     currentHash: ["index"],
     ignoreFileChange: false, // ignore the file switching in the IDE
     displayEditRuleTutorial: true, // display the tour guide for edit rule

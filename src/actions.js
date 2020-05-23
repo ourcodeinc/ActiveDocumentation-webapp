@@ -85,6 +85,16 @@ export const updateProjectHierarchyData = (hierarchyData) => {
     };
 };
 
+/**
+ * @param projectPath string
+ * @return {{data: {projectPath: string}, type: string}}
+ */
+export const updateProjectPath = (projectPath) => {
+    return {
+        type: "PROJECT_PATH",
+        data: {projectPath: projectPath}
+    }
+};
 
 /*
     file Handling

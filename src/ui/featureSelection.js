@@ -187,12 +187,6 @@ class FeatureSelection extends Component {
 }
 
 function mapStateToProps(state) {
-    // copied from headerBar.js
-    let path = "";
-    try {
-        path = state["projectHierarchy"]["properties"]["canonicalPath"];
-    } catch (e) {
-    }
     return {
         message: state.message,
         filePath: state.featureSelection.filePath,
@@ -206,7 +200,7 @@ function mapStateToProps(state) {
         modifiedSelectedText: state.featureSelection.modifiedSelectedText,
         idMap: state.featureSelection.idMap,
         displayTextArray: state.featureSelection.displayTextArray,
-        projectPath: path
+        projectPath: state.projectPath
     }
 }
 

@@ -569,19 +569,13 @@ class MinedRulesComponent extends Component {
 }
 
 function mapStateToProps(state) {
-    // copied from headerBar.js
-    let path = "";
-    try {
-        path = state["projectHierarchy"]["properties"]["canonicalPath"];
-    } catch (e) {
-    }
     return {
         message: state.message,
         ws: state.ws,
         xmlFiles: state.xmlFiles,
         metaData: state.minedRulesState.metaData,
         minedRules: state.minedRulesState.minedRules,
-        projectPath: path,
+        projectPath: state.projectPath,
         customFeatures: state.customFeatures // custom features received from feature selection
     }
 }
