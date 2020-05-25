@@ -3,7 +3,7 @@
  */
 
 import React, {Component, Fragment} from "react";
-import "../App.css";
+import "../../App.css";
 import {connect} from "react-redux";
 import {Button, Row, Col, ButtonGroup} from "react-bootstrap";
 import Slider from "rc-slider";
@@ -12,12 +12,12 @@ import "rc-slider/assets/index.css";
 import "three-dots"
 
 
-import {mineRulesFromXmlFiles} from "../miningRulesCore/miningRules";
-import {ignoreFile, updateMetaData} from "../actions";
+import {mineRulesFromXmlFiles} from "../../miningRulesCore/miningRules";
+import {ignoreFile, updateMetaData} from "../../actions";
 import MinedRulePad from "./minedRulePad";
-import {verifyPartialTextBasedOnGrammar} from "../core/languageProcessing";
-import {generateGuiTrees} from "./rulePadTextualEditor/generateGuiTree";
-import Utilities from "../core/utilities";
+import {verifyPartialTextBasedOnGrammar} from "../../core/languageProcessing";
+import {generateGuiTrees} from "../RulePad/rulePadTextualEditor/generateGuiTree";
+import Utilities from "../../core/utilities";
 
 
 class MinedRulesComponent extends Component {

@@ -11,8 +11,8 @@ import TableOfContents from "./ui/tableOfContents";
 import RuleTable from "./ui/ruleTable";
 import NavBar from "./ui/navBar";
 import HeaderBar from "./ui/headerBar";
-import MinedRulesComponent from "./ui/minedRulesComponent";
-import FeatureSelection from "./ui/featureSelection";
+import MinedRulesComponent from "./ui/MiningRules/minedRulesComponent";
+import FeatureSelection from "./ui/MiningRules/featureSelection";
 
 class App extends Component {
 

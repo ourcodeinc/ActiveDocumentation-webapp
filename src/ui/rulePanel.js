@@ -14,7 +14,7 @@ import MdEdit from "react-icons/lib/md/edit";
 
 import {changeEditMode, ignoreFile} from "../actions";
 import Utilities from "../core/utilities";
-import RulePad from "./rulePad";
+import RulePad from "./RulePad/rulePad";
 
 
 class RulePanel extends Component {

@@ -3,12 +3,12 @@
  */
 
 import React, {Component} from "react";
-import "../../App.css";
+import "../../../App.css";
 
 import {connect} from "react-redux";
 
 import GraphicalComponent from "./graphicalComponent";
-import {changeAutoCompleteTextFromGUI, changeGuiElement} from "../../actions";
+import {changeAutoCompleteTextFromGUI, changeGuiElement} from "../../../actions";
 import {generateTreeForElement, getConditionByName} from "./graphicalEditorConstants";
 import {autoComplete_suggestion} from "../rulePadTextualEditor/textualEditorConstant";
 

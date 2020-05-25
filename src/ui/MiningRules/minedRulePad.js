@@ -6,7 +6,7 @@
 
 import React, {Component, Fragment} from "react";
 
-import {getConditionByName} from "./rulePadGraphicalEditor/graphicalEditorConstants";
+import {getConditionByName} from "../RulePad/rulePadGraphicalEditor/graphicalEditorConstants";
 
 
 class MinedRulePad extends Component {

@@ -4,7 +4,7 @@
 
 import React, {Component, Fragment} from "react";
 import {connect} from "react-redux";
-import "../App.css";
+import "../../App.css";
 import {
     Alert, MenuItem, Button, FormGroup, ButtonToolbar, Label, FormControl,
     Modal, Dropdown, Tabs, Tab, Badge
@@ -27,37 +27,37 @@ import marked from "marked";
 import Joyride, {ACTIONS, EVENTS} from "react-joyride";
 import ReactToolTip from "react-tooltip";
 
-import GraphicalEditor from "./rulePadGraphicalEditor/graphicalEditor";
-import verifyTextBasedOnGrammar from "../core/languageProcessing";
+import GraphicalEditor from "../RulePad/rulePadGraphicalEditor/graphicalEditor";
+import verifyTextBasedOnGrammar from "../../core/languageProcessing";
 import {
     matchMessages, receiveGuiTree, clearNewRuleForm,
     editRuleForm, submitNewRule, submitNewTag, updateRule, updateXPaths, updateDisplayEditTutorial, ignoreFile
-} from "../actions";
-import {generateGuiTrees} from "./rulePadTextualEditor/generateGuiTree";
-import TextualEditor from "./rulePadTextualEditor/textualEditor";
-import Utilities from "../core/utilities";
-import {error_messages_IMarkdownString} from "./rulePadTextualEditor/textualEditorConstant";
+} from "../../actions";
+import {generateGuiTrees} from "../RulePad/rulePadTextualEditor/generateGuiTree";
+import TextualEditor from "../RulePad/rulePadTextualEditor/textualEditor";
+import Utilities from "../../core/utilities";
+import {error_messages_IMarkdownString} from "../RulePad/rulePadTextualEditor/textualEditorConstant";
 
-import title_description_filled from "../resources/title_description_filled.png";
-import visibility_class_declaration from "../resources/visibility_class_declaration.png";
-import visibility_class_declaration_code from "../resources/visibility_class_declaration_code.png";
-import hidden_element_interaction from "../resources/hidden_element_interaction.png";
-import constraint_example from "../resources/constraint_example.png";
-import EoI_GUI_example_1 from "../resources/EoI_GUI_example_1.png";
-import EoI_GUI_example_2 from "../resources/EoI_GUI_example_2.png";
-import EoI_TE_example_1 from "../resources/EoI_TE_example_1.png";
-import EoI_TE_example_2 from "../resources/EoI_TE_example_2.png";
-import auto_complete_filled from "../resources/auto_complete_filled.png";
-import auto_complete_info_icon from "../resources/auto_complete_info_icon.png";
-import auto_complete_info from "../resources/auto_complete_info.png";
-import auto_complete_example from "../resources/auto_complete_example.png";
-import files_folders from "../resources/files_folders.png";
-import tags from "../resources/tags.png";
-import new_tag from "../resources/new_tag.png";
-import feedback_snippet_1 from "../resources/feedback_snippet_1.png";
-import matching_code from "../resources/matching_code.png";
+import title_description_filled from "./resources/title_description_filled.png";
+import visibility_class_declaration from "./resources/visibility_class_declaration.png";
+import visibility_class_declaration_code from "./resources/visibility_class_declaration_code.png";
+import hidden_element_interaction from "./resources/hidden_element_interaction.png";
+import constraint_example from "./resources/constraint_example.png";
+import EoI_GUI_example_1 from "./resources/EoI_GUI_example_1.png";
+import EoI_GUI_example_2 from "./resources/EoI_GUI_example_2.png";
+import EoI_TE_example_1 from "./resources/EoI_TE_example_1.png";
+import EoI_TE_example_2 from "./resources/EoI_TE_example_2.png";
+import auto_complete_filled from "./resources/auto_complete_filled.png";
+import auto_complete_info_icon from "./resources/auto_complete_info_icon.png";
+import auto_complete_info from "./resources/auto_complete_info.png";
+import auto_complete_example from "./resources/auto_complete_example.png";
+import files_folders from "./resources/files_folders.png";
+import tags from "./resources/tags.png";
+import new_tag from "./resources/new_tag.png";
+import feedback_snippet_1 from "./resources/feedback_snippet_1.png";
+import matching_code from "./resources/matching_code.png";
 
-import {checkRulesForAll} from "../core/ruleExecutor";
+import {checkRulesForAll} from "../../core/ruleExecutor";
 import ProjectHierarchy from "./projectHierarchy";
 
 

@@ -6,7 +6,7 @@ import pluralize from "pluralize";
 
 import {generateTreeForElement, getConditionByName} from "../rulePadGraphicalEditor/graphicalEditorConstants";
 import {grammar_keywords, special_word} from "./textualEditorConstant";
-import {initial_graphicalElementTree, initial_graphicalElements} from "../../initialState";
+import {initial_graphicalElementTree, initial_graphicalElements} from "../../../initialState";
 
 /**
  * create the quantifier and the constraint guiTree based on the grammar parse tree

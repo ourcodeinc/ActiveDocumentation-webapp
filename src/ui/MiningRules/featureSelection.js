@@ -3,12 +3,12 @@
  */
 
 import React, {Component} from "react";
-import "../App.css";
+import "../../App.css";
 import {connect} from "react-redux";
 import {ButtonToolbar, Button} from "react-bootstrap";
 
-import {computeXPath} from "../miningRulesCore/findingFeature";
-import {updateResetFeatureSelection, updateSaveFeatureSelection} from "../actions";
+import {computeXPath} from "../../miningRulesCore/findingFeature";
+import {updateResetFeatureSelection, updateSaveFeatureSelection} from "../../actions";
 
 class FeatureSelection extends Component {
 

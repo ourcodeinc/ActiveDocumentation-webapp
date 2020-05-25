@@ -7,7 +7,7 @@ import React, {Component} from "react";
 import {MdSave} from "react-icons/lib/md/index";
 import ReactToolTip from "react-tooltip";
 
-import "../App.css";
+import "../../App.css";
 
 
 import {SplitButton, MenuItem, Button} from "react-bootstrap";
