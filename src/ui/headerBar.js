@@ -2,7 +2,6 @@
  * Created by saharmehrpour on 9/7/17.
  */
 
-
 import React, {Component} from "react";
 import "../App.css";
 import Utilities from "../core/utilities";
@@ -10,8 +9,6 @@ import Utilities from "../core/utilities";
 import {FormControl} from "react-bootstrap";
 import {connect} from "react-redux";
 import GoAlert from "react-icons/lib/go/alert";
-import {updateTagTable} from "../actions";
-
 
 export class HeaderBar extends Component {
 
@@ -28,7 +25,6 @@ export class HeaderBar extends Component {
         )
     }
 
-
     renderHeader() {
         switch (this.props.currentHash[0]) {
             case "tag":
@@ -37,7 +33,16 @@ export class HeaderBar extends Component {
                         <span className="text-16 primary">Rules related to tag: </span><br/>
                         <span className="text-24 important">{this.props.title}</span>
                         <FormControl componentClass="textarea" defaultValue={this.props.content} style={{resize: "vertical"}}
-                                     onBlur={(e) => this.props.onUpdateTag(this.props.ws, this.props.tagTable, this.props.tag, e.target.value)} key={new Date()}
+                                     onBlur={(e) => {
+                                         if (e.target.value !== this.props.tag["detail"]) {
+                                             let filtered = this.props.tagTable.filter((d) => d["tagName"] === this.props.tag["tagName"]);
+                                             if (filtered.length === 1) {
+                                                 filtered[0]["detail"] = e.target.value;
+                                                 Utilities.sendToServer(this.props.ws, "MODIFIED_TAG", filtered[0]);
+                                             }
+                                         }
+                                     }}
+                                     key={new Date()}
                                      placeholder="Information about tag"
                                      onClick={(e) => {
                                          e.target.style.cssText = "height:0";
@@ -118,10 +123,10 @@ function mapStateToProps(state) {
             props.title = "All Rules";
             break;
         case "tagJsonChanged":
-            props.title = "tagJson.txt is changed.";
+            props.title = "tagTable.json is changed.";
             break;
         case "ruleJsonChanged":
-            props.title = "ruleJson.txt is changed.";
+            props.title = "ruleTable.json is changed.";
             break;
         case "index":
             props.title = "Active Documentation";
@@ -151,19 +156,4 @@ function mapStateToProps(state) {
 
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        onUpdateTag: (ws, tagTable, tag, newValue) => {
-            if (newValue !== tag["detail"]) {
-                let filtered = tagTable.filter((d) => d["tagName"] === tag["tagName"]);
-                if (filtered.length === 1) {
-                    tagTable.filter((d) => d["tagName"] === tag["tagName"])[0]["detail"] = newValue;
-                    Utilities.sendToServer(ws, "MODIFIED_TAG", tag);
-                    dispatch(updateTagTable(tagTable));
-                }
-            }
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(HeaderBar);
+export default connect(mapStateToProps, null)(HeaderBar);

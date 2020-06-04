@@ -55,7 +55,7 @@ class RuleTable extends Component {
         );
     }
 
-    //componentDidUpdate doesn"t work
+    //componentDidUpdate doesn't work
     UNSAFE_componentWillReceiveProps(nextProps) {
         this.setState(nextProps);
     }

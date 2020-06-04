@@ -31,7 +31,7 @@ import GraphicalEditor from "../RulePad/rulePadGraphicalEditor/graphicalEditor";
 import verifyTextBasedOnGrammar from "../../core/languageProcessing";
 import {
     matchMessages, receiveGuiTree, clearNewRuleForm,
-    editRuleForm, submitNewRule, submitNewTag, updateRule, updateXPaths, updateDisplayEditTutorial, ignoreFile
+    editRuleForm, submitNewRule, submitNewTag, updateRule, updateXPaths, updateDisplayEditTutorial, ignoreFileChange
 } from "../../actions";
 import {generateGuiTrees} from "../RulePad/rulePadTextualEditor/generateGuiTree";
 import TextualEditor from "../RulePad/rulePadTextualEditor/textualEditor";
@@ -1532,7 +1532,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        onIgnoreFile: (shouldIgnore) => dispatch(ignoreFile(shouldIgnore)),
+        onIgnoreFile: (shouldIgnore) => dispatch(ignoreFileChange(shouldIgnore)),
         onSubmitNewRule: () => dispatch(submitNewRule()),
         onUpdateRule: () => dispatch(updateRule()),
         onSubmitNewTag: () => dispatch(submitNewTag()),

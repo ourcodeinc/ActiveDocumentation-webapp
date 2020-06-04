@@ -6,7 +6,7 @@ import {Component} from "react";
 import {connect} from "react-redux";
 
 import {
-    receiveExpressionStatementXML, ignoreFile, updateFilePath, updateRuleTable, updateTagTable,
+    receiveExpressionStatementXML, ignoreFileChange, updateFilePath, updateRuleTable, updateTagTable,
     updateWS, updateXmlFiles, updateProjectHierarchyData, updatedMinedRules, updateFeatureSelection,
     updateDangerousMinedRules, updateProjectPath
 } from "../actions";
@@ -246,7 +246,7 @@ function mapDispatchToProps(dispatch) {
         onUpdateRuleTable: (ruleTable) => dispatch(updateRuleTable(ruleTable)),
         onUpdateTagTable: (tagTable) => dispatch(updateTagTable(tagTable)),
         onFilePathChange: (filePath) => dispatch(updateFilePath(filePath)),
-        onFalsifyIgnoreFile: () => dispatch(ignoreFile(false)),
+        onFalsifyIgnoreFile: () => dispatch(ignoreFileChange(false)),
         onReceiveExprStmtXML: (data) => dispatch(receiveExpressionStatementXML(data)),
         onUpdateXmlFiles: (xmlFiles) => dispatch(updateXmlFiles(xmlFiles)),
 

@@ -13,7 +13,7 @@ import "three-dots"
 
 
 import {mineRulesFromXmlFiles} from "../../miningRulesCore/miningRules";
-import {ignoreFile, updateMetaData} from "../../actions";
+import {ignoreFileChange, updateMetaData} from "../../actions";
 import MinedRulePad from "./minedRulePad";
 import {verifyPartialTextBasedOnGrammar} from "../../core/languageProcessing";
 import {generateGuiTrees} from "../RulePad/rulePadTextualEditor/generateGuiTree";
@@ -582,7 +582,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        onIgnoreFile: (shouldIgnore) => dispatch(ignoreFile(shouldIgnore)),
+        onIgnoreFile: (shouldIgnore) => dispatch(ignoreFileChange(shouldIgnore)),
         onUpdateMetaData: (metaData) => dispatch(updateMetaData(metaData))
     }
 }

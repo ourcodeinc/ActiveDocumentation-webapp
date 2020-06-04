@@ -105,9 +105,9 @@ export const updateProjectPath = (projectPath) => {
  * @param shouldIgnore boolean
  * @return {{data: {shouldIgnore: boolean}, type: string}}
  */
-export const ignoreFile = (shouldIgnore) => {
+export const ignoreFileChange = (shouldIgnore) => {
     return {
-        type: "IGNORE_FILE",
+        type: "IGNORE_FILE_CHANGE",
         data: {shouldIgnore: shouldIgnore}
     };
 };
@@ -129,7 +129,7 @@ export const updateDisplayEditTutorial = (shouldDisplay) => {
  */
 export const updateFilePath = (filePath) => {
     return {
-        type: "FILE_PATH",
+        type: "FILE_PATH_UPDATED",
         data: {openFilePath: filePath}
     };
 };

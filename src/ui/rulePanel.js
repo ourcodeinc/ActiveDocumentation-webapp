@@ -12,7 +12,7 @@ import FaCaretDown from "react-icons/lib/fa/caret-down";
 import FaCaretUp from "react-icons/lib/fa/caret-up";
 import MdEdit from "react-icons/lib/md/edit";
 
-import {changeEditMode, ignoreFile} from "../actions";
+import {changeEditMode, ignoreFileChange} from "../actions";
 import Utilities from "../core/utilities";
 import RulePad from "./RulePad/rulePad";
 
@@ -322,8 +322,7 @@ class RulePanel extends Component {
                 return (
                     <div data-file-path={d["filePath"]} className="snippetDiv" key={i}>
                                 <pre className="link" onClick={() => {
-                                    this.props.onIgnoreFile(true);
-                                    // PubSub.publish("IGNORE_FILE", [true]);
+                                    this.props.on_File(true);
                                     Utilities.sendToServer(this.props.ws, "XML_RESULT", d["xml"])
                                 }}>
                                     <div className="content" dangerouslySetInnerHTML={{__html: d["snippet"]}}/>
@@ -412,7 +411,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        onIgnoreFile: (shouldIgnore) => dispatch(ignoreFile(shouldIgnore)),
+        onIgnoreFile: (shouldIgnore) => dispatch(ignoreFileChange(shouldIgnore)),
         onChangeEditMode: (ruleIndex, newEditMode) => dispatch(changeEditMode(ruleIndex, newEditMode))
     }
 }

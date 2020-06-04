@@ -12,29 +12,16 @@ import {changeEditMode} from "../actions";
 
 class TableOfContents extends Component {
 
-    constructor() {
-        super();
-
-        this.state = {
-            selectedAlphabet: "All"
-        };
-
-        this.setWrapperRef = this.setWrapperRef.bind(this);
-    }
-
     render() {
         return (
-            <div ref={this.setWrapperRef}>
+            <div>
                 <div className={"well well-sm"}>
                     <h4>Tags</h4>
                 </div>
-                {/*<div className={"list-inline"} id={"alphabet_index"}>{this.createAlphabetIndex()}</div>*/}
-                {/*<hr className={"bottomBorder"}/>*/}
                 <ul className={"list-inline"} id={"tags_list"}>
                     {this.props.tags.map((tag, i) =>
                         (<li key={i}
-                             style={{display: this.selectAlphabet(tag)}}
-                             onClick={(d) =>
+                             onClick={() =>
                                  window.location.hash = "#/tag/" + tag["tagName"]
                              }>{tag["tagName"]}</li>)
                     )}
@@ -67,41 +54,6 @@ class TableOfContents extends Component {
             </div>
         )
     }
-
-    setWrapperRef(node) {
-        this.thisNode = node;
-    }
-
-    selectAlphabet(tag) {
-        if (this.state.selectedAlphabet === "All") {
-            return "block";
-        }
-        if (tag["tagName"].charAt(0).toUpperCase() === this.state.selectedAlphabet)
-            return "block";
-        return "none";
-    }
-
-
-    /**
-     * This function creates an alphabet list on top
-     */
-    createAlphabetIndex() {
-
-        let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-        alphabet.push("All");
-
-        return alphabet.map((d, i) => {
-            return (
-                <li key={i}
-                    className={d === this.state.selectedAlphabet ? "selected" : ""}
-                    onClick={() => this.setState({selectedAlphabet: d})}>
-                    {d}
-                </li>
-            )
-        });
-
-    };
-
 
 }
 

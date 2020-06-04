@@ -14,13 +14,13 @@ import {generateTreeForElement} from "./ui/RulePad/rulePadGraphicalEditor/graphi
     UPDATE_RULE_TABLE
     UPDATE_RULE
 
-    NEW_RULE
-    NEW_TAG
+    SUBMIT_NEW_RULE
+    SUBMIT_NEW_TAG
 
     HIERARCHY_DATA
     PROJECT_PATH
 
-    IGNORE_FILE
+    IGNORE_FILE_CHANGE
 
     UPDATE_DISPLAY_EDIT_TUTORIAL
 
@@ -48,6 +48,8 @@ import {generateTreeForElement} from "./ui/RulePad/rulePadGraphicalEditor/graphi
 
     CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI
     UPDATE_XPATHS
+
+    //  Mining Rules
 
     UPDATE_META_DATA
     UPDATE_MINED_RULES
@@ -174,10 +176,10 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
          file handling
           */
 
-        case "IGNORE_FILE":
+        case "IGNORE_FILE_CHANGE":
             let editCount = state.ruleTable.reduce((count, element) => count + element.rulePanelState.editMode ? 1 : 0, 0);
             if (state.rulePadState.isEditMode || editCount > 0) return Object.assign({}, state);
-            return Object.assign({}, state, {ignoreFileChange: action.data["shouldIgnore"], message: "IGNORE_FILE"});
+            return Object.assign({}, state, {ignoreFileChange: action.data["shouldIgnore"], message: "IGNORE_FILE_CHANGE"});
 
         case "UPDATE_DISPLAY_EDIT_TUTORIAL":
             return Object.assign({}, state, {
@@ -185,7 +187,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 message: "UPDATE_DISPLAY_EDIT_TUTORIAL"
             });
 
-        case "FILE_PATH":
+        case "FILE_PATH_UPDATED":
             if (state.ignoreFileChange) return Object.assign({}, state, {message: "FILE_PATH_UPDATED"});
             return Object.assign({}, state, {openFilePath: action.data["openFilePath"], message: "FILE_PATH_UPDATED"});
 
