@@ -74,7 +74,7 @@ class RulePanel extends Component {
         };
     }
 
-    render() {console.log(this.state.openPanel);
+    render() {
         if (!this.ruleI && !this.state.editMode) return null;
         if (this.state.editMode)
             return (
