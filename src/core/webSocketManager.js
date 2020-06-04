@@ -20,7 +20,6 @@ class WebSocketManager extends Component {
     constructor(props) {
         super(props);
 
-
         let xml = []; // [{filePath: "", xml: ""}]
         let ruleTable = [];
         let tagTable = [];
@@ -31,7 +30,6 @@ class WebSocketManager extends Component {
 
         ws.onopen = function () {};
 
-
         if (!window.WebSocket) {
             alert("FATAL: WebSocket not natively supported. This demo will not work!");
         }
@@ -40,8 +38,7 @@ class WebSocketManager extends Component {
 
             let message = JSON.parse(e.data);
 
-            if (message.command !== "XML")
-                console.log(message);
+            // if (message.command !== "XML") console.log(message);
 
             switch (message.command) {
 
@@ -220,17 +217,15 @@ class WebSocketManager extends Component {
         };
     }
 
-
     render() {
         return null;
-
     }
 
 }
 
 
 // map state to props
-function mapStateToProps(state) {console.log(state);
+function mapStateToProps(state) {
     return {
         ignoreFileChange: state.ignoreFileChange,
 
