@@ -9,9 +9,9 @@ This file is required for FPMax algorithm (for mining design rules) to execute. 
 **The file should be copied/moved to the root directory of the project.**
 
 
-## ruleJson.txt
+## ruleTable.json
 
-There must be a file name `ruleJson.txt` in the project folder in which all rules are stored. `grammar` field is recently added for each rule. 
+There must be a file name `ruleTable.json` in the project folder in which all rules are stored. `grammar` field is recently added for each rule. 
 It is mandatory but is generated for newly added rules. Here is an example for this file:
 
 ```javascript
@@ -81,9 +81,9 @@ It is mandatory but is generated for newly added rules. Here is an example for t
 ```
 
 
-## tagJson.txt
+## tagTable.json
 
-There is also another json file named `tagJson.txt`. In this file we store information about tags. Here is an example for this file:
+There is also another json file named `tagTable.json`. In this file we store information about tags. Here is an example for this file:
 
 ```javascript
 [
