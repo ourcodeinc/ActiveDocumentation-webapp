@@ -125,8 +125,8 @@ class RulePanel extends Component {
     UNSAFE_componentWillReceiveProps(nextProps) {
 
         if (nextProps.message === reduxStoreMessages.hash_msg) {
-            let panelState = this.newUpdateStateUponCodeChange(nextProps.codeChanged);
-            this.setState(panelState);
+            let panelState = this.newUpdateStateUponCodeChange(nextProps.codeChanged, nextProps.filePath);
+            this.setState({...panelState, filePath: nextProps.filePath});
         }
 
         else if (nextProps.message === reduxStoreMessages.file_path_update_msg)
@@ -141,7 +141,7 @@ class RulePanel extends Component {
                 Only ${indices.toString()} are found as indices.`);
                 else {
                     this.ruleI = nextProps.rules[arrayIndex];
-                    this.setState({editMode: this.ruleI.rulePanelState.editMode});
+                    this.setState({editMode: this.ruleI.rulePanelState.editMode, filePath: nextProps.filePath});
                 }
             }
         }
@@ -157,10 +157,10 @@ class RulePanel extends Component {
                 this.ruleI = nextProps.rules[arrayIndex];
 
                 if (this.ruleI.rulePanelState.editMode && !this.state.editMode)
-                    this.setState({editMode: true});
+                    this.setState({editMode: true, filePath: nextProps.filePath});
 
                 else {
-                    let panelState = this.newUpdateStateUponCodeChange(nextProps.codeChanged);
+                    let panelState = this.newUpdateStateUponCodeChange(nextProps.codeChanged, nextProps.filePath);
                     let newState = {
                         title: this.ruleI.title,
                         description: this.ruleI.description,
@@ -168,6 +168,7 @@ class RulePanel extends Component {
                         folderConstraint: this.ruleI.checkForFilesFoldersConstraints,
                         filesFolders: this.ruleI.checkForFilesFolders,
                         editMode: false,
+                        filePath: nextProps.filePath,
 
                         className: panelState.className,
                         openPanel: panelState.openPanel
@@ -185,7 +186,7 @@ class RulePanel extends Component {
      * set the states "openPanel" and "className" after mounting.
      */
     componentDidMount() {
-        let panelState = this.newUpdateStateUponCodeChange(this.props.codeChanged);
+        let panelState = this.newUpdateStateUponCodeChange(this.props.codeChanged, this.state.filePath);
         this.setState(panelState);
     }
 
@@ -350,22 +351,25 @@ class RulePanel extends Component {
     /**
      * compute the className and state of the panel after the code is changed
      * @param codeChanged
+     * @param filePath path of the open file
      * @returns {*}
      */
-    newUpdateStateUponCodeChange (codeChanged) {
+    newUpdateStateUponCodeChange (codeChanged, filePath) {
         if (!codeChanged) {
             let open = false;
-            if (this.state.filePath === "none")
+            if (filePath === "none")
                 open = true;
             else
-                open = this.ruleI["xPathQueryResult"].filter(d => d["filePath"] === (this.props.projectPath + this.state.filePath)).length > 0;
+            {
+                open = this.ruleI["xPathQueryResult"].filter(d => d["filePath"] === filePath).length > 0;
+            }
             return {
                 className: "rulePanelDiv" + (this.newRuleRequest ? " edit-bg" : ""),
                 openPanel: open
             };
         }
 
-        let file = this.ruleI["xPathQueryResult"].filter(d => d["filePath"] === (this.props.projectPath + this.state.filePath));
+        let file = this.ruleI["xPathQueryResult"].filter(d => d["filePath"] === filePath);
         let ruleIfile = file.length !== 0 ? file[0]["data"] : {};
         if (ruleIfile["allChanged"] === "greater" && ruleIfile["satisfiedChanged"] === ruleIfile["violatedChanged"] === "none") {
             return {openPanel: true, className: "rulePanelDiv blue-bg"};
@@ -399,9 +403,8 @@ function mapStateToProps(state) {
         rules: state.ruleTable,
         tags: state.tagTable,
         codeChanged: state.currentHash[0] === "codeChanged",
-        filePath: ["rulesForFile", "codeChanged"].indexOf(state.currentHash[0]) !== -1 ? state.openFilePath : "none",
+        filePath: ["rulesForFile", "codeChanged"].indexOf(state.currentHash[0]) !== -1 ? (state.projectPath + state.openFilePath) : "none",
         ws: state.ws,
-        projectPath: state.projectPath,
         message: state.message
     };
 }
