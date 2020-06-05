@@ -1480,9 +1480,10 @@ class RulePad extends Component {
             return;
         }
 
-        let tag = {tagName: this.state.tagName, detail: this.state.tagDetail};
+        let tag = {ID: Math.floor(new Date().getTime() / 10).toString(), tagName: this.state.tagName, detail: this.state.tagDetail};
         this.props.onSubmitNewTag();
         Utilities.sendToServer(this.props.ws, webSocketSendMessage.new_tag_msg, tag);
+        this.setState({showNewTagModal: false});
     }
 
     /***
