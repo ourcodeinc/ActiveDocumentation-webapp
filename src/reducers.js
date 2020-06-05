@@ -1,67 +1,6 @@
 import {initial_state, default_rulePanelState} from "./initialState";
 import {generateTreeForElement} from "./ui/RulePad/rulePadGraphicalEditor/graphicalEditorConstants";
-
-
-/*
-
-    List of messages:
-
-
-    HASH
-    NEW_WS
-    UPDATE_XML_FILES
-    UPDATE_TAG_TABLE
-    UPDATE_RULE_TABLE
-    UPDATE_RULE
-
-    SUBMIT_NEW_RULE
-    SUBMIT_NEW_TAG
-
-    HIERARCHY_DATA
-    PROJECT_PATH
-
-    IGNORE_FILE_CHANGE
-
-    UPDATE_DISPLAY_EDIT_TUTORIAL
-
-    FILE_PATH_UPDATED
-
-    CLICKED_ON_FORWARD
-    CLICKED_ON_BACK
-
-    CLEAR_NEW_RULE_FORM
-    EDIT_RULE_FORM
-    CHANGE_EDIT_MODE
-
-    RECEIVE_GUI_TREE
-
-    SEND_EXPR_STMT_XML
-    RECEIVE_EXPR_STMT_XML
-    MATCHED_MESSAGES
-
-    CHANGE_GUI_ELEMENT
-        ADD_EXTRA
-        REMOVE_EXTRA
-        UPDATE_ELEMENT
-        REMOVE_ELEMENT
-        SELECT_ELEMENT
-
-    CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI
-    UPDATE_XPATHS
-
-    //  Mining Rules
-
-    UPDATE_META_DATA
-    UPDATE_MINED_RULES
-
-    UPDATE_FEATURE_SELECTION
-    DANGEROUS_MINED_RULES
-
-    RESET_FEATURE_SELECTION
-    SAVE_FEATURE_SELECTION
-
- */
-
+import {reduxStoreMessages} from "./reduxStoreConstants";
 
 
 /**
@@ -78,13 +17,14 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
     // Using Object.assign({}, state) has a flaw that it only does a shallow copy.
     // It means that nested properties are still going to be copied by reference.
     let copiedState = JSON.parse(JSON.stringify(state));
+    let rules = [];
 
     switch (action.type) {
         case "HASH":
             if (!state.hashManager.clickedOnButtons) {
                 return Object.assign({}, state, {
                     currentHash: action.data["currentHash"],
-                    message: "HASH",
+                    message: reduxStoreMessages.hash_msg,
                     hashManager: {
                         history: [...state.hashManager.history, "#/" + action.data["currentHash"].join("/")],
                         activeHashIndex: state.hashManager.activeHashIndex + 1,
@@ -96,7 +36,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             }
             return Object.assign({}, state, {
                 currentHash: action.data["currentHash"],
-                message: "HASH",
+                message: reduxStoreMessages.hash_msg,
                 hashManager: {
                     history: state.hashManager.history,
                     activeHashIndex: state.hashManager.activeHashIndex,
@@ -107,16 +47,16 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             });
 
         case "NEW_WS":
-            return Object.assign({}, state, {ws: action.data["ws"], message: "NEW_WS"});
+            return Object.assign({}, state, {ws: action.data["ws"], message: reduxStoreMessages.ws_msg});
 
         case "UPDATE_XML_FILES":
-            return Object.assign({}, state, {xmlFiles: action.data["xmlFiles"], message: "UPDATE_XML_FILES"});
+            return Object.assign({}, state, {xmlFiles: action.data["xmlFiles"], message: reduxStoreMessages.update_xml_files_msg});
 
         case "UPDATE_TAG_TABLE":
-            return Object.assign({}, state, {tagTable: action.data["tagTable"], message: "UPDATE_TAG_TABLE"});
+            return Object.assign({}, state, {tagTable: action.data["tagTable"], message: reduxStoreMessages.update_tag_table_msg});
 
         case "UPDATE_RULE_TABLE":
-            let rules = JSON.parse(JSON.stringify(action.data["ruleTable"]));
+            rules = JSON.parse(JSON.stringify(action.data["ruleTable"]));
             rules = rules.map(rule =>
                 Object.assign({}, rule, {
                     rulePanelState: {
@@ -138,12 +78,12 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             );
             return Object.assign({}, state, {
                 ruleTable: rules,
-                message: "UPDATE_RULE_TABLE"
+                message: reduxStoreMessages.update_rule_table_msg
             });
 
         case "UPDATE_RULE":
             return Object.assign({}, state, {
-                message: "UPDATE_RULE"
+                message: reduxStoreMessages.update_rule_msg
             });
 
         case "SUBMIT_NEW_RULE":
@@ -152,24 +92,24 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     ...JSON.parse(JSON.stringify(initial_state.rulePadState)),
                     isEditMode: false
                 },
-                message: "NEW_RULE"
+                message: reduxStoreMessages.new_rule_msg
             });
 
         case "SUBMIT_NEW_TAG":
             return Object.assign({}, state, {
-                message: "NEW_TAG"
+                message: reduxStoreMessages.new_tag_msg
             });
 
         case "HIERARCHY_DATA":
             return Object.assign({}, state, {
                 projectHierarchy: action.data["hierarchyData"],
-                message: "HIERARCHY_DATA"
+                message: reduxStoreMessages.hierarchy_data_msg
             });
 
         case "PROJECT_PATH":
             return Object.assign({}, state, {
                 projectPath: action.data["projectPath"],
-                message: "PROJECT_PATH"
+                message: reduxStoreMessages.project_path_msg
             });
 
         /*
@@ -179,17 +119,17 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
         case "IGNORE_FILE_CHANGE":
             let editCount = state.ruleTable.reduce((count, element) => count + element.rulePanelState.editMode ? 1 : 0, 0);
             if (state.rulePadState.isEditMode || editCount > 0) return Object.assign({}, state);
-            return Object.assign({}, state, {ignoreFileChange: action.data["shouldIgnore"], message: "IGNORE_FILE_CHANGE"});
+            return Object.assign({}, state, {ignoreFileChange: action.data["shouldIgnore"], message: reduxStoreMessages.ignore_file_msg});
 
         case "UPDATE_DISPLAY_EDIT_TUTORIAL":
             return Object.assign({}, state, {
                 displayEditRuleTutorial: action.data["shouldDisplay"],
-                message: "UPDATE_DISPLAY_EDIT_TUTORIAL"
+                message: reduxStoreMessages.update_display_edit_tutorial_msg
             });
 
         case "FILE_PATH_UPDATED":
-            if (state.ignoreFileChange) return Object.assign({}, state, {message: "FILE_PATH_UPDATED"});
-            return Object.assign({}, state, {openFilePath: action.data["openFilePath"], message: "FILE_PATH_UPDATED"});
+            if (state.ignoreFileChange) return Object.assign({}, state, {message: reduxStoreMessages.file_path_update_msg});
+            return Object.assign({}, state, {openFilePath: action.data["openFilePath"], message: reduxStoreMessages.file_path_update_msg});
 
         /*
          nav-bar navigation
@@ -204,7 +144,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     backDisable: "",
                     clickedOnButtons: true
                 },
-                message: "CLICKED_ON_FORWARD"
+                message: reduxStoreMessages.click_forward_msg
             });
 
         case "CLICKED_ON_BACK":
@@ -216,7 +156,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     backDisable: state.hashManager.activeHashIndex === 1 ? "disabled" : "",
                     clickedOnButtons: true
                 },
-                message: "CLICKED_ON_BACK"
+                message: reduxStoreMessages.click_back_msg
             });
 
         /*
@@ -229,12 +169,12 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     ...JSON.parse(JSON.stringify(initial_state.rulePadState)),
                     isEditMode: true
                 },
-                message: "CLEAR_NEW_RULE_FORM"
+                message: reduxStoreMessages.clear_new_rule_form_msg
             });
 
         case "EDIT_RULE_FORM":
             if (action.data["ruleIndex"] !== -1) {
-                let rules = JSON.parse(JSON.stringify(state.ruleTable));
+                rules = JSON.parse(JSON.stringify(state.ruleTable));
                 rules = rules.map(d => {
                     let a = Object.assign({}, d);
                     if (a.index !== action.data["ruleIndex"]) return a;
@@ -247,7 +187,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 });
                 return Object.assign({}, state, {
                     ruleTable: rules,
-                    message: "EDIT_RULE_FORM"
+                    message: reduxStoreMessages.edit_rule_form_msg
                 });
             }
             else
@@ -260,17 +200,17 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         folderConstraint: action.data["folderConstraint"],
                         filesFolders: action.data["filesFolders"]
                     },
-                    message: "EDIT_RULE_FORM"
+                    message: reduxStoreMessages.edit_rule_form_msg
                 });
 
         case "CHANGE_EDIT_MODE":
             if (action.data["ruleIndex"] !== -1) {
-                let editCount = copiedState.ruleTable.reduce((count, element) => {
+                let editCount_ = copiedState.ruleTable.reduce((count, element) => {
                     if (element.index !== action.data["ruleIndex"]) return count + element.rulePanelState.editMode ? 1 : 0;
                     return count + action.data["newEditMode"] ? 1 : 0;
                 }, 0);
 
-                let rules = copiedState.ruleTable.map(d => {
+                rules = copiedState.ruleTable.map(d => {
                     let a = Object.assign({}, d);
                     if (a.index === action.data["ruleIndex"]) {
                         a.rulePanelState.editMode = action.data["newEditMode"];
@@ -295,9 +235,9 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     return a;
                 });
                 return Object.assign({}, state, {
-                    ignoreFileChange: (state.rulePadState.isEditMode || editCount > 0),
+                    ignoreFileChange: (state.rulePadState.isEditMode || editCount_ > 0),
                     ruleTable: rules,
-                    message: "CHANGE_EDIT_MODE"
+                    message: reduxStoreMessages.change_edit_mode_msg
                 });
             }
             else
@@ -307,7 +247,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         ...state.rulePadState,
                         isEditMode: action.data["newEditMode"]
                     },
-                    message: "CHANGE_EDIT_MODE"
+                    message: reduxStoreMessages.change_edit_mode_msg
                 });
 
         case "RECEIVE_GUI_TREE":
@@ -326,13 +266,13 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     return a;
                 });
                 return Object.assign({}, state, {
-                    message: "RECEIVE_GUI_TREE",
+                    message: reduxStoreMessages.receive_gui_tree_msg,
                     ruleTable: rules
                 });
             }
             else
                 return Object.assign({}, state, {
-                    message: "RECEIVE_GUI_TREE",
+                    message: reduxStoreMessages.receive_gui_tree_msg,
                     rulePadState: {
                         ...state.rulePadState,
                         quantifierXPath: action.data["quantifierXPath"],
@@ -351,7 +291,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     ...state.rulePadState,
                     sentMessages: state.rulePadState.sentMessages.concat([action.data["codeTextAndID"]])
                 },
-                message: "SEND_EXPR_STMT_XML"
+                message: reduxStoreMessages.send_expr_stmt_xml_msg
             });
 
         case "RECEIVE_EXPR_STMT_XML":
@@ -360,12 +300,12 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     ...state.rulePadState,
                     receivedMessages: state.rulePadState.receivedMessages.concat([action.data["xmlData"]])
                 },
-                message: "RECEIVE_EXPR_STMT_XML"
+                message: reduxStoreMessages.receive_expr_stmt_xml_msg
             });
 
         case "MATCHED_MESSAGES":
             if (action.data["ruleIndex"] !== -1) {
-                let rules = JSON.parse(JSON.stringify(state.ruleTable));
+                rules = JSON.parse(JSON.stringify(state.ruleTable));
                 rules = rules.map(d => {
                     let a = Object.assign({}, d);
                     if (a.index !== action.data["ruleIndex"]) return a;
@@ -374,7 +314,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     return a;
                 });
                 return Object.assign({}, state, {
-                    message: "MATCHED_MESSAGES",
+                    message: reduxStoreMessages.matched_messages_msg,
                     ruleTable: rules,
                     rulePadState: {
                         ...state.rulePadState,
@@ -392,7 +332,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         sentMessages: action.data["sentMessages"],
                         receivedMessages: action.data["receivedMessages"]
                     },
-                    message: "MATCHED_MESSAGES"
+                    message: reduxStoreMessages.matched_messages_msg
                 });
 
         /*
@@ -590,7 +530,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             return Object.assign({}, state, {
                 ruleTable: copiedState.ruleTable,
                 rulePadState: copiedState.rulePadState,
-                message: "CHANGE_GUI_ELEMENT"
+                message: reduxStoreMessages.change_gui_element_msg
             });
 
         case "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI":
@@ -607,7 +547,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 });
                 return Object.assign({}, state, {
                     ruleTable: rules,
-                    message: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI"
+                    message: reduxStoreMessages.change_autocomplete_text_msg
                 });
             }
             else
@@ -616,7 +556,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         ...state.rulePadState,
                         autoCompleteArray: action.data["newAutoCompleteArray"]
                     },
-                    message: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI"
+                    message: reduxStoreMessages.change_autocomplete_text_msg
                 });
 
         case "UPDATE_XPATHS":
@@ -630,7 +570,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     return a;
                 });
                 return Object.assign({}, state, {
-                    message: "UPDATE_XPATHS",
+                    message: reduxStoreMessages.update_xpath_msg,
                     ruleTable: rules
                 });
             }
@@ -641,19 +581,16 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         quantifierXPath: action.data["quantifierXPath"],
                         constraintXPath: action.data["constraintXPath"]
                     },
-                    message: "UPDATE_XPATHS"
+                    message: reduxStoreMessages.update_xpath_msg
                 });
-
-
 
             /*
                 Mining Rules
              */
 
-
         case "UPDATE_META_DATA":
             return Object.assign({}, state, {
-                message: "UPDATE_META_DATA",
+                message: reduxStoreMessages.update_metadata_msg,
                 minedRulesState: {
                     metaData: action.data["metaData"],
                     minedRules: []
@@ -662,7 +599,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
         case "UPDATE_MINED_RULES":
             return Object.assign({}, state, {
-                message: "UPDATE_MINED_RULES",
+                message: reduxStoreMessages.update_mined_rules_msg,
                 minedRulesState: {
                     ...JSON.parse(JSON.stringify(state.minedRulesState)),
                     minedRules: action.data["minedRules"]
@@ -671,7 +608,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
         case "UPDATE_FEATURE_SELECTION" :
             return Object.assign({}, state, {
-                message: "UPDATE_FEATURE_SELECTION",
+                message: reduxStoreMessages.update_feature_selection_msg,
                 featureSelection: {
                     filePath: action.data["filePath"],
                     startOffset: action.data["startOffset"],
@@ -689,7 +626,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
         case "DANGEROUS_MINED_RULES":
             return Object.assign({}, state, {
-                message: "UPDATE_MINED_RULES",
+                message: reduxStoreMessages.update_mined_rules_msg,
                 minedRulesState: {
                     metaData: action.data["metaData"],
                     minedRules: action.data["minedRules"]
@@ -698,7 +635,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
         case "RESET_FEATURE_SELECTION":
             return Object.assign({}, state, {
-                message: "RESET_FEATURE_SELECTION",
+                message: reduxStoreMessages.reset_feature_selection_msg,
                 featureSelection: {
                     ...JSON.parse(JSON.stringify(initial_state.featureSelection))
                 }
@@ -706,7 +643,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
         case "SAVE_FEATURE_SELECTION":
             return Object.assign({}, state, {
-                message: "SAVE_FEATURE_SELECTION",
+                message: reduxStoreMessages.save_feature_selection_msg,
                 featureSelection: {
                     ...JSON.parse(JSON.stringify(initial_state.featureSelection))
                 },
@@ -715,7 +652,6 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     featureXpath: action.data["featureXpath"]
                 }])
             });
-
 
         default:
             return Object.assign({}, state);
