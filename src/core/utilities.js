@@ -19,7 +19,7 @@ class Utilities {
             switch (command) {
                 case webSocketSendMessage.modified_rule_msg:
                     messageJson.data = {
-                        ruleID: data.ID,
+                        ruleID: data.index,
                         ruleInfo: data
                     };
                     break;
@@ -45,7 +45,7 @@ class Utilities {
 
                 case webSocketSendMessage.new_rule_msg:
                     messageJson.data = {
-                        ruleID: data.ID,
+                        ruleID: data.index,
                         ruleInfo: data
                     };
                     break;

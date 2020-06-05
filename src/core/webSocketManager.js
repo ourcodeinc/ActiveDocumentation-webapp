@@ -98,7 +98,7 @@ class WebSocketManager extends Component {
 
                 case webSocketReceiveMessage.update_tag_msg:
                     // data: {tagID: longNumber, tagInfo: {...}}
-                    let newTag = JSON.parse(message.data);
+                    let newTag = message.data["tagInfo"];
                     let filteredTag = tagTable.filter((d) => d.tagName === newTag["tagName"]);
                     if (filteredTag.length === 0)
                         tagTable.push(newTag);
@@ -111,9 +111,9 @@ class WebSocketManager extends Component {
                     // data: {tagID: longNumber, tagInfo: {...}}
                     break;
 
-                case webSocketReceiveMessage.update_rule_msg:
+                case webSocketReceiveMessage.update_rule_msg: console.log(message.data);
                     // data: {ruleID: longNumber, ruleInfo: {...}}
-                    let updatedRule = JSON.parse(message.data["rule"]);
+                    let updatedRule = message.data["ruleInfo"];
                     try {
                         let ruleIndex = -1;
                         ruleTable.forEach((d, i) => +d.index === +updatedRule.index ? ruleIndex = i : "");
