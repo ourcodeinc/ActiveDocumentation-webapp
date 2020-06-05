@@ -3,7 +3,7 @@
  */
 
 import React, {Component, Fragment} from "react";
-import "../App.css";
+import "../../App.css";
 import {connect} from "react-redux";
 import {Button, Row, Col, ButtonGroup} from "react-bootstrap";
 import Slider from "rc-slider";
@@ -12,12 +12,13 @@ import "rc-slider/assets/index.css";
 import "three-dots"
 
 
-import {mineRulesFromXmlFiles} from "../miningRulesCore/miningRules";
-import {ignoreFile, updateMetaData} from "../actions";
+import {mineRulesFromXmlFiles} from "../../miningRulesCore/miningRules";
+import {ignoreFileChange, updateMetaData} from "../../actions";
 import MinedRulePad from "./minedRulePad";
-import {verifyPartialTextBasedOnGrammar} from "../core/languageProcessing";
-import {generateGuiTrees} from "./ruleGenerationText/generateGuiTree";
-import Utilities from "../core/utilities";
+import {verifyPartialTextBasedOnGrammar} from "../../core/languageProcessing";
+import {generateGuiTrees} from "../RulePad/rulePadTextualEditor/generateGuiTree";
+import Utilities from "../../core/utilities";
+import {webSocketSendMessage} from "../../core/coreConstants";
 
 
 class MinedRulesComponent extends Component {
@@ -433,7 +434,7 @@ class MinedRulesComponent extends Component {
                                             <div key={i} className={"ruleLink"}
                                                  onClick={() => {
                                                      this.props.onIgnoreFile(true);
-                                                     Utilities.sendToServer(this.props.ws, "OPEN_FILE", fileName)
+                                                     Utilities.sendToServer(this.props.ws, webSocketSendMessage.open_file_mined_rules, fileName)
                                                  }}>
                                                 {fileName
                                                     .replace(this.props.projectPath.slice, "")
@@ -469,7 +470,7 @@ class MinedRulesComponent extends Component {
      */
     ShowMinedRules() {
         this.setState({minedRules: [], displayedMinedRules: [], loading: true});
-        Utilities.sendToServer(this.props.ws, "DANGEROUS_READ_MINED_RULES");
+        Utilities.sendToServer(this.props.ws, webSocketSendMessage.dangerous_read_mined_rules_msg);
     }
 
     /**
@@ -569,26 +570,20 @@ class MinedRulesComponent extends Component {
 }
 
 function mapStateToProps(state) {
-    // copied from headerBar.js
-    let path = "";
-    try {
-        path = state["projectHierarchy"]["properties"]["canonicalPath"];
-    } catch (e) {
-    }
     return {
         message: state.message,
         ws: state.ws,
         xmlFiles: state.xmlFiles,
         metaData: state.minedRulesState.metaData,
         minedRules: state.minedRulesState.minedRules,
-        projectPath: path,
+        projectPath: state.projectPath,
         customFeatures: state.customFeatures // custom features received from feature selection
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        onIgnoreFile: (shouldIgnore) => dispatch(ignoreFile(shouldIgnore)),
+        onIgnoreFile: (shouldIgnore) => dispatch(ignoreFileChange(shouldIgnore)),
         onUpdateMetaData: (metaData) => dispatch(updateMetaData(metaData))
     }
 }

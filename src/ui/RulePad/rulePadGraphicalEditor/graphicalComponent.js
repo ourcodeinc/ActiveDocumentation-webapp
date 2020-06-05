@@ -14,11 +14,11 @@ import {RootCloseWrapper} from "react-overlays";
 import * as marked from "marked";
 import ReactToolTip from "react-tooltip";
 
-import {getConditionByName} from "./guiConstants";
-import {documentations_IMarkdownString} from "../ruleGenerationText/textConstant";
+import {getConditionByName} from "./graphicalEditorConstants";
+import {documentations_IMarkdownString} from "../rulePadTextualEditor/textualEditorConstant";
 
 
-class GuiComponent extends Component {
+class GraphicalComponent extends Component {
 
     constructor(props) {
         super(props);
@@ -458,10 +458,10 @@ class GuiComponent extends Component {
         return (
             <Fragment key={index}>
                 <div className={group === "body" ? "rowGroup" : "rowItem"}>
-                    <GuiComponent key={new Date()} ruleIndex={this.props.ruleIndex} elementId={childId}
-                                  rootTree={this.props["rootTree"]} guiElements={this.state.guiElements}
-                                  canBeStarredIDs={this.props["canBeStarredIDs"]}
-                                  changeGuiElementJobs={this.props["changeGuiElementJobs"]}
+                    <GraphicalComponent key={new Date()} ruleIndex={this.props.ruleIndex} elementId={childId}
+                                        rootTree={this.props["rootTree"]} guiElements={this.state.guiElements}
+                                        canBeStarredIDs={this.props["canBeStarredIDs"]}
+                                        changeGuiElementJobs={this.props["changeGuiElementJobs"]}
                     />
                 </div>
                 {(index === array.length - 1 && this.state.guiElements[childId].activeElement) ? (
@@ -1007,7 +1007,7 @@ class GuiComponent extends Component {
 }
 
 
-export default GuiComponent;
+export default GraphicalComponent;
 
 
 class CustomDropDown extends Component {

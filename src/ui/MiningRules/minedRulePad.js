@@ -1,12 +1,12 @@
 /**
  * Created by saharmehrpour on 1/14/20.
- * Copied from src/ui/ruleGenerationGUI/guiComponent.js
+ * Copied from src/ui/rulePadGraphicalEditor/graphicalComponent.js
  *
  */
 
 import React, {Component, Fragment} from "react";
 
-import {getConditionByName} from "./ruleGenerationGUI/guiConstants";
+import {getConditionByName} from "../RulePad/rulePadGraphicalEditor/graphicalEditorConstants";
 
 
 class MinedRulePad extends Component {

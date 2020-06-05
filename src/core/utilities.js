@@ -1,6 +1,7 @@
 /**
  * Created by saharmehrpour on 9/8/17.
  */
+import {webSocketSendMessage} from "./coreConstants";
 
 class Utilities {
 
@@ -12,94 +13,97 @@ class Utilities {
      * @param data
      */
     static sendToServer(ws, command, data) {
-        let messageJson = {"source": "WEB", "destination": "IDEA", "command": command};
+        let messageJson = {source: "WEB", destination: "IDEA", command: command};
 
         if (ws) {
             switch (command) {
-                case "MODIFIED_RULE":
-                    messageJson["data"] = {
-                        "index": data.index,
-                        "ruleText": data
+                case webSocketSendMessage.modified_rule_msg:
+                    messageJson.data = {
+                        ruleID: data.index,
+                        ruleInfo: data
                     };
                     break;
-                case "MODIFIED_TAG":
-                    messageJson["data"] = {
-                        "tagName": data.tagName,
-                        "tagText": data
+                case webSocketSendMessage.modified_tag_msg:
+                    messageJson.data = {
+                        tagID: data.ID,
+                        tagInfo: data
                     };
                     break;
-                case "XML_RESULT":
-                    messageJson["data"] = data;
-                    break;
-
-                case "EXPR_STMT":
-                    messageJson["data"] = data; // {codeText: "", messageID: ""}
-                    break;
-
-                case "DECL_STMT":
-                    messageJson["data"] = data;
-                    break;
-
-                case "NEW_RULE":
-                    messageJson["data"] = {
-                        "index": data.index,
-                        "ruleText": data
-                    };
-                    break;
-                case "NEW_TAG":
-                    messageJson["data"] = {
-                        "tagName": data.tagName,
-                        "tagText": data
+                case webSocketSendMessage.snippet_xml_msg:
+                    messageJson.data = {
+                        fileName: data.fileName,
+                        xml: data.xml
                     };
                     break;
 
-                case "LEARN_RULES_META_DATA":
+                case webSocketSendMessage.code_to_xml_msg:
+                    messageJson.data = {
+                        codeText: data.codeText,
+                        messageID: data.messageID
+                    };
+                    break;
+
+                case webSocketSendMessage.new_rule_msg:
+                    messageJson.data = {
+                        ruleID: data.index,
+                        ruleInfo: data
+                    };
+                    break;
+                case webSocketSendMessage.new_tag_msg:
+                    messageJson.data = {
+                        tagID: data.ID,
+                        tagInfo: data
+                    };
+                    break;
+
+                    /*  mining rules  */
+
+                case webSocketSendMessage.learn_rules_metadata_msg:
                     if (data.content.length > this.BREAK_LINE) {
                         this.sendChunkedData(messageJson, data.content.slice(0), data.fileName, ws);
                         return;
                     }
-                    messageJson["data"] = [[data.fileName, data.content]];
+                    messageJson.data = [[data.fileName, data.content]];
                     break;
 
-                case "LEARN_RULES_FILE_LOCATIONS":
+                case webSocketSendMessage.learn_rules_file_location_msg:
                     if (data.content.length > this.BREAK_LINE) {
                         this.sendChunkedData(messageJson, data.content.slice(0), data.fileName, ws);
                         return;
                     }
-                    messageJson["data"] = [[data.fileName, data.content]];
+                    messageJson.data = [[data.fileName, data.content]];
                     break;
 
-                case "LEARN_RULES_DATABASES":
+                case webSocketSendMessage.learn_rules_databases_msg:
                     if (data[0][1].length > this.BREAK_LINE) {
                         this.sendChunkedData(messageJson, data[0][1].slice(0), data[0][0], ws);
                         return;
                     }
-                    messageJson["data"] = data; // array of arrays: [["file_name.txt", "data to be written"]]
+                    messageJson.data = data; // array of arrays: [["file_name.txt", "data to be written"]]
                     break;
 
-                case "EXECUTE_TNR":
-                    messageJson["data"] = {
+                case webSocketSendMessage.execute_tnr_msg:
+                    messageJson.data = {
                         confidence: data.tnrConfidence, // double
                         k: data.tnrK, //int
                         delta: data.tnrDelta // int
                     };
                     break;
 
-                case "EXECUTE_FP_MAX":
-                    messageJson["data"] = data.fpMaxSupport; // support
+                case webSocketSendMessage.execute_fp_max_msg:
+                    messageJson.data = data.fpMaxSupport; // support
                     break;
 
-                case "OPEN_FILE":
-                    messageJson["command"] = "XML_RESULT"; // there is no separate command in the server
-                    messageJson["data"] = {
+                case webSocketSendMessage.open_file_mined_rules:
+                    messageJson.command = webSocketSendMessage.snippet_xml_msg; // there is no separate command in the server
+                    messageJson.data = {
                         fileName: data,
                         xml: "<unit xmlns=\"http://www.srcML.org/srcML/src\" revision=\"0.9.5\" language=\"Java\">\n" +
                             "</unit>"
                     };
                     break;
 
-                case "DANGEROUS_READ_MINED_RULES":
-                    messageJson["command"] = "DANGEROUS_READ_MINED_RULES";
+                case webSocketSendMessage.dangerous_read_mined_rules_msg:
                     break;
 
                 default:
@@ -122,7 +126,7 @@ class Utilities {
         messageJson["command"] += "_APPEND";
         let start = 0; let cnt = 0;
         while (start < initData.length) {
-            messageJson["data"] = [[fileName, initData.substring(start, Math.min(start + this.BREAK_LINE, initData.length))]];
+            messageJson.data = [[fileName, initData.substring(start, Math.min(start + this.BREAK_LINE, initData.length))]];
             messageJson["part"] = cnt; // only for debugging
             ws.send(JSON.stringify(messageJson));
             start += this.BREAK_LINE;
@@ -163,7 +167,7 @@ class Utilities {
     }
 
     /**
-     * deep copy of an xml variable
+     * deep copy of an xml data
      * @param xml
      * @returns {Document}
      */
@@ -183,7 +187,7 @@ class Utilities {
     }
 
     /**
-     * deep copy of a JSON variable
+     * deep copy of a JSON data
      * @param json
      * @returns
      */
@@ -197,7 +201,7 @@ class Utilities {
     }
 
     /**
-     * check whether one arrays contains all elements of the other array
+     * check whether one array contains all elements of the other array
      * @param container
      * @param arr
      * @returns {boolean}

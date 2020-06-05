@@ -4,7 +4,7 @@
 
 import React, {Component, Fragment} from "react";
 import {connect} from "react-redux";
-import "../App.css";
+import "../../App.css";
 import {
     Alert, MenuItem, Button, FormGroup, ButtonToolbar, Label, FormControl,
     Modal, Dropdown, Tabs, Tab, Badge
@@ -27,41 +27,42 @@ import marked from "marked";
 import Joyride, {ACTIONS, EVENTS} from "react-joyride";
 import ReactToolTip from "react-tooltip";
 
-import RuleGeneratorGui from "./ruleGenerationGUI/ruleGeneratorGui";
-import verifyTextBasedOnGrammar from "../core/languageProcessing";
+import GraphicalEditor from "../RulePad/rulePadGraphicalEditor/graphicalEditor";
+import verifyTextBasedOnGrammar from "../../core/languageProcessing";
 import {
     matchMessages, receiveGuiTree, clearNewRuleForm,
-    editRuleForm, submitNewRule, submitNewTag, updateRule, updateXPaths, updateDisplayEditTutorial, ignoreFile
-} from "../actions";
-import {generateGuiTrees} from "./ruleGenerationText/generateGuiTree";
-import RuleGeneratorText from "./ruleGenerationText/ruleGeneratorText";
-import Utilities from "../core/utilities";
-import {error_messages_IMarkdownString} from "./ruleGenerationText/textConstant";
+    editRuleForm, submitNewRule, submitNewTag, updateRule, updateXPaths, updateDisplayEditTutorial, ignoreFileChange
+} from "../../actions";
+import {generateGuiTrees} from "../RulePad/rulePadTextualEditor/generateGuiTree";
+import TextualEditor from "../RulePad/rulePadTextualEditor/textualEditor";
+import Utilities from "../../core/utilities";
+import {error_messages_IMarkdownString} from "../RulePad/rulePadTextualEditor/textualEditorConstant";
 
-import title_description_filled from "../resources/title_description_filled.png";
-import visibility_class_declaration from "../resources/visibility_class_declaration.png";
-import visibility_class_declaration_code from "../resources/visibility_class_declaration_code.png";
-import hidden_element_interaction from "../resources/hidden_element_interaction.png";
-import constraint_example from "../resources/constraint_example.png";
-import EoI_GUI_example_1 from "../resources/EoI_GUI_example_1.png";
-import EoI_GUI_example_2 from "../resources/EoI_GUI_example_2.png";
-import EoI_TE_example_1 from "../resources/EoI_TE_example_1.png";
-import EoI_TE_example_2 from "../resources/EoI_TE_example_2.png";
-import auto_complete_filled from "../resources/auto_complete_filled.png";
-import auto_complete_info_icon from "../resources/auto_complete_info_icon.png";
-import auto_complete_info from "../resources/auto_complete_info.png";
-import auto_complete_example from "../resources/auto_complete_example.png";
-import files_folders from "../resources/files_folders.png";
-import tags from "../resources/tags.png";
-import new_tag from "../resources/new_tag.png";
-import feedback_snippet_1 from "../resources/feedback_snippet_1.png";
-import matching_code from "../resources/matching_code.png";
+import title_description_filled from "./resources/title_description_filled.png";
+import visibility_class_declaration from "./resources/visibility_class_declaration.png";
+import visibility_class_declaration_code from "./resources/visibility_class_declaration_code.png";
+import hidden_element_interaction from "./resources/hidden_element_interaction.png";
+import constraint_example from "./resources/constraint_example.png";
+import EoI_GUI_example_1 from "./resources/EoI_GUI_example_1.png";
+import EoI_GUI_example_2 from "./resources/EoI_GUI_example_2.png";
+import EoI_TE_example_1 from "./resources/EoI_TE_example_1.png";
+import EoI_TE_example_2 from "./resources/EoI_TE_example_2.png";
+import auto_complete_filled from "./resources/auto_complete_filled.png";
+import auto_complete_info_icon from "./resources/auto_complete_info_icon.png";
+import auto_complete_info from "./resources/auto_complete_info.png";
+import auto_complete_example from "./resources/auto_complete_example.png";
+import files_folders from "./resources/files_folders.png";
+import tags from "./resources/tags.png";
+import new_tag from "./resources/new_tag.png";
+import feedback_snippet_1 from "./resources/feedback_snippet_1.png";
+import matching_code from "./resources/matching_code.png";
 
-import {checkRulesForAll} from "../core/ruleExecutor";
+import {checkRulesForAll} from "../../core/ruleExecutor";
 import ProjectHierarchy from "./projectHierarchy";
+import {webSocketSendMessage} from "../../core/coreConstants";
 
 
-class EditRuleForm extends Component {
+class RulePad extends Component {
 
     constructor(props) {
         super(props);
@@ -309,7 +310,7 @@ class EditRuleForm extends Component {
             title: props.title,
             description: props.description,
             ruleTags: props.ruleTags,
-            folderConstraint: props.folderConstraint ? props.folderConstraint : "FOLDER",
+            folderConstraint: props.folderConstraint ? props.folderConstraint : "INCLUDE",
             filesFolders: props.filesFolders,
             tags: props.tags,
             projectHierarchy: props.projectHierarchy,
@@ -365,7 +366,7 @@ class EditRuleForm extends Component {
                 this.state.title = this.ruleI.rulePanelState.title;
                 this.state.description = this.ruleI.rulePanelState.description;
                 this.state.ruleTags = this.ruleI.rulePanelState.ruleTags;
-                this.state.folderConstraint = this.ruleI.rulePanelState.folderConstraint ? this.ruleI.rulePanelState.folderConstraint : "FOLDER";
+                this.state.folderConstraint = this.ruleI.rulePanelState.folderConstraint ? this.ruleI.rulePanelState.folderConstraint : "INCLUDE";
                 this.state.filesFolders = this.ruleI.rulePanelState.filesFolders;
                 this.state.tags = props.tags;
                 // updating the rule
@@ -381,7 +382,7 @@ class EditRuleForm extends Component {
             this.state.title = props.title;
             this.state.description = props.description;
             this.state.ruleTags = props.ruleTags;
-            this.state.folderConstraint = props.folderConstraint ? props.folderConstraint : "FOLDER";
+            this.state.folderConstraint = props.folderConstraint ? props.folderConstraint : "INCLUDE";
             this.state.filesFolders = props.filesFolders;
             this.state.tags = props.tags;
 
@@ -536,7 +537,7 @@ class EditRuleForm extends Component {
                     )
                 })}
                 {Object.entries(this.state.projectHierarchy).length !== 0 ? (
-                    <div className={"projectHierarchy" + (this.state.folderConstraint === "FOLDER" && this.state.filesFolders.length === 0 ? " has-error" : "")}>
+                    <div className={"projectHierarchy" + (this.state.folderConstraint === "INCLUDE" && this.state.filesFolders.length === 0 ? " has-error" : "")}>
                         <ProjectHierarchy projectHierarchy={this.state.projectHierarchy}
                                           onSubmit={(newPath) => {
                                               const filesFolders = this.state.filesFolders;
@@ -624,11 +625,11 @@ class EditRuleForm extends Component {
     renderTextUI() {
         return (
             <div style={{paddingTop: "10px", clear: "both"}} id={`text_ui_div_${this.ruleIndex}`}>
-                <RuleGeneratorText autoCompleteArray={this.state.autoCompleteArray}
-                                   ruleIndex={this.ruleIndex}
-                                   errorPoint={this.state.errorPoint}
-                                   formStatus={this.state.monacoFormStatus}
-                                   onBlur={(newAutoCompleteText) => {
+                <TextualEditor autoCompleteArray={this.state.autoCompleteArray}
+                               ruleIndex={this.ruleIndex}
+                               errorPoint={this.state.errorPoint}
+                               formStatus={this.state.monacoFormStatus}
+                               onBlur={(newAutoCompleteText) => {
                                        verifyTextBasedOnGrammar(newAutoCompleteText)
                                            .then((data) => {
                                                if (this._mounted)
@@ -655,7 +656,7 @@ class EditRuleForm extends Component {
                                                })
                                            });
                                    }}
-                                   onUpdate={(newAutoCompleteText) => {
+                               onUpdate={(newAutoCompleteText) => {
                                        if (this.state.autoCompleteArray.map(d => d.text).join(" ") !== newAutoCompleteText
                                            || this.state.constraintXPath === "" || this.state.quantifierXPath === "" || this.state.shouldUpdateSnippets)
                                            verifyTextBasedOnGrammar(newAutoCompleteText)
@@ -683,7 +684,7 @@ class EditRuleForm extends Component {
                                                    })
                                                });
                                    }}
-                                   onError={(errorIndex) => this.processLanguageProcessingError("ERROR_INDEX", errorIndex)}
+                               onError={(errorIndex) => this.processLanguageProcessingError("ERROR_INDEX", errorIndex)}
                 />
                 {this.renderAutoCompleteError()}
             </div>
@@ -697,7 +698,7 @@ class EditRuleForm extends Component {
         return (
             <div id={`gui_div_${this.ruleIndex}`}>
                 <div className={"generateRuleGuiDiv" + (this.state.guiError ? " has-error" : "")}>
-                    <RuleGeneratorGui ruleIndex={this.ruleIndex} className={"generateRuleGui"}
+                    <GraphicalEditor ruleIndex={this.ruleIndex} className={"generateRuleGui"}
                                       onError={(error) => error !== this.state.guiError ? this.setState({guiError: error}) : {}}
                                       onFilledGUI={(isFilled) => isFilled !== this.state.isFilledGUI ? this.setState({isFilledGUI: isFilled}) : {}}/>
                 </div>
@@ -964,7 +965,7 @@ class EditRuleForm extends Component {
                         <div data-file-path={d["filePath"]} className="snippetDiv" key={i}>
                             <pre className="link" onClick={() => {
                                 this.props.onIgnoreFile(true);
-                                Utilities.sendToServer(this.props.ws, "XML_RESULT", d["xml"])
+                                Utilities.sendToServer(this.props.ws, webSocketSendMessage.snippet_xml_msg, d["xml"])
                             }}>
                                 <div className="content" dangerouslySetInnerHTML={{__html: d["snippet"]}}/>
                             </pre>
@@ -1008,7 +1009,7 @@ class EditRuleForm extends Component {
                     title: this.ruleI.rulePanelState.title,
                     description: this.ruleI.rulePanelState.description,
                     ruleTags: this.ruleI.rulePanelState.ruleTags,
-                    folderConstraint: this.ruleI.rulePanelState.folderConstraint ? this.ruleI.rulePanelState.folderConstraint : "FOLDER",
+                    folderConstraint: this.ruleI.rulePanelState.folderConstraint ? this.ruleI.rulePanelState.folderConstraint : "INCLUDE",
                     filesFolders: this.ruleI.rulePanelState.filesFolders,
                     tags: this.ruleI.rulePanelState.tags,
 
@@ -1027,13 +1028,13 @@ class EditRuleForm extends Component {
             // new rule
             else {
                 let xPathQueryResult = this.updateFeedbackSnippet(nextProps.quantifierXPath, nextProps.constraintXPath,
-                    nextProps.folderConstraint ? nextProps.folderConstraint : "FOLDER", nextProps.filesFolders);
+                    nextProps.folderConstraint ? nextProps.folderConstraint : "INCLUDE", nextProps.filesFolders);
 
                 this.setState({
                     title: nextProps.title,
                     description: nextProps.description,
                     ruleTags: nextProps.ruleTags,
-                    folderConstraint: nextProps.folderConstraint ? nextProps.folderConstraint : "FOLDER",
+                    folderConstraint: nextProps.folderConstraint ? nextProps.folderConstraint : "INCLUDE",
                     filesFolders: nextProps.filesFolders,
                     tags: nextProps.tags,
 
@@ -1300,19 +1301,17 @@ class EditRuleForm extends Component {
 
     updateFeedbackSnippet(quantifierXPath, constraintXPath, folderConstraint, filesFolders) {
         if (quantifierXPath === "" || constraintXPath === "" || folderConstraint === ""
-            || (folderConstraint === "FOLDER" && filesFolders.filter((d) => d !== "").length === 0))
+            || (folderConstraint === "INCLUDE" && filesFolders.filter((d) => d !== "").length === 0))
             return [];
 
         let ruleInArray = [
             {
                 index: "000",
-                ruleType: {
-                    constraint: folderConstraint,
-                    checkFor: filesFolders.filter((d) => d !== ""),
-                    type: "WITHIN"
-                },
-                quantifier: {command: quantifierXPath.startsWith("src:unit/") ? quantifierXPath: "src:unit/" + quantifierXPath},
-                constraint: {command: constraintXPath.startsWith("src:unit/") ? constraintXPath: "src:unit/" + constraintXPath},
+                checkForFilesFoldersConstraints: folderConstraint,
+                checkForFilesFolders: filesFolders.filter((d) => d !== ""),
+                processFilesFolders: "WITHIN",
+                quantifierXPathQuery: [quantifierXPath.startsWith("src:unit/") ? quantifierXPath: "src:unit/" + quantifierXPath],
+                constraintXPathQuery: [constraintXPath.startsWith("src:unit/") ? constraintXPath: "src:unit/" + constraintXPath]
             }
         ];
         try {
@@ -1334,13 +1333,11 @@ class EditRuleForm extends Component {
             title: this.state.title,
             description: this.state.description,
             tags: this.state.ruleTags,
-            ruleType: {
-                constraint: this.state.folderConstraint,
-                checkFor: this.state.filesFolders.filter((d) => d !== ""),
-                type: "WITHIN"
-            },
-            quantifier: {detail: "", command: "src:unit/" + this.state.quantifierXPath},
-            constraint: {detail: "", command: "src:unit/" + this.state.constraintXPath},
+            checkForFilesFoldersConstraints: this.state.folderConstraint,
+            checkForFilesFolders: this.state.filesFolders.filter((d) => d !== ""),
+            processFilesFolders: "WITHIN",
+            quantifierXPathQuery: ["src:unit/" + this.state.quantifierXPath],
+            constraintXPathQuery: ["src:unit/" + this.state.constraintXPath],
             grammar: this.ruleI.rulePanelState.autoCompleteArray.map(d => d.text).join(" ")
         };
 
@@ -1362,7 +1359,7 @@ class EditRuleForm extends Component {
             return;
         }
 
-        if (rule.ruleType.constraint === "" || (rule.ruleType.constraint === "FOLDER" && rule.ruleType.checkFor.length === 0)) {
+        if (rule.checkForFilesFoldersConstraints === "" || (rule.checkForFilesFoldersConstraints === "INCLUDE" && rule.checkForFilesFolders.length === 0)) {
             this.setState({
                 errorTitle: "Error in Submitting the updated Rule",
                 errorMessage: "Make sure to specify the folders/files on which the rule is applied on.",
@@ -1383,15 +1380,15 @@ class EditRuleForm extends Component {
         let isChanged = (rule.title !== this.ruleI.title) ||
             (rule.description !== this.ruleI.description) ||
             (JSON.stringify(rule.tags) !== JSON.stringify(this.ruleI.tags)) ||
-            (rule.ruleType.constraint !== this.ruleI.ruleType.constraint) ||
-            (JSON.stringify(rule.ruleType.checkFor) !== JSON.stringify(this.ruleI.ruleType.checkFor)) ||
+            (rule.checkForFilesFoldersConstraints !== this.ruleI.checkForFilesFoldersConstraints) ||
+            (JSON.stringify(rule.checkForFilesFolders) !== JSON.stringify(this.ruleI.checkForFilesFolders)) ||
             (rule.grammar !== this.ruleI.grammar) ||
-            (rule.constraint.command !== this.ruleI.constraint.command) ||
-            (rule.quantifier.command !== this.ruleI.quantifier.command);
+            (rule.constraintXPathQuery[0] !== this.ruleI.constraintXPathQuery[0]) ||
+            (rule.quantifierXPathQuery[0] !== this.ruleI.quantifierXPathQuery[0]);
 
         if (isChanged) {
-            this.props.onUpdateRule(rule);
-            Utilities.sendToServer(this.props.ws, "MODIFIED_RULE", rule);
+            this.props.onUpdateRule();
+            Utilities.sendToServer(this.props.ws, webSocketSendMessage.modified_rule_msg, rule);
         }
         this.changeEditMode();
     }
@@ -1405,13 +1402,11 @@ class EditRuleForm extends Component {
             title: this.state.title,
             description: this.state.description,
             tags: this.state.ruleTags,
-            ruleType: {
-                constraint: this.state.folderConstraint,
-                checkFor: this.state.filesFolders.filter((d) => d !== ""),
-                type: "WITHIN"
-            },
-            quantifier: {detail: "", command: "src:unit/" + this.state.quantifierXPath},
-            constraint: {detail: "", command: "src:unit/" + this.state.constraintXPath},
+            checkForFilesFoldersConstraints: this.state.folderConstraint,
+            checkForFilesFolders: this.state.filesFolders.filter((d) => d !== ""),
+            processFilesFolders: "WITHIN",
+            quantifierXPathQuery: ["src:unit/" + this.state.quantifierXPath],
+            constraintXPathQuery: ["src:unit/" + this.state.constraintXPath],
             grammar: this.props.autoCompleteArray.map(d => d.text).join(" ")
         };
 
@@ -1433,7 +1428,7 @@ class EditRuleForm extends Component {
             return;
         }
 
-        if (rule.ruleType.constraint === "" || (rule.ruleType.constraint === "FOLDER" && rule.ruleType.checkFor.length === 0)) {
+        if (rule.checkForFilesFoldersConstraints === "" || (rule.checkForFilesFoldersConstraints === "INCLUDE" && rule.checkForFilesFolders.length === 0)) {
             this.setState({
                 errorTitle: "Error in Submitting the new Rule",
                 errorMessage: "Make sure to specify the folders/files on which the rule is applied on.",
@@ -1451,8 +1446,8 @@ class EditRuleForm extends Component {
             return;
         }
 
-        this.props.onSubmitNewRule(rule);
-        Utilities.sendToServer(this.props.ws, "NEW_RULE", rule);
+        this.props.onSubmitNewRule();
+        Utilities.sendToServer(this.props.ws, webSocketSendMessage.new_rule_msg, rule);
         this.changeEditMode();
     }
 
@@ -1485,9 +1480,10 @@ class EditRuleForm extends Component {
             return;
         }
 
-        let tag = {tagName: this.state.tagName, detail: this.state.tagDetail};
-        this.props.onSubmitNewTag(tag);
-        Utilities.sendToServer(this.props.ws, "NEW_TAG", tag);
+        let tag = {ID: Math.floor(new Date().getTime() / 10).toString(), tagName: this.state.tagName, detail: this.state.tagDetail};
+        this.props.onSubmitNewTag();
+        Utilities.sendToServer(this.props.ws, webSocketSendMessage.new_tag_msg, tag);
+        this.setState({showNewTagModal: false});
     }
 
     /***
@@ -1516,21 +1512,21 @@ function mapStateToProps(state) {
         projectHierarchy: state.projectHierarchy,
 
         // for new rule
-        title: state.newOrEditRule.title,
-        description: state.newOrEditRule.description,
-        ruleTags: state.newOrEditRule.ruleTags,
-        folderConstraint: state.newOrEditRule.folderConstraint,
-        filesFolders: state.newOrEditRule.filesFolders,
+        title: state.rulePadState.title,
+        description: state.rulePadState.description,
+        ruleTags: state.rulePadState.ruleTags,
+        folderConstraint: state.rulePadState.folderConstraint,
+        filesFolders: state.rulePadState.filesFolders,
 
-        autoCompleteArray: state.newOrEditRule.autoCompleteArray,
-        quantifierXPath: state.newOrEditRule.quantifierXPath,
-        constraintXPath: state.newOrEditRule.constraintXPath,
+        autoCompleteArray: state.rulePadState.autoCompleteArray,
+        quantifierXPath: state.rulePadState.quantifierXPath,
+        constraintXPath: state.rulePadState.constraintXPath,
         message: state.message,
 
-        sentMessages: state.newOrEditRule.sentMessages,
-        receivedMessages: state.newOrEditRule.receivedMessages,
+        sentMessages: state.rulePadState.sentMessages,
+        receivedMessages: state.rulePadState.receivedMessages,
         // for submitting the rule
-        numberOfSentMessages: state.newOrEditRule.sentMessages.length,
+        numberOfSentMessages: state.rulePadState.sentMessages.length,
 
         displayEditRuleTutorial: state.displayEditRuleTutorial
     };
@@ -1538,10 +1534,10 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        onIgnoreFile: (shouldIgnore) => dispatch(ignoreFile(shouldIgnore)),
-        onSubmitNewRule: (newRule) => dispatch(submitNewRule(newRule)),
-        onUpdateRule: (updatedRule) => dispatch(updateRule(updatedRule)),
-        onSubmitNewTag: (newTag) => dispatch(submitNewTag(newTag)),
+        onIgnoreFile: (shouldIgnore) => dispatch(ignoreFileChange(shouldIgnore)),
+        onSubmitNewRule: () => dispatch(submitNewRule()),
+        onUpdateRule: () => dispatch(updateRule()),
+        onSubmitNewTag: () => dispatch(submitNewTag()),
         onClearForm: () => dispatch(clearNewRuleForm()),
         onEditForm: (ruleIndex, title, description, ruleTags, folderConstraint, filesFolders) =>
             dispatch(editRuleForm(ruleIndex, title, description, ruleTags, folderConstraint, filesFolders)),
@@ -1554,7 +1550,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditRuleForm);
+export default connect(mapStateToProps, mapDispatchToProps)(RulePad);
 
 
 /* custom dropdown for tags */

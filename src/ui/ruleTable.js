@@ -55,7 +55,7 @@ class RuleTable extends Component {
         );
     }
 
-    //componentDidUpdate doesn"t work
+    //componentDidUpdate doesn't work
     UNSAFE_componentWillReceiveProps(nextProps) {
         this.setState(nextProps);
     }
@@ -66,18 +66,18 @@ class RuleTable extends Component {
 function mapStateToProps(state) {
 
     let props = {
-        newRule: state.newOrEditRule.isEditMode,
+        newRule: state.rulePadState.isEditMode,
         indicesOfRulesToDisplay: state.ruleTable.map(d => d.index),
-        hash0: state.hash[0]
+        hash0: state.currentHash[0]
     };
 
 
-    if (state.hash[0] === "tag")
+    if (state.currentHash[0] === "tag")
         props.indicesOfRulesToDisplay = state.ruleTable
-            .filter((d) => d["tags"].indexOf(state.hash[1]) !== -1)
+            .filter((d) => d["tags"].indexOf(state.currentHash[1]) !== -1)
             .map(d => d.index);
 
-    else if (state.hash[0] === "violatedRules")
+    else if (state.currentHash[0] === "violatedRules")
         props.indicesOfRulesToDisplay = state.ruleTable
             .filter(d => d["xPathQueryResult"].map(dd => dd["data"].violated).reduce((a, b) => { return a + b }, 0) !== 0)
             .map(d => d.index);

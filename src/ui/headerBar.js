@@ -2,7 +2,6 @@
  * Created by saharmehrpour on 9/7/17.
  */
 
-
 import React, {Component} from "react";
 import "../App.css";
 import Utilities from "../core/utilities";
@@ -10,8 +9,7 @@ import Utilities from "../core/utilities";
 import {FormControl} from "react-bootstrap";
 import {connect} from "react-redux";
 import GoAlert from "react-icons/lib/go/alert";
-import {updateTagTable} from "../actions";
-
+import {webSocketSendMessage} from "../core/coreConstants";
 
 export class HeaderBar extends Component {
 
@@ -28,16 +26,24 @@ export class HeaderBar extends Component {
         )
     }
 
-
     renderHeader() {
-        switch (this.props.hash[0]) {
+        switch (this.props.currentHash[0]) {
             case "tag":
                 return (
                     <div>
                         <span className="text-16 primary">Rules related to tag: </span><br/>
                         <span className="text-24 important">{this.props.title}</span>
                         <FormControl componentClass="textarea" defaultValue={this.props.content} style={{resize: "vertical"}}
-                                     onBlur={(e) => this.props.onUpdateTag(this.props, e.target.value)} key={new Date()}
+                                     onBlur={(e) => {
+                                         if (e.target.value !== this.props.tag["detail"]) {
+                                             let filtered = this.props.tagTable.filter((d) => d["tagName"] === this.props.tag["tagName"]);
+                                             if (filtered.length === 1) {
+                                                 filtered[0]["detail"] = e.target.value;
+                                                 Utilities.sendToServer(this.props.ws, webSocketSendMessage.modified_tag_msg, filtered[0]);
+                                             }
+                                         }
+                                     }}
+                                     key={new Date()}
                                      placeholder="Information about tag"
                                      onClick={(e) => {
                                          e.target.style.cssText = "height:0";
@@ -95,76 +101,55 @@ export class HeaderBar extends Component {
 
 // map state to props
 function mapStateToProps(state) {
-    let path = "";
-    try {
-        path = state["projectHierarchy"]["properties"]["canonicalPath"];
-    } catch (e) {
-    }
     let props = {
-        tags: state["tagTable"],
-        hash: state["hash"],
-        ws: state["ws"],
-        ignoreFile: state["ignoreFile"],
-        projectPath: path
+        tagTable: state.tagTable,
+        currentHash: state.currentHash,
+        ws: state.ws,
+        projectPath: state.projectPath,
+        tag: "",
+        title: "",
+        content: ""
     };
 
-    switch (state["hash"][0]) {
+    switch (state.currentHash[0]) {
         case "tag":
-            props["tag"] = state["tagTable"].filter((d) => d["tagName"] === state["hash"][1])[0]; // can throw errors
-            props["title"] = state["hash"][1];
-            props["content"] = props["tag"]["detail"];
-            break;
-        case "rule":
-            props["title"] = state["hash"][1];
-            props["content"] = "";
+            try {
+                props.tag = state.tagTable.filter((d) => d["tagName"] === state.currentHash[1])[0];
+            } catch {
+            }
+            props.title = state.currentHash[1];
+            props.content = props["tag"]["detail"];
             break;
         case "rules":
-            props["title"] = "All Rules";
-            props["content"] = "";
+            props.title = "All Rules";
             break;
         case "tagJsonChanged":
-            props["title"] = "tagJson.txt is changed.";
-            props["content"] = "";
+            props.title = "tagTable.json is changed.";
             break;
         case "ruleJsonChanged":
-            props["title"] = "ruleJson.txt is changed.";
-            props["content"] = "";
-            break;
-        case "hierarchy":
-            props["title"] = "Project Hierarchy";
-            props["content"] = "";
+            props.title = "ruleTable.json is changed.";
             break;
         case "index":
-            props["title"] = "Active Documentation";
-            props["content"] = "";
-            break;
-        case "genRule":
-            props["title"] = "New Rule";
-            props["content"] = "";
+            props.title = "Active Documentation";
             break;
         case "violatedRules":
-            props["title"] = "Violated Rules";
-            props["content"] = "";
+            props.title = "Violated Rules";
             break;
         case "rulesForFile":
-            props["title"] = "";
-            props["content"] = state["filePath"];
+            props.content = state.openFilePath;
             break;
         case "codeChanged":
-            props["title"] = "Code changed in";
-            props["content"] = state["filePath"];
+            props.title = "Code changed in";
+            props.content = state.openFilePath;
             break;
         case "minedRules":
-            props["title"] = "Mining Rules";
-            props["content"] = "";
+            props.title = "Mining Rules";
             break;
         case "featureSelection":
-            props["title"] = "Feature Selection";
-            props["content"] = "";
+            props.title = "Feature Selection";
             break;
         default:
-            props["title"] = "";
-            props["content"] = "Error no page is found for: " + state["hash"][0];
+            props.content = "Error no page is found for: " + state.currentHash[0];
             break;
     }
 
@@ -172,16 +157,4 @@ function mapStateToProps(state) {
 
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        onUpdateTag: (props, newValue) => {
-            if (newValue !== props["tag"]["detail"]) {
-                props["tags"].filter((d) => d["tagName"] === props["hash"][1])[0]["detail"] = newValue; // can throw errors
-                Utilities.sendToServer(props["ws"], "MODIFIED_TAG", props["tag"]);
-                dispatch(updateTagTable(props["tags"]));
-            }
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(HeaderBar);
+export default connect(mapStateToProps, null)(HeaderBar);

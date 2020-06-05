@@ -1,7 +1,7 @@
 import antlr4 from "antlr4/index";
 import posTagger from "wink-pos-tagger";
 
-import Traverse from "./generateXpath";
+import Traverse from "./generateXPath";
 
 
 /**

@@ -56,25 +56,25 @@ export class NavBar extends Component {
 // map state to props
 function mapStateToProps(state) {
     return {
-        history: state["hashManager"]["history"],
-        activeHash: state["hashManager"]["activeHash"],
-        forwardDisable: state["hashManager"]["forwardDisable"],
-        backDisable: state["hashManager"]["backDisable"]
+        history: state.hashManager.history,
+        activeHashIndex: state.hashManager.activeHashIndex,
+        forwardDisable: state.hashManager.forwardDisable,
+        backDisable: state.hashManager.backDisable
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         backClick: (props) => {
-            if (props.activeHash > 0) {
+            if (props.activeHashIndex > 0) {
                 dispatch(clickedOnBack());
-                window.location.hash = props.history[props.activeHash - 1];
+                window.location.hash = props.history[props.activeHashIndex - 1];
             }
         },
         forwardClick: (props) => {
-            if (props.activeHash < props.history.length - 1) {
+            if (props.activeHashIndex < props.history.length - 1) {
                 dispatch(clickedOnForward());
-                window.location.hash = props.history[props.activeHash + 1];
+                window.location.hash = props.history[props.activeHashIndex + 1];
             }
         }
     }
