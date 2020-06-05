@@ -14,6 +14,7 @@ import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from "./ruleExecut
 import {parseGrouping} from "../miningRulesCore/parseGrouping";
 import {getXpathForFeature} from "../miningRulesCore/findingFeature";
 import {dangerousParseMetaDataFile} from "../miningRulesCore/miningRules";
+import {webSocketReceiveMessage} from "./coreConstants";
 
 class WebSocketManager extends Component {
 
@@ -42,41 +43,41 @@ class WebSocketManager extends Component {
 
             switch (message.command) {
 
-                case "XML":
+                case webSocketReceiveMessage.xml_files_msg:
                     // data: {filePath: "", xml: ""}
                     xml.push(message.data);
                     break;
 
-                case "RULE_TABLE":
+                case webSocketReceiveMessage.rule_table_msg:
                     // data: [ruleTable]
                     ruleTable = JSON.parse(message.data);
                     this.props.onUpdateXmlFiles(xml);
                     break;
 
-                case "TAG_TABLE":
+                case webSocketReceiveMessage.tag_table_msg:
                     // data: [tagTable]
                     tagTable = JSON.parse(message.data);
                     this.props.onUpdateTagTable(tagTable);
                     break;
 
-                case "PROJECT_HIERARCHY":
+                case webSocketReceiveMessage.project_hierarchy_msg:
                     // data: {projectHierarchy}
                     this.props.onProjectHierarchy(message.data);
                     break;
 
-                case "PROJECT_PATH":
+                case webSocketReceiveMessage.project_path_msg:
                     // data: projectPath
                     projectPath = message.data;
                     this.props.onProjectPathUpdate(projectPath);
                     break;
 
-                case "VERIFY_RULES":
+                case webSocketReceiveMessage.verify_rules_msg:
                     // data: ""
                     ruleTable = checkRulesForAll(xml, ruleTable);
                     this.props.onUpdateRuleTable(ruleTable);
                     break;
 
-                case "UPDATE_XML":
+                case webSocketReceiveMessage.update_xml_file_msg:
                     // data: {filePath: "", xml: ""}
                     let filteredXML = xml.filter((d) => d.filePath === message.data["filePath"]);
                     if (filteredXML.length === 0)
@@ -86,7 +87,7 @@ class WebSocketManager extends Component {
                     this.props.onUpdateXmlFiles(xml);
                     break;
 
-                case "CHECK_RULES_FOR_FILE":
+                case webSocketReceiveMessage.check_rules_for_file_msg:
                     // data: "filePath"
                     let filePath = message.data;
                     ruleTable = checkRulesForFile(xml, ruleTable, filePath);
@@ -95,7 +96,7 @@ class WebSocketManager extends Component {
                     window.location.hash = "#/codeChanged";
                     break;
 
-                case "UPDATE_TAG":
+                case webSocketReceiveMessage.update_tag_msg:
                     // data: {tagID: longNumber, tagInfo: {...}}
                     let newTag = JSON.parse(message.data);
                     let filteredTag = tagTable.filter((d) => d.tagName === newTag["tagName"]);
@@ -106,11 +107,11 @@ class WebSocketManager extends Component {
                     window.location.hash = "#/tag/" + newTag["tagName"];
 
                     break;
-                case "FAILED_UPDATE_TAG":
+                case webSocketReceiveMessage.failed_update_tag_msg:
                     // data: {tagID: longNumber, tagInfo: {...}}
                     break;
 
-                case "UPDATE_RULE":
+                case webSocketReceiveMessage.update_rule_msg:
                     // data: {ruleID: longNumber, ruleInfo: {...}}
                     let updatedRule = JSON.parse(message.data["rule"]);
                     try {
@@ -123,16 +124,16 @@ class WebSocketManager extends Component {
                     }
                     break;
 
-                case "FAILED_UPDATE_RULE":
+                case webSocketReceiveMessage.failed_update_rule_msg:
                     // data: {ruleID: longNumber, ruleInfo: {...}}
                     break;
 
-                case "EXPR_STMT_XML":
+                case webSocketReceiveMessage.xml_from_code_msg:
                     // data: {xmlText: "", messageID: ""}
                     this.props.onReceiveExprStmtXML(message.data);
                     break;
 
-                case "NEW_RULE":
+                case webSocketReceiveMessage.new_rule_msg:
                     // data: {ruleID: longNumber, rule: {...}}
                     let newAddedRule = JSON.parse(message.data["rule"]);
                     ruleTable.push(newAddedRule);
@@ -141,22 +142,22 @@ class WebSocketManager extends Component {
                     this.props.onUpdateRuleTable(ruleTable);
                     break;
 
-                case "FAILED_NEW_RULE":
+                case webSocketReceiveMessage.failed_new_rule_msg:
                     // data: {ruleID: longNumber, rule: {...}}
                     break;
 
-                case "NEW_TAG":
+                case webSocketReceiveMessage.new_tag_msg:
                     // data: {tagID: longNumber, tag: {...}}
                     let newAddedTag = JSON.parse(message.data["tag"]);
                     tagTable.push(newAddedTag);
                     this.props.onUpdateTagTable(tagTable);
                     break;
 
-                case "FAILED_NEW_TAG":
+                case webSocketReceiveMessage.failed_new_tag_msg:
                     // data: {tagID: longNumber, tag: {...}}
                     break;
 
-                case "FILE_CHANGE":
+                case webSocketReceiveMessage.file_change_in_ide_msg:
                     // data: "filePath"
                     let focusedFilePath = message.data.replace(projectPath, "");
                     if (!this.props.ignoreFileChange) {
@@ -164,22 +165,21 @@ class WebSocketManager extends Component {
                         window.location.hash = "#/rulesForFile/" + focusedFilePath.replace(/\//g, "%2F");
                     } else
                         this.props.onFalsifyIgnoreFile();
-
                     break;
 
                     /* Mining Rules */
 
-                case "TNR_OUTPUT":
+                case webSocketReceiveMessage.tnr_output_msg:
                     console.log(message.data);
                     break;
 
-                case "FP_MAX_OUTPUT":
+                case webSocketReceiveMessage.fp_max_output_msg:
                     // message.data = {"fpMaxOutput" : {0: "content of output0", ...}}
                     let modifiedOutput = parseGrouping(Object.values(message.data["fpMaxOutput"]), this.props.minedRuleMetaData);
                     this.props.onUpdateMinedRules(modifiedOutput);
                     break;
 
-                case "FEATURE_SELECTION":
+                case webSocketReceiveMessage.feature_selection_msg:
                     console.log(message.data);
                     let selected = xml.filter(d => d.filePath === message.data["path"]);
                     if (selected.length > 0) {
@@ -203,15 +203,13 @@ class WebSocketManager extends Component {
                     break;
 
                 // dangerously read output files and meta data.
-                case "DANGEROUS_READ_MINED_RULES":
+                case webSocketReceiveMessage.dangerous_read_mined_rules_msg:
                     let metaData = dangerousParseMetaDataFile(JSON.parse(message.data["metaData"]));
                     let outputFiles = Object.values(JSON.parse(JSON.parse(message.data["outputFiles"])));
                     let output = parseGrouping(outputFiles, metaData);
                     this.props.onUpdateDangerousMinedRules(metaData, output);
                     break;
 
-                case "ENTER":
-                case "LEFT":
                 default:
             }
         };

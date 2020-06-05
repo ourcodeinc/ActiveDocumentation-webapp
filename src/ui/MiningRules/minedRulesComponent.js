@@ -18,6 +18,7 @@ import MinedRulePad from "./minedRulePad";
 import {verifyPartialTextBasedOnGrammar} from "../../core/languageProcessing";
 import {generateGuiTrees} from "../RulePad/rulePadTextualEditor/generateGuiTree";
 import Utilities from "../../core/utilities";
+import {webSocketSendMessage} from "../../core/coreConstants";
 
 
 class MinedRulesComponent extends Component {
@@ -433,7 +434,7 @@ class MinedRulesComponent extends Component {
                                             <div key={i} className={"ruleLink"}
                                                  onClick={() => {
                                                      this.props.onIgnoreFile(true);
-                                                     Utilities.sendToServer(this.props.ws, "OPEN_FILE", fileName)
+                                                     Utilities.sendToServer(this.props.ws, webSocketSendMessage.open_file_mined_rules, fileName)
                                                  }}>
                                                 {fileName
                                                     .replace(this.props.projectPath.slice, "")
@@ -469,7 +470,7 @@ class MinedRulesComponent extends Component {
      */
     ShowMinedRules() {
         this.setState({minedRules: [], displayedMinedRules: [], loading: true});
-        Utilities.sendToServer(this.props.ws, "DANGEROUS_READ_MINED_RULES");
+        Utilities.sendToServer(this.props.ws, webSocketSendMessage.dangerous_read_mined_rules_msg);
     }
 
     /**

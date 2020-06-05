@@ -15,6 +15,8 @@ import MdEdit from "react-icons/lib/md/edit";
 import {changeEditMode, ignoreFileChange} from "../actions";
 import Utilities from "../core/utilities";
 import RulePad from "./RulePad/rulePad";
+import {reduxStoreMessages} from "../reduxStoreConstants";
+import {webSocketSendMessage} from "../core/coreConstants";
 
 
 class RulePanel extends Component {
@@ -41,7 +43,6 @@ class RulePanel extends Component {
 
             filePath: "none"
         };
-
 
         // existing rule
         if (!this.newRuleRequest && this.ruleIndex !== -1) {
@@ -121,19 +122,17 @@ class RulePanel extends Component {
         );
     }
 
-    //componentDidUpdate doesn"t work
     UNSAFE_componentWillReceiveProps(nextProps) {
 
-        if (nextProps.message === "HASH")
-        {
+        if (nextProps.message === reduxStoreMessages.hash_msg) {
             let panelState = this.newUpdateStateUponCodeChange(nextProps.codeChanged);
             this.setState(panelState);
         }
 
-        else if (nextProps.message === "FILE_PATH_UPDATED")
+        else if (nextProps.message === reduxStoreMessages.file_path_update_msg)
             this.setState({filePath: nextProps.filePath});
 
-        else if (nextProps.message === "CHANGE_EDIT_MODE") {
+        else if (nextProps.message === reduxStoreMessages.change_edit_mode_msg) {
             let indices = nextProps.rules.map(d => d.index);
             let arrayIndex = indices.indexOf(this.ruleIndex);
             if (this.ruleIndex !== -1) {
@@ -148,7 +147,7 @@ class RulePanel extends Component {
         }
 
         // existing rule
-        else if (nextProps.message === "UPDATE_RULE_TABLE" && this.ruleIndex !== -1) {
+        else if (nextProps.message === reduxStoreMessages.update_rule_table_msg && this.ruleIndex !== -1) {
             let indices = nextProps.rules.map(d => d.index);
             let arrayIndex = indices.indexOf(this.ruleIndex);
             if (arrayIndex === -1)
@@ -189,7 +188,6 @@ class RulePanel extends Component {
         let panelState = this.newUpdateStateUponCodeChange(this.props.codeChanged);
         this.setState(panelState);
     }
-
 
     /**
      * render the tab headers
@@ -322,8 +320,8 @@ class RulePanel extends Component {
                 return (
                     <div data-file-path={d["filePath"]} className="snippetDiv" key={i}>
                                 <pre className="link" onClick={() => {
-                                    this.props.on_File(true);
-                                    Utilities.sendToServer(this.props.ws, "XML_RESULT", d["xml"])
+                                    this.props.onIgnoreFile(true);
+                                    Utilities.sendToServer(this.props.ws, webSocketSendMessage.snippet_xml_msg, d["xml"])
                                 }}>
                                     <div className="content" dangerouslySetInnerHTML={{__html: d["snippet"]}}/>
                                 </pre>
@@ -360,16 +358,14 @@ class RulePanel extends Component {
             if (this.state.filePath === "none")
                 open = true;
             else
-                open = this.ruleI["xPathQueryResult"].filter(d => d["filePath"] === this.state.filePath).length > 0;
-
-
+                open = this.ruleI["xPathQueryResult"].filter(d => d["filePath"] === (this.props.projectPath + this.state.filePath)).length > 0;
             return {
                 className: "rulePanelDiv" + (this.newRuleRequest ? " edit-bg" : ""),
                 openPanel: open
             };
         }
 
-        let file = this.ruleI["xPathQueryResult"].filter(d => d["filePath"] === this.state.filePath);
+        let file = this.ruleI["xPathQueryResult"].filter(d => d["filePath"] === (this.props.projectPath + this.state.filePath));
         let ruleIfile = file.length !== 0 ? file[0]["data"] : {};
         if (ruleIfile["allChanged"] === "greater" && ruleIfile["satisfiedChanged"] === ruleIfile["violatedChanged"] === "none") {
             return {openPanel: true, className: "rulePanelDiv blue-bg"};
@@ -405,6 +401,7 @@ function mapStateToProps(state) {
         codeChanged: state.currentHash[0] === "codeChanged",
         filePath: ["rulesForFile", "codeChanged"].indexOf(state.currentHash[0]) !== -1 ? state.openFilePath : "none",
         ws: state.ws,
+        projectPath: state.projectPath,
         message: state.message
     };
 }

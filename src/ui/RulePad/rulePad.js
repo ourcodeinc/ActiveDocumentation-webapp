@@ -59,6 +59,7 @@ import matching_code from "./resources/matching_code.png";
 
 import {checkRulesForAll} from "../../core/ruleExecutor";
 import ProjectHierarchy from "./projectHierarchy";
+import {webSocketSendMessage} from "../../core/coreConstants";
 
 
 class RulePad extends Component {
@@ -964,7 +965,7 @@ class RulePad extends Component {
                         <div data-file-path={d["filePath"]} className="snippetDiv" key={i}>
                             <pre className="link" onClick={() => {
                                 this.props.onIgnoreFile(true);
-                                Utilities.sendToServer(this.props.ws, "XML_RESULT", d["xml"])
+                                Utilities.sendToServer(this.props.ws, webSocketSendMessage.snippet_xml_msg, d["xml"])
                             }}>
                                 <div className="content" dangerouslySetInnerHTML={{__html: d["snippet"]}}/>
                             </pre>
@@ -1387,7 +1388,7 @@ class RulePad extends Component {
 
         if (isChanged) {
             this.props.onUpdateRule();
-            Utilities.sendToServer(this.props.ws, "MODIFIED_RULE", rule);
+            Utilities.sendToServer(this.props.ws, webSocketSendMessage.modified_rule_msg, rule);
         }
         this.changeEditMode();
     }
@@ -1446,7 +1447,7 @@ class RulePad extends Component {
         }
 
         this.props.onSubmitNewRule();
-        Utilities.sendToServer(this.props.ws, "NEW_RULE", rule);
+        Utilities.sendToServer(this.props.ws, webSocketSendMessage.new_rule_msg, rule);
         this.changeEditMode();
     }
 
@@ -1481,7 +1482,7 @@ class RulePad extends Component {
 
         let tag = {tagName: this.state.tagName, detail: this.state.tagDetail};
         this.props.onSubmitNewTag();
-        Utilities.sendToServer(this.props.ws, "NEW_TAG", tag);
+        Utilities.sendToServer(this.props.ws, webSocketSendMessage.new_tag_msg, tag);
     }
 
     /***

@@ -9,6 +9,7 @@ import Utilities from "../core/utilities";
 import {FormControl} from "react-bootstrap";
 import {connect} from "react-redux";
 import GoAlert from "react-icons/lib/go/alert";
+import {webSocketSendMessage} from "../core/coreConstants";
 
 export class HeaderBar extends Component {
 
@@ -38,7 +39,7 @@ export class HeaderBar extends Component {
                                              let filtered = this.props.tagTable.filter((d) => d["tagName"] === this.props.tag["tagName"]);
                                              if (filtered.length === 1) {
                                                  filtered[0]["detail"] = e.target.value;
-                                                 Utilities.sendToServer(this.props.ws, "MODIFIED_TAG", filtered[0]);
+                                                 Utilities.sendToServer(this.props.ws, webSocketSendMessage.modified_tag_msg, filtered[0]);
                                              }
                                          }
                                      }}

@@ -6,6 +6,7 @@ import {TerminalNodeImpl} from "antlr4/tree/Tree";
 import Utilities from "./utilities";
 import store from "../reduxStore";
 import {sendExpressionStatementXML} from "../actions";
+import {webSocketSendMessage} from "./coreConstants";
 
 class GenerateXPath {
 
@@ -905,7 +906,7 @@ class GenerateXPath {
 
         }
 
-        Utilities.sendToServer(this.ws, "EXPR_STMT", {"codeText": code, "messageID": messageID});
+        Utilities.sendToServer(this.ws, webSocketSendMessage.code_to_xml_msg, {"codeText": code, "messageID": messageID});
         store.dispatch(sendExpressionStatementXML({
             "codeText": code,
             "messageID": messageID,

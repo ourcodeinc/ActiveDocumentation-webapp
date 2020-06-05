@@ -60,6 +60,7 @@ import {addChildren, addParentChildRelations, findParentChildRelations,
 
 import et from 'elementtree';
 import Utilities from "../core/utilities";
+import {webSocketSendMessage} from "../core/coreConstants";
 
 /**
  *
@@ -235,9 +236,9 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws,
     outputFileAnalysisData(fileAnalysisMap, ws);
 
     if (algorithm === "FP_MAX")
-        Utilities.sendToServer(ws, "EXECUTE_FP_MAX", {fpMaxSupport});
+        Utilities.sendToServer(ws, webSocketSendMessage.execute_fp_max_msg, {fpMaxSupport});
     else if (algorithm === "TNR")
-        Utilities.sendToServer(ws, "EXECUTE_TNR", {tnrConfidence, tnrK, tnrDelta});
+        Utilities.sendToServer(ws, webSocketSendMessage.execute_tnr_msg, {tnrConfidence, tnrK, tnrDelta});
 
 };
 
@@ -256,7 +257,7 @@ const outputMetaData = (allAttributes, queryMap, metaData, ws) => {
         metaData[entries[x][1]] = {attr: entries[x][0], query: queries[x][0]};
     }
 
-    Utilities.sendToServer(ws, "LEARN_RULES_META_DATA", {fileName: "attribute_META_data.txt", content: data})
+    Utilities.sendToServer(ws, webSocketSendMessage.learn_rules_metadata_msg, {fileName: "attribute_META_data.txt", content: data})
 
 };
 
@@ -271,7 +272,7 @@ const outputFileAnalysisData = (fileAnalysisMap, ws) => {
         stream += entries[x][0] + "\n" + entries[x][1] + "\n";
     }
 
-    Utilities.sendToServer(ws, "LEARN_RULES_FILE_LOCATIONS", {fileName: "fileLocations.txt", content: stream})
+    Utilities.sendToServer(ws, webSocketSendMessage.learn_rules_file_location_msg, {fileName: "fileLocations.txt", content: stream})
 
 };
 
@@ -284,7 +285,7 @@ const outputDataBases = (dataMap, ws) => {
     let finalFormat = formatDatabases(databases);
     // websocket seems to fail in sending large messages. Instead of sending the database as a whole, we send messages in patches.
     finalFormat.forEach((d => {
-        Utilities.sendToServer(ws, "LEARN_RULES_DATABASES", [d])
+        Utilities.sendToServer(ws, webSocketSendMessage.learn_rules_databases_msg, [d])
     }))
 
 };
