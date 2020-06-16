@@ -36,9 +36,9 @@ export const webSocketReceiveMessage = {
     failed_new_tag_msg: "FAILED_NEW_TAG",
     file_change_in_ide_msg: "FILE_CHANGE",
 
-    tnr_output_msg: "",
-    fp_max_output_msg: "",
-    feature_selection_msg: "",
+    tnr_output_msg: "EXECUTE_TNR",
+    fp_max_output_msg: "FP_MAX_OUTPUT",
+    feature_selection_msg: "FEATURE_SELECTION",
     dangerous_read_mined_rules_msg: "DANGEROUS_READ_MINED_RULES",
 
     enter_chat_msg: "ENTER",
