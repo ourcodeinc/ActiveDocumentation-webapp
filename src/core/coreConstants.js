@@ -9,7 +9,6 @@ export const webSocketSendMessage = {
     learn_rules_metadata_msg: "LEARN_RULES_META_DATA",
     learn_rules_file_location_msg: "LEARN_RULES_FILE_LOCATIONS",
     learn_rules_databases_msg: "LEARN_RULES_DATABASES",
-    execute_tnr_msg: "EXECUTE_TNR",
     execute_fp_max_msg: "EXECUTE_FP_MAX",
     open_file_mined_rules: "OPEN_FILE",
     dangerous_read_mined_rules_msg: "DANGEROUS_READ_MINED_RULES"
@@ -36,7 +35,6 @@ export const webSocketReceiveMessage = {
     failed_new_tag_msg: "FAILED_NEW_TAG",
     file_change_in_ide_msg: "FILE_CHANGE",
 
-    tnr_output_msg: "EXECUTE_TNR",
     fp_max_output_msg: "FP_MAX_OUTPUT",
     feature_selection_msg: "FEATURE_SELECTION",
     dangerous_read_mined_rules_msg: "DANGEROUS_READ_MINED_RULES",

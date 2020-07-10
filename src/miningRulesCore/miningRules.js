@@ -67,15 +67,10 @@ import {webSocketSendMessage} from "../core/coreConstants";
  * @param xmlFiles is an array of objects: {filePath:"", xml: ""}
  * @param metaData {key: {attr: "", query: ""}}
  * @param ws
- * @param algorithm TNR or FP_MAX
  * @param fpMaxSupport
- * @param tnrConfidence
- * @param tnrK
- * @param tnrDelta
  * @param customQueries
  */
-export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws,
-                                      algorithm, fpMaxSupport, tnrConfidence, tnrK, tnrDelta, customQueries = []) => {
+export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, customQueries = []) => {
 
     let analysisFileName = "AttributeEncoding";
 
@@ -235,11 +230,7 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws,
 
     outputFileAnalysisData(fileAnalysisMap, ws);
 
-    if (algorithm === "FP_MAX")
-        Utilities.sendToServer(ws, webSocketSendMessage.execute_fp_max_msg, {fpMaxSupport});
-    else if (algorithm === "TNR")
-        Utilities.sendToServer(ws, webSocketSendMessage.execute_tnr_msg, {tnrConfidence, tnrK, tnrDelta});
-
+    Utilities.sendToServer(ws, webSocketSendMessage.execute_fp_max_msg, {fpMaxSupport});
 };
 
 const outputMetaData = (allAttributes, queryMap, metaData, ws) => {

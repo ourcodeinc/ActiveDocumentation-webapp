@@ -26,12 +26,9 @@ class MinedRulesComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            algorithm: "FP_MAX", // FP_MAX or TNR
+            algorithm: "FP_MAX", // FP_MAX or NONE
 
             fpMaxSupport: 60,
-            tnrConfidence: 60,
-            tnrK: 20,
-            tnrDelta: 2,
 
             minedRules: [],
             displayedMinedRules: [],
@@ -142,10 +139,8 @@ class MinedRulesComponent extends Component {
                         <ButtonGroup>
                             <Button onClick={() => this.setState({algorithm: "FP_MAX"})}
                                     active={this.state.algorithm === "FP_MAX"}>FP_MAX</Button>
-                            <Button onClick={() => this.setState({algorithm: "TNR"})}
-                                    active={this.state.algorithm === "TNR"}>TNR</Button>
                             <Button onClick={() => this.setState({algorithm: "NONE"})}
-                                    active={this.state.algorithm === "TNR"}>View Existing Mined Rules</Button>
+                                    active={this.state.algorithm === "NONE"}>View Existing Mined Rules</Button>
                         </ButtonGroup>
                     </Row>
                     {this.state.algorithm === "FP_MAX" ? (
@@ -183,77 +178,12 @@ class MinedRulesComponent extends Component {
                             </Col>
                             <Col xs={6} md={4}>
                                 <div style={{float: "right"}}>
-                                    <Button onClick={() => this.doMineRules("FP_MAX")} style={{padding: "0 5px"}}>
+                                    <Button onClick={() => this.doMineRules()} style={{padding: "0 5px"}}>
                                         Mine Rules - FPMax
                                     </Button>
                                 </div>
                             </Col>
                         </Row>
-                    ) : this.state.algorithm === "TNR" ? (
-                        <Fragment>
-                            <Row className="show-grid"  style={{padding: "20px 0"}}>
-                                <Col xsHidden md={2}>
-                                    TNR Confidence
-                                </Col>
-                                <Col xs={5} md={5}>
-                                    <Slider
-                                        defaultValue={60}
-                                        min={10}
-                                        max={100}
-                                        marks={marksHundred}
-                                        included={false}
-                                        onChange={(value) => this.setState({tnrConfidence: value})}
-                                        handle={(props) => {
-                                            // copied from rc-slider website
-                                            const {value, dragging, index, ...restProps} = props;
-                                            return (
-                                                <Tooltip
-                                                    prefixCls="rc-slider-tooltip"
-                                                    overlay={value}
-                                                    visible={dragging}
-                                                    placement="top"
-                                                    key={index}
-                                                >
-                                                    <Slider.Handle value={value} {...restProps} />
-                                                </Tooltip>
-                                            );
-                                        }}
-                                    />
-                                </Col>
-                                <Col xs={1} md={1}>
-                                    {this.state.tnrConfidence}%
-                                </Col>
-                                <Col xs={6} md={4}>
-                                    <div style={{float: "right"}}>
-                                        <Button disabled onClick={() => this.doMineRules("TNR")} style={{padding: "0 5px"}}>
-                                            Mine Rules - TNR
-                                        </Button>
-                                    </div>
-                                </Col>
-                            </Row>
-                            <Row className="show-grid">
-                                <Col xsHidden md={2}>
-                                    TNR K
-                                </Col>
-                                <Col xs={5} md={5}>
-                                    <input type={"text"} value={this.state.tnrK} onChange={(value) => this.setState({tnrK: value})}/>
-                                </Col>
-                                <Col xs={1} md={1}>
-                                    {this.state.tnrK}
-                                </Col>
-                            </Row>
-                            <Row className="show-grid">
-                                <Col xsHidden md={2}>
-                                    TNR Delta
-                                </Col>
-                                <Col xs={5} md={5}>
-                                    <input type={"text"} value={this.state.tnrDelta} onChange={(value) => this.setState({tnrDelta: value})}/>
-                                </Col>
-                                <Col xs={1} md={1}>
-                                    {this.state.tnrDelta}
-                                </Col>
-                            </Row>
-                        </Fragment>
                     ) : (
                         <Button onClick={() => this.ShowMinedRules()} style={{padding: "0 5px", color: "red"}}>
                             Show Mined Rules (Dangerous!)
@@ -454,14 +384,12 @@ class MinedRulesComponent extends Component {
 
     /**
      * send command to mine rules
-     * @param algorithm FP_MAX or TNR
      */
-    doMineRules(algorithm) {
+    doMineRules() {
         let metaData = {};
         this.setState({minedRules: [], displayedMinedRules: [], loading: true});
-        mineRulesFromXmlFiles(this.props.xmlFiles, metaData, this.props.ws, algorithm,
-            this.state.fpMaxSupport,
-            this.state.tnrConfidence, this.state.tnrK, this.state.tnrDelta);
+        mineRulesFromXmlFiles(this.props.xmlFiles, metaData, this.props.ws,
+            this.state.fpMaxSupport);
         this.props.onUpdateMetaData(metaData);
     }
 

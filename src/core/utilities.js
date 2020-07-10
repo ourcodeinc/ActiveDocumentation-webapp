@@ -82,14 +82,6 @@ class Utilities {
                     messageJson.data = data; // array of arrays: [["file_name.txt", "data to be written"]]
                     break;
 
-                case webSocketSendMessage.execute_tnr_msg:
-                    messageJson.data = {
-                        confidence: data.tnrConfidence, // double
-                        k: data.tnrK, //int
-                        delta: data.tnrDelta // int
-                    };
-                    break;
-
                 case webSocketSendMessage.execute_fp_max_msg:
                     messageJson.data = data.fpMaxSupport; // support
                     break;

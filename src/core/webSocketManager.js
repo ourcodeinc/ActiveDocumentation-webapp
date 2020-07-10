@@ -169,10 +169,6 @@ class WebSocketManager extends Component {
 
                     /* Mining Rules */
 
-                case webSocketReceiveMessage.tnr_output_msg:
-                    console.log(message.data);
-                    break;
-
                 case webSocketReceiveMessage.fp_max_output_msg:
                     // message.data = {"fpMaxOutput" : {0: "content of output0", ...}}
                     let modifiedOutput = parseGrouping(Object.values(message.data["fpMaxOutput"]), this.props.minedRuleMetaData);
