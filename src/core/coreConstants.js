@@ -42,3 +42,6 @@ export const webSocketReceiveMessage = {
     enter_chat_msg: "ENTER",
     left_chat_msg: "LEFT"
 };
+
+export const defaultXML = "<unit xmlns=\"http://www.srcML.org/srcML/src\" revision=\"0.9.5\" language=\"Java\">\n" +
+    "</unit>";

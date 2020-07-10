@@ -1,7 +1,7 @@
 /**
  * Created by saharmehrpour on 9/8/17.
  */
-import {webSocketSendMessage} from "./coreConstants";
+import {defaultXML, webSocketSendMessage} from "./coreConstants";
 
 class Utilities {
 
@@ -90,8 +90,7 @@ class Utilities {
                     messageJson.command = webSocketSendMessage.snippet_xml_msg; // there is no separate command in the server
                     messageJson.data = {
                         fileName: data,
-                        xml: "<unit xmlns=\"http://www.srcML.org/srcML/src\" revision=\"0.9.5\" language=\"Java\">\n" +
-                            "</unit>"
+                        xml: defaultXML
                     };
                     break;
 
