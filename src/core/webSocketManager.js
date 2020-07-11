@@ -111,7 +111,7 @@ class WebSocketManager extends Component {
                     // data: {tagID: longNumber, tagInfo: {...}}
                     break;
 
-                case webSocketReceiveMessage.update_rule_msg: console.log(message.data);
+                case webSocketReceiveMessage.update_rule_msg:
                     // data: {ruleID: longNumber, ruleInfo: {...}}
                     let updatedRule = message.data["ruleInfo"];
                     try {
@@ -176,7 +176,6 @@ class WebSocketManager extends Component {
                     break;
 
                 case webSocketReceiveMessage.feature_selection_msg:
-                    console.log(message.data);
                     let selected = xml.filter(d => d.filePath === message.data["path"]);
                     if (selected.length > 0) {
                         //  {{xpath: string, selectedText: string, idMap, displayTextArray: Array}}
