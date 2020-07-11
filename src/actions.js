@@ -1,13 +1,15 @@
 // action creator
 
+import {reduxStoreActions} from "./reduxStoreConstants";
+
 /**
  * If the hash is #/hash1/hash2
  * @param hash array of hashes ["hash1", "hash2"]
- * @return {{data: {hash: array}, type: string}}
+ * @return {{data: {currentHash: array}, type: string}}
  */
 export const hashChange = (hash) => {
     return {
-        type: "HASH",
+        type: reduxStoreActions.action_hash,
         data:
             {currentHash: hash}
     };
@@ -19,7 +21,7 @@ export const hashChange = (hash) => {
  */
 export const updateWS = (ws) => {
     return {
-        type: "NEW_WS",
+        type: reduxStoreActions.action_new_ws,
         data:
             {ws: ws}
     };
@@ -31,7 +33,7 @@ export const updateWS = (ws) => {
  */
 export const updateXmlFiles = (xmlFiles) => {
     return {
-        type: "UPDATE_XML_FILES",
+        type: reduxStoreActions.action_update_xml_files,
         data:
             {xmlFiles: xmlFiles}
     }
@@ -43,7 +45,7 @@ export const updateXmlFiles = (xmlFiles) => {
  */
 export const updateTagTable = (newTagTable) => {
     return {
-        type: "UPDATE_TAG_TABLE",
+        type: reduxStoreActions.action_update_tag_table,
         data: {tagTable: newTagTable}
     };
 };
@@ -54,24 +56,24 @@ export const updateTagTable = (newTagTable) => {
  */
 export const updateRuleTable = (newRuleTable) => {
     return {
-        type: "UPDATE_RULE_TABLE",
+        type: reduxStoreActions.action_update_rule_table,
         data: {ruleTable: newRuleTable}
     };
 };
 
 
 export const updateRule = () => {
-    return {type: "UPDATE_RULE"};
+    return {type: reduxStoreActions.action_update_rule};
 };
 
 
 export const submitNewRule = () => {
-    return {type: "SUBMIT_NEW_RULE"}
+    return {type: reduxStoreActions.action_new_rule}
 };
 
 
 export const submitNewTag = () => {
-    return {type: "SUBMIT_NEW_TAG"}
+    return {type: reduxStoreActions.action_new_tag}
 };
 
 /**
@@ -80,7 +82,7 @@ export const submitNewTag = () => {
  */
 export const updateProjectHierarchyData = (hierarchyData) => {
     return {
-        type: "HIERARCHY_DATA",
+        type: reduxStoreActions.action_hierarchy_data,
         data: {hierarchyData: hierarchyData}
     };
 };
@@ -91,7 +93,7 @@ export const updateProjectHierarchyData = (hierarchyData) => {
  */
 export const updateProjectPath = (projectPath) => {
     return {
-        type: "PROJECT_PATH",
+        type: reduxStoreActions.action_project_path,
         data: {projectPath: projectPath}
     }
 };
@@ -107,21 +109,11 @@ export const updateProjectPath = (projectPath) => {
  */
 export const ignoreFileChange = (shouldIgnore) => {
     return {
-        type: "IGNORE_FILE_CHANGE",
+        type: reduxStoreActions.action_ignore_file,
         data: {shouldIgnore: shouldIgnore}
     };
 };
 
-/**
- * @param shouldDisplay boolean
- * @return {{data: {shouldDisplay: boolean}, type: string}}
- */
-export const updateDisplayEditTutorial = (shouldDisplay) => {
-    return {
-        type: "UPDATE_DISPLAY_EDIT_TUTORIAL",
-        data: {shouldDisplay: shouldDisplay}
-    };
-};
 
 /**
  * @param filePath
@@ -129,7 +121,7 @@ export const updateDisplayEditTutorial = (shouldDisplay) => {
  */
 export const updateFilePath = (filePath) => {
     return {
-        type: "FILE_PATH_UPDATED",
+        type: reduxStoreActions.action_file_path_update,
         data: {openFilePath: filePath}
     };
 };
@@ -141,11 +133,11 @@ export const updateFilePath = (filePath) => {
 
 
 export const clickedOnForward = () => {
-    return {type: "CLICKED_ON_FORWARD"};
+    return {type: reduxStoreActions.action_click_forward};
 };
 
 export const clickedOnBack = () => {
-    return {type: "CLICKED_ON_BACK"};
+    return {type: reduxStoreActions.action_click_back};
 };
 
 /*
@@ -153,8 +145,20 @@ export const clickedOnBack = () => {
  */
 
 
+/**
+ * @param shouldDisplay boolean
+ * @return {{data: {shouldDisplay: boolean}, type: string}}
+ */
+export const updateDisplayEditTutorial = (shouldDisplay) => {
+    return {
+        type: reduxStoreActions.action_update_display_edit_tutorial,
+        data: {shouldDisplay: shouldDisplay}
+    };
+};
+
+
 export const clearNewRuleForm = () => {
-    return {type: "CLEAR_NEW_RULE_FORM"}
+    return {type: reduxStoreActions.action_clear_new_rule_form}
 };
 
 /**
@@ -168,7 +172,7 @@ export const clearNewRuleForm = () => {
  */
 export const editRuleForm = (ruleIndex, title, description, ruleTags, folderConstraint, filesFolders) => {
     return {
-        type: "EDIT_RULE_FORM",
+        type: reduxStoreActions.action_edit_rule_form,
         data: {
             ruleIndex: ruleIndex,
             title: title,
@@ -187,7 +191,7 @@ export const editRuleForm = (ruleIndex, title, description, ruleTags, folderCons
  */
 export const changeEditMode = (ruleIndex, newEditMode) => {
     return {
-        type: "CHANGE_EDIT_MODE",
+        type: reduxStoreActions.action_change_edit_mode,
         data: {ruleIndex: ruleIndex, newEditMode: newEditMode}
     }
 };
@@ -202,7 +206,7 @@ export const changeEditMode = (ruleIndex, newEditMode) => {
  */
 export const receiveGuiTree = (ruleIndex, newTreeData, autoCompleteArray, quantifierXPath, constraintXPath) => {
     return {
-        type: "RECEIVE_GUI_TREE",
+        type: reduxStoreActions.action_receive_gui_tree,
         data: {
             ruleIndex: ruleIndex,
             newTreeData: newTreeData,
@@ -215,14 +219,14 @@ export const receiveGuiTree = (ruleIndex, newTreeData, autoCompleteArray, quanti
 
 export const sendExpressionStatementXML = (codeTextAndIDData) => {
     return {
-        type: "SEND_EXPR_STMT_XML",
+        type: reduxStoreActions.action_send_expr_stmt_xml,
         data: {codeTextAndID: codeTextAndIDData}
     }
 };
 
 export const receiveExpressionStatementXML = (xmlData) => {
     return {
-        type: "RECEIVE_EXPR_STMT_XML",
+        type: reduxStoreActions.action_receive_expr_stmt_xml,
         data: {xmlData: xmlData}
     }
 };
@@ -238,7 +242,7 @@ export const receiveExpressionStatementXML = (xmlData) => {
  */
 export const matchMessages = (ruleIndex, sentMessages, receivedMessages, quantifierXPath, constraintXPath) => {
     return {
-        type: "MATCHED_MESSAGES",
+        type: reduxStoreActions.action_matched_messages,
         data: {
             ruleIndex: ruleIndex,
             sentMessages: sentMessages,
@@ -261,7 +265,7 @@ export const matchMessages = (ruleIndex, sentMessages, receivedMessages, quantif
  */
 export const changeGuiElement = (ruleIndex, tasks) => {
     return {
-        type: "CHANGE_GUI_ELEMENT",
+        type: reduxStoreActions.action_change_gui_element,
         data: {
             ruleIndex: ruleIndex,
             tasks: tasks
@@ -276,7 +280,7 @@ export const changeGuiElement = (ruleIndex, tasks) => {
  */
 export const changeAutoCompleteTextFromGUI = (ruleIndex, newAutoCompleteArray) => {
     return {
-        type: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI",
+        type: reduxStoreActions.action_change_autocomplete_text,
         data: {
             ruleIndex: ruleIndex,
             newAutoCompleteArray: newAutoCompleteArray
@@ -286,7 +290,7 @@ export const changeAutoCompleteTextFromGUI = (ruleIndex, newAutoCompleteArray) =
 
 export const updateXPaths = (ruleIndex, quantifierXPath, constraintXPath) => {
     return {
-        type: "UPDATE_XPATHS",
+        type: reduxStoreActions.action_update_xpath,
         data: {
             ruleIndex: ruleIndex,
             quantifierXPath: quantifierXPath,
@@ -305,7 +309,7 @@ export const updateXPaths = (ruleIndex, quantifierXPath, constraintXPath) => {
  */
 export const updateMetaData = (metaData) => {
     return {
-        type: "UPDATE_META_DATA",
+        type: reduxStoreActions.action_update_metadata,
         data: {metaData: metaData}
     }
 };
@@ -316,25 +320,8 @@ export const updateMetaData = (metaData) => {
  */
 export const updatedMinedRules = (minedRules) => {
     return {
-        type: "UPDATE_MINED_RULES",
+        type: reduxStoreActions.action_update_mined_rules,
         data: {minedRules: minedRules}
-    }
-};
-
-
-// not recommended
-/**
- * @param metaData **
- * @param minedRules **
- * @return {{data: {metaData: *, minedRules: *}, type: string}}
- */
-export const updateDangerousMinedRules = (metaData, minedRules) => {
-    return {
-        type: "DANGEROUS_MINED_RULES",
-        data: {
-            metaData: metaData,
-            minedRules: minedRules
-        }
     }
 };
 
@@ -346,14 +333,14 @@ export const updateDangerousMinedRules = (metaData, minedRules) => {
  */
 export const updateFeatureSelection = (dataObject) => {
     return {
-        type: "UPDATE_FEATURE_SELECTION",
+        type: reduxStoreActions.action_update_feature_selection,
         data: {...dataObject}
     }
 };
 
 export const updateResetFeatureSelection = () => {
     return {
-        type: "RESET_FEATURE_SELECTION"
+        type: reduxStoreActions.action_reset_feature_selection
     }
 };
 
@@ -364,8 +351,23 @@ export const updateResetFeatureSelection = () => {
  */
 export const updateSaveFeatureSelection = (featureDescription, featureXpath) => {
     return {
-        type: "SAVE_FEATURE_SELECTION",
+        type: reduxStoreActions.action_save_feature_selection,
         data: {featureDescription, featureXpath}
     }
 };
 
+// not recommended
+/**
+ * @param metaData **
+ * @param minedRules **
+ * @return {{data: {metaData: *, minedRules: *}, type: string}}
+ */
+export const updateDangerousMinedRules = (metaData, minedRules) => {
+    return {
+        type: reduxStoreActions.action_dangerous_mined_rules,
+        data: {
+            metaData: metaData,
+            minedRules: minedRules
+        }
+    }
+};
