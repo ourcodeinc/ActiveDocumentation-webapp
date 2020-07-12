@@ -9,6 +9,7 @@ import {ButtonToolbar, Button} from "react-bootstrap";
 
 import {computeXPath} from "../../miningRulesCore/findingFeature";
 import {updateResetFeatureSelection, updateSaveFeatureSelection} from "../../actions";
+import {reduxStoreMessages} from "../../reduxStoreConstants";
 
 class FeatureSelection extends Component {
 
@@ -51,7 +52,7 @@ class FeatureSelection extends Component {
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
-        if (nextProps.message === "UPDATE_FEATURE_SELECTION") {
+        if (nextProps.message === reduxStoreMessages.update_feature_selection_msg) {
 
             let startModifiedSelectionIndex = nextProps.wholeText.indexOf(nextProps.modifiedSelectedText);
             let startSelectionIndex = nextProps.wholeText.indexOf(nextProps.selectedText);

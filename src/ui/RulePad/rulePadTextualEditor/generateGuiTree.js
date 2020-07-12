@@ -15,7 +15,6 @@ import {initial_graphicalElementTree, initial_graphicalElements} from "../../../
  */
 export async function generateGuiTrees(grammarTree) {
     let trees = await createConstraintTree(grammarTree);
-    // console.log(trees);
     if (Object.entries(trees).length === 0)
         return null;
     // // match with redux state: rulePadState.graphicalEditorState
@@ -31,20 +30,13 @@ export async function generateGuiTrees(grammarTree) {
  * @returns {{newGuiElements, newElementTree, grammarTree: *, guiTree: *}}
  */
 const createConstraintTree = (tree) => {
-    // console.log(tree);
     let combinedNodes = combineNode(tree);
-    // console.log(combinedNodes);
     let combinedWordsNodes = combineWordsNode(combinedNodes);
-    // console.log(combinedWordsNodes);
     let reorderedMustClause = reorderMustClause(combinedWordsNodes);
-    // console.log(reorderedMustClause);
     let newTree = traverseNormalNode(reorderedMustClause);
-    // console.log(newTree);
     newTree.selectedElement = true;
     let parentChildTree = reverseParentChildOrder(newTree);
-    // console.log(parentChildTree);
     let treeOfIDs = createGuiElementTree(parentChildTree);
-    // console.log(treeOfIDs);
     return updateGuiElements(parentChildTree, treeOfIDs);
 };
 

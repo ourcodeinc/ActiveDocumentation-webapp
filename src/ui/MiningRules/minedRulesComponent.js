@@ -19,6 +19,7 @@ import {verifyPartialTextBasedOnGrammar} from "../../core/languageProcessing";
 import {generateGuiTrees} from "../RulePad/rulePadTextualEditor/generateGuiTree";
 import Utilities from "../../core/utilities";
 import {webSocketSendMessage} from "../../core/coreConstants";
+import {reduxStoreMessages} from "../../reduxStoreConstants";
 
 
 class MinedRulesComponent extends Component {
@@ -53,7 +54,7 @@ class MinedRulesComponent extends Component {
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
-        if (nextProps.message === "UPDATE_MINED_RULES") {
+        if (nextProps.message === reduxStoreMessages.update_mined_rules_msg) {
             // calculate the max and min number of attributes in mined rules
             let minAttr = Infinity;
             let maxAttr = -1 * Infinity;

@@ -60,6 +60,7 @@ import matching_code from "./resources/matching_code.png";
 import {checkRulesForAll} from "../../core/ruleExecutor";
 import ProjectHierarchy from "./projectHierarchy";
 import {webSocketSendMessage} from "../../core/coreConstants";
+import {reduxStoreMessages} from "../../reduxStoreConstants";
 
 
 class RulePad extends Component {
@@ -978,15 +979,15 @@ class RulePad extends Component {
 
     //componentDidUpdate doesn't work
     UNSAFE_componentWillReceiveProps(nextProps) {
-        if (nextProps.message === "SEND_EXPR_STMT_XML") return;
-        if (nextProps.message === "CHANGE_GUI_ELEMENT") return;
+        if (nextProps.message === reduxStoreMessages.send_expr_stmt_xml_msg) return;
+        if (nextProps.message === reduxStoreMessages.change_gui_element_msg) return;
 
-        if (nextProps.message === "RECEIVE_EXPR_STMT_XML") {
+        if (nextProps.message === reduxStoreMessages.receive_expr_stmt_xml_msg) {
             this.matchSentAndReceivedMessages(nextProps);
             this.updateFeedbackSnippet(this.state.quantifierXPath, this.state.constraintXPath, this.state.folderConstraint, this.state.filesFolders);
         }
 
-        if (nextProps.message === "PROJECT_HIERARCHY") {
+        if (nextProps.message === reduxStoreMessages.hierarchy_data_msg) {
             this.setState({projectHierarchy: nextProps.projectHierarchy})
         }
 
