@@ -41,7 +41,9 @@ class MinedRulesComponent extends Component {
             minFiles: 1,
             maxFiles: 10,
 
-            doiInformation: {}
+            visitedFiles: [],
+            searchHistory: [],
+            visitedElements: []
         };
     }
 
@@ -98,7 +100,9 @@ class MinedRulesComponent extends Component {
         }
         else if (nextProps.message === reduxStoreMessages.update_doi_information_msg) {
             this.setState({
-                doiInformation: nextProps.doiInformation
+                visitedFiles: nextProps.visitedFiles,
+                searchHistory: nextProps.searchHistory,
+                visitedElements: nextProps.visitedElements
             })
         }
     }
@@ -110,7 +114,7 @@ class MinedRulesComponent extends Component {
         //   You can extract real data from the project as well.
 
         let visitedFiles = ["file1", "file2", "file3"];
-        let searchTerms = ["searchItem1", "searchItem2"];
+        let searchHistory = ["searchItem1", "searchItem2"];
 
         // the types are predefined tags. If you need the complete list, we can prepare it.
         let visitedElements = [{name:"className", type: "class"}, {name: "fieldName", type: "decl_stmt"}];
@@ -551,7 +555,9 @@ function mapStateToProps(state) {
         projectPath: state.projectPath,
         customFeatures: state.customFeatures, // custom features received from feature selection
 
-        doiInformation: state.doiInformation
+        visitedFiles: state.doiInformation.visitedFiles,
+        searchHistory: state.doiInformation.searchHistory,
+        visitedElements: state.doiInformation.visitedElements
     }
 }
 

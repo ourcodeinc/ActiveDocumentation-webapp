@@ -657,7 +657,9 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             return Object.assign({}, state, {
                 message: reduxStoreMessages.update_doi_information_msg,
                 doiInformation: {
-                    ... action.data
+                    visitedFiles: action.data["visitedFiles"],
+                    searchHistory: action.data["searchHistory"],
+                    visitedElements: action.data["visitedElements"]
                 }
             });
 

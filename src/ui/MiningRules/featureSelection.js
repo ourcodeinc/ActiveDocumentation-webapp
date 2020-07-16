@@ -7,7 +7,7 @@ import "../../App.css";
 import {connect} from "react-redux";
 import {ButtonToolbar, Button} from "react-bootstrap";
 
-import {computeXPath} from "../../miningRulesCore/findingFeature";
+import {computeXPath} from "../../miningRulesCore/featureSelectionProcessing";
 import {updateResetFeatureSelection, updateSaveFeatureSelection} from "../../actions";
 import {reduxStoreMessages} from "../../reduxStoreConstants";
 

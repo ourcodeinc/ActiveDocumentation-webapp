@@ -22,9 +22,10 @@ import {
 } from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from "./ruleExecutor";
 import {parseGrouping} from "../miningRulesCore/parseGrouping";
-import {getXpathForFeature} from "../miningRulesCore/findingFeature";
+import {getXpathForFeature} from "../miningRulesCore/featureSelectionProcessing";
 import {dangerousParseMetaDataFile} from "../miningRulesCore/miningRules";
 import {webSocketReceiveMessage} from "./coreConstants";
+import {processCaretLocations} from "../miningRulesCore/doiInformationProcessing";
 
 class WebSocketManager extends Component {
 
@@ -216,10 +217,17 @@ class WebSocketManager extends Component {
                     break;
 
                 case webSocketReceiveMessage.receive_doi_information:
-                    // data = {"searchesInfo", "caretInfo", "visitedFiles"}
-                    // TODO process the received information
-                    let information = {};
-                    this.props.onUpdateDoiInformation(information);
+                    // data = {"visitedFiles", "searchHistory", "caretLocations"}
+                    let caretLocationsData = data["caretLocations"].map((d) => {
+                        let xmlCaretFiles = xml.filter(dd => dd.filePath === d["filePath"]);
+                        if (xmlCaretFiles.length === 1) {
+                            return {...d, xmlFile: xmlCaretFiles[0]}
+                        }
+                        return null;
+                    });
+
+                    let visitedElements = processCaretLocations(caretLocationsData);
+                    this.props.onUpdateDoiInformation(data["visitedFiles"], data["searchHistory"], visitedElements);
                     break;
 
                 default:
@@ -258,8 +266,8 @@ function mapDispatchToProps(dispatch) {
         onUpdateFeatureSelection: (dataObject) => dispatch(updateFeatureSelection(dataObject)),
         onUpdateDangerousMinedRules: (metaData, minedRules) => dispatch(updateDangerousMinedRules(metaData, minedRules)),
 
-        onUpdateDoiInformation: (information) =>
-            dispatch(updateDoiInformation(information))
+        onUpdateDoiInformation: (visitedFiles, searchHistory, visitedElements) =>
+            dispatch(updateDoiInformation(visitedFiles, searchHistory, visitedElements))
     }
 }
 

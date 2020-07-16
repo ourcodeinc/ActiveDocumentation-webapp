@@ -343,7 +343,9 @@ export const initial_state = {
     customFeatures: [],
 
     doiInformation: {
-
+        visitedFiles: [],
+        searchHistory: [],
+        visitedElements: []
     }
 
 };
