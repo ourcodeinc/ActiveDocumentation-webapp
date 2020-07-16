@@ -36,7 +36,9 @@ export const reduxStoreMessages = {
     update_mined_rules_msg: "UPDATE_MINED_RULES",
     update_feature_selection_msg: "UPDATE_FEATURE_SELECTION",
     reset_feature_selection_msg: "RESET_FEATURE_SELECTION",
-    save_feature_selection_msg: "SAVE_FEATURE_SELECTION"
+    save_feature_selection_msg: "SAVE_FEATURE_SELECTION",
+
+    update_doi_information_msg: "UPDATE_DOI_INFORMATION"
 };
 
 
@@ -73,5 +75,7 @@ export const reduxStoreActions = {
     action_update_feature_selection: "UPDATE_FEATURE_SELECTION",
     action_reset_feature_selection: "RESET_FEATURE_SELECTION",
     action_save_feature_selection: "SAVE_FEATURE_SELECTION",
-    action_dangerous_mined_rules: "DANGEROUS_MINED_RULES"
+    action_dangerous_mined_rules: "DANGEROUS_MINED_RULES",
+
+    action_update_doi_information: "UPDATE_DOI_INFORMATION"
 };

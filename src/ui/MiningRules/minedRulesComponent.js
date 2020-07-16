@@ -39,13 +39,18 @@ class MinedRulesComponent extends Component {
             maxComplexity: 100,
 
             minFiles: 1,
-            maxFiles: 10
+            maxFiles: 10,
+
+            doiInformation: {}
         };
     }
 
     render() {
         return (
             <div className={"minedRulesComponent"}>
+                <Button onClick={()=>{Utilities.sendToServer(this.props.ws, webSocketSendMessage.send_doi_information_msg, "")}}>
+                    Get DOI Information</Button>
+                {this.renderSettings()}
                 {this.renderButtonsAndSliders()}
                 {this.renderLoading()}
                 {this.renderMinedRulePad()}
@@ -55,6 +60,11 @@ class MinedRulesComponent extends Component {
 
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.message === reduxStoreMessages.update_mined_rules_msg) {
+
+            // todo rank mined rules based on the DOI: customQueries, searchTerms, visitedElements, and visited Files
+            //   how should we rank them??
+
+
             // calculate the max and min number of attributes in mined rules
             let minAttr = Infinity;
             let maxAttr = -1 * Infinity;
@@ -86,8 +96,41 @@ class MinedRulesComponent extends Component {
                     })
                 })
         }
+        else if (nextProps.message === reduxStoreMessages.update_doi_information_msg) {
+            this.setState({
+                doiInformation: nextProps.doiInformation
+            })
+        }
     }
 
+    renderSettings() {
+        // todo design the setting
+        //   Right now, we don't have actual values.
+        //   Try working with hard-coded values.
+        //   You can extract real data from the project as well.
+
+        let visitedFiles = ["file1", "file2", "file3"];
+        let searchTerms = ["searchItem1", "searchItem2"];
+
+        // the types are predefined tags. If you need the complete list, we can prepare it.
+        let visitedElements = [{name:"className", type: "class"}, {name: "fieldName", type: "decl_stmt"}];
+
+    return (
+            <div>
+                <div>
+                </div>
+                <div>
+                </div>
+                <div>
+                    {visitedElements.forEach((d, i) =>
+                        <div key={i} className={visitedElements}>
+                            {d.name}
+                        </div>
+                    )}
+                </div>
+            </div>
+        )
+    }
 
     /**
      * render the buttons and the sliders
@@ -390,7 +433,7 @@ class MinedRulesComponent extends Component {
         let metaData = {};
         this.setState({minedRules: [], displayedMinedRules: [], loading: true});
         mineRulesFromXmlFiles(this.props.xmlFiles, metaData, this.props.ws,
-            this.state.fpMaxSupport);
+            this.state.fpMaxSupport, this.props.customFeatures);
         this.props.onUpdateMetaData(metaData);
     }
 
@@ -506,7 +549,9 @@ function mapStateToProps(state) {
         metaData: state.minedRulesState.metaData,
         minedRules: state.minedRulesState.minedRules,
         projectPath: state.projectPath,
-        customFeatures: state.customFeatures // custom features received from feature selection
+        customFeatures: state.customFeatures, // custom features received from feature selection
+
+        doiInformation: state.doiInformation
     }
 }
 

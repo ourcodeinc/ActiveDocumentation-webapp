@@ -6,9 +6,19 @@ import {Component} from "react";
 import {connect} from "react-redux";
 
 import {
-    receiveExpressionStatementXML, ignoreFileChange, updateFilePath, updateRuleTable, updateTagTable,
-    updateWS, updateXmlFiles, updateProjectHierarchyData, updatedMinedRules, updateFeatureSelection,
-    updateDangerousMinedRules, updateProjectPath
+    receiveExpressionStatementXML,
+    ignoreFileChange,
+    updateFilePath,
+    updateRuleTable,
+    updateTagTable,
+    updateWS,
+    updateXmlFiles,
+    updateProjectHierarchyData,
+    updatedMinedRules,
+    updateFeatureSelection,
+    updateDangerousMinedRules,
+    updateProjectPath,
+    updateDoiInformation
 } from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from "./ruleExecutor";
 import {parseGrouping} from "../miningRulesCore/parseGrouping";
@@ -205,6 +215,13 @@ class WebSocketManager extends Component {
                     this.props.onUpdateDangerousMinedRules(metaData, output);
                     break;
 
+                case webSocketReceiveMessage.receive_doi_information:
+                    // data = {"searchesInfo", "caretInfo", "visitedFiles"}
+                    // TODO process the received information
+                    let information = {};
+                    this.props.onUpdateDoiInformation(information);
+                    break;
+
                 default:
             }
         };
@@ -221,7 +238,6 @@ class WebSocketManager extends Component {
 function mapStateToProps(state) {
     return {
         ignoreFileChange: state.ignoreFileChange,
-
         minedRuleMetaData: state.minedRulesState.metaData
     };
 }
@@ -240,7 +256,10 @@ function mapDispatchToProps(dispatch) {
 
         onUpdateMinedRules: (modifiedOutput) => dispatch(updatedMinedRules(modifiedOutput)),
         onUpdateFeatureSelection: (dataObject) => dispatch(updateFeatureSelection(dataObject)),
-        onUpdateDangerousMinedRules: (metaData, minedRules) => dispatch(updateDangerousMinedRules(metaData, minedRules))
+        onUpdateDangerousMinedRules: (metaData, minedRules) => dispatch(updateDangerousMinedRules(metaData, minedRules)),
+
+        onUpdateDoiInformation: (information) =>
+            dispatch(updateDoiInformation(information))
     }
 }
 

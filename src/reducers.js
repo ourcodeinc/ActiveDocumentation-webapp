@@ -653,6 +653,13 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 }
             });
 
+        case reduxStoreActions.action_update_doi_information:
+            return Object.assign({}, state, {
+                message: reduxStoreMessages.update_doi_information_msg,
+                doiInformation: {
+                    ... action.data
+                }
+            });
 
         default:
             return Object.assign({}, state);

@@ -785,3 +785,9 @@ img.tutorialSmallImage {
 .featureSelection .inputText:hover , .featureSelection .inputText:focus {
     background-color: #d9d9d9;
 }
+
+/* mining rules */
+
+.minedRulesComponent .visitedElements {
+    font-weight: bold;
+}

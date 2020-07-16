@@ -371,3 +371,16 @@ export const updateDangerousMinedRules = (metaData, minedRules) => {
         }
     }
 };
+
+/**
+ * @param information
+ * @return {{data: {visitedFiles: *, cursorLocationHistory: *, searchHistory: *}, type: string}}
+ */
+export const updateDoiInformation = (information) => {
+    return {
+        type: reduxStoreActions.action_update_doi_information,
+        data: {
+            ...information
+        }
+    }
+};

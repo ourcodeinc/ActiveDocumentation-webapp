@@ -68,9 +68,16 @@ import {webSocketSendMessage} from "../core/coreConstants";
  * @param metaData {key: {attr: "", query: ""}}
  * @param ws
  * @param fpMaxSupport
- * @param customQueries
+ * @param customQueries [xpath queries]
+ * @param searchTerms [searchTerms with pattern matching]  ... -> any  ! -> not
+ * @param visitedElements [[element, elementType]]  for example: ["command", "decl_stmt"]
  */
-export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, customQueries = []) => {
+export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, customQueries = [],
+                                      searchTerms = [], visitedElements = []) => {
+    // todo create features based on the input
+    //     if it needed to store the features for future references,
+    //     they can be stored in redux before calling this method.
+    //     Right now, we don't have actual input.
 
     let analysisFileName = "AttributeEncoding";
 

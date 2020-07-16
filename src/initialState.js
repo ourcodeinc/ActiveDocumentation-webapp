@@ -340,7 +340,12 @@ export const initial_state = {
         idMap: {},
         displayTextArray: []
     },
-    customFeatures: []
+    customFeatures: [],
+
+    doiInformation: {
+
+    }
+
 };
 
 // used for editing existing rule

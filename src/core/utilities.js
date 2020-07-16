@@ -97,6 +97,10 @@ class Utilities {
                 case webSocketSendMessage.dangerous_read_mined_rules_msg:
                     break;
 
+                case webSocketSendMessage.send_doi_information_msg:
+                    messageJson.data = data;
+                    break;
+
                 default:
                     break;
             }

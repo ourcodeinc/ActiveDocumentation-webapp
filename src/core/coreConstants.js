@@ -11,7 +11,9 @@ export const webSocketSendMessage = {
     learn_rules_databases_msg: "LEARN_RULES_DATABASES",
     execute_fp_max_msg: "EXECUTE_FP_MAX",
     open_file_mined_rules: "OPEN_FILE",
-    dangerous_read_mined_rules_msg: "DANGEROUS_READ_MINED_RULES"
+    dangerous_read_mined_rules_msg: "DANGEROUS_READ_MINED_RULES",
+
+    send_doi_information_msg: "SEND_DOI_INFORMATION"
 
 };
 
@@ -38,6 +40,8 @@ export const webSocketReceiveMessage = {
     fp_max_output_msg: "FP_MAX_OUTPUT",
     feature_selection_msg: "FEATURE_SELECTION",
     dangerous_read_mined_rules_msg: "DANGEROUS_READ_MINED_RULES",
+
+    receive_doi_information: "DOI_INFORMATION",
 
     enter_chat_msg: "ENTER",
     left_chat_msg: "LEFT"
