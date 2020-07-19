@@ -69,11 +69,14 @@ import {webSocketSendMessage} from "../core/coreConstants";
  * @param ws
  * @param fpMaxSupport
  * @param customQueries [xpath queries]
- * @param searchTerms [searchTerms with pattern matching]  ... -> any  ! -> not
- * @param visitedElements [[element, elementType]]  for example: ["command", "decl_stmt"]
+ * @param searchTerms [{file: xmlFile, searchTerms: [keyword1, keyword2]},
+ *                     {file: xmlFile, searchTerms: [keyword1, keyword2]}]
+ * [searchTerms as it appears and case-sensitive]
+ * @param visitedElements [{file: xmlFile, xpath: [xpathQuery, xpathQuery2, xpathQuery3]}]
+ * @param isSeparated a boolean value indicating whether the output is separated for the extra information or not
  */
 export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, customQueries = [],
-                                      searchTerms = [], visitedElements = []) => {
+                                      searchTerms = [], visitedElements = [], isSeparated = false) => {
     // todo create features based on the input
     //     if it needed to store the features for future references,
     //     they can be stored in redux before calling this method.
@@ -85,6 +88,7 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, cust
 
     // This is to keep track of the XML queries used for each of the attributes
     let queryMap = new Map();
+    let queryMapExtra = new Map();
 
     // This variable will always be used when trying to obtain the
     // root for each file
