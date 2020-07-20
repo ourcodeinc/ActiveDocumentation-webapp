@@ -31,6 +31,7 @@
   },
   "scripts": {
     "start-Mac": "PORT=9010 react-scripts start",
+    "start-Ubuntu": "PORT=9010 react-scripts start",
     "start-Windows": "set PORT = 9010 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
