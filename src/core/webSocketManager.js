@@ -218,7 +218,7 @@ class WebSocketManager extends Component {
 
                 case webSocketReceiveMessage.receive_doi_information:
                     // data = {"visitedFiles", "searchHistory", "caretLocations"}
-                    let caretLocationsData = data["caretLocations"].map((d) => {
+                    let caretLocationsData = message.data["caretLocations"].map((d) => {
                         let xmlCaretFiles = xml.filter(dd => dd.filePath === d["filePath"]);
                         if (xmlCaretFiles.length === 1) {
                             return {...d, xmlFile: xmlCaretFiles[0]}
@@ -227,7 +227,7 @@ class WebSocketManager extends Component {
                     });
 
                     let visitedElements = processCaretLocations(caretLocationsData);
-                    this.props.onUpdateDoiInformation(data["visitedFiles"], data["searchHistory"], visitedElements);
+                    this.props.onUpdateDoiInformation(message.data["visitedFiles"], message.data["searchHistory"], visitedElements);
                     break;
 
                 default:
