@@ -85,11 +85,14 @@ class RulePanel extends Component {
                 <FormGroup>
                     <div style={{float: "right"}}>
                         <FaCaretUp size={20} onClick={() => this.setState({openPanel: false})}
-                                   style={this.caretClass[this.state.openPanel.toString()]}/>
+                                   style={this.caretClass[this.state.openPanel.toString()]}
+                                   className={"react-icons"}/>
                         <FaCaretDown size={20} onClick={() => this.setState({openPanel: true})}
-                                     style={this.caretClass[(!this.state.openPanel).toString()]}/>
+                                     style={this.caretClass[(!this.state.openPanel).toString()]}
+                                     className={"react-icons"}/>
                         <MdEdit size={20} style={this.editIconClass[this.state.editMode.toString()]}
-                                onClick={() => this.changeEditMode()}/>
+                                onClick={() => this.changeEditMode()}
+                                className={"react-icons"}/>
                     </div>
                     <ControlLabel>{this.state.title}</ControlLabel>
                     <p>{this.state.description}</p>

@@ -29,7 +29,7 @@ class RuleTable extends Component {
                     (!this.state.newRule ? (
                         <div style={{paddingBottom: "10px", clear: "both"}}>
                             <Button onClick={() => this.props.onChangeEditMode()} style={{padding: "0 5px"}}>
-                                <MdPlaylistAdd size={35}/>
+                                <MdPlaylistAdd className={"react-icons"} size={35}/>
                                 Add a New Rule
                             </Button>
                         </div>

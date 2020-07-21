@@ -17,7 +17,8 @@ export class HeaderBar extends Component {
         return (
             <div style={{paddingBottom: "30px"}} id="headerBar">
                 {this.props.ws.readyState === 1 ? null : (
-                    <div className={"webSocketError"}><GoAlert size={25}/>The tool is not connected to the IDE. Check IntelliJ IDE. Then refresh the page.</div>
+                    <div className={"webSocketError"}><GoAlert size={25} className={"react-icons"}/>
+                    The tool is not connected to the IDE. Check IntelliJ IDE. Then refresh the page.</div>
                 )}
                 <div className="headerDiv">
                     {this.renderHeader()}

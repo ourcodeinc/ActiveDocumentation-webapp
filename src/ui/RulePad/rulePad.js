@@ -181,7 +181,7 @@ class RulePad extends Component {
                     <div style={{marginBottom: "10px"}}>Now, specify what must be true by writing code and switching them into <span
                         style={{backgroundColor: "#bfd9ff"}}>constraints</span> using checkboxes (
                         <div className={"switchContainer checkboxConstraint constraint"}>
-                            <FaCheckSquare size={20}/>
+                            <FaCheckSquare size={20} className={"react-icons"}/>
                         </div>
                         ) in the Graphical Editor as follows.
                     </div>
@@ -195,7 +195,7 @@ class RulePad extends Component {
                 content: <span style={{textAlign: "left"}}>
                     <p>In every design rule, one element is the most interesting element of the rule that is called <em>Element of Interest (EoI).</em>.</p>
                     <div>The Graphical Editor will select an EoI automatically (Marked by <div className={"MdStar selectedElement"} style={{display: "inline"}}><MdStar size={20}/></div>).
-                        EoI can be changed using <div className={"MdStar"} style={{display: "inline"}}><MdStar size={20}/></div></div>
+                        EoI can be changed using <div className={"MdStar"} style={{display: "inline"}}><MdStar size={20} className={"react-icons"}/></div></div>
                     <p>For example, consider the following scenarios.</p>
 
                     <div style={{width: "80%", marginLeft: "10%", marginBottom: "10px"}}>
@@ -390,12 +390,12 @@ class RulePad extends Component {
         return (
             <div className={"rulePanelDiv" + (this.ruleIndex === -1 ? " edit-bg" : "")}>
                 <div style={{float: "right"}}>
-                    <FaQuestionCircle size={20} className={"faQuestionCircle"}
+                    <FaQuestionCircle size={20} className={"faQuestionCircle react-icons"}
                                       onClick={() => this.setState({
                                           tourShouldRun: true,
                                           isTourGuide: true
                                       })}/>
-                    <MdEdit size={20} className={"mdEdit"}
+                    <MdEdit size={20} className={"mdEdit react-icons"}
                             onClick={() => this.changeEditMode()}/>
                 </div>
                 {this.renderTitleAndDescription()}
@@ -477,7 +477,7 @@ class RulePad extends Component {
                         <div className={"tagLabel"} key={i}>
                             <Label style={{paddingRight: "1px"}}>{d}
                                 <TiDelete size={23}
-                                          className={"tiDelete"}
+                                          className={"tiDelete react-icons"}
                                           onClick={() => {
                                               const tags = this.state.ruleTags;
                                               tags.splice(i, 1);
@@ -514,7 +514,7 @@ class RulePad extends Component {
                         <div key={i} style={{backgroundColor: "#fff"}}>
                             <div style={{display: "inline-block", paddingRight: "15px"}}>
                                 <TiDelete size={25}
-                                          className={"tiDelete"}
+                                          className={"tiDelete react-icons"}
                                           onClick={() => {
                                               const filesFolders = this.state.filesFolders;
                                               filesFolders.splice(i, 1);
@@ -542,7 +542,7 @@ class RulePad extends Component {
                     </div>
                 ) : (
                     <div style={{color: "#a94442"}}>
-                        <GoAlert size={25}/>
+                        <GoAlert size={25} className={"react-icons"}/>
                         <strong>{"The plugin is not connected to the IDE."}</strong>
                     </div>
                 )}
@@ -566,7 +566,7 @@ class RulePad extends Component {
                 <div className={"tutorialArrow " + stepOneStatus}>&#x25B6;</div>
                 <div className={"tutorialText " + stepOneStatus}>
                     <strong>Step 1:</strong> Write the code you want to match in code using the Graphical Editor.
-                    <FaQuestionCircle size={20} className={"faQuestionCircle"}
+                    <FaQuestionCircle size={20} className={"faQuestionCircle react-icons"}
                                       onClick={() => this.setState({
                                           tourShouldRun: true,
                                           isTourGuide: false,
@@ -578,10 +578,10 @@ class RulePad extends Component {
                     <strong>Step 2:</strong> Specify what must be true by switching the conditions to
                     'constraints' by clicking on checkboxes
                     <div className={"switchContainer checkboxConstraint constraint"}>
-                        <FaCheckSquare size={20}/>
+                        <FaCheckSquare size={20} className={"react-icons"}/>
                     </div>
                     . Constraint elements are highlighted in the Graphical Editor.
-                    <FaQuestionCircle size={20} className={"faQuestionCircle"}
+                    <FaQuestionCircle size={20} className={"faQuestionCircle react-icons"}
                                       onClick={() => this.setState({
                                           tourShouldRun: true,
                                           isTourGuide: false,
@@ -592,7 +592,7 @@ class RulePad extends Component {
                 <div className={"tutorialText " + stepThreeStatus}>
                     <strong>Step 3: [Optional]</strong> Edit the rule text by adding parentheses and changing
                     and' to 'or'.
-                    <FaQuestionCircle size={20} className={"faQuestionCircle"}
+                    <FaQuestionCircle size={20} className={"faQuestionCircle react-icons"}
                                       onClick={() => this.setState({
                                           tourShouldRun: true,
                                           isTourGuide: false,
@@ -601,10 +601,10 @@ class RulePad extends Component {
                 </div>
                 <div style={{float: "right"}}>
                     {this.state.pinnedDynamicGuide ?
-                        <GoPin className={"tutorialPin"} size={20}
+                        <GoPin className={"tutorialPin react-icons"} size={20}
                                onClick={() => this.setState({pinnedDynamicGuide: false})}/>
                         :
-                        <TiPinOutline className={"tutorialPin"} size={20}
+                        <TiPinOutline className={"tutorialPin react-icons"} size={20}
                                       onClick={() => this.setState({pinnedDynamicGuide: true})}/>
                     }
                 </div>
@@ -713,7 +713,8 @@ class RulePad extends Component {
                             <div className={"controlButtonDiv"}>
                                 <div className={"controlButton"}>
                                     <div data-tip={"React-tooltip"} data-for={"minimize"}>
-                                        <FaMinusCircle size={20} onClick={() => this.setState({showAlert: false})}/>
+                                        <FaMinusCircle size={20} className={"react-icons"}
+                                                       onClick={() => this.setState({showAlert: false})}/>
                                     </div>
                                     <ReactToolTip place={"top"} type={"dark"} effect={"solid"} id={"minimize"}
                                                   delayShow={300}>
@@ -722,7 +723,8 @@ class RulePad extends Component {
                                 </div>
                                 <div className={"controlButton"}>
                                     <div data-tip={"React-tooltip"} data-for={"close"}>
-                                        <FaTimesCircle size={20} onClick={() => this.setState({editorError: ""})}/>
+                                        <FaTimesCircle size={20} className={"react-icons"}
+                                                       onClick={() => this.setState({editorError: ""})}/>
                                     </div>
                                     <ReactToolTip place={"top"} type={"dark"} effect={"solid"} id={"close"}
                                                   delayShow={300}>
@@ -743,7 +745,8 @@ class RulePad extends Component {
                     <Alert bsStyle={this.state.editorError.alertType}>
                         <div className={"controlButtonDiv controlButton"}>
                             <div data-tip={"React-tooltip"} data-for={"maximize"}>
-                                <TiArrowMaximise size={20} onClick={() => this.setState({showAlert: true})}/>
+                                <TiArrowMaximise size={20} className={"react-icons"}
+                                                 onClick={() => this.setState({showAlert: true})}/>
                             </div>
                             <ReactToolTip place={"top"} type={"dark"} effect={"solid"} id={"maximize"} delayShow={300}>
                                 <span>Expand the error message.</span>
@@ -1570,7 +1573,7 @@ class CustomDropDown extends Component {
                           onToggle={() => this.setState({open: !this.state.open})}>
                     <CustomToggle bsRole="toggle">
                         <span className={"faTag"} data-tip={"React-tooltip"} data-for={"tags"}>Assign Tags
-                            <FaTag size={25} className={"faTag"}/>
+                            <FaTag size={25} className={"faTag react-icons"}/>
                         </span>
                         <ReactToolTip place={"top"} type={"dark"} effect={"solid"} id={"tags"} delayShow={300}>
                             <span>{"Use tags to organize rules."}</span>
@@ -1581,7 +1584,7 @@ class CustomDropDown extends Component {
                             (<MenuItem eventKey={el} key={i}
                                        onSelect={this.state.onSelectFunction}
                             >{(() => el !== "New Tag" ? el :
-                                <Fragment><MdAddBox size={20} className={"mdAddBox"}/> {el}</Fragment>)()}
+                                <Fragment><MdAddBox size={20} className={"mdAddBox react-icons"}/> {el}</Fragment>)()}
                             </MenuItem>)
                         )}
                     </CustomMenu>

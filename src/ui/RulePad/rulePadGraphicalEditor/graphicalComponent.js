@@ -372,7 +372,7 @@ class GraphicalComponent extends Component {
                                 <div
                                     className={"MdStar" + (this.state.thisElement.selectedElement ? " selectedElement" : "")}
                                     id={`gui__star__${this.props.ruleIndex}__${this.state.elementId}`}>
-                                    <MdStar size={20}
+                                    <MdStar size={20} className={"react-icons"}
                                             onClick={() => this._handleSelectedElement(this.state.elementId, this.state.thisElement, this.state.elementCondition)}/>
                                 </div>
                             </div>
@@ -654,7 +654,7 @@ class GraphicalComponent extends Component {
                         <div>
                             <div className={"MdRemove"} style={{float: "right"}}
                                  ref={node => closeInformationDiv = node}>
-                                <MdClose size={20} onClick={() => {
+                                <MdClose size={20} className={"react-icons"} onClick={() => {
                                 }}/>
                             </div>
                             <span
@@ -869,9 +869,9 @@ class GraphicalComponent extends Component {
                              onMouseLeave={() => mouseChange(false)}>
 
                             {checkedStatus || hoverCheckbox ? (
-                                <FaCheckSquare size={20} onClick={changeFunction}/>
+                                <FaCheckSquare size={20} className={"react-icons"} onClick={changeFunction}/>
                             ) : (
-                                <FaSquare size={20} onClick={changeFunction}/>
+                                <FaSquare size={20} className={"react-icons"} onClick={changeFunction}/>
                             )}
                         </div>
                     </div>
@@ -879,7 +879,7 @@ class GraphicalComponent extends Component {
                 <div style={{float: "left"}}>
                     <div data-tip={"React-tooltip"} data-for={"clear"}>
                         <div className={"MdRemove rowItem"} style={{display: "inline-block"}}>
-                            <FaEraser size={20} onClick={closeFunction}/>
+                            <FaEraser size={20} className={"react-icons"} onClick={closeFunction}/>
                         </div>
                     </div>
                     <ReactToolTip place={"top"} type={"dark"} effect={"solid"} id={"clear"} delayShow={300}>

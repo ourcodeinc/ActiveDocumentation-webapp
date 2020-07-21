@@ -18,6 +18,10 @@ body {
     margin-bottom: 5px !important;
 }
 
+.react-icons {
+    vertical-align: middle;
+}
+
 /*!*** ruleTable and rulePanel*!*/
 
 .rulePanelDiv {
@@ -788,6 +792,10 @@ img.tutorialSmallImage {
 
 /* mining rules */
 
-.minedRulesComponent .visitedElements {
+.learningDesignRulesComponent .visitedElements {
     font-weight: bold;
+}
+
+.learningDesignRulesComponent .rotateGlyph {
+    transform: rotate(90deg);
 }

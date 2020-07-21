@@ -46,7 +46,7 @@ class TableOfContents extends Component {
                                     window.location.hash = "#/rules";
                                     this.props.onAddNewRule()
                                 }}>
-                            <MdPlaylistAdd size={35}/>
+                            <MdPlaylistAdd className={"react-icons"} size={35}/>
                             Add a New Rule
                         </Button>
                     </div>
