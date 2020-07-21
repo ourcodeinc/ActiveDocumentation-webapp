@@ -142,7 +142,7 @@ function mapStateToProps(state) {
             props.title = "Code changed in";
             props.content = state.openFilePath;
             break;
-        case "minedRules":
+        case "learnDesignRules":
             props.title = "Learn Design Rules";
             break;
         case "featureSelection":

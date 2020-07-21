@@ -24,7 +24,7 @@ export class NavBar extends Component {
                         onSelect={key => {
                             if (key > 0)
                                 window.location.hash = (key === 1) ? "#/index" : (key === 2) ? "#/rules"
-                                    : (key === 3) ? "#/violatedRules" : (key === 4) ? "#/minedRules" : "#/index"
+                                    : (key === 3) ? "#/violatedRules" : (key === 4) ? "#/learnDesignRules" : "#/index"
                         }}>
                         <NavItem eventKey={-1} className={this.props.backDisable} onClick={() => this.props.backClick(this.props)}>
                             <FaArrowLeft size={20}/>

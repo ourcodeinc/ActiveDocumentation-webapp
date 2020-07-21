@@ -5,7 +5,7 @@
 import React, {Component, Fragment} from "react";
 import "../../App.css";
 import {connect} from "react-redux";
-import {Button, Row, Col, ButtonGroup} from "react-bootstrap";
+import {Button, Row, Col, ButtonGroup, Glyphicon, Checkbox} from "react-bootstrap";
 import Slider from "rc-slider";
 import Tooltip from "rc-tooltip";
 import "rc-slider/assets/index.css";
@@ -27,6 +27,9 @@ class MinedRulesComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
+
+            showAdvancedSettings: false,
+
             algorithm: "FP_MAX", // FP_MAX or NONE
 
             fpMaxSupport: 60,
@@ -41,21 +44,38 @@ class MinedRulesComponent extends Component {
             minFiles: 1,
             maxFiles: 10,
 
-            visitedFiles: [],
-            searchHistory: [],
-            visitedElements: []
+            showVisitedFiles: false,
+            showSearchHistory: false,
+            showVisitedElements: false,
+            showCustomFeatures: false,
+
+            // visitedFiles: [],
+            // searchHistory: [],
+            // visitedElements: [],
+            // customFeatures: []
+
+            visitedFiles: [{value: "file1", isIncluded: true}, {value: "file2", isIncluded: true}, {value: "file3", isIncluded: true}],
+            searchHistory: [{value: "searchItem1", isIncluded: true}, {value: "searchItem2", isIncluded: true}],
+            visitedElements: [{name: "className", type: "class", isIncluded: true}, {name: "fieldName", type: "decl_stmt", isIncluded: true}],
+            customFeatures: [
+                {
+                    featureDescription: "public abstract void execute(String projectId)",
+                    featureXpath: "src:function_decl[src:specifier/text()=\"abstract\"]",
+                    isIncluded: true
+                }]
         };
     }
 
     render() {
         return (
             <div className={"minedRulesComponent"}>
-                <Button onClick={()=>{Utilities.sendToServer(this.props.ws, webSocketSendMessage.send_doi_information_msg, "")}}>
-                    Get DOI Information</Button>
-                {this.renderSettings()}
-                {this.renderButtonsAndSliders()}
-                {this.renderLoading()}
-                {this.renderMinedRulePad()}
+                {this.renderDefaultView()}
+                {/*<Button onClick={()=>{Utilities.sendToServer(this.props.ws, webSocketSendMessage.send_doi_information_msg, "")}}>*/}
+                {/*    Get DOI Information</Button>*/}
+                {this.renderAdvancedSettings()}
+                {/*{this.renderButtonsAndSliders()}*/}
+                {/*{this.renderLoading()}*/}
+                {/*{this.renderMinedRulePad()}*/}
             </div>
         )
     }
@@ -104,34 +124,98 @@ class MinedRulesComponent extends Component {
                 searchHistory: nextProps.searchHistory,
                 visitedElements: nextProps.visitedElements
             })
+        } else if (nextProps.message === reduxStoreMessages.save_feature_selection_msg) {
+            let mappedCustomFeatures = nextProps.customFeatures.map(d => {
+                return {...d, isIncluded: true}
+            });
+            this.setState({
+                customFeatures: mappedCustomFeatures
+            })
         }
     }
 
-    renderSettings() {
-        // todo design the setting
-        //   Right now, we don't have actual values.
-        //   Try working with hard-coded values.
-        //   You can extract real data from the project as well.
+    renderDefaultView() {
+        if (this.state.showAdvancedSettings) return null;
+        return (
+            <div>
+                <Button onClick={()=>{}}>Find Design Rules In Code</Button>
+                <Glyphicon glyph={"cog"} onClick={() => this.setState({showAdvancedSettings: true})}/>
 
-        let visitedFiles = ["file1", "file2", "file3"];
-        let searchHistory = ["searchItem1", "searchItem2"];
+            </div>
+        )
 
-        // the types are predefined tags. If you need the complete list, we can prepare it.
-        let visitedElements = [{name:"className", type: "class"}, {name: "fieldName", type: "decl_stmt"}];
+    }
 
-    return (
+    renderAdvancedSettings() {
+
+        if (!this.state.showAdvancedSettings) return  null;
+
+        let visitedFilesStyle = this.state.showVisitedFiles ? {transform: "rotate(90deg)"} : {};
+        let searchHistoryStyle = this.state.showSearchHistory ? {transform: "rotate(90deg)"} : {};
+        let visitedElementsStyle = this.state.showVisitedElements ? {transform: "rotate(90deg)"} : {};
+        let customFeaturesStyle = this.state.showCustomFeatures ? {transform: "rotate(90deg)"} : {};
+
+        let copies = {
+            visitedElements: this.state.visitedElements.map(d => d),
+            searchHistory: this.state.searchHistory.map(d => d),
+            visitedFiles: this.state.visitedFiles.map(d => d)
+        };
+
+        return (
             <div>
                 <div>
+                    Classes to be considered
+                    <Glyphicon glyph={"play"} style={visitedFilesStyle}
+                               onClick={() => this.setState({showVisitedFiles: !this.state.showVisitedFiles})}/>
+
+                    {this.state.showVisitedFiles ?
+                        this.state.visitedFiles.map((d, i) =>
+                            <div key={i}>{d.value}
+                                <Checkbox checked={d.isIncluded} onChange={()=>{
+                                    let visitedFiles = this.state.visitedFiles;
+                                    visitedFiles[i].isIncluded = !visitedFiles[i].isIncluded;
+                                    this.setState({visitedFiles})
+                                }}/>
+                            </div>
+                        ) : null}
                 </div>
                 <div>
+                    Search History to be considered
+                    <Glyphicon glyph={"play"} style={searchHistoryStyle}
+                               onClick={() => this.setState({showSearchHistory: !this.state.showSearchHistory})}/>
+
+                    {this.state.showSearchHistory ?
+                        this.state.searchHistory.map((d, i) =>
+                            <div key={i}>{d.value}
+                                <Checkbox checked={d.isIncluded}/>
+                            </div>
+                        ) : null}
                 </div>
                 <div>
-                    {visitedElements.forEach((d, i) =>
-                        <div key={i} className={visitedElements}>
-                            {d.name}
-                        </div>
-                    )}
+                    Code Elements to be considered
+                    <Glyphicon glyph={"play"} style={visitedElementsStyle}
+                               onClick={() => this.setState({showVisitedElements: !this.state.showVisitedElements})}/>
+
+                    {this.state.showVisitedElements ?
+                        this.state.visitedElements.map((d, i) =>
+                            <div key={i}>{d.name}
+                                <Checkbox checked={d.isIncluded}/>
+                            </div>
+                        ) : null}
                 </div>
+                <div>
+                    Selected Features
+                    <Glyphicon glyph={"play"} style={customFeaturesStyle}
+                               onClick={() => this.setState({showCustomFeatures: !this.state.showCustomFeatures})}/>
+                    {this.state.showCustomFeatures ?
+                        this.state.customFeatures.map((d, i) =>
+                            <div key={i}>{d.featureDescription}
+                                <Checkbox checked={d.isIncluded}/>
+                            </div>
+                        ) : null}
+                </div>
+                <Button onClick={() => this.setState({showAdvancedSettings: false})}>Save</Button>
+                <Button onClick={() => this.setState({...copies, showAdvancedSettings: false})}>Cancel</Button>
             </div>
         )
     }
@@ -183,7 +267,7 @@ class MinedRulesComponent extends Component {
         return (
             <div>
                 <div>
-                    <Row className="show-grid" style={{padding: "20px 0"}}>
+                    <Row className="show-grid" style={{padding: "20px 0", margin: "0"}}>
                         <ButtonGroup>
                             <Button onClick={() => this.setState({algorithm: "FP_MAX"})}
                                     active={this.state.algorithm === "FP_MAX"}>FP_MAX</Button>
@@ -553,8 +637,7 @@ function mapStateToProps(state) {
         metaData: state.minedRulesState.metaData,
         minedRules: state.minedRulesState.minedRules,
         projectPath: state.projectPath,
-        customFeatures: state.customFeatures, // custom features received from feature selection
-
+        customFeatures: state.doiInformation.customFeatures,
         visitedFiles: state.doiInformation.visitedFiles,
         searchHistory: state.doiInformation.searchHistory,
         visitedElements: state.doiInformation.visitedElements

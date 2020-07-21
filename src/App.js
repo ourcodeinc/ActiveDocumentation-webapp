@@ -11,7 +11,7 @@ import TableOfContents from "./ui/tableOfContents";
 import RuleTable from "./ui/ruleTable";
 import NavBar from "./ui/navBar";
 import HeaderBar from "./ui/headerBar";
-import MinedRulesComponent from "./ui/MiningRules/minedRulesComponent";
+import MinedRulesComponent from "./ui/MiningRules/learnDesignRulesComponent";
 import FeatureSelection from "./ui/MiningRules/featureSelection";
 
 class App extends Component {
@@ -74,9 +74,9 @@ class App extends Component {
                          }>
                         <RuleTable/>
                     </div>
-                    <div id={"minedRules"}
+                    <div id={"learnDesignRules"}
                          className={
-                             (["minedRules"].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
+                             (["learnDesignRules"].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
                          }>
                         <MinedRulesComponent/>
                     </div>
