@@ -179,8 +179,8 @@ class FeatureSelection extends Component {
     saveFeature() {
         let featureDesc = this.state.mappedText
             .map(d => d.text.trim())
-            .filter(d => d!=="")
-            .join("");
+            .filter(d => d.trim() !== "")
+            .join(" ");
         this.props.saveFeatureSelection(featureDesc, this.state.xpath);
         window.location.hash = "#/minedRules";
     }
