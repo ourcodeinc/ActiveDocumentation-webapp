@@ -8,9 +8,8 @@ import "../App.css";
 import {
     Tab, Tabs, Badge, FormGroup, ControlLabel, Label, Collapse
 } from "react-bootstrap";
-import FaCaretDown from "react-icons/lib/fa/caret-down";
-import FaCaretUp from "react-icons/lib/fa/caret-up";
-import MdEdit from "react-icons/lib/md/edit";
+import {FaCaretDown,FaCaretUp} from "react-icons/fa";
+import {MdEdit} from "react-icons/md";
 
 import {changeEditMode, ignoreFileChange} from "../actions";
 import Utilities from "../core/utilities";

@@ -10,19 +10,11 @@ import {
     Modal, Dropdown, Tabs, Tab, Badge
 } from "react-bootstrap";
 import {RootCloseWrapper} from "react-overlays";
-import MdEdit from "react-icons/lib/md/edit";
-import MdAddBox from "react-icons/lib/md/add-box";
-import MdStar from "react-icons/lib/md/star";
-import TiDelete from "react-icons/lib/ti/delete";
-import TiArrowMaximise from "react-icons/lib/ti/arrow-maximise";
-import TiPinOutline from "react-icons/lib/ti/pin-outline";
-import GoAlert from "react-icons/lib/go/alert";
-import GoPin from "react-icons/lib/go/pin";
-import FaTag from "react-icons/lib/fa/tag";
-import FaMinusCircle from "react-icons/lib/fa/minus-circle";
-import FaTimesCircle from "react-icons/lib/fa/times-circle";
-import FaCheckSquareO from "react-icons/lib/fa/check-square-o";
-import FaQuestionCircle from "react-icons/lib/fa/question-circle"
+import {MdEdit, MdAddBox, MdStar} from "react-icons/md";
+import {TiDelete, TiArrowMaximise, TiPinOutline} from "react-icons/ti";
+import {GoAlert, GoPin} from "react-icons/go";
+import {FaTag, FaMinusCircle, FaTimesCircle, FaCheckSquare, FaQuestionCircle} from "react-icons/fa";
+
 import marked from "marked";
 import Joyride, {ACTIONS, EVENTS} from "react-joyride";
 import ReactToolTip from "react-tooltip";
@@ -189,7 +181,7 @@ class RulePad extends Component {
                     <div style={{marginBottom: "10px"}}>Now, specify what must be true by writing code and switching them into <span
                         style={{backgroundColor: "#bfd9ff"}}>constraints</span> using checkboxes (
                         <div className={"switchContainer checkboxConstraint constraint"}>
-                            <FaCheckSquareO size={20}/>
+                            <FaCheckSquare size={20}/>
                         </div>
                         ) in the Graphical Editor as follows.
                     </div>
@@ -586,7 +578,7 @@ class RulePad extends Component {
                     <strong>Step 2:</strong> Specify what must be true by switching the conditions to
                     'constraints' by clicking on checkboxes
                     <div className={"switchContainer checkboxConstraint constraint"}>
-                        <FaCheckSquareO size={20}/>
+                        <FaCheckSquare size={20}/>
                     </div>
                     . Constraint elements are highlighted in the Graphical Editor.
                     <FaQuestionCircle size={20} className={"faQuestionCircle"}

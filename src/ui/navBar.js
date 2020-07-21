@@ -5,8 +5,7 @@
 
 import React, {Component} from "react";
 import "../App.css";
-import FaArrowLeft from "react-icons/lib/fa/arrow-left";
-import FaArrowRight from "react-icons/lib/fa/arrow-right";
+import {FaArrowLeft, FaArrowRight} from "react-icons/fa";
 import {Nav, Navbar, NavItem} from "react-bootstrap";
 import {connect} from "react-redux";
 import {clickedOnBack, clickedOnForward} from "../actions";

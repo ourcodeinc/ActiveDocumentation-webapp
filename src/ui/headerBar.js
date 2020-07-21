@@ -8,7 +8,7 @@ import Utilities from "../core/utilities";
 
 import {FormControl} from "react-bootstrap";
 import {connect} from "react-redux";
-import GoAlert from "react-icons/lib/go/alert";
+import {GoAlert} from "react-icons/go";
 import {webSocketSendMessage} from "../core/coreConstants";
 
 export class HeaderBar extends Component {

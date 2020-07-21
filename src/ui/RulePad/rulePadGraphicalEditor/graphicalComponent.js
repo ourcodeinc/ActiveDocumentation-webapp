@@ -4,11 +4,8 @@
  */
 
 import React, {Component, Fragment} from "react";
-import MdStar from "react-icons/lib/md/star";
-import MdClose from "react-icons/lib/md/close";
-import FaEraser from "react-icons/lib/fa/eraser";
-import FaCheckSquareO from "react-icons/lib/fa/check-circle-o";
-import FaSquareO from "react-icons/lib/fa/square-o";
+import {MdStar,MdClose} from "react-icons/md";
+import {FaEraser, FaCheckSquare, FaSquare} from "react-icons/fa";
 import {Button, MenuItem, Dropdown, Modal} from "react-bootstrap";
 import {RootCloseWrapper} from "react-overlays";
 import * as marked from "marked";
@@ -872,9 +869,9 @@ class GraphicalComponent extends Component {
                              onMouseLeave={() => mouseChange(false)}>
 
                             {checkedStatus || hoverCheckbox ? (
-                                <FaCheckSquareO size={20} onClick={changeFunction}/>
+                                <FaCheckSquare size={20} onClick={changeFunction}/>
                             ) : (
-                                <FaSquareO size={20} onClick={changeFunction}/>
+                                <FaSquare size={20} onClick={changeFunction}/>
                             )}
                         </div>
                     </div>

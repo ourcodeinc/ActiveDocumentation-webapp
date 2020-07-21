@@ -6,7 +6,7 @@ import React, {Component} from "react";
 import "../App.css";
 import {connect} from "react-redux";
 import {Button} from "react-bootstrap";
-import {MdPlaylistAdd} from "react-icons/lib/md/index";
+import {MdPlaylistAdd} from "react-icons/md";
 
 import {changeEditMode} from "../actions";
 

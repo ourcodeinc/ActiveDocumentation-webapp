@@ -8,7 +8,7 @@ import "../App.css";
 import RulePanel from "./rulePanel";
 import {connect} from "react-redux";
 import {Button} from "react-bootstrap";
-import MdPlaylistAdd from "react-icons/lib/md/playlist-add";
+import {MdPlaylistAdd} from "react-icons/md";
 import {changeEditMode} from "../actions";
 
 class RuleTable extends Component {
