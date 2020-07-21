@@ -43,7 +43,7 @@ export class NavBar extends Component {
                             Violated Rules
                         </NavItem>
                         <NavItem eventKey={4}>
-                            Mined Design Rules
+                            Learn Design Rules
                         </NavItem>
                     </Nav>
                 </Navbar.Collapse>
