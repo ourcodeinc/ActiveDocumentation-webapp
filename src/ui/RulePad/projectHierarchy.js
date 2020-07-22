@@ -4,7 +4,7 @@
 
 
 import React, {Component} from "react";
-import {MdSave} from "react-icons/lib/md/index";
+import {MdSave} from "react-icons/md";
 import ReactToolTip from "react-tooltip";
 
 import "../../App.css";
@@ -25,7 +25,7 @@ export class ProjectHierarchy extends Component {
         return (
             <div>
                 <div style={{display: "inline-block", paddingRight: "15px", marginLeft: "3px"}} data-tip={"React-tooltip"} data-for={"save"}>
-                    <MdSave size={20} className={"MdSave"}
+                    <MdSave size={20} className={"MdSave react-icons"}
                              onClick={() => {
                                  let newPath = [];
                                  this.state.dropDowns.forEach(item => {
