@@ -919,6 +919,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
 };
 
 
+
 export const addClassAnnotations = (subCL, attributes, allAttributes) => {
     // Now we look for other attributes in the class
     //if(childName == "CrowdServlet" ) {console.log(childName);}
@@ -1606,4 +1607,57 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
 
     } // Bracket for else
   } // End of for loop for functions
+};
+
+
+// Adds attributes created from search terms
+/* ADD FUNCTION DOCUMENTATION HERE */
+export const addParentChildRelationsExtra = (subCL[j], attributes, allAttributes, searchTerms) => {
+
+  /* class, function call, member variable */
+  /* formal XML query, RulePad description, element API  */
+  let searchCandidates = [
+    {".//src:class/src:name/text()=", "class with name ", ".//class/name"},
+    {".//src:class/src:block/src:function/src:call/src:name/text()=",
+        "class with function with name ", ".//class/block/function/call/name"},
+    {".//src:class/src:block/src:decl_stmt/src:decl/src:name/text()=",
+        "class with declaration statement with name ", ".//class/block/decl_stmt/decl/name"}];
+
+  /* For each element in searchTerms...*/
+  for(let i = 0; i < searchTerms.length; i++){
+
+      /* For each keyword listed for the XML file...*/
+      for(let j = 0; j < (searchTerms[i]["searchTerms"]).length; j++){
+          let keyword = "\"" + (searchTerms[i]["searchTerms"])[j] + "\"";
+
+          /* There are 3 different combinations for the keyword that we
+           * want to explore */
+           for(let k = 0; k < searchCandidates.length; k++){
+             /* Create the XML Query*/
+             let searchCommand = searchCandidates[k][0] + keyword;
+             /* Create the RulePad description */
+             let searchName = searchCandidates[k][1] + keyword;
+             /* Use the API to search */
+             let search = subCL.findall(searchCandidates[k][2]);
+
+             /* If we find the search term at least once, then we add the
+              * search as a feature. */
+             for(let m = 0; m < search; m++){
+
+                 if(search[m].text != null && search[m].text != "" &&
+                    search[m].text == keyword){
+
+                      // Check whether attribute has been seen globally
+                      if(allAttributes.has(searchName)){
+                          attributes.push(allAttributes.get(searchName));
+                      }
+
+                 }
+             }
+         }
+      }
+  }
+
+
+
 };

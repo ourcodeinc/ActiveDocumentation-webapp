@@ -7,7 +7,7 @@
 
 import {addClassAnnotations, addClsFunctions, addConstructors, addImplementations,
     addMemberVars, findClassAnnotations, findClsFunctions, findConstructors,
-    findImplements, findMemberVars} from "./sci_functions";
+    findImplements, findMemberVars, addParentChildRelationsExtra} from "./sci_functions";
 
 import et from 'elementtree';
 
@@ -99,7 +99,7 @@ export const addChildren = (parent, childParent, groupID, currDepth, groupList) 
 
 // Note: the xPath queries provided in customQueries double as the
 // attribute description and command
-export const findCustomRelations = (id_start, customQueries, attributeList, queryMap) => {
+export const findCustomRelations = (id_start, customQueries, attributeList, queryMap, queryMap_special) => {
 
   for (var i = 0; i < customQueries.length; i++){
 
@@ -107,6 +107,7 @@ export const findCustomRelations = (id_start, customQueries, attributeList, quer
 
       attributeList.set(customQueries[i].featureDescription, id_start.id);
       queryMap.set(customQueries[i].featureXpath, id_start.id);
+      queryMap_special.set(customQueries[i].featureXpath, id_start.id);
 
       id_start.id += 1;
     }
@@ -191,8 +192,8 @@ export const addCustomRelations = (allAttributes, customQueries, classGroupings,
         // in this class, then add its attribute id to the list of attributes
         // for the class
         for (var k = 0; k < customQueries.length; k++){
-            // THIS NEEDS TO GET EDITED
-            let query = subCL[j].findall(customQueries[k].featureXpath);
+          // THIS NEEDS TO GET EDITED
+          let query = subCL[j].findall(customQueries[k].featureXpath);
 
           // If we found this customQuery, then we add it to the list of
           // attribute for this class
@@ -356,7 +357,8 @@ export const findParentChildRelations = (id_start, classGroupings,
 
 export const addParentChildRelations = (allAttributes, classGroupings,
                                             analysisFileName, classLocations,
-                                            parentInfo, fileAnalysisMap, dataMap, xmlFiles) => {
+                                            parentInfo, fileAnalysisMap, dataMap,
+                                            xmlFiles, searchTerms) => {
 
     let parentClass = classGroupings[classGroupings.length-1];
     // This array is to keep track of what functions are overridden in
@@ -497,6 +499,9 @@ export const addParentChildRelations = (allAttributes, classGroupings,
                 // Adds attributes about class visibility and class functions
                 addClsFunctions(subCL[j], attributes, allAttributes);
 
+                // Adds attributes created from search terms
+                addParentChildRelationsExtra(subCL[j], attributes, allAttributes, searchTerms);
+
                 // This is the file we will be outputting to
                 fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
 
@@ -561,3 +566,176 @@ export const addParentChildRelations = (allAttributes, classGroupings,
     fileAnalysisMap.set(fileN, newStuff);
 
 };
+
+
+/* ADD DOCUMENTATION FOR FUNCTION HERE!! */
+export const addVisitedElements = (allAttributes, visitedElements, classGroupings,
+                                            analysisFileName, classLocations,
+                                            parentInfo, fileAnalysisMap, dataMap, xmlFiles) => {
+
+  var parentClass = classGroupings[classGroupings.length-1];
+  var classTree;
+
+  // Used to keep track of the children classes about which we've already
+  // collected data
+  var classesVisited = [];
+
+  var index = 0;
+
+  for(var i = 0; i < classGroupings.length; i++){
+
+    var f = classLocations[classGroupings[i]];
+
+    if(f != undefined){
+      f = f.split("\\")[(f.split("\\")).length - 1]
+      f = f.split(".")[0] + ".java";
+
+      // var data = fs.readFileSync(f).toString();
+      // classTree = et.parse(data);
+
+        let filtered = xmlFiles.filter(d => d["filePath"].endsWith(f));
+        if (filtered.length > 0)
+            classTree = et.parse(filtered[0]["xml"]);
+        if (filtered.length === 0) {
+            console.log("file not found: ", f);
+            continue;
+        }
+
+    }
+    else{
+      continue;
+    }
+
+
+    var subCL = classTree.findall('.//class');
+
+
+    var childName;
+    for(var j = 0; j < subCL.length; j++){
+
+      // Figure out what the child class's name is
+      var chName = subCL[j].find('name');
+
+      if(chName == null){
+        continue;
+      }
+
+      if(chName.text == null){
+        childName = (chName.find('name')).text
+      }
+      else{
+        childName = chName.text;
+      }
+      // If we can't find a name, then we go on to the next class in
+      // the srcML file
+      if(childName == ''){
+        continue;
+      }
+
+      // Each xml file might contain multiple classes, so just because a class
+      // is in the file, doesn't mean that it is the one that we want, so
+      // we need to check that the filename is in classGroupings
+      if(classGroupings.includes(childName) && !classesVisited.includes(childName)){
+        classesVisited.push(childName);
+
+        // Get the list of attributes for this class
+        let fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
+        var entry = (dataMap.get(fileN));
+
+        // Go through each of the visitedElements. If the visitedElement is present
+        // in this class, then add its attribute id to the list of attributes
+        // for the class
+        for (var k = 0; k < visitedElements.length; k++){
+          let query = subCL[j].findall(visitedElements[k].featureXpath);
+
+          // If we found this visitedElement, then we add it to the list of
+          // attribute for this class
+          if(query != null && index < entry.length){
+
+            if(allAttributes.has(visitedElements[k].featureDescription) &&
+                 !entry[index].includes(allAttributes.get(visitedElements[k].featureDescription))){
+
+                 entry[index].push(allAttributes.get(visitedElements[k].featureDescription));
+                 dataMap.set(fileN, entry);
+                 entry = dataMap.get(fileN);
+
+            }
+          }
+        }
+        // Increment index into set of entries for this database
+        index++;
+      }
+    }
+  }
+};
+
+/* ADD DOCUMENTATION HERE FOR FUNCTION */
+export const findVisitedElements = (id_start, customQueries, attributeList, queryMap, queryMap_special) => {
+
+  for (var i = 0; i < customQueries.length; i++){
+
+    if(!attributeList.has(customQueries[i].featureDescription)){
+
+      attributeList.set(customQueries[i].featureDescription, id_start.id);
+      queryMap.set(customQueries[i].featureXpath, id_start.id);
+      queryMap_special.set(customQueries[i].featureXpath, id_start.id);
+
+      id_start.id += 1;
+    }
+  }
+}
+
+
+/* ADD FUNCTION DOCUMENTATION HERE*/
+export const findParentChildRelationsExtra = (id_start, attributeList,
+                                              queryMap, searchTerms, specialMap) => {
+
+    /* class, function call, member variable */
+    /* formal XML query, RulePad description, element API  */
+    let searchCandidates = [
+      {".//src:class/src:name/text()=", "class with name ", ".//class/name"},
+      {".//src:class/src:block/src:function/src:call/src:name/text()=",
+          "class with function with name ", ".//class/block/function/call/name"},
+      {".//src:class/src:block/src:decl_stmt/src:decl/src:name/text()=",
+          "class with declaration statement with name ", ".//class/block/decl_stmt/decl/name"}];
+
+    /* For each element in searchTerms...*/
+    for(let i = 0; i < searchTerms.length; i++){
+        /* Parse the XML file */
+        let classTree = et.parse(searchTerms[i]["file"]);
+
+        /* For each keyword listed for the XML file...*/
+        for(let j = 0; j < (searchTerms[i]["searchTerms"]).length; j++){
+            let keyword = "\"" + (searchTerms[i]["searchTerms"])[j] + "\"";
+
+            /* There are 3 different combinations for the keyword that we
+             * want to explore */
+             for(let k = 0; k < searchCandidates.length; k++){
+               /* Create the XML Query*/
+               let searchCommand = searchCandidates[k][0] + keyword;
+               /* Create the RulePad description */
+               let searchName = searchCandidates[k][1] + keyword;
+               /* Use the API to search */
+               let search = classTree.findall(searchCandidates[k][2]);
+
+               /* If we find the search term at least once, then we add the
+                * search as a feature. */
+               for(let m = 0; m < search; m++){
+
+                   if(search[m].text != null && search[m].text != "" &&
+                      search[m].text == keyword){
+
+                        if(!attributeList.has(searchName)){
+
+                          attributeList.set(searchName, id_start.id);
+                          queryMap.set(searchCommand, id_start.id);
+                          specialMap.set(searchCommand, id_start.id);
+
+                          id_start.id += 1;
+                        }
+                   }
+               }
+           }
+        }
+    }
+}
