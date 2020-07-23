@@ -1610,8 +1610,8 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
 };
 
 
-// Adds attributes created from search terms
-/* ADD FUNCTION DOCUMENTATION HERE */
+// Adds attributes created from search terms to class entry in database if
+// attribute is found  
 export const addParentChildRelationsExtra = (subCL[j], attributes, allAttributes, searchTerms) => {
 
   /* class, function call, member variable */
