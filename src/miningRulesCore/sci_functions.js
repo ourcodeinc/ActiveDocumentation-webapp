@@ -1611,17 +1611,17 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
 
 
 // Adds attributes created from search terms to class entry in database if
-// attribute is found  
+// attribute is found
 export const addParentChildRelationsExtra = (subCL[j], attributes, allAttributes, searchTerms) => {
 
   /* class, function call, member variable */
   /* formal XML query, RulePad description, element API  */
   let searchCandidates = [
-    {".//src:class/src:name/text()=", "class with name ", ".//class/name"},
-    {".//src:class/src:block/src:function/src:call/src:name/text()=",
-        "class with function with name ", ".//class/block/function/call/name"},
-    {".//src:class/src:block/src:decl_stmt/src:decl/src:name/text()=",
-        "class with declaration statement with name ", ".//class/block/decl_stmt/decl/name"}];
+    [".//src:class/src:name/text()=", "class with name ", ".//class/name"],
+    [".//src:class/src:block/src:function/src:call/src:name/text()=",
+        "class with function with name ", ".//class/block/function/call/name"],
+    [".//src:class/src:block/src:decl_stmt/src:decl/src:name/text()=",
+        "class with declaration statement with name ", ".//class/block/decl_stmt/decl/name"]];
 
   /* For each element in searchTerms...*/
   for(let i = 0; i < searchTerms.length; i++){
