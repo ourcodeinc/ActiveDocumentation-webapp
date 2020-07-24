@@ -55,8 +55,28 @@ by the FPGrowth algorithm. It does the following steps:
 in this process.
  */
 
+/*
+* Additions as of 07-21-2020, Gennie Mansi
+* Reason: In order to support more specialized rule mining based off of search
+*   terms and cursor location
+* Parameters: Three parameters were added
+*     @param searchTerms
+          is an array of pairs, where file is an xmlFile to search
+*         and searchTerms is a list of keywords that have been searched by the user;
+*         each keyword is searched for in the xmlFile provided. If the keyword is
+*         found, then its XML query gets added as an attribute.
+*     @param visitedElements
+*         is also an array of pairs, similar to searchTerms except
+*         that each file is paired with a list of xPath queries. If the xPath
+*         query finds anything when run on the XML file provided, then the xPath
+*         gets added as an attribute
+*
+*/
+
 import {addChildren, addParentChildRelations, findParentChildRelations,
-        makePairsList, findCustomRelations, addCustomRelations} from "./sci_class";
+        makePairsList, findCustomRelations, addCustomRelations,
+        findParentChildRelationsExtra,
+        findVisitedElements, addVisitedElements} from "./sci_class";
 
 import et from 'elementtree';
 import Utilities from "../core/utilities";
@@ -72,11 +92,11 @@ import {webSocketSendMessage} from "../core/coreConstants";
  * @param searchTerms [{file: xmlFile, searchTerms: [keyword1, keyword2]},
  *                     {file: xmlFile, searchTerms: [keyword1, keyword2]}]
  * [searchTerms as it appears and case-sensitive]
- * @param visitedElements [{file: xmlFile, xpath: [xpathQuery, xpathQuery2, xpathQuery3]}]
- * @param isSeparated a boolean value indicating whether the output is separated for the extra information or not
+ * @param visitedElements [xpath queries]
+ *
  */
 export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, customQueries = [],
-                                      searchTerms = [], visitedElements = [], isSeparated = false) => {
+                                      searchTerms = [], visitedElements = []) => {
     // todo create features based on the input
     //     if it needed to store the features for future references,
     //     they can be stored in redux before calling this method.
@@ -88,7 +108,9 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, cust
 
     // This is to keep track of the XML queries used for each of the attributes
     let queryMap = new Map();
-    let queryMapExtra = new Map();
+    /* This variable is a map that keeps track of attributes created from
+     * custom queries, visited elements, and search terms. */
+    let queryMap_special = new Map();
 
     // This variable will always be used when trying to obtain the
     // root for each file
@@ -119,8 +141,6 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, cust
 
     // Path to directory with xml files we wish to iterate through
     // Currenlty, the directory is the directory main.js is running in
-
-
     for (let i=0; i< xmlFiles.length; i++) {
         try {
             classRoot = (et.parse(xmlFiles[i]["xml"]));
@@ -148,7 +168,6 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, cust
         (groupList.get(supa)).push(supa);
 
     }
-
 
     //Now, we're going to populate an information list about the parents defined
     // in this code, so that attributes can be generated
@@ -215,33 +234,48 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, cust
             findParentChildRelations(id_start, groupList.get(group),
                 allAttributes, classLocations, parentInfo, queryMap, xmlFiles));
 
+        /* Add in attributes found based off of search queries*/
+        allAttributes = new Map(allAttributes,
+            findParentChildRelationsExtra(id_start, groupList.get(group),
+                allAttributes, classLocations, parentInfo, queryMap, xmlFiles));
+
     }
 
     // Add any custom attributes
-    findCustomRelations(id_start, customQueries, allAttributes, queryMap);
+    /* NEED TO EDIT */
+    findCustomRelations(id_start, customQueries, allAttributes, queryMap, queryMap_special);
+    // Add any attributes from visited elements
+    /* NEED TO IMPLEMENT */
+    findVisitedElements(id_start, visitedElements, allAttributes, queryMap, queryMap_special);
 
     // Output the metadata to a file
     outputMetaData(allAttributes, queryMap, metaData, ws);
+
 
     let dataMap = new Map();
     for (const group of groupList.keys()){
         let grouping = groupList.get(group);
         addParentChildRelations(allAttributes, grouping, analysisFileName,
-            classLocations, parentInfo, fileAnalysisMap, dataMap, xmlFiles);
+            classLocations, parentInfo, fileAnalysisMap, dataMap, xmlFiles,
+            searchTerms);
+        }
     }
 
-    // Now look for customRelations
+    // Now look for attributes from customRelations, visitedElements, and search
+    // terms
     for (const group of groupList.keys()){
       var grouping = groupList.get(group);
       addCustomRelations(allAttributes, customQueries, grouping, analysisFileName,
-                                   classLocations, parentInfo, fileAnalysisMap, dataMap, xmlFiles);
+                         classLocations, parentInfo, fileAnalysisMap, dataMap, xmlFiles);
+      addVisitedElements(allAttributes, visitedElements, grouping, analysisFileName,
+                         classLocations, parentInfo, fileAnalysisMap, dataMap, xmlFiles);
     }
 
+    /* Output databases and analyze attributes using FP_MAX*/
     outputDataBases(dataMap, ws);
-
     outputFileAnalysisData(fileAnalysisMap, ws);
-
     Utilities.sendToServer(ws, webSocketSendMessage.execute_fp_max_msg, {fpMaxSupport});
+
 };
 
 const outputMetaData = (allAttributes, queryMap, metaData, ws) => {
