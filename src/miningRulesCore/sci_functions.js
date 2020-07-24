@@ -19,7 +19,7 @@ export const findClassAnnotations = (subCL, attributeList, id_start, queryMap) =
 
       let annotArgs = clsAnnot.findall('.//argument/expr');
 
-      let clsAnnotName = "class conttaining annotation of \"@"
+      let clsAnnotName = "class with annotation \""
                           + (clsAnnot.find('name').text)
                           + "\"";
 
@@ -936,7 +936,7 @@ export const addClassAnnotations = (subCL, attributes, allAttributes) => {
             //console.log(clsAnnot);
             let annotArgs = clsAnnot.findall('.//argument/expr');
             //console.log(annotArgs);
-            name = "class containing annotation of \""
+            name = "class with annotation \""
                 + (clsAnnot.find('name').text)
                 + "\"";
 
