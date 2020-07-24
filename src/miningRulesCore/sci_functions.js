@@ -90,7 +90,7 @@ export const findConstructors = (subCL, attributeList, id_start, queryMap) => {
         let constrBodyList = constructorBody.find(".*");
         if(constrBodyList != undefined){
 
-          name = "class containing non-empty constructor";
+          name = "class with constructor with \"non-empty body\"";
 
           // Check if attribute has been seen globally
           if(!attributeList.has(name)){
@@ -215,7 +215,7 @@ export const findConstructors = (subCL, attributeList, id_start, queryMap) => {
         // If the constructor didn't have a body, then we create an
         // attribute saying so
         else{
-          name = "class containing empty-body constructor";
+          name = "class with constructor with \"empty body\"";
           // Check if this attribute has been seen globally
           if(!attributeList.has(name)){
 
@@ -294,7 +294,7 @@ export const findConstructors = (subCL, attributeList, id_start, queryMap) => {
         else{
           // If the constructor has parameters and all of them were stored
           if(allParamsStored == true){
-            name = "class containing constructor that stores all parameters as member variables";
+            name = "class with constructor with \"storing all parameters as member variables\"";
             // Check if this attribute has been seen globally
             if(!attributeList.has(name)){
               // logic: class[count(argument in statements) = count(arguments)]
@@ -317,7 +317,7 @@ export const findConstructors = (subCL, attributeList, id_start, queryMap) => {
     // If the class doesn't define a constructor, then we add that as an
     // attribute
     else{
-      name = "class not containing defined constructor";
+      name = "class with \"no constructor\"";
       // Check if this attribute has been seen globally
       if(!attributeList.has(name)){
 
@@ -665,10 +665,10 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
         if (attrName!= null && attrName.text == "this" && op != null && op.text == "="
             && call != null){
 
-          name = "class containing function of name \""
+          name = "class with function with (name \""
                 + fncName.text
-                + "\" that modifies member variable of name \""
-                + call.text + "\"";
+                + "\" and \"modifies member variable of name \'"
+                + call.text + "\'\")";
 
           // Check whether attribute has been seen globally
           if(!attributeList.has(name)){
@@ -794,7 +794,9 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
     // (2) An attribute containing informatnio  about the function return type, name,
     //     and visibility
     if (fncParams == null){
-     name = " class containing function of name \"" + fncName.text + "\" with no parameters";
+     name = "class with function with (name \""
+            + fncName.text
+            + "\" and \"no parameters\")";
      // Check whether attribute has been seen globally
      if(!attributeList.has(name)){
 
@@ -993,7 +995,7 @@ export const addConstructors = (subCL, attributes, allAttributes) => {
         let constrBodyList = constructorBody.find(".*");
         if(constrBodyList != undefined){
 
-          name = "class containing non-empty constructor";
+          name = "class with constructor with \"non-empty body\"";
 
           if(allAttributes.has(name)){
             attributes.push(allAttributes.get(name));
@@ -1084,7 +1086,7 @@ export const addConstructors = (subCL, attributes, allAttributes) => {
         // If the constructor didn't have a body, then we create an
         // attribute saying so
         else{
-          name = "class containing empty-body constructor";
+          name = "class with constructor with \"empty body\"";
 
           // Check if this attribute has been seen globally
           if(allAttributes.has(name)){
@@ -1135,7 +1137,7 @@ export const addConstructors = (subCL, attributes, allAttributes) => {
 
 
         if(allParamTypes != ""){
-          name = "class with constructor with ( parameter with type " + allParamTypes;
+          name = "class with constructor with ( " + allParamTypes;
           // Check if this attribute has been seen globally
           if(allAttributes.has(name)){
             attributes.push(allAttributes.get(name));
@@ -1145,7 +1147,7 @@ export const addConstructors = (subCL, attributes, allAttributes) => {
         else{
           // If the constructor has parameters and all of them were stored
           if(allParamsStored == true){
-            name = "class containing constructor that stores all parameters as member variables";
+            name = "class with constructor with \"storing all parameters as member variables\"";
             // Check if this attribute has been seen globally
             if(allAttributes.has(name)){
               attributes.push(allAttributes.get(name));
@@ -1158,7 +1160,7 @@ export const addConstructors = (subCL, attributes, allAttributes) => {
     // If the class doesn't define a constructor, then we add that as an
     // attribute
     else{
-      name = "class not containing defined constructor";
+      name = "class with \"no constructor\"";
       // Check if this attribute has been seen globally
       if(allAttributes.has(name)){
         attributes.push(allAttributes.get(name));
@@ -1429,10 +1431,10 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
         if (attrName!= null && attrName.text == "this" && op != null && op.text == "="
             && call != null){
 
-          name = "class containing function of name \""
+          name = "class with function with (name \""
                 + fncName.text
-                + "\" that modifies member variable of name \""
-                + call.text + "\"";
+                + "\" and \"modifies member variable of name \'"
+                + call.text + "\'\")";
 
           // Check whether attribute has been seen globally
           if(allAttributes.has(name)){
@@ -1539,7 +1541,9 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
     // (2) An attribute containing informatnio  about the function return type, name,
     //     and visibility
     if (fncParams == null){
-     name = " class containing function of name \"" + fncName.text + "\" with no parameters";
+     name = "class with function with (name \""
+            + fncName.text
+            + "\" and \"no parameters\")";
      // Check whether attribute has been seen globally
      if(allAttributes.has(name)){
         attributes.push(allAttributes.get(name));
