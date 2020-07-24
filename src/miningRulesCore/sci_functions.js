@@ -934,7 +934,7 @@ export const addClassAnnotations = (subCL, attributes, allAttributes) => {
             //console.log(clsAnnot);
             let annotArgs = clsAnnot.findall('.//argument/expr');
             //console.log(annotArgs);
-            name = "class containing annotation of \"@"
+            name = "class containing annotation of \""
                 + (clsAnnot.find('name').text)
                 + "\"";
 
@@ -1135,7 +1135,7 @@ export const addConstructors = (subCL, attributes, allAttributes) => {
 
 
         if(allParamTypes != ""){
-          name = "class containing constructor with parameters of type " + allParamTypes;
+          name = "class with constructor with ( parameter with type " + allParamTypes;
           // Check if this attribute has been seen globally
           if(allAttributes.has(name)){
             attributes.push(allAttributes.get(name));
