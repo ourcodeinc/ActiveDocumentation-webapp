@@ -97,11 +97,6 @@ import {webSocketSendMessage} from "../core/coreConstants";
  */
 export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, customQueries = [],
                                       searchTerms = [], visitedElements = []) => {
-    // todo create features based on the input
-    //     if it needed to store the features for future references,
-    //     they can be stored in redux before calling this method.
-    //     Right now, we don't have actual input.
-
     let analysisFileName = "AttributeEncoding";
 
     let allAttributes = new Map();
@@ -258,7 +253,6 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, cust
         addParentChildRelations(allAttributes, grouping, analysisFileName,
             classLocations, parentInfo, fileAnalysisMap, dataMap, xmlFiles,
             searchTerms);
-        }
     }
 
     // Now look for attributes from customRelations, visitedElements, and search
