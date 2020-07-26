@@ -346,9 +346,9 @@ export const initial_state = {
         idMap: {},
         displayTextArray: []
     },
-    customFeatures: [],
 
     doiInformation: {
+        customFeatures: [],
         visitedFiles: [],
         searchHistory: [],
         visitedElements: []

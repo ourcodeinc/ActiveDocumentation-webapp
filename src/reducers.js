@@ -638,10 +638,13 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 featureSelection: {
                     ...JSON.parse(JSON.stringify(initial_state.featureSelection))
                 },
-                customFeatures: state.customFeatures.concat([{
-                    featureDescription: action.data["featureDescription"],
-                    featureXpath: action.data["featureXpath"]
-                }])
+                doiInformation: {
+                    ...state.doiInformation,
+                    customFeatures: state.doiInformation.customFeatures.concat([{
+                        featureDescription: action.data["featureDescription"],
+                        featureXpath: action.data["featureXpath"]
+                    }])
+                }
             });
 
         case reduxStoreActions.action_dangerous_mined_rules:
@@ -657,6 +660,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             return Object.assign({}, state, {
                 message: reduxStoreMessages.update_doi_information_msg,
                 doiInformation: {
+                    ...state.doiInformation,
                     visitedFiles: action.data["visitedFiles"],
                     searchHistory: action.data["searchHistory"],
                     visitedElements: action.data["visitedElements"]
