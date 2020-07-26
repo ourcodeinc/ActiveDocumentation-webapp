@@ -9,7 +9,6 @@ mustClause
     | abstractFunctions must have abstractFunctionExpression
     | constructors must have constructorExpression
     | classes must have classExpression
-    | interfaces must have interfaceExpression
     | parameters must have parameterExpression
     | declarationStatements must have declarationStatementExpression
     ;
@@ -37,18 +36,6 @@ word
     |  '!...' Alphabet+ '...'
     ;
 
-
-oldWords
-    : '"' Alphabet+ '"'
-    | '"' '!' Alphabet+ '"'
-    | '"' '...' Alphabet+ '"'
-    | '"' '!...' Alphabet+ '"'
-    | '"' Alphabet+ '...' '"'
-    | '"' '!' Alphabet+ '...' '"'
-    | '"' '...' Alphabet+ '...' '"'
-    | '"' '!...' Alphabet+ '...' '"'
-    ;
-
 combinatorialWords
     : '"' (Alphabet | symbols | SPACE)+ '"'
     ;
@@ -72,6 +59,9 @@ emptyLine
     : NL
     ;
 
+comments
+    : '"'(Alphabet | symbols | SPACE)+'"'
+    ;
 
 /*
     connectors
@@ -131,11 +121,6 @@ names
     : NAME nameCondition?
     ;
 
-nameOf
-    : of (classes | functions | abstractFunctions | declarationStatements | parameters | annotations
-            | types | constructors | extensions | implementations)
-    ;
-
 nameCondition
     : words SPACE
     ;
@@ -151,10 +136,6 @@ ANNOTATION
 
 annotations
     : ANNOTATION annotationCondition?
-    ;
-
-annotationOf
-    : of (classes | functions | constructors | abstractFunctions | declarationStatements)
     ;
 
 annotationCondition
@@ -178,10 +159,6 @@ extensions
     : EXTENSION extensionCondition
     ;
 
-extensionOf
-    : of classes
-    ;
-
 extensionCondition
     : of ( words SPACE | SUPERCLASS)
     ;
@@ -201,10 +178,6 @@ INTERFACE
 
 implementations
     : IMPLEMENTATION implementationCondition
-    ;
-
-implementationOf
-    : of classes
     ;
 
 implementationCondition
@@ -235,7 +208,8 @@ functionCondition
 functionExpression
     : LPAREN functionExpression RPAREN
     | left=functionExpression op=binary right=functionExpression
-    | ( annotations | specifiers | visibilities | types | names | parameters | returnValues | declarationStatements | expressionStatements )
+    | ( annotations | specifiers | visibilities | types | names | parameters | returnValues
+        | declarationStatements | expressionStatements | comments)
     | functionExpression SPACE
     ;
 
@@ -290,7 +264,8 @@ constructorCondition
 constructorExpression
     : LPAREN constructorExpression RPAREN
     | left=constructorExpression op=binary right=constructorExpression
-    | ( annotations | specifiers | visibilities | parameters | returnValues | declarationStatements | expressionStatements )
+    | ( annotations | specifiers | visibilities | parameters | returnValues | declarationStatements
+        | expressionStatements  | comments )
     | constructorExpression SPACE
     ;
 
@@ -304,10 +279,6 @@ PARAMETER
 
 parameters
     : PARAMETER parameterCondition?
-    ;
-
-parameterOf
-    : of (functions | constructors | abstractFunctions)
     ;
 
 parameterCondition
@@ -334,10 +305,6 @@ types
     : TYPES typeCondition?
     ;
 
-typeOf
-    : of (parameters | declarationStatements)
-    ;
-
 typeCondition
     : combinatorialWords SPACE
     | words SPACE
@@ -356,10 +323,6 @@ specifiers
     : SPECIFIER specifierCondition?
     ;
 
-specifierOf
-    : of (functions | constructors | abstractFunctions | declarationStatements | classes)
-    ;
-
 specifierCondition
     : words SPACE
     ;
@@ -374,10 +337,6 @@ VISIBILITY
 
 visibilities
     : VISIBILITY visibilityCondition?
-    ;
-
-visibilityOf
-    : of (functions | constructors | abstractFunctions | declarationStatements | classes)
     ;
 
 visibilityCondition
@@ -395,10 +354,6 @@ ReturnValue
 
 returnValues
     : ReturnValue returnValueCondition?
-    ;
-
-returnValueOf
-    : of functions
     ;
 
 returnValueCondition
@@ -499,34 +454,7 @@ classCondition
 classExpression
     : LPAREN classExpression RPAREN
     | left=classExpression op=binary right=classExpression
-    | ( annotations | specifiers | visibilities | names | extensions | implementations | functions | interfaces
-            | abstractFunctions | constructors | declarationStatements | classes | returnValues )
+    | ( annotations | specifiers | visibilities | names | extensions | implementations | functions
+            | abstractFunctions | constructors | declarationStatements | classes | returnValues  | comments )
     | classExpression SPACE
-    ;
-
-/*
-    classes
-*/
-
-INTERFACES
-    : 'interface '
-    ;
-
-interfaces
-    : INTERFACES interfaceCondition? interfaceOf?
-    ;
-
-interfaceOf
-    : of (interfaces | classes)
-    ;
-
-interfaceCondition
-    : withWord interfaceExpression
-    ;
-
-interfaceExpression
-    : LPAREN interfaceExpression RPAREN
-    | left=interfaceExpression op=binary right=interfaceExpression
-    | (annotations | specifiers | visibilities | names | abstractFunctions | declarationStatements | interfaces)
-    | interfaceExpression SPACE
     ;

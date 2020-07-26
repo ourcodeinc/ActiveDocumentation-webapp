@@ -119,6 +119,10 @@ class GenerateXPath {
 
                     break;
 
+                case "commentsContext":
+                    this.commentsContextTraversal(node, isConstraintCondition);
+                    break;
+
                 case "ClassesContext":
                     this.classesContextTraversal(node, isConstraintCondition);
                     break;
@@ -244,6 +248,23 @@ class GenerateXPath {
             node.children.splice(3, 1);
             // console.log("re-organize (else)", node);
         }
+    }
+
+    commentsContextTraversal(node, isConstraintCondition) {
+        let word = "";
+
+        // based on the grammar the first and last children are quotation marks
+        if (node.children.length <= 2) return word;
+
+        for (let k = 1; k < node.children.length - 1; k++) {
+            if (node.getChild(k).constructor.name === "TerminalNodeImpl")
+                word += node.getChild(k).getSymbol().text;
+            else if (node.getChild(k).constructor.name === "SymbolsContext")
+                word += node.getChild(k).getChild(0).getSymbol().text;
+        }
+        // todo look in the meta data
+        // if (!isConstraintCondition) this.XPathQ += word;
+        // this.XPathC += word;
     }
 
     classesContextTraversal(node, isConstraintCondition) {

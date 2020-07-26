@@ -644,13 +644,25 @@ class GraphicalComponent extends Component {
                                    onFocus={focus}
                                    onBlur={(e) => blur(e.target.value)}/>
                             <div className={"checkboxConstraintDiv rowGroup"}
-                                 ref={node => group !== "body" ? this.nodes[group][index]["checkbox"] = node : this.nodes["body"][innerIndex][index]["checkbox"] = node}>
+                                 ref={node => {
+                                     try {
+                                         group !== "body" ? this.nodes[group][index]["checkbox"] = node : this.nodes["body"][innerIndex][index]["checkbox"] = node
+                                     } catch (e) {
+                                         // console.log("Reference to checkbox failed. The component should have been re-rendered after this message.");
+                                     }
+                                 }}>
                                 {!childElement.activeElement ? null : this.renderCheckboxAndErase(changeFunction, checkedStatus, closeFunction, group, innerIndex, index, renderSwitch)}
                             </div>
                         </form>
                     </div>
                     <div className={"informationDiv rowGroup"}
-                         ref={node => group !== "body" ? this.nodes[group][index]["information"] = node : this.nodes["body"][innerIndex][index]["information"] = node}>
+                         ref={node => {
+                             try {
+                                 group !== "body" ? this.nodes[group][index]["information"] = node : this.nodes["body"][innerIndex][index]["information"] = node
+                             } catch (e) {
+                                 // console.log("Reference to informationDiv is failed. The component should have been re-rendered after this message.")
+                             }
+                         }}>
                         <div>
                             <div className={"MdRemove"} style={{float: "right"}}
                                  ref={node => closeInformationDiv = node}>

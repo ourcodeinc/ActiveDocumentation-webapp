@@ -1,11 +1,13 @@
 export const grammar_keywords = [
     "name", "annotation", "extension", "implementation", "function", "abstract function", "constructor", "parameter", "type",
-    "specifier", "visibility", "return value", "declaration statement", "expression statement", "class", "interface", "initial value"
+    "specifier", "visibility", "return value", "declaration statement", "expression statement", "class", "initial value", "comment"
 ];
 
 export const grammar_connectors = ["with", "have", "must", "and", "or", "of", "(", ")"];
 
 export const special_word = ["Superclass", "Interface"];
+
+export const skip_words_from_TE = ["comment"];
 
 export const autoComplete_suggestion = {
     "name": {
@@ -26,7 +28,7 @@ export const autoComplete_suggestion = {
     },
     "function": {
         withClause: ["annotation", "specifier", "visibility", "type", "name", "parameter", "return value", "declaration statement",
-            "expression statement"],
+            "expression statement", "\"SOME_COMMENT\""],
         ofClause: ["class"]
     },
     "abstract function": {
@@ -34,7 +36,8 @@ export const autoComplete_suggestion = {
         ofClause: ["class"]
     },
     "constructor": {
-        withClause: ["annotation", "specifier", "visibility", "parameter", "declaration statement", "expression statement"],
+        withClause: ["annotation", "specifier", "visibility", "parameter", "declaration statement", "expression statement",
+            "\"SOME_COMMENT\""],
         ofClause: ["class"]
     },
     "parameter": {
@@ -68,12 +71,11 @@ export const autoComplete_suggestion = {
     },
     "class": {
         withClause: ["annotation", "specifier", "visibility", "name", "extension", "function", "abstract function",
-            "constructor", "declaration statement", "class", "return value", "implementation"],
+            "constructor", "declaration statement", "class", "return value", "implementation", "\"SOME_COMMENT\""],
         ofClause: []
     },
-    "interface": {
-        withClause: ["annotation", "specifier", "visibility", "name", "abstract function", "declaration statement", "interface"],
-        ofClause: ["class"]
+    "comment": {
+        ofClause: []
     }
 };
 
@@ -88,7 +90,7 @@ export const sample_phrases = [
     },
     {
         replaceWordWith: "bar function",
-        value: "function with name\"bar\""
+        value: "function with name \"bar\""
     },
     {
         replaceWordWith: "Command class",
@@ -511,12 +513,6 @@ export const documentations_IMarkdownString = {
         "int i = foo(); // foo() is the initial value\n" +
         "String str = \"Hi\"; // \"Hi\" is the initial value\n" +
         "```"
-    },
-    "interface": {
-        isTrusted: true, value:
-        "#### interface\n" +
-        "An interface represents a java `interface`\n" +
-        "Interface is not supported currently."
     },
     "class": {
         isTrusted: true, value:

@@ -25,6 +25,15 @@ const element_conditions = {
         unique: true,
         grammar: "specifier"
     },
+    comment: {
+        type: "wideText",
+        pre: "// ",
+        post: "",
+        placeholder: "comment",
+        unique: false,
+        grammar: "comment", // is skipped in the TE
+        wordValidation: "combinatorial"
+    },
 
     class_el: {
         type: "element",
@@ -37,6 +46,7 @@ const element_conditions = {
             after_2: "class_implements",
             after_3: "class_extends",
             body: [
+                "comment",
                 "declaration_statement_el",
                 "constructor_el",
                 "function_el",
@@ -84,49 +94,6 @@ const element_conditions = {
         required: "of ",
         wordValidation: "word"
     },
-
-    interface_el: {
-        type: "element",
-        children: {
-            top: "annotation",
-            before_1: "visibility",
-            before_2: "specifier",
-            before_3: "",
-            after_1: "interface_name",
-            after_3: "interface_extends",
-            body: []
-        },
-        grammar: "interface",
-        pre_before_1: "",
-        pre_before_2: "",
-        pre_before_3: "",
-        pre_after_1: "interface",
-        pre_after_2: "",
-        pre_after_3: "",
-        post_after_3: "",
-        pre_body: "{",
-        post_body: "}",
-        canBeSelected: true
-    },
-    interface_name: {
-        type: "text",
-        pre: "",
-        post: "",
-        placeholder: "interfaceName",
-        unique: true,
-        grammar: "name",
-        wordValidation: "word"
-    },
-    interface_extends: {
-        type: "text",
-        pre: "extends",
-        post: "",
-        placeholder: "base interface",
-        unique: true,
-        grammar: "extension",
-        wordValidation: "word"
-    },
-
     function_el: {
         type: "element",
         children: {
@@ -138,6 +105,7 @@ const element_conditions = {
             after_2: "parameter_el",
             after_3: "",
             body: [
+                "comment",
                 "declaration_statement_el",
                 "function_expression_statement",
                 "function_return_value"
@@ -201,6 +169,7 @@ const element_conditions = {
             after_2: "parameter_el",
             after_3: "",
             body: [
+                "comment",
                 "constructor_expression_statement",
                 "declaration_statement_el"
             ]

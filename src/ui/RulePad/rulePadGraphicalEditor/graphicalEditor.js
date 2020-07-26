@@ -10,7 +10,7 @@ import {connect} from "react-redux";
 import GraphicalComponent from "./graphicalComponent";
 import {changeAutoCompleteTextFromGUI, changeGuiElement} from "../../../actions";
 import {generateTreeForElement, getConditionByName} from "./graphicalEditorConstants";
-import {autoComplete_suggestion} from "../rulePadTextualEditor/textualEditorConstant";
+import {autoComplete_suggestion, skip_words_from_TE} from "../rulePadTextualEditor/textualEditorConstant";
 
 
 class GraphicalEditor extends Component {
@@ -311,9 +311,11 @@ class GraphicalEditor extends Component {
         let grammarObject = []; // {text: "", id: ""}
 
         // element name
-        if (!constraintQuery)
-            rootNode["properties"].elementGrammar.split(" ").forEach(part =>
-                grammarObject.push({text: part, id: rootNode.nodeId}));
+        if (!constraintQuery) {
+            if (!skip_words_from_TE.includes(rootNode["properties"].elementGrammar))
+                rootNode["properties"].elementGrammar.split(" ").forEach(part =>
+                    grammarObject.push({text: part, id: rootNode.nodeId}));
+        }
 
         // text value
         if (rootNode["properties"].text) {
@@ -365,9 +367,11 @@ class GraphicalEditor extends Component {
         let grammarObject = []; // {text: "", id: ""}
 
         // element name
-        if (!constraintQuery)
-            rootNode["properties"].elementGrammar.split(" ").forEach(part =>
-                grammarObject.push({text: part, id: rootNode.nodeId}));
+        if (!constraintQuery) {
+            if (!skip_words_from_TE.includes(rootNode["properties"].elementGrammar))
+                rootNode["properties"].elementGrammar.split(" ").forEach(part =>
+                    grammarObject.push({text: part, id: rootNode.nodeId}));
+        }
 
         // text value
         if (rootNode["properties"].text) {

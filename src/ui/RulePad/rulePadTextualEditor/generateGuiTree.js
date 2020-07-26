@@ -145,6 +145,10 @@ const combineWordsNode = (node) => {
         let word = node.children.map(child => child.text !== "\"" ? (child.text === "" ? " " : child.text) : null).join("");
         return {nodeType: "word", text: word}
     }
+    if (node.nodeType === "CommentsContext") {
+        let word = node.children.map(child => child.text !== "\"" ? (child.text === "" ? " " : child.text) : null).join("");
+        return {nodeType: "comment", text: word}
+    }
 
     if (node.children && node.children.length > 0)
         node.children = node.children.map(child => combineWordsNode(child));
@@ -266,6 +270,13 @@ const traverseExpressionNode = (ExpressionNode, isConstraint) => {
             else if (child.nodeType.endsWith("ExpressionContext"))
                 guiWithArray = guiWithArray.concat(traverseExpressionNode(child, setIsConstraint));
 
+            else if (child.nodeType === "comment") {
+                guiWithArray.push({
+                    isConstraint: child.isConstraint || setIsConstraint,
+                    key: child.nodeType,
+                    value: {word: child.text.trim(), type: "text"}
+                });
+            }
             else if (keywords.indexOf(child.nodeType.replace("Context", "")) !== -1) {
                 guiWithArray.push(traverseNormalNode(child, setIsConstraint));
             }
