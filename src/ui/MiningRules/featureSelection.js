@@ -182,7 +182,7 @@ class FeatureSelection extends Component {
             .filter(d => d.trim() !== "")
             .join(" ");
         this.props.saveFeatureSelection(featureDesc, this.state.xpath);
-        window.location.hash = "#/minedRules";
+        window.location.hash = "#/learnDesignRules";
     }
 
 }

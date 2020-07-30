@@ -2,91 +2,75 @@
  * Created by saharmehrpour on 11/1/17.
  */
 
-import React, {Component, Fragment} from "react";
+import React, {Component} from "react";
 import "../../App.css";
 import {connect} from "react-redux";
-import {Button, Row, Col, ButtonGroup, Glyphicon, Checkbox} from "react-bootstrap";
-import Slider from "rc-slider";
-import Tooltip from "rc-tooltip";
+import {Button, Col, Row} from "react-bootstrap";
 import "rc-slider/assets/index.css";
 import "three-dots"
-
+import Slider from "rc-slider";
+import Tooltip from "rc-tooltip/es";
 
 import {mineRulesFromXmlFiles} from "../../miningRulesCore/miningRules";
 import {ignoreFileChange, updateMetaData} from "../../actions";
-import MinedRulePad from "./minedRulePad";
 import {verifyPartialTextBasedOnGrammar} from "../../core/languageProcessing";
 import {generateGuiTrees} from "../RulePad/rulePadTextualEditor/generateGuiTree";
 import Utilities from "../../core/utilities";
 import {webSocketSendMessage} from "../../core/coreConstants";
 import {reduxStoreMessages} from "../../reduxStoreConstants";
+import MinedRulePad from "./minedRulePad";
+import FilterComponent from "./filterComponent";
 
 
-class MinedRulesComponent extends Component {
+
+class LearnDesignRulesComponent extends Component {
 
     constructor(props) {
         super(props);
+
+        this.fpMaxSupport = 60; // default support value
+
         this.state = {
-
-            showAdvancedSettings: false,
-
-            algorithm: "FP_MAX", // FP_MAX or NONE
-
-            fpMaxSupport: 60,
-
             minedRules: [],
-            displayedMinedRules: [],
+
             loading: false, // for loading icons when mining rules
+            doiLoading: false, // for fetching doi information
 
             minComplexity: 0,
             maxComplexity: 100,
-
             minFiles: 1,
             maxFiles: 10,
 
-            showVisitedFiles: false,
-            showSearchHistory: false,
-            showVisitedElements: false,
-            showCustomFeatures: false,
+            // DOI information
 
-            // visitedFiles: [],
-            // searchHistory: [],
-            // visitedElements: [],
-            // customFeatures: []
-
-            visitedFiles: [{value: "file1", isIncluded: true}, {value: "file2", isIncluded: true}, {value: "file3", isIncluded: true}],
-            searchHistory: [{value: "searchItem1", isIncluded: true}, {value: "searchItem2", isIncluded: true}],
-            visitedElements: [{name: "className", type: "class", isIncluded: true}, {name: "fieldName", type: "decl_stmt", isIncluded: true}],
-            customFeatures: [
-                {
-                    featureDescription: "public abstract void execute(String projectId)",
-                    featureXpath: "src:function_decl[src:specifier/text()=\"abstract\"]",
-                    isIncluded: true
-                }]
+            visitedFiles:[],
+            searchHistory: [],
+            visitedElements: [],
+            customFeatures: []
         };
     }
 
     render() {
         return (
-            <div className={"minedRulesComponent"}>
+            <div className={"learningDesignRulesComponent"}>
                 {this.renderDefaultView()}
-                {/*<Button onClick={()=>{Utilities.sendToServer(this.props.ws, webSocketSendMessage.send_doi_information_msg, "")}}>*/}
-                {/*    Get DOI Information</Button>*/}
-                {this.renderAdvancedSettings()}
-                {/*{this.renderButtonsAndSliders()}*/}
-                {/*{this.renderLoading()}*/}
-                {/*{this.renderMinedRulePad()}*/}
+                {this.renderButtonsAndSliders()}
+                {this.renderLoading()}
+                {this.renderDoiLoading()}
+                {this.state.minedRules.length === 0 ? null : (
+                    <FilterComponent visitedFiles={this.state.visitedFiles}
+                                     searchHistory={this.state.searchHistory}
+                                     customFeatures={this.state.customFeatures}/>
+                )}
+                <div className={"minedRulesComponent"}>
+                    {this.renderMinedRulePad()}
+                </div>
             </div>
         )
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.message === reduxStoreMessages.update_mined_rules_msg) {
-
-            // todo rank mined rules based on the DOI: customQueries, searchTerms, visitedElements, and visited Files
-            //   how should we rank them??
-
-
             // calculate the max and min number of attributes in mined rules
             let minAttr = Infinity;
             let maxAttr = -1 * Infinity;
@@ -109,7 +93,6 @@ class MinedRulesComponent extends Component {
                 .then(processedMinedRules => {
                     this.setState({
                         minedRules: processedMinedRules,
-                        displayedMinedRules: processedMinedRules,
                         loading: false,
                         minComplexity: minAttr,
                         maxComplexity: maxAttr,
@@ -117,13 +100,17 @@ class MinedRulesComponent extends Component {
                         maxFiles: maxFiles
                     })
                 })
-        }
-        else if (nextProps.message === reduxStoreMessages.update_doi_information_msg) {
+
+        } else if (nextProps.message === reduxStoreMessages.update_doi_information_msg) {
             this.setState({
                 visitedFiles: nextProps.visitedFiles,
                 searchHistory: nextProps.searchHistory,
-                visitedElements: nextProps.visitedElements
-            })
+                visitedElements: nextProps.visitedElements,
+
+                loading: true,
+                doiLoading: false
+            }, () => this.doMineRules())
+
         } else if (nextProps.message === reduxStoreMessages.save_feature_selection_msg) {
             let mappedCustomFeatures = nextProps.customFeatures.map(d => {
                 return {...d, isIncluded: true}
@@ -134,90 +121,84 @@ class MinedRulesComponent extends Component {
         }
     }
 
+    /**
+     * render the initial views
+     * @return {null|*}
+     */
     renderDefaultView() {
-        if (this.state.showAdvancedSettings) return null;
+        if (this.state.minedRules.length > 0)
+            return (
+                <div>
+                    <Button onClick={() => this.doRequestMineRules()}>Search Again</Button>
+                </div>
+            );
         return (
             <div>
-                <Button onClick={()=>{}}>Find Design Rules In Code</Button>
-                <Glyphicon glyph={"cog"} onClick={() => this.setState({showAdvancedSettings: true})}/>
-
+                <Button onClick={() => this.doRequestMineRules()}>Find Design Rules In Code</Button>
+                <Button onClick={() => this.ShowMinedRules()} style={{color: "red"}}>
+                    Show Mined Rules (Dangerous!)
+                </Button>
             </div>
         )
-
     }
 
-    renderAdvancedSettings() {
 
-        if (!this.state.showAdvancedSettings) return  null;
-
-        let visitedFilesStyle = this.state.showVisitedFiles ? {transform: "rotate(90deg)"} : {};
-        let searchHistoryStyle = this.state.showSearchHistory ? {transform: "rotate(90deg)"} : {};
-        let visitedElementsStyle = this.state.showVisitedElements ? {transform: "rotate(90deg)"} : {};
-        let customFeaturesStyle = this.state.showCustomFeatures ? {transform: "rotate(90deg)"} : {};
-
-        let copies = {
-            visitedElements: this.state.visitedElements.map(d => d),
-            searchHistory: this.state.searchHistory.map(d => d),
-            visitedFiles: this.state.visitedFiles.map(d => d)
-        };
-
-        return (
-            <div>
-                <div>
-                    Classes to be considered
-                    <Glyphicon glyph={"play"} style={visitedFilesStyle}
-                               onClick={() => this.setState({showVisitedFiles: !this.state.showVisitedFiles})}/>
-
-                    {this.state.showVisitedFiles ?
-                        this.state.visitedFiles.map((d, i) =>
-                            <div key={i}>{d.value}
-                                <Checkbox checked={d.isIncluded} onChange={()=>{
-                                    let visitedFiles = this.state.visitedFiles;
-                                    visitedFiles[i].isIncluded = !visitedFiles[i].isIncluded;
-                                    this.setState({visitedFiles})
-                                }}/>
-                            </div>
-                        ) : null}
+    /**
+     * render loading gif
+     * @return {null}
+     */
+    renderLoading() {
+        return this.state.loading ? (
+            <div style={{
+                padding: "20%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                margin: "0 -5%",
+                overflow: "hidden"
+            }}>
+                <div>Mining Design Rules</div>
+                <div style={{
+                    padding: "20%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: "0 -5%",
+                    overflow: "hidden"
+                }}>
+                    <div className="dot-elastic"/>
                 </div>
-                <div>
-                    Search History to be considered
-                    <Glyphicon glyph={"play"} style={searchHistoryStyle}
-                               onClick={() => this.setState({showSearchHistory: !this.state.showSearchHistory})}/>
-
-                    {this.state.showSearchHistory ?
-                        this.state.searchHistory.map((d, i) =>
-                            <div key={i}>{d.value}
-                                <Checkbox checked={d.isIncluded}/>
-                            </div>
-                        ) : null}
-                </div>
-                <div>
-                    Code Elements to be considered
-                    <Glyphicon glyph={"play"} style={visitedElementsStyle}
-                               onClick={() => this.setState({showVisitedElements: !this.state.showVisitedElements})}/>
-
-                    {this.state.showVisitedElements ?
-                        this.state.visitedElements.map((d, i) =>
-                            <div key={i}>{d.name}
-                                <Checkbox checked={d.isIncluded}/>
-                            </div>
-                        ) : null}
-                </div>
-                <div>
-                    Selected Features
-                    <Glyphicon glyph={"play"} style={customFeaturesStyle}
-                               onClick={() => this.setState({showCustomFeatures: !this.state.showCustomFeatures})}/>
-                    {this.state.showCustomFeatures ?
-                        this.state.customFeatures.map((d, i) =>
-                            <div key={i}>{d.featureDescription}
-                                <Checkbox checked={d.isIncluded}/>
-                            </div>
-                        ) : null}
-                </div>
-                <Button onClick={() => this.setState({showAdvancedSettings: false})}>Save</Button>
-                <Button onClick={() => this.setState({...copies, showAdvancedSettings: false})}>Cancel</Button>
             </div>
-        )
+        ) : null;
+    }
+
+    /**
+     * render loading gif for loading DOI information
+     * @return {null}
+     */
+    renderDoiLoading() {
+        return this.state.doiLoading ? (
+            <div style={{
+                padding: "20%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                margin: "0 -5%",
+                overflow: "hidden"
+            }}>
+                <div>Fetching DOI Information</div>
+                <div style={{
+                    padding: "20%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: "0 -5%",
+                    overflow: "hidden"
+                }}>
+                    <div className="dot-elastic"/>
+                </div>
+            </div>
+        ) : null;
     }
 
     /**
@@ -225,11 +206,6 @@ class MinedRulesComponent extends Component {
      * @return {*}
      */
     renderButtonsAndSliders() {
-        // create marks for fpMaxSupport slider
-        let marksHundred = {};
-        for (let i = 10; i <= 100; i += 10)
-            marksHundred[i] = i;
-
         // calculate the max and min number of attributes in mined rules
         let minNumberOfAttributes = Infinity;
         let maxNumberOfAttributes = -1 * Infinity;
@@ -264,177 +240,96 @@ class MinedRulesComponent extends Component {
         }
         marksFiles[maxNumberOfFiles] = maxNumberOfFiles;
 
+        if (this.state.minedRules.length === 0) return null;
+
         return (
             <div>
-                <div>
-                    <Row className="show-grid" style={{padding: "20px 0", margin: "0"}}>
-                        <ButtonGroup>
-                            <Button onClick={() => this.setState({algorithm: "FP_MAX"})}
-                                    active={this.state.algorithm === "FP_MAX"}>FP_MAX</Button>
-                            <Button onClick={() => this.setState({algorithm: "NONE"})}
-                                    active={this.state.algorithm === "NONE"}>View Existing Mined Rules</Button>
-                        </ButtonGroup>
+                <div style={{paddingTop: "25px"}}>
+                    <Row className="show-grid">
+                        <Col xsHidden md={2}>
+                            Complexity
+                        </Col>
+                        <Col xs={5} md={5}>
+                            <Slider.Range
+                                step={1}
+                                defaultValue={[minNumberOfAttributes, maxNumberOfAttributes]}
+                                onAfterChange={(value) => this.setState({
+                                    minComplexity: value[0],
+                                    maxComplexity: value[1]
+                                })}
+                                min={minNumberOfAttributes}
+                                max={maxNumberOfAttributes}
+                                marks={marksComplexity}
+                                handle={(props) => {
+                                    // copied from rc-slider website
+                                    const {value, dragging, index, ...restProps} = props;
+                                    return (
+                                        <Tooltip
+                                            prefixCls="rc-slider-tooltip"
+                                            overlay={value}
+                                            visible={dragging}
+                                            placement="top"
+                                            key={index}
+                                        >
+                                            <Slider.Handle value={value} {...restProps} />
+                                        </Tooltip>
+                                    );
+                                }}
+                            />
+                        </Col>
+                        <Col xs={6} md={5}>
+                            Min: {this.state.minComplexity}, max: {this.state.maxComplexity}
+                        </Col>
                     </Row>
-                    {this.state.algorithm === "FP_MAX" ? (
-                        <Row className="show-grid">
-                            <Col xsHidden md={2}>
-                                FP_Max Support
-                            </Col>
-                            <Col xs={5} md={5}>
-                                <Slider
-                                    defaultValue={60}
-                                    min={10}
-                                    max={100}
-                                    marks={marksHundred}
-                                    included={false}
-                                    onChange={(value) => this.setState({fpMaxSupport: value})}
-                                    handle={(props) => {
-                                        // copied from rc-slider website
-                                        const {value, dragging, index, ...restProps} = props;
-                                        return (
-                                            <Tooltip
-                                                prefixCls="rc-slider-tooltip"
-                                                overlay={value}
-                                                visible={dragging}
-                                                placement="top"
-                                                key={index}
-                                            >
-                                                <Slider.Handle value={value} {...restProps} />
-                                            </Tooltip>
-                                        );
-                                    }}
-                                />
-                            </Col>
-                            <Col xs={1} md={1}>
-                                {this.state.fpMaxSupport}%
-                            </Col>
-                            <Col xs={6} md={4}>
-                                <div style={{float: "right"}}>
-                                    <Button onClick={() => this.doMineRules()} style={{padding: "0 5px"}}>
-                                        Mine Rules - FPMax
-                                    </Button>
-                                </div>
-                            </Col>
-                        </Row>
-                    ) : (
-                        <Button onClick={() => this.ShowMinedRules()} style={{padding: "0 5px", color: "red"}}>
-                            Show Mined Rules (Dangerous!)
-                        </Button>
-                    )}
-
-
                 </div>
-
-                {this.state.minedRules.length > 0 ? (
-                    <Fragment>
-                        <div style={{paddingTop: "25px"}}>
-                            <Row className="show-grid">
-                                <Col xsHidden md={2}>
-                                    Complexity
-                                </Col>
-                                <Col xs={5} md={5}>
-                                    <Slider.Range
-                                        step={1}
-                                        defaultValue={[minNumberOfAttributes, maxNumberOfAttributes]}
-                                        onAfterChange={(value) => this.setState({
-                                            minComplexity: value[0],
-                                            maxComplexity: value[1]
-                                        })}
-                                        min={minNumberOfAttributes}
-                                        max={maxNumberOfAttributes}
-                                        marks={marksComplexity}
-                                        handle={(props) => {
-                                            // copied from rc-slider website
-                                            const {value, dragging, index, ...restProps} = props;
-                                            return (
-                                                <Tooltip
-                                                    prefixCls="rc-slider-tooltip"
-                                                    overlay={value}
-                                                    visible={dragging}
-                                                    placement="top"
-                                                    key={index}
-                                                >
-                                                    <Slider.Handle value={value} {...restProps} />
-                                                </Tooltip>
-                                            );
-                                        }}
-                                    />
-                                </Col>
-                                <Col xs={6} md={5}>
-                                    Min: {this.state.minComplexity}, max: {this.state.maxComplexity}
-                                </Col>
-                            </Row>
-                        </div>
-                        <div style={{paddingTop: "25px"}}>
-                            <Row className="show-grid">
-                                <Col xsHidden md={2}>
-                                    Number of Files
-                                </Col>
-                                <Col xs={5} md={5}>
-                                    <Slider.Range
-                                        step={1}
-                                        defaultValue={[minNumberOfFiles, maxNumberOfFiles]}
-                                        onAfterChange={(value) => this.setState({
-                                            minFiles: value[0],
-                                            maxFiles: value[1]
-                                        })}
-                                        min={minNumberOfFiles}
-                                        max={maxNumberOfFiles}
-                                        marks={marksFiles}
-                                        handle={(props) => {
-                                            // copied from rc-slider website
-                                            const {value, dragging, index, ...restProps} = props;
-                                            return (
-                                                <Tooltip
-                                                    prefixCls="rc-slider-tooltip"
-                                                    overlay={value}
-                                                    visible={dragging}
-                                                    placement="top"
-                                                    key={index}
-                                                >
-                                                    <Slider.Handle value={value} {...restProps} />
-                                                </Tooltip>
-                                            );
-                                        }}
-                                    />
-                                </Col>
-                                <Col xs={6} md={5}>
-                                    Min: {this.state.minFiles}, max: {this.state.maxFiles}
-                                </Col>
-                            </Row>
-                        </div>
-                    </Fragment>
-                ) : null}
+                <div style={{paddingTop: "25px"}}>
+                    <Row className="show-grid">
+                        <Col xsHidden md={2}>
+                            Number of Files
+                        </Col>
+                        <Col xs={5} md={5}>
+                            <Slider.Range
+                                step={1}
+                                defaultValue={[minNumberOfFiles, maxNumberOfFiles]}
+                                onAfterChange={(value) => this.setState({
+                                    minFiles: value[0],
+                                    maxFiles: value[1]
+                                })}
+                                min={minNumberOfFiles}
+                                max={maxNumberOfFiles}
+                                marks={marksFiles}
+                                handle={(props) => {
+                                    // copied from rc-slider website
+                                    const {value, dragging, index, ...restProps} = props;
+                                    return (
+                                        <Tooltip
+                                            prefixCls="rc-slider-tooltip"
+                                            overlay={value}
+                                            visible={dragging}
+                                            placement="top"
+                                            key={index}
+                                        >
+                                            <Slider.Handle value={value} {...restProps} />
+                                        </Tooltip>
+                                    );
+                                }}
+                            />
+                        </Col>
+                        <Col xs={6} md={5}>
+                            Min: {this.state.minFiles}, max: {this.state.maxFiles}
+                        </Col>
+                    </Row>
+                </div>
             </div>
         )
     }
-
-    /**
-     * render loading gif
-     * @return {null}
-     */
-    renderLoading() {
-        return this.state.loading ? (
-            <div style={{
-                padding: "20%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                margin: "0 -5%",
-                overflow: "hidden"
-            }}>
-                <div className="dot-elastic"/>
-            </div>
-        ) : null;
-    }
-
 
     /**
      * render each rule through either RulePad or simple rendering
      * @return {*}
      */
     renderMinedRulePad() {
-        return this.state.displayedMinedRules.map((group, i) => {
+        return this.state.minedRules.map((group, i) => {
                 if (group["files"].length < this.state.minFiles || group["files"].length > this.state.maxFiles)
                     return null;
 
@@ -483,7 +378,8 @@ class MinedRulesComponent extends Component {
                                     </Col>
                                     <Col md={5}>
                                         <h5><strong>
-                                            Rule with {rule["displayableAttr"].length} out of {rule["attributes"].length} Attributes
+                                            Rule with {rule["displayableAttr"].length} out
+                                            of {rule["attributes"].length} Attributes
                                         </strong></h5>
                                         {rule["grammar"]}
 
@@ -491,7 +387,6 @@ class MinedRulesComponent extends Component {
                                             {group["files"].length > 10 ? "10 out of " : ""}
                                             {group["files"].length} Matches in Code
                                         </strong></h5>
-
                                         {group["files"].filter((d, j) => j < 10).map((fileName, i) => (
                                             <div key={i} className={"ruleLink"}
                                                  onClick={() => {
@@ -517,11 +412,15 @@ class MinedRulesComponent extends Component {
     /**
      * send command to mine rules
      */
+    doRequestMineRules() {
+        this.setState({minedRules: [], doiLoading: true});
+        Utilities.sendToServer(this.props.ws, webSocketSendMessage.send_doi_information_msg, "")
+    }
+
     doMineRules() {
         let metaData = {};
-        this.setState({minedRules: [], displayedMinedRules: [], loading: true});
         mineRulesFromXmlFiles(this.props.xmlFiles, metaData, this.props.ws,
-            this.state.fpMaxSupport, this.props.customFeatures);
+            this.fpMaxSupport, []);
         this.props.onUpdateMetaData(metaData);
     }
 
@@ -529,7 +428,7 @@ class MinedRulesComponent extends Component {
      * request for reading the existing data from file
      */
     ShowMinedRules() {
-        this.setState({minedRules: [], displayedMinedRules: [], loading: true});
+        this.setState({minedRules: [], loading: true});
         Utilities.sendToServer(this.props.ws, webSocketSendMessage.dangerous_read_mined_rules_msg);
     }
 
@@ -630,6 +529,24 @@ class MinedRulesComponent extends Component {
 }
 
 function mapStateToProps(state) {
+
+    let search = Object.keys(state.doiInformation.searchHistory)
+        .map(key => state.doiInformation.searchHistory[key])
+        .flat();
+    let visited = state.doiInformation.visitedElements
+        .map(d => {
+            return d.xpathQueries.map(dd => {
+                return {elementText: dd.elementText.trim(), xpath: dd.xpath}
+            })
+        })
+        .flat();
+    let files = Object.keys(state.doiInformation.visitedFiles).map(d => {
+        return {
+            fileName: d.substring(d.lastIndexOf("/")+1, d.length),
+            count: state.doiInformation.visitedFiles[d]
+        }
+    });
+
     return {
         message: state.message,
         ws: state.ws,
@@ -638,9 +555,9 @@ function mapStateToProps(state) {
         minedRules: state.minedRulesState.minedRules,
         projectPath: state.projectPath,
         customFeatures: state.doiInformation.customFeatures,
-        visitedFiles: state.doiInformation.visitedFiles,
-        searchHistory: state.doiInformation.searchHistory,
-        visitedElements: state.doiInformation.visitedElements
+        visitedFiles: files,
+        searchHistory: search,
+        visitedElements: visited
     }
 }
 
@@ -652,4 +569,4 @@ function mapDispatchToProps(dispatch) {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(MinedRulesComponent);
+export default connect(mapStateToProps, mapDispatchToProps)(LearnDesignRulesComponent);

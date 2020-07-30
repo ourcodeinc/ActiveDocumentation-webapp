@@ -8,9 +8,10 @@
  * @param mainXml
  * @param startOffset index
  * @param endOffset index
- * @return {{xpath: string, selectedText: string, idMap, displayTextArray: Array}}
+ * @param forCaretLocation true if it is used for DOI information
+ * return null or {{xpath: string, selectedText: string, idMap, displayTextArray: Array}}
  */
-export const getXpathForFeature = (mainXml, startOffset, endOffset) => {
+export const getXpathForFeature = (mainXml, startOffset, endOffset, forCaretLocation = false) => {
     let xml = mainXml.slice(0); // copy of xml data
 
     let parser = new DOMParser();
@@ -51,7 +52,17 @@ export const getXpathForFeature = (mainXml, startOffset, endOffset) => {
     };
 
     traverseNodes(xmlDoc);
-    let idMapDisplayTextArray = lowestCommonAncestor(startNode, endNode);
+
+    let idMapDisplayTextArray = {};
+    try {
+        idMapDisplayTextArray = (startOffset === endOffset && forCaretLocation) ?
+            lowestCommonAncestor(endNode, startNode) :
+            lowestCommonAncestor(startNode, endNode);
+    }
+    catch (e) {
+        console.log(`error in finding LCA for startOffset=${startOffset} and endOffset=${endOffset}`);
+        return null;
+    }
     let xpath = computeXPath(idMapDisplayTextArray.idMap);
 
     return {
