@@ -8,9 +8,9 @@
 creates the attributes and analyzes the XML files.
  -> Requirements: xml files that are to be analyzed must be in same directory
  -> Output:
-    (A.) A series of databases with the name "AE_crowdCode_subClassOf*.txt"
+    (A.) A series of databases with the name "AttributeEncoding_subClassOf_*.txt"
     - Each database contains a row of numbers with each row representing a different class.
-    (B.) A file called "attributeMETAdata_crowdCode.txt"
+    (B.) A file called "attribute_META_data.txt"
     - File contains all the attribute keys, descriptions, and queries that were found
          in all provided xml files.
     (C.) A file called "fileLocations.txt"
@@ -38,7 +38,7 @@ by the FPGrowth algorithm. It does the following steps:
       repeatedly, we gather up all the parent information in one step, so that
       such attributes can be more easily found.
 (4.) Outputs a file with all the metadata.
-    - File that is output has the name _attributeMETAdata_crowdCode.txt.
+    - File that is output has the name _attribute_META_data.txt.
     - Every two lines in the file are paired. The first line of the pair is the
       attribute key followed on the same line by a short written description of
       the attribute. The second line of the pair is the XML query that corresponds
@@ -46,7 +46,7 @@ by the FPGrowth algorithm. It does the following steps:
 (5.) Outputs "fileLocations.txt"
     - See output bullet under miningRules.js for more information.
 (6.) Outputs the databases.
-    - Each database has a name in the format "AE_crowdCode_subClassOf*.txt"
+    - Each database has a name in the format "AttributeEncoding_subClassOf_*.txt"
     - Each parent-child grouping has its own database. Each line in the database
       represents a different class in the grouping.
     - Each class in each grouping is search for attributes from the
@@ -73,10 +73,12 @@ in this process.
 *
 */
 
-import {addChildren, addParentChildRelations, findParentChildRelations,
-        makePairsList, findCustomRelations, addCustomRelations,
-        findParentChildRelationsExtra,
-        findVisitedElements, addVisitedElements} from "./sci_class";
+import {
+    addChildren, addParentChildRelations, findParentChildRelations,
+    makePairsList, findCustomRelations, addCustomRelations,
+    findParentChildRelationsExtra,
+    findVisitedElements, addVisitedElements
+} from "./sci_class";
 
 import et from 'elementtree';
 import Utilities from "../core/utilities";
@@ -135,13 +137,12 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, cust
     // in the directory and find the names of all the parentClasses.
 
     // Path to directory with xml files we wish to iterate through
-    // Currenlty, the directory is the directory main.js is running in
-    for (let i=0; i< xmlFiles.length; i++) {
+    // Currently, the directory is the directory main.js is running in
+    for (let i = 0; i < xmlFiles.length; i++) {
         try {
             classRoot = (et.parse(xmlFiles[i]["xml"]));
             makePairsList(classRoot, childParent, classLocations);
-        }
-        catch (e) {
+        } catch (e) {
             console.log("elementTree failed to parse: ", xmlFiles[i]["xml"]);
             console.error(e);
             return;
@@ -169,7 +170,7 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, cust
     let parentInfo = new Map();
     // We already have all the fileNames, so all we have to do now go through
     // each file and pull out the parent attributes
-    for (let i = 0; i < xmlFiles.length; i++){
+    for (let i = 0; i < xmlFiles.length; i++) {
 
         // let data = fs.readFileSync(fileList[i]).toString();
         classRoot = (et.parse(xmlFiles[i]["xml"]));
@@ -177,32 +178,30 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, cust
         // We're going to pull out all the parent info
         let cls = classRoot.findall(".//class");
 
-        for(let j = 0; j < cls.length; j++){
+        for (let j = 0; j < cls.length; j++) {
 
             let ptName = cls[j].find('name');
             let parentName;
 
-            if(ptName !== null && ptName === ''){
+            if (ptName !== null && ptName === '') {
                 parentName = (ptName.find('name')).text;
-            }
-            else if(ptName !== null){
+            } else if (ptName !== null) {
                 parentName = ptName.text;
             }
 
             // If class name is not found, then we know it was defined and
             // not simply imported into the code
-            if(parentName != null){
+            if (parentName != null) {
 
-                if(childParent.get(parentName) !== undefined){
-                    //console.log(parentName);
+                if (childParent.get(parentName) !== undefined) {
                     let functionList = [];
                     // Get all the functions in this class
                     let fncs = cls[j].findall('block/function');
-                    for(let k = 0; k < fncs.length; k++){
+                    for (let k = 0; k < fncs.length; k++) {
                         // Get the function name
                         let fncName = (fncs[k].find('name')).text;
                         // Make sure we found a valid function name
-                        if(fncName !== ''){
+                        if (fncName !== '') {
                             (functionList).push(fncName);
                         }
                     }
@@ -210,19 +209,20 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, cust
                     // Sort all the functions for easy comparison
                     (functionList).sort();
 
-
-                    parentInfo.set(parentName, {name:parentName,
-                        totalChildren:(childParent.get(parentName)).length,
-                        children:childParent.get(parentName),
+                    parentInfo.set(parentName, {
+                        name: parentName,
+                        totalChildren: (childParent.get(parentName)).length,
+                        children: childParent.get(parentName),
                         pathToFile: xmlFiles[i]["filePath"],
-                        functions: functionList});
+                        functions: functionList
+                    });
                 }
             }
         }
     }
 
     // Now we have all the information we need to generate the attributes
-    let id_start = {id : 0};
+    let id_start = {id: 0};
     for (const group of groupList.keys()) {
 
         allAttributes = new Map(allAttributes,
@@ -248,7 +248,7 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, cust
 
 
     let dataMap = new Map();
-    for (const group of groupList.keys()){
+    for (const group of groupList.keys()) {
         let grouping = groupList.get(group);
         addParentChildRelations(allAttributes, grouping, analysisFileName,
             classLocations, parentInfo, fileAnalysisMap, dataMap, xmlFiles,
@@ -257,12 +257,12 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, cust
 
     // Now look for attributes from customRelations, visitedElements, and search
     // terms
-    for (const group of groupList.keys()){
-      var grouping = groupList.get(group);
-      addCustomRelations(allAttributes, customQueries, grouping, analysisFileName,
-                         classLocations, parentInfo, /*fileAnalysisMap,*/ dataMap, xmlFiles);
-      addVisitedElements(allAttributes, visitedElements, grouping, analysisFileName,
-                         classLocations, parentInfo, /*fileAnalysisMap,*/ dataMap, xmlFiles);
+    for (const group of groupList.keys()) {
+        let grouping = groupList.get(group);
+        addCustomRelations(allAttributes, customQueries, grouping, analysisFileName,
+            classLocations, parentInfo, /*fileAnalysisMap,*/ dataMap, xmlFiles);
+        addVisitedElements(allAttributes, visitedElements, grouping, analysisFileName,
+            classLocations, parentInfo, /*fileAnalysisMap,*/ dataMap, xmlFiles);
     }
 
     /* Output databases and analyze attributes using FP_MAX*/
@@ -279,7 +279,7 @@ const outputMetaData = (allAttributes, queryMap, metaData, ws) => {
 
     let data = "";
 
-    for(let x = 0; x < entries.length; x++){
+    for (let x = 0; x < entries.length; x++) {
         // Just while debugging is happening; remove after last queries
         // developed
 
@@ -287,22 +287,26 @@ const outputMetaData = (allAttributes, queryMap, metaData, ws) => {
         metaData[entries[x][1]] = {attr: entries[x][0], query: queries[x][0]};
     }
 
-    Utilities.sendToServer(ws, webSocketSendMessage.learn_rules_metadata_msg, {fileName: "attribute_META_data.txt", content: data})
+    Utilities.sendToServer(ws, webSocketSendMessage.learn_rules_metadata_msg, {
+        fileName: "attribute_META_data.txt",
+        content: data
+    })
 
 };
 
 const outputFileAnalysisData = (fileAnalysisMap, ws) => {
 
     let entries = Array.from(fileAnalysisMap.entries());
-    //console.log(fileAnalysisMap);
-
     let stream = "";
 
-    for(let x = 0; x < entries.length; x++){
+    for (let x = 0; x < entries.length; x++) {
         stream += entries[x][0] + "\n" + entries[x][1] + "\n";
     }
 
-    Utilities.sendToServer(ws, webSocketSendMessage.learn_rules_file_location_msg, {fileName: "fileLocations.txt", content: stream})
+    Utilities.sendToServer(ws, webSocketSendMessage.learn_rules_file_location_msg, {
+        fileName: "fileLocations.txt",
+        content: stream
+    })
 
 };
 
@@ -313,7 +317,8 @@ const outputDataBases = (dataMap, ws) => {
     // ["nextFile.txt", "some other data"]]
     let databases = Array.from(dataMap.entries());
     let finalFormat = formatDatabases(databases);
-    // websocket seems to fail in sending large messages. Instead of sending the database as a whole, we send messages in patches.
+    // websocket seems to fail in sending large messages.
+    // Instead of sending the database as a whole, we send messages in patches.
     finalFormat.forEach((d => {
         Utilities.sendToServer(ws, webSocketSendMessage.learn_rules_databases_msg, [d])
     }))
@@ -322,32 +327,32 @@ const outputDataBases = (dataMap, ws) => {
 
 const formatDatabases = (databases) => {
 
-  // Write new contents
-  var finalFormat = [];
-  for (var x = 0; x < databases.length; x++){
+    // Write new contents
+    let finalFormat = [];
+    for (let x = 0; x < databases.length; x++) {
 
-    var table = [];
-    // nameFile.txt
-    var fileN = databases[x][0];
-    table.push(fileN);
+        let table = [];
+        // nameFile.txt
+        let fileN = databases[x][0];
+        table.push(fileN);
 
-    var dataWritten = "";
-    for(var y = 0; y < databases[x].length; y++){
-      var data = databases[x][y];
+        let dataWritten = "";
+        for (let y = 0; y < databases[x].length; y++) {
+            let data = databases[x][y];
 
-      if(data !== fileN){
-        for(const arr of data){
-          for(const num of arr){
-            dataWritten = dataWritten + num + " ";
-          }
-          dataWritten += "\n";
+            if (data !== fileN) {
+                for (const arr of data) {
+                    for (const num of arr) {
+                        dataWritten = dataWritten + num + " ";
+                    }
+                    dataWritten += "\n";
+                }
+                table.push(dataWritten);
+            }
         }
-        table.push(dataWritten);
-      }
+        finalFormat.push(table);
     }
-    finalFormat.push(table);
-  }
-  return finalFormat;
+    return finalFormat;
 };
 
 

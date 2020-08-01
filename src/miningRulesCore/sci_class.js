@@ -3,56 +3,54 @@
  * Edited by Sahar Mehrpour
  * Nov 2019
  */
-/* eslint-disable */
 
-import {addClassAnnotations, addClsFunctions, addConstructors, addImplementations,
+import {
+    addClassAnnotations, addClsFunctions, addConstructors, addImplementations,
     addMemberVars, findClassAnnotations, findClsFunctions, findConstructors,
-    findImplements, findMemberVars, addParentChildRelationsExtra} from "./sci_functions";
+    findImplements, findMemberVars, addParentChildRelationsExtra
+} from "./sci_functions";
 
-import et from 'elementtree';
+import et from "elementtree";
 
 export const makePairsList = (classRoot, childParent, classLocations) => {
 
     let childName = "DOES NOT EXIST";
     let parentName = "DOES NOT EXIST";
 
-    let cls = classRoot.findall('.//class');
+    let cls = classRoot.findall(".//class");
 
-    for(let i = 0 ; i < cls.length; i++){
+    for (let i = 0; i < cls.length; i++) {
 
         // Figure out what the child class's name is
-        let chName = cls[i].find('name');
-        //console.log(chName);
+        let chName = cls[i].find("name");
         if (chName == null) {
             continue;
         }
 
         if (chName.text == null) {
-            childName = (chName.find('name')).text
-        }
-        else{
+            childName = (chName.find("name")).text
+        } else {
             childName = chName.text;
 
-            if (childName != '') {
-                classLocations[childName] = classRoot.find('[@filename]').get('filename');
+            if (childName !== "") {
+                classLocations[childName] = classRoot.find("[@filename]")
+                    .get("filename");
             }
-
         }
         // If we can't find a name, then we go on to the next class in
         // the srcML file
-        if (childName == '') {
+        if (childName === "") {
             continue;
         }
 
         let ext = cls[i].find(".//super/extends");
         if (ext != null) {
 
-            let ptName = ext.find('name');
+            let ptName = ext.find("name");
 
-            if (ptName.text == '') {
-                parentName = (ptName.find('name')).text;
-            }
-            else{
+            if (ptName.text === "") {
+                parentName = (ptName.find("name")).text;
+            } else {
                 parentName = ptName.text;
             }
 
@@ -62,36 +60,30 @@ export const makePairsList = (classRoot, childParent, classLocations) => {
                 continue;
             }
 
-            if (!childParent.has(parentName)){
+            if (!childParent.has(parentName)) {
                 childParent.set(parentName, [childName]);
-            }
-            else{
+            } else {
                 childParent.get(parentName).push(childName);
             }
         }
-
     }
-
 };
 
 
 export const addChildren = (parent, childParent, groupID, currDepth, groupList) => {
 
-    if (currDepth <= 0 || !childParent.has(parent)){
+    if (currDepth <= 0 || !childParent.has(parent)) {
         return parent;
     }
 
-    for (let i = 0; i < childParent.get(parent).length; i++){
-
-        let nextChild = addChildren((childParent.get(parent))[i], childParent, groupID, currDepth - 1, groupList);
-
-        if (!groupList.has(groupID)){
+    for (let i = 0; i < childParent.get(parent).length; i++) {
+        let nextChild = addChildren((childParent.get(parent))[i], childParent,
+            groupID, currDepth - 1, groupList);
+        if (!groupList.has(groupID)) {
             groupList.set(groupID, [nextChild]);
-        }
-        else{
+        } else {
             groupList.get(groupID).push(nextChild);
         }
-
     }
 
     return parent;
@@ -99,128 +91,125 @@ export const addChildren = (parent, childParent, groupID, currDepth, groupList) 
 
 // Note: the xPath queries provided in customQueries double as the
 // attribute description and command
-export const findCustomRelations = (id_start, customQueries, attributeList, queryMap, queryMap_special) => {
+export const findCustomRelations = (id_start, customQueries, attributeList,
+                                    queryMap, queryMap_special) => {
 
-  for (var i = 0; i < customQueries.length; i++){
+    for (let i = 0; i < customQueries.length; i++) {
 
-    if(!attributeList.has(customQueries[i].featureDescription)){
+        if (!attributeList.has(customQueries[i].featureDescription)) {
 
-      attributeList.set(customQueries[i].featureDescription, id_start.id);
-      queryMap.set(customQueries[i].featureXpath, id_start.id);
-      queryMap_special.set(customQueries[i].featureXpath, id_start.id);
+            attributeList.set(customQueries[i].featureDescription, id_start.id);
+            queryMap.set(customQueries[i].featureXpath, id_start.id);
+            queryMap_special.set(customQueries[i].featureXpath, id_start.id);
 
-      id_start.id += 1;
+            id_start.id += 1;
+        }
     }
-  }
-}
+};
 
 
 export const addCustomRelations = (allAttributes, customQueries, classGroupings,
-                                            analysisFileName, classLocations,
-                                            parentInfo, /*fileAnalysisMap,*/ dataMap, xmlFiles) => {
+                                   analysisFileName, classLocations,
+                                   parentInfo, /*fileAnalysisMap,*/ dataMap, xmlFiles) => {
 
-  var parentClass = classGroupings[classGroupings.length-1];
-  var classTree;
+    let parentClass = classGroupings[classGroupings.length - 1];
+    let classTree;
 
-  // Used to keep track of the children classes about which we've already
-  // collected data
-  var classesVisited = [];
+    // Used to keep track of the children classes about which we've already
+    // collected data
+    let classesVisited = [];
 
-  // Used to keep track of all the files we have accessed
-  let listOfFiles = [];
+    // Used to keep track of all the files we have accessed
+    let listOfFiles = [];
+    let index = 0;
 
-  var index = 0;
+    for (let i = 0; i < classGroupings.length; i++) {
 
-  for(var i = 0; i < classGroupings.length; i++){
+        let f = classLocations[classGroupings[i]];
 
-    var f = classLocations[classGroupings[i]];
+        if (f !== undefined) {
+            f = f.split("\\")[(f.split("\\")).length - 1];
+            f = f.split(".")[0] + ".java";
 
-    if(f != undefined){
-      f = f.split("\\")[(f.split("\\")).length - 1]
-      f = f.split(".")[0] + ".java";
+            // let data = fs.readFileSync(f).toString();
+            // classTree = et.parse(data);
 
-      // var data = fs.readFileSync(f).toString();
-      // classTree = et.parse(data);
-
-        let filtered = xmlFiles.filter(d => d["filePath"].endsWith(f));
-        if (filtered.length > 0)
-            classTree = et.parse(filtered[0]["xml"]);
-        if (filtered.length === 0) {
-            console.log("file not found: ", f);
+            let filtered = xmlFiles.filter(d => d["filePath"].endsWith(f));
+            if (filtered.length > 0)
+                classTree = et.parse(filtered[0]["xml"]);
+            if (filtered.length === 0) {
+                console.log("file not found: ", f);
+                continue;
+            }
+        } else {
             continue;
         }
 
-    }
-    else{
-      continue;
-    }
+        let subCL = classTree.findall(".//class");
+        let childName;
 
+        for (let j = 0; j < subCL.length; j++) {
 
-    var subCL = classTree.findall('.//class');
+            // Figure out what the child class's name is
+            let chName = subCL[j].find("name");
 
+            if (chName == null) {
+                continue;
+            }
 
-    var childName;
-    for(var j = 0; j < subCL.length; j++){
+            if (chName.text == null) {
+                childName = (chName.find("name")).text
+            } else {
+                childName = chName.text;
+            }
+            // If we can't find a name, then we go on to the next class in
+            // the srcML file
+            if (childName === "") {
+                continue;
+            }
 
-      // Figure out what the child class's name is
-      var chName = subCL[j].find('name');
+            // Each xml file might contain multiple classes, so just because a class
+            // is in the file, doesn't mean that it is the one that we want, so
+            // we need to check that the filename is in classGroupings
+            if (classGroupings.includes(childName) && !classesVisited.includes(childName)) {
+                classesVisited.push(childName);
 
-      if(chName == null){
-        continue;
-      }
+                // Get the list of attributes for this class
+                let fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
+                let entry = (dataMap.get(fileN));
 
-      if(chName.text == null){
-        childName = (chName.find('name')).text
-      }
-      else{
-        childName = chName.text;
-      }
-      // If we can't find a name, then we go on to the next class in
-      // the srcML file
-      if(childName == ''){
-        continue;
-      }
+                // Go through each of the customQueries. If the customQuery is present
+                // in this class, then add its attribute id to the list of attributes
+                // for the class
+                for (let k = 0; k < customQueries.length; k++) {
 
-      // Each xml file might contain multiple classes, so just because a class
-      // is in the file, doesn't mean that it is the one that we want, so
-      // we need to check that the filename is in classGroupings
-      if(classGroupings.includes(childName) && !classesVisited.includes(childName)){
-        classesVisited.push(childName);
+                    let query = subCL[j].findall(customQueries[k].featureXpath);
 
-        // Get the list of attributes for this class
-        let fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
-        var entry = (dataMap.get(fileN));
+                    // If we found this customQuery, then we add it to the list of
+                    // attribute for this class
+                    if (query != null && index < entry.length) {
 
-        // Go through each of the customQueries. If the customQuery is present
-        // in this class, then add its attribute id to the list of attributes
-        // for the class
-        for (var k = 0; k < customQueries.length; k++){
+                        if (allAttributes.has(customQueries[k].featureDescription) &&
+                            !entry[index].includes(allAttributes
+                                .get(customQueries[k].featureDescription))) {
 
-          let query = subCL[j].findall(customQueries[k].featureXpath);
+                            entry[index].push(allAttributes
+                                .get(customQueries[k].featureDescription));
+                            dataMap.set(fileN, entry);
+                            entry = dataMap.get(fileN);
 
-          // If we found this customQuery, then we add it to the list of
-          // attribute for this class
-          if(query != null && index < entry.length){
+                            if (!listOfFiles.includes(f)) {
+                                listOfFiles.push(f);
+                            }
 
-            if(allAttributes.has(customQueries[k].featureDescription) &&
-                 !entry[index].includes(allAttributes.get(customQueries[k].featureDescription))){
+                        }
+                    }
+                }
+                // Increment index into set of entries for this database
+                index++;
+            }
 
-                 entry[index].push(allAttributes.get(customQueries[k].featureDescription));
-                 dataMap.set(fileN, entry);
-                 entry = dataMap.get(fileN);
-
-                 if (!listOfFiles.includes(f)){
-                     listOfFiles.push(f);
-                 }
-
-               }
-             }
-          }
-          // Increment index into set of entries for this database
-          index++;
         }
-
-      }
     }
 
     // // Record that this file was used to contribute to this database
@@ -228,14 +217,14 @@ export const addCustomRelations = (allAttributes, customQueries, classGroupings,
     // let newStuff = listOfFiles.join("\n");
     //
     // fileAnalysisMap.set(fileN, newStuff);
-}
+};
 
 
 export const findParentChildRelations = (id_start, classGroupings,
                                          attributeList, classLocations,
                                          parentInfo, queryMap, xmlFiles) => {
 
-    let parentClass = classGroupings[classGroupings.length-1];
+    let parentClass = classGroupings[classGroupings.length - 1];
     let subCLfncs = [];
     let classTree;
     // Get all the children classes' info
@@ -245,11 +234,11 @@ export const findParentChildRelations = (id_start, classGroupings,
     // find a class that doesn't override a parent function we set that
     // element to False
 
-    for(let i = 0; i < classGroupings.length; i++){
+    for (let i = 0; i < classGroupings.length; i++) {
 
         let f = classLocations[classGroupings[i]];
 
-        if (f != undefined) {
+        if (f !== undefined) {
             f = f.split("\\")[(f.split("\\")).length - 1];
             f = f.split(".")[0] + ".java";
             let filtered = xmlFiles.filter(d => d["filePath"].endsWith(f));
@@ -263,45 +252,45 @@ export const findParentChildRelations = (id_start, classGroupings,
             continue;
         }
 
-        let subCL = classTree.findall('.//class');
+        let subCL = classTree.findall(".//class");
         let childName;
-        for(let j = 0; j < subCL.length; j++){
+        for (let j = 0; j < subCL.length; j++) {
             // Figure out what the child class's name is
-            let chName = subCL[j].find('name');
+            let chName = subCL[j].find("name");
 
             if (chName == null) {
                 continue;
             }
 
             if (chName.text == null) {
-                childName = (chName.find('name')).text
-            }
-            else{
+                childName = (chName.find("name")).text
+            } else {
                 childName = chName.text;
             }
             // If we can't find a name, then we go on to the next class in
             // the srcML file
-            if (childName == '') {
+            if (childName === "") {
                 continue;
             }
 
-            // Each xml file might contain multiple classes, so just because setInterval(function () {
+            // Each xml file might contain multiple classes, so just because
+            // setInterval(function () {
             // is in the file, doesn't mean that it is the one that we want, so
             // we need to check that the filename is in classGroupings
-            if(classGroupings.includes(childName)){
+            if (classGroupings.includes(childName)) {
 
-                if (parentInfo.get(parentClass) != undefined) {
+                if (parentInfo.get(parentClass) !== undefined) {
 
                     // This will contain a list of functions that are present in both
                     // the parent class and the child class.
                     let matchingFunctions;
-                    if (parentClass != childName) {
+                    if (parentClass !== childName) {
 
                         // First get a list of all the child functions
-                        let fncs = subCL[j].findall('block/function');
+                        let fncs = subCL[j].findall("block/function");
 
-                        for (let k = 0; k < fncs.length; k++){
-                            subCLfncs.push((fncs[k].find('name')).text);
+                        for (let k = 0; k < fncs.length; k++) {
+                            subCLfncs.push((fncs[k].find("name")).text);
                         }
 
                         subCLfncs.sort();
@@ -309,7 +298,8 @@ export const findParentChildRelations = (id_start, classGroupings,
                         // Then see what functions are in common between the two lists;
                         // If there are matching functions, then matchingFunctions will
                         // contain their names.
-                        matchingFunctions = subCLfncs.filter(element => (parentInfo.get(parentClass).functions).includes(element));
+                        matchingFunctions = subCLfncs.filter(element =>
+                            (parentInfo.get(parentClass).functions).includes(element));
 
                         subCLfncs.length = 0;
 
@@ -317,19 +307,19 @@ export const findParentChildRelations = (id_start, classGroupings,
                     // Come here and output attribute about parent functions matching
                     // Clear out matching functions here as well
                     if (matchingFunctions != null) {
-                        for (let m = 0; m < matchingFunctions.length; m++){
+                        for (let m = 0; m < matchingFunctions.length; m++) {
 
                             let name = "class overrides function of name \""
                                 + matchingFunctions[m]
                                 + "\" in parent class";
 
                             // Check if this attribute has been seen globally
-                            if(!attributeList.has(name)){
+                            if (!attributeList.has(name)) {
 
-                                let command = "//src:function[src:annotation/src:name/text()=\"Override\""
+                                let command = "//src:function[src:annotation/src:name/"
+                                    + "text()=\"Override\""
                                     + "and src:name/text()=\"" + matchingFunctions[m]
                                     + "\"]";
-                                //console.log(command);
 
                                 attributeList.set(name, id_start.id);
                                 queryMap.set(command, id_start.id);
@@ -368,11 +358,11 @@ export const findParentChildRelations = (id_start, classGroupings,
 
 
 export const addParentChildRelations = (allAttributes, classGroupings,
-                                            analysisFileName, classLocations,
-                                            parentInfo, fileAnalysisMap, dataMap,
-                                            xmlFiles, searchTerms) => {
+                                        analysisFileName, classLocations,
+                                        parentInfo, fileAnalysisMap, dataMap,
+                                        xmlFiles, searchTerms) => {
 
-    let parentClass = classGroupings[classGroupings.length-1];
+    let parentClass = classGroupings[classGroupings.length - 1];
     // This array is to keep track of what functions are overridden in
     // the child class; we assume they are overridden, but once we
     // find a class that doesn't override a parent function we set that
@@ -395,13 +385,13 @@ export const addParentChildRelations = (allAttributes, classGroupings,
 
     // Used to keep track of the children classes about which we've already
     // collected data
-    var classesVisited = [];
+    let classesVisited = [];
 
-    for(let i = 0; i < classGroupings.length; i++){
+    for (let i = 0; i < classGroupings.length; i++) {
 
         let f = classLocations[classGroupings[i]];
 
-        if (f != undefined) {
+        if (f !== undefined) {
             f = f.split("\\")[(f.split("\\")).length - 1];
             f = f.split(".")[0] + ".java";
             let filtered = xmlFiles.filter(d => d["filePath"].endsWith(f));
@@ -416,53 +406,51 @@ export const addParentChildRelations = (allAttributes, classGroupings,
         }
 
         let attributes = [];
-        let subCL = classTree.findall('.//class');
+        let subCL = classTree.findall(".//class");
         let childName;
 
         let removeDuplicateMethod = (elem, pos) => {
-            return attributes.indexOf(elem) == pos;
+            return attributes.indexOf(elem) === pos;
         };
 
-        for(let j = 0; j < subCL.length; j++){
+        for (let j = 0; j < subCL.length; j++) {
             // Figure out what the child class's name is
-            let chName = subCL[j].find('name');
+            let chName = subCL[j].find("name");
 
             if (chName == null) {
                 continue;
             }
 
             if (chName.text == null) {
-                childName = (chName.find('name')).text
-            }
-            else{
+                childName = (chName.find("name")).text
+            } else {
                 childName = chName.text;
             }
             // If we can't find a name, then we go on to the next class in
             // the srcML file
-            if (childName == '') {
+            if (childName === "") {
                 continue;
             }
 
-            // Each xml file might contain multiple classes, so just because setInterval(function () {
+            // Each xml file might contain multiple classes, so just because
+            // setInterval(function () {
             // is in the file, doesn't mean that it is the one that we want, so
             // we need to check that the filename is in classGroupings
-            if(classGroupings.includes(childName) && !classesVisited.includes(childName)){
+            if (classGroupings.includes(childName) && !classesVisited.includes(childName)) {
                 classesVisited.push(childName);
 
-                if (parentInfo.get(parentClass) != undefined) {
+                if (parentInfo.get(parentClass) !== undefined) {
 
                     // This will contain a list of functions that are present in both
                     // the parent class and the child class.
                     let matchingFunctions;
-                    if (parentClass != childName) {
+                    if (parentClass !== childName) {
 
                         // First get a list of all the child functions
-                        let fncs = subCL[j].findall('block/function');
+                        let fncs = subCL[j].findall("block/function");
 
-                        for (let k = 0; k < fncs.length; k++){
-
-                            subCLfncs.push((fncs[k].find('name')).text);
-
+                        for (let k = 0; k < fncs.length; k++) {
+                            subCLfncs.push((fncs[k].find("name")).text);
                         }
 
                         subCLfncs.sort();
@@ -470,7 +458,8 @@ export const addParentChildRelations = (allAttributes, classGroupings,
                         // Then see what functions are in common between the two lists;
                         // If there are matching functions, then matchingFunctions will
                         // contain their names.
-                        matchingFunctions = subCLfncs.filter(element => (parentInfo.get(parentClass).functions).includes(element));
+                        matchingFunctions = subCLfncs.filter(element =>
+                            (parentInfo.get(parentClass).functions).includes(element));
 
                         subCLfncs.length = 0;
 
@@ -478,14 +467,14 @@ export const addParentChildRelations = (allAttributes, classGroupings,
                     // Come here and output attribute about parent functions matching
                     // Clear out matching functions here as well
                     if (matchingFunctions != null) {
-                        for (let m = 0; m < matchingFunctions.length; m++){
+                        for (let m = 0; m < matchingFunctions.length; m++) {
 
                             let name = "class overrides function of name \""
                                 + matchingFunctions[m]
                                 + "\" in parent class";
 
                             // Check if this attribute has been seen globally
-                            if(!allAttributes.has(name)){
+                            if (!allAttributes.has(name)) {
                                 attributes.push(allAttributes.get(name));
                             }
                             name = "";
@@ -520,9 +509,8 @@ export const addParentChildRelations = (allAttributes, classGroupings,
                 // Output attributes found to database
                 // Current FP Growth implementation will stop when it reads a newline
                 // so we don't want it to output newlines when attributes is empty
-                if(attributes.length > 0){
+                if (attributes.length > 0) {
                     // Remove duplicate elements from attributes
-                    // Sahar: Extract callback function
                     let finalList = attributes.filter(removeDuplicateMethod);
 
                     // By default the JavaScript sort() method will sort values as strings
@@ -530,28 +518,23 @@ export const addParentChildRelations = (allAttributes, classGroupings,
                     // then "6" is bigger than "542", so we have to supply a sort function
                     // that we define
                     // Sort the attributes we found in ascending order
-                    // Sahar: callback function added here
-                    finalList.sort((a,b)=> a-b);
-
-                    //console.log(finalList);
-
-                    let data = finalList.join(" ") + "\n";
+                    finalList.sort((a, b) => a - b);
 
                     // Place the data in the map...
                     // If we already have an entry for this database, then we just
                     // append the new information
-                    if (dataMap.has(fileN)){
-                       var entry = dataMap.get(fileN);
+                    if (dataMap.has(fileN)) {
+                        let entry = dataMap.get(fileN);
 
-                       entry.push(finalList);
-                       dataMap.set(fileN, entry);
-                     }
+                        entry.push(finalList);
+                        dataMap.set(fileN, entry);
+                    }
                     // However, if we haven't yet had any entries for this database,
                     // then we just set this data as the first entry
-                    else{
-                      var entry  = new Array();
-                      entry[0] = finalList;
-                      dataMap.set(fileN, entry);
+                    else {
+                        let entry = [];
+                        entry[0] = finalList;
+                        dataMap.set(fileN, entry);
                     }
 
                     /*
@@ -564,7 +547,7 @@ export const addParentChildRelations = (allAttributes, classGroupings,
                 attributes.length = 0;
                 attributes = [];
 
-                if (!listOfFiles.includes(f)){
+                if (!listOfFiles.includes(f)) {
                     listOfFiles.push(f);
                 }
             }
@@ -574,7 +557,6 @@ export const addParentChildRelations = (allAttributes, classGroupings,
     // Record that this file was used to contribute to this database
     let fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
     let newStuff = listOfFiles.join("\n");
-console.log("add parent child relation",fileN, newStuff);
     fileAnalysisMap.set(fileN, newStuff);
 
 };
@@ -605,116 +587,112 @@ console.log("add parent child relation",fileN, newStuff);
  *
 */
 export const addVisitedElements = (allAttributes, visitedElements, classGroupings,
-                                            analysisFileName, classLocations,
-                                            parentInfo, /*fileAnalysisMap,*/ dataMap, xmlFiles) => {
+                                   analysisFileName, classLocations,
+                                   parentInfo, /*fileAnalysisMap,*/ dataMap, xmlFiles) => {
 
-  var parentClass = classGroupings[classGroupings.length-1];
-  var classTree;
+    let parentClass = classGroupings[classGroupings.length - 1];
+    let classTree;
 
-  // Used to keep track of the children classes about which we've already
-  // collected data
-  var classesVisited = [];
+    // Used to keep track of the children classes about which we've already
+    // collected data
+    let classesVisited = [];
 
-  // Used to keep track of all the files we have accessed
-  let listOfFiles = [];
+    // Used to keep track of all the files we have accessed
+    let listOfFiles = [];
 
-  var index = 0;
+    let index = 0;
 
-  for(var i = 0; i < classGroupings.length; i++){
+    for (let i = 0; i < classGroupings.length; i++) {
 
-    var f = classLocations[classGroupings[i]];
+        let f = classLocations[classGroupings[i]];
 
-    if(f != undefined){
-      f = f.split("\\")[(f.split("\\")).length - 1]
-      f = f.split(".")[0] + ".java";
+        if (f !== undefined) {
+            f = f.split("\\")[(f.split("\\")).length - 1];
+            f = f.split(".")[0] + ".java";
 
-      // var data = fs.readFileSync(f).toString();
-      // classTree = et.parse(data);
+            // let data = fs.readFileSync(f).toString();
+            // classTree = et.parse(data);
 
-        let filtered = xmlFiles.filter(d => d["filePath"].endsWith(f));
-        if (filtered.length > 0)
-            classTree = et.parse(filtered[0]["xml"]);
-        if (filtered.length === 0) {
-            console.log("file not found: ", f);
+            let filtered = xmlFiles.filter(d => d["filePath"].endsWith(f));
+            if (filtered.length > 0)
+                classTree = et.parse(filtered[0]["xml"]);
+            if (filtered.length === 0) {
+                console.log("file not found: ", f);
+                continue;
+            }
+        } else {
             continue;
         }
 
-    }
-    else{
-      continue;
-    }
+        let subCL = classTree.findall(".//class");
+        let childName;
 
+        for (let j = 0; j < subCL.length; j++) {
 
-    var subCL = classTree.findall('.//class');
+            // Figure out what the child class's name is
+            let chName = subCL[j].find("name");
 
-
-    var childName;
-    for(var j = 0; j < subCL.length; j++){
-
-      // Figure out what the child class's name is
-      var chName = subCL[j].find('name');
-
-      if(chName == null){
-        continue;
-      }
-
-      if(chName.text == null){
-        childName = (chName.find('name')).text
-      }
-      else{
-        childName = chName.text;
-      }
-      // If we can't find a name, then we go on to the next class in
-      // the srcML file
-      if(childName == ''){
-        continue;
-      }
-
-      // Each xml file might contain multiple classes, so just because a class
-      // is in the file, doesn't mean that it is the one that we want, so
-      // we need to check that the filename is in classGroupings
-      if(classGroupings.includes(childName) && !classesVisited.includes(childName)){
-        classesVisited.push(childName);
-
-        // Get the list of attributes for this class
-        let fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
-        var entry = (dataMap.get(fileN));
-
-        // Go through each of the visitedElements. If the visitedElement is present
-        // in this class, then add its attribute id to the list of attributes
-        // for the class
-        for (var k = 0; k < visitedElements.length; k++){
-          let query = subCL[j].findall(visitedElements[k].featureXpath);
-
-          // If we found this visitedElement, then we add it to the list of
-          // attribute for this class
-          if(query != null && index < entry.length){
-
-            if(allAttributes.has(visitedElements[k].featureDescription) &&
-                 !entry[index].includes(allAttributes.get(visitedElements[k].featureDescription))){
-
-                 entry[index].push(allAttributes.get(visitedElements[k].featureDescription));
-                 dataMap.set(fileN, entry);
-                 entry = dataMap.get(fileN);
-
-                 if (!listOfFiles.includes(f)){
-                     listOfFiles.push(f);
-                 }
-
+            if (chName == null) {
+                continue;
             }
-          }
-        }
-        // Increment index into set of entries for this database
-        index++;
-      }
-    }
-  }
 
-  // // Record that this file was used to contribute to this database
-  // let fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
-  // let newStuff = listOfFiles.join("\n");
-  //
-  // fileAnalysisMap.set(fileN, newStuff);
+            if (chName.text == null) {
+                childName = (chName.find("name")).text
+            } else {
+                childName = chName.text;
+            }
+            // If we can't find a name, then we go on to the next class in
+            // the srcML file
+            if (childName === "") {
+                continue;
+            }
+
+            // Each xml file might contain multiple classes, so just because a class
+            // is in the file, doesn't mean that it is the one that we want, so
+            // we need to check that the filename is in classGroupings
+            if (classGroupings.includes(childName) && !classesVisited.includes(childName)) {
+                classesVisited.push(childName);
+
+                // Get the list of attributes for this class
+                let fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
+                let entry = (dataMap.get(fileN));
+
+                // Go through each of the visitedElements. If the visitedElement is present
+                // in this class, then add its attribute id to the list of attributes
+                // for the class
+                for (let k = 0; k < visitedElements.length; k++) {
+                    let query = subCL[j].findall(visitedElements[k].featureXpath);
+
+                    // If we found this visitedElement, then we add it to the list of
+                    // attribute for this class
+                    if (query != null && index < entry.length) {
+
+                        if (allAttributes.has(visitedElements[k].featureDescription) &&
+                            !entry[index].includes(allAttributes.get(visitedElements[k].featureDescription))) {
+
+                            entry[index].push(allAttributes
+                                .get(visitedElements[k].featureDescription));
+                            dataMap.set(fileN, entry);
+                            entry = dataMap.get(fileN);
+
+                            if (!listOfFiles.includes(f)) {
+                                listOfFiles.push(f);
+                            }
+
+                        }
+                    }
+                }
+                // Increment index into set of entries for this database
+                index++;
+            }
+        }
+    }
+
+    // // Record that this file was used to contribute to this database
+    // let fileN = analysisFileName + "_subClassOf_" + parentClass + ".txt";
+    // let newStuff = listOfFiles.join("\n");
+    //
+    // fileAnalysisMap.set(fileN, newStuff);
 
 };
 
@@ -739,18 +717,18 @@ export const addVisitedElements = (allAttributes, visitedElements, classGrouping
 */
 export const findVisitedElements = (id_start, visitedElements, attributeList, queryMap, specialMap) => {
 
-  for (var i = 0; i < visitedElements.length; i++){
+    for (let i = 0; i < visitedElements.length; i++) {
 
-    if(!attributeList.has(visitedElements[i].featureDescription)){
+        if (!attributeList.has(visitedElements[i].featureDescription)) {
 
-      attributeList.set(visitedElements[i].featureDescription, id_start.id);
-      queryMap.set(visitedElements[i].featureXpath, id_start.id);
-      specialMap.set(visitedElements[i].featureXpath, id_start.id);
+            attributeList.set(visitedElements[i].featureDescription, id_start.id);
+            queryMap.set(visitedElements[i].featureXpath, id_start.id);
+            specialMap.set(visitedElements[i].featureXpath, id_start.id);
 
-      id_start.id += 1;
+            id_start.id += 1;
+        }
     }
-  }
-}
+};
 
 
 /* findParentChildRelationsExtra
@@ -786,49 +764,49 @@ export const findParentChildRelationsExtra = (id_start, attributeList,
      * to explore for each keyword
      */
     let searchCandidates = [
-      [".//src:class/src:name/text()=", "class with name ", ".//class/name"],
-      [".//src:class/src:block/src:function/src:call/src:name/text()=",
-          "class with function with name ", ".//class/block/function/call/name"],
-      [".//src:class/src:block/src:decl_stmt/src:decl/src:name/text()=",
-          "class with declaration statement with name ", ".//class/block/decl_stmt/decl/name"]];
+        [".//src:class/src:name/text()=", "class with name ", ".//class/name"],
+        [".//src:class/src:block/src:function/src:call/src:name/text()=",
+            "class with function with name ", ".//class/block/function/call/name"],
+        [".//src:class/src:block/src:decl_stmt/src:decl/src:name/text()=",
+            "class with declaration statement with name ", ".//class/block/decl_stmt/decl/name"]];
 
     /* For each element in searchTerms...*/
-    for(let i = 0; i < searchTerms.length; i++){
+    for (let i = 0; i < searchTerms.length; i++) {
         /* Parse the XML file */
         let classTree = et.parse(searchTerms[i]["file"]);
 
         /* For each keyword listed for the XML file...*/
-        for(let j = 0; j < (searchTerms[i]["searchTerms"]).length; j++){
+        for (let j = 0; j < (searchTerms[i]["searchTerms"]).length; j++) {
             let keyword = "\"" + (searchTerms[i]["searchTerms"])[j] + "\"";
 
             /* There are 3 different combinations for the keyword that we
              * want to explore */
-             for(let k = 0; k < searchCandidates.length; k++){
-               /* Create the XML Query*/
-               let searchCommand = searchCandidates[k][0] + keyword;
-               /* Create the RulePad description */
-               let searchName = searchCandidates[k][1] + keyword;
-               /* Use the API to search */
-               let search = classTree.findall(searchCandidates[k][2]);
+            for (let k = 0; k < searchCandidates.length; k++) {
+                /* Create the XML Query*/
+                let searchCommand = searchCandidates[k][0] + keyword;
+                /* Create the RulePad description */
+                let searchName = searchCandidates[k][1] + keyword;
+                /* Use the API to search */
+                let search = classTree.findall(searchCandidates[k][2]);
 
-               /* If we find the search term at least once, then we add the
-                * search as a feature. */
-               for(let m = 0; m < search; m++){
+                /* If we find the search term at least once, then we add the
+                 * search as a feature. */
+                for (let m = 0; m < search; m++) {
 
-                   if(search[m].text != null && search[m].text != "" &&
-                      search[m].text == keyword){
+                    if (search[m].text != null && search[m].text !== "" &&
+                        search[m].text === keyword) {
 
-                        if(!attributeList.has(searchName)){
+                        if (!attributeList.has(searchName)) {
 
-                          attributeList.set(searchName, id_start.id);
-                          queryMap.set(searchCommand, id_start.id);
-                          specialMap.set(searchCommand, id_start.id);
+                            attributeList.set(searchName, id_start.id);
+                            queryMap.set(searchCommand, id_start.id);
+                            specialMap.set(searchCommand, id_start.id);
 
-                          id_start.id += 1;
+                            id_start.id += 1;
                         }
-                   }
-               }
-           }
+                    }
+                }
+            }
         }
     }
-}
+};
