@@ -26,37 +26,36 @@ export const findClassAnnotations = (subCL, attributeList, id_start, queryMap) =
       let command = "src:annotation[src:name/text()=\""
                     + (clsAnnot.find('name').text) +"\"]";
 
-      if(annotArgs.length > 0){
-        clsAnnotName += " with ";
-        for(let q = 0; q < annotArgs.length; q++){
-
-          let node = annotArgs[q];
-
-          for(let u = 0; u < (node._children).length; u++){
-
-            let ch = (node._children)[u];
-
-            if(ch.text != null){
-              clsAnnotName += ch.text;
-            }
-            else{
-              for(let v = 0; v < (ch._children).length; v++){
-                let c = (ch._children)[v];
-                if(c.text != null){
-                  clsAnnotName += c.text;
-                }
-              }
-            }
-
-          }
-
-          clsAnnotName += "\n";
-        }
-        // Remove trailing newline
-        clsAnnotName = clsAnnotName.slice(0, -1);
-      }
-
-      command = command + "]";
+      // let word = "";
+      //
+      // if(annotArgs.length > 0){
+      //
+      //   for(let q = 0; q < annotArgs.length; q++){
+      //
+      //     let node = annotArgs[q];
+      //     word += node.text !== null ? node.text : "";
+      //     word += node.tail !== null ? node.tail : "";
+      //
+      //     for(let u = 0; u < (node._children).length; u++){
+      //
+      //       let ch = (node._children)[u];
+      //       word += ch.text !== null ? ch.text : "";
+      //       word += ch.tail !== null ? ch.tail : "";
+      //
+      //       if(ch.text == null){
+      //
+      //         for(let v = 0; v < (ch._children).length; v++){
+      //
+      //           let c = (ch._children)[v];
+      //           word += c.text !== null ? c.text : "";
+      //           word += c.tail !== null ? c.tail : "";
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
+      //
+      // clsAnnotName = clsAnnotName + word + "\"";
 
       if(!attributeList.has(clsAnnotName)){
 
@@ -382,29 +381,61 @@ export const findMemberVars = (subCL, attributeList, id_start, queryMap) => {
       // Generate feature for all member variable names with annotations
       let memberVarAnnotations = decl.findall('annotation');
 
-      if(memberVarAnnotations != null){
+      if(memberVarAnnotations.length > 0){
 
-        for(let q = 0; q < memberVarAnnotations.length; q++){
+        for(let k = 0; k < memberVarAnnotations.length; k++){
 
-          let annot = memberVarAnnotations[q];
-          let annotName = annot.find('name');
+          let memAnnot = memberVarAnnotations[k];
+          let annotArgs = memAnnot.findall('.//argument/expr');
+
           // New name
-          let memberVarAnnotAttr = "class with declaration statement with ( "
-           + "annotation \"" + annotName.text + " and name \"" + memberVarName.text + " )";
+          let memberVarAnnotName = "class with declaration statement with ( "
+           + "annotation \"" + (memAnnot.find('name').text) + "\"";
 
-          // Check if this attribute has been seen globally
-          if(!attributeList.has(memberVarAnnotAttr)){
+          let command = "src:annotation/src:name/text()=\""
+                        + (memAnnot.find('name').text)
+                        + "\" and src:block/src:decl_stmt/src:decl/src:name/text()=\""
+                        + memberVarName.text + "\"";
+          // let word = "";
+          //
+          // if(annotArgs.length > 0){
+          //   for(let q = 0; q < annotArgs.length; q++){
+          //
+          //     let node = annotArgs[q];
+          //     word += node.text !== null ? node.text : "";
+          //     word += node.tail !== null ? node.tail : "";
+          //
+          //     for(let u = 0; u < (node._children).length; u++){
+          //
+          //       let ch = (node._children)[u];
+          //       word += ch.text !== null ? ch.text : "";
+          //       word += ch.tail !== null ? ch.tail : "";
+          //
+          //       if(ch.text == null){
+          //         for(let v = 0; v < (ch._children).length; v++){
+          //
+          //           let c = (ch._children)[v];
+          //           word += c.text !== null ? c.text : "";
+          //           word += c.tail !== null ? c.tail : "";
+          //         }
+          //       }
+          //     }
+          //   }
+          // }
+          //
+          // // Check if this attribute has been seen globally
+          // memberVarAnnotName = memberVarAnnotName+ word
+          //                      + "\" and name \""
+          //                      + memberVarName.text + " )";
 
-            let command = "src:annotation/src:name/text()=\""
-                          + annotName.text
-                          + "\" and src:block/src:decl_stmt/src:decl/src:name/text()=\""
-                          + memberVarName.text + "\"";
+          if(!attributeList.has(memberVarAnnotName)){
 
-            attributeList.set(memberVarAnnotAttr , id_start.id);
+            attributeList.set(memberVarAnnotName, id_start.id);
             queryMap.set(command, id_start.id);
 
             id_start.id += 1;
           }
+          memberVarAnnotName = "";
         }
       }
 
@@ -690,30 +721,65 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
     }
 
     // Has annotation
-    let fncAnnotCandidate = fnc.findall('annotation');
-    if (fncAnnotCandidate != null){
+    let fncAnnotations = fnc.findall('annotation');
+    if (fncAnnotations.legnth > 0){
 
-      for (let g = 0; g < fncAnnotCandidate.length; g++){
+      for (let k = 0; k < fncAnnotations.length; k++){
 
-        let fncAnnot = fncAnnotCandidate[g];
-        name = "class with function with ( annotation \""
-                + (fncAnnot.find('name')).text + "\" and name \""
-                + fncName.text + "\" )";
+        let fncAnnot = fncAnnotations[k];
+        let annotArgs = memAnnot.findall('.//argument/expr');
+
+        // New name
+        let fncAnnotName = "class with function with ( annotation \""
+                + (fncAnnot.find('name')).text + "\"";
+
+        let command = "src:annotation/src:name/text()=\""
+                      + (fncAnnot.find('name')).text
+                      + "\" and src:block/src:function/src:name/text()=\""
+                      + fncName.text + "\"";
+
+        // let word = "";
+        //
+        // if(annotArgs.length > 0){
+        //    for(let q = 0; q < annotArgs.length; q++){
+        //
+        //      let node = annotArgs[q];
+        //      word += node.text !== null ? node.text : "";
+        //      word += node.tail !== null ? node.tail : "";
+        //
+        //      for(let u = 0; u < (node._children).length; u++){
+        //
+        //        let ch = (node._children)[u];
+        //        word += ch.text !== null ? ch.text : "";
+        //        word += ch.tail !== null ? ch.tail : "";
+        //
+        //        if(ch.text == null){
+        //          for(let v = 0; v < (ch._children).length; v++){
+        //
+        //            let c = (ch._children)[v];
+        //            word += c.text !== null ? c.text : "";
+        //            word += c.tail !== null ? c.tail : "";
+        //          }
+        //        }
+        //      }
+        //    }
+        //  }
+        //
+        // fncAnnotName = fncAnnotName + word
+        //                + "\" and name \""
+        //                + fncName.text + "\" )";
 
         // Check if this attribute has been seen globally
-        if(!attributeList.has(name)){
+        if(!attributeList.has(fncAnnotName)){
 
-          let command = "src:annotation/src:name/text()=\""
-                        + (fncAnnot.find('name')).text
-                        + "\" and src:block/src:function/src:name/text()=\""
-                        + fncName.text + "\"";
 
-          attributeList.set(name, id_start.id);
+
+          attributeList.set(fncAnnotName, id_start.id);
           queryMap.set(command, id_start.id);
 
           id_start.id += 1;
         }
-        name = "";
+        fncAnnotName = "";
      }
     }
 
@@ -936,37 +1002,39 @@ export const addClassAnnotations = (subCL, attributes, allAttributes) => {
             //console.log(clsAnnot);
             let annotArgs = clsAnnot.findall('.//argument/expr');
             //console.log(annotArgs);
-            name = "class with annotation \""
-                + (clsAnnot.find('name').text)
-                + "\"";
+            let name = "class with annotation \""
+                        + (clsAnnot.find('name').text) + "\"";
 
-            if (annotArgs.length > 0) {
-                name += " with ";
-                for (let q = 0; q < annotArgs.length; q++) {
-
-                    let node = annotArgs[q];
-
-                    for (let u = 0; u < (node._children).length; u++) {
-
-                        let ch = (node._children)[u];
-
-                        if (ch.text != null) {
-                            name += ch.text;
-                        } else {
-                            for (let v = 0; v < (ch._children).length; v++) {
-                                let c = (ch._children)[v];
-                                if (c.text != null) {
-                                    name += c.text;
-                                }
-                            }
-                        }
-
-                    }
-                    name += "\n";
-                }
-                // Remove trailing newline
-                name = name.slice(0, -1);
-            }
+            // let word = "";
+            //
+            // if(annotArgs.length > 0){
+            //
+            //   for(let q = 0; q < annotArgs.length; q++){
+            //
+            //     let node = annotArgs[q];
+            //     word += node.text !== null ? node.text : "";
+            //     word += node.tail !== null ? node.tail : "";
+            //
+            //     for(let u = 0; u < (node._children).length; u++){
+            //
+            //       let ch = (node._children)[u];
+            //       word += ch.text !== null ? ch.text : "";
+            //       word += ch.tail !== null ? ch.tail : "";
+            //
+            //       if(ch.text == null){
+            //
+            //         for(let v = 0; v < (ch._children).length; v++){
+            //
+            //           let c = (ch._children)[v];
+            //           word += c.text !== null ? c.text : "";
+            //           word += c.tail !== null ? c.tail : "";
+            //         }
+            //       }
+            //     }
+            //   }
+            // }
+            //
+            // name = name + word + "\"";
 
             if (allAttributes.has(name)) {
                 attributes.push(allAttributes.get(name));
@@ -1214,20 +1282,53 @@ export const addMemberVars = (subCL, attributes, allAttributes) => {
         // Generate feature for all member variable names with annotations
         let memberVarAnnotations = decl.findall('annotation');
 
-        if(memberVarAnnotations != null){
+         if(memberVarAnnotations.length > 0){
 
-          for(let q = 0; q < memberVarAnnotations.length; q++){
+          for(let k = 0; k < memberVarAnnotations.length; k++){
+            let memAnnot = memberVarAnnotations[k];
+            let annotArgs = memAnnot.findall('.//argument/expr');
 
-            let annot = memberVarAnnotations[q];
-            let annotName = annot.find('name');
             // New name
-            let memberVarAnnotAttr = "class with declaration statement with ( "
-             + "annotation \"" + annotName.text + " and name \"" + memberVarName.text + " )";
+            let memberVarAnnotName = "class with declaration statement with ( "
+                                     + "annotation \"" + (memAnnot.find('name').text) + "\"";
+
+            let word = "";
+
+            // if(annotArgs.length > 0){
+            //    for(let q = 0; q < annotArgs.length; q++){
+            //
+            //      let node = annotArgs[q];
+            //      word += node.text !== null ? node.text : "";
+            //      word += node.tail !== null ? node.tail : "";
+            //
+            //      for(let u = 0; u < (node._children).length; u++){
+            //
+            //        let ch = (node._children)[u];
+            //        word += ch.text !== null ? ch.text : "";
+            //        word += ch.tail !== null ? ch.tail : "";
+            //
+            //        if(ch.text == null){
+            //          for(let v = 0; v < (ch._children).length; v++){
+            //
+            //            let c = (ch._children)[v];
+            //            word += c.text !== null ? c.text : "";
+            //            word += c.tail !== null ? c.tail : "";
+            //          }
+            //        }
+            //      }
+            //    }
+            //  }
+            //
+            //  // Check if this attribute has been seen globally
+            //  memberVarAnnotName = memberVarAnnotName+ word
+            //                       + "\" and name \""
+            //                       + memberVarName.text + " )";
 
             // Check if this attribute has been seen globally
-            if(!allAttributes.has(memberVarAnnotAttr )){
-              attributes.push(allAttributes.get(memberVarAnnotAttr));
+            if(!allAttributes.has(memberVarAnnotName)){
+              attributes.push(allAttributes.get(memberVarAnnotName));
             }
+            memberVarAnnotName = "";
           }
         }
 
@@ -1446,21 +1547,54 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
     }
 
     // Has annotation
-    let fncAnnotCandidate = fnc.findall('annotation');
-    if (fncAnnotCandidate != null){
+    let fncAnnotations = fnc.findall('annotation');
+    if (fncAnnotations.legnth > 0){
 
-      for (let g = 0; g < fncAnnotCandidate.length; g++){
+      for (let k = 0; k < fncAnnotations.length; k++){
 
-        let fncAnnot = fncAnnotCandidate[g];
-        name = "class with function with ( annotation \""
-                + (fncAnnot.find('name')).text + "\" and name \""
-                + fncName.text + "\" )";
+        let fncAnnot = fncAnnotations[k];
+        let annotArgs = memAnnot.findall('.//argument/expr');
+
+        // New name
+        let fncAnnotName = "class with function with ( annotation \""
+                + (fncAnnot.find('name')).text + "\"";
+
+        // let word = "";
+        //
+        // if(annotArgs.length > 0){
+        //    for(let q = 0; q < annotArgs.length; q++){
+        //
+        //      let node = annotArgs[q];
+        //      word += node.text !== null ? node.text : "";
+        //      word += node.tail !== null ? node.tail : "";
+        //
+        //      for(let u = 0; u < (node._children).length; u++){
+        //
+        //        let ch = (node._children)[u];
+        //        word += ch.text !== null ? ch.text : "";
+        //        word += ch.tail !== null ? ch.tail : "";
+        //
+        //        if(ch.text == null){
+        //          for(let v = 0; v < (ch._children).length; v++){
+        //
+        //            let c = (ch._children)[v];
+        //            word += c.text !== null ? c.text : "";
+        //            word += c.tail !== null ? c.tail : "";
+        //          }
+        //        }
+        //      }
+        //    }
+        //  }
+        //
+        // fncAnnotName = fncAnnotName + word
+        //                + "\" and name \""
+        //                + fncName.text + "\" )";
 
         // Check if this attribute has been seen globally
-        if(allAttributes.has(name)){
-           attributes.push(allAttributes.get(name));
+        if(allAttributes.has(fncAnnotName)){
+           attributes.push(allAttributes.get(fncAnnotName));
         }
-        name = "";
+        fncAnnotName = "";
      }
     }
 

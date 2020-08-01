@@ -260,9 +260,9 @@ export const mineRulesFromXmlFiles = (xmlFiles, metaData, ws, fpMaxSupport, cust
     for (const group of groupList.keys()){
       var grouping = groupList.get(group);
       addCustomRelations(allAttributes, customQueries, grouping, analysisFileName,
-                         classLocations, parentInfo, fileAnalysisMap, dataMap, xmlFiles);
+                         classLocations, parentInfo, /*fileAnalysisMap,*/ dataMap, xmlFiles);
       addVisitedElements(allAttributes, visitedElements, grouping, analysisFileName,
-                         classLocations, parentInfo, fileAnalysisMap, dataMap, xmlFiles);
+                         classLocations, parentInfo, /*fileAnalysisMap,*/ dataMap, xmlFiles);
     }
 
     /* Output databases and analyze attributes using FP_MAX*/
