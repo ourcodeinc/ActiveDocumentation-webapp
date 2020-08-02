@@ -484,12 +484,21 @@ const getXmlData = (mainXml, query, index) => {
                 break;
             }
 
+        // remove the extra children
         if (res.firstChild && res.firstChild.nodeType !== -1 && nameIndex !== -1 && nameIndex !== res.children.length)
             par = removeSib(res.children[nameIndex]);
+
+        // if there is no extra children, remove sibling
         else if (res.nextSibling)
             par = removeSib(res.nextSibling);
-        else
+        else {
             par = res;
+            // until we reach a sibling or the main ancestor, go up in the tree
+            while (!par.nextSibling && par.nodeName !== "unit") {
+                par = par.parentNode;
+            }
+            par = removeSib(res.parentNode);
+        }
 
         fileName = par.getAttribute("filename");
     }
