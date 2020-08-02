@@ -100,7 +100,7 @@ There is also another json file named `tagTable.json`. In this file we store inf
 ]
 ```
 
-## Generate Rules
+## RulePad Grammar
 
 This system is using ANTLR4.
 
@@ -109,6 +109,10 @@ This system is using ANTLR4.
 * The `gradle.build` file is located in the root directory of the project.
 * Run `gradle generateParser`
 
+## Clearing Search history in IntelliJ (for Learning Design Rules)
+
+Edit the related workspace xml file in this directory (in MacOS):
+`~/Library/Application Support/JetBrains/IntelliJIdea2020.1/workspace`
 
 ## Used Ports
 
