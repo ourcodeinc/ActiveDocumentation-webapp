@@ -112,11 +112,8 @@ class LearnDesignRulesComponent extends Component {
             }, () => this.doMineRules())
 
         } else if (nextProps.message === reduxStoreMessages.save_feature_selection_msg) {
-            let mappedCustomFeatures = nextProps.customFeatures.map(d => {
-                return {...d, isIncluded: true}
-            });
             this.setState({
-                customFeatures: mappedCustomFeatures
+                customFeatures: nextProps.customFeatures
             })
         }
     }
@@ -420,7 +417,7 @@ class LearnDesignRulesComponent extends Component {
     doMineRules() {
         let metaData = {};
         mineRulesFromXmlFiles(this.props.xmlFiles, metaData, this.props.ws,
-            this.fpMaxSupport, []);
+            this.fpMaxSupport, [], this.state.searchHistory, []);
         this.props.onUpdateMetaData(metaData);
     }
 
@@ -536,7 +533,11 @@ function mapStateToProps(state) {
     let visited = state.doiInformation.visitedElements
         .map(d => {
             return d.xpathQueries.map(dd => {
-                return {elementText: dd.elementText.trim(), xpath: dd.xpath}
+                return {
+                    featureDescription: dd.featureDescription,
+                    featureXpath: dd.featureXpath,
+                    srcmlXpath: dd.srcmlXpath
+                }
             })
         })
         .flat();

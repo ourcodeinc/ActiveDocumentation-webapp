@@ -1518,39 +1518,33 @@ export const addParentChildRelationsExtra = (subCL, attributes, allAttributes, s
     /* class, function call, member variable */
     /* formal XML query, RulePad description, element API  */
     let searchCandidates = [
-        [".//src:class/src:name/text()=", "class with name ", ".//class/name"],
-        [".//src:class/src:block/src:function/src:call/src:name/text()=",
-            "class with function with name ", ".//class/block/function/call/name"],
+        [".//src:class/src:name/text()=", "class with name ", "name"],
+        [".//src:class/src:block/src:function/src:name/text()=",
+            "class with function with name ", "block/function/name"],
         [".//src:class/src:block/src:decl_stmt/src:decl/src:name/text()=",
-            "class with declaration statement with name ", ".//class/block/decl_stmt/decl/name"]];
+            "class with declaration statement with name ", "block/decl_stmt/decl/name"]];
 
     /* For each element in searchTerms...*/
     for (let i = 0; i < searchTerms.length; i++) {
+        let keyword = "\"" + searchTerms[i] + "\"";
+        /* There are 3 different combinations for the keyword that we
+         * want to explore */
+        for (let k = 0; k < searchCandidates.length; k++) {
+            /* Create the RulePad description */
+            let searchName = searchCandidates[k][1] + keyword;
+            /* Use the API to search */
+            let search = subCL.findall(searchCandidates[k][2]);
 
-        /* For each keyword listed for the XML file...*/
-        for (let j = 0; j < (searchTerms[i]["searchTerms"]).length; j++) {
-            let keyword = "\"" + (searchTerms[i]["searchTerms"])[j] + "\"";
+            /* If we find the search term at least once, then we add the
+             * search as a feature. */
+            for (let m = 0; m < search.length; m++) {
 
-            /* There are 3 different combinations for the keyword that we
-             * want to explore */
-            for (let k = 0; k < searchCandidates.length; k++) {
-                /* Create the RulePad description */
-                let searchName = searchCandidates[k][1] + keyword;
-                /* Use the API to search */
-                let search = subCL.findall(searchCandidates[k][2]);
+                if (search[m].text !== null && search[m].text !== "" &&
+                    search[m].text === searchTerms[i]) {
 
-                /* If we find the search term at least once, then we add the
-                 * search as a feature. */
-                for (let m = 0; m < search; m++) {
-
-                    if (search[m].text !== null && search[m].text !== "" &&
-                        search[m].text === keyword) {
-
-                        // Check whether attribute has been seen globally
-                        if (allAttributes.has(searchName)) {
-                            attributes.push(allAttributes.get(searchName));
-                        }
-
+                    // Check whether attribute has been seen globally
+                    if (allAttributes.has(searchName)) {
+                        attributes.push(allAttributes.get(searchName));
                     }
                 }
             }

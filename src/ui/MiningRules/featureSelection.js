@@ -32,7 +32,8 @@ class FeatureSelection extends Component {
             selectedText: "",
 
             // computed
-            xpath: ""
+            xpath: "",
+            mineRulesXPath: ""
         }
     }
 
@@ -42,7 +43,7 @@ class FeatureSelection extends Component {
                 <p>{this.state.filePath.replace(this.props.projectPath.slice, "")
                     .replace(this.props.projectPath.slice(1), "")}</p>
                 {this.state.editMode ? this.renderEditableFeature() : this.renderHighlightedText()}
-                <p>{this.state.xpath}</p>
+                <p>{this.state.mineRulesXPath}</p>
                 <ButtonToolbar>
                     <Button onClick={() => this.saveFeature()}>Save</Button>
                     <Button onClick={() => this.resetFeature()}>Cancel</Button>
@@ -105,6 +106,7 @@ class FeatureSelection extends Component {
                 selectedText: nextProps.selectedText,
 
                 xpath: nextProps.xpath,
+                mineRulesXPath: (nextProps.xpath).replace(/src:/g, ""),
                 editMode: false
             })
         }
@@ -146,7 +148,8 @@ class FeatureSelection extends Component {
                                        let newIdMap = this.props.idMap;
                                        newIdMap[word.id].text = word.text;
                                        //  calculate the XPath
-                                       this.setState({xpath: computeXPath(newIdMap)});
+                                       let xpath = computeXPath(newIdMap);
+                                       this.setState({xpath: xpath, mineRulesXPath : xpath.replace(/src:/g, "")});
                                    }}
                             />
                         ) : word.text
@@ -170,7 +173,8 @@ class FeatureSelection extends Component {
             filePath: "",
             wholeText: "",
             selectedText: "",
-            xpath: ""
+            xpath: "",
+            mineRulesXPath: ""
         });
         this.props.resetFeatureSelection();
         window.location.hash = "#/index";
@@ -180,8 +184,11 @@ class FeatureSelection extends Component {
         let featureDesc = this.state.mappedText
             .map(d => d.text.trim())
             .filter(d => d.trim() !== "")
-            .join(" ");
-        this.props.saveFeatureSelection(featureDesc, this.state.xpath);
+            .join(",")
+            .replace(/([,\t\n();{}.])/g, " ")
+            .trim();
+
+        this.props.saveFeatureSelection(featureDesc, this.state.mineRulesXPath, this.state.xpath);
         window.location.hash = "#/learnDesignRules";
     }
 
@@ -208,7 +215,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         resetFeatureSelection: () => dispatch(updateResetFeatureSelection()),
-        saveFeatureSelection: (featureDescription, featureXpath) => dispatch(updateSaveFeatureSelection(featureDescription, featureXpath))
+        saveFeatureSelection: (featureDescription, featureXPath, srcmlXPath) =>
+            dispatch(updateSaveFeatureSelection(featureDescription, featureXPath, srcmlXPath))
     }
 }
 

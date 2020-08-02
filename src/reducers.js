@@ -642,7 +642,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     ...state.doiInformation,
                     customFeatures: state.doiInformation.customFeatures.concat([{
                         featureDescription: action.data["featureDescription"],
-                        featureXpath: action.data["featureXpath"]
+                        featureXpath: action.data["featureXpath"],
+                        srcmlXpath: action.data["srcmlXpath"]
                     }])
                 }
             });

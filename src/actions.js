@@ -347,12 +347,13 @@ export const updateResetFeatureSelection = () => {
 /**
  * @param featureDescription string
  * @param featureXpath string
+ * @param srcmlXpath xpath without the leading 'src:' for tags
  * @return {{data: {featureDescription: *, featureXpath: *}, type: string}}
  */
-export const updateSaveFeatureSelection = (featureDescription, featureXpath) => {
+export const updateSaveFeatureSelection = (featureDescription, featureXpath, srcmlXpath) => {
     return {
         type: reduxStoreActions.action_save_feature_selection,
-        data: {featureDescription, featureXpath}
+        data: {featureDescription, featureXpath, srcmlXpath}
     }
 };
 

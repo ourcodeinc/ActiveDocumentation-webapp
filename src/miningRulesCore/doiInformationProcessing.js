@@ -6,6 +6,7 @@
 import {getXpathForFeature} from "./featureSelectionProcessing";
 
 export const processCaretLocations = (caretLocationsData) => {
+    let xpathList = [];
     return caretLocationsData
         .map(fileSet => {
             let xpathQueries = (fileSet.caretArray)
@@ -17,7 +18,15 @@ export const processCaretLocations = (caretLocationsData) => {
                     }
                     let xpath = computedData.xpath;
                     let elementText = computedData.selectedText;
-                    return {xpath, elementText, startOffset: location.startOffset, endOffset: location.endOffset}
+                    if (xpathList.includes(xpath)) return null;
+                    xpathList.push(xpath);
+                    return {
+                        srcmlXpath: xpath,
+                        featureDescription: elementText.trim(),
+                        featureXpath: xpath.replace(/src:/g, ""),
+                        startOffset: location.startOffset,
+                        endOffset: location.endOffset
+                    }
                 })
                 .filter(d => d !== null);
             if (xpathQueries.length === 0) {
@@ -25,5 +34,5 @@ export const processCaretLocations = (caretLocationsData) => {
             }
             return {filePath: fileSet.filePath, xpathQueries}
         })
-        .filter(d => d !== null)
+        .filter(d => d !== null);
 };

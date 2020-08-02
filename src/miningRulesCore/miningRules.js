@@ -91,8 +91,7 @@ import {webSocketSendMessage} from "../core/coreConstants";
  * @param ws
  * @param fpMaxSupport
  * @param customQueries [xpath queries]
- * @param searchTerms [{file: xmlFile, searchTerms: [keyword1, keyword2]},
- *                     {file: xmlFile, searchTerms: [keyword1, keyword2]}]
+ * @param searchTerms [keyword1, keyword2]
  * [searchTerms as it appears and case-sensitive]
  * @param visitedElements [xpath queries]
  *
