@@ -401,6 +401,7 @@ export const addParentChildRelations = (allAttributes, classGroupings,
                 console.log("file not found: ", f);
                 continue;
             }
+            f = classLocations[classGroupings[i]]
         } else {
             continue;
         }
