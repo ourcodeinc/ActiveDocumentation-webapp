@@ -2,6 +2,12 @@
 
 import {reduxStoreActions} from "./reduxStoreConstants";
 
+export const connectToIDE = () => {
+    return {
+        type: reduxStoreActions.action_update_loading_rules,
+    }
+};
+
 /**
  * If the hash is #/hash1/hash2
  * @param hash array of hashes ["hash1", "hash2"]

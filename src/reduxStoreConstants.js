@@ -43,6 +43,7 @@ export const reduxStoreMessages = {
 
 
 export const reduxStoreActions = {
+    action_update_loading_rules: "UPDATE_LOADING_RULES",
     action_hash: "HASH",
     action_new_ws: "NEW_WS",
     action_update_xml_files: "UPDATE_XML_FILES",

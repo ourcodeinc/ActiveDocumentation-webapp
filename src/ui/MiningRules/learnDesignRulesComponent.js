@@ -7,7 +7,6 @@ import "../../App.css";
 import {connect} from "react-redux";
 import {Button, Col, Row} from "react-bootstrap";
 import "rc-slider/assets/index.css";
-import "three-dots"
 import Slider from "rc-slider";
 import Tooltip from "rc-tooltip/es";
 
@@ -55,8 +54,6 @@ class LearnDesignRulesComponent extends Component {
             <div className={"learningDesignRulesComponent"}>
                 {this.renderDefaultView()}
                 {this.renderButtonsAndSliders()}
-                {this.renderLoading()}
-                {this.renderDoiLoading()}
                 {this.state.minedRules.length === 0 ? null : (
                     <FilterComponent visitedFiles={this.state.visitedFiles}
                                      searchHistory={this.state.searchHistory}
@@ -131,6 +128,9 @@ class LearnDesignRulesComponent extends Component {
             );
         return (
             <div>
+                {this.renderLoading()}
+                {this.renderDoiLoading()}
+
                 <Button onClick={() => this.doRequestMineRules()}>Find Design Rules In Code</Button>
                 <Button onClick={() => this.ShowMinedRules()} style={{color: "red"}}>
                     Show Mined Rules (Dangerous!)
@@ -151,19 +151,14 @@ class LearnDesignRulesComponent extends Component {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                margin: "0 -5%",
-                overflow: "hidden"
+                width: "100%",
+                zIndex: "1",
+                position: "fixed",
+                backgroundColor: "white"
             }}>
-                <div>Mining Design Rules</div>
-                <div style={{
-                    padding: "20%",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    margin: "0 -5%",
-                    overflow: "hidden"
-                }}>
-                    <div className="dot-elastic"/>
+                <div style={{marginTop: "50px"}}>Mining Design Rules</div>
+                <div style={{padding: "20%"}}>
+                    <div className="spinner"/>
                 </div>
             </div>
         ) : null;
@@ -180,19 +175,14 @@ class LearnDesignRulesComponent extends Component {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                margin: "0 -5%",
-                overflow: "hidden"
+                width: "100%",
+                zIndex: "1",
+                position: "fixed",
+                backgroundColor: "white"
             }}>
-                <div>Fetching DOI Information</div>
-                <div style={{
-                    padding: "20%",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    margin: "0 -5%",
-                    overflow: "hidden"
-                }}>
-                    <div className="dot-elastic"/>
+                <div style={{marginTop: "50px"}}>Fetching DOI Information</div>
+                <div style={{padding: "20%"}}>
+                    <div className="spinner"/>
                 </div>
             </div>
         ) : null;

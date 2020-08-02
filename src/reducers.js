@@ -20,6 +20,11 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
     let rules = [];
 
     switch (action.type) {
+        case reduxStoreActions.action_update_loading_rules:
+            return Object.assign({}, state, {
+                loadingRules: true
+            });
+
         case reduxStoreActions.action_hash:
             if (!state.hashManager.clickedOnButtons) {
                 return Object.assign({}, state, {
@@ -77,6 +82,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 })
             );
             return Object.assign({}, state, {
+                loadingRules: false,
                 ruleTable: rules,
                 message: reduxStoreMessages.update_rule_table_msg
             });

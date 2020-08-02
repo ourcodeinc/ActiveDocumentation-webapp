@@ -18,7 +18,7 @@ import {
     updateFeatureSelection,
     updateDangerousMinedRules,
     updateProjectPath,
-    updateDoiInformation
+    updateDoiInformation, connectToIDE
 } from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from "./ruleExecutor";
 import {parseGrouping} from "../miningRulesCore/parseGrouping";
@@ -53,6 +53,10 @@ class WebSocketManager extends Component {
             // if (message.command !== "XML") console.log(message);
 
             switch (message.command) {
+
+                case webSocketReceiveMessage.enter_chat_msg:
+                    this.props.onConnectToIDE();
+                    break;
 
                 case webSocketReceiveMessage.xml_files_msg:
                     // data: {filePath: "", xml: ""}
@@ -259,6 +263,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
+        onConnectToIDE: () => dispatch(connectToIDE()),
         onUpdateWS: (ws) => dispatch(updateWS(ws)),
         onProjectHierarchy: (hierarchyData) => dispatch(updateProjectHierarchyData(hierarchyData)),
         onProjectPathUpdate: (projectPath) => dispatch(updateProjectPath(projectPath)),

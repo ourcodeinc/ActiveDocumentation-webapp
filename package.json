@@ -27,7 +27,6 @@
     "react-scripts": "2.0.3",
     "react-tooltip": "^3.11.2",
     "redux": "^4.0.5",
-    "three-dots": "^0.1.2",
     "wink-lemmatizer": "^2.0.0",
     "wink-pos-tagger": "^1.5.0"
   },

@@ -49,12 +49,15 @@ class App extends Component {
         }
 
         window.location.hash = "#/index";
+
+        this.state = {loading: false}
     }
 
     render() {
         return (
             <div>
                 <WebSocketManager/>
+                {this.renderLoading()}
                 <nav className={"navbar navbar-inverse"} id={"navBar"}>
                     <NavBar/>
                 </nav>
@@ -92,12 +95,50 @@ class App extends Component {
         )
     }
 
+
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        this.setState({loading: nextProps.loading})
+    }
+
+    /**
+     * render loading gif
+     * @return {null}
+     */
+    renderLoading() {
+        return this.state.loading ? (
+            <div style={{
+                padding: "20%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                overflow: "hidden",
+                position: "fixed",
+                width: "100%",
+                height: "100%",
+                zIndex: "1",
+                backgroundColor: "rgba(0,0,0,0.1)"
+            }}>
+                <div style={{
+                    padding: "20%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: "0 -5%",
+                    overflow: "hidden"
+                }}>
+                    <div className="spinner"/>
+                </div>
+            </div>
+        ) : null;
+    }
+
 }
 
 // map state to props
 function mapStateToProps(state) {
     return {
-        currentHash: state.currentHash
+        currentHash: state.currentHash,
+        loading: state.loadingRules
     }
 }
 
