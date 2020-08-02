@@ -129,7 +129,7 @@ export const addCustomRelations = (allAttributes, customQueries, classGroupings,
 
         if (f !== undefined) {
             f = f.split("\\")[(f.split("\\")).length - 1];
-            f = f.split(".")[0] + ".java";
+            f = f.split(".")[f.split(".").length - 2] + ".java";
 
             // let data = fs.readFileSync(f).toString();
             // classTree = et.parse(data);
@@ -240,7 +240,7 @@ export const findParentChildRelations = (id_start, classGroupings,
 
         if (f !== undefined) {
             f = f.split("\\")[(f.split("\\")).length - 1];
-            f = f.split(".")[0] + ".java";
+            f = f.split(".")[f.split(".").length - 2] + ".java";
             let filtered = xmlFiles.filter(d => d["filePath"].endsWith(f));
             if (filtered.length > 0)
                 classTree = et.parse(filtered[0]["xml"]);
@@ -393,7 +393,7 @@ export const addParentChildRelations = (allAttributes, classGroupings,
 
         if (f !== undefined) {
             f = f.split("\\")[(f.split("\\")).length - 1];
-            f = f.split(".")[0] + ".java";
+            f = f.split(".")[f.split(".").length - 2] + ".java";
             let filtered = xmlFiles.filter(d => d["filePath"].endsWith(f));
             if (filtered.length > 0)
                 classTree = et.parse(filtered[0]["xml"]);
@@ -608,7 +608,7 @@ export const addVisitedElements = (allAttributes, visitedElements, classGrouping
 
         if (f !== undefined) {
             f = f.split("\\")[(f.split("\\")).length - 1];
-            f = f.split(".")[0] + ".java";
+            f = f.split(".")[f.split(".").length - 2] + ".java";
 
             // let data = fs.readFileSync(f).toString();
             // classTree = et.parse(data);

@@ -207,6 +207,9 @@ export const findConstructors = (subCL, attributeList, id_start, queryMap) => {
                 }
 
                 let paramType = p.find("type/name");
+
+                if (paramType == null) continue;
+
                 if (paramType.text == null) {
                     paramType = paramType.find("name");
                 }
@@ -614,7 +617,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
 
                     name = "class with function with (name \""
                         + fncName.text
-                        + "\" and \"modifies member variable of name '"
+                        + "\" and \"modifies member variable '"
                         + call.text + "'\")";
 
                     // Check whether attribute has been seen globally
@@ -645,7 +648,7 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
                 let fncAnnot = fncAnnotations[k];
 
                 let fncAnnotName = "class with function with ( annotation \""
-                    + (fncAnnot.find("name")).text + "\"";
+                    + (fncAnnot.find("name")).text + "\" ) ";
 
                 let command = "src:annotation/src:name/text()=\""
                     + (fncAnnot.find("name")).text
@@ -795,6 +798,8 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
                 let p = fncParams[m];
                 let paramType = p.find("decl/type/name");
 
+                if (paramType == null) continue;
+
                 // Check for nesting
                 if (paramType.text == null) {
                     paramType = paramType.find("name");
@@ -820,8 +825,8 @@ export const findClsFunctions = (subCL, attributeList, id_start, queryMap) => {
 
             if (allFncParamTypes !== "") {
                 // New combined attribute
-                name = "class with function with ( visibility " + fncSpecType
-                    + " and " + finalReturnVal
+                name = "class with function with ( visibility \"" + fncSpecType
+                    + "\" and " + finalReturnVal
                     + " and name \"" + fncName.text
                     + "\" and " + allFncParamTypes + ")";
 
@@ -1023,6 +1028,9 @@ export const addConstructors = (subCL, attributes, allAttributes) => {
                 }
 
                 let paramType = p.find("type/name");
+
+                if (paramType == null) continue;
+
                 if (paramType.text == null) {
                     paramType = paramType.find("name");
                 }
@@ -1353,7 +1361,7 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
 
                 // New name
                 let fncAnnotName = "class with function with ( annotation \""
-                    + (fncAnnot.find("name")).text + "\"";
+                    + (fncAnnot.find("name")).text + "\" ) ";
 
                 // Check if this attribute has been seen globally
                 if (allAttributes.has(fncAnnotName)) {
@@ -1464,6 +1472,8 @@ export const addClsFunctions = (subCL, attributes, allAttributes) => {
 
                 let p = fncParams[m];
                 let paramType = p.find("decl/type/name");
+
+                if (paramType == null) continue;
 
                 // Check for nesting
                 if (paramType.text == null) {

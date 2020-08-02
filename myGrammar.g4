@@ -41,7 +41,7 @@ combinatorialWords
     ;
 
 symbols
-    : '.' | '=' | '>' | '<' | '(' | ')'
+    : '.' | '=' | '>' | '<' | '(' | ')' | '\'' | '&'
     ;
 
 Alphabet
