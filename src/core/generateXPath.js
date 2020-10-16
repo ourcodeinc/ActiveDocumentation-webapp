@@ -396,8 +396,8 @@ class GenerateXPath {
                     if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
                         tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
                         this.sendTextDataToSrcML(tempText, "annotation", messageID);
-                        if (!isConstraintCondition) this.XPathQ += "[" + messageID + tempText + "]";
-                        this.XPathC += "[" + messageID + tempText + "]";
+                        if (!isConstraintCondition) this.XPathQ += "['" + messageID + tempText + "']";
+                        this.XPathC += "['" + messageID + tempText + "']";
                     }
                 }
             }
@@ -931,7 +931,7 @@ class GenerateXPath {
         store.dispatch(sendExpressionStatementXML({
             "codeText": code,
             "messageID": messageID,
-            "lookFor": messageID + text,
+            "lookFor": "'" + messageID + text + "'",
             "query": query,
             "cuttingLength": cuttingLength
         }));
