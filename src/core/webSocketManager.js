@@ -149,8 +149,8 @@ class WebSocketManager extends Component {
                     break;
 
                 case webSocketReceiveMessage.new_rule_msg:
-                    // data: {ruleID: longNumber, rule: {...}}
-                    let newAddedRule = JSON.parse(message.data["rule"]);
+                    // data: {ruleID: longNumber, ruleInfo: {...}}
+                    let newAddedRule = message.data["ruleInfo"];
                     ruleTable.push(newAddedRule);
                     // received by RuleExecutor
                     ruleTable[ruleTable.length - 1] = runRulesByTypes(xml, newAddedRule);

@@ -45,7 +45,7 @@ class Utilities {
 
                 case webSocketSendMessage.new_rule_msg:
                     messageJson.data = {
-                        ruleID: data.index,
+                        ruleID: data.index.toString(),
                         ruleInfo: data
                     };
                     break;

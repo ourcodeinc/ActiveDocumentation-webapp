@@ -1394,7 +1394,7 @@ class RulePad extends Component {
      */
     onSubmitNewRule() {
         let rule = {
-            index: Math.floor(new Date().getTime() / 1000),
+            index: Math.floor(new Date().getTime() / 1000).toString(),
             title: this.state.title,
             description: this.state.description,
             tags: this.state.ruleTags,
