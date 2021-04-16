@@ -829,10 +829,34 @@ img.tutorialSmallImage {
 
 /* mining rules */
 
+.learningDesignRulesComponent {
+    min-height: 700px;
+}
+
 .learningDesignRulesComponent .visitedElements {
     font-weight: bold;
 }
 
 .learningDesignRulesComponent .rotateGlyph {
     transform: rotate(90deg);
+}
+
+.loadingMinedRulesContainer {
+    text-align: center;
+    color: black;
+    background-color: white;
+}
+
+.loadingMinedRules {
+    margin-top: 250px;
+    margin-left: 50px;
+    color: #349ec3;
+}
+
+.padding-bottom-25 {
+    padding-bottom: 25px;
+}
+
+.padding-top-25 {
+    padding-bottom: 25px;
 }

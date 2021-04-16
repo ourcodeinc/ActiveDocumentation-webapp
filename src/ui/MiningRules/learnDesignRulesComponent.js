@@ -51,7 +51,9 @@ class LearnDesignRulesComponent extends Component {
 
     render() {
         return (
-            <div className={"learningDesignRulesComponent"}>
+            <div className={"learningDesignRulesComponent overlayContainer"}>
+                <div className={"mainDiv-overlay"}>
+
                 {this.renderDefaultView()}
                 {this.renderButtonsAndSliders()}
                 {this.state.minedRules.length === 0 ? null : (
@@ -62,6 +64,9 @@ class LearnDesignRulesComponent extends Component {
                 <div className={"minedRulesComponent"}>
                     {this.renderMinedRulePad()}
                 </div>
+                </div>
+                {this.renderLoading()}
+                {this.renderDoiLoading()}
             </div>
         )
     }
@@ -123,6 +128,9 @@ class LearnDesignRulesComponent extends Component {
         if (this.state.minedRules.length > 0)
             return (
                 <div>
+                    {this.renderLoading()}
+                    {this.renderDoiLoading()}
+
                     <Button onClick={() => this.doRequestMineRules()}>Search Again</Button>
                 </div>
             );
@@ -131,10 +139,8 @@ class LearnDesignRulesComponent extends Component {
                 {this.renderLoading()}
                 {this.renderDoiLoading()}
 
-                <Button onClick={() => this.doRequestMineRules()}>Find Design Rules In Code</Button>
-                <Button onClick={() => this.ShowMinedRules()} style={{color: "red"}}>
-                    Show Mined Rules (Dangerous!)
-                </Button>
+                <Button disabled={false} onClick={() => this.doRequestMineRules()}>Find Design Rules In Code</Button>
+                <Button onClick={() => this.ShowMinedRules()}>Show Mined Rules</Button>
             </div>
         )
     }
@@ -146,18 +152,9 @@ class LearnDesignRulesComponent extends Component {
      */
     renderLoading() {
         return this.state.loading ? (
-            <div style={{
-                padding: "20%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-                zIndex: "1",
-                position: "fixed",
-                backgroundColor: "white"
-            }}>
-                <div style={{marginTop: "50px"}}>Mining Design Rules</div>
-                <div style={{padding: "20%"}}>
+            <div className={"overlay loadingMinedRulesContainer"}>
+                <div className={"loadingMinedRules"}><h3>Mining Design Rules</h3></div>
+                <div>
                     <div className="spinner"/>
                 </div>
             </div>
@@ -170,18 +167,9 @@ class LearnDesignRulesComponent extends Component {
      */
     renderDoiLoading() {
         return this.state.doiLoading ? (
-            <div style={{
-                padding: "20%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-                zIndex: "1",
-                position: "fixed",
-                backgroundColor: "white"
-            }}>
-                <div style={{marginTop: "50px"}}>Fetching DOI Information</div>
-                <div style={{padding: "20%"}}>
+            <div className={"overlay loadingMinedRulesContainer"}>
+                <div className={"loadingMinedRules"}><h3>Fetching DOI Information</h3></div>
+                <div>
                     <div className="spinner"/>
                 </div>
             </div>
@@ -206,7 +194,8 @@ class LearnDesignRulesComponent extends Component {
         // create marks for complexity slider IF there are mined rules
         let marksComplexity = {};
         if (this.state.minedRules.length > 0) {
-            for (let i = minNumberOfAttributes; i <= maxNumberOfAttributes; i += Math.floor((maxNumberOfAttributes - minNumberOfAttributes) / 8))
+            for (let i = minNumberOfAttributes; i <= maxNumberOfAttributes;
+                 i += Math.max(Math.floor((maxNumberOfAttributes - minNumberOfAttributes) / 8), 1))
                 marksComplexity[i] = i;
         }
         marksComplexity[maxNumberOfAttributes] = maxNumberOfAttributes;
@@ -222,7 +211,8 @@ class LearnDesignRulesComponent extends Component {
         // create marks for file slider IF there are mined rules
         let marksFiles = {};
         if (this.state.minedRules.length > 0) {
-            for (let i = minNumberOfFiles; i <= maxNumberOfFiles; i += Math.floor((maxNumberOfFiles - minNumberOfFiles) / 8))
+            for (let i = minNumberOfFiles; i <= maxNumberOfFiles;
+                 i += Math.max(Math.floor((maxNumberOfFiles - minNumberOfFiles) / 8), 1))
                 marksFiles[i] = i;
         }
         marksFiles[maxNumberOfFiles] = maxNumberOfFiles;
@@ -230,8 +220,8 @@ class LearnDesignRulesComponent extends Component {
         if (this.state.minedRules.length === 0) return null;
 
         return (
-            <div>
-                <div style={{paddingTop: "25px"}}>
+            <div className={"padding-bottom-25"}>
+                <div className={"padding-bottom-25"}>
                     <Row className="show-grid">
                         <Col xsHidden md={2}>
                             Complexity
@@ -269,7 +259,7 @@ class LearnDesignRulesComponent extends Component {
                         </Col>
                     </Row>
                 </div>
-                <div style={{paddingTop: "25px"}}>
+                <div className={"padding-top-25"}>
                     <Row className="show-grid">
                         <Col xsHidden md={2}>
                             Number of Files
@@ -381,7 +371,7 @@ class LearnDesignRulesComponent extends Component {
                                                      Utilities.sendToServer(this.props.ws, webSocketSendMessage.open_file_mined_rules, fileName)
                                                  }}>
                                                 {fileName
-                                                    .replace(this.props.projectPath.slice, "")
+                                                    .replace(this.props.projectPath.slice(0), "")
                                                     .replace(this.props.projectPath.slice(1), "")}
                                             </div>
                                         ))}
