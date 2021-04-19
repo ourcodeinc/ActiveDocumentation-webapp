@@ -3,6 +3,7 @@
  */
 
 import Utilities from "./utilities";
+import {nsResolver} from "./srcMLConfig";
 
 /**
  * verify the rules for all xml files
@@ -333,11 +334,6 @@ const runXPathQuery = (xmlFile, xpathQuery) => {
     let parser = new DOMParser();
     let result = [];
 
-    function nsResolver(prefix) {
-        let ns = {"src": "http://www.srcML.org/srcML/src"};
-        return ns[prefix] || null;
-    }
-
     // checks validity of the XML
     let xml = parser.parseFromString(xmlFile["xml"], "text/xml");
     if (!xml.evaluate) {
@@ -440,11 +436,6 @@ const getXmlData = (mainXml, query, index) => {
 
     let xml = Utilities.cloneXML(mainXml);
 
-    function nsResolver(prefix) {
-        let ns = {"src": "http://www.srcML.org/srcML/src"};
-        return ns[prefix] || null;
-    }
-
     let nodes = xml.evaluate(query, xml, nsResolver, XPathResult.ANY_TYPE, null);
     let res = nodes.iterateNext();
     let i = 0;
@@ -527,10 +518,6 @@ const isValidXPathQueries = (ruleI) => {
     let xml = parser.parseFromString("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
         "<unit xmlns=\"http://www.srcML.org/srcML/src\" revision=\"0.9.5\" language=\"Java\" filename=\"validate.java\"/>", "text/xml");
 
-    function nsResolver(prefix) {
-        let ns = {"src": "http://www.srcML.org/srcML/src"};
-        return ns[prefix] || null;
-    }
     try {
         for (let i=0; i< ruleI.quantifierXPathQuery.length; i++)
             xml.evaluate(ruleI.quantifierXPathQuery[i], xml, nsResolver, XPathResult.ANY_TYPE, null);
