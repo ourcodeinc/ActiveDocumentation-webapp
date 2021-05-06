@@ -58,6 +58,17 @@ class WebSocketManager extends Component {
                     this.props.onConnectToIDE();
                     break;
 
+                case webSocketReceiveMessage.project_path_msg:
+                    // data: projectPath
+                    projectPath = message.data;
+                    this.props.onProjectPathUpdate(projectPath);
+                    break;
+
+                case webSocketReceiveMessage.project_hierarchy_msg:
+                    // data: {projectHierarchy}
+                    this.props.onProjectHierarchy(message.data);
+                    break;
+
                 case webSocketReceiveMessage.xml_files_msg:
                     // data: {filePath: "", xml: ""}
                     xml.push(message.data);
@@ -73,17 +84,6 @@ class WebSocketManager extends Component {
                     // data: [tagTable]
                     tagTable = JSON.parse(message.data);
                     this.props.onUpdateTagTable(tagTable);
-                    break;
-
-                case webSocketReceiveMessage.project_hierarchy_msg:
-                    // data: {projectHierarchy}
-                    this.props.onProjectHierarchy(message.data);
-                    break;
-
-                case webSocketReceiveMessage.project_path_msg:
-                    // data: projectPath
-                    projectPath = message.data;
-                    this.props.onProjectPathUpdate(projectPath);
                     break;
 
                 case webSocketReceiveMessage.verify_rules_msg:
@@ -106,7 +106,7 @@ class WebSocketManager extends Component {
                     // data: "filePath"
                     let filePath = message.data;
                     ruleTable = checkRulesForFile(xml, ruleTable, filePath);
-                    this.props.onFilePathChange(filePath.replace(projectPath, ""));
+                    this.props.onFilePathChange(filePath);
                     this.props.onUpdateRuleTable(ruleTable);
                     window.location.hash = "#/codeChanged";
                     break;
@@ -174,7 +174,7 @@ class WebSocketManager extends Component {
 
                 case webSocketReceiveMessage.file_change_in_ide_msg:
                     // data: "filePath"
-                    let focusedFilePath = message.data.replace(projectPath, "");
+                    let focusedFilePath = message.data;
                     if (!this.props.ignoreFileChange) {
                         this.props.onFilePathChange(focusedFilePath);
                         window.location.hash = "#/rulesForFile/" + focusedFilePath.replace(/\//g, "%2F");

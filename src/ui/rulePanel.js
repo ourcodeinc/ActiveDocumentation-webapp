@@ -16,15 +16,34 @@ import Utilities from "../core/utilities";
 import RulePad from "./RulePad/rulePad";
 import {reduxStoreMessages} from "../reduxStoreConstants";
 import {webSocketSendMessage} from "../core/coreConstants";
+import {relatives} from "../core/ruleExecutorConstants";
 
 
 class RulePanel extends Component {
 
     constructor(props) {
         super(props);
-        this.ruleIndex = props["ruleIndex"] !== undefined ? props["ruleIndex"] : -1;
+        this.ruleIndex = props.ruleIndex !== undefined ? props.ruleIndex : -1;
+        /**
+         * @type {null|{index:number, title:string, description:string, tags:[], grammar:string, 
+         * checkForFilesFolders:[string], checkForFilesFoldersConstraints:"INCLUDE"|"EXCLUDE"|"NONE", 
+         * processFilesFolders:"WITHIN", 
+         * quantifierXPathQuery:[], constraintXPathQuery:[], quantifierQueryType:string, constraintQueryType:string, 
+         * rulePanelState:{editMode:boolean, title:string, description:string, ruleTags:[], folderConstraint:string, 
+         * filesFolders:[], 
+         * constraintXPath:string, quantifierXPath:string, autoCompleteArray:[], 
+         * graphicalEditorState:{guiTree:{}, guiElements:{}, ruleType:string}}, 
+         * xPathQueryResult:[{
+         * data:{quantifierResult:[{filePath:string,snippet:string,xml:{fileName:string,  
+         * xml:string}}], 
+         * satisfied:number, satisfiedResult:[], violated:number, violatedResult:[]
+         * changed:boolean,violatedChanged:string,satisfiedChanged:string,allChanged:string}, 
+         * filePath:string
+         * }]}}
+         */
         this.ruleI = null;
         this.newRuleRequest = this.ruleIndex === -1;
+        this.none_filePath = "none";
 
         this.state = {
             openPanel: true,
@@ -40,7 +59,7 @@ class RulePanel extends Component {
             filesFolders: [],
             tags: [],
 
-            filePath: "none"
+            filePath: this.none_filePath
         };
 
         // existing rule
@@ -199,23 +218,23 @@ class RulePanel extends Component {
     renderTabHeader(group) {
         // sum up the number of satisfied and violated
         let totalSatisfied = 0, totalViolated = 0;
-        for (let i = 0; i < this.ruleI["xPathQueryResult"].length; i++) {
-            totalSatisfied += this.ruleI["xPathQueryResult"][i]["data"]["satisfied"];
-            totalViolated += this.ruleI["xPathQueryResult"][i]["data"]["violated"]
+        for (let i = 0; i < this.ruleI.xPathQueryResult.length; i++) {
+            totalSatisfied += this.ruleI.xPathQueryResult[i].data.satisfied;
+            totalViolated += this.ruleI.xPathQueryResult[i].data.violated
         }
 
         let fileSatisfied = 0, fileViolated = 0;
-        let file = this.ruleI["xPathQueryResult"].filter(d => d["filePath"] === this.state.filePath);
+        let file = this.ruleI.xPathQueryResult.filter(d => d.filePath === this.state.filePath);
         if (file.length > 0) {
-            fileSatisfied = file[0]["data"]["satisfied"];
-            fileViolated = file[0]["data"]["violated"];
+            fileSatisfied = file[0].data.satisfied;
+            fileViolated = file[0].data.violated;
         }
 
         switch (group) {
             case "all":
                 return (
                     <span className="rulePanelGeneralTab">Matches
-                        {this.state.filePath !== "none" ? (
+                        {this.state.filePath !== this.none_filePath ? (
                             <Fragment>
                                 <Badge className="forAll">{fileSatisfied + fileViolated}</Badge>
                                 <span style={{color: "#777"}}>out of</span>
@@ -229,7 +248,7 @@ class RulePanel extends Component {
             case "satisfied":
                 return (
                     <span className="rulePanelSatisfiedTab">Examples
-                        {this.state.filePath !== "none" ? (
+                        {this.state.filePath !== this.none_filePath ? (
                             <Fragment>
                                 <Badge className="forAll">{fileSatisfied}</Badge>
                                 <span style={{color: "#777"}}>out of</span>
@@ -243,7 +262,7 @@ class RulePanel extends Component {
             case "violated":
                 return (
                     <span className="rulePanelViolatedTab">Violated
-                        {this.state.filePath !== "none" ? (
+                        {this.state.filePath !== this.none_filePath ? (
                             <Fragment>
                                 <Badge className="forAll">{fileViolated}</Badge>
                                 <span style={{color: "#777"}}>out of</span>
@@ -263,7 +282,7 @@ class RulePanel extends Component {
      * render tag badges
      */
     renderTags() {
-        return this.ruleI["tags"].map((d, i) => {
+        return (this.ruleI.tags).map((d, i) => {
             return (
                 <div className="buttonDiv" key={i}>
                     <Label onClick={() => window.location.hash = "#/tag/" + d.replace(/\//g, "%2F")}>{d}</Label>
@@ -273,43 +292,42 @@ class RulePanel extends Component {
 
     /**
      * create a list div node for quantifier and satisfied result and wrap them in a div
-     * @param group
-     * @returns {XML}
+     * @param group {string}
      */
     renderListOfSnippets(group) {
 
         let otherFilesList = [], fileList = [];
-        let file = this.ruleI["xPathQueryResult"].filter(d => d["filePath"] === this.state.filePath);
+        let file = this.ruleI.xPathQueryResult.filter(d => d.filePath === this.state.filePath);
 
         switch (group) {
             case "all":
-                if (this.state.filePath !== "none") {
+                if (this.state.filePath !== this.none_filePath) {
                     if (file.length > 0)
-                        fileList = file[0]["data"]["quantifierResult"];
+                        fileList = file[0].data.quantifierResult;
                 }
-                for (let i = 0; i < this.ruleI["xPathQueryResult"].length; i++) {
-                    if (this.ruleI["xPathQueryResult"][i]["filePath"] === this.state.filePath) continue;
-                    otherFilesList = otherFilesList.concat(this.ruleI["xPathQueryResult"][i]["data"]["quantifierResult"])
+                for (let i = 0; i < this.ruleI.xPathQueryResult.length; i++) {
+                    if (this.ruleI.xPathQueryResult[i].filePath === this.state.filePath) continue;
+                    otherFilesList = otherFilesList.concat(this.ruleI.xPathQueryResult[i].data.quantifierResult)
                 }
                 break;
             case "satisfied":
-                if (this.state.filePath !== "none") {
+                if (this.state.filePath !== this.none_filePath) {
                     if (file.length > 0)
-                        fileList = file[0]["data"]["satisfiedResult"];
+                        fileList = file[0].data.satisfiedResult;
                 }
-                for (let i = 0; i < this.ruleI["xPathQueryResult"].length; i++) {
-                    if (this.ruleI["xPathQueryResult"][i]["filePath"] === this.state.filePath) continue;
-                    otherFilesList = otherFilesList.concat(this.ruleI["xPathQueryResult"][i]["data"]["satisfiedResult"])
+                for (let i = 0; i < this.ruleI.xPathQueryResult.length; i++) {
+                    if (this.ruleI.xPathQueryResult[i].filePath === this.state.filePath) continue;
+                    otherFilesList = otherFilesList.concat(this.ruleI.xPathQueryResult[i].data.satisfiedResult)
                 }
                 break;
             case "violated":
-                if (this.state.filePath !== "none") {
+                if (this.state.filePath !== this.none_filePath) {
                     if (file.length > 0)
-                        fileList = file[0]["data"]["violatedResult"];
+                        fileList = file[0].data.violatedResult;
                 }
-                for (let i = 0; i < this.ruleI["xPathQueryResult"].length; i++) {
-                    if (this.ruleI["xPathQueryResult"][i]["filePath"] === this.state.filePath) continue;
-                    otherFilesList = otherFilesList.concat(this.ruleI["xPathQueryResult"][i]["data"]["violatedResult"])
+                for (let i = 0; i < this.ruleI.xPathQueryResult.length; i++) {
+                    if (this.ruleI.xPathQueryResult[i].filePath === this.state.filePath) continue;
+                    otherFilesList = otherFilesList.concat(this.ruleI.xPathQueryResult[i].data.violatedResult)
                 }
                 break;
             default:
@@ -321,23 +339,24 @@ class RulePanel extends Component {
                 return (<h5>No snippet</h5>);
             return list.map((d, i) => {
                 return (
-                    <div data-file-path={d["filePath"]} className="snippetDiv" key={i}>
+                    <div data-file-path={d.filePath} className="snippetDiv" key={i}>
                                 <pre className="link" onClick={() => {
                                     this.props.onIgnoreFile(true);
-                                    Utilities.sendToServer(this.props.ws, webSocketSendMessage.snippet_xml_msg, d["xml"])
+                                    Utilities.sendToServer(this.props.ws, webSocketSendMessage.snippet_xml_msg, d.xml)
                                 }}>
-                                    <div className="content" dangerouslySetInnerHTML={{__html: d["snippet"]}}/>
+                                    <div className="content" dangerouslySetInnerHTML={{__html: d.snippet}}/>
                                 </pre>
                     </div>
                 )
             })
         };
 
-        let headerText = group === "all" ? "Matches" : group === "satisfied" ? "Example Snippet" : "Violated snippet";
+        let headerText = group === "all" ? "Matches" : group === "satisfied" ? 
+            "Example Snippet" : "Violated snippet";
 
         return (
             <div>
-                {this.state.filePath !== "none" ? (
+                {this.state.filePath !== this.none_filePath ? (
                     <Fragment>
                         <h4>{headerText + " for this file"}</h4>
                         <div>{returnList(fileList)}</div>
@@ -358,34 +377,33 @@ class RulePanel extends Component {
      */
     newUpdateStateUponCodeChange (codeChanged, filePath) {
         if (!codeChanged) {
-            let open = false;
-            if (filePath === "none")
+            let open;
+            if (filePath === this.none_filePath)
                 open = true;
             else
-            {
-                open = this.ruleI["xPathQueryResult"].filter(d => d["filePath"] === filePath).length > 0;
-            }
+                open = this.ruleI.xPathQueryResult.filter(d => d.filePath === filePath).length > 0;
             return {
                 className: "rulePanelDiv" + (this.newRuleRequest ? " edit-bg" : ""),
                 openPanel: open
             };
         }
 
-        let file = this.ruleI["xPathQueryResult"].filter(d => d["filePath"] === filePath);
-        let ruleIfile = file.length !== 0 ? file[0]["data"] : {};
-        if (ruleIfile["allChanged"] === "greater" && ruleIfile["satisfiedChanged"] === ruleIfile["violatedChanged"] === "none") {
+        let file = this.ruleI.xPathQueryResult.filter(d => d.filePath === filePath);
+        let ruleIFile = file.length !== 0 ? file[0].data : {};
+        if (ruleIFile.allChanged === relatives.greater && ruleIFile.satisfiedChanged === relatives.none 
+            && ruleIFile.violatedChanged === relatives.none) {
             return {openPanel: true, className: "rulePanelDiv blue-bg"};
         }
-        if (ruleIfile["satisfiedChanged"] === "greater")
+        if (ruleIFile.satisfiedChanged === relatives.greater)
             return{openPanel: true, className: "rulePanelDiv green-bg"};
 
-        if (ruleIfile["violatedChanged"] === "greater")
+        if (ruleIFile.violatedChanged === relatives.greater)
             return {openPanel: true, className: "rulePanelDiv red-bg"};
 
         if (file.length > 0)
             return {openPanel: true, className: "rulePanelDiv"};
 
-        if (ruleIfile["violated"] === 0)
+        if (ruleIFile.violated === 0)
             return {openPanel: false, className: "rulePanelDiv"};
 
         return {openPanel: false, className: "rulePanelDiv"};
@@ -405,7 +423,8 @@ function mapStateToProps(state) {
         rules: state.ruleTable,
         tags: state.tagTable,
         codeChanged: state.currentHash[0] === "codeChanged",
-        filePath: ["rulesForFile", "codeChanged"].indexOf(state.currentHash[0]) !== -1 ? (state.projectPath + state.openFilePath) : "none",
+        filePath: ["rulesForFile", "codeChanged"].indexOf(state.currentHash[0]) !== -1 ? 
+            (state.openFilePath) : this.none_filePath,
         ws: state.ws,
         message: state.message
     };

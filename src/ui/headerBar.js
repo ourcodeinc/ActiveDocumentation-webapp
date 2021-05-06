@@ -137,11 +137,11 @@ function mapStateToProps(state) {
             props.title = "Violated Rules";
             break;
         case "rulesForFile":
-            props.content = state.openFilePath;
+            props.content = state.openFilePath.replace(state.projectPath, "");
             break;
         case "codeChanged":
             props.title = "Code changed in";
-            props.content = state.openFilePath;
+            props.content = state.openFilePath.replace(state.projectPath, "");
             break;
         case "learnDesignRules":
             props.title = "Learn Design Rules";
