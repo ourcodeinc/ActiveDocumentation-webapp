@@ -187,6 +187,10 @@ class GenerateXPath {
                     this.expressionStatementsContextTraversal(node, isConstraintCondition);
                     break;
 
+                case "ValueContext":
+                    this.valueContextTraversal(node, isConstraintCondition);
+                    break;
+
                 case "InitialValuesContext":
                     this.initialValuesContextTraversal(node, isConstraintCondition);
                     break;
@@ -760,7 +764,22 @@ class GenerateXPath {
                 this.XPathC += "descendant-or-self::src:expr_stmt/src:expr";
             }
 
-            if (nodeType === "ExpressionStatementConditionContext") {
+            if (nodeType === "ExpressionStatementConditionContext" || nodeType === "ExpressionStatementExpressionContext") {
+
+                if (!isConstraintCondition) this.XPathQ += "[";
+                this.XPathC += "[";
+                this.traverseNode(nodeChildren[i], isConstraintCondition);
+                if (!isConstraintCondition) this.XPathQ += "]";
+                this.XPathC += "]";
+            }
+        }
+    }
+
+    valueContextTraversal(node, isConstraintCondition) {
+        let nodeChildren = node.children.slice(0);
+        for (let i = 0; i < node.children.length; i++) {
+            let nodeType = nodeChildren[i].constructor.name;
+            if (nodeType === "ValueConditionContext") {
                 let tempText = "";
                 let messageID = Math.floor(new Date().getTime() / 1000); // to match send and receive messages
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
@@ -900,7 +919,7 @@ class GenerateXPath {
      */
     sendTextDataToSrcML(text, elementType, messageID) {
         if (text === "") return;
-        let code = text;
+        let code;
         let query = "";
         let cuttingLength = 9; // for cutting XPath after receiving and processing the message
         // let messageID = Math.floor(new Date().getTime() / 1000); // to match send and receive messages

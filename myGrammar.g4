@@ -384,7 +384,7 @@ declarationStatementCondition
 declarationStatementExpression
     : LPAREN declarationStatementExpression RPAREN
     | left=declarationStatementExpression op=binary right=declarationStatementExpression
-    | ( annotations | specifiers | visibilities | types | names | initialValues )
+    | ( annotations | specifiers | visibilities | types | names | initialValues | comments)
     | declarationStatementExpression SPACE
     ;
 
@@ -406,9 +406,31 @@ expressionStatementOf
     ;
 
 expressionStatementCondition
-    : combinatorialWords SPACE
+    : withWord expressionStatementExpression
     ;
 
+expressionStatementExpression
+    : LPAREN expressionStatementExpression RPAREN
+    | left=expressionStatementExpression op=binary right=expressionStatementExpression
+    | (comments | value)
+    | expressionStatementExpression SPACE
+    ;
+
+/*
+    values
+*/
+
+Value
+    :  'value '
+    ;
+
+value
+    : Value valueCondition?
+    ;
+
+valueCondition
+    : combinatorialWords SPACE
+    ;
 
 /*
     init values

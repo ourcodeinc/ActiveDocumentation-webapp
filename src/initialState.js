@@ -20,6 +20,7 @@ export const initial_graphicalElements = {
     "0-7-0-3-0": {conditionName: "declaration_statement_type", ...graphicalElementAttributes},
     "0-7-0-4-0": {conditionName: "declaration_statement_name", ...graphicalElementAttributes},
     "0-7-0-5-0": {conditionName: "declaration_statement_initialization", ...graphicalElementAttributes},
+    "0-7-0-7-0": {conditionName: "comment", ...graphicalElementAttributes},
     "0-7-1": {conditionName: "constructor_el", ...graphicalElementAttributes},
     "0-7-1-0-0": {conditionName: "annotation", ...graphicalElementAttributes},
     "0-7-1-2-0": {conditionName: "visibility", ...graphicalElementAttributes},
@@ -27,6 +28,8 @@ export const initial_graphicalElements = {
     "0-7-1-5-0-1-0": {conditionName: "parameter_type", ...graphicalElementAttributes},
     "0-7-1-5-0-4-0": {conditionName: "parameter_name", ...graphicalElementAttributes},
     "0-7-1-7-0": {conditionName: "constructor_expression_statement", ...graphicalElementAttributes},
+    "0-7-1-7-0-0-0": {conditionName: "expression_el", ...graphicalElementAttributes},
+    "0-7-1-7-0-7-0": {conditionName: "comment", ...graphicalElementAttributes},
     "0-7-1-7-1": {conditionName: "declaration_statement_el", ...graphicalElementAttributes},
     "0-7-1-7-1-0-0": {conditionName: "annotation", ...graphicalElementAttributes},
     "0-7-1-7-1-1-0": {conditionName: "visibility", ...graphicalElementAttributes},
@@ -34,6 +37,7 @@ export const initial_graphicalElements = {
     "0-7-1-7-1-3-0": {conditionName: "declaration_statement_type", ...graphicalElementAttributes},
     "0-7-1-7-1-4-0": {conditionName: "declaration_statement_name", ...graphicalElementAttributes},
     "0-7-1-7-1-5-0": {conditionName: "declaration_statement_initialization", ...graphicalElementAttributes},
+    "0-7-1-7-1-7-0": {conditionName: "comment", ...graphicalElementAttributes},
     "0-7-1-7-2": {conditionName: "comment", ...graphicalElementAttributes},
     "0-7-2": {conditionName: "function_el", ...graphicalElementAttributes},
     "0-7-2-0-0": {conditionName: "annotation", ...graphicalElementAttributes},
@@ -51,7 +55,10 @@ export const initial_graphicalElements = {
     "0-7-2-7-0-3-0": {conditionName: "declaration_statement_type", ...graphicalElementAttributes},
     "0-7-2-7-0-4-0": {conditionName: "declaration_statement_name", ...graphicalElementAttributes},
     "0-7-2-7-0-5-0": {conditionName: "declaration_statement_initialization", ...graphicalElementAttributes},
+    "0-7-2-7-0-7-0": {conditionName: "comment", ...graphicalElementAttributes},
     "0-7-2-7-1": {conditionName: "function_expression_statement", ...graphicalElementAttributes},
+    "0-7-2-7-1-0-0": {conditionName: "expression_el", ...graphicalElementAttributes},
+    "0-7-2-7-1-7-0": {conditionName: "comment", ...graphicalElementAttributes},
     "0-7-2-7-2": {conditionName: "function_return_value", ...graphicalElementAttributes},
     "0-7-2-7-3": {conditionName: "comment", ...graphicalElementAttributes},
     "0-7-3": {conditionName: "abstract_function_el", ...graphicalElementAttributes},
@@ -97,7 +104,7 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-0-4-0"],
             after_2: ["0-7-0-5-0"],
             after_3: [],
-            body: []
+            body: [["0-7-0-7-0"]]
         }
     },
     "0-7-0-0-0": {parentId: "0-7-0", children: {}},
@@ -106,6 +113,7 @@ export const initial_graphicalElementTree = {
     "0-7-0-3-0": {parentId: "0-7-0", children: {}},
     "0-7-0-4-0": {parentId: "0-7-0", children: {}},
     "0-7-0-5-0": {parentId: "0-7-0", children: {}},
+    "0-7-0-7-0": {parentId: "0-7-0", children: {}},
     "0-7-1": {
         parentId: "0",
         children: {
@@ -136,7 +144,21 @@ export const initial_graphicalElementTree = {
     },
     "0-7-1-5-0-1-0": {parentId: "0-7-1-5-0", children: {}},
     "0-7-1-5-0-4-0": {parentId: "0-7-1-5-0", children: {}},
-    "0-7-1-7-0": {parentId: "0-7-1", children: {}},
+    "0-7-1-7-0": {
+        parentId: "0-7-1",
+        children: {
+            top: ["0-7-1-7-0-0-0"],
+            before_1: [],
+            before_2: [],
+            before_3: [],
+            after_1: [],
+            after_2: [],
+            after_3: [],
+            body: [["0-7-1-7-0-7-0"]]
+        }
+    },
+    "0-7-1-7-0-0-0": {parentId: "0-7-1-7-0", children: {}},
+    "0-7-1-7-0-7-0": {parentId: "0-7-1-7-0", children: {}},
     "0-7-1-7-1": {
         parentId: "0-7-1",
         children: {
@@ -147,7 +169,7 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-1-7-1-4-0"],
             after_2: ["0-7-1-7-1-5-0"],
             after_3: [],
-            body: []
+            body: [["0-7-1-7-1-7-0"]]
         }
     },
     "0-7-1-7-1-0-0": {parentId: "0-7-1-7-1", children: {}},
@@ -156,6 +178,7 @@ export const initial_graphicalElementTree = {
     "0-7-1-7-1-3-0": {parentId: "0-7-1-7-1", children: {}},
     "0-7-1-7-1-4-0": {parentId: "0-7-1-7-1", children: {}},
     "0-7-1-7-1-5-0": {parentId: "0-7-1-7-1", children: {}},
+    "0-7-1-7-1-7-0": {parentId: "0-7-1-7-1", children: {}},
     "0-7-1-7-2": {parentId:"0-7-1", children: {}},
     "0-7-2": {
         parentId: "0",
@@ -200,7 +223,7 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-2-7-0-4-0"],
             after_2: ["0-7-2-7-0-5-0"],
             after_3: [],
-            body: []
+            body: [["0-7-2-7-0-7-0"]]
         }
     },
     "0-7-2-7-0-0-0": {parentId: "0-7-2-7-0", children: {}},
@@ -209,7 +232,22 @@ export const initial_graphicalElementTree = {
     "0-7-2-7-0-3-0": {parentId: "0-7-2-7-0", children: {}},
     "0-7-2-7-0-4-0": {parentId: "0-7-2-7-0", children: {}},
     "0-7-2-7-0-5-0": {parentId: "0-7-2-7-0", children: {}},
-    "0-7-2-7-1": {parentId: "0-7-2", children: {}},
+    "0-7-2-7-0-7-0": {parentId: "0-7-2-7-0", children: {}},
+    "0-7-2-7-1": {
+        parentId: "0-7-2",
+        children: {
+            top: ["0-7-2-7-1-0-0"],
+            before_1: [],
+            before_2: [],
+            before_3: [],
+            after_1: [],
+            after_2: [],
+            after_3: [],
+            body: [["0-7-2-7-1-7-0"]]
+        }
+    },
+    "0-7-2-7-1-0-0": {parentId: "0-7-2-7-1", children: {}},
+    "0-7-2-7-1-7-0": {parentId: "0-7-2-7-1", children: {}},
     "0-7-2-7-2": {parentId: "0-7-2", children: {}},
     "0-7-2-7-3": {parentId: "0-7-2", children: {}},
     "0-7-3": {

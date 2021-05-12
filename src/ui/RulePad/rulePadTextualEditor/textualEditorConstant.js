@@ -57,10 +57,11 @@ export const autoComplete_suggestion = {
         ofClause: []
     },
     "declaration statement": {
-        withClause: ["annotation", "specifier", "visibility", "type", "name", "initial value"],
+        withClause: ["annotation", "specifier", "visibility", "type", "name", "initial value", "\"SOME_COMMENT\""],
         ofClause: ["class", "function", "constructor"]
     },
     "expression statement": {
+        withClause: ["value", "\"SOME_COMMENT\""],
         ofClause: []
     },
     "initial value": {

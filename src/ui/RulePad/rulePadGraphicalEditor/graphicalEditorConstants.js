@@ -141,13 +141,37 @@ const element_conditions = {
         grammar: "name",
         wordValidation: "word"
     },
-    function_expression_statement: {
+    expression_el: {
         type: "wideText",
         pre: "",
         post: ";",
-        placeholder: "expression statement inside function",
-        unique: false,
-        grammar: "expression statement"
+        placeholder: "expression statement",
+        unique: true,
+        grammar: "value"
+    },
+    function_expression_statement: {
+        type: "element",
+        children: {
+            top: "expression_el",
+            before_1: "",
+            before_2: "",
+            before_3: "",
+            after_1: "",
+            after_2: "",
+            after_3: "",
+            body: ["comment"]
+        },
+        grammar: "expression statement",
+        pre_before_1: "",
+        pre_before_2: "",
+        pre_before_3: "",
+        pre_after_1: "",
+        pre_after_2: "",
+        pre_after_3: "",
+        post_after_3: "",
+        pre_body: "",
+        post_body: "",
+        canBeSelected: false
     },
     function_return_value: {
         type: "wideText",
@@ -187,12 +211,28 @@ const element_conditions = {
         canBeSelected: true
     },
     constructor_expression_statement: {
-        type: "wideText",
-        pre: "",
-        post: ";",
-        placeholder: "expression statement inside constructor",
-        unique: false,
-        grammar: "expression statement"
+        type: "element",
+        children: {
+            top: "expression_el",
+            before_1: "",
+            before_2: "",
+            before_3: "",
+            after_1: "",
+            after_2: "",
+            after_3: "",
+            body: ["comment"]
+        },
+        grammar: "expression statement",
+        pre_before_1: "",
+        pre_before_2: "",
+        pre_before_3: "",
+        pre_after_1: "",
+        pre_after_2: "",
+        pre_after_3: "",
+        post_after_3: "",
+        pre_body: "",
+        post_body: "",
+        canBeSelected: false
     },
 
     abstract_function_el: {
@@ -248,7 +288,7 @@ const element_conditions = {
             after_1: "declaration_statement_name",
             after_2: "declaration_statement_initialization",
             after_3: "",
-            body: []
+            body: ["comment"]
         },
         grammar: "declaration statement",
         pre_before_1: "",
