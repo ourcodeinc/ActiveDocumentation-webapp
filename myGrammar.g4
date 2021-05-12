@@ -420,12 +420,12 @@ expressionStatementExpression
     values
 */
 
-Value
+VALUE
     :  'value '
     ;
 
 value
-    : Value valueCondition?
+    : VALUE valueCondition?
     ;
 
 valueCondition

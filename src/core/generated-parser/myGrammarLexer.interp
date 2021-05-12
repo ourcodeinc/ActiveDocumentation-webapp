@@ -84,7 +84,7 @@ VISIBILITY
 ReturnValue
 DeclarationStatement
 ExpressionStatement
-Value
+VALUE
 InitialValue
 CLASSES
 
@@ -128,7 +128,7 @@ VISIBILITY
 ReturnValue
 DeclarationStatement
 ExpressionStatement
-Value
+VALUE
 InitialValue
 CLASSES
 

@@ -468,7 +468,7 @@ var symbolicNames = [ null, null, null, null, null, null, null, null, null,
                       "NAME", "ANNOTATION", "EXTENSION", "SUPERCLASS", "IMPLEMENTATION", 
                       "INTERFACE", "FUNCTION", "AbstractFunctions", "CONSTRUCTOR", 
                       "PARAMETER", "TYPES", "SPECIFIER", "VISIBILITY", "ReturnValue", 
-                      "DeclarationStatement", "ExpressionStatement", "Value", 
+                      "DeclarationStatement", "ExpressionStatement", "VALUE", 
                       "InitialValue", "CLASSES" ];
 
 var ruleNames =  [ "inputSentence", "mustClause", "words", "word", "combinatorialWords", 
@@ -548,7 +548,7 @@ myGrammarParser.VISIBILITY = 36;
 myGrammarParser.ReturnValue = 37;
 myGrammarParser.DeclarationStatement = 38;
 myGrammarParser.ExpressionStatement = 39;
-myGrammarParser.Value = 40;
+myGrammarParser.VALUE = 40;
 myGrammarParser.InitialValue = 41;
 myGrammarParser.CLASSES = 42;
 
@@ -5624,7 +5624,7 @@ myGrammarParser.prototype.expressionStatementExpression = function(_p) {
             this.match(myGrammarParser.RPAREN);
             break;
         case myGrammarParser.T__0:
-        case myGrammarParser.Value:
+        case myGrammarParser.VALUE:
             this.state = 574;
             this._errHandler.sync(this);
             switch(this._input.LA(1)) {
@@ -5632,7 +5632,7 @@ myGrammarParser.prototype.expressionStatementExpression = function(_p) {
                 this.state = 572;
                 this.comments();
                 break;
-            case myGrammarParser.Value:
+            case myGrammarParser.VALUE:
                 this.state = 573;
                 this.value();
                 break;
@@ -5719,8 +5719,8 @@ function ValueContext(parser, parent, invokingState) {
 ValueContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
 ValueContext.prototype.constructor = ValueContext;
 
-ValueContext.prototype.Value = function() {
-    return this.getToken(myGrammarParser.Value, 0);
+ValueContext.prototype.VALUE = function() {
+    return this.getToken(myGrammarParser.VALUE, 0);
 };
 
 ValueContext.prototype.valueCondition = function() {
@@ -5751,7 +5751,7 @@ myGrammarParser.prototype.value = function() {
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 589;
-        this.match(myGrammarParser.Value);
+        this.match(myGrammarParser.VALUE);
         this.state = 591;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,67,this._ctx);

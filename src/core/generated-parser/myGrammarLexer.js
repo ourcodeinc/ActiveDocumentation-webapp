@@ -308,7 +308,7 @@ myGrammarLexer.VISIBILITY = 36;
 myGrammarLexer.ReturnValue = 37;
 myGrammarLexer.DeclarationStatement = 38;
 myGrammarLexer.ExpressionStatement = 39;
-myGrammarLexer.Value = 40;
+myGrammarLexer.VALUE = 40;
 myGrammarLexer.InitialValue = 41;
 myGrammarLexer.CLASSES = 42;
 
@@ -342,7 +342,7 @@ myGrammarLexer.prototype.symbolicNames = [ null, null, null, null, null,
                                            "CONSTRUCTOR", "PARAMETER", "TYPES", 
                                            "SPECIFIER", "VISIBILITY", "ReturnValue", 
                                            "DeclarationStatement", "ExpressionStatement", 
-                                           "Value", "InitialValue", "CLASSES" ];
+                                           "VALUE", "InitialValue", "CLASSES" ];
 
 myGrammarLexer.prototype.ruleNames = [ "T__0", "T__1", "T__2", "T__3", "T__4", 
                                        "T__5", "T__6", "T__7", "T__8", "T__9", 
@@ -355,7 +355,7 @@ myGrammarLexer.prototype.ruleNames = [ "T__0", "T__1", "T__2", "T__3", "T__4",
                                        "CONSTRUCTOR", "PARAMETER", "TYPES", 
                                        "SPECIFIER", "VISIBILITY", "ReturnValue", 
                                        "DeclarationStatement", "ExpressionStatement", 
-                                       "Value", "InitialValue", "CLASSES" ];
+                                       "VALUE", "InitialValue", "CLASSES" ];
 
 myGrammarLexer.prototype.grammarFileName = "myGrammar.g4";
 
