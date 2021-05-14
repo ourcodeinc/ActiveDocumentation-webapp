@@ -560,15 +560,6 @@ myGrammarListener.prototype.exitClasses = function(ctx) {
 };
 
 
-// Enter a parse tree produced by myGrammarParser#classOf.
-myGrammarListener.prototype.enterClassOf = function(ctx) {
-};
-
-// Exit a parse tree produced by myGrammarParser#classOf.
-myGrammarListener.prototype.exitClassOf = function(ctx) {
-};
-
-
 // Enter a parse tree produced by myGrammarParser#classCondition.
 myGrammarListener.prototype.enterClassCondition = function(ctx) {
 };
@@ -584,6 +575,42 @@ myGrammarListener.prototype.enterClassExpression = function(ctx) {
 
 // Exit a parse tree produced by myGrammarParser#classExpression.
 myGrammarListener.prototype.exitClassExpression = function(ctx) {
+};
+
+
+// Enter a parse tree produced by myGrammarParser#subclasses.
+myGrammarListener.prototype.enterSubclasses = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#subclasses.
+myGrammarListener.prototype.exitSubclasses = function(ctx) {
+};
+
+
+// Enter a parse tree produced by myGrammarParser#subclassOf.
+myGrammarListener.prototype.enterSubclassOf = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#subclassOf.
+myGrammarListener.prototype.exitSubclassOf = function(ctx) {
+};
+
+
+// Enter a parse tree produced by myGrammarParser#subclassCondition.
+myGrammarListener.prototype.enterSubclassCondition = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#subclassCondition.
+myGrammarListener.prototype.exitSubclassCondition = function(ctx) {
+};
+
+
+// Enter a parse tree produced by myGrammarParser#subclassExpression.
+myGrammarListener.prototype.enterSubclassExpression = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#subclassExpression.
+myGrammarListener.prototype.exitSubclassExpression = function(ctx) {
 };
 
 

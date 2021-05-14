@@ -11,6 +11,7 @@ mustClause
     | classes must have classExpression
     | parameters must have parameterExpression
     | declarationStatements must have declarationStatementExpression
+    | subclasses must have subclassExpression
     ;
 
 /*
@@ -458,15 +459,11 @@ initialValueCondition
 */
 
 CLASSES
-    : 'class ' | 'subclass '
+    : 'class '
     ;
 
 classes
-    : CLASSES classCondition? classOf?
-    ;
-
-classOf
-    : of classes
+    : CLASSES classCondition?
     ;
 
 classCondition
@@ -477,6 +474,35 @@ classExpression
     : LPAREN classExpression RPAREN
     | left=classExpression op=binary right=classExpression
     | ( annotations | specifiers | visibilities | names | extensions | implementations | functions
-            | abstractFunctions | constructors | declarationStatements | classes | returnValues  | comments )
+            | abstractFunctions | constructors | declarationStatements | returnValues  | comments | subclasses)
     | classExpression SPACE
+    ;
+
+
+/*
+    subclasses
+*/
+
+SUBCLASSES
+    : 'subclass '
+    ;
+
+subclasses
+    : SUBCLASSES subclassCondition? subclassOf?
+    ;
+
+subclassOf
+    : of classes
+    ;
+
+subclassCondition
+    : withWord subclassExpression
+    ;
+
+subclassExpression
+    : LPAREN subclassExpression RPAREN
+    | left=subclassExpression op=binary right=subclassExpression
+    | ( annotations | specifiers | visibilities | names | extensions | implementations | functions | subclasses |
+            | abstractFunctions | constructors | declarationStatements | returnValues  | comments )
+    | subclassExpression SPACE
     ;

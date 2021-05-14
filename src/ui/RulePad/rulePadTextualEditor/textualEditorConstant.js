@@ -1,6 +1,7 @@
 export const grammar_keywords = [
     "name", "annotation", "extension", "implementation", "function", "abstract function", "constructor", "parameter", "type",
-    "specifier", "visibility", "return value", "declaration statement", "expression statement", "class", "initial value", "comment"
+    "specifier", "visibility", "return value", "declaration statement", "expression statement", "class", "initial value", "comment",
+    "subclass"
 ];
 
 export const grammar_connectors = ["with", "have", "must", "and", "or", "of", "(", ")"];
@@ -72,11 +73,17 @@ export const autoComplete_suggestion = {
     },
     "class": {
         withClause: ["annotation", "specifier", "visibility", "name", "extension", "function", "abstract function",
-            "constructor", "declaration statement", "class", "return value", "implementation", "\"SOME_COMMENT\""],
+            "constructor", "declaration statement", "class", "return value", "implementation", "\"SOME_COMMENT\"",
+            "subclass"],
         ofClause: []
     },
     "comment": {
         ofClause: []
+    },
+    "subclass": {
+        withClause: ["annotation", "specifier", "visibility", "name", "extension", "function", "abstract function",
+            "constructor", "declaration statement", "class", "return value", "implementation", "\"SOME_COMMENT\""],
+        ofClause: ["class"]
     }
 };
 
@@ -526,5 +533,22 @@ export const documentations_IMarkdownString = {
         "    course[] courses;\n" +
         "}\n" +
         "```"
+    },
+    "comment": {
+        isTrusted: true, value:
+            "#### comments\n" +
+            "This element is designed to display properties not covered in RulePad\n"
+    },
+    "subclass": {
+        isTrusted: true, value:
+            "#### subclass\n" +
+            "A subclass represents a java subclass, a `class` child of another `class`\n" +
+            "``` java\n" +
+            "public class School {\n" +
+            "    class ClassRoom {\n"+
+            "        int roomCapacity;\n" +
+            "    }\n" +
+            "}\n" +
+            "```"
     },
 };

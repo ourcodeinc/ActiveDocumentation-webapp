@@ -35,6 +35,37 @@ const element_conditions = {
         wordValidation: "combinatorial"
     },
 
+    subclass_el: {
+        type: "element",
+        children: {
+            top: "annotation",
+            before_1: "visibility",
+            before_2: "specifier",
+            before_3: "",
+            after_1: "class_name",
+            after_2: "class_implements",
+            after_3: "class_extends",
+            body: [
+                "comment",
+                "declaration_statement_el",
+                "constructor_el",
+                "function_el",
+                "abstract_function_el"
+            ]
+        },
+        grammar: "subclass",
+        pre_before_1: "",
+        pre_before_2: "",
+        pre_before_3: "",
+        pre_after_1: "class",
+        pre_after_2: "",
+        pre_after_3: "",
+        post_after_3: "",
+        pre_body: "{",
+        post_body: "}",
+        canBeSelected: true
+    },
+
     class_el: {
         type: "element",
         children: {

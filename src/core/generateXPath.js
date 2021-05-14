@@ -123,6 +123,7 @@ class GenerateXPath {
                     this.commentsContextTraversal(node, isConstraintCondition);
                     break;
 
+                case "SubclassesContext":
                 case "ClassesContext":
                     this.classesContextTraversal(node, isConstraintCondition);
                     break;
@@ -285,13 +286,21 @@ class GenerateXPath {
                 if (!isConstraintCondition) this.XPathQ += "]";
                 this.XPathC += "]";
             }
+            if (nodeType === "SubclassOfContext") {
+                if (!isConstraintCondition) this.XPathQ += "[ancestor::";
+                this.XPathC += "[ancestor::";
+                this.traverseNode(nodeChildren[i], isConstraintCondition);
+                if (!isConstraintCondition) this.XPathQ += "]";
+                this.XPathC += "]";
+            }
 
             if (nodeType === "TerminalNodeImpl") {
                 if (!isConstraintCondition) this.XPathQ += "src:class";
                 this.XPathC += "src:class";
             }
 
-            if (nodeType === "ClassConditionContext" || nodeType === "ClassExpressionContext") {
+            if (nodeType === "ClassConditionContext" || nodeType === "ClassExpressionContext" ||
+                nodeType === "SubclassConditionContext" || nodeType === "SubclassExpressionContext") {
                 if (!isConstraintCondition) this.XPathQ += "[";
                 this.XPathC += "[";
                 this.traverseNode(nodeChildren[i], isConstraintCondition);
