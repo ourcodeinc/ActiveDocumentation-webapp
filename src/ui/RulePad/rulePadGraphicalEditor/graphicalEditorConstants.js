@@ -21,7 +21,7 @@ const element_conditions = {
         type: "smallText",
         pre: "",
         post: "",
-        placeholder: "static ?",
+        placeholder: "specifier",
         unique: true,
         grammar: "specifier"
     },
