@@ -1,7 +1,8 @@
 # Active Documentation
 
 This app is written in "React" framework.
-It communicates with the server using "Web-Socket".
+- It communicates with the [IDE Connector](https://github.com/devuxd/ActiveDocumentation/tree/RulePad-version) using "Web-Socket".
+- It is based on _srcML_ library, which should be installed as instructed [here](https://github.com/devuxd/active-doc-client/wiki#installing-srcml).
 
 ## spmf.jar
 
@@ -51,7 +52,7 @@ It is mandatory but is generated for newly added rules. Here is an example for t
        "quantifierQueryType": "FIND_FROM_TEXT",
        // Calling constructors of all entity objects
        "quantifierXPathQuery": ["//src:unit/src:class[(src:annotation/src:name[text()=\"Entity\"] or src:annotation/src:name[text()=\"Subclass\"])]/src:name/text()",
-                "//src:unit/src:class[src:super/src:extends/src:name/text()=\"Command\"]/src:block/src:class/src:block/descendant-or-self::src:decl_stmt/src:decl[src:init/src:expr/src:call/src:name/text()=\"<TEMP>\"]"]
+                "//src:unit/src:class[src:super/src:extends/src:name/text()=\"Command\"]/src:block/src:class/src:block/descendant-or-self::src:decl_stmt/src:decl[src:init/src:expr/src:call/src:name/text()=\"<TEMP>\"]"],
        "constraintQueryType": "RETURN_TO_BASE",
        // Calling constructors of allowed entity objects",
        "constraintXPathQuery": ["//src:unit/src:class/src:block/src:function_decl[src:name/text()=\"execute\"]/src:parameter_list/src:parameter/src:decl/src:type/src:name[not(text()=\"String\")]/text()",
@@ -71,7 +72,7 @@ It is mandatory but is generated for newly added rules. Here is an example for t
         "checkForFilesFoldersConstraints": "INCLUDE",
         "processFilesFolders": "MIXED",              
         // Entity classes
-        "quantifierXPathQuery": ["//src:unit/src:class[(src:annotation/src:name[text()=\"Entity\"] or src:annotation/src:name[text()=\"Subclass\"])]"]
+        "quantifierXPathQuery": ["//src:unit/src:class[(src:annotation/src:name[text()=\"Entity\"] or src:annotation/src:name[text()=\"Subclass\"])]"],
         "constraintQueryType": "FIND_FROM_TEXT",
         // Registered classes
         "constraintXPathQuery": ["//src:unit/src:class[src:name/text()=\"CrowdServlet\"]//src:expr_stmt/src:expr/src:call[src:name/src:name/text()=\"ObjectifyService\" and src:name/src:name/text()=\"register\"]/src:argument_list/src:argument/src:expr/src:name/src:name[1]/text()",
