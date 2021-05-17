@@ -10,7 +10,8 @@
     "diff": "^4.0.2",
     "elementtree": "^0.1.7",
     "marked": "^0.7.0",
-    "monaco-editor": "^0.15.6",
+    "monaco-editor": "^0.21.2",
+    "monaco-editor-webpack-plugin": "^2.0.0",
     "npm": "^6.13.6",
     "path": "^0.12.7",
     "pluralize": "^7.0.0",
@@ -24,17 +25,23 @@
     "react-overlays": "^0.8.3",
     "react-redux": "^5.1.2",
     "react-select": "^3.1.0",
-    "react-scripts": "2.0.3",
     "react-tooltip": "^3.11.2",
     "redux": "^4.0.5",
+    "serve": "11.3.2",
+    "three-dots": "^0.1.2",
     "wink-lemmatizer": "^2.0.0",
-    "wink-pos-tagger": "^1.5.0"
+    "wink-pos-tagger": "^1.5.0",
+    "natural": "^2.1.5"
+  },
+  "devDependencies": {
+    "gh-pages": "3.1.0",
+    "react-app-rewired": "^2.1.8",
+    "react-scripts": "2.0.3"
   },
   "scripts": {
     "start-Mac": "PORT=9010 react-scripts start",
-    "start-Ubuntu": "PORT=9010 react-scripts start",
     "start-Windows": "set PORT = 9010 && react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-app-rewired --max_old_space_size=8192 build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
