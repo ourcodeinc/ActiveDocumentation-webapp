@@ -958,7 +958,7 @@ class GenerateXPath {
         Utilities.sendToServer(this.ws, webSocketSendMessage.code_to_xml_msg, {"codeText": code, "messageID": messageID});
         store.dispatch(sendExpressionStatementXML({
             "codeText": code,
-            "messageID": messageID,
+            "messageID": messageID.toString(),
             "lookFor": "'" + messageID + text + "'",
             "query": query,
             "cuttingLength": cuttingLength

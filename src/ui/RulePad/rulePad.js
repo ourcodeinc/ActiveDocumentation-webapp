@@ -1107,10 +1107,10 @@ class RulePad extends Component {
                     let resultXPath = this.traverseReceivedXml(receivedMessages[j]["xmlText"], sentMessages[index]);
                     // replace all occurrences of textAndXPath.originalText
 
-                    let regQ = new RegExp(sentMessages[j]["lookFor"], "g");
-                    quantifierXPath = quantifierXPath.replace(regQ, resultXPath);
-                    let regC = new RegExp(sentMessages[j]["lookFor"], "g");
-                    constraintXPath = constraintXPath.replace(regC, resultXPath);
+                    while (quantifierXPath.indexOf(sentMessages[j]["lookFor"]) !== -1)
+                        quantifierXPath = quantifierXPath.replace(sentMessages[j]["lookFor"], resultXPath);
+                    while (constraintXPath.indexOf(sentMessages[j]["lookFor"]) !== -1)
+                        constraintXPath = constraintXPath.replace(sentMessages[j]["lookFor"], resultXPath);
 
                     matchedIndices.sent.push(index);
                     matchedIndices.received.push(j);
