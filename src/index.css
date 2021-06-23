@@ -615,7 +615,7 @@ body {
     height: 100%;
 }
 
-.overlay {
+.overlay, .overlay .overlayLoading {
     width: 100%;
     height: 100%;
     position: absolute;
@@ -859,4 +859,8 @@ img.tutorialSmallImage {
 
 .padding-top-25 {
     padding-bottom: 25px;
+}
+
+.minedRulesComponent .generateRuleGui .smallText {
+    width: auto !important;
 }

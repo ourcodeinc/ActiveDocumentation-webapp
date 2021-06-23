@@ -32,13 +32,17 @@ export const reduxStoreMessages = {
     change_autocomplete_text_msg: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI",
     update_xpath_msg: "UPDATE_XPATHS",
 
-    update_metadata_msg: "UPDATE_META_DATA",
+    update_feature_metadata_msg: "UPDATE_FEATURE_META_DATA",
+    update_grouping_metadata_msg: "UPDATE_GROUPING_META_DATA",
+    update_feature_weights_msg: "UPDATE_FEATURE_WEIGHTS ",
+    update_focused_element_identifiers: "UPDATE_FOCUS_ELEMENT_IDENTIFIERS",
+    update_doi_information_msg: "UPDATE_DOI_INFORMATION",
+    request_mine_rules_for_element_msg: "REQUEST_MINE_RULES_FOR_ELEMENT",
     update_mined_rules_msg: "UPDATE_MINED_RULES",
+
     update_feature_selection_msg: "UPDATE_FEATURE_SELECTION",
     reset_feature_selection_msg: "RESET_FEATURE_SELECTION",
     save_feature_selection_msg: "SAVE_FEATURE_SELECTION",
-
-    update_doi_information_msg: "UPDATE_DOI_INFORMATION"
 };
 
 
@@ -71,12 +75,14 @@ export const reduxStoreActions = {
     action_change_autocomplete_text: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI",
     action_update_xpath: "UPDATE_XPATHS",
 
-    action_update_metadata: "UPDATE_META_DATA",
+    action_update_feature_metadata: "UPDATE_FEATURE_META_DATA",
+    action_update_grouping_metadata: "UPDATE_GROUPING_META_DATA",
+    action_update_focused_element_data: "UPDATE_FOCUSED_ELEMENT_DATA",
+    action_update_doi_information: "UPDATE_DOI_INFORMATION",
+    action_request_mine_rules_for_element: "REQUEST_MINE_RULES_FOR_ELEMENT",
     action_update_mined_rules: "UPDATE_MINED_RULES",
+
     action_update_feature_selection: "UPDATE_FEATURE_SELECTION",
     action_reset_feature_selection: "RESET_FEATURE_SELECTION",
     action_save_feature_selection: "SAVE_FEATURE_SELECTION",
-    action_dangerous_mined_rules: "DANGEROUS_MINED_RULES",
-
-    action_update_doi_information: "UPDATE_DOI_INFORMATION"
 };

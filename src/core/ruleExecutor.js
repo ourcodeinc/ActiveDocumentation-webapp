@@ -19,7 +19,9 @@ import {fileFolderConstraints, processFileFolder, queryType, relatives, ruleProp
  * data:{quantifierResult:[{filePath:string,  snippet:string,  xml:{fileName:string,  xml:string}}], 
  * satisfied:number, satisfiedResult:[], violated:number, violatedResult:[]}, 
  * filePath:string
- * }]}[]}
+ * }]}[]
+ * |{index, checkForFilesFoldersConstraints, checkForFilesFolders, processFilesFolders:"WITHIN", quantifierXPathQuery, constraintXPathQuery}[]
+ * }
  * retrieved from ruleJson.txt
  */
 export const checkRulesForAll = (xmlFiles, ruleTable) => {

@@ -8,10 +8,9 @@
  * @param mainXml
  * @param startOffset index
  * @param endOffset index
- * @param forCaretLocation true if it is used for DOI information
- * return null or {{xpath: string, selectedText: string, idMap, displayTextArray: Array}}
+ * @return {{startNode: Node, endNode: Node, selectedText: string}}
  */
-export const getXpathForFeature = (mainXml, startOffset, endOffset, forCaretLocation = false) => {
+export const getNodesFromOffsets = (mainXml, startOffset, endOffset) => {
     let xml = mainXml.slice(0); // copy of xml data
 
     let parser = new DOMParser();
@@ -35,6 +34,13 @@ export const getXpathForFeature = (mainXml, startOffset, endOffset, forCaretLoca
                         startNode = node;
                         offsetToCheck = endOffset;
                         selectedText += node.childNodes[i].nodeValue;
+
+                        // if the startOffset and endOffset are both belong to the same text node
+                        if (str.length >= offsetToCheck) {
+                            endNode = node;
+                            offsetToCheck = Infinity;
+                            return "end";
+                        }
                     } else {
                         endNode = node;
                         offsetToCheck = Infinity;
@@ -50,14 +56,27 @@ export const getXpathForFeature = (mainXml, startOffset, endOffset, forCaretLoca
         }
         return "";
     };
-
     traverseNodes(xmlDoc);
+    return {endNode, startNode, selectedText};
+}
+
+/**
+ * finding the start and end xml nodes in srcML data
+ * @param mainXml
+ * @param startOffset index
+ * @param endOffset index
+ * @param forCaretLocation true if it is used for DOI information
+ * return null or {{xpath: string, selectedText: string, idMap, displayTextArray: Array}}
+ */
+export const getXpathForFeature = (mainXml, startOffset, endOffset, forCaretLocation = false) => {
+
+    let nodes = getNodesFromOffsets (mainXml, startOffset, endOffset);
 
     let idMapDisplayTextArray = {};
     try {
         idMapDisplayTextArray = (startOffset === endOffset && forCaretLocation) ?
-            lowestCommonAncestor(endNode, startNode) :
-            lowestCommonAncestor(startNode, endNode);
+            lowestCommonAncestor(nodes.endNode, nodes.startNode) :
+            lowestCommonAncestor(nodes.startNode, nodes.endNode);
     }
     catch (e) {
         console.log(`error in finding LCA for startOffset=${startOffset} and endOffset=${endOffset}`);
@@ -69,7 +88,7 @@ export const getXpathForFeature = (mainXml, startOffset, endOffset, forCaretLoca
         xpath: xpath,
         idMap: idMapDisplayTextArray.idMap,
         displayTextArray: idMapDisplayTextArray.displayTextArray,
-        selectedText: selectedText
+        selectedText: nodes.selectedText
     };
 };
 

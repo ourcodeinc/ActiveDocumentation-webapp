@@ -482,10 +482,10 @@ class GraphicalComponent extends Component {
         let nodes = group !== "body" ? this.nodes[group] : this.nodes["body"][innerIndex];
         let texts = group !== "body" ? this.state.texts[group] : this.state.texts["body"][innerIndex];
         let children = group !== "body" ? this.state.elementNode.children[group] : this.state.elementNode.children["body"][innerIndex];
-        let informationGroup = childCondition.type === "wideText" ? "EXACT_CODE" : "TEXTS";
+        let informationGroup = childCondition.informationType ? childCondition.informationType : "TEXTS";
         let wordRegex = /^(!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)(&&|\|\|))*!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)$/;
-        let combinatorialRegex = /^([a-zA-Z0-9_-]|\.|=|>|<|\(|\)| )+$/;
-        let wordOrCombinatorialRegex = /^(([a-zA-Z0-9_-]|\.|=|>|<|\(|\)| )+|((!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)(&&|\|\|))*!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)))$/;
+        let combinatorialRegex = /^([a-zA-Z0-9_-]|\.|=|>|<|\(|\)| |'|,)+$/;
+        let wordOrCombinatorialRegex = /^(([a-zA-Z0-9_-]|\.|=|>|<|\(|\)| |'|,)+|((!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)(&&|\|\|))*!?([a-zA-Z0-9_-]+|\.\.\.[a-zA-Z0-9_-]+|[a-zA-Z0-9_-]+\.\.\.|\.\.\.[a-zA-Z0-9_-]+\.\.\.)))$/;
         let validatorRegex = childCondition.wordValidation === "both" ? wordOrCombinatorialRegex : childCondition.wordValidation === "word" ? wordRegex : combinatorialRegex;
 
         let mouseEnter = () => {
@@ -510,7 +510,8 @@ class GraphicalComponent extends Component {
         };
 
         let focus = () => {
-            if (childCondition.wordValidation === "word" && shouldDisplayInformation && nodes && nodes[index] && nodes[index]["information"]
+            if (childCondition.informationType && shouldDisplayInformation
+                && nodes && nodes[index] && nodes[index]["information"]
                 && Object.entries(nodes[index]["information"]).length !== 0)
                 nodes[index]["information"].style.display = "block";
         };
@@ -644,25 +645,13 @@ class GraphicalComponent extends Component {
                                    onFocus={focus}
                                    onBlur={(e) => blur(e.target.value)}/>
                             <div className={"checkboxConstraintDiv rowGroup"}
-                                 ref={node => {
-                                     try {
-                                         group !== "body" ? this.nodes[group][index]["checkbox"] = node : this.nodes["body"][innerIndex][index]["checkbox"] = node
-                                     } catch (e) {
-                                         // console.log("Reference to checkbox failed. The component should have been re-rendered after this message.");
-                                     }
-                                 }}>
+                                 ref={node => group !== "body" ? this.nodes[group][index]["checkbox"] = node : this.nodes["body"][innerIndex][index]["checkbox"] = node}>
                                 {!childElement.activeElement ? null : this.renderCheckboxAndErase(changeFunction, checkedStatus, closeFunction, group, innerIndex, index, renderSwitch)}
                             </div>
                         </form>
                     </div>
                     <div className={"informationDiv rowGroup"}
-                         ref={node => {
-                             try {
-                                 group !== "body" ? this.nodes[group][index]["information"] = node : this.nodes["body"][innerIndex][index]["information"] = node
-                             } catch (e) {
-                                 // console.log("Reference to informationDiv is failed. The component should have been re-rendered after this message.")
-                             }
-                         }}>
+                         ref={node => group !== "body" ? this.nodes[group][index]["information"] = node : this.nodes["body"][innerIndex][index]["information"] = node}>
                         <div>
                             <div className={"MdRemove"} style={{float: "right"}}
                                  ref={node => closeInformationDiv = node}>
@@ -905,7 +894,7 @@ class GraphicalComponent extends Component {
 
     /**
      * render the dialog for documentation
-     * @returns {XML}
+     * @returns {JSX.Element}
      */
     renderDocModalDialog() {
         return (

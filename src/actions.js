@@ -310,15 +310,64 @@ export const updateXPaths = (ruleIndex, quantifierXPath, constraintXPath) => {
  */
 
 /**
- * @param metaData **
+ * @param featureMetaData maps for extracting features (see createMetaDataMap())
  * @return {{data: {metaData: *}, type: string}}
  */
-export const updateMetaData = (metaData) => {
+export const updateFeatureMetaData = (featureMetaData) => {
     return {
-        type: reduxStoreActions.action_update_metadata,
-        data: {metaData: metaData}
+        type: reduxStoreActions.action_update_feature_metadata,
+        data: {featureMetaData: featureMetaData}
     }
 };
+
+/**
+ * @param groupingMetaData maps for grouping files
+ * @return {{data: {groupingMetaData: *}, type: string}}
+ */
+export const updateGroupingMetaData = (groupingMetaData) => {
+    return {
+        type: reduxStoreActions.action_update_grouping_metadata,
+        data: {groupingMetaData: groupingMetaData}
+    }
+}
+
+/**
+ * request to mine rules for a focused element
+ * @param focusedElementData
+ * @return {{data: {focusElementIdentifiers}, type: string}}
+ */
+export const updateFocusedElementData = (focusedElementData) => {
+    return {
+        type: reduxStoreActions.action_update_focused_element_data,
+        data: {focusedElementData: focusedElementData}
+    }
+}
+
+/**
+ * update the doi information
+ * @param doiInformation {{recentVisitedFiles: {timestamp: Date, filePath: string}[],
+ * recentVisitedElements: {timestamp: Date, filePath: string, startOffset:number,
+ * endOffset: number, visitedElement: string}[],
+ * recentSearches: {timestamp: Date, filePath: string, keyword: string}[]}}
+ * @return {{data: {doiInformation}, type: string}}
+ */
+export const updateDoiInformation = (doiInformation) => {
+    return {
+        type: reduxStoreActions.action_update_doi_information,
+        data: {doiInformation}
+    }
+}
+
+/**
+ * request to start mining rules for a previously sent focused element
+ * @return {{data: {}, type: string}}
+ */
+export const requestMineRulesForElement = () => {
+    return {
+        type: reduxStoreActions.action_request_mine_rules_for_element,
+        data: {}
+    }
+}
 
 /**
  * @param minedRules **
@@ -360,36 +409,5 @@ export const updateSaveFeatureSelection = (featureDescription, featureXpath, src
     return {
         type: reduxStoreActions.action_save_feature_selection,
         data: {featureDescription, featureXpath, srcmlXpath}
-    }
-};
-
-// not recommended
-/**
- * @param metaData **
- * @param minedRules **
- * @return {{data: {metaData: *, minedRules: *}, type: string}}
- */
-export const updateDangerousMinedRules = (metaData, minedRules) => {
-    return {
-        type: reduxStoreActions.action_dangerous_mined_rules,
-        data: {
-            metaData: metaData,
-            minedRules: minedRules
-        }
-    }
-};
-
-/**
- * @param visitedFiles
- * @param searchHistory
- * @param visitedElements
- * @return {{data: {visitedFiles: *, cursorLocationHistory: *, searchHistory: *}, type: string}}
- */
-export const updateDoiInformation = (visitedFiles, searchHistory, visitedElements) => {
-    return {
-        type: reduxStoreActions.action_update_doi_information,
-        data: {
-            visitedFiles, searchHistory, visitedElements
-        }
     }
 };

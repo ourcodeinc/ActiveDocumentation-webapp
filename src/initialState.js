@@ -642,7 +642,30 @@ export const initial_state = {
 
     // mining Rules
     minedRulesState: {
-        metaData: {},
+        // see createFeatureMetaDataMap()
+        featureMetaData: {
+            featureInfoContainers: {
+                featureInfo: {},
+                featureInfoReverse: {},
+                featureMap: {},
+                featureMapReverse: {}
+            },
+            featureGroups: {spec: {}, usage: {}}
+        },
+        groupingMetaData: {
+            groupMapping: {},
+            fileMapping:{}
+        },
+        focusedElementData: {
+            filePath: "",
+            identifier: "",
+            mapFocusedElementToFeaturesKey: ""
+        },
+        doiInformation: {
+            recentVisitedFiles: [],
+            recentSearches: [],
+            recentVisitedElements: []
+        },
         minedRules: []
     },
     featureSelection: {
@@ -657,13 +680,6 @@ export const initial_state = {
         modifiedSelectedText: "",
         idMap: {},
         displayTextArray: []
-    },
-
-    doiInformation: {
-        customFeatures: [],
-        visitedFiles: [],
-        searchHistory: [],
-        visitedElements: []
     }
 
 };

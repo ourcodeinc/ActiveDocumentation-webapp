@@ -7,25 +7,19 @@ import {connect} from "react-redux";
 
 import {
     receiveExpressionStatementXML,
-    ignoreFileChange,
-    updateFilePath,
-    updateRuleTable,
-    updateTagTable,
-    updateWS,
-    updateXmlFiles,
-    updateProjectHierarchyData,
-    updatedMinedRules,
-    updateFeatureSelection,
-    updateDangerousMinedRules,
-    updateProjectPath,
-    updateDoiInformation, connectToIDE
+    ignoreFileChange, updateFilePath,
+    updateRuleTable, updateTagTable,
+    updateWS, updateXmlFiles,
+    updateProjectHierarchyData, updatedMinedRules,
+    updateFeatureSelection, updateProjectPath,
+    connectToIDE, updateFocusedElementData, updateDoiInformation, requestMineRulesForElement
 } from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from "./ruleExecutor";
-import {parseGrouping} from "../miningRulesCore/parseGrouping";
 import {getXpathForFeature} from "../miningRulesCore/featureSelectionProcessing";
-import {dangerousParseMetaDataFile} from "../miningRulesCore/miningRules";
 import {webSocketReceiveMessage} from "./coreConstants";
-import {processCaretLocations} from "../miningRulesCore/doiInformationProcessing";
+import {parseFrequentItemSets_CHUI, processOutPutRules, removeSparseData} from "../miningRulesCore/postProcessing";
+import {getDataForFocusedElement, processDoiInformation} from "../miningRulesCore/focusedElementProcessing";
+import Utilities from "./utilities";
 
 class WebSocketManager extends Component {
 
@@ -48,7 +42,7 @@ class WebSocketManager extends Component {
 
         ws.onmessage = (e) => {
 
-            let message = JSON.parse(e.data);
+            let message = Utilities.parseJson(e.data, "the received message", {command: ""});
 
             // if (message.command !== "XML") console.log(message);
 
@@ -76,13 +70,13 @@ class WebSocketManager extends Component {
 
                 case webSocketReceiveMessage.rule_table_msg:
                     // data: [ruleTable]
-                    ruleTable = JSON.parse(message.data);
+                    ruleTable = Utilities.parseJson(message.data, "ruleTable", []);
                     this.props.onUpdateXmlFiles(xml);
                     break;
 
                 case webSocketReceiveMessage.tag_table_msg:
                     // data: [tagTable]
-                    tagTable = JSON.parse(message.data);
+                    tagTable = Utilities.parseJson(message.data, "tagTable", []);
                     this.props.onUpdateTagTable(tagTable);
                     break;
 
@@ -163,7 +157,7 @@ class WebSocketManager extends Component {
 
                 case webSocketReceiveMessage.new_tag_msg:
                     // data: {tagID: longNumber, tag: {...}}
-                    let newAddedTag = JSON.parse(message.data["tag"]);
+                    let newAddedTag = Utilities.parseJson(message.data["tag"], "new Tag information", {});
                     tagTable.push(newAddedTag);
                     this.props.onUpdateTagTable(tagTable);
                     break;
@@ -182,16 +176,10 @@ class WebSocketManager extends Component {
                         this.props.onFalsifyIgnoreFile();
                     break;
 
-                    /* Mining Rules */
-
-                case webSocketReceiveMessage.fp_max_output_msg:
-                    // message.data = {"fpMaxOutput" : {0: "content of output0", ...}}
-                    let modifiedOutput = parseGrouping(Object.values(message.data["fpMaxOutput"]), this.props.minedRuleMetaData);
-                    this.props.onUpdateMinedRules(modifiedOutput);
-                    break;
+                /* Mining Rules */
 
                 case webSocketReceiveMessage.feature_selection_msg:
-                    let selected = xml.filter(d => d.filePath === message.data["path"]);
+                    let selected = xml.filter(d => d.filePath === message.data["filePath"]);
                     if (selected.length > 0) {
                         //  {{xpath: string, selectedText: string, idMap, displayTextArray: Array}}
                         let textXpathData = getXpathForFeature(selected[0].xml, message.data["startOffset"], message.data["endOffset"]);
@@ -201,9 +189,7 @@ class WebSocketManager extends Component {
                         //         xpath, modifiedSelectedText, idMap, displayTextArray
                         this.props.onUpdateFeatureSelection({
                             ...message.data,
-                            filePath: message.data["path"],
-                            selectedText: message.data["text"],
-
+                            selectedText: message.data["text"] ? message.data["text"] : "",
                             xpath: textXpathData.xpath,
                             modifiedSelectedText: textXpathData.selectedText,
                             idMap: textXpathData.idMap,
@@ -212,33 +198,45 @@ class WebSocketManager extends Component {
                     }
                     break;
 
-                // dangerously read output files and meta data.
-                case webSocketReceiveMessage.dangerous_read_mined_rules_msg:
-                    let metaData = dangerousParseMetaDataFile(JSON.parse(message.data["metaData"]));
-                    let outputFiles = Object.values(JSON.parse(JSON.parse(message.data["outputFiles"])));
-                    let output = parseGrouping(outputFiles, metaData);
-                    this.props.onUpdateDangerousMinedRules(metaData, output);
+                case webSocketReceiveMessage.element_info_for_mine_rules:
+                    let focusedElementFile = xml.filter(d => d.filePath === message.data["filePath"]);
+                    if (focusedElementFile.length > 0) {
+                        let focusedElementData = getDataForFocusedElement(
+                            focusedElementFile[0], message.data["startOffset"]);
+                        focusedElementData.filePath = message.data["filePath"].replace(projectPath, "");
+                        this.props.onUpdateFocusedElementData(focusedElementData);
+                    }
                     break;
 
-                case webSocketReceiveMessage.receive_doi_information:
-                    // data = {"visitedFiles", "searchHistory", "visitedElements"}
-                    let rawCaretLocationsData = JSON.parse(message.data["visitedElements"]);
-                    let caretLocationData = [];
-                    Object.keys(rawCaretLocationsData).forEach((filePathKey) => {
-                        let xmlCaretFiles = xml.filter(dd => dd.filePath === filePathKey);
-                        if (xmlCaretFiles.length === 1) {
-                            caretLocationData.push({
-                                filePath: filePathKey,
-                                caretArray: rawCaretLocationsData[filePathKey].map((pair) => {
-                                    return {startOffset: pair[0], endOffset: pair[1]}
-                                }),
-                                xmlFile: xmlCaretFiles[0]
-                            });
-                        }
-                    });
-                    let visitedElements = processCaretLocations(caretLocationData);
-                    this.props.onUpdateDoiInformation(JSON.parse(message.data["visitedFiles"]),
-                        JSON.parse(message.data["searchHistory"]), visitedElements);
+                case webSocketReceiveMessage.doi_information:
+                    // "recentVisitedFiles", "recentSearches", "recentVisitedElements"
+                    let recentVisitedFiles = Utilities.parseJson(message.data["recentVisitedFiles"],
+                        "recentVisitedFiles", []);
+                    let recentSearchKeywords = Utilities.parseJson(message.data["recentSearches"],
+                        "recentSearches", []);
+                    let recentVisitedElements = Utilities.parseJson(message.data["recentVisitedElements"],
+                        "recentVisitedElements", []);
+                    let newDoiInformation = processDoiInformation(recentVisitedFiles, recentSearchKeywords,
+                        recentVisitedElements, xml, this.props.projectPath);
+                    this.props.onUpdateDoiInformation(newDoiInformation);
+
+                    break;
+
+                case webSocketReceiveMessage.request_mine_rules_for_element:
+                    window.location.hash = "#/learnDesignRules/";
+                    this.props.onRequestMineRulesForElement();
+                    break;
+
+                case webSocketReceiveMessage.mined_design_rules:
+                    let output = message.data["minedFrequentItemSets"];
+                    let parsedOutput = parseFrequentItemSets_CHUI(output);
+                    removeSparseData(parsedOutput);
+                    // let mergedOutput = mergeFrequentItemSets(parsedOutput);
+                    Promise.all(processOutPutRules(parsedOutput, this.props.featureMetaData))
+                        .then(processedRules => {
+                            console.log(processedRules);
+                            this.props.onUpdateMinedRules(processedRules);
+                        });
                     break;
 
                 default:
@@ -257,7 +255,8 @@ class WebSocketManager extends Component {
 function mapStateToProps(state) {
     return {
         ignoreFileChange: state.ignoreFileChange,
-        minedRuleMetaData: state.minedRulesState.metaData
+        projectPath: state.projectPath,
+        featureMetaData: state.minedRulesState.featureMetaData
     };
 }
 
@@ -274,12 +273,12 @@ function mapDispatchToProps(dispatch) {
         onReceiveExprStmtXML: (data) => dispatch(receiveExpressionStatementXML(data)),
         onUpdateXmlFiles: (xmlFiles) => dispatch(updateXmlFiles(xmlFiles)),
 
+        onUpdateFocusedElementData: (focusedElementData) => dispatch(updateFocusedElementData(focusedElementData)),
+        onUpdateDoiInformation: (doiInformation) => dispatch(updateDoiInformation(doiInformation)),
+        onRequestMineRulesForElement: () => dispatch(requestMineRulesForElement()),
         onUpdateMinedRules: (modifiedOutput) => dispatch(updatedMinedRules(modifiedOutput)),
-        onUpdateFeatureSelection: (dataObject) => dispatch(updateFeatureSelection(dataObject)),
-        onUpdateDangerousMinedRules: (metaData, minedRules) => dispatch(updateDangerousMinedRules(metaData, minedRules)),
 
-        onUpdateDoiInformation: (visitedFiles, searchHistory, visitedElements) =>
-            dispatch(updateDoiInformation(visitedFiles, searchHistory, visitedElements))
+        onUpdateFeatureSelection: (dataObject) => dispatch(updateFeatureSelection(dataObject))
     }
 }
 

@@ -13,7 +13,7 @@ class Utilities {
      * @param data
      */
     static sendToServer(ws, command, data) {
-        let messageJson = {source: "WEB", destination: "IDEA", command: command};
+        let messageJson = {command: command};
 
         if (ws) {
             switch (command) {
@@ -58,7 +58,7 @@ class Utilities {
 
                     /*  mining rules  */
 
-                case webSocketSendMessage.learn_rules_metadata_msg:
+                case webSocketSendMessage.learn_design_rules_databases_msg:
                     if (data.content.length > this.BREAK_LINE) {
                         this.sendChunkedData(messageJson, data.content.slice(0), data.fileName, ws);
                         return;
@@ -66,7 +66,7 @@ class Utilities {
                     messageJson.data = [[data.fileName, data.content]];
                     break;
 
-                case webSocketSendMessage.learn_rules_file_location_msg:
+                case webSocketSendMessage.learn_design_rules_features_msg:
                     if (data.content.length > this.BREAK_LINE) {
                         this.sendChunkedData(messageJson, data.content.slice(0), data.fileName, ws);
                         return;
@@ -74,31 +74,19 @@ class Utilities {
                     messageJson.data = [[data.fileName, data.content]];
                     break;
 
-                case webSocketSendMessage.learn_rules_databases_msg:
-                    if (data[0][1].length > this.BREAK_LINE) {
-                        this.sendChunkedData(messageJson, data[0][1].slice(0), data[0][0], ws);
-                        return;
-                    }
-                    messageJson.data = data; // array of arrays: [["file_name.txt", "data to be written"]]
+                case webSocketSendMessage.mine_design_rules_msg:
+                    messageJson.data = {
+                        utility : data.utility,
+                        algorithm: data.algorithm // "CHUI-Miner" or "CHUI-MinerMax"
+                    };
                     break;
 
-                case webSocketSendMessage.execute_fp_max_msg:
-                    messageJson.data = data.fpMaxSupport; // support
-                    break;
-
-                case webSocketSendMessage.open_file_mined_rules:
+                case webSocketSendMessage.open_file_msg:
                     messageJson.command = webSocketSendMessage.snippet_xml_msg; // there is no separate command in the server
                     messageJson.data = {
                         fileName: data,
                         xml: defaultXML
                     };
-                    break;
-
-                case webSocketSendMessage.dangerous_read_mined_rules_msg:
-                    break;
-
-                case webSocketSendMessage.send_doi_information_msg:
-                    messageJson.data = data;
                     break;
 
                 default:
@@ -118,11 +106,11 @@ class Utilities {
      * @param ws
      */
     static sendChunkedData (messageJson, initData, fileName, ws) {
-        messageJson["command"] += "_APPEND";
+        messageJson.command += "_APPEND";
         let start = 0; let cnt = 0;
         while (start < initData.length) {
             messageJson.data = [[fileName, initData.substring(start, Math.min(start + this.BREAK_LINE, initData.length))]];
-            messageJson["part"] = cnt; // only for debugging
+            messageJson.part = cnt; // only for debugging
             ws.send(JSON.stringify(messageJson));
             start += this.BREAK_LINE;
             cnt ++;
@@ -237,6 +225,21 @@ class Utilities {
         return arr; // for testing purposes
     };
 
+    /**
+     * a method to parse strings
+     * @param stringJson
+     * @param dataName
+     * @param defaultValue
+     * @return {any}
+     */
+    static parseJson(stringJson, dataName, defaultValue) {
+        try {
+            return JSON.parse(stringJson);
+        } catch (e) {
+            console.log(`Failed to parse ${dataName}`);
+            return defaultValue;
+        }
+    }
 
 }
 

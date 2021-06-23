@@ -6,14 +6,12 @@ export const webSocketSendMessage = {
     new_rule_msg: "NEW_RULE",
     new_tag_msg: "NEW_TAG",
 
-    learn_rules_metadata_msg: "LEARN_RULES_META_DATA",
-    learn_rules_file_location_msg: "LEARN_RULES_FILE_LOCATIONS",
-    learn_rules_databases_msg: "LEARN_RULES_DATABASES",
-    execute_fp_max_msg: "EXECUTE_FP_MAX",
-    open_file_mined_rules: "OPEN_FILE",
-    dangerous_read_mined_rules_msg: "DANGEROUS_READ_MINED_RULES",
+    open_file_msg: "OPEN_FILE",
 
-    send_doi_information_msg: "SEND_DOI_INFORMATION"
+    refresh_learn_design_rules_directory_msg: "REFRESH_LEARNING_DR_DIRECTORY",
+    learn_design_rules_databases_msg: "LEARN_DESIGN_RULES_DATABASE",
+    learn_design_rules_features_msg: "LEARN_DESIGN_RULES_FEATURES",
+    mine_design_rules_msg: "MINE_DESIGN_RULES"
 
 };
 
@@ -37,11 +35,12 @@ export const webSocketReceiveMessage = {
     failed_new_tag_msg: "FAILED_NEW_TAG",
     file_change_in_ide_msg: "FILE_CHANGE",
 
-    fp_max_output_msg: "FP_MAX_OUTPUT",
-    feature_selection_msg: "FEATURE_SELECTION",
-    dangerous_read_mined_rules_msg: "DANGEROUS_READ_MINED_RULES",
+    element_info_for_mine_rules: "ELEMENT_INFO_FOR_MINE_RULES",
+    doi_information: "DOI_INFORMATION",
+    request_mine_rules_for_element: "MINE_RULES_FOR_ELEMENT",
+    mined_design_rules: "MINED_DESIGN_RULES",
 
-    receive_doi_information: "DOI_INFORMATION",
+    feature_selection_msg: "FEATURE_SELECTION",
 
     enter_chat_msg: "ENTER",
     left_chat_msg: "LEFT"
@@ -49,3 +48,8 @@ export const webSocketReceiveMessage = {
 
 export const defaultXML = "<unit xmlns=\"http://www.srcML.org/srcML/src\" revision=\"0.9.5\" language=\"Java\">\n" +
     "</unit>";
+
+export const nsResolver = (prefix) => {
+    let ns = {"src": "http://www.srcML.org/srcML/src"};
+    return ns[prefix] || null;
+}

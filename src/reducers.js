@@ -594,20 +594,55 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 Mining Rules
              */
 
-        case reduxStoreActions.action_update_metadata:
+        case reduxStoreActions.action_update_feature_metadata:
             return Object.assign({}, state, {
-                message: reduxStoreMessages.update_metadata_msg,
+                message: reduxStoreMessages.update_feature_metadata_msg,
                 minedRulesState: {
-                    metaData: action.data["metaData"],
+                    ...state.minedRulesState,
+                    featureMetaData: action.data["featureMetaData"],
                     minedRules: []
                 }
+            });
+
+        case reduxStoreActions.action_update_grouping_metadata:
+            return Object.assign({}, state, {
+                message: reduxStoreMessages.update_grouping_metadata_msg,
+                minedRulesState: {
+                    ...state.minedRulesState,
+                    groupingMetaData: action.data["groupingMetaData"],
+                    minedRules: []
+                }
+            });
+
+        case reduxStoreActions.action_update_focused_element_data:
+            return Object.assign({}, state, {
+                message: reduxStoreMessages.update_focused_element_identifiers,
+                minedRulesState: {
+                    ...state.minedRulesState,
+                    focusedElementData: action.data["focusedElementData"]
+                }
+            });
+
+        case reduxStoreActions.action_update_doi_information:
+            return Object.assign({}, state, {
+                message: reduxStoreMessages.update_doi_information_msg,
+                minedRulesState: {
+                    ...state.minedRulesState,
+                    doiInformation: action.data["doiInformation"]
+                }
+            });
+
+        case reduxStoreActions.action_request_mine_rules_for_element:
+            return Object.assign({}, state, {
+                message: reduxStoreMessages.request_mine_rules_for_element_msg,
             });
 
         case reduxStoreActions.action_update_mined_rules:
             return Object.assign({}, state, {
                 message: reduxStoreMessages.update_mined_rules_msg,
                 minedRulesState: {
-                    ...JSON.parse(JSON.stringify(state.minedRulesState)),
+                    // ...JSON.parse(JSON.stringify(state.minedRulesState)),
+                    ...state.minedRulesState,
                     minedRules: action.data["minedRules"]
                 }
             });
@@ -651,26 +686,6 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         featureXpath: action.data["featureXpath"],
                         srcmlXpath: action.data["srcmlXpath"]
                     }])
-                }
-            });
-
-        case reduxStoreActions.action_dangerous_mined_rules:
-            return Object.assign({}, state, {
-                message: reduxStoreMessages.update_mined_rules_msg,
-                minedRulesState: {
-                    metaData: action.data["metaData"],
-                    minedRules: action.data["minedRules"]
-                }
-            });
-
-        case reduxStoreActions.action_update_doi_information:
-            return Object.assign({}, state, {
-                message: reduxStoreMessages.update_doi_information_msg,
-                doiInformation: {
-                    ...state.doiInformation,
-                    visitedFiles: action.data["visitedFiles"],
-                    searchHistory: action.data["searchHistory"],
-                    visitedElements: action.data["visitedElements"]
                 }
             });
 

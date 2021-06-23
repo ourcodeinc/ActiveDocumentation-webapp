@@ -409,8 +409,8 @@ class GenerateXPath {
                     if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
                         tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
                         this.sendTextDataToSrcML(tempText, "annotation", messageID);
-                        if (!isConstraintCondition) this.XPathQ += "['" + messageID + tempText + "']";
-                        this.XPathC += "['" + messageID + tempText + "']";
+                        if (!isConstraintCondition) this.XPathQ += "[" + messageID + tempText + "]";
+                        this.XPathC += "[" + messageID + tempText + "]";
                     }
                 }
             }
@@ -591,8 +591,8 @@ class GenerateXPath {
                     if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
                         tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
                         this.sendTextDataToSrcML(tempText, "type", messageID);
-                        if (!isConstraintCondition) this.XPathQ += "['" + messageID + tempText + "']";
-                        this.XPathC += "['" + messageID + tempText + "']";
+                        if (!isConstraintCondition) this.XPathQ += "[" + messageID + tempText + "]";
+                        this.XPathC += "[" + messageID + tempText + "]";
 
                     }
                     else if (nodeChildren[i].getChild(j).constructor.name === "WordsContext") {
@@ -709,8 +709,8 @@ class GenerateXPath {
                     if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
                         tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
                         this.sendTextDataToSrcML(tempText, "returnValue", messageID);
-                        if (!isConstraintCondition) this.XPathQ += "['" + messageID + tempText + "']";
-                        this.XPathC += "['" + messageID + tempText + "']";
+                        if (!isConstraintCondition) this.XPathQ += "[" + messageID + tempText + "]";
+                        this.XPathC += "[" + messageID + tempText + "]";
                     }
                 }
             }
@@ -795,8 +795,8 @@ class GenerateXPath {
                     if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
                         tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
                         this.sendTextDataToSrcML(tempText, "expressionStatement", messageID);
-                        if (!isConstraintCondition) this.XPathQ += "['" + messageID + tempText + "']";
-                        this.XPathC += "['" + messageID + tempText + "']";
+                        if (!isConstraintCondition) this.XPathQ += "[" + messageID + tempText + "]";
+                        this.XPathC += "[" + messageID + tempText + "]";
                     }
                 }
             }
@@ -833,8 +833,8 @@ class GenerateXPath {
                     if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
                         tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
                         this.sendTextDataToSrcML(tempText, "initialValue", messageID);
-                        if (!isConstraintCondition) this.XPathQ += "['" + messageID + tempText + "']";
-                        this.XPathC += "['" + messageID + tempText + "']";
+                        if (!isConstraintCondition) this.XPathQ += "[" + messageID + tempText + "]";
+                        this.XPathC += "[" + messageID + tempText + "]";
                     }
                 }
 
@@ -955,11 +955,12 @@ class GenerateXPath {
 
         }
 
-        Utilities.sendToServer(this.ws, webSocketSendMessage.code_to_xml_msg, {"codeText": code, "messageID": messageID});
+        Utilities.sendToServer(this.ws, webSocketSendMessage.code_to_xml_msg,
+            {"codeText": code.replace(/'/g, "\""), "messageID": messageID});
         store.dispatch(sendExpressionStatementXML({
             "codeText": code,
             "messageID": messageID.toString(),
-            "lookFor": "'" + messageID + text + "'",
+            "lookFor": messageID + text,
             "query": query,
             "cuttingLength": cuttingLength
         }));
