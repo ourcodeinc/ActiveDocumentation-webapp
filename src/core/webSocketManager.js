@@ -234,7 +234,6 @@ class WebSocketManager extends Component {
                     // let mergedOutput = mergeFrequentItemSets(parsedOutput);
                     Promise.all(processOutPutRules(parsedOutput, this.props.featureMetaData))
                         .then(processedRules => {
-                            console.log(processedRules);
                             this.props.onUpdateMinedRules(processedRules);
                         });
                     break;
