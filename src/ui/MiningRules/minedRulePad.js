@@ -13,12 +13,14 @@ class MinedRulePad extends Component {
 
     constructor(props) {
         super(props);
-        // elementId, rootTree, guiElements, root << for styling
+        // elementId [optional], rulePadState (guiTree, guiElements), styleClass [optional] << for styling
 
         this.state = {};
 
-        this.state.guiElements = props["guiElements"];
-        this.state.elementId = props["elementId"];
+        this.styleClass = this.props.styleClass ? this.props.styleClass : "rootContainer";
+
+        this.state.guiElements = props.rulePadState.guiElements;
+        this.state.elementId = props.elementId ? props.elementId : "0";
         this.state.thisElement = this.state.guiElements[this.state.elementId];
 
         /*
@@ -63,13 +65,13 @@ class MinedRulePad extends Component {
             body: [["0.7.0"], ["0.7.1"], ["0.7.2"], ["0.7.3"]]
         }
         */
-        this.state.elementNode = props["rootTree"][this.state.elementId];
+        this.state.elementNode = props.rulePadState.guiTree[this.state.elementId];
     }
 
 
     render() {
         return (
-            <div className={"overlayContainer " + this.props["styleClass"]}>
+            <div className={"overlayContainer " + this.styleClass}>
                 <div
                     className={"mainDiv-overlay elementDiv" + (this.state.thisElement.activeElement ? " activeElement" : "")
                     + (this.state.thisElement.selectedElement ? " selectedElement" : "")
@@ -213,7 +215,7 @@ class MinedRulePad extends Component {
             <Fragment key={index}>
                 <div className={group === "body" ? "rowGroup" : "rowItem"}>
                     <MinedRulePad key={new Date()} ruleIndex={this.props.ruleIndex} elementId={childId}
-                                  rootTree={this.props["rootTree"]} guiElements={this.state.guiElements}
+                                  rulePadState={this.props.rulePadState} styleClass={""}
                     />
                 </div>
             </Fragment>

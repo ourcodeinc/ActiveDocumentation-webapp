@@ -5,12 +5,8 @@
 import React, {Component} from "react";
 import "../../App.css";
 import {connect} from "react-redux";
-import {Button, Col, FormControl, FormGroup, Modal, Row} from "react-bootstrap";
+import {Button} from "react-bootstrap";
 import "rc-slider/assets/index.css";
-// import Slider from "rc-slider";
-// import Tooltip from "rc-tooltip/es";
-import {IoIosArrowDroprightCircle, IoIosArrowDropleftCircle} from "react-icons/io";
-import {IconContext} from "react-icons";
 
 import {updateFeatureMetaData, updateGroupingMetaData} from "../../actions";
 import Utilities from "../../core/utilities";
@@ -19,9 +15,10 @@ import MinedRulePad from "./minedRulePad";
 import {createGroupingMetaData, formGroupings} from "../../miningRulesCore/preProcessing";
 import {createFeatureMetaDataMap} from "../../miningRulesCore/extractFeatures";
 import {
-    generateFeatures, prepareMapsToSend, combineFeatureSetToRulePadCompressed, grammarTextToRulePadGUI
+    generateFeatures, prepareMapsToSend, combineFeatureSetToRulePadCompressed
 } from "../../miningRulesCore/processing";
 import {focusElementType, groupTitle} from "../../miningRulesCore/featureConfig";
+import MinedDesignRules from "./MinedDesignRules";
 
 class LearnDesignRulesComponent extends Component {
 
@@ -32,10 +29,6 @@ class LearnDesignRulesComponent extends Component {
             minedRules: [],
             loadingStatus: false, // for loading icons when mining rules
             loadingTitle: "Mining Design Rules",
-            // minComplexity: 0,
-            // maxComplexity: 100,
-            // minSupport: 0,
-            // maxSupport: 100,
         };
     }
 
@@ -44,12 +37,10 @@ class LearnDesignRulesComponent extends Component {
             <div className={"learningDesignRulesComponent overlayContainer"}>
                 <div className={"mainDiv-overlay"}>
                 {this.renderDefaultView()}
-                {/*{this.renderButtonsSlidersFilter()}*/}
                 <div className={"minedRulesComponent"}>
                     {this.renderFocusedElementInfo()}
                     {this.renderFeatureRulePad()}
-                    {/*{this.renderMinedRulesRulePad()}*/}
-                    {this.renderMinedRulesRulePad_new()}
+                    <MinedDesignRules minedRules={this.state.minedRules} featureMetaData={this.props.featureMetaData}/>
                 </div>
                 </div>
                 {this.renderLoading()}
@@ -131,137 +122,6 @@ class LearnDesignRulesComponent extends Component {
         ) : null;
     }
 
-    // /**
-    //  * render the buttons and the sliders
-    //  * @return {*}
-    //  */
-    // renderButtonsSlidersFilter() {
-    //     // calculate the max and min number of attributes in mined rules
-    //     let minNumberOfAttributes = Infinity;
-    //     let maxNumberOfAttributes = -1 * Infinity;
-    //     this.state.minedRules.forEach(group => {
-    //         group["rules"].forEach(obj => {
-    //             minNumberOfAttributes = Math.min(obj["attributes"].length, minNumberOfAttributes);
-    //             maxNumberOfAttributes = Math.max(obj["attributes"].length, maxNumberOfAttributes);
-    //         })
-    //     });
-    //
-    //     // create marks for complexity slider IF there are mined rules
-    //     let marksComplexity = {};
-    //     if (this.state.minedRules.length > 0) {
-    //         for (let i = minNumberOfAttributes; i <= maxNumberOfAttributes;
-    //              i += Math.max(Math.floor((maxNumberOfAttributes - minNumberOfAttributes) / 8), 1))
-    //             marksComplexity[i] = i;
-    //     }
-    //     marksComplexity[maxNumberOfAttributes] = maxNumberOfAttributes;
-    //
-    //     // // calculate the max and min number of files in mined rules
-    //     // let minNumberOfFiles = Infinity;
-    //     // let maxNumberOfFiles = -1 * Infinity;
-    //     // this.state.minedRules.forEach(group => {
-    //     //     minNumberOfFiles = Math.min(group["files"].length, minNumberOfFiles);
-    //     //     maxNumberOfFiles = Math.max(group["files"].length, maxNumberOfFiles);
-    //     // });
-    //
-    //     // // create marks for file slider IF there are mined rules
-    //     // let marksFiles = {};
-    //     // if (this.state.minedRules.length > 0) {
-    //     //     for (let i = minNumberOfFiles; i <= maxNumberOfFiles;
-    //     //          i += Math.max(Math.floor((maxNumberOfFiles - minNumberOfFiles) / 8), 1))
-    //     //         marksFiles[i] = i;
-    //     // }
-    //     // marksFiles[maxNumberOfFiles] = maxNumberOfFiles;
-    //
-    //     if (this.state.minedRules.length === 0) return null;
-    //
-    //     return (
-    //         <div className={"padding-bottom-25"}>
-    //             <div className={"padding-bottom-25"}>
-    //                 <Row className="show-grid">
-    //                     <Col xsHidden md={2}>
-    //                         Complexity
-    //                     </Col>
-    //                     <Col xs={5} md={5}>
-    //                         <Slider.Range
-    //                             step={1}
-    //                             defaultValue={[minNumberOfAttributes, maxNumberOfAttributes]}
-    //                             onAfterChange={(value) => this.setState({
-    //                                 minComplexity: value[0],
-    //                                 maxComplexity: value[1]
-    //                             })}
-    //                             min={minNumberOfAttributes}
-    //                             max={maxNumberOfAttributes}
-    //                             marks={marksComplexity}
-    //                             handle={(props) => {
-    //                                 // copied from rc-slider website
-    //                                 const {value, dragging, index, ...restProps} = props;
-    //                                 return (
-    //                                     <Tooltip
-    //                                         prefixCls="rc-slider-tooltip"
-    //                                         overlay={value}
-    //                                         visible={dragging}
-    //                                         placement="top"
-    //                                         key={index}
-    //                                     >
-    //                                         <Slider.Handle value={value} {...restProps} />
-    //                                     </Tooltip>
-    //                                 );
-    //                             }}
-    //                         />
-    //                     </Col>
-    //                     <Col xs={6} md={5}>
-    //                         Min: {this.state.minComplexity}, max: {this.state.maxComplexity}
-    //                     </Col>
-    //                 </Row>
-    //             </div>
-    //             {/*<div className={"padding-top-25"}>*/}
-    //             {/*    <Row className="show-grid">*/}
-    //             {/*        <Col xsHidden md={2}>*/}
-    //             {/*            Number of Files*/}
-    //             {/*        </Col>*/}
-    //             {/*        <Col xs={5} md={5}>*/}
-    //             {/*            <Slider.Range*/}
-    //             {/*                step={1}*/}
-    //             {/*                defaultValue={[minNumberOfFiles, maxNumberOfFiles]}*/}
-    //             {/*                onAfterChange={(value) => this.setState({*/}
-    //             {/*                    minFiles: value[0],*/}
-    //             {/*                    maxFiles: value[1]*/}
-    //             {/*                })}*/}
-    //             {/*                min={minNumberOfFiles}*/}
-    //             {/*                max={maxNumberOfFiles}*/}
-    //             {/*                marks={marksFiles}*/}
-    //             {/*                handle={(props) => {*/}
-    //             {/*                    // copied from rc-slider website*/}
-    //             {/*                    const {value, dragging, index, ...restProps} = props;*/}
-    //             {/*                    return (*/}
-    //             {/*                        <Tooltip*/}
-    //             {/*                            prefixCls="rc-slider-tooltip"*/}
-    //             {/*                            overlay={value}*/}
-    //             {/*                            visible={dragging}*/}
-    //             {/*                            placement="top"*/}
-    //             {/*                            key={index}*/}
-    //             {/*                        >*/}
-    //             {/*                            <Slider.Handle value={value} {...restProps} />*/}
-    //             {/*                        </Tooltip>*/}
-    //             {/*                    );*/}
-    //             {/*                }}*/}
-    //             {/*            />*/}
-    //             {/*        </Col>*/}
-    //             {/*        <Col xs={6} md={5}>*/}
-    //             {/*            Min: {this.state.minSupport}, max: {this.state.maxSupport}*/}
-    //             {/*        </Col>*/}
-    //             {/*    </Row>*/}
-    //             {/*</div>*/}
-    //
-    //             {this.state.minedRules.length === 0 ? null : (
-    //                 <FilterComponent visitedFiles={this.state.visitedFiles}
-    //                                  searchHistory={this.state.searchHistory}
-    //                                  customFeatures={this.state.customFeatures}/>
-    //             )}
-    //         </div>
-    //     )
-    // }
-
     renderFocusedElementInfo() {
         let filePath = "";
         let identifier = "";
@@ -301,11 +161,7 @@ class LearnDesignRulesComponent extends Component {
                 <div key={i}>
                     <h4>{groupTitle[key] ? groupTitle[key] : key}</h4>
                     <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"}>
-                        <MinedRulePad key={new Date()} elementId={"0"} root
-                                      rootTree={groupObject.rule.rulePadStateCompressed.guiTree}
-                                      guiElements={groupObject.rule.rulePadStateCompressed.guiElements}
-                                      styleClass={"rootContainer"}
-                        />
+                        <MinedRulePad key={new Date()} rulePadState={groupObject.rule.rulePadStateCompressed}/>
                     </div>
                 </div>
             )
@@ -323,155 +179,6 @@ class LearnDesignRulesComponent extends Component {
 
 
     /**
-     * render each rule through either RulePad or simple rendering
-     */
-    renderMinedRulesRulePad_new() {
-        if (this.state.minedRules.length === 0) return null;
-        return this.state.minedRules.map((group, i) => {
-            return (
-                <div key={i}>
-                    <h4>{groupTitle[group.group] ? groupTitle[group.group] : group.group}</h4>
-                    {group.rules.map((rule, j) => {
-                        return (
-                            <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"} key={j}>
-                                <Row>
-                                    <Col md={7}>
-                                        <MinedRulePad key={new Date()} elementId={"0"} root
-                                                      rootTree={rule.rulePadState.guiTree}
-                                                      guiElements={rule.rulePadState.guiElements}
-                                                      styleClass={"rootContainer"}
-                                        />
-                                    </Col>
-                                    <Col md={5}>
-                                        <h5><strong>
-                                            Rule with {rule.featureIds.length} Attributes
-                                        </strong></h5>
-                                        <h5>{rule.grammar}</h5>
-                                        <h5><strong>Support {rule.support}</strong></h5>
-                                        <h5><strong>Utility {rule.utility}</strong></h5>
-                                        <br/>
-                                    </Col>
-                                </Row>
-                            </div>
-                        )
-                    })
-                    }
-                </div>
-            )
-
-        })
-    }
-
-    // /**
-    //  * render each rule through either RulePad or simple rendering
-    //  * @return {*}
-    //  */
-    // renderMinedRulesRulePad() {
-    //     if (this.state.minedRules.length === 0) return null;
-    //     return this.state.minedRules.map((group, i) => {
-    //         /* {
-    //                 primary: {attributes, grammar, support, utility, rulePadState: {guiTree: {}, guiElements: {}} },
-    //                 cluster: cl.cluster,
-    //             }
-    //          */
-    //         return (
-    //             <div>
-    //                 <h1>{group.fileType.replace("FeatureMap", "")}</h1>
-    //                 {group.rules
-    //                     .sort((rule_a, rule_b) => rule_b.primary.utility - rule_a.primary.utility)
-    //                     .map((rule, j) => {
-    //
-    //                         let displayRule = rule.display === "p" ? rule.primary : rule.cluster[rule.display];
-    //                         // if RulePad is unable to visualize the rule
-    //                         if (Object.keys(displayRule.rulePadState.guiTree).length === 0) {
-    //                             return (
-    //                                 <div key={`${i}_${j}`} className={"minedFrequentItemSetRawDisplay"}>
-    //                                     <h4>{displayRule.grammar}</h4>
-    //                                     {displayRule.attributes.map((attr, k) => {
-    //                                         return (
-    //                                             <Row className={"attrRowContainer"} key={k}>
-    //                                                 <Col className={"attrId"} md={1}>{attr}</Col>
-    //                                             </Row>)
-    //                                     })}
-    //                                 </div>)
-    //                         }
-    //
-    //                         // rendering RulePad
-    //                         return (
-    //                             <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"}
-    //                                  style={{minHeight: "400px"}}
-    //                                  key={`${i}_${j}`}>
-    //                                 <h5><strong>There are {rule.cluster.length} similar rules.</strong></h5>
-    //                                 {rule.display === "p" ?
-    //                                     (<IconContext.Provider value={{color: "grey"}}>
-    //                                             <div style={{float: "left"}}>
-    //                                                 <IoIosArrowDropleftCircle size={30}/>
-    //                                             </div>
-    //                                         </IconContext.Provider>
-    //                                     )
-    //                                     :
-    //                                     (
-    //                                         <div style={{float: "left"}}>
-    //                                             <IoIosArrowDropleftCircle size={30} onClick={() => {
-    //                                                 let newState = this.state.minedRules;
-    //                                                 newState[i].rules[j].display === 0 ? newState[i].rules[j].display = "p" :
-    //                                                     newState[i].rules[j].display -= 1
-    //                                                 this.setState({minedRules: newState})
-    //                                             }}/>
-    //                                         </div>
-    //                                     )
-    //                                 }
-    //                                 {rule.cluster.length !== 0 && rule.display !== rule.cluster.length - 1 ?
-    //                                     (
-    //                                         <div>
-    //                                             <IoIosArrowDroprightCircle size={30} onClick={() => {
-    //                                                 let newState = this.state.minedRules;
-    //                                                 newState[i].rules[j].display === "p" ? newState[i].rules[j].display = 0 :
-    //                                                     newState[i].rules[j].display += 1
-    //                                                 this.setState({minedRules: newState})
-    //                                             }}/>
-    //                                         </div>
-    //                                     )
-    //                                     :
-    //                                     (
-    //                                         <IconContext.Provider value={{color: "grey"}}>
-    //                                             <div>
-    //                                                 <IoIosArrowDroprightCircle size={30}/>
-    //                                             </div>
-    //                                         </IconContext.Provider>
-    //                                     )
-    //                                 }
-    //                                 <Row>
-    //                                     <Col md={7}>
-    //                                         <MinedRulePad key={new Date()} elementId={"0"} root
-    //                                                       rootTree={displayRule.rulePadState.guiTree}
-    //                                                       guiElements={displayRule.rulePadState.guiElements}
-    //                                                       styleClass={"rootContainer"}
-    //                                         />
-    //
-    //                                     </Col>
-    //                                     <Col md={5}>
-    //                                         <h4>{rule.display === "p" ? "Primary Rule" : `Similar Rule ${rule.display + 1}`}</h4>
-    //                                         <h5><strong>
-    //                                             Rule with {displayRule.attributes.length} Attributes
-    //                                         </strong></h5>
-    //                                         <h5>{displayRule.grammar}</h5>
-    //                                         <h5><strong>Support {displayRule.support}</strong></h5>
-    //                                         <h5><strong>Utility {displayRule.utility}</strong></h5>
-    //                                         <br/>
-    //                                     </Col>
-    //                                 </Row>
-    //                             </div>
-    //                         )
-    //                     })
-    //                 }
-    //             </div>
-    //         )
-    //     });
-    // }
-
-
-    /**
      * Find the groupings
      * Since the method is called after reduxStoreMessages.project_path_msg
      * the projectPath is not updated in the props yet.
@@ -479,7 +186,6 @@ class LearnDesignRulesComponent extends Component {
     preProcessGroupings() {
         let groupingMetaData = new createGroupingMetaData();
         formGroupings(this.props.xmlFiles, this.props.projectPath, groupingMetaData);
-        console.log({groupingMetaData});
         this.props.onUpdateGroupingMetaData(groupingMetaData);
     }
 
@@ -500,7 +206,6 @@ class LearnDesignRulesComponent extends Component {
                     loadingStatus: false,
                 });
                 this.props.onUpdateFeatureMetaData(featureMetaData);
-                console.log({featureMetaData})
             });
 
     }
