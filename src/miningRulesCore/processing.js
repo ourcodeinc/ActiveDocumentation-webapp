@@ -63,7 +63,7 @@ export const generateFeatures = (xmlFiles, projectPath,
         groupingMetaData.fileMapping[focusedElementFilePath].packages) ?
         groupingMetaData.fileMapping[focusedElementFilePath].packages : [];
 
-    let allVisitedFiles = doiInformation.recentVisitedFiles.map(d => d.filePath);
+    // let allVisitedFiles = doiInformation.recentVisitedFiles.map(d => d.filePath);
     let fileToProcess = xmlFiles
         .filter((xmlFile) => {
             // // also includes recently visited files
@@ -150,48 +150,48 @@ const UpdateFeatureWeights = (featureIdWeights, featureMetaData) => {
     }
 }
 
-/**
- * @param doiInformation {doiInformationType}
- * @param featureMetaData {featureMetaDataType}
- * @param projectPath {string}
- */
-const updateFeatureWeightsDoi = (doiInformation,
-                                        featureMetaData,
-                                        projectPath) => {
-
-    let featureIdWeights = [];
-    let allKeywords = doiInformation.recentSearches.map(d => d.keyword);
-    let allElements = doiInformation.recentVisitedElements.map(d => d.visitedElement);
-    let allVisitedFiles = doiInformation.recentVisitedFiles.map(d => d.filePath);
-
-    // if a search keyword or visited elements is among the identifiers of features,
-    // multiply the weight of the feature by 10
-    let featureInfoKeys = Object.keys(featureMetaData.featureInfoContainers.featureInfo);
-    for (let feature of featureInfoKeys) {
-        let nodeValues = feature.nodes;
-        if (!nodeValues) continue;
-        for (let value of nodeValues) {
-            if (allKeywords.includes(value) || allElements.includes(value)) {
-                // todo update based on timestamp
-                let weight = 10;
-                featureIdWeights.push({featureId: feature.featureId, weight, action: "multiply"});
-            }
-        }
-    }
-
-    // for all visited files, multiply the weight of all their feature by 5
-    allVisitedFiles.forEach(file => {
-        let path = file.replace(projectPath, "");
-        let featureIds = featureMetaData.featureInfoContainers.featureMapReverse[path] ?
-            featureMetaData.featureInfoContainers.featureMapReverse[path] : [];
-        // todo update based on timestamp
-        featureIds.forEach(id => {
-            featureIdWeights.push({featureId: id, weight: 5, action: "multiply"});
-        })
-    });
-
-    UpdateFeatureWeights(featureIdWeights, featureMetaData);
-}
+// /**
+//  * @param doiInformation {doiInformationType}
+//  * @param featureMetaData {featureMetaDataType}
+//  * @param projectPath {string}
+//  */
+// const updateFeatureWeightsDoi = (doiInformation,
+//                                         featureMetaData,
+//                                         projectPath) => {
+//
+//     let featureIdWeights = [];
+//     let allKeywords = doiInformation.recentSearches.map(d => d.keyword);
+//     let allElements = doiInformation.recentVisitedElements.map(d => d.visitedElement);
+//     let allVisitedFiles = doiInformation.recentVisitedFiles.map(d => d.filePath);
+//
+//     // if a search keyword or visited elements is among the identifiers of features,
+//     // multiply the weight of the feature by 10
+//     let featureInfoKeys = Object.keys(featureMetaData.featureInfoContainers.featureInfo);
+//     for (let feature of featureInfoKeys) {
+//         let nodeValues = feature.nodes;
+//         if (!nodeValues) continue;
+//         for (let value of nodeValues) {
+//             if (allKeywords.includes(value) || allElements.includes(value)) {
+//                 // todo update based on timestamp
+//                 let weight = 10;
+//                 featureIdWeights.push({featureId: feature.featureId, weight, action: "multiply"});
+//             }
+//         }
+//     }
+//
+//     // for all visited files, multiply the weight of all their feature by 5
+//     allVisitedFiles.forEach(file => {
+//         let path = file.replace(projectPath, "");
+//         let featureIds = featureMetaData.featureInfoContainers.featureMapReverse[path] ?
+//             featureMetaData.featureInfoContainers.featureMapReverse[path] : [];
+//         // todo update based on timestamp
+//         featureIds.forEach(id => {
+//             featureIdWeights.push({featureId: id, weight: 5, action: "multiply"});
+//         })
+//     });
+//
+//     UpdateFeatureWeights(featureIdWeights, featureMetaData);
+// }
 
 
 /**
