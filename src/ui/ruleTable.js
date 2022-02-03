@@ -16,18 +16,13 @@ class RuleTable extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            newRule: false,
-            indicesOfRulesToDisplay: [],
-            hash0: ""
-        };
     }
 
     render() {
         return (
             <Fragment>
-                {this.state.hash0 === hashConst.rules ?
-                    (!this.state.newRule ? (
+                {this.props.hash0 === hashConst.rules ?
+                    (!this.props.newRule ? (
                         <div style={{paddingBottom: "10px", clear: "both"}}>
                             <Button onClick={() => this.props.onChangeEditMode()} style={{padding: "0 5px"}}>
                                 <MdPlaylistAdd className={"react-icons"} size={35}/>
@@ -41,24 +36,19 @@ class RuleTable extends Component {
                     ))
                     : null}
                 <div>
-                    {this.state.indicesOfRulesToDisplay.map((d, i) =>
+                    {this.props.indicesOfRulesToDisplay.map((d, i) =>
                         (<div key={i} style={{paddingBottom: "5px"}}>
                             <RulePanel ruleIndex={d}/>
                         </div>)
                     )}
                 </div>
-                {this.state.hash0 !== hashConst.rules && this.state.indicesOfRulesToDisplay.length === 0 ? (
+                {this.props.hash0 !== hashConst.rules && this.props.indicesOfRulesToDisplay.length === 0 ? (
                     <div>
                         <h4>There are no rules to display.</h4>
                     </div>
                 ) : null}
             </Fragment>
         );
-    }
-
-    //componentDidUpdate doesn't work
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        this.setState(nextProps);
     }
 
 }
