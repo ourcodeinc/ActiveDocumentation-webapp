@@ -9,6 +9,7 @@ import {Button} from "react-bootstrap";
 import {MdPlaylistAdd} from "react-icons/md";
 
 import {changeEditMode} from "../actions";
+import {hashConst} from "./uiConstants";
 
 class TableOfContents extends Component {
 
@@ -22,8 +23,8 @@ class TableOfContents extends Component {
                     {this.props.tags.map((tag, i) =>
                         (<li key={i}
                              onClick={() =>
-                                 window.location.hash = "#/tag/" + tag["tagName"]
-                             }>{tag["tagName"]}</li>)
+                                 window.location.hash = `#/${hashConst.tag}/${tag.tagName}`
+                             }>{tag.tagName}</li>)
                     )}
                 </ul>
 
@@ -35,7 +36,7 @@ class TableOfContents extends Component {
                         <tbody>
                         {this.props.rules.map((rule, i) =>
                             <tr key={i}>
-                                <td className={"list-group-item"}>{rule["title"]}</td>
+                                <td className={"list-group-item"}>{rule.title}</td>
                             </tr>
                         )}
                         </tbody>
@@ -43,7 +44,7 @@ class TableOfContents extends Component {
                     <div style={{padding: "10px 0 10px 0", clear: "both"}}>
                         <Button style={{padding: "0 5px"}}
                                 onClick={() => {
-                                    window.location.hash = "#/rules";
+                                    window.location.hash = `#/${hashConst.rules}`;
                                     this.props.onAddNewRule()
                                 }}>
                             <MdPlaylistAdd className={"react-icons"} size={35}/>
@@ -57,6 +58,23 @@ class TableOfContents extends Component {
 
 }
 
+/**
+ * @param state {{ruleTable:[{index:number, title:string, description:string, tags:[], grammar:string,
+ * checkForFilesFolders:[string], checkForFilesFoldersConstraints:"INCLUDE"|"EXCLUDE"|"NONE",
+ * processFilesFolders:"WITHIN",
+ * quantifierXPathQuery:[], constraintXPathQuery:[], quantifierQueryType:string, constraintQueryType:string,
+ * rulePanelState:{editMode:boolean, title:string, description:string, ruleTags:[], folderConstraint:string,
+ * filesFolders:[],
+ * constraintXPath:string, quantifierXPath:string, autoCompleteArray:[],
+ * graphicalEditorState:{guiTree:{}, guiElements:{}, ruleType:string}},
+ * xPathQueryResult:[{
+ * data:{quantifierResult:[{filePath:string,snippet:string,xml:{fileName:string,
+ * xml:string}}],
+ * satisfied:number, satisfiedResult:[], violated:number, violatedResult:[]
+ * changed:boolean,violatedChanged:string,satisfiedChanged:string,allChanged:string},
+ * filePath:string
+ * }]}], tagTable: [{ID:string,tagName:string, detail:string}], currentHash:string[]}}
+ */
 function mapStateToProps(state) {
     return {
         rules: state.ruleTable,

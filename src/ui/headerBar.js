@@ -10,6 +10,7 @@ import {FormControl} from "react-bootstrap";
 import {connect} from "react-redux";
 import {GoAlert} from "react-icons/go";
 import {webSocketSendMessage} from "../core/coreConstants";
+import {hashConst} from "./uiConstants";
 
 export class HeaderBar extends Component {
 
@@ -29,7 +30,7 @@ export class HeaderBar extends Component {
 
     renderHeader() {
         switch (this.props.currentHash[0]) {
-            case "tag":
+            case hashConst.tag:
                 return (
                     <div>
                         <span className="text-16 primary">Rules related to tag: </span><br/>
@@ -52,7 +53,7 @@ export class HeaderBar extends Component {
                                      }}/>
                     </div>
                 );
-            case "rule":
+            case hashConst.rule:
                 return (
                     <div>
                         <span className="text-16 primary">Rule Index: </span>
@@ -60,7 +61,7 @@ export class HeaderBar extends Component {
                             className="text-24 important">{this.props.title.replace(this.props.projectPath, "")}</span>
                     </div>
                 );
-            case "codeChanged":
+            case hashConst.codeChanged:
                 return (
                     <div>
                         <span className="text-16 primary">Code Changed in File:</span><br/>
@@ -68,19 +69,19 @@ export class HeaderBar extends Component {
                             className="text-24 important">{this.props.content.replace(this.props.projectPath, "")}</span>
                     </div>
                 );
-            case "ruleChanged":
+            case hashConst.ruleChanged:
                 return (
                     <div>
                         <h3>Rule {this.props.title} is changed.</h3>
                     </div>
                 );
-            case "genRule":
+            case hashConst.generateRule:
                 return (
                     <div>
                         <h3>{this.props.title}</h3>
                     </div>
                 );
-            case "rulesForFile":
+            case hashConst.rulesForFile:
                 return (
                     <div>
                         <span className="text-16 primary">Rules applicable for File:</span><br/>
@@ -113,7 +114,7 @@ function mapStateToProps(state) {
     };
 
     switch (state.currentHash[0]) {
-        case "tag":
+        case hashConst.tag:
             try {
                 props.tag = state.tagTable.filter((d) => d["tagName"] === state.currentHash[1])[0];
             } catch {
@@ -121,32 +122,32 @@ function mapStateToProps(state) {
             props.title = state.currentHash[1];
             props.content = props["tag"]["detail"];
             break;
-        case "rules":
+        case hashConst.rules:
             props.title = "All Rules";
             break;
-        case "tagJsonChanged":
+        case hashConst.tagJsonChanged:
             props.title = "tagTable.json is changed.";
             break;
-        case "ruleJsonChanged":
+        case hashConst.ruleJsonChanged:
             props.title = "ruleTable.json is changed.";
             break;
-        case "index":
+        case hashConst.index:
             props.title = "Active Documentation";
             break;
-        case "violatedRules":
+        case hashConst.violatedRules:
             props.title = "Violated Rules";
             break;
-        case "rulesForFile":
+        case hashConst.rulesForFile:
             props.content = state.openFilePath.replace(state.projectPath, "");
             break;
-        case "codeChanged":
+        case hashConst.codeChanged:
             props.title = "Code changed in";
             props.content = state.openFilePath.replace(state.projectPath, "");
             break;
-        case "learnDesignRules":
+        case hashConst.learnDesignRules:
             props.title = "Learn Design Rules";
             break;
-        case "featureSelection":
+        case hashConst.featureSelection:
             props.title = "Feature Selection";
             break;
         default:

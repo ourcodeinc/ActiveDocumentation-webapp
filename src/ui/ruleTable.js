@@ -10,6 +10,7 @@ import {connect} from "react-redux";
 import {Button} from "react-bootstrap";
 import {MdPlaylistAdd} from "react-icons/md";
 import {changeEditMode} from "../actions";
+import {hashConst} from "./uiConstants";
 
 class RuleTable extends Component {
 
@@ -25,7 +26,7 @@ class RuleTable extends Component {
     render() {
         return (
             <Fragment>
-                {this.state.hash0 === "rules" ?
+                {this.state.hash0 === hashConst.rules ?
                     (!this.state.newRule ? (
                         <div style={{paddingBottom: "10px", clear: "both"}}>
                             <Button onClick={() => this.props.onChangeEditMode()} style={{padding: "0 5px"}}>
@@ -46,7 +47,7 @@ class RuleTable extends Component {
                         </div>)
                     )}
                 </div>
-                {this.state.hash0 !== "rules" && this.state.indicesOfRulesToDisplay.length === 0 ? (
+                {this.state.hash0 !== hashConst.rules && this.state.indicesOfRulesToDisplay.length === 0 ? (
                     <div>
                         <h4>There are no rules to display.</h4>
                     </div>
@@ -72,14 +73,14 @@ function mapStateToProps(state) {
     };
 
 
-    if (state.currentHash[0] === "tag")
+    if (state.currentHash[0] === hashConst.tag)
         props.indicesOfRulesToDisplay = state.ruleTable
-            .filter((d) => d["tags"].indexOf(state.currentHash[1]) !== -1)
+            .filter((d) => d.tags.indexOf(state.currentHash[1]) !== -1)
             .map(d => d.index);
 
-    else if (state.currentHash[0] === "violatedRules")
+    else if (state.currentHash[0] === hashConst.violatedRules)
         props.indicesOfRulesToDisplay = state.ruleTable
-            .filter(d => d["xPathQueryResult"].map(dd => dd["data"].violated).reduce((a, b) => { return a + b }, 0) !== 0)
+            .filter(d => d.xPathQueryResult.map(dd => dd.data.violated).reduce((a, b) => { return a + b }, 0) !== 0)
             .map(d => d.index);
 
     return props;

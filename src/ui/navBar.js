@@ -9,6 +9,7 @@ import {FaArrowLeft, FaArrowRight} from "react-icons/fa";
 import {Nav, Navbar, NavItem} from "react-bootstrap";
 import {connect} from "react-redux";
 import {clickedOnBack, clickedOnForward} from "../actions";
+import {hashConst} from "./uiConstants";
 
 
 export class NavBar extends Component {
@@ -22,8 +23,8 @@ export class NavBar extends Component {
                     <Nav
                         onSelect={key => {
                             if (key > 0)
-                                window.location.hash = (key === 1) ? "#/index" : (key === 2) ? "#/rules"
-                                    : (key === 3) ? "#/violatedRules" : (key === 4) ? "#/learnDesignRules" : "#/index"
+                                window.location.hash = (key === 1) ? `#/${hashConst.index}` : (key === 2) ? `#/${hashConst.rules}`
+                                    : (key === 3) ? `#/${hashConst.violatedRules}` : (key === 4) ? `#/${hashConst.learnDesignRules}` : `#/${hashConst.index}`
                         }}>
                         <NavItem eventKey={-1} className={this.props.backDisable} onClick={() => this.props.backClick(this.props)}>
                             <FaArrowLeft size={20}/>

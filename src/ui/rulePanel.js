@@ -17,6 +17,7 @@ import RulePad from "./RulePad/rulePad";
 import {reduxStoreMessages} from "../reduxStoreConstants";
 import {webSocketSendMessage} from "../core/coreConstants";
 import {relatives} from "../core/ruleExecutorConstants";
+import {hashConst} from "./uiConstants";
 
 
 class RulePanel extends Component {
@@ -294,7 +295,7 @@ class RulePanel extends Component {
         return (this.ruleI.tags).map((d, i) => {
             return (
                 <div className="buttonDiv" key={i}>
-                    <Label onClick={() => window.location.hash = "#/tag/" + d.replace(/\//g, "%2F")}>{d}</Label>
+                    <Label onClick={() => window.location.hash = `#/${hashConst.tag}` + d.replace(/\//g, "%2F")}>{d}</Label>
                 </div>)
         });
     }
