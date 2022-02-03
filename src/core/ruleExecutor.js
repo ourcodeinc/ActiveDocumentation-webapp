@@ -312,17 +312,17 @@ const runXpathQueryMixed = (xmlFiles, ruleI) => {
     let quantifierResult = [];
     let constraintResult = [];
 
-    if (ruleI.hasOwnProperty(ruleProperties.quantifierQueryType) && ruleI.quantifierQueryType === queryType.find_from_text)
+    if (ruleI.hasOwnProperty(ruleProperties.quantifierQueryType) && ruleI.quantifierQueryType === queryType.next_file)
         quantifierResult = findFromText(xmlFiles, ruleI.quantifierXPathQuery);
-    else if (ruleI.hasOwnProperty(ruleProperties.quantifierQueryType) && ruleI.quantifierQueryType === queryType.return_to_base)
+    else if (ruleI.hasOwnProperty(ruleProperties.quantifierQueryType) && ruleI.quantifierQueryType === queryType.first_file)
         quantifierResult = findAndReturnToBase(xmlFiles, ruleI.quantifierXPathQuery);
     else
         for (let j = 0; j < xmlFiles.length; j++)
             quantifierResult = quantifierResult.concat(runXPathQuery(xmlFiles[j], ruleI.quantifierXPathQuery[0]));
 
-    if (ruleI.hasOwnProperty(ruleProperties.constraintQueryType) && ruleI.constraintQueryType === queryType.find_from_text)
+    if (ruleI.hasOwnProperty(ruleProperties.constraintQueryType) && ruleI.constraintQueryType === queryType.next_file)
         constraintResult = findFromText(xmlFiles, ruleI.constraintXPathQuery);
-    else if (ruleI.hasOwnProperty(ruleProperties.constraintQueryType) && ruleI.constraintQueryType === queryType.return_to_base)
+    else if (ruleI.hasOwnProperty(ruleProperties.constraintQueryType) && ruleI.constraintQueryType === queryType.first_file)
         constraintResult = findAndReturnToBase(xmlFiles, ruleI.constraintXPathQuery);
     else
         for (let j = 0; j < xmlFiles.length; j++)

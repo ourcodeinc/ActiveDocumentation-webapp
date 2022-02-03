@@ -18,8 +18,8 @@ export const processFileFolder = {
 }
 
 export const queryType = {
-    find_from_text: "FIND_FROM_TEXT",
-    return_to_base: "RETURN_TO_BASE"
+    next_file: "NEXT", //  two queries, two separate files
+    first_file: "FIRST" //  three queries, the third query is ran against the first file again.
 }
 
 export const ruleProperties = {
