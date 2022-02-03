@@ -617,7 +617,7 @@ export const initial_state = {
         backDisable: "disabled",
         clickedOnButtons: false
     },
-    loadingRules: false,
+    loadingGif: false,
 
     rulePadState: {
         isEditMode: false,

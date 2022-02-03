@@ -12,7 +12,7 @@ import {
     updateWS, updateXmlFiles,
     updateProjectHierarchyData, updatedMinedRules,
     updateFeatureSelection, updateProjectPath,
-    connectToIDE, updateFocusedElementData, updateDoiInformation, requestMineRulesForElement
+    updateLoadingGif, updateFocusedElementData, updateDoiInformation, requestMineRulesForElement
 } from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from "./ruleExecutor";
 import {getXpathForFeature} from "../miningRulesCore/featureSelectionProcessing";
@@ -27,7 +27,7 @@ class WebSocketManager extends Component {
     constructor(props) {
         super(props);
 
-        let xml = []; // [{filePath: "", xml: ""}]
+        let xmlData = []; // [{filePath: "", xml: ""}]
         let ruleTable = [];
         let tagTable = [];
         let ws = new WebSocket("ws://localhost:8887");
@@ -50,7 +50,7 @@ class WebSocketManager extends Component {
             switch (message.command) {
 
                 case webSocketReceiveMessage.enter_chat_msg:
-                    this.props.onConnectToIDE();
+                    this.props.onLoadingGif(true);
                     break;
 
                 case webSocketReceiveMessage.project_path_msg:
@@ -66,13 +66,13 @@ class WebSocketManager extends Component {
 
                 case webSocketReceiveMessage.xml_files_msg:
                     // data: {filePath: "", xml: ""}
-                    xml.push(message.data);
+                    xmlData.push(message.data);
                     break;
 
                 case webSocketReceiveMessage.rule_table_msg:
                     // data: [ruleTable]
                     ruleTable = Utilities.parseJson(message.data, "ruleTable", []);
-                    this.props.onUpdateXmlFiles(xml);
+                    this.props.onUpdateXmlFiles(xmlData);
                     break;
 
                 case webSocketReceiveMessage.tag_table_msg:
@@ -83,24 +83,24 @@ class WebSocketManager extends Component {
 
                 case webSocketReceiveMessage.verify_rules_msg:
                     // data: ""
-                    ruleTable = checkRulesForAll(xml, ruleTable);
+                    ruleTable = checkRulesForAll(xmlData, ruleTable);
                     this.props.onUpdateRuleTable(ruleTable);
                     break;
 
                 case webSocketReceiveMessage.update_xml_file_msg:
                     // data: {filePath: "", xml: ""}
-                    let filteredXML = xml.filter((d) => d.filePath === message.data["filePath"]);
+                    let filteredXML = xmlData.filter((d) => d.filePath === message.data["filePath"]);
                     if (filteredXML.length === 0)
-                        xml.push({"filePath": message.data["filePath"], "xml": message.data["xml"]});
+                        xmlData.push({"filePath": message.data["filePath"], "xml": message.data["xml"]});
                     else
                         filteredXML[0].xml = message.data["xml"];
-                    this.props.onUpdateXmlFiles(xml);
+                    this.props.onUpdateXmlFiles(xmlData);
                     break;
 
                 case webSocketReceiveMessage.check_rules_for_file_msg:
                     // data: "filePath"
                     let filePath = message.data;
-                    ruleTable = checkRulesForFile(xml, ruleTable, filePath);
+                    ruleTable = checkRulesForFile(xmlData, ruleTable, filePath);
                     this.props.onFilePathChange(filePath);
                     this.props.onUpdateRuleTable(ruleTable);
                     window.location.hash = `#/${hashConst.codeChanged}`;
@@ -127,7 +127,7 @@ class WebSocketManager extends Component {
                     try {
                         let ruleIndex = -1;
                         ruleTable.forEach((d, i) => +d.index === +updatedRule.index ? ruleIndex = i : "");
-                        ruleTable[ruleIndex] = runRulesByTypes(xml, updatedRule);
+                        ruleTable[ruleIndex] = runRulesByTypes(xmlData, updatedRule);
                         this.props.onUpdateRuleTable(ruleTable);
                     } catch (e) {
                         console.log(e);
@@ -148,7 +148,7 @@ class WebSocketManager extends Component {
                     let newAddedRule = message.data["ruleInfo"];
                     ruleTable.push(newAddedRule);
                     // received by RuleExecutor
-                    ruleTable[ruleTable.length - 1] = runRulesByTypes(xml, newAddedRule);
+                    ruleTable[ruleTable.length - 1] = runRulesByTypes(xmlData, newAddedRule);
                     this.props.onUpdateRuleTable(ruleTable);
                     break;
 
@@ -180,7 +180,7 @@ class WebSocketManager extends Component {
                 /* Mining Rules */
 
                 case webSocketReceiveMessage.feature_selection_msg:
-                    let selected = xml.filter(d => d.filePath === message.data["filePath"]);
+                    let selected = xmlData.filter(d => d.filePath === message.data["filePath"]);
                     if (selected.length > 0) {
                         //  {{xpath: string, selectedText: string, idMap, displayTextArray: Array}}
                         let textXpathData = getXpathForFeature(selected[0].xml, message.data["startOffset"], message.data["endOffset"]);
@@ -200,7 +200,7 @@ class WebSocketManager extends Component {
                     break;
 
                 case webSocketReceiveMessage.element_info_for_mine_rules:
-                    let focusedElementFile = xml.filter(d => d.filePath === message.data["filePath"]);
+                    let focusedElementFile = xmlData.filter(d => d.filePath === message.data["filePath"]);
                     if (focusedElementFile.length > 0) {
                         let focusedElementData = getDataForFocusedElement(
                             focusedElementFile[0], message.data["startOffset"]);
@@ -218,7 +218,7 @@ class WebSocketManager extends Component {
                     let recentVisitedElements = Utilities.parseJson(message.data["recentVisitedElements"],
                         "recentVisitedElements", []);
                     let newDoiInformation = processDoiInformation(recentVisitedFiles, recentSearchKeywords,
-                        recentVisitedElements, xml, this.props.projectPath);
+                        recentVisitedElements, xmlData, this.props.projectPath);
                     this.props.onUpdateDoiInformation(newDoiInformation);
 
                     break;
@@ -262,7 +262,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        onConnectToIDE: () => dispatch(connectToIDE()),
+        onLoadingGif: (status) => dispatch(updateLoadingGif(status)),
         onUpdateWS: (ws) => dispatch(updateWS(ws)),
         onProjectHierarchy: (hierarchyData) => dispatch(updateProjectHierarchyData(hierarchyData)),
         onProjectPathUpdate: (projectPath) => dispatch(updateProjectPath(projectPath)),

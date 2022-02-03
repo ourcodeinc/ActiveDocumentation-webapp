@@ -2,9 +2,12 @@
 
 import {reduxStoreActions} from "./reduxStoreConstants";
 
-export const connectToIDE = () => {
+export const updateLoadingGif = (status) => {
     return {
-        type: reduxStoreActions.action_update_loading_rules,
+        type: reduxStoreActions.action_update_loading_gif,
+        data: {
+            loadingGif: status
+        }
     }
 };
 

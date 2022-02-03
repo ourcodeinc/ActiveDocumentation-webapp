@@ -20,9 +20,9 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
     let rules = [];
 
     switch (action.type) {
-        case reduxStoreActions.action_update_loading_rules:
+        case reduxStoreActions.action_update_loading_gif:
             return Object.assign({}, state, {
-                loadingRules: true
+                loadingGif: action.data["loadingGif"]
             });
 
         case reduxStoreActions.action_hash:
@@ -82,7 +82,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 })
             );
             return Object.assign({}, state, {
-                loadingRules: false,
+                loadingGif: false,
                 ruleTable: rules,
                 message: reduxStoreMessages.update_rule_table_msg
             });

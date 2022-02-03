@@ -51,7 +51,7 @@ class App extends Component {
 
         window.location.hash = "#/index";
 
-        this.state = {loading: false}
+        this.state = {loadingGif: false}
     }
 
     render() {
@@ -96,9 +96,10 @@ class App extends Component {
         )
     }
 
-
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        this.setState({loading: nextProps.loading})
+    static getDerivedStateFromProps(props, state) {
+        if (props.loadingGif !== state.loadingGif)
+            return {loadingGif: props.loadingGif};
+        return null;
     }
 
     /**
@@ -106,7 +107,8 @@ class App extends Component {
      * @return {null}
      */
     renderLoading() {
-        return this.state.loading ? (
+        return (<div id={"loadingGif"}
+             className={(this.state.loadingGif ? "" : "hidden")}>
             <div style={{
                 padding: "20%",
                 display: "flex",
@@ -130,7 +132,7 @@ class App extends Component {
                     <div className="spinner"/>
                 </div>
             </div>
-        ) : null;
+        </div>);
     }
 
 }
@@ -139,7 +141,7 @@ class App extends Component {
 function mapStateToProps(state) {
     return {
         currentHash: state.currentHash,
-        loading: state.loadingRules
+        loadingGif: state.loadingGif
     }
 }
 
