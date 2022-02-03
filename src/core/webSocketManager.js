@@ -20,6 +20,7 @@ import {webSocketReceiveMessage} from "./coreConstants";
 import {parseFrequentItemSets_CHUI, processOutPutRules, removeSparseData} from "../miningRulesCore/postProcessing";
 import {getDataForFocusedElement, processDoiInformation} from "../miningRulesCore/focusedElementProcessing";
 import Utilities from "./utilities";
+import {hashConst} from "../ui/uiConstants";
 
 class WebSocketManager extends Component {
 
@@ -102,7 +103,7 @@ class WebSocketManager extends Component {
                     ruleTable = checkRulesForFile(xml, ruleTable, filePath);
                     this.props.onFilePathChange(filePath);
                     this.props.onUpdateRuleTable(ruleTable);
-                    window.location.hash = "#/codeChanged";
+                    window.location.hash = `#/${hashConst.codeChanged}`;
                     break;
 
                 case webSocketReceiveMessage.update_tag_msg:
@@ -113,7 +114,7 @@ class WebSocketManager extends Component {
                         tagTable.push(newTag);
                     else
                         tagTable.filter((d) => d.tagName === newTag["tagName"])[0].detail = newTag["detail"];
-                    window.location.hash = "#/tag/" + newTag["tagName"];
+                    window.location.hash = `#/${hashConst.tag}/` + data["tagID"];
 
                     break;
                 case webSocketReceiveMessage.failed_update_tag_msg:
@@ -171,7 +172,7 @@ class WebSocketManager extends Component {
                     let focusedFilePath = message.data;
                     if (!this.props.ignoreFileChange) {
                         this.props.onFilePathChange(focusedFilePath);
-                        window.location.hash = "#/rulesForFile/" + focusedFilePath.replace(/\//g, "%2F");
+                        window.location.hash = `#/${hashConst.rulesForFile}/` + focusedFilePath.replace(/\//g, "%2F");
                     } else
                         this.props.onFalsifyIgnoreFile();
                     break;
@@ -183,7 +184,7 @@ class WebSocketManager extends Component {
                     if (selected.length > 0) {
                         //  {{xpath: string, selectedText: string, idMap, displayTextArray: Array}}
                         let textXpathData = getXpathForFeature(selected[0].xml, message.data["startOffset"], message.data["endOffset"]);
-                        window.location.hash = "#/featureSelection";
+                        window.location.hash = `#/${hashConst.featureSelection}`;
 
                         // filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText, selectedText,
                         //         xpath, modifiedSelectedText, idMap, displayTextArray
@@ -223,7 +224,7 @@ class WebSocketManager extends Component {
                     break;
 
                 case webSocketReceiveMessage.request_mine_rules_for_element:
-                    window.location.hash = "#/learnDesignRules/";
+                    window.location.hash = `#/${hashConst.learnDesignRules}/`;
                     this.props.onRequestMineRulesForElement();
                     break;
 
