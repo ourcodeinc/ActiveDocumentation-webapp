@@ -13,6 +13,7 @@ import NavBar from "./ui/navBar";
 import HeaderBar from "./ui/headerBar";
 import MinedRulesComponent from "./ui/MiningRules/learnDesignRulesComponent";
 import FeatureSelection from "./ui/MiningRules/featureSelection";
+import {hashConst} from "./ui/uiConstants";
 
 class App extends Component {
 
@@ -67,25 +68,25 @@ class App extends Component {
                     </div>
                     <div id={"tableOfContent"}
                          className={
-                             (["index", "tagJsonChanged", "ruleJsonChanged"].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
+                             ([hashConst.index, hashConst.tagJsonChanged, hashConst.ruleJsonChanged].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
                          }>
                         <TableOfContents/>
                     </div>
                     <div id={"ruleResults"}
                          className={
-                             (["rules", "tag", "codeChanged", "rulesForFile", "violatedRules"].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
+                             ([hashConst.rules, hashConst.tag, hashConst.codeChanged, hashConst.rulesForFile, hashConst.violatedRules].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
                          }>
                         <RuleTable/>
                     </div>
                     <div id={"learnDesignRules"}
                          className={
-                             (["learnDesignRules"].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
+                             ([hashConst.learnDesignRules].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
                          }>
                         <MinedRulesComponent/>
                     </div>
                     <div id={"featureSelection"}
                          className={
-                             (["featureSelection"].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
+                             ([hashConst.featureSelection].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
                          }>
                         <FeatureSelection/>
                     </div>
