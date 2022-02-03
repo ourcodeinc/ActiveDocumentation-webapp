@@ -23,7 +23,7 @@ class TableOfContents extends Component {
                     {this.props.tags.map((tag, i) =>
                         (<li key={i}
                              onClick={() =>
-                                 window.location.hash = `#/${hashConst.tag}/${tag.tagName}`
+                                 window.location.hash = `#/${hashConst.tag}/${tag.ID}`
                              }>{tag.tagName}</li>)
                     )}
                 </ul>

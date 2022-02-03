@@ -15,3 +15,5 @@ export const hashConst = {
     tagJsonChanged: "tagJsonChanged",
     ruleJsonChanged: "ruleJsonChanged"
 }
+
+export const none_filePath = "none";

@@ -37,10 +37,10 @@ export class HeaderBar extends Component {
                         <span className="text-24 important">{this.props.title}</span>
                         <FormControl componentClass="textarea" defaultValue={this.props.content} style={{resize: "vertical"}}
                                      onBlur={(e) => {
-                                         if (e.target.value !== this.props.tag["detail"]) {
-                                             let filtered = this.props.tagTable.filter((d) => d["tagName"] === this.props.tag["tagName"]);
+                                         if (e.target.value !== this.props.tag.detail) {
+                                             let filtered = this.props.tagTable.filter((d) => d.tagName === this.props.tag.tagName);
                                              if (filtered.length === 1) {
-                                                 filtered[0]["detail"] = e.target.value;
+                                                 filtered[0].detail = e.target.value;
                                                  Utilities.sendToServer(this.props.ws, webSocketSendMessage.modified_tag_msg, filtered[0]);
                                              }
                                          }
@@ -102,6 +102,24 @@ export class HeaderBar extends Component {
 }
 
 // map state to props
+/**
+ * @param state {{ruleTable:[{index:number, title:string, description:string, tags:[], grammar:string,
+ * checkForFilesFolders:[string], checkForFilesFoldersConstraints:"INCLUDE"|"EXCLUDE"|"NONE",
+ * processFilesFolders:"WITHIN",
+ * quantifierXPathQuery:[], constraintXPathQuery:[], quantifierQueryType:string, constraintQueryType:string,
+ * rulePanelState:{editMode:boolean, title:string, description:string, ruleTags:[], folderConstraint:string,
+ * filesFolders:[],
+ * constraintXPath:string, quantifierXPath:string, autoCompleteArray:[],
+ * graphicalEditorState:{guiTree:{}, guiElements:{}, ruleType:string}},
+ * xPathQueryResult:[{
+ * data:{quantifierResult:[{filePath:string,snippet:string,xml:{fileName:string,
+ * xml:string}}],
+ * satisfied:number, satisfiedResult:[], violated:number, violatedResult:[]
+ * changed:boolean,violatedChanged:string,satisfiedChanged:string,allChanged:string},
+ * filePath:string
+ * }]}], tagTable: [{ID:string,tagName:string,detail:string}], currentHash:string[],
+ * ws:any, projectPath: string, openFilePath:string}}
+ */
 function mapStateToProps(state) {
     let props = {
         tagTable: state.tagTable,
@@ -116,11 +134,11 @@ function mapStateToProps(state) {
     switch (state.currentHash[0]) {
         case hashConst.tag:
             try {
-                props.tag = state.tagTable.filter((d) => d["tagName"] === state.currentHash[1])[0];
+                props.tag = state.tagTable.filter((d) => d.ID === state.currentHash[1])[0];
             } catch {
             }
-            props.title = state.currentHash[1];
-            props.content = props["tag"]["detail"];
+            props.title = props.tag.tagName;
+            props.content = props.tag.detail;
             break;
         case hashConst.rules:
             props.title = "All Rules";

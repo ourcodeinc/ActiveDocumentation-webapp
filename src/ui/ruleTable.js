@@ -73,10 +73,17 @@ function mapStateToProps(state) {
     };
 
 
-    if (state.currentHash[0] === hashConst.tag)
-        props.indicesOfRulesToDisplay = state.ruleTable
-            .filter((d) => d.tags.indexOf(state.currentHash[1]) !== -1)
-            .map(d => d.index);
+    if (state.currentHash[0] === hashConst.tag) {
+        let tagFilter = state.tagTable.filter((d) => d.ID === state.currentHash[1]);
+        if (tagFilter.length !== 1) {
+            props.indicesOfRulesToDisplay = [];
+        }
+        else {
+            props.indicesOfRulesToDisplay = state.ruleTable
+                .filter((d) => d.tags.indexOf(tagFilter[0].tagName) !== -1)
+                .map(d => d.index);
+        }
+    }
 
     else if (state.currentHash[0] === hashConst.violatedRules)
         props.indicesOfRulesToDisplay = state.ruleTable

@@ -17,7 +17,7 @@ import RulePad from "./RulePad/rulePad";
 import {reduxStoreMessages} from "../reduxStoreConstants";
 import {webSocketSendMessage} from "../core/coreConstants";
 import {relatives} from "../core/ruleExecutorConstants";
-import {hashConst} from "./uiConstants";
+import {hashConst, none_filePath} from "./uiConstants";
 
 
 class RulePanel extends Component {
@@ -44,7 +44,6 @@ class RulePanel extends Component {
          */
         this.ruleI = null;
         this.newRuleRequest = this.ruleIndex === -1;
-        this.none_filePath = "none";
 
         this.state = {
             openPanel: true,
@@ -60,7 +59,7 @@ class RulePanel extends Component {
             filesFolders: [],
             tags: [],
 
-            filePath: this.none_filePath
+            filePath: none_filePath
         };
 
         // existing rule
@@ -77,7 +76,7 @@ class RulePanel extends Component {
                 this.state.ruleTags = this.ruleI.tags;
                 this.state.folderConstraint = this.ruleI.checkForFilesFoldersConstraints;
                 this.state.filesFolders = this.ruleI.checkForFilesFolders;
-                this.state.tags = props.tags;
+                this.state.tagTable = props.tagTable;
 
                 this.state.editMode = this.ruleI.rulePanelState.editMode;
             }
@@ -244,7 +243,7 @@ class RulePanel extends Component {
             case "all":
                 return (
                     <span className="rulePanelGeneralTab">Matches
-                        {this.state.filePath !== this.none_filePath ? (
+                        {this.state.filePath !== none_filePath ? (
                             <Fragment>
                                 <Badge className="forAll">{fileSatisfied + fileViolated}</Badge>
                                 <span style={{color: "#777"}}>out of</span>
@@ -258,7 +257,7 @@ class RulePanel extends Component {
             case "satisfied":
                 return (
                     <span className="rulePanelSatisfiedTab">Examples
-                        {this.state.filePath !== this.none_filePath ? (
+                        {this.state.filePath !== none_filePath ? (
                             <Fragment>
                                 <Badge className="forAll">{fileSatisfied}</Badge>
                                 <span style={{color: "#777"}}>out of</span>
@@ -272,7 +271,7 @@ class RulePanel extends Component {
             case "violated":
                 return (
                     <span className="rulePanelViolatedTab">Violated
-                        {this.state.filePath !== this.none_filePath ? (
+                        {this.state.filePath !== none_filePath ? (
                             <Fragment>
                                 <Badge className="forAll">{fileViolated}</Badge>
                                 <span style={{color: "#777"}}>out of</span>
@@ -293,9 +292,16 @@ class RulePanel extends Component {
      */
     renderTags() {
         return (this.ruleI.tags).map((d, i) => {
+            let tagFilter = this.state.tagTable.filter((tt) => tt.tagName === d);
+            if (tagFilter.length !== 1) {
+                return (
+                    <div className="buttonDiv" key={i}>
+                        <Label>{d}</Label>
+                    </div>)
+            }
             return (
                 <div className="buttonDiv" key={i}>
-                    <Label onClick={() => window.location.hash = `#/${hashConst.tag}` + d.replace(/\//g, "%2F")}>{d}</Label>
+                    <Label onClick={() => window.location.hash = `#/${hashConst.tag}/${tagFilter[0].ID}`}>{d}</Label>
                 </div>)
         });
     }
@@ -311,7 +317,7 @@ class RulePanel extends Component {
 
         switch (group) {
             case "all":
-                if (this.state.filePath !== this.none_filePath) {
+                if (this.state.filePath !== none_filePath) {
                     if (file.length > 0)
                         fileList = file[0].data.quantifierResult;
                 }
@@ -321,7 +327,7 @@ class RulePanel extends Component {
                 }
                 break;
             case "satisfied":
-                if (this.state.filePath !== this.none_filePath) {
+                if (this.state.filePath !== none_filePath) {
                     if (file.length > 0)
                         fileList = file[0].data.satisfiedResult;
                 }
@@ -331,7 +337,7 @@ class RulePanel extends Component {
                 }
                 break;
             case "violated":
-                if (this.state.filePath !== this.none_filePath) {
+                if (this.state.filePath !== none_filePath) {
                     if (file.length > 0)
                         fileList = file[0].data.violatedResult;
                 }
@@ -366,7 +372,7 @@ class RulePanel extends Component {
 
         return (
             <div>
-                {this.state.filePath !== this.none_filePath ? (
+                {this.state.filePath !== none_filePath ? (
                     <Fragment>
                         <h4>{headerText + " for this file"}</h4>
                         <div>{returnList(fileList)}</div>
@@ -388,7 +394,7 @@ class RulePanel extends Component {
     newUpdateStateUponCodeChange (codeChanged, filePath) {
         if (!codeChanged) {
             let open;
-            if (filePath === this.none_filePath)
+            if (filePath === none_filePath)
                 open = true;
             else
                 open = this.ruleI.xPathQueryResult.filter(d => d.filePath === filePath).length > 0;
@@ -429,12 +435,11 @@ class RulePanel extends Component {
 
 // map state to props
 function mapStateToProps(state) {
-    let none_filePath = "none";
     return {
         rules: state.ruleTable,
-        tags: state.tagTable,
-        codeChanged: state.currentHash[0] === "codeChanged",
-        filePath: ["rulesForFile", "codeChanged"].indexOf(state.currentHash[0]) !== -1 ? 
+        tagTable: state.tagTable,
+        codeChanged: state.currentHash[0] === hashConst.codeChanged,
+        filePath: [hashConst.rulesForFile, hashConst.codeChanged].indexOf(state.currentHash[0]) !== -1 ?
             (state.openFilePath) : none_filePath,
         ws: state.ws,
         message: state.message
