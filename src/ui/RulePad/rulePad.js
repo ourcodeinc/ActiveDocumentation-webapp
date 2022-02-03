@@ -15,7 +15,7 @@ import {TiDelete, TiArrowMaximise, TiPinOutline} from "react-icons/ti";
 import {GoAlert, GoPin} from "react-icons/go";
 import {FaTag, FaMinusCircle, FaTimesCircle, FaCheckSquare, FaQuestionCircle} from "react-icons/fa";
 
-import marked from "marked";
+import {marked} from "marked";
 import Joyride, {ACTIONS, EVENTS} from "react-joyride";
 import ReactToolTip from "react-tooltip";
 

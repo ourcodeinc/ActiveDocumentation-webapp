@@ -8,7 +8,7 @@ import {MdStar,MdClose} from "react-icons/md";
 import {FaEraser, FaCheckSquare, FaSquare} from "react-icons/fa";
 import {Button, MenuItem, Dropdown, Modal} from "react-bootstrap";
 import {RootCloseWrapper} from "react-overlays";
-import * as marked from "marked";
+import {marked} from "marked";
 import ReactToolTip from "react-tooltip";
 
 import {getConditionByName} from "./graphicalEditorConstants";
