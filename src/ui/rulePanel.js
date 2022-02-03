@@ -145,6 +145,15 @@ class RulePanel extends Component {
 
     UNSAFE_componentWillReceiveProps(nextProps) {
 
+        this.ruleIndex = nextProps.ruleIndex !== undefined ? nextProps.ruleIndex : -1;
+        let arrayIndex = nextProps.rules.map(d => d.index).indexOf(this.ruleIndex);
+        if (arrayIndex === -1)
+            console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
+                Only ${nextProps.rules.map(d => d.index).toString()} are found as indices.`);
+        else {
+            this.ruleI = nextProps.rules[arrayIndex];
+        }
+
         if (nextProps.message === reduxStoreMessages.hash_msg) {
             let panelState = this.newUpdateStateUponCodeChange(nextProps.codeChanged, nextProps.filePath);
             this.setState({...panelState, filePath: nextProps.filePath});
@@ -419,12 +428,13 @@ class RulePanel extends Component {
 
 // map state to props
 function mapStateToProps(state) {
+    let none_filePath = "none";
     return {
         rules: state.ruleTable,
         tags: state.tagTable,
         codeChanged: state.currentHash[0] === "codeChanged",
         filePath: ["rulesForFile", "codeChanged"].indexOf(state.currentHash[0]) !== -1 ? 
-            (state.openFilePath) : this.none_filePath,
+            (state.openFilePath) : none_filePath,
         ws: state.ws,
         message: state.message
     };
