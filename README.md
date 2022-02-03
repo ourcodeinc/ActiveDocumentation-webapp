@@ -120,3 +120,11 @@ Edit the related workspace xml file in this directory (in MacOS):
 Three ports are used for this application:
 * 8887 for websocket
 * 3000 for application server (Changing Frequently, check package.json for the active port)
+
+
+## Dev Reports
+Currently, there are issues in upgrading the dependencies.
+If devDependencies are updated, then antlr-4 become incompatible unless a configuration of Webpack is changed.
+If only "react-scripts" is updated to "^4.0.3", then there would be warning about eslint that can be removed
+by adding SKIP_PREFLIGHT_CHECK=true to the .env file.
+To install, `npm install --legacy-peer-deps` should be used.
