@@ -124,8 +124,11 @@ class GenerateXPath {
                     break;
 
                 case "SubclassesContext":
+                    this.classesContextTraversal(node, isConstraintCondition, true);
+                    break;
+
                 case "ClassesContext":
-                    this.classesContextTraversal(node, isConstraintCondition);
+                    this.classesContextTraversal(node, isConstraintCondition, false);
                     break;
 
                 case "interfacesContext":
@@ -272,7 +275,7 @@ class GenerateXPath {
         // this.XPathC += word;
     }
 
-    classesContextTraversal(node, isConstraintCondition) {
+    classesContextTraversal(node, isConstraintCondition, isSubclass = false) {
         let nodeChildren = node.children.slice(0);
 
         for (let i = 0; i < node.children.length; i++) {
@@ -295,8 +298,8 @@ class GenerateXPath {
             }
 
             if (nodeType === "TerminalNodeImpl") {
-                if (!isConstraintCondition) this.XPathQ += "src:class";
-                this.XPathC += "src:class";
+                if (!isConstraintCondition) this.XPathQ += (isSubclass ? "/" : "") + "src:class";
+                this.XPathC += (isSubclass ? "/" : "") + "src:class";
             }
 
             if (nodeType === "ClassConditionContext" || nodeType === "ClassExpressionContext" ||
