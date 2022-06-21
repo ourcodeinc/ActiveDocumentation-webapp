@@ -144,7 +144,7 @@ class RulePanel extends Component {
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
-
+        let newState = {};
         this.ruleIndex = nextProps.ruleIndex !== undefined ? nextProps.ruleIndex : -1;
         let arrayIndex = nextProps.rules.map(d => d.index).indexOf(this.ruleIndex);
         if (arrayIndex === -1)
@@ -152,15 +152,23 @@ class RulePanel extends Component {
                 Only ${nextProps.rules.map(d => d.index).toString()} are found as indices.`);
         else {
             this.ruleI = nextProps.rules[arrayIndex];
+            newState = {
+                title: this.ruleI.title,
+                description: this.ruleI.description,
+                ruleTags: this.ruleI.tags,
+                folderConstraint: this.ruleI.checkForFilesFoldersConstraints,
+                filesFolders: this.ruleI.checkForFilesFolders,
+                editMode: false
+            };
         }
 
         if (nextProps.message === reduxStoreMessages.hash_msg) {
             let panelState = this.newUpdateStateUponCodeChange(nextProps.codeChanged, nextProps.filePath);
-            this.setState({...panelState, filePath: nextProps.filePath});
+            this.setState({...panelState, ...newState, filePath: nextProps.filePath});
         }
 
         else if (nextProps.message === reduxStoreMessages.file_path_update_msg)
-            this.setState({filePath: nextProps.filePath});
+            this.setState({...newState, filePath: nextProps.filePath});
 
         else if (nextProps.message === reduxStoreMessages.change_edit_mode_msg) {
             let indices = nextProps.rules.map(d => d.index);
@@ -171,42 +179,23 @@ class RulePanel extends Component {
                 Only ${indices.toString()} are found as indices.`);
                 else {
                     this.ruleI = nextProps.rules[arrayIndex];
-                    this.setState({editMode: this.ruleI.rulePanelState.editMode, filePath: nextProps.filePath});
+                    newState.editMode = this.ruleI.rulePanelState.editMode;
+                    this.setState({...newState, filePath: nextProps.filePath});
                 }
             }
         }
 
         // existing rule
         else if (nextProps.message === reduxStoreMessages.update_rule_table_msg && this.ruleIndex !== -1) {
-            let indices = nextProps.rules.map(d => d.index);
-            let arrayIndex = indices.indexOf(this.ruleIndex);
-            if (arrayIndex === -1)
-                console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
-                Only ${indices.toString()} are found as indices.`);
-            else {
-                this.ruleI = nextProps.rules[arrayIndex];
-
-                if (this.ruleI.rulePanelState.editMode && !this.state.editMode)
-                    this.setState({editMode: true, filePath: nextProps.filePath});
+            if (arrayIndex !== -1) {
+                if (this.ruleI.rulePanelState.editMode && !this.state.editMode) {
+                    newState.editMode = true;
+                    this.setState({...newState, filePath: nextProps.filePath});
+                }
 
                 else {
                     let panelState = this.newUpdateStateUponCodeChange(nextProps.codeChanged, nextProps.filePath);
-                    let newState = {
-                        title: this.ruleI.title,
-                        description: this.ruleI.description,
-                        ruleTags: this.ruleI.tags,
-                        folderConstraint: this.ruleI.checkForFilesFoldersConstraints,
-                        filesFolders: this.ruleI.checkForFilesFolders,
-                        editMode: false,
-                        filePath: nextProps.filePath,
-
-                        className: panelState.className,
-                        openPanel: panelState.openPanel
-                    };
-
-                    if (Object.keys(newState).length !== 0)
-                        this.setState(newState);
-
+                    this.setState({...newState, ...panelState, filePath: nextProps.filePath});
                 }
             }
         }
