@@ -62,6 +62,9 @@ export const generateFeatures = (xmlFiles, projectPath,
     let targetPackage = (groupingMetaData.fileMapping[focusedElementFilePath] &&
         groupingMetaData.fileMapping[focusedElementFilePath].packages) ?
         groupingMetaData.fileMapping[focusedElementFilePath].packages : [];
+    // let targetImports = (groupingMetaData.fileMapping[focusedElementFilePath] &&
+    //     groupingMetaData.fileMapping[focusedElementFilePath].imports) ?
+    //     groupingMetaData.fileMapping[focusedElementFilePath].imports : [];
 
     // let allVisitedFiles = doiInformation.recentVisitedFiles.map(d => d.filePath);
     let fileToProcess = xmlFiles
@@ -84,19 +87,21 @@ export const generateFeatures = (xmlFiles, projectPath,
                         }
                     }
                 }
-                // if the file import the package, include it
-                if (groupingMetaData.fileMapping[path].imports) {
-                    let fileImports = groupingMetaData.fileMapping[path].imports ?
-                        groupingMetaData.fileMapping[path].imports : [];
-                    if (fileImports) {
-                        for (let fileImp of fileImports) {
-                            for (let pack of targetPackage) {
-                                if (fileImp.startsWith(pack))
-                                    return true;
-                            }
-                        }
-                    }
-                }
+                // // if the file import the package, include it
+                // if (groupingMetaData.fileMapping[path].imports) {
+                //     let fileImports = groupingMetaData.fileMapping[path].imports ?
+                //         groupingMetaData.fileMapping[path].imports : [];
+                //     if (fileImports) {
+                //         for (let fileImp of fileImports) {
+                //             for (let imp of targetImports) {
+                //                 if (fileImp.startsWith(imp)) {
+                //                     console.log(path)
+                //                     return true;
+                //                 }
+                //             }
+                //         }
+                //     }
+                // }
             }
             return false;
         });
