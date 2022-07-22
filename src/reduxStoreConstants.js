@@ -73,7 +73,7 @@ export const reduxStoreActions = {
     action_matched_messages: "MATCHED_MESSAGES",
     action_change_gui_element: "CHANGE_GUI_ELEMENT",
     action_change_autocomplete_text: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI",
-    action_update_xpath: "UPDATE_XPATHS",
+    action_update_xpath: "UPDATE_XPATH",
 
     action_update_feature_metadata: "UPDATE_FEATURE_META_DATA",
     action_update_grouping_metadata: "UPDATE_GROUPING_META_DATA",
