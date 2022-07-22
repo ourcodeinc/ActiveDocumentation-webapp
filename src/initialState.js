@@ -563,7 +563,7 @@ export const initial_state = {
     ws: null,
 
     /*
-    index: 1545798262,
+    index: "1",
     title: "",
     description: "",
     tags: [],
@@ -588,16 +588,18 @@ export const initial_state = {
         quantifierXPath: "",
         autoCompleteArray: [],
         graphicalEditorState: {guiTree: {...initial_graphicalElementTree}, guiElements: {...initial_graphicalElements}, ruleType: ""}
-    }
+    },
     xPathQueryResult: [
-        data: {
-            quantifierResult: [{filePath: "", snippet: "", xml: {fileName: "", xml: ""}}]
-            satisfied: 0
-            satisfiedResult: []
-            violated: 0
-            violatedResult: []
+        {
+            data: {
+                quantifierResult: [{filePath: "", snippet: "", xml: {fileName: "", xml: ""}}],
+                satisfied: 0,
+                satisfiedResult: [],
+                violated: 0,
+                violatedResult: []
+            },
+            filePath: ""
         }
-        filePath: ""
      ]
      */
     ruleTable: [],
@@ -642,7 +644,7 @@ export const initial_state = {
 
     // mining Rules
     minedRulesState: {
-        // see createFeatureMetaDataMap()
+        // see miningRulesCore/extractFeatures/createFeatureMetaDataMap()
         featureMetaData: {
             featureInfoContainers: {
                 featureInfo: {},
