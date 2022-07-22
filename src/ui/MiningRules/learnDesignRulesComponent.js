@@ -18,7 +18,7 @@ import {
     generateFeatures, prepareMapsToSend, combineFeatureSetToRulePadCompressed
 } from "../../miningRulesCore/processing";
 import {focusElementType, groupTitle} from "../../miningRulesCore/featureConfig";
-import MinedDesignRules from "./MinedDesignRules";
+import MinedDesignRules from "./minedDesignRules";
 
 class LearnDesignRulesComponent extends Component {
 
