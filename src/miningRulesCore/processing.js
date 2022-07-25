@@ -62,19 +62,12 @@ export const generateFeatures = (xmlFiles, projectPath,
     let targetPackage = (groupingMetaData.fileMapping[focusedElementFilePath] &&
         groupingMetaData.fileMapping[focusedElementFilePath].packages) ?
         groupingMetaData.fileMapping[focusedElementFilePath].packages : [];
-    // let targetImports = (groupingMetaData.fileMapping[focusedElementFilePath] &&
-    //     groupingMetaData.fileMapping[focusedElementFilePath].imports) ?
-    //     groupingMetaData.fileMapping[focusedElementFilePath].imports : [];
 
-    // let allVisitedFiles = doiInformation.recentVisitedFiles.map(d => d.filePath);
     let fileToProcess = xmlFiles
         .filter((xmlFile) => {
-            // // also includes recently visited files
-            // if (allVisitedFiles.includes(xmlFile.filePath.replace(projectPath, ""))) return true;
-
             let path = xmlFile.filePath.replace(projectPath, "");
             if (groupingMetaData.fileMapping[path]) {
-                // if the file belongs to the same package, include it
+                // if the file belongs to the same package, or is in the parent package, include it
                 if (groupingMetaData.fileMapping[path].packages) {
                     let filePackages = groupingMetaData.fileMapping[path].packages ?
                         groupingMetaData.fileMapping[path].packages : [];
@@ -82,26 +75,22 @@ export const generateFeatures = (xmlFiles, projectPath,
                         for (let pack of targetPackage) {
                             if (filePack.startsWith(pack))
                                 return true;
-                            if (pack.startsWith(filePack))
-                                return true;
                         }
                     }
                 }
-                // // if the file import the package, include it
-                // if (groupingMetaData.fileMapping[path].imports) {
-                //     let fileImports = groupingMetaData.fileMapping[path].imports ?
-                //         groupingMetaData.fileMapping[path].imports : [];
-                //     if (fileImports) {
-                //         for (let fileImp of fileImports) {
-                //             for (let imp of targetImports) {
-                //                 if (fileImp.startsWith(imp)) {
-                //                     console.log(path)
-                //                     return true;
-                //                 }
-                //             }
-                //         }
-                //     }
-                // }
+                // if the file import the package, include it
+                if (groupingMetaData.fileMapping[path].imports) {
+                    let fileImports = groupingMetaData.fileMapping[path].imports ?
+                        groupingMetaData.fileMapping[path].imports : [];
+                    if (fileImports) {
+                        for (let fileImp of fileImports) {
+                            for (let pack of targetPackage) {
+                                if (fileImp === pack)
+                                    return true;
+                            }
+                        }
+                    }
+                }
             }
             return false;
         });
