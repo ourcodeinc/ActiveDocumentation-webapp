@@ -68,6 +68,7 @@ export const focusElementType = [
     },
 ]
 
+// used for readability
 const nodeType = {
     class_node : "class_node",
     class_field_node : "class_field_node",
@@ -89,6 +90,7 @@ const nodeType = {
     decl_call_field_node : "decl_call_field_node",
 }
 
+// used for readability
 const featureSet = {
     class_spec: ["class_annotation", "class_vis", "class_specifier", "class_name",
         "class_extend", "class_impl",
@@ -129,7 +131,8 @@ const featureSet = {
     ]
 };
 
-const mappedElementType = {
+// used for readability
+const elementType = {
     class: "class",
     field: "field",
     constructor: "constructor",
@@ -138,6 +141,7 @@ const mappedElementType = {
     declaration: "declaration"
 }
 
+// used only in the UI
 export const groupTitle = {
     class_fields_in_related_classes: "Features of class fields in related classes",
     constructors_in_related_classes: "Features of class constructors in related classes",
@@ -172,39 +176,52 @@ export const groupTitle = {
         "Features of declaration statements statements in functions reading/modifying the field (focused element)",
 };
 
+/**
+ * spec: features defining the specifications of the element
+ * container: the containing element for with primary featureSet and other featureSets in contentGroups are extracted
+ * container.node: type of the container node. The information in defaultFeature is used to query the code
+ * container.type: the string that is used to create the feature metadata
+ * container.featureSet: the set of features extracted in this group
+ * container.featureQueryPrefix: "" or "/", a prefix added to the XPath of the container
+ *
+ * contentGroups: the group of features extracted on the container nodes
+ * contentGroups[i].id: used as a key in feature MetaData
+ *
+ * usage: the group of features defined to find the usages of the element
+ */
 export const mapFocusedElementToFeatures = {
     class_spec_body: {
         spec: [
             {
                 container: {
                     node: nodeType.class_node,
-                    type: mappedElementType.class,
+                    type: elementType.class,
                     featureSet: featureSet.class_spec,
                     featureQueryPrefix: ""
                 },
-                content_groups: [
+                contentGroups: [
                     {
                         node: nodeType.class_field_node,
-                        type: mappedElementType.field,
+                        type: elementType.field,
                         featureSet: featureSet.field_spec,
                         id: "class_fields_in_related_classes"
                     },
                     {
                         node: nodeType.class_constr_node,
-                        type: mappedElementType.constructor,
+                        type: elementType.constructor,
                         featureSet: featureSet.constr_spec,
                         id: "constructors_in_related_classes"
                     },
                     {
                         node: nodeType.class_function_node,
-                        type: mappedElementType.function,
+                        type: elementType.function,
                         featureSet: featureSet.func_spec,
                         id: "functions_in_related_classes"
                     }
                     ,
                     {
                         node: nodeType.class_subclass_node,
-                        type: mappedElementType.class,
+                        type: elementType.class,
                         featureSet: featureSet.subclass_spec,
                         id: "subclasses_in_related_classes"
                     }
@@ -218,13 +235,13 @@ export const mapFocusedElementToFeatures = {
             {
                 container: {
                     node: nodeType.class_node,
-                    type: mappedElementType.class,
+                    type: elementType.class,
                     featureSet: featureSet.class_spec,
                 },
-                content_groups: [
+                contentGroups: [
                     {
                         node: nodeType.class_constr_node,
-                        type: mappedElementType.constructor,
+                        type: elementType.constructor,
                         featureSet: featureSet.constr_spec_body,
                         id: "constructors_in_related_classes"
                     },
@@ -235,20 +252,20 @@ export const mapFocusedElementToFeatures = {
             {
                 container: {
                     node: nodeType.class_constr_call_constr_node,
-                    type: mappedElementType.constructor,
+                    type: elementType.constructor,
                     featureSet: featureSet.constr_spec,
                     featureQueryPrefix: "/"
                 },
-                content_groups: [
+                contentGroups: [
                     {
                         node: nodeType.expr_call_constr_node,
-                        type: mappedElementType.expression,
+                        type: elementType.expression,
                         featureSet: featureSet.expr_spec,
                         id: "expression_statements_in_constructors_calling_constructors_focused_element"
                     },
                     {
                         node: nodeType.decl_call_constr_node,
-                        type: mappedElementType.declaration,
+                        type: elementType.declaration,
                         featureSet: featureSet.decl_spec,
                         id: "declaration_statements_in_constructors_calling_constructors_focused_element"
                     }
@@ -257,20 +274,20 @@ export const mapFocusedElementToFeatures = {
             {
                 container: {
                     node: nodeType.class_func_call_constr_node,
-                    type: mappedElementType.function,
+                    type: elementType.function,
                     featureSet: featureSet.func_spec,
                     featureQueryPrefix: "/"
                 },
-                content_groups: [
+                contentGroups: [
                     {
                         node: nodeType.expr_call_constr_node,
-                        type: mappedElementType.expression,
+                        type: elementType.expression,
                         featureSet: featureSet.expr_spec,
                         id: "expression_statements_in_functions_calling_constructors_focused_element"
                     },
                     {
                         node: nodeType.decl_call_constr_node,
-                        type: mappedElementType.declaration,
+                        type: elementType.declaration,
                         featureSet: featureSet.decl_spec,
                         id: "declaration_statements_in_functions_calling_constructors_focused_element"
                     }
@@ -283,14 +300,14 @@ export const mapFocusedElementToFeatures = {
             {
                 container: {
                     node: nodeType.class_node,
-                    type: mappedElementType.class,
+                    type: elementType.class,
                     featureSet: featureSet.class_spec,
                     featureQueryPrefix: "/"
                 },
-                content_groups: [
+                contentGroups: [
                     {
                         node: nodeType.class_function_node,
-                        type: mappedElementType.function,
+                        type: elementType.function,
                         featureSet: featureSet.func_spec_body,
                         id: "functions_in_related_classes"
                     },
@@ -301,20 +318,20 @@ export const mapFocusedElementToFeatures = {
             {
                 container: {
                     node: nodeType.class_constr_call_func_node,
-                    type: mappedElementType.constructor,
+                    type: elementType.constructor,
                     featureSet: featureSet.constr_spec,
                     featureQueryPrefix: "/"
                 },
-                content_groups: [
+                contentGroups: [
                     {
                         node: nodeType.expr_call_func_node,
-                        type: mappedElementType.expression,
+                        type: elementType.expression,
                         featureSet: featureSet.expr_spec,
                         id: "expression_statements_in_constructors_calling_functions_focused_element"
                     },
                     {
                         node: nodeType.decl_call_func_node,
-                        type: mappedElementType.declaration,
+                        type: elementType.declaration,
                         featureSet: featureSet.decl_spec,
                         id: "declaration_statements_in_constructors_calling_functions_focused_element"
                     }
@@ -323,20 +340,20 @@ export const mapFocusedElementToFeatures = {
             {
                 container: {
                     node: nodeType.class_func_call_func_node,
-                    type: mappedElementType.function,
+                    type: elementType.function,
                     featureSet: featureSet.func_spec,
                     featureQueryPrefix: "/"
                 },
-                content_groups: [
+                contentGroups: [
                     {
                         node: nodeType.expr_call_func_node,
-                        type: mappedElementType.expression,
+                        type: elementType.expression,
                         featureSet: featureSet.expr_spec,
                         id: "expression_statements_in_functions_calling_functions_focused_element"
                     },
                     {
                         node: nodeType.decl_call_func_node,
-                        type: mappedElementType.declaration,
+                        type: elementType.declaration,
                         featureSet: featureSet.decl_spec,
                         id: "declaration_statements_in_functions_calling_functions_focused_element"
                     }
@@ -349,14 +366,14 @@ export const mapFocusedElementToFeatures = {
             {
                 container: {
                     node: nodeType.class_node,
-                    type: mappedElementType.class,
+                    type: elementType.class,
                     featureSet: featureSet.class_spec,
                     featureQueryPrefix: "/"
                 },
-                content_groups: [
+                contentGroups: [
                     {
                         node: nodeType.class_field_node,
-                        type: mappedElementType.field,
+                        type: elementType.field,
                         featureSet: featureSet.field_spec,
                         id: "class_fields_in_related_classes"
                     },
@@ -367,20 +384,20 @@ export const mapFocusedElementToFeatures = {
             {
                 container: {
                     node: nodeType.class_constr_call_field_node,
-                    type: mappedElementType.constructor,
+                    type: elementType.constructor,
                     featureSet: featureSet.constr_spec,
                     featureQueryPrefix: "/",
                 },
-                content_groups: [
+                contentGroups: [
                     {
                         node: nodeType.expr_call_field_node,
-                        type: mappedElementType.expression,
+                        type: elementType.expression,
                         featureSet: featureSet.expr_spec,
                         id: "expression_statements_in_constructors_reading_modifying_field_focused_element"
                     },
                     {
                         node: nodeType.decl_call_field_node,
-                        type: mappedElementType.declaration,
+                        type: elementType.declaration,
                         featureSet: featureSet.decl_spec,
                         id: "declaration_statements_in_constructors_reading_modifying_field_focused_element"
                     }
@@ -389,20 +406,20 @@ export const mapFocusedElementToFeatures = {
             {
                 container: {
                     node: nodeType.class_func_call_field_node,
-                    type: mappedElementType.function,
+                    type: elementType.function,
                     featureSet: featureSet.func_spec,
                     featureQueryPrefix: "/"
                 },
-                content_groups: [
+                contentGroups: [
                     {
                         node: nodeType.expr_call_field_node,
-                        type: mappedElementType.expression,
+                        type: elementType.expression,
                         featureSet: featureSet.expr_spec,
                         id: "expression_statements_in_functions_reading_modifying_field_focused_element"
                     },
                     {
                         node: nodeType.decl_call_field_node,
-                        type: mappedElementType.declaration,
+                        type: elementType.declaration,
                         featureSet: featureSet.decl_spec,
                         id: "declaration_statements_in_functions_reading_modifying_field_focused_element"
                     }
@@ -430,6 +447,9 @@ export const breakFeatureDescription = [
 /**
  * @type {Object.<string, {type: string, xpath:string, description:string, weight: number,
  * nodeName: string[]|undefined, nodes: string[]|undefined}>}
+ * the key of the objects are used as the feature ID in the extracted files
+ * the <TEMP_?> are used as the key
+ * nodeName property is used to populate the feature metaData
  */
 export const defaultFeatures = {
     class_annotation: {
