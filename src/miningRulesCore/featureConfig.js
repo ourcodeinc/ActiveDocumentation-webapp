@@ -35,6 +35,8 @@ export const featureTypes = {
     node: "node_is_selected",
     no_node: "no_node_is_selected",
     single_node_text: "select_a_single_node",
+    single_node_text_ends_with: "single_node_text_ends_with",
+    single_node_text_starts_with: "single_node_text_starts_with",
     single_node_and_children_text: "select_a_single_node_and_its_children",
     multiple_nodes_texts: "select_multiple_nodes",
     multiple_nodes_and_children_texts: "select_multiple_nodes_and_their_children",
@@ -93,13 +95,16 @@ const nodeType = {
 // used for readability
 const featureSet = {
     class_spec: ["class_annotation", "class_vis", "class_specifier", "class_name",
+        "class_name_ends_with", "class_name_starts_with",
         "class_extend", "class_impl",
         "class_no_constr", "class_no_func"],
     subclass_spec: ["subclass_annotation", "subclass_vis", "subclass_specifier",
-        "subclass_name", "subclass_extend", "subclass_impl",
+        "subclass_name", "subclass_name_ends_with", "subclass_name_starts_with",
+        "subclass_extend", "subclass_impl",
         "subclass_no_constr", "subclass_no_func"],
     field_spec: ["decl_annotation", "decl_vis", "decl_specifier",
         // "decl_type", "decl_name",
+        "decl_name_ends_with", "decl_name_starts_with",
         "decl_type_name", "decl_has_init"],
     constr_spec: ["constr_annotation", "constr_vis", "constr_empty_body",
         // "constr_param_type", "constr_param_name",
@@ -111,10 +116,12 @@ const featureSet = {
         "constr_call_constr", "constr_call_func", "constr_modify_field"
     ],
     func_spec: ["func_annotation", "func_vis", "func_specifier", "func_type", "func_name",
+        "func_name_ends_with", "func_name_starts_with",
         "func_no_param", //"func_param_type", "func_param_name",
         "func_param_type_name"
     ],
     func_spec_body: ["func_annotation", "func_vis", "func_specifier", "func_type", "func_name",
+        "func_name_ends_with", "func_name_starts_with",
         "func_no_param",
         // "func_param_type", "func_param_name",
         "func_param_type_name",
@@ -127,6 +134,7 @@ const featureSet = {
     decl_spec: ["decl_annotation", "decl_vis", "decl_specifier",
         // "decl_type", "decl_name",
         "decl_has_init", "decl_type_name",
+        "decl_name_ends_with", "decl_name_starts_with",
         "decl_call_function", "decl_call_function_argument", "decl_init_value"
     ]
 };
@@ -481,6 +489,20 @@ export const defaultFeatures = {
         weight: 10,
         nodeName: ["Name"]
     },
+    class_name_ends_with: {
+        type: featureTypes.single_node_text_ends_with,
+        xpath: "/src:class/src:name/text()",
+        description: "class with ( name \"<TEMP_0>\" )",
+        weight: 10,
+        nodeName: ["Name"]
+    },
+    class_name_starts_with: {
+        type: featureTypes.single_node_text_starts_with,
+        xpath: "/src:class/src:name/text()",
+        description: "class with ( name \"<TEMP_0>\" )",
+        weight: 10,
+        nodeName: ["Name"]
+    },
     class_extend: {
         type: featureTypes.single_node_text,
         xpath: "/src:class/src:super/src:extends/src:name/text()",
@@ -532,6 +554,20 @@ export const defaultFeatures = {
     },
     subclass_name: {
         type: featureTypes.single_node_text,
+        xpath: "/src:class/src:name/text()",
+        description: "subclass with ( name \"<TEMP_0>\" )",
+        weight: 10,
+        nodeName: ["Name"]
+    },
+    subclass_name_ends_with: {
+        type: featureTypes.single_node_text_ends_with,
+        xpath: "/src:class/src:name/text()",
+        description: "subclass with ( name \"<TEMP_0>\" )",
+        weight: 10,
+        nodeName: ["Name"]
+    },
+    subclass_name_starts_with: {
+        type: featureTypes.single_node_text_starts_with,
         xpath: "/src:class/src:name/text()",
         description: "subclass with ( name \"<TEMP_0>\" )",
         weight: 10,
@@ -645,6 +681,20 @@ export const defaultFeatures = {
         weight: 10,
         nodeName: ["Name"]
     },
+    func_name_ends_with: {
+        type: featureTypes.single_node_text_ends_with,
+        xpath: "/src:function/src:name/text()",
+        description: "function with ( name \"<TEMP_0>\" )",
+        weight: 10,
+        nodeName: ["Name"]
+    },
+    func_name_starts_with: {
+        type: featureTypes.single_node_text_starts_with,
+        xpath: "/src:function/src:name/text()",
+        description: "function with ( name \"<TEMP_0>\" )",
+        weight: 10,
+        nodeName: ["Name"]
+    },
     func_no_param: {
         type: featureTypes.no_node,
         xpath: "/src:function/src:parameter_list[not(src:parameter)]",
@@ -710,6 +760,20 @@ export const defaultFeatures = {
     //     weight: 5,
     //     nodeName: ["Name"]
     // },
+    decl_name_ends_with: {
+        type: featureTypes.single_node_text_ends_with,
+        xpath: "/src:decl_stmt/src:decl/src:name/text()",
+        description: "declaration statement with ( name \"<TEMP_0>\" )",
+        weight: 10,
+        nodeName: ["Name"]
+    },
+    decl_name_starts_with: {
+        type: featureTypes.single_node_text_starts_with,
+        xpath: "/src:decl_stmt/src:decl/src:name/text()",
+        description: "declaration statement with ( name \"<TEMP_0>\" )",
+        weight: 10,
+        nodeName: ["Name"]
+    },
     decl_type_name: {
         type: featureTypes.multiple_nodes_texts,
         xpath: "/src:decl_stmt/src:decl",

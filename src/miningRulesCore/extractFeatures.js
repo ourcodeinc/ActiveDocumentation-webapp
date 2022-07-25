@@ -218,6 +218,10 @@ const extractFeatureFromNode = (mainNode, featureIndex, featureMetaData, xpath) 
             return extractMultipleTextsFeature(mainNode, featureIndex, featureMetaData, xpath);
         case featureTypes.multiple_nodes_and_children_texts:
             return extractMultipleTextsFeature(mainNode, featureIndex, featureMetaData, xpath, true);
+        case featureTypes.single_node_text_ends_with:
+            return extractSingleTextEndsWithFeature(mainNode, featureIndex, featureMetaData, xpath);
+        case featureTypes.single_node_text_starts_with:
+            return extractSingleTextEndsWithFeature(mainNode, featureIndex, featureMetaData, xpath, true);
         default:
             return [];
     }
@@ -260,8 +264,8 @@ const extractNoNodeFeature = (mainNode, featureIndex, featureMetaData, xpath) =>
  * @param includeChildren {boolean} used to extract children of the xpath query node
  * @return {*[]} returns the array of new featureIds
  */
-const extractSingleTextFeature = (mainNode, featureIndex, featureMetaData
-    , xpath, includeChildren = false) => {
+const extractSingleTextFeature = (mainNode, featureIndex, featureMetaData,
+                                  xpath, includeChildren = false) => {
     // feature_desc: {featureIndex, featureId, nodes, weight}
     let featureInfo = featureMetaData.featureInfoContainers.featureInfo,
         // featureId: feature_desc
@@ -319,6 +323,54 @@ const extractMultipleTextsFeature = (mainNode, featureIndex, featureMetaData,
         });
         featureInfoReverse[featureId] = description;
         ids.push(featureId);
+    }
+    return ids;
+}
+
+
+/**
+ * extract features when only one node (as text()) is queried. E.g., class with visibility xx
+ * @param mainNode {Node} the node on which the query is executed
+ * @param featureIndex {string} a key from defaultFeatures
+ * @param featureMetaData {featureMetaDataType}
+ * @param xpath {string}
+ * @param startsWith {boolean} used to indicate whether the target starts or ends with a key
+ * @return {*[]} returns the array of new featureIds
+ */
+const extractSingleTextEndsWithFeature = (mainNode, featureIndex, featureMetaData,
+                                      xpath, startsWith = false) => {
+    // feature_desc: {featureIndex, featureId, nodes, weight}
+    let featureInfo = featureMetaData.featureInfoContainers.featureInfo,
+        // featureId: feature_desc
+        featureInfoReverse = featureMetaData.featureInfoContainers.featureInfoReverse;
+    let ids = [];
+    let result = runXPathSingleNode(mainNode, xpath);
+    if (result.length === 0) return [];
+    for (let j = 0; j < result.length; j++) {
+
+        // break the text based on camelCase letters
+        let parts = result[j].replace(/([A-Z])/g, ' $1').trim().split(" ");
+        if (parts.length <= 1) continue;
+
+        let commonPart = "";
+        let startPartIndex = startsWith ? 0 : 1;
+        let endPartIndex = startsWith ? parts.length - 2 : parts.length - 1;
+        for (let k = startPartIndex; k <= endPartIndex; k++) {
+            commonPart = startsWith ? parts.slice(0, k + 1).join("") : parts.slice(k).join("");
+            let str = startsWith ? commonPart + "..." : "..." + commonPart;
+
+            let description = defaultFeatures[featureIndex].description
+                .replace("<TEMP_0>", str);
+            let featureId = featureInfo.hasOwnProperty(description) ? featureInfo[description].featureId
+                : Object.keys(featureInfo).length;
+            featureInfo[description] =
+                Object.assign({}, {
+                    featureIndex: featureIndex, featureId, nodes: [str],
+                    weight: defaultFeatures[featureIndex].weight
+                });
+            featureInfoReverse[featureId] = description;
+            ids.push(featureId);
+        }
     }
     return ids;
 }
