@@ -5,14 +5,14 @@ It also prepare texts that should be written in files designated as the
 output of mining algorithms.
  */
 
-import {mineFeaturesFromXmlFile} from "./extractFeatures";
+import {extractFeaturesFromXmlFile} from "./extractFeatures";
 import {
     algorithm,
     attributeFileNames,
     breakFeatureDescription,
     minOccurrence,
     minUtility,
-    new_features
+    defaultFeatures
 } from "./featureConfig";
 import {webSocketSendMessage} from "../core/coreConstants";
 import {verifyPartialTextBasedOnGrammar} from "../core/languageProcessing";
@@ -96,7 +96,7 @@ export const generateFeatures = (xmlFiles, projectPath,
         });
 
     fileToProcess.forEach(xmlFile => {
-        mineFeaturesFromXmlFile(xmlFile, projectPath, focusedElementData, featureMetaData);
+        extractFeaturesFromXmlFile(xmlFile, projectPath, focusedElementData, featureMetaData);
     });
 
     removeMinOccurredFeatures(featureMetaData, minOccurrence);
@@ -124,7 +124,7 @@ const UpdateFeatureWeights = (featureIdWeights, featureMetaData) => {
         if (!feature_info) continue;
         let original_weight = featureMetaData.featureInfoContainers.featureInfo[feature_desc].weight ?
             featureMetaData.featureInfoContainers.featureInfo[feature_desc].weight :
-            new_features[featureMetaData.featureInfoContainers.featureInfo[feature_desc].featureIndex].weight;
+            defaultFeatures[featureMetaData.featureInfoContainers.featureInfo[feature_desc].featureIndex].weight;
         switch (featureIdWeight.action) {
             case "replace":
                 featureMetaData.featureInfoContainers.featureInfo[feature_desc].weight =
@@ -344,8 +344,8 @@ async function createRuleTextUsages (category, featureMetaData) {
             let indices = Object.keys(featuresGroupByFeatureIndex);
             let textArray = [];
             for (let feature_index of indices) {
-                let nodeName = new_features[feature_index].nodeName ? new_features[feature_index].nodeName : [""];
-                let desc = new_features[feature_index].description.replace(breakText.text, "");
+                let nodeName = defaultFeatures[feature_index].nodeName ? defaultFeatures[feature_index].nodeName : [""];
+                let desc = defaultFeatures[feature_index].description.replace(breakText.text, "");
                 for (let i = 0; i < nodeName.length; i++) {
                     desc = desc.replace(`<TEMP_${i}>`,
                         `${nodeName[i]}_${featuresGroupByFeatureIndex[feature_index].length}_values`)
