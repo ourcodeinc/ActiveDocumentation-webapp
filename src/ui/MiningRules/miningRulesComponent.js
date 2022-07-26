@@ -20,7 +20,7 @@ import {
 import {focusElementType, groupTitle} from "../../miningRulesCore/featureConfig";
 import MinedDesignRules from "./minedDesignRules";
 
-class LearnDesignRulesComponent extends Component {
+class MiningRulesComponent extends Component {
 
     constructor(props) {
         super(props);
@@ -197,6 +197,7 @@ class LearnDesignRulesComponent extends Component {
         let featureMetaData = createFeatureMetaDataMap();
         generateFeatures(this.props.xmlFiles, this.props.projectPath, this.props.focusedElementData,
             this.props.doiInformation, this.props.groupingMetaData, featureMetaData);
+        console.log(featureMetaData);
         Promise
             .all([combineFeatureSetToRulePadCompressed(featureMetaData)]) // combineFeatureSetToRulePad(featureMetaData)
             .then(() => {
@@ -252,4 +253,4 @@ function mapDispatchToProps(dispatch) {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(LearnDesignRulesComponent);
+export default connect(mapStateToProps, mapDispatchToProps)(MiningRulesComponent);
