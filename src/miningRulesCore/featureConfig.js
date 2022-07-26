@@ -648,7 +648,7 @@ export const defaultFeatures = {
     func_annotation: {
         type: featureTypes.single_node_text,
         xpath: "/src:function/src:annotation/src:name/text()",
-        description: "function with ( annotation \"<TEMP_0>\") ",
+        description: "function with ( annotation \"<TEMP_0>\" )",
         weight: 5,
         nodeName: ["Annotation"]
     },
