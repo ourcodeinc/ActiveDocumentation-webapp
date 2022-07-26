@@ -197,7 +197,6 @@ class MiningRulesComponent extends Component {
         let featureMetaData = createFeatureMetaDataMap();
         generateFeatures(this.props.xmlFiles, this.props.projectPath, this.props.focusedElementData,
             this.props.doiInformation, this.props.groupingMetaData, featureMetaData);
-        console.log(featureMetaData);
         Promise
             .all([combineFeatureSetToRulePadCompressed(featureMetaData)]) // combineFeatureSetToRulePad(featureMetaData)
             .then(() => {
