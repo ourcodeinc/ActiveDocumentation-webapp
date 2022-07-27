@@ -149,8 +149,8 @@ const elementType = {
     declaration: "declaration"
 }
 
-// used only in the UI
-export const groupTitle = {
+// used for readability
+const groupTitle = {
     class_fields_in_related_classes: "Features of class fields in related classes",
     constructors_in_related_classes: "Features of class constructors in related classes",
     functions_in_related_classes: "Features of class functions in related classes",
@@ -212,26 +212,26 @@ export const mapFocusedElementToFeatures = {
                         node: nodeType.class_field_node,
                         type: elementType.field,
                         featureSet: featureSet.field_spec,
-                        id: "class_fields_in_related_classes"
+                        id: groupTitle.class_fields_in_related_classes
                     },
                     {
                         node: nodeType.class_constr_node,
                         type: elementType.constructor,
                         featureSet: featureSet.constr_spec,
-                        id: "constructors_in_related_classes"
+                        id: groupTitle.constructors_in_related_classes
                     },
                     {
                         node: nodeType.class_function_node,
                         type: elementType.function,
                         featureSet: featureSet.func_spec,
-                        id: "functions_in_related_classes"
+                        id: groupTitle.functions_in_related_classes
                     }
                     ,
                     {
                         node: nodeType.class_subclass_node,
                         type: elementType.class,
                         featureSet: featureSet.subclass_spec,
-                        id: "subclasses_in_related_classes"
+                        id: groupTitle.subclasses_in_related_classes
                     }
                 ]
             }
@@ -251,7 +251,7 @@ export const mapFocusedElementToFeatures = {
                         node: nodeType.class_constr_node,
                         type: elementType.constructor,
                         featureSet: featureSet.constr_spec_body,
-                        id: "constructors_in_related_classes"
+                        id: groupTitle.constructors_in_related_classes
                     },
                 ]
             }
@@ -269,13 +269,13 @@ export const mapFocusedElementToFeatures = {
                         node: nodeType.expr_call_constr_node,
                         type: elementType.expression,
                         featureSet: featureSet.expr_spec,
-                        id: "expression_statements_in_constructors_calling_constructors_focused_element"
+                        id: groupTitle.expression_statements_in_constructors_calling_constructors_focused_element
                     },
                     {
                         node: nodeType.decl_call_constr_node,
                         type: elementType.declaration,
                         featureSet: featureSet.decl_spec,
-                        id: "declaration_statements_in_constructors_calling_constructors_focused_element"
+                        id: groupTitle.declaration_statements_in_constructors_calling_constructors_focused_element
                     }
                 ]
             },
@@ -291,13 +291,13 @@ export const mapFocusedElementToFeatures = {
                         node: nodeType.expr_call_constr_node,
                         type: elementType.expression,
                         featureSet: featureSet.expr_spec,
-                        id: "expression_statements_in_functions_calling_constructors_focused_element"
+                        id: groupTitle.expression_statements_in_functions_calling_constructors_focused_element
                     },
                     {
                         node: nodeType.decl_call_constr_node,
                         type: elementType.declaration,
                         featureSet: featureSet.decl_spec,
-                        id: "declaration_statements_in_functions_calling_constructors_focused_element"
+                        id: groupTitle.declaration_statements_in_functions_calling_constructors_focused_element
                     }
                 ]
             }
@@ -317,7 +317,7 @@ export const mapFocusedElementToFeatures = {
                         node: nodeType.class_function_node,
                         type: elementType.function,
                         featureSet: featureSet.func_spec_body,
-                        id: "functions_in_related_classes"
+                        id: groupTitle.functions_in_related_classes
                     },
                 ]
             }
@@ -335,13 +335,13 @@ export const mapFocusedElementToFeatures = {
                         node: nodeType.expr_call_func_node,
                         type: elementType.expression,
                         featureSet: featureSet.expr_spec,
-                        id: "expression_statements_in_constructors_calling_functions_focused_element"
+                        id: groupTitle.expression_statements_in_constructors_calling_functions_focused_element
                     },
                     {
                         node: nodeType.decl_call_func_node,
                         type: elementType.declaration,
                         featureSet: featureSet.decl_spec,
-                        id: "declaration_statements_in_constructors_calling_functions_focused_element"
+                        id: groupTitle.declaration_statements_in_constructors_calling_functions_focused_element
                     }
                 ]
             },
@@ -357,13 +357,13 @@ export const mapFocusedElementToFeatures = {
                         node: nodeType.expr_call_func_node,
                         type: elementType.expression,
                         featureSet: featureSet.expr_spec,
-                        id: "expression_statements_in_functions_calling_functions_focused_element"
+                        id: groupTitle.expression_statements_in_functions_calling_functions_focused_element
                     },
                     {
                         node: nodeType.decl_call_func_node,
                         type: elementType.declaration,
                         featureSet: featureSet.decl_spec,
-                        id: "declaration_statements_in_functions_calling_functions_focused_element"
+                        id: groupTitle.declaration_statements_in_functions_calling_functions_focused_element
                     }
                 ]
             }
@@ -383,7 +383,7 @@ export const mapFocusedElementToFeatures = {
                         node: nodeType.class_field_node,
                         type: elementType.field,
                         featureSet: featureSet.field_spec,
-                        id: "class_fields_in_related_classes"
+                        id: groupTitle.class_fields_in_related_classes
                     },
                 ]
             }
@@ -401,13 +401,13 @@ export const mapFocusedElementToFeatures = {
                         node: nodeType.expr_call_field_node,
                         type: elementType.expression,
                         featureSet: featureSet.expr_spec,
-                        id: "expression_statements_in_constructors_reading_modifying_field_focused_element"
+                        id: groupTitle.expression_statements_in_constructors_reading_modifying_field_focused_element
                     },
                     {
                         node: nodeType.decl_call_field_node,
                         type: elementType.declaration,
                         featureSet: featureSet.decl_spec,
-                        id: "declaration_statements_in_constructors_reading_modifying_field_focused_element"
+                        id: groupTitle.declaration_statements_in_constructors_reading_modifying_field_focused_element
                     }
                 ]
             },
@@ -423,13 +423,13 @@ export const mapFocusedElementToFeatures = {
                         node: nodeType.expr_call_field_node,
                         type: elementType.expression,
                         featureSet: featureSet.expr_spec,
-                        id: "expression_statements_in_functions_reading_modifying_field_focused_element"
+                        id: groupTitle.expression_statements_in_functions_reading_modifying_field_focused_element
                     },
                     {
                         node: nodeType.decl_call_field_node,
                         type: elementType.declaration,
                         featureSet: featureSet.decl_spec,
-                        id: "declaration_statements_in_functions_reading_modifying_field_focused_element"
+                        id: groupTitle.declaration_statements_in_functions_reading_modifying_field_focused_element
                     }
                 ]
             }
