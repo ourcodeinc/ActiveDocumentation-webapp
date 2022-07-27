@@ -621,21 +621,21 @@ export const defaultFeatures = {
         description: "constructor with ( \"Empty Body\" )",
         weight: 5,
     },
-    // constr_param_type: {
-    //     type: featureTypes.single_node_and_children_text,
-    //     xpath: "/src:constructor/src:parameter_list/" +
-    //         "src:parameter/src:decl/src:type/src:name",
-    //     description: "constructor with ( parameter with type  \"<TEMP_0>\" )",
-    //     weight: 5,
-    //     nodeName: ["Type"]
-    // },
-    // constr_param_name: {
-    //     type: featureTypes.single_node_text,
-    //     xpath: "/src:constructor/src:parameter_list/src:parameter/src:decl/src:name/text()",
-    //     description: "constructor with ( parameter with name  \"<TEMP_0>\" )",
-    //     weight: 10,
-    //     nodeName: ["Name"]
-    // },
+    constr_param_type: {
+        type: featureTypes.single_node_and_children_text,
+        xpath: "/src:constructor/src:parameter_list/" +
+            "src:parameter/src:decl/src:type/src:name",
+        description: "constructor with ( parameter with type  \"<TEMP_0>\" )",
+        weight: 5,
+        nodeName: ["Type"]
+    },
+    constr_param_name: {
+        type: featureTypes.single_node_text,
+        xpath: "/src:constructor/src:parameter_list/src:parameter/src:decl/src:name/text()",
+        description: "constructor with ( parameter with name  \"<TEMP_0>\" )",
+        weight: 10,
+        nodeName: ["Name"]
+    },
     constr_param_type_name: {
         type: featureTypes.multiple_nodes_texts,
         xpath: "/src:constructor/src:parameter_list/src:parameter",
@@ -701,20 +701,20 @@ export const defaultFeatures = {
         description: "function with ( \"No Parameter\" )",
         weight: 5,
     },
-    // func_param_type: {
-    //     type: featureTypes.single_node_and_children_text,
-    //     xpath: "/src:function/src:parameter_list/src:parameter/src:decl/src:type/src:name",
-    //     description: "function with ( parameter with type  \"<TEMP_0>\" )",
-    //     weight: 5,
-    //     nodeName: ["Type"]
-    // },
-    // func_param_name: {
-    //     type: featureTypes.single_node_text,
-    //     xpath: "/src:function/src:parameter_list/src:parameter/src:decl/src:name/text()",
-    //     description: "function with ( parameter with name  \"<TEMP_0>\" )",
-    //     weight: 5,
-    //     nodeName: ["Name"]
-    // },
+    func_param_type: {
+        type: featureTypes.single_node_and_children_text,
+        xpath: "/src:function/src:parameter_list/src:parameter/src:decl/src:type/src:name",
+        description: "function with ( parameter with type  \"<TEMP_0>\" )",
+        weight: 5,
+        nodeName: ["Type"]
+    },
+    func_param_name: {
+        type: featureTypes.single_node_text,
+        xpath: "/src:function/src:parameter_list/src:parameter/src:decl/src:name/text()",
+        description: "function with ( parameter with name  \"<TEMP_0>\" )",
+        weight: 5,
+        nodeName: ["Name"]
+    },
     func_param_type_name: {
         type: featureTypes.multiple_nodes_texts,
         xpath: "/src:function/src:parameter_list/src:parameter",
@@ -746,20 +746,20 @@ export const defaultFeatures = {
         weight: 5,
         nodeName: ["Specifier"]
     },
-    // decl_type: {
-    //     type: featureTypes.single_node_and_children_text,
-    //     xpath: "/src:decl_stmt/src:decl/src:type/src:name",
-    //     description: "declaration statement with ( type \"<TEMP_0>\" )",
-    //     weight: 5,
-    //     nodeName: ["Type"]
-    // },
-    // decl_name: {
-    //     type: featureTypes.single_node_text,
-    //     xpath: "/src:decl_stmt/src:decl/src:name/text()",
-    //     description: "declaration statement with ( name \"<TEMP_0>\" )",
-    //     weight: 5,
-    //     nodeName: ["Name"]
-    // },
+    decl_type: {
+        type: featureTypes.single_node_and_children_text,
+        xpath: "/src:decl_stmt/src:decl/src:type/src:name",
+        description: "declaration statement with ( type \"<TEMP_0>\" )",
+        weight: 5,
+        nodeName: ["Type"]
+    },
+    decl_name: {
+        type: featureTypes.single_node_text,
+        xpath: "/src:decl_stmt/src:decl/src:name/text()",
+        description: "declaration statement with ( name \"<TEMP_0>\" )",
+        weight: 5,
+        nodeName: ["Name"]
+    },
     decl_name_ends_with: {
         type: featureTypes.single_node_text_ends_with,
         xpath: "/src:decl_stmt/src:decl/src:name/text()",
