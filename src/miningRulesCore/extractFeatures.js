@@ -67,11 +67,11 @@ export function extractFeaturesFromXmlFile(xmlFile, projectPath,
             let containerFeatureIds = [];
             let containerNode = containerNodes[j];
             // extract the default set of features for the container
-            for (let featureId of spec_item.container.featureSet) {
+            for (let featureIndex of spec_item.container.featureSet) {
                 // prepare the XPath for running the default features on container nodes
                 let container_node_xpath = (spec_item.container.featureQueryPrefix ? spec_item.container.featureQueryPrefix : "") +
-                    (defaultFeatures[featureId].xpath);
-                containerFeatureIds = containerFeatureIds.concat(extractFeatureFromNode(containerNode, featureId,
+                    (defaultFeatures[featureIndex].xpath);
+                containerFeatureIds = containerFeatureIds.concat(extractFeatureFromNode(containerNode, featureIndex,
                     featureMetaData, container_node_xpath));
             }
 
@@ -237,21 +237,10 @@ const extractFeatureFromNode = (mainNode, featureIndex, featureMetaData, xpath) 
  * @return {number[]} array of the new featureId
  */
 const extractNoNodeFeature = (mainNode, featureIndex, featureMetaData, xpath) => {
-    // feature_desc: {featureIndex, featureId, nodes, weight}
-    let featureInfo = featureMetaData.featureInfoContainers.featureInfo,
-        // featureId: feature_desc
-        featureInfoReverse = featureMetaData.featureInfoContainers.featureInfoReverse;
     let result = runXPathNoNode(mainNode, xpath);
     if (!result) return [];
-    let featureId = featureInfo.hasOwnProperty(defaultFeatures[featureIndex].description)
-        ? featureInfo[defaultFeatures[featureIndex].description].featureId
-        : Object.keys(featureInfo).length;
-    featureInfo[defaultFeatures[featureIndex].description] = Object.assign({}, {
-        featureIndex: featureIndex,
-        featureId,
-        weight: defaultFeatures[featureIndex].weight
-    });
-    featureInfoReverse[featureId] = defaultFeatures[featureIndex].description;
+    let featureId = addToFeatureMetaData(featureMetaData, defaultFeatures[featureIndex].description, featureIndex,
+        [], defaultFeatures[featureIndex].weight);
     return [featureId];
 }
 
@@ -266,24 +255,15 @@ const extractNoNodeFeature = (mainNode, featureIndex, featureMetaData, xpath) =>
  */
 const extractSingleTextFeature = (mainNode, featureIndex, featureMetaData,
                                   xpath, includeChildren = false) => {
-    // feature_desc: {featureIndex, featureId, nodes, weight}
-    let featureInfo = featureMetaData.featureInfoContainers.featureInfo,
-        // featureId: feature_desc
-        featureInfoReverse = featureMetaData.featureInfoContainers.featureInfoReverse;
     let ids = [];
     let result = includeChildren ? runXPathSingleNodeAndChildren(mainNode, xpath)
         : runXPathSingleNode(mainNode, xpath);
     if (result.length === 0) return [];
     for (let j = 0; j < result.length; j++) {
         let description = defaultFeatures[featureIndex].description.replace("<TEMP_0>", result[j].replace(/"/g, "'"));
-        let featureId = featureInfo.hasOwnProperty(description) ? featureInfo[description].featureId
-            : Object.keys(featureInfo).length;
-        featureInfo[description] =
-            Object.assign({}, {
-                featureIndex: featureIndex, featureId, nodes: [result[j]],
-                weight: defaultFeatures[featureIndex].weight
-            });
-        featureInfoReverse[featureId] = description;
+
+        let featureId = addToFeatureMetaData(featureMetaData, description, featureIndex,
+            [result[j]], defaultFeatures[featureIndex].weight);
         ids.push(featureId);
     }
     return ids;
@@ -300,10 +280,6 @@ const extractSingleTextFeature = (mainNode, featureIndex, featureMetaData,
  */
 const extractMultipleTextsFeature = (mainNode, featureIndex, featureMetaData,
                                      xpath, includeChildren = false) => {
-    // feature_desc: {featureIndex, featureId, nodes, weight}
-    let featureInfo = featureMetaData.featureInfoContainers.featureInfo,
-        // featureId: feature_desc
-        featureInfoReverse = featureMetaData.featureInfoContainers.featureInfoReverse;
     let ids = [];
     let result = includeChildren ? runXPathMultipleNodesAndChildren(mainNode, xpath, defaultFeatures[featureIndex].nodes) :
         runXPathMultipleNodes(mainNode, xpath, defaultFeatures[featureIndex].nodes);
@@ -313,15 +289,9 @@ const extractMultipleTextsFeature = (mainNode, featureIndex, featureMetaData,
         for (let j = 0; j < result[i].length; j++) {
             description = description.replace(`<TEMP_${j}>`, result[i][j].replace(/"/g, "'"));
         }
-        let featureId = featureInfo.hasOwnProperty(description) ? featureInfo[description].featureId
-            : Object.keys(featureInfo).length;
-        featureInfo[description] = Object.assign({}, {
-            featureIndex: featureIndex,
-            featureId,
-            nodes: result[i],
-            weight: defaultFeatures[featureIndex].weight
-        });
-        featureInfoReverse[featureId] = description;
+
+        let featureId = addToFeatureMetaData(featureMetaData, description, featureIndex,
+            result[i], defaultFeatures[featureIndex].weight);
         ids.push(featureId);
     }
     return ids;
@@ -339,10 +309,6 @@ const extractMultipleTextsFeature = (mainNode, featureIndex, featureMetaData,
  */
 const extractSingleTextEndsWithFeature = (mainNode, featureIndex, featureMetaData,
                                       xpath, startsWith = false) => {
-    // feature_desc: {featureIndex, featureId, nodes, weight}
-    let featureInfo = featureMetaData.featureInfoContainers.featureInfo,
-        // featureId: feature_desc
-        featureInfoReverse = featureMetaData.featureInfoContainers.featureInfoReverse;
     let ids = [];
     let result = runXPathSingleNode(mainNode, xpath);
     if (result.length === 0) return [];
@@ -361,18 +327,37 @@ const extractSingleTextEndsWithFeature = (mainNode, featureIndex, featureMetaDat
 
             let description = defaultFeatures[featureIndex].description
                 .replace("<TEMP_0>", str);
-            let featureId = featureInfo.hasOwnProperty(description) ? featureInfo[description].featureId
-                : Object.keys(featureInfo).length;
-            featureInfo[description] =
-                Object.assign({}, {
-                    featureIndex: featureIndex, featureId, nodes: [str],
-                    weight: defaultFeatures[featureIndex].weight
-                });
-            featureInfoReverse[featureId] = description;
+
+            let featureId = addToFeatureMetaData(featureMetaData, description, featureIndex,
+                [str], defaultFeatures[featureIndex].weight);
             ids.push(featureId);
         }
     }
     return ids;
+}
+
+/**
+ * add feature information to featureMetaData
+ * @param featureMetaData {featureMetaDataType}
+ * @param featureDescription {string} the description of the feature created by featureConfig.defaultFeatures.description
+ * @param featureIndex {string} name of the feature in featureConfig.defaultFeatures
+ * @param nodes {string[]} values of nodes in the feature, e.g., public/private in "class with visibility <TEMP_0>"
+ * @param weight {number}
+ * @return {number}
+ * */
+const addToFeatureMetaData = (featureMetaData, featureDescription,
+                              featureIndex, nodes, weight) => {
+    // {feature_desc: {featureIndex, featureId, nodes, weight}}
+    let featureInfo = featureMetaData.featureInfoContainers.featureInfo,
+        // {featureId: feature_desc}
+        featureInfoReverse = featureMetaData.featureInfoContainers.featureInfoReverse;
+    let featureId = featureInfo.hasOwnProperty(featureDescription) ? featureInfo[featureDescription].featureId
+        : Object.keys(featureInfo).length;
+
+    featureInfo[featureDescription] = Object.assign({}, {featureIndex, featureId, nodes, weight});
+    featureInfoReverse[featureId] = featureDescription;
+
+    return featureId
 }
 
 
