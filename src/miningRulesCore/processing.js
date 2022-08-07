@@ -9,38 +9,22 @@ import {extractFeaturesFromXmlFile} from "./extractFeatures";
 import {
     algorithm,
     attributeFileNames,
-    breakFeatureDescription,
     minOccurrence,
     minUtility,
     defaultFeatures
 } from "./featureConfig";
 import {webSocketSendMessage} from "../core/coreConstants";
-import {verifyPartialTextBasedOnGrammar} from "../core/languageProcessing";
-import {generateGuiTrees} from "../ui/RulePad/rulePadTextualEditor/generateGuiTree";
-// import {createTextFromItemSets, grammarTextToRulePadGUI} from "./postProcessing";
 
 /**
  * The method extracts features and updates the featureMetaData
  *
- * @typedef {{identifier: string, mapFocusedElementToFeaturesKey: string, filePath: string}} focusedElementDataType
- * @typedef {{recentVisitedFiles: {timestamp: Date, filePath: string}[],
- * recentVisitedElements: {timestamp: Date, filePath: string, startOffset:number,
- * endOffset: number, visitedElement: string}[],
- * recentSearches: {timestamp: Date, filePath: string, keyword: string}[]}} doiInformationType
- * @typedef {Object.<string, Object.<string, string[]>>} groupMappingType
- * @typedef {Object.<string, Object.<string, string[]>>} fileMappingType
- * @typedef {{groupMapping: groupMappingType, fileMapping: fileMappingType
- * }} groupingMetaDataType
- * @typedef {{element: string, featureIds: number[]}} elementFeatures
- * @typedef {{featureInfoContainers: {
- * featureInfo: Object.<string, {featureIndex: string, featureId: number, nodes: undefined|string[], weight: number}>,
- * featureInfoReverse: Object.<number, string>,
- * featureMap: Object.<number, string[]>,
- * featureMapReverse: Object.<string, number[]>},
- * featureGroups: {
- * spec: Object.<string, {elementFeatures: elementFeatures[], rule: {}}>,
- * usage: Object.<string, {elementFeatures: elementFeatures[], rule: {}}>}
- * }} featureMetaDataType
+ * @typedef {import("../initialState")} focusedElementDataType
+ * @typedef {import("../initialState")} doiInformationType
+ * @typedef {import("../initialState")} groupMappingType
+ * @typedef {import("../initialState")} fileMappingType
+ * @typedef {import("../initialState")} groupingMetaDataType
+ * @typedef {import("../initialState")} elementFeatures
+ * @typedef {import("../initialState")} featureMetaDataType
  *
  * @param xmlFiles {[{xml: string, filePath:string}]}
  * @param projectPath is used to simplify the identifiers
@@ -109,6 +93,60 @@ export const generateFeatures = (xmlFiles, projectPath,
     })
     UpdateFeatureWeights(targetIdWeight, featureMetaData);
     // updateFeatureWeightsDoi(doiInformation, featureMetaData, projectPath);
+}
+
+/**
+ * remove features that appear less than minOccurrence from featureMaps
+ * @param featureMetaData {featureMetaDataType}
+ * @param minOccurrence {number}  positive number
+ */
+const removeMinOccurredFeatures = (featureMetaData,
+                                   minOccurrence) => {
+    let redundantFeatures = [];
+    let filePaths = [];
+    Object.keys(featureMetaData.featureInfoContainers.featureMap)
+        .map(d => +d)
+        .forEach((featureId) => {
+            let occurrences = 0;
+            // feature occurrence is the total number not only once per file
+            featureMetaData.featureInfoContainers.featureMap[featureId].forEach(filePath => {
+                occurrences += featureMetaData.featureInfoContainers.featureMapReverse[filePath]
+                    .reduce((total, x) => (x === featureId ? total + 1 : total), 0);
+            })
+            if (occurrences < minOccurrence) {
+                redundantFeatures.push(featureId);
+                filePaths = filePaths.concat(featureMetaData.featureInfoContainers.featureMap[featureId]);
+            }
+        });
+
+    /**
+     * remove redundant features from featureMetaData.featureGroups
+     * the features remain in featureMetaData.featureInfoContainers
+     * @param gr {"spec"|"usage"}
+     */
+    function process(gr) {
+        /**
+         * @type {Object.<string, elementFeatures>}
+         */
+        let specGroups = featureMetaData.featureGroups[gr];
+        let specGroupKeys = Object.keys(specGroups);
+        for (let group of specGroupKeys) {
+            specGroups[group].elementFeatures.forEach(el => {
+                let cleanedPath = el.element.split(".java").length === 0 ? "" :
+                    el.element.split(".java").pop() + ".java";
+                if (cleanedPath === "") return;
+                if (!filePaths.includes(cleanedPath)) return;
+                featureMetaData.featureGroups[gr][group][el].featureIds =
+                    featureMetaData.featureGroups[gr][group][el].featureIds.filter(featureId => {
+                        return !redundantFeatures.includes(featureId)
+                    });
+            });
+        }
+    }
+
+    process("spec");
+    process("usage");
+
 }
 
 /**
@@ -189,214 +227,10 @@ const UpdateFeatureWeights = (featureIdWeights, featureMetaData) => {
 
 
 /**
- * remove features that appear less than minOccurrence from featureMaps
- * @param featureMetaData {featureMetaDataType}
- * * @param minOccurrence {number}  positive number
- */
-const removeMinOccurredFeatures = (featureMetaData,
-                                   minOccurrence) => {
-    let redundantFeatures = [];
-    let filePaths = [];
-    Object.keys(featureMetaData.featureInfoContainers.featureMap)
-        .map(d => +d)
-        .forEach((featureId) => {
-            let occurrences = 0;
-            // feature occurrence is the total number not only once per file
-            featureMetaData.featureInfoContainers.featureMap[featureId].forEach(filePath => {
-                occurrences += featureMetaData.featureInfoContainers.featureMapReverse[filePath]
-                    .reduce((total, x) => (x === featureId ? total + 1 : total), 0);
-            })
-            if (occurrences < minOccurrence) {
-                redundantFeatures.push(featureId);
-                filePaths = filePaths.concat(featureMetaData.featureInfoContainers.featureMap[featureId]);
-            }
-        });
-
-    /**
-     * remove redundant features from featureMetaData.featureGroups
-     * the features remain in featureMetaData.featureInfoContainers
-     * @param gr {"spec"|"usage"}
-     */
-    function process(gr) {
-        /**
-         * @type {Object.<string, elementFeatures>}
-         */
-        let specGroups = featureMetaData.featureGroups[gr];
-        let specGroupKeys = Object.keys(specGroups);
-        for (let group of specGroupKeys) {
-            specGroups[group].elementFeatures.forEach(el => {
-                let cleanedPath = el.element.split(".java").length === 0 ? "" :
-                    el.element.split(".java").pop() + ".java";
-                if (cleanedPath === "") return;
-                if (!filePaths.includes(cleanedPath)) return;
-                featureMetaData.featureGroups[gr][group][el].featureIds =
-                    featureMetaData.featureGroups[gr][group][el].featureIds.filter(featureId => {
-                        return !redundantFeatures.includes(featureId)
-                    });
-            });
-        }
-    }
-
-    process("spec");
-    process("usage");
-
-}
-
-/**
- * combine all features into RulePad, so a developer can remove unwanted features
- * @param featureMetaData {featureMetaDataType}
- */
-export const combineFeatureSetToRulePad = (featureMetaData) => {
-    return Promise.all([
-        createRuleTextSpec("spec", featureMetaData),
-        createRuleTextSpec("usage", featureMetaData)
-    ]);
-}
-
-/**
- * @param category {"spec"|"usage"}
- * @param featureMetaData {featureMetaDataType}
- * @return {Promise<void>}
- */
-async function createRuleTextSpec (category, featureMetaData) {
-    let specGroupKeys = Object.keys(featureMetaData.featureGroups[category]);
-    for (let specKey of specGroupKeys) {
-        let allElements = featureMetaData.featureGroups[category][specKey].elementFeatures;
-        let allFeatureIds = [...new Set(allElements.map(el => el.featureIds).flat())];
-        let texts = preProcessFeatureIdsForRules(allFeatureIds, featureMetaData);
-         if (texts.length === 0) return;
-        await processTextToRulePad(texts, featureMetaData, category, specKey,
-            "grammar", "rulePadState");
-    }
-}
-
-/**
- * @typedef {{featureInfoContainers: {
- * featureInfo: Object.<string, {featureIndex: string, featureId: number, nodes: undefined|string[], weight: number}>,
- * featureInfoReverse: Object.<number, string>,
- * featureMap: Object.<number, string[]>,
- * featureMapReverse: Object.<string, number[]>},
- * featureGroups: {
- * spec: Object.<string, {elementFeatures: elementFeatures[], rule: {}}>,
- * usage: Object.<string, {elementFeatures: elementFeatures[], rule: {}}>}
- * }} featureMetaDataType
- *
- * combine all features into RulePad, so a developer can remove unwanted features
- * this function aggregate all possible values
- * @param featureMetaData {featureMetaDataType}
- * @return {Promise<void[]>}
- */
-export const combineFeatureSetToRulePadCompressed = (featureMetaData) => {
-    return Promise.all([
-        createRuleTextUsages("spec", featureMetaData),
-        createRuleTextUsages("usage", featureMetaData)
-    ]);
-}
-
-/**
- *
- * @param category {"spec"|"usage"}
- * @param featureMetaData {featureMetaDataType}
- * @return {Promise<void>}
- */
-async function createRuleTextUsages (category, featureMetaData) {
-    let groupBy = key => array =>
-        array.reduce((objectsByKeyValue, obj) => {
-            const value = obj[key];
-            objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
-            return objectsByKeyValue;
-        }, {});
-    let groupByFeatureIndex = groupBy('featureIndex');
-
-    let mapFeatureId = (feature_id) => {
-        let feature_desc = featureMetaData.featureInfoContainers.featureInfoReverse[feature_id];
-        return {
-            featureDesc: feature_desc,
-            featureId: feature_id,
-            featureIndex: featureMetaData.featureInfoContainers.featureInfo[feature_desc].featureIndex
-        }
-    }
-
-    let specGroupKeys = Object.keys(featureMetaData.featureGroups[category]);
-    for (let specKey of specGroupKeys) {
-        let allElements = featureMetaData.featureGroups[category][specKey].elementFeatures;
-        let allFeatureIds = [...new Set(allElements.map(el => el.featureIds).flat())];
-        let allFeatureInfo = allFeatureIds.map(mapFeatureId);
-
-        let descriptionGroups = {};
-        for (let breakText of breakFeatureDescription) {
-            descriptionGroups[breakText.id] = [];
-        }
-
-        allFeatureInfo.forEach(featureInfo => {
-            for (let breakText of breakFeatureDescription) {
-                if (featureInfo.featureDesc.startsWith(breakText.text)) {
-                    descriptionGroups[breakText.id].push(featureInfo);
-                    return;
-                }
-            }
-        });
-
-        let texts = [];
-        for (let breakText of breakFeatureDescription) {
-            if (descriptionGroups[breakText.id].length === 0) continue;
-            let featuresGroupByFeatureIndex = groupByFeatureIndex(descriptionGroups[breakText.id]);
-            let indices = Object.keys(featuresGroupByFeatureIndex);
-            let textArray = [];
-            for (let feature_index of indices) {
-                let nodeName = defaultFeatures[feature_index].nodeName ? defaultFeatures[feature_index].nodeName : [""];
-                let desc = defaultFeatures[feature_index].description.replace(breakText.text, "");
-                for (let i = 0; i < nodeName.length; i++) {
-                    desc = desc.replace(`<TEMP_${i}>`,
-                        `${nodeName[i]}_${featuresGroupByFeatureIndex[feature_index].length}_values`)
-                }
-                textArray.push(desc);
-            }
-            let text = "( " + textArray.join(" and ") + " )";
-            texts.push({priority: breakText.priority, id: breakText.id, text, preText: breakText.text})
-        }
-
-        if (texts.length === 0) return;
-        await processTextToRulePad(texts, featureMetaData, category, specKey,
-            "grammarCompressed", "rulePadStateCompressed");
-    }
-}
-
-/**
- * process featureMetaData to be sent for mining
- * @param texts {{priority: number, id: string, text, preText: string}[]}
- * @param featureMetaData {featureMetaDataType}
- * @param category {"spec"|"usage"}
- * @param specKey {string}
- * @param grammarRuleKey {"grammar"|"grammarCompressed"}
- * @param rulePadStateKey {"rulePadState"|"rulePadStateCompressed"}
- * @return {Promise<void>}
- */
-async function processTextToRulePad(texts, featureMetaData, category, specKey, grammarRuleKey, rulePadStateKey) {
-    texts.sort((a, b) => a.priority - b.priority);
-    let finalRule = texts[0].preText + "( " + texts[0].text + " and " + texts[1].preText + texts[1].text + " )";
-    // this condition is for parsing based on the grammar
-    if (!finalRule.startsWith("class with"))
-        finalRule = "class with ( " + finalRule + " )";
-
-    finalRule = finalRule.replace(/ {2}/g, " ")
-        .replace(/\)/g, " )")
-        .replace(/\( /g, "(")
-        .replace(/\) /g, ")")
-        .replace(/ {2}/g, " ");
-
-    let rulePadState = await grammarTextToRulePadGUI(finalRule)
-    // .then(rulePadState => {
-    featureMetaData.featureGroups[category][specKey].rule[grammarRuleKey] = finalRule;
-    featureMetaData.featureGroups[category][specKey].rule[rulePadStateKey] = rulePadState;
-    // });
-}
-
-/**
  * create txt files for writing in files and processing for mining design rules
  * @param featureMetaData {featureMetaDataType}
  * @return {{command, data}[]} strings for writing in file and processing by CHUI-Miner */
-export const prepareMapsToSend = (featureMetaData) => {
+export const prepareFilesAndRequestMineRules = (featureMetaData) => {
 
     /**
      * @type {{name: string, content: string}[]}
@@ -405,6 +239,7 @@ export const prepareMapsToSend = (featureMetaData) => {
 
     /**
      * transform input to CHUI transactions
+     * output: <featureId1> <featureId2>:<weight of featureId1> <weight of featureId2>
      * @param featureIds {number[]}
      * @return {string|null}
      */
@@ -424,6 +259,7 @@ export const prepareMapsToSend = (featureMetaData) => {
     }
 
     /**
+     * output: array of files with name: featureConfig.sortGroupInformation.key and contents created by processLine
      * @param group {"spec"|"usage"}
      */
     function processGroup(group) {
@@ -479,66 +315,4 @@ export const prepareMapsToSend = (featureMetaData) => {
         });
 
     return output;
-}
-
-/**
- * @param grammarText
- * @return {Promise<T | {guiTree: {}, guiElements: {}}>|Promise<{guiTree: {}, guiElements: {}}>}
- */
-export const grammarTextToRulePadGUI = (grammarText) => {
-    // the "classes" token must have an space at the end
-    let result = verifyPartialTextBasedOnGrammar(grammarText + " ");
-    if (result.error) {
-        console.log("error happened in parsing");
-        console.log({grammarText, errors: result.listOfErrors});
-        return Promise.resolve({guiTree: {}, guiElements: {}});
-    }
-
-    return generateGuiTrees(result.grammarTree)
-        .then((tree) => {
-            return {guiTree: tree.guiTree, guiElements: tree.guiElements}
-        })
-        .catch((error) => {
-            console.error("error happened in creating the guiTree");
-            console.log({grammarText, error});
-            return {guiTree: {}, guiElements: {}};
-        });
-}
-
-
-/**
- *
- * @param featureIds {number[]}
- * @param featureMetaData {featureMetaDataType}
- * @return {{priority: number, id: string, text, preText: string}[]}
- */
-export const preProcessFeatureIdsForRules = (featureIds, featureMetaData) => {
-    let allFeatureDesc = featureIds
-        .map(feature_id => featureMetaData.featureInfoContainers.featureInfoReverse[feature_id]);
-
-    let descriptionGroups = {};
-    for (let breakText of breakFeatureDescription) {
-        descriptionGroups[breakText.id] = [];
-    }
-
-    allFeatureDesc.forEach(feature_desc => {
-        for (let breakText of breakFeatureDescription) {
-            if (feature_desc.startsWith(breakText.text)) {
-                descriptionGroups[breakText.id].push(feature_desc);
-                return;
-            }
-        }
-    });
-
-    let texts = [];
-    for (let breakText of breakFeatureDescription) {
-        if (descriptionGroups[breakText.id].length === 0) continue;
-        let textArray = [];
-        for (let feature_desc of descriptionGroups[breakText.id]) {
-            textArray.push(feature_desc.slice(breakText.text.length));
-        }
-        let text = "( " + textArray.join(" and ") + " )";
-        texts.push({priority: breakText.priority, id: breakText.id, text, preText: breakText.text})
-    }
-    return texts;
 }
