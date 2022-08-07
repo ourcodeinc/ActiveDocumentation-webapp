@@ -314,7 +314,7 @@ const reverseParentChildOrder = (node) => {
 
 /**
  * build a tree from GUI element IDs
- * @param parseTree
+ * @param parseTree {{isConstraint: boolean, key: string, ?selectedElement: boolean, withChildren: Array}}
  * return false or a tree of ids corresponding to the input tree
  */
 const createGuiElementTree = (parseTree) => {
