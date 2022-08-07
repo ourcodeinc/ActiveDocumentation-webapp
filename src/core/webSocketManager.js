@@ -17,7 +17,7 @@ import {
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from "./ruleExecutor";
 import {getXpathForFeature} from "../miningRulesCore/featureSelectionProcessing";
 import {webSocketReceiveMessage} from "./coreConstants";
-import {parseFrequentItemSets_CHUI, processOutPutRules, removeSparseData} from "../miningRulesCore/postProcessing";
+import {processReceivedFrequentItemSets} from "../miningRulesCore/postProcessing";
 import {getDataForFocusedElement, processDoiInformation} from "../miningRulesCore/focusedElementProcessing";
 import Utilities from "./utilities";
 import {hashConst} from "../ui/uiConstants";
@@ -42,7 +42,7 @@ class WebSocketManager extends Component {
             alert("FATAL: WebSocket not natively supported. This demo will not work!");
         }
 
-        ws.onmessage = (e) => {
+        ws.onmessage = async (e) => {
 
             let message = Utilities.parseJson(e.data, "the received message", {command: ""});
 
@@ -175,7 +175,7 @@ class WebSocketManager extends Component {
                         this.props.onFilePathChange(focusedFilePath);
                         window.location.hash = `#/${hashConst.rulesForFile}/` + focusedFilePath.replace(/\//g, "%2F");
                     } else {
-                        counter --;
+                        counter--;
                         if (counter === 0) {
                             this.props.onFalsifyIgnoreFile();
                             counter = 3;
@@ -236,10 +236,7 @@ class WebSocketManager extends Component {
 
                 case webSocketReceiveMessage.mined_design_rules:
                     let output = message.data["minedFrequentItemSets"];
-                    let parsedOutput = parseFrequentItemSets_CHUI(output);
-                    removeSparseData(parsedOutput);
-                    // let mergedOutput = mergeFrequentItemSets(parsedOutput);
-                    Promise.all(processOutPutRules(parsedOutput, this.props.featureMetaData))
+                    Promise.all(await processReceivedFrequentItemSets(output, this.props.featureMetaData))
                         .then(processedRules => {
                             this.props.onUpdateMinedRules(processedRules);
                         });

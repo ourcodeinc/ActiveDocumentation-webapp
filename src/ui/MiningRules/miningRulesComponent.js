@@ -5,27 +5,24 @@
 import React, {Component} from "react";
 import "../../App.css";
 import {connect} from "react-redux";
-import {Button} from "react-bootstrap";
+import {Button, Col, Row} from "react-bootstrap";
 import "rc-slider/assets/index.css";
 
 import {updateFeatureMetaData, updateGroupingMetaData} from "../../actions";
 import Utilities from "../../core/utilities";
 import {reduxStoreMessages} from "../../reduxStoreConstants";
-import MinedRulePad from "./minedRulePad";
 import {createGroupingMetaData, formGroupings} from "../../miningRulesCore/preProcessing";
 import {createFeatureMetaDataMap} from "../../miningRulesCore/extractFeatures";
-import {
-    generateFeatures, prepareMapsToSend, combineFeatureSetToRulePadCompressed
-} from "../../miningRulesCore/processing";
-import {focusElementType, groupTitle} from "../../miningRulesCore/featureConfig";
-import MinedDesignRules from "./minedDesignRules";
+import {generateFeatures, prepareFilesAndRequestMineRules} from "../../miningRulesCore/processing";
+import {focusElementType, sortGroupInformation} from "../../miningRulesCore/featureConfig";
+// import MinedDesignRules from "./minedDesignRules";
+import MinedRulePad from "./minedRulePad";
 
 class MiningRulesComponent extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            featureRulePad: [],
             minedRules: [],
             loadingStatus: false, // for loading icons when mining rules
             loadingTitle: "Mining Design Rules",
@@ -39,8 +36,9 @@ class MiningRulesComponent extends Component {
                 {this.renderDefaultView()}
                 <div className={"minedRulesComponent"}>
                     {this.renderFocusedElementInfo()}
-                    {this.renderFeatureRulePad()}
-                    <MinedDesignRules minedRules={this.state.minedRules} featureMetaData={this.props.featureMetaData}/>
+                    {this.renderApproval()}
+                    {this.renderNewOutput()}
+                    {/*<MinedDesignRules minedRules={this.state.minedRules} featureMetaData={this.props.featureMetaData}/>*/}
                 </div>
                 </div>
                 {this.renderLoading()}
@@ -93,7 +91,7 @@ class MiningRulesComponent extends Component {
      * @return {null|*}
      */
     renderDefaultView() {
-        if (this.state.minedRules.length > 0 || this.state.featureRulePad.length > 0)
+        if (this.state.minedRules.length > 0)
             return (
                 <div>
                     {this.renderLoading()}
@@ -143,40 +141,48 @@ class MiningRulesComponent extends Component {
         }
     }
 
-    renderFeatureRulePad() {
-
-        if (this.state.minedRules.length > 0 || this.state.featureRulePad.length === 0) return null;
-
-        let mapped = this.state.featureRulePad.map((objEntries, i) => {
-            let key = objEntries[0];
-            /**
-             * @type {{
-             * elementFeatures: {element: string, featureIds: number[]}[],
-             * rule: {grammarCompressed: string, rulePadStateCompressed: {guiElements, guiTree}}
-             * }}
-             */
-            let groupObject = objEntries[1];
-
-            return (
-                <div key={i}>
-                    <h4>{groupTitle[key] ? groupTitle[key] : key}</h4>
-                    <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"}>
-                        <MinedRulePad key={new Date()} rulePadState={groupObject.rule.rulePadStateCompressed}/>
-                    </div>
-                </div>
-            )
-        });
-
+    renderApproval() {
+        if (this.state.minedRules.length > 0) return null;
         return (
             <div>
-                <div>{mapped}</div>
-                <div>
-                    <Button onClick={() => this.sendFeaturesForMiningRules()}>Approve</Button>
-                </div>
+                <Button onClick={() => this.sendFeaturesForMiningRules()}>Start Mining Rules</Button>
             </div>
         )
     }
 
+    renderNewOutput() {
+        let process = (rule) => {
+            try {
+                return (<div>
+                    <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"}>
+                        <Row>
+                            <Col md={7}>
+                                <MinedRulePad key={new Date()} rulePadState={rule.rulePadState}/>
+                            </Col>
+                            <Col md={5}>
+                                <h5>{rule.mergedGrammarText}</h5>
+                                <br/>
+                            </Col>
+                        </Row>
+                    </div>
+                </div>)
+            } catch (e) {
+                console.log(e);
+                console.log(rule);
+                return <h4>Error</h4>;
+            }
+
+        }
+
+        return this.state.minedRules.map((gr, i) => {
+            console.log(gr);
+            return (
+                <div key={i}>
+                    <h4>{sortGroupInformation[gr.fileGroup].desc}</h4>
+                    {gr.rules.map(process)}
+                </div>)
+        })
+    }
 
     /**
      * Find the groupings
@@ -197,16 +203,10 @@ class MiningRulesComponent extends Component {
         let featureMetaData = createFeatureMetaDataMap();
         generateFeatures(this.props.xmlFiles, this.props.projectPath, this.props.focusedElementData,
             this.props.doiInformation, this.props.groupingMetaData, featureMetaData);
-        Promise
-            .all([combineFeatureSetToRulePadCompressed(featureMetaData)]) // combineFeatureSetToRulePad(featureMetaData)
-            .then(() => {
-                this.setState({
-                    featureRulePad: Object.entries(featureMetaData.featureGroups.spec)
-                        .concat(Object.entries(featureMetaData.featureGroups.usage)),
-                    loadingStatus: false,
-                });
-                this.props.onUpdateFeatureMetaData(featureMetaData);
-            });
+
+        this.setState({loadingStatus: false}
+            , () => this.props.onUpdateFeatureMetaData(featureMetaData)
+        );
 
     }
 
@@ -221,7 +221,7 @@ class MiningRulesComponent extends Component {
      * selected features are sent to the server for mining rules
      */
     sendFeaturesForMiningRules() {
-        let messages = prepareMapsToSend(this.props.featureMetaData)
+        let messages = prepareFilesAndRequestMineRules(this.props.featureMetaData)
         for (let message of messages) {
             Utilities.sendToServer(this.props.ws, message.command, message.data);
         }
