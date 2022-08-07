@@ -20,17 +20,8 @@ import {
  *
  * featureInfoContainers: {featureInfo, featureInfoReverse, featureMap, featureMapReverse}
  * featureCategories: {classType, constructorType, functionType}
- * @typedef {{element: string, featureIds: number[]}} elementFeatures
- * @typedef {{featureInfoContainers: {
- * featureInfo: Object.<string, {featureIndex: string, featureId: number, nodes: undefined|string[], weight: number}>,
- * featureInfoReverse: Object.<number, string>,
- * featureMap: Object.<number, string[]>,
- * featureMapReverse: Object.<string, number[]>},
- * featureGroups: {
- * spec: Object.<string, {elementFeatures: elementFeatures[], rule: {}}>,
- * usage: Object.<string, {elementFeatures: elementFeatures[], rule: {}}>}
- * }} featureMetaDataType
- *
+ * @typedef {import("../initialState")} elementFeatures
+ * @typedef {import("../initialState")} featureMetaDataType
  * @typedef {{identifier: string, mapFocusedElementToFeaturesKey: string, filePath: string}} focusedElementDataType
  *
  * as featureMetaData
@@ -98,7 +89,7 @@ export function extractFeaturesFromXmlFile(xmlFile, projectPath,
                     }
 
                     // populate the featureMetaData.featureGroups.spec
-                    let groupId = group.id;
+                    let groupId = group.groupId;
                     if (!featureMetaData.featureGroups.spec[groupId])
                         featureMetaData.featureGroups.spec[groupId] = {elementFeatures: [], rule: {}};
                     let element = `${xmlFile.filePath.replace(projectPath, "")}`
@@ -181,7 +172,7 @@ const processFeatureSetUsage = (xmlFile, projectPath,
                     }
 
                     // populate the featureMetaData.featureGroups.usage
-                    let groupId = group.id;
+                    let groupId = group.groupId;
                     if (!featureMetaData.featureGroups.usage[groupId])
                         featureMetaData.featureGroups.usage[groupId] = {elementFeatures: [], rule: {}};
                     let element = `${xmlFile.filePath.replace(projectPath, "")}`
