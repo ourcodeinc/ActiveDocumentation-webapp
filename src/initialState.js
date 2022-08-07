@@ -1,3 +1,61 @@
+/**
+ * featureInfo is a Map > featureDescription: {featureId, featureIndex (from features in featureConfig), nodes, weight}
+ * featureInfoReverse is a Map > featureId: featureDescription
+ * featureMap is a Map > featureId: array of identifiers
+ * featureMapReverse is a Map > identifier: array of featureIds
+ *
+ * featureInfoContainers: {featureInfo, featureInfoReverse, featureMap, featureMapReverse}
+ * featureCategories: {classType, constructorType, functionType}
+ */
+
+ /**
+  * @typedef {{element: string, featureIds: number[]}} elementFeatures
+  *
+  * @typedef {Object.<string, Object.<string, string[]>>} groupMappingType
+  * @typedef {Object.<string, Object.<string, string[]>>} fileMappingType
+  * @typedef {{groupMapping: groupMappingType, fileMapping: fileMappingType
+  * }} groupingMetaDataType
+  *
+  * @typedef {{featureInfoContainers: {
+  * featureInfo: Object.<string, {featureIndex: string, featureId: number
+  *             , nodes: undefined|string[], weight: number}>,
+  * featureInfoReverse: Object.<number, string>,
+  * featureMap: Object.<number, string[]>,
+  * featureMapReverse: Object.<string, number[]>},
+  * featureGroups: {
+  * spec: Object.<string, {elementFeatures: elementFeatures[], rule: {}}>,
+  * usage: Object.<string, {elementFeatures: elementFeatures[], rule: {}}>}
+  * }} featureMetaDataType
+  *
+  * @typedef {{identifier: string, mapFocusedElementToFeaturesKey: string
+  *         , filePath: string}} focusedElementDataType
+  *
+  * @typedef {{recentVisitedFiles: {timestamp: Date, filePath: string}[],
+  * recentVisitedElements: {timestamp: Date, filePath: string, startOffset:number,
+  * endOffset: number, visitedElement: string}[],
+  * recentSearches: {timestamp: Date, filePath: string, keyword: string}[]}} doiInformationType
+  *
+  * @typedef {{support:number, utility:number, featureIds: number[]}} initialFrequentItemSetType
+  * @typedef {{support:number, utility:number, featureIds: Object<string, number[]>[]}} frequentItemSetType
+  *
+  * @typedef  {{fileGroup: string, frequentItemSets: initialFrequentItemSetType[]}[]} initialParsedOutputType
+  * @typedef  {{fileGroup: string, frequentItemSets: frequentItemSetType[]}[]} parsedOutputType
+  *
+  * @typedef {{frequentItemSetIds: number[], selectedSpecifier: number,
+  *            otherSpecifiers: Object<number, Object<number, number[]>>,
+  *            mergedFeatureIds: Object<string, Object<number, number[]>>,
+  *            ?grammarText: string,
+  *            subDivided: {frequentItemSetIds: number[], selectedSpecifier: number,
+  *                 otherSpecifiers: Object<number, Object<number, number[]>>,
+  *                 mergedFeatureIds: Object<string, Object<number, number[]>>,
+  *                 ?grammarText: string
+  *            }[]}} dividedType
+  *
+  * @typedef  {{fileGroup: string, frequentItemSets: initialFrequentItemSetType[], divided: dividedType[]}
+  *             []} extendedParsedOutputType
+  */
+
+
 // the attributes of each element in the Graphical Editor of RulePad
 const graphicalElementAttributes = {
     activeElement: false, // if the element has at least one child
@@ -668,7 +726,8 @@ export const initial_state = {
             recentSearches: [],
             recentVisitedElements: []
         },
-        minedRules: []
+        minedRules: [],
+        mergedRules: []
     },
     featureSelection: {
         filePath: "",
