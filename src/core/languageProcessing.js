@@ -147,7 +147,7 @@ const antlr = (input) => {
  * parse the input text without constraint
  * used in minedRules
  * @param input text based on grammar without constraint only from "classes" tokens
- * @return {{grammarTree: *}|{grammarErrors: Array, inputText: string}}
+ * @return {{grammarTree, error: boolean}|{listOfErrors, error: true}}
  */
 export const verifyPartialTextBasedOnGrammar = (input) => {
 
@@ -176,7 +176,7 @@ export const verifyPartialTextBasedOnGrammar = (input) => {
     let orgTree = orgParser.classes();
 
     if (errors.length !== 0)
-        return {grammarErrors: errors, error: true, listOfErrors: errors};
+        return {listOfErrors: errors, error: true};
 
     return {grammarTree: orgTree, error: false};
 
