@@ -170,38 +170,6 @@ class Utilities {
     }
 
     /**
-     * deep copy of a JSON data
-     * @param json
-     * @returns
-     */
-    static cloneJSON(json) {
-
-        let newObj = {};
-        for (let ky in json)
-            newObj[ky] = json[ky];
-
-        return newObj;
-    }
-
-    /**
-     * check whether one array contains all elements of the other array
-     * @param container
-     * @param arr
-     * @returns {boolean}
-     */
-    static arrayContains(container, arr) {
-        let arrContainer = container.slice(0);
-
-        for (let i = arr.length; i--;) {
-            if (arrContainer.indexOf(arr[i]) === -1)
-                return false;
-            arrContainer.splice(arrContainer.indexOf(arr[i]), 1)
-        }
-        return true;
-    }
-
-
-    /**
      * move an array element from old_index to new_index
      * @param arr array of elements
      * @param old_index origin
@@ -242,6 +210,5 @@ class Utilities {
     }
 
 }
-
 
 export default Utilities;
