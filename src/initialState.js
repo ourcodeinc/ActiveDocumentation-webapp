@@ -82,6 +82,7 @@ export const initial_graphicalElements = {
     "0-7-1": {conditionName: "constructor_el", ...graphicalElementAttributes},
     "0-7-1-0-0": {conditionName: "annotation", ...graphicalElementAttributes},
     "0-7-1-2-0": {conditionName: "visibility", ...graphicalElementAttributes},
+    "0-7-1-4-0": {conditionName: "constructor_name", ...graphicalElementAttributes},
     "0-7-1-5-0": {conditionName: "parameter_el", ...graphicalElementAttributes},
     "0-7-1-5-0-1-0": {conditionName: "parameter_type", ...graphicalElementAttributes},
     "0-7-1-5-0-4-0": {conditionName: "parameter_name", ...graphicalElementAttributes},
@@ -244,7 +245,7 @@ export const initial_graphicalElementTree = {
             before_1: [],
             before_2: ["0-7-1-2-0"],
             before_3: [],
-            after_1: [],
+            after_1: ["0-7-1-4-0"],
             after_2: ["0-7-1-5-0"],
             after_3: [],
             body: [["0-7-1-7-0"], ["0-7-1-7-1"],["0-7-1-7-2"]]
@@ -252,6 +253,7 @@ export const initial_graphicalElementTree = {
     },
     "0-7-1-0-0": {parentId: "0-7-1", children: {}},
     "0-7-1-2-0": {parentId: "0-7-1", children: {}},
+    "0-7-1-4-0": {parentId: "0-7-1", children: {}},
     "0-7-1-5-0": {
         parentId: "0-7-1",
         children: {

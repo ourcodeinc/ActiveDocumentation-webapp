@@ -230,7 +230,7 @@ const element_conditions = {
             before_1: "",
             before_2: "visibility",
             before_3: "",
-            after_1: "",
+            after_1: "constructor_name",
             after_2: "parameter_el",
             after_3: "",
             body: [
@@ -242,7 +242,7 @@ const element_conditions = {
         grammar: "constructor",
         pre_before_1: "",
         pre_before_2: "",
-        pre_before_3: "constructorName",
+        pre_before_3: "",
         pre_after_1: "",
         pre_after_2: "(",
         pre_after_3: ")",
@@ -250,6 +250,16 @@ const element_conditions = {
         pre_body: "{",
         post_body: "}",
         canBeSelected: true
+    },
+    constructor_name: {
+        type: "text",
+        informationType: "TEXTS",
+        pre: "",
+        post: "",
+        placeholder: "className",
+        unique: true,
+        grammar: "name",
+        wordValidation: "word"
     },
     constructor_expression_statement: {
         type: "element",
