@@ -38,7 +38,6 @@ class MiningRulesComponent extends Component {
                     {this.renderFocusedElementInfo()}
                     {this.renderApproval()}
                     {this.renderNewOutput()}
-                    {/*<MinedDesignRules minedRules={this.state.minedRules} featureMetaData={this.props.featureMetaData}/>*/}
                 </div>
                 </div>
                 {this.renderLoading()}
@@ -71,7 +70,7 @@ class MiningRulesComponent extends Component {
             case reduxStoreMessages.update_feature_metadata_msg:
                 this.setState({
                     featureMetaData: nextProps.featureMetaData
-                });
+                }, () => this.sendFeaturesForMiningRules()); // todo temp
                 break;
 
             case reduxStoreMessages.save_feature_selection_msg:
@@ -151,36 +150,24 @@ class MiningRulesComponent extends Component {
     }
 
     renderNewOutput() {
-        let process = (rule) => {
-            try {
-                return (<div>
-                    <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"}>
-                        <Row>
-                            <Col md={7}>
-                                <MinedRulePad key={new Date()} rulePadState={rule.rulePadState}/>
-                            </Col>
-                            <Col md={5}>
-                                <h5>{rule.mergedGrammarText}</h5>
-                                <br/>
-                            </Col>
-                        </Row>
-                    </div>
-                </div>)
-            } catch (e) {
-                console.log(e);
-                console.log(rule);
-                return <h4>Error</h4>;
-            }
-
+        let process = (rulePadState, index) => {
+            return (<div>
+                <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"}>
+                    <Row>
+                        <Col md={10}>
+                            <MinedRulePad key={new Date()} rulePadState={rulePadState} ruleIndex={`mined_${index}`}/>
+                        </Col>
+                    </Row>
+                </div>
+            </div>)
         }
-
         return this.state.minedRules.map((gr, i) => {
-            console.log(gr);
             return (
                 <div key={i}>
-                    <h4>{sortGroupInformation[gr.fileGroup].desc}</h4>
-                    {gr.rules.map(process)}
+                    <h4>{sortGroupInformation[gr.data.fileGroup].desc}</h4>
+                    {gr.rulePadStates.map((rp, j) => process(rp, `${i}_${j}`))}
                 </div>)
+
         })
     }
 

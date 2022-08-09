@@ -554,33 +554,22 @@ export const mapFocusedElementToFeatures = {
 };
 
 /**
- * used to merge description to create the grammar text
- * id: name of the category
- * priority: order for merging the grammar text
- * prefix: prefix of the feature category
- * @type {{id: string, prefix: string, priority: number}[]}
- */
-export const breakFeatureDescription = [
-    {id: "class", priority: 1, prefix: "class with "},
-    {id: "constructor", priority: 2, prefix: "constructor with "},
-    {id: "function", priority: 3, prefix: "function with "},
-    {id: "subclass", priority: 4, prefix: "subclass with "},
-    {id: "declaration statement", priority: 5, prefix: "declaration statement with "},
-    {id: "expression statement", priority: 6, prefix: "expression statement with "},
-];
-
-/**
  * general description of features
  * @type {Object.<string, {type: string, xpath:string, description:string, weight: number,
- * ?FeatureSortGroup: string, nodeName: string[]|undefined, nodes: string[]|undefined}>}
+ * ?FeatureSortGroup: string, ?nodes: string[]|undefined,
+ * FeatureObject: {key: string,
+ *       withChildren: {key: string, value: {word: string, type: string}}[]|
+ *                     {key: string, withChildren:{key: string, value: {word: string, type: string}}[]}[]}
+ *   }>}
  * the key of the objects are used as the feature ID in the extracted files
  * type: used to run the XPath query
  * XPath: used to extract features on code
- * description: used to create the grammar text, the <TEMP_?> are used as the key
+ * description: used to label features in featureMetaData
+ * <TEMP_?> are used as the key
  * weight: default value set as a utility of a feature
  * FeatureSortGroup: used to order features to group similar design rules
- * nodeName: used to populate the feature metaData,
- * nodes: <TEMP_?> values, generated when extracting features
+ * FeatureObject: object readable by rulePadTextualEditor/generateGuiTree.createGuiElementTree
+ * key: the grammar keyword also defined in src/ui/RulePad/rulePadGraphicalEditor/graphicalEditorConstants.element_conditions
  */
 export const defaultFeatures = {
     class_annotation: {
@@ -589,7 +578,10 @@ export const defaultFeatures = {
         description: "class with ( annotation \"<TEMP_0>\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.classSpecifiers,
-        nodeName: ["Annotation"]  // todo extra property? remove?
+        FeatureObject: {
+            key: "class",
+            withChildren: [{key: "annotation", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     class_vis: {
         type: featureTypes.single_node_text,
@@ -597,7 +589,10 @@ export const defaultFeatures = {
         description: "class with ( visibility \"<TEMP_0>\" )",
         weight: 1,
         FeatureSortGroup: FeatureSortGroup.classSpecifiers,
-        nodeName: ["Visibility"]
+        FeatureObject: {
+            key: "class",
+            withChildren: [{key: "visibility", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     class_specifier: {
         type: featureTypes.single_node_text,
@@ -606,7 +601,10 @@ export const defaultFeatures = {
         description: "class with ( specifier \"<TEMP_0>\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.classSpecifiers,
-        nodeName: ["Specifier"]
+        FeatureObject: {
+            key: "class",
+            withChildren: [{key: "specifier", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     class_name: {
         type: featureTypes.single_node_text,
@@ -614,7 +612,10 @@ export const defaultFeatures = {
         description: "class with ( name \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.classIdentifier,
-        nodeName: ["Name"]
+        FeatureObject: {
+            key: "class",
+            withChildren: [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     class_name_ends_with: {
         type: featureTypes.single_node_text_ends_with,
@@ -622,7 +623,10 @@ export const defaultFeatures = {
         description: "class with ( name \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.classIdentifier,
-        nodeName: ["Name"]
+        FeatureObject: {
+            key: "class",
+            withChildren: [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     class_name_starts_with: {
         type: featureTypes.single_node_text_starts_with,
@@ -630,7 +634,10 @@ export const defaultFeatures = {
         description: "class with ( name \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.classIdentifier,
-        nodeName: ["Name"]
+        FeatureObject: {
+            key: "class",
+            withChildren: [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     class_extend: {
         type: featureTypes.single_node_text,
@@ -638,7 +645,10 @@ export const defaultFeatures = {
         description: "class with ( extension of \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.classSpecifiers,
-        nodeName: ["Extension"]
+        FeatureObject: {
+            key: "class",
+            withChildren: [{key: "extension", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     class_impl: {
         type: featureTypes.single_node_text,
@@ -646,7 +656,10 @@ export const defaultFeatures = {
         description: "class with ( implementation of \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.classSpecifiers,
-        nodeName: ["Implementation"]
+        FeatureObject: {
+            key: "class",
+            withChildren: [{key: "implementation", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     class_no_constr: {
         type: featureTypes.no_node,
@@ -654,6 +667,10 @@ export const defaultFeatures = {
         description: "class with ( \"No Constructor\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.classSpecifiers,
+        FeatureObject: {
+            key: "class",
+            withChildren: [{key: "comment", value: {word: "\"No Constructor\"", type: "text"}}]
+        }
     },
     class_no_func: {
         type: featureTypes.no_node,
@@ -661,6 +678,10 @@ export const defaultFeatures = {
         description: "class with ( \"No Function\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.classSpecifiers,
+        FeatureObject: {
+            key: "class",
+            withChildren: [{key: "comment", value: {word: "\"No Function\"", type: "text"}}]
+        }
     },
 
     subclass_annotation: {
@@ -669,7 +690,10 @@ export const defaultFeatures = {
         description: "subclass with ( annotation \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.subclassSpecifiers,
-        nodeName: ["Annotation"]
+        FeatureObject: {
+            key: "subclass",
+            withChildren: [{key: "annotation", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     subclass_vis: {
         type: featureTypes.single_node_text,
@@ -677,7 +701,10 @@ export const defaultFeatures = {
         description: "subclass with ( visibility \"<TEMP_0>\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.subclassSpecifiers,
-        nodeName: ["Visibility"]
+        FeatureObject: {
+            key: "subclass",
+            withChildren: [{key: "visibility", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     subclass_specifier: {
         type: featureTypes.single_node_text,
@@ -686,7 +713,10 @@ export const defaultFeatures = {
         description: "subclass with ( specifier \"<TEMP_0>\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.subclassSpecifiers,
-        nodeName: ["Specifier"]
+        FeatureObject: {
+            key: "subclass",
+            withChildren: [{key: "specifier", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     subclass_name: {
         type: featureTypes.single_node_text,
@@ -694,6 +724,10 @@ export const defaultFeatures = {
         description: "subclass with ( name \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.subclassIdentifier,
+        FeatureObject: {
+            key: "subclass",
+            withChildren: [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     subclass_name_ends_with: {
         type: featureTypes.single_node_text_ends_with,
@@ -701,7 +735,10 @@ export const defaultFeatures = {
         description: "subclass with ( name \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.subclassIdentifier,
-        nodeName: ["Name"]
+        FeatureObject: {
+            key: "subclass",
+            withChildren: [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     subclass_name_starts_with: {
         type: featureTypes.single_node_text_starts_with,
@@ -709,7 +746,10 @@ export const defaultFeatures = {
         description: "subclass with ( name \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.subclassIdentifier,
-        nodeName: ["Name"]
+        FeatureObject: {
+            key: "subclass",
+            withChildren: [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     subclass_extend: {
         type: featureTypes.single_node_text,
@@ -717,7 +757,10 @@ export const defaultFeatures = {
         description: "subclass with ( extension of \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.subclassSpecifiers,
-        nodeName: ["Extension"]
+        FeatureObject: {
+            key: "subclass",
+            withChildren: [{key: "extension", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     subclass_impl: {
         type: featureTypes.single_node_text,
@@ -725,7 +768,10 @@ export const defaultFeatures = {
         description: "subclass with ( implementation of \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.subclassSpecifiers,
-        nodeName: ["Implementation"]
+        FeatureObject: {
+            key: "subclass",
+            withChildren: [{key: "implementation", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     subclass_no_constr: {
         type: featureTypes.no_node,
@@ -733,6 +779,10 @@ export const defaultFeatures = {
         description: "subclass with ( \"No Constructor\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.subclassSpecifiers,
+        FeatureObject: {
+            key: "subclass",
+            withChildren: [{key: "comment", value: {word: "\"No Constructor\"", type: "text"}}]
+        }
     },
     subclass_no_func: {
         type: featureTypes.no_node,
@@ -740,6 +790,10 @@ export const defaultFeatures = {
         description: "subclass with ( \"No Function\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.subclassSpecifiers,
+        FeatureObject: {
+            key: "subclass",
+            withChildren: [{key: "comment", value: {word: "\"No Function\"", type: "text"}}]
+        }
     },
 
 
@@ -749,15 +803,21 @@ export const defaultFeatures = {
         description: "constructor with ( annotation \"<TEMP_0>\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.constructorSpecifiers,
-        nodeName: ["Annotation"]
+        FeatureObject: {
+            key: "constructor",
+            withChildren: [{key: "annotation", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
-    constr_name: { // todo add to grammar and rulePad
+    constr_name: { // todo add to grammar
         type: featureTypes.single_node_text,
         xpath: "/src:constructor/src:name/text()",
         description: "constructor with ( name \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.constructorIdentifiers,
-        nodeName: ["Name"]
+        FeatureObject: {
+            key: "constructor",
+            withChildren: [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     constr_vis: {
         type: featureTypes.single_node_text,
@@ -765,7 +825,10 @@ export const defaultFeatures = {
         description: "constructor with ( visibility \"<TEMP_0>\" )",
         weight: 1,
         FeatureSortGroup: FeatureSortGroup.constructorSpecifiers,
-        nodeName: ["Visibility"]
+        FeatureObject: {
+            key: "constructor",
+            withChildren: [{key: "visibility", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     constr_empty_body: {
         type: featureTypes.no_node,
@@ -773,6 +836,10 @@ export const defaultFeatures = {
         description: "constructor with ( \"Empty Body\" )",
         FeatureSortGroup: FeatureSortGroup.constructorSpecifiers,
         weight: 5,
+        FeatureObject: {
+            key: "constructor",
+            withChildren: [{key: "comment", value: {word: "\"Empty Body\"", type: "text"}}]
+        }
     },
     constr_param_type: {
         type: featureTypes.single_node_and_children_text,
@@ -781,7 +848,12 @@ export const defaultFeatures = {
         description: "constructor with ( parameter with type  \"<TEMP_0>\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.constructorSpecifiers,
-        nodeName: ["Type"]
+        FeatureObject: {
+            key: "constructor",
+            withChildren: [{
+                key: "parameter", withChildren: [{key: "type", value: {word: "<TEMP_0>", type: "text"}}]
+            }]
+        }
     },
     constr_param_name: {
         type: featureTypes.single_node_text,
@@ -789,7 +861,12 @@ export const defaultFeatures = {
         description: "constructor with ( parameter with name  \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.constructorSpecifiers,
-        nodeName: ["Name"]
+        FeatureObject: {
+            key: "constructor",
+            withChildren: [{
+                key: "parameter", withChildren: [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
+            }]
+        }
     },
     constr_param_type_name: {
         type: featureTypes.multiple_nodes_texts,
@@ -798,7 +875,15 @@ export const defaultFeatures = {
         description: "constructor with ( parameter with ( type \"<TEMP_0>\" and name \"<TEMP_1>\" ) )",
         weight: 20,
         FeatureSortGroup: FeatureSortGroup.constructorSpecifiers,
-        nodeName: ["type", "name"]
+        FeatureObject: {
+            key: "constructor",
+            withChildren: [{
+                key: "parameter", withChildren: [
+                    {key: "type", value: {word: "<TEMP_0>", type: "text"}},
+                    {key: "name", value: {word: "<TEMP_1>", type: "text"}}
+                ]
+            }]
+        }
     },
 
     func_annotation: {
@@ -807,7 +892,10 @@ export const defaultFeatures = {
         description: "function with ( annotation \"<TEMP_0>\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.functionSpecifiers,
-        nodeName: ["Annotation"]
+        FeatureObject: {
+            key: "function",
+            withChildren: [{key: "annotation", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     func_vis: {
         type: featureTypes.single_node_text,
@@ -815,7 +903,10 @@ export const defaultFeatures = {
         description: "function with ( visibility \"<TEMP_0>\" )",
         weight: 2,
         FeatureSortGroup: FeatureSortGroup.functionSpecifiers,
-        nodeName: ["Visibility"]
+        FeatureObject: {
+            key: "function",
+            withChildren: [{key: "visibility", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     func_specifier: {
         type: featureTypes.single_node_text,
@@ -824,7 +915,10 @@ export const defaultFeatures = {
         description: "function with ( specifier \"<TEMP_0>\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.functionSpecifiers,
-        nodeName: ["Specifier"]
+        FeatureObject: {
+            key: "function",
+            withChildren: [{key: "specifier", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     func_type: {
         type: featureTypes.single_node_and_children_text,
@@ -832,7 +926,10 @@ export const defaultFeatures = {
         description: "function with ( type \"<TEMP_0>\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.functionSpecifiers,
-        nodeName: ["Type"]
+        FeatureObject: {
+            key: "function",
+            withChildren: [{key: "type", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     func_name: {
         type: featureTypes.single_node_text,
@@ -840,7 +937,10 @@ export const defaultFeatures = {
         description: "function with ( name \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.functionIdentifier,
-        nodeName: ["Name"]
+        FeatureObject: {
+            key: "function",
+            withChildren: [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     func_name_ends_with: {
         type: featureTypes.single_node_text_ends_with,
@@ -848,7 +948,10 @@ export const defaultFeatures = {
         description: "function with ( name \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.functionIdentifier,
-        nodeName: ["Name"]
+        FeatureObject: {
+            key: "function",
+            withChildren: [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     func_name_starts_with: {
         type: featureTypes.single_node_text_starts_with,
@@ -856,7 +959,10 @@ export const defaultFeatures = {
         description: "function with ( name \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.functionIdentifier,
-        nodeName: ["Name"]
+        FeatureObject: {
+            key: "function",
+            withChildren: [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     func_no_param: {
         type: featureTypes.no_node,
@@ -864,6 +970,10 @@ export const defaultFeatures = {
         description: "function with ( \"No Parameter\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.functionSpecifiers,
+        FeatureObject: {
+            key: "function",
+            withChildren: [{key: "comment", value: {word: "\"No Parameter\"", type: "text"}}]
+        }
     },
     func_param_type: {
         type: featureTypes.single_node_and_children_text,
@@ -871,7 +981,13 @@ export const defaultFeatures = {
         description: "function with ( parameter with type  \"<TEMP_0>\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.functionSpecifiers,
-        nodeName: ["Type"]
+        FeatureObject: {
+            key: "function",
+            withChildren: [{
+                key: "parameter", withChildren:
+                    [{key: "type", value: {word: "<TEMP_0>", type: "text"}}]
+            }]
+        }
     },
     func_param_name: {
         type: featureTypes.single_node_text,
@@ -879,7 +995,13 @@ export const defaultFeatures = {
         description: "function with ( parameter with name  \"<TEMP_0>\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.functionSpecifiers,
-        nodeName: ["Name"]
+        FeatureObject: {
+            key: "function",
+            withChildren: [{
+                key: "parameter", withChildren:
+                    [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
+            }]
+        }
     },
     func_param_type_name: {
         type: featureTypes.multiple_nodes_texts,
@@ -888,7 +1010,16 @@ export const defaultFeatures = {
         description: "function with ( parameter with ( type \"<TEMP_0>\" and name \"<TEMP_1>\" ) )",
         weight: 20,
         FeatureSortGroup: FeatureSortGroup.functionSpecifiers,
-        nodeName: ["type", "name"]
+        FeatureObject: {
+            key: "function",
+            withChildren: [{
+                key: "parameter",
+                withChildren: [
+                    {key: "type", value: {word: "<TEMP_0>", type: "text"}},
+                    {key: "name", value: {word: "<TEMP_1>", type: "text"}}
+                ]
+            }]
+        }
     },
 
     field_annotation: {
@@ -897,7 +1028,10 @@ export const defaultFeatures = {
         description: "declaration statement with ( annotation \"<TEMP_0>\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.fieldSpecifiers,
-        nodeName: ["Annotation"]
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "annotation", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     field_vis: {
         type: featureTypes.single_node_text,
@@ -905,7 +1039,10 @@ export const defaultFeatures = {
         description: "declaration statement with ( visibility \"<TEMP_0>\" )",
         weight: 1,
         FeatureSortGroup: FeatureSortGroup.fieldSpecifiers,
-        nodeName: ["Visibility"]
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "visibility", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     field_specifier: {
         type: featureTypes.single_node_text,
@@ -914,7 +1051,10 @@ export const defaultFeatures = {
         description: "declaration statement with ( specifier \"<TEMP_0>\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.fieldSpecifiers,
-        nodeName: ["Specifier"]
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "specifier", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     field_type: {
         type: featureTypes.single_node_and_children_text,
@@ -922,7 +1062,10 @@ export const defaultFeatures = {
         description: "declaration statement with ( type \"<TEMP_0>\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.fieldSpecifiers,
-        nodeName: ["Type"]
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "type", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     field_name: {
         type: featureTypes.single_node_text,
@@ -930,7 +1073,10 @@ export const defaultFeatures = {
         description: "declaration statement with ( name \"<TEMP_0>\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.fieldIdentifier,
-        nodeName: ["Name"]
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     field_name_ends_with: {
         type: featureTypes.single_node_text_ends_with,
@@ -938,7 +1084,10 @@ export const defaultFeatures = {
         description: "declaration statement with ( name \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.fieldIdentifier,
-        nodeName: ["Name"]
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     field_name_starts_with: {
         type: featureTypes.single_node_text_starts_with,
@@ -946,7 +1095,10 @@ export const defaultFeatures = {
         description: "declaration statement with ( name \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.fieldIdentifier,
-        nodeName: ["Name"]
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     field_type_name: {
         type: featureTypes.multiple_nodes_texts,
@@ -955,7 +1107,13 @@ export const defaultFeatures = {
         description: "declaration statement with ( type \"<TEMP_0>\" and name \"<TEMP_1>\" )",
         weight: 20,
         FeatureSortGroup: FeatureSortGroup.fieldSpecifiers,
-        nodeName: ["type", "name"]
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [
+                {key: "type", value: {word: "<TEMP_0>", type: "text"}},
+                {key: "name", value: {word: "<TEMP_1>", type: "text"}}
+            ]
+        }
     },
     field_has_init: {
         type: featureTypes.no_node,
@@ -963,6 +1121,10 @@ export const defaultFeatures = {
         description: "declaration statement with ( \"Initialization\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.fieldSpecifiers,
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "comment", value: {word: "\"Initialization\"", type: "text"}}]
+        }
     },
 
     constr_call_constr: {
@@ -974,6 +1136,10 @@ export const defaultFeatures = {
         description: "constructor with ( \"Calling Constructor: <TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.constructorSpecifiers,
+        FeatureObject: {
+            key: "constructor",
+            withChildren: [{key: "comment", value: {word: "\"Calling Constructor: <TEMP_0>\"", type: "text"}}]
+        }
     },
     constr_call_func: {
         type: featureTypes.single_node_text,
@@ -984,6 +1150,10 @@ export const defaultFeatures = {
         description: "constructor with ( \"Calling Function: <TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.constructorSpecifiers,
+        FeatureObject: {
+            key: "constructor",
+            withChildren: [{key: "comment", value: {word: "\"Calling Function: <TEMP_0>\"", type: "text"}}]
+        }
     },
     constr_modify_field: {
         // xpath: "/src:constructor/src:block//src:expr_stmt/src:expr/src:operator[text()=\"=\"]" +
@@ -992,9 +1162,13 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text,
         xpath: "/src:constructor/src:block//src:expr_stmt/src:expr/src:operator[text()=\"=\"]" +
             "/preceding-sibling::src:name[src:name/text()=\"this\"]/src:name[position()=2]/text()",
-        description: "constructor with ( \"Modifying Field <TEMP_0>\" )",
+        description: "constructor with ( \"Modifying Field: <TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.constructorSpecifiers,
+        FeatureObject: {
+            key: "constructor",
+            withChildren: [{key: "comment", value: {word: "\"Modifying Field: <TEMP_0>\"", type: "text"}}]
+        }
     },
 
     func_call_constr: {
@@ -1006,6 +1180,10 @@ export const defaultFeatures = {
         description: "function with ( \"Calling Constructor: <TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.functionSpecifiers,
+        FeatureObject: {
+            key: "function",
+            withChildren: [{key: "comment", value: {word: "\"Calling Constructor: <TEMP_0>\"", type: "text"}}]
+        }
     },
     func_call_func: {
         type: featureTypes.single_node_text,
@@ -1016,6 +1194,10 @@ export const defaultFeatures = {
         description: "function with ( \"Calling Function: <TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.functionSpecifiers,
+        FeatureObject: {
+            key: "function",
+            withChildren: [{key: "comment", value: {word: "\"Calling Function: <TEMP_0>\"", type: "text"}}]
+        }
     },
     func_modify_field: {
         // xpath: "/src:function/src:block//src:expr_stmt/src:expr/src:operator[text()=\"=\"]" +
@@ -1027,6 +1209,10 @@ export const defaultFeatures = {
         description: "function with ( \"Modifying Field <TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.functionSpecifiers,
+        FeatureObject: {
+            key: "function",
+            withChildren: [{key: "comment", value: {word: "\"Modifying Field: <TEMP_0>\"", type: "text"}}]
+        }
     },
 
     decl_annotation: {
@@ -1035,7 +1221,10 @@ export const defaultFeatures = {
         description: "declaration statement with ( annotation \"<TEMP_0>\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.declarationSpecifiers,
-        nodeName: ["Annotation"]
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "annotation", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     decl_vis: {
         type: featureTypes.single_node_text,
@@ -1043,7 +1232,10 @@ export const defaultFeatures = {
         description: "declaration statement with ( visibility \"<TEMP_0>\" )",
         weight: 1,
         FeatureSortGroup: FeatureSortGroup.declarationSpecifiers,
-        nodeName: ["Visibility"]
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "visibility", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     decl_specifier: {
         type: featureTypes.single_node_text,
@@ -1051,7 +1243,10 @@ export const defaultFeatures = {
             "[not(contains(\"public private protected\",text()))]/text()",
         description: "declaration statement with ( specifier \"<TEMP_0>\" )",
         weight: 5,
-        nodeName: ["Specifier"]
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "specifier", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     decl_type: {
         type: featureTypes.single_node_and_children_text,
@@ -1059,7 +1254,10 @@ export const defaultFeatures = {
         description: "declaration statement with ( type \"<TEMP_0>\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.declarationSpecifiers,
-        nodeName: ["Type"]
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "type", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     decl_name: {
         type: featureTypes.single_node_text,
@@ -1067,7 +1265,10 @@ export const defaultFeatures = {
         description: "declaration statement with ( name \"<TEMP_0>\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.declarationSpecifiers,
-        nodeName: ["Name"]
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     decl_name_ends_with: {
         type: featureTypes.single_node_text_ends_with,
@@ -1075,7 +1276,10 @@ export const defaultFeatures = {
         description: "declaration statement with ( name \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.declarationSpecifiers,
-        nodeName: ["Name"]
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     decl_name_starts_with: {
         type: featureTypes.single_node_text_starts_with,
@@ -1083,7 +1287,10 @@ export const defaultFeatures = {
         description: "declaration statement with ( name \"<TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.declarationSpecifiers,
-        nodeName: ["Name"]
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
+        }
     },
     decl_type_name: {
         type: featureTypes.multiple_nodes_texts,
@@ -1092,7 +1299,13 @@ export const defaultFeatures = {
         description: "declaration statement with ( type \"<TEMP_0>\" and name \"<TEMP_1>\" )",
         weight: 20,
         FeatureSortGroup: FeatureSortGroup.declarationSpecifiers,
-        nodeName: ["type", "name"]
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [
+                {key: "type", value: {word: "<TEMP_0>", type: "text"}},
+                {key: "name", value: {word: "<TEMP_1>", type: "text"}}
+            ]
+        }
     },
     decl_has_init: {
         type: featureTypes.no_node,
@@ -1100,6 +1313,10 @@ export const defaultFeatures = {
         description: "declaration statement with ( \"Initialization\" )",
         weight: 5,
         FeatureSortGroup: FeatureSortGroup.declarationSpecifiers,
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "comment", value: {word: "\"Initialization\"", type: "text"}}]
+        }
     },
     decl_call_function: {
         // xpath: "/src:decl_stmt/src:decl/src:init/src:expr/src:call/src:name",
@@ -1110,6 +1327,10 @@ export const defaultFeatures = {
         description: "declaration statement with ( \"Initialized by Calling Function: <TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.declarationSpecifiers,
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "comment", value: {word: "\"Initialized by Calling Function: <TEMP_0>\"", type: "text"}}]
+        }
     },
     decl_call_function_argument: {
         // xpath: "/src:decl_stmt/src:decl/src:init/src:expr/src:call/src:argument_list/src:argument",
@@ -1125,9 +1346,13 @@ export const defaultFeatures = {
             "/src:argument/src:expr/src:call/src:name[not(src:name)]/text()|" +
             "/src:decl_stmt/src:decl/src:init/src:expr/src:call/src:argument_list" +
             "/src:argument/src:expr/src:call/src:name/src:name[last()]/text()",
-        description: "declaration statement with ( \"Initialized by Calling a Function With Argument <TEMP_0>\" )",
+        description: "declaration statement with ( \"Initialized by Calling a Function With Argument: <TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.declarationSpecifiers,
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "comment", value: {word: "\"Initialized by Calling a Function With Argument: <TEMP_0>\"", type: "text"}}]
+        }
     },
     decl_init_value: {
         type: featureTypes.single_node_text,
@@ -1137,6 +1362,10 @@ export const defaultFeatures = {
         description: "declaration statement with ( \"Initialization <TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.declarationSpecifiers,
+        FeatureObject: {
+            key: "declaration statement",
+            withChildren: [{key: "comment", value: {word: "\"Initialization <TEMP_0>\"", type: "text"}}]
+        }
     },
 
     expr_call_function: {
@@ -1148,6 +1377,10 @@ export const defaultFeatures = {
         description: "expression statement with ( \"Calling Function: <TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.expressionSpecifiers,
+        FeatureObject: {
+            key: "expression statement",
+            withChildren: [{key: "comment", value: {word: "\"Calling Function: <TEMP_0>\"", type: "text"}}]
+        }
     },
     expr_call_function_argument: {
         // xpath: "/src:expr_stmt/src:expr/*[position()=1 and self::src:call]/src:argument_list/src:argument/src:expr",
@@ -1163,18 +1396,26 @@ export const defaultFeatures = {
             "/src:argument/src:expr/src:call/src:name[not(src:name)]/text()|" +
             "/src:expr_stmt/src:expr/*[position()=1 and self::src:call]/src:argument_list" +
             "/src:argument/src:expr/src:call/src:name/src:name[last()]/text()",
-        description: "expression statement with ( \"Calling a Function With Argument <TEMP_0>\" )",
+        description: "expression statement with ( \"Calling a Function With Argument: <TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.expressionSpecifiers,
+        FeatureObject: {
+            key: "expression statement",
+            withChildren: [{key: "comment", value: {word: "\"Calling a Function With Argument: <TEMP_0>\"", type: "text"}}]
+        }
     },
     expr_assignment_caller: {
         // xpath: "/src:expr_stmt/src:expr/src:name[position()=1]",
         // note: this Xpath query only returns the function being called without its preceding identifiers or arguments
         type: featureTypes.single_node_text,
         xpath: "/src:expr_stmt/src:expr/src:name[position()=1]/text()|/src:expr_stmt/src:expr/src:name[position()=1]/src:name[last()]/text()",
-        description: "expression statement with ( \"Caller <TEMP_0>\" )",
+        description: "expression statement with ( \"Caller: <TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.expressionSpecifiers,
+        FeatureObject: {
+            key: "expression statement",
+            withChildren: [{key: "comment", value: {word: "\"Caller: <TEMP_0>\"", type: "text"}}]
+        }
     },
     expr_assignment_callee_value: {
         // xpath: "/src:expr_stmt/src:expr/src:operator[text()="="]/following-sibling::*",
@@ -1183,9 +1424,13 @@ export const defaultFeatures = {
         xpath: "/src:expr_stmt/src:expr/src:operator[text()=\"=\"]/following-sibling::src:name[not(src:name)]/text()|" +
             "/src:expr_stmt/src:expr/src:operator[text()=\"=\"]/following-sibling::src:name/src:name[last()]/text()|" +
             "/src:expr_stmt/src:expr/src:operator[text()=\"=\"]/following-sibling::src:literal/text()",
-        description: "expression statement with ( \"Assigned Value <TEMP_0>\" )",
+        description: "expression statement with ( \"Assigned Value: <TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.expressionSpecifiers,
+        FeatureObject: {
+            key: "expression statement",
+            withChildren: [{key: "comment", value: {word: "\"Assigned Value: <TEMP_0>\"", type: "text"}}]
+        }
     },
     expr_assignment_callee_call_function: {
         // xpath: "/src:expr_stmt/src:expr/src:operator[text()=\"=\"]/following-sibling::src:call/src:name",
@@ -1196,6 +1441,10 @@ export const defaultFeatures = {
         description: "expression statement with ( \"Initialized by Calling Function: <TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.expressionSpecifiers,
+        FeatureObject: {
+            key: "expression statement",
+            withChildren: [{key: "comment", value: {word: "\"Initialized by Calling Function: <TEMP_0>\"", type: "text"}}]
+        }
     },
     expr_assignment_callee_call_function_argument: {
         // xpath: "/src:expr_stmt/src:expr/src:operator[text()=\"=\"]/following-sibling::src:call/src:argument_list/src:argument",
@@ -1211,9 +1460,13 @@ export const defaultFeatures = {
             "src:argument_list/src:argument/src:expr/src:call/src:name[not(src:name)]/text()|" +
             "/src:expr_stmt/src:expr/src:operator[text()=\"=\"]/following-sibling::src:call/" +
             "src:argument_list/src:argument/src:expr/src:call/src:name/src:name[last()]/text()",
-        description: "expression statement with ( \"Initialized by Calling a Function With Argument <TEMP_0>\" )",
+        description: "expression statement with ( \"Initialized by Calling a Function With Argument: <TEMP_0>\" )",
         weight: 10,
         FeatureSortGroup: FeatureSortGroup.expressionSpecifiers,
+        FeatureObject: {
+            key: "expression statement",
+            withChildren: [{key: "comment", value: {word: "\"Initialized by Calling a Function With Argument: <TEMP_0>\"", type: "text"}}]
+        }
     },
 
     /*

@@ -5,20 +5,17 @@ transform them into formats displayable for RulePad.
 
 import {
     attributeFileNames,
-    breakFeatureDescription,
     defaultFeatures,
     minSupport,
     sortGroupInformation,
 } from "./featureConfig";
-import {verifyPartialTextBasedOnGrammar} from "../core/languageProcessing";
-import {generateGuiTrees} from "../ui/RulePad/rulePadTextualEditor/generateGuiTree";
+import {processRulePadForMiningRules} from "../ui/RulePad/rulePadTextualEditor/generateGuiTree"
 
 /**
  * @typedef {import("../initialState")} featureMetaDataType
  * @typedef {import("../initialState")} parsedOutputType
  * @typedef {import("../initialState")} initialParsedOutputType
  * @typedef {import("../initialState")} extendedParsedOutputType
- * @typedef {import("../initialState")} dividedType
  * @typedef {import("../initialState")} frequentItemSetType
  *
  * @param outputFiles array of {outputFileName: String of contents}
@@ -31,9 +28,7 @@ export async function processReceivedFrequentItemSets (outputFiles, featureMetaD
     removeSparseData(initialParsedOutput);
     let parsedOutput = doSeparateFIQ(initialParsedOutput, featureMetaData);
     let extendedParsedOutput = doGrouping(parsedOutput, featureMetaData);
-    let processedOutputPromise = processOutPutRules(extendedParsedOutput, featureMetaData);
-    console.log({initialParsedOutput, featureMetaData, extendedParsedOutput,processedOutputPromise}); // todo remove
-    return processedOutputPromise;
+    return Promise.resolve(createRulePad(extendedParsedOutput));
 }
 
 /**
@@ -116,7 +111,7 @@ const doGrouping = (parsedOutput, featureMetaData) => {
      * @param newFrequentItemSets {frequentItemSetType[]}
      * @param fiqIds {number[]}
      * @param groupByIdentifier
-     * @returns {{selectedFeatureId: number|null, otherFeatureIds: {}, frequentItemSetIds: number[]}[]}
+     * @returns {{frequentItemSetIds: number[], builtObject}[]}
      */
     function divide(newFrequentItemSets, fiqIds, groupByIdentifier) {
         if (newFrequentItemSets.length < fiqIds.length)
@@ -135,15 +130,19 @@ const doGrouping = (parsedOutput, featureMetaData) => {
                         count[fId].push(index)
                     else
                         count[fId] = [index];
-                    if (count[fId].length > maxCount) {
-                        maxCount = count[fId].length;
-                        maxId = fId;
-                    }
+                    if (count[fId].length > maxCount)
+                        [maxCount, maxId] = [count[fId].length, +fId];
                 }
             }
             if (maxCount === 0)
-                return [{selectedFeatureId: null, otherFeatureIds: null, frequentItemSetIds: fiqIds}]
-            result.push({selectedFeatureId: maxId, otherFeatureIds: count, frequentItemSetIds: count[maxId]});
+                return [{frequentItemSetIds: fiqIds}]
+
+            let builtObject = buildObjectForFeature(maxId, featureMetaData);
+            builtObject.frequentItemSetIds = count[maxId];
+            for (let child of builtObject.withChildren)
+                child.selectedFeatureId = maxId;
+
+            result.push({frequentItemSetIds: count[maxId], builtObject});
             // filter the rest
             toBeGroupedIndices = toBeGroupedIndices.filter(d => !count[maxId].includes(d))
         }
@@ -151,10 +150,9 @@ const doGrouping = (parsedOutput, featureMetaData) => {
     }
 
     /**
-     * @param divided {{selectedFeatureId: number|null, otherFeatureIds: {}, frequentItemSetIds: number[]}}
+     * @param divided {{frequentItemSetIds: number[], builtObject}}
      * @param newFileGroup {{fileGroup: string, frequentItemSets: frequentItemSetType[]}}
      * @param groupingIdentifier {string}
-     * @return {*}
      */
     function doMerge(divided, newFileGroup, groupingIdentifier) {
         let merged = {};
@@ -175,12 +173,33 @@ const doGrouping = (parsedOutput, featureMetaData) => {
                 }
             }
         }
-        return merged;
+        for (let featureIndex of Object.keys(merged)) {
+            let maxId = null, maxCount = 0;
+            for (let featureId of Object.keys(merged[featureIndex])) {
+                if (merged[featureIndex][featureId].length > maxCount)
+                    [maxId, maxCount] = [+featureId, merged[featureIndex][featureId].length]
+            }
+            if (maxId !== null) {
+                let builtObject = buildObjectForFeature(maxId, featureMetaData);
+                for (let child of builtObject.withChildren) {
+                    child.frequentItemSetIds = merged[featureIndex][maxId];
+                    child.allFeatureIds = Object.entries(merged[featureIndex]).map(d => {
+                        return {featureId: +d[0], frequentItemSetIds: d[1]}
+                    });
+                    child.selectedFeatureId = maxId;
+                }
+                divided.builtObject.withChildren.push(...builtObject.withChildren);
+            }
+        }
+        return divided;
     }
 
     let result = [];
     for (let fileGroup of parsedOutput) {
-        let res = {fileGroup: fileGroup.fileGroup, frequentItemSets: fileGroup.frequentItemSets, divided: []};
+        let res = {
+            fileGroup: fileGroup.fileGroup,
+            builtObjects: []
+        };
         let fis = fileGroup.frequentItemSets;
         let fiqIndices = new Array(fis.length).fill(0).map((_, i) => i);
         let groupingIdentifiers = sortGroupInformation[fileGroup.fileGroup].identifierGroup.groupBy;
@@ -188,184 +207,64 @@ const doGrouping = (parsedOutput, featureMetaData) => {
         if (groupingIdentifiers.length > 1) {
             for (let div of divided) {
                 let newDivided = divide(fis, div.frequentItemSetIds, groupingIdentifiers[1]);
-                let subDivided = [];
                 newDivided.forEach(nDiv => {
                     let groupingIdentifierDivided = sortGroupInformation[fileGroup.fileGroup].identifierGroup.rest[1];
-                    let mergedDividedFeatureIds = doMerge(nDiv, fileGroup, groupingIdentifierDivided)
-                    subDivided.push({selectedSpecifier: nDiv.selectedFeatureId,
-                        otherSpecifiers: nDiv.otherFeatureIds, frequentItemSetIds: nDiv.frequentItemSetIds,
-                        mergedFeatureIds: mergedDividedFeatureIds});
+                    doMerge(nDiv, fileGroup, groupingIdentifierDivided)
+                    div.builtObject.withChildren.push(nDiv.builtObject);
                 })
                 let groupingIdentifier = sortGroupInformation[fileGroup.fileGroup].identifierGroup.rest[0];
-                let mergedFeatureIds = doMerge(div, fileGroup, groupingIdentifier)
-                res.divided.push({selectedSpecifier: div.selectedFeatureId,
-                    otherSpecifiers: div.otherFeatureIds,
-                    frequentItemSetIds: div.frequentItemSetIds, mergedFeatureIds, subDivided});
+                doMerge(div, fileGroup, groupingIdentifier);
+                div.builtObject.selectedElement = true;
+                res.builtObjects.push(div.builtObject);
             }
-        }
-        else {
-            // todo, and fix dividedType
-            // subDivided = null
+        } else {
+            // todo
         }
         result.push(res);
     }
     return result;
 }
 
-/**
- * compute the GUI states of received mined itemSets
- * @param parsedOutput {extendedParsedOutputType}
- * @param featureMetaData {featureMetaDataType}
- * @returns {Promise[]}
- */
-export const processOutPutRules = (parsedOutput, featureMetaData) => {
-
-    /**
-     * @param featureIdGroup {Object<string, Object<number, number[]>>}
-     * @returns {number[]}
+const buildObjectForFeature = (featureId, featureMetaData) => {
+    let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
+    let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
+    /**{key: string, withChildren:
+     *          ([{key: string, value: {word: string, type: string}}]|
+     *           [{key: string, withChildren: [{key: string, value: {word: string, type: string}}]}])}
      */
-    function extracted(featureIdGroup) {
-        let result = [];
-        let featureGroupIds = Object.keys(featureIdGroup);
-        for (let groupId of featureGroupIds ) {
-            let maxId = -1, maxCount = 0;
-            let fIds = Object.keys(featureIdGroup[groupId]);
-            for (let fId of fIds) {
-                let count = featureIdGroup[groupId][fId].length;
-                if (count > maxCount)
-                    [maxId, maxCount] = [fId, count]
-            }
-            if (maxCount > 0) result.push(maxId);
-        }
-        return result;
-    }
-
-    for (let fileGroup of parsedOutput) {
-        let allRules = fileGroup.divided;
-        for (let ruleGroup of allRules) {
-            let text = "";
-            let fids = [ruleGroup.selectedSpecifier];
-            // first process the features of the container
-            let mergedFeatureIds = extracted(ruleGroup.mergedFeatureIds)
-            fids.push(...mergedFeatureIds);
-            ruleGroup.grammarText = createTextFromItemSets(fids, featureMetaData);
-            text = ruleGroup.grammarText;
-            if (ruleGroup.subDivided !== null) {
-                text = text + " and (";
-                let subtexts = [];
-                for (let rule of ruleGroup.subDivided) {
-                    fids = [rule.selectedSpecifier];
-                    let mergedFeatureIdsRule = extracted(rule.mergedFeatureIds);
-                    fids.push(...mergedFeatureIdsRule);
-                    rule.grammarText = createTextFromItemSets(fids, featureMetaData);
-                    subtexts.push(rule.grammarText);
+    let obj = JSON.parse(JSON.stringify(defaultFeatures[featureInfo.featureIndex].FeatureObject));
+    let count = 0;
+    while (count < featureInfo.nodes.length) {
+        for (let child of obj.withChildren) {
+            if ("value" in child) {
+                child.value.word = child.value.word.replace(`<TEMP_${count}>`, featureInfo.nodes[count]);
+                count++;
+                if (count === featureInfo.nodes.length) break;
+            } else if ("withChildren" in child) {
+                for (let grandChild of child.withChildren) {
+                    if ("value" in grandChild) {
+                        grandChild.value.word = grandChild.value.word.replace(`<TEMP_${count}>`, featureInfo.nodes[count]);
+                        count++;
+                        if (count === featureInfo.nodes.length) break;
+                    }
                 }
-                text = text + subtexts.join(" and ") + ")"
             }
-            ruleGroup.mergedGrammarText = text;
         }
     }
-
-    return parsedOutput.map(fileGroup => {
-        return Promise
-            .all(fileGroup.divided.map(ruleGroup => {
-                return grammarTextToRulePadGUI(ruleGroup.mergedGrammarText)
-                    .then(rulePadState => {
-                        return {rulePadState: rulePadState, grammar: ruleGroup.mergedGrammarText, ruleGroup}
-                    });
-            }))
-            .then(rules => {
-                return {
-                    frequentItemSets: fileGroup.frequentItemSets,
-                    fileGroup: fileGroup.fileGroup,
-                    rules: rules
-                }
-            })
-    })
+    return obj;
 }
 
 /**
- * cleanup a textual representation formed by merging features to create a grammar text
- * @param featureIds {number[]}
- * @param featureMetaData {featureMetaDataType}
- * @return {string}
+ * create an object readable by rulePadTextualEditor/generateGuiTree.createGuiElementTree
+ * by combining FeatureObject property of each feature
+ * @param extendedParsedOutput {extendedParsedOutputType}
+ * @return {{}}
  */
-export const createTextFromItemSets = (featureIds, featureMetaData) => {
-    let texts = preProcessFeatureIdsForRules(featureIds, featureMetaData);
-    texts.sort((a, b) => a.priority - b.priority);
-    let finalRule = texts.length === 2 ?
-        texts[0].preText + "( " + texts[0].text + " and " + texts[1].preText + texts[1].text + " )"
-        : texts.length === 1 ?
-            texts[0].preText + "( " + texts[0].text + " )"
-            : "";
-
-    // cleanup the extra characters
-    return finalRule.replace(/ {2}/g, " ")
-        .replace(/\)/g, " )")
-        .replace(/\( /g, "(")
-        .replace(/\) /g, ")")
-        .replace(/ {2}/g, " ");
-}
-
-/**
- * generate the GUI tree for the grammar text
- * @param grammarText
- * @return {Promise<T | {guiTree: {}, guiElements: {}}>|Promise<{guiTree: {}, guiElements: {}}>}
- */
-export const grammarTextToRulePadGUI = (grammarText) => {
-    // the "classes" token must have an space at the end
-    let result = verifyPartialTextBasedOnGrammar(grammarText + " ");
-    if (result.error) {
-        console.log("error happened in parsing");
-        console.log({grammarText, errors: result.listOfErrors});
-        return Promise.resolve({guiTree: {}, guiElements: {}});
-    }
-
-    return generateGuiTrees(result.grammarTree)
-        .then((tree) => {
-            return {guiTree: tree.guiTree, guiElements: tree.guiElements}
+const createRulePad = (extendedParsedOutput) => {
+    return extendedParsedOutput.map(fileGroup => {
+        let rulePadStates = fileGroup.builtObjects.map(obj => {
+            return processRulePadForMiningRules(obj)
         })
-        .catch((error) => {
-            console.error("error happened in creating the guiTree");
-            console.log({grammarText, error});
-            return {guiTree: {}, guiElements: {}};
-        });
-}
-
-
-/**
- * merge feature description of features of groups to create a grammar text
- * @param featureIds {number[]}
- * @param featureMetaData {featureMetaDataType}
- * @return {{priority: number, id: string, text, preText: string}[]}
- */
-export const preProcessFeatureIdsForRules = (featureIds, featureMetaData) => {
-    let allFeatureDesc = featureIds
-        .map(feature_id => featureMetaData.featureInfoContainers.featureInfoReverse[feature_id]);
-
-    let descriptionGroups = {};
-    for (let breakText of breakFeatureDescription) {
-        descriptionGroups[breakText.id] = [];
-    }
-
-    allFeatureDesc.forEach(feature_desc => {
-        for (let breakText of breakFeatureDescription) {
-            if (feature_desc.startsWith(breakText.prefix)) {
-                descriptionGroups[breakText.id].push(feature_desc);
-                return;
-            }
-        }
-    });
-
-    let texts = [];
-    for (let breakText of breakFeatureDescription) {
-        if (descriptionGroups[breakText.id].length === 0) continue;
-        let textArray = [];
-        for (let feature_desc of descriptionGroups[breakText.id]) {
-            textArray.push(feature_desc.slice(breakText.prefix.length));
-        }
-        let text = "( " + textArray.join(" and ") + " )";
-        texts.push({priority: breakText.priority, id: breakText.id, text, preText: breakText.prefix})
-    }
-    return texts;
+        return {rulePadStates, data: fileGroup}
+    })
 }

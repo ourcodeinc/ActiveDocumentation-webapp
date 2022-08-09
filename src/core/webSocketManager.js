@@ -236,8 +236,10 @@ class WebSocketManager extends Component {
 
                 case webSocketReceiveMessage.mined_design_rules:
                     let output = message.data["minedFrequentItemSets"];
-                    Promise.all(await processReceivedFrequentItemSets(output, this.props.featureMetaData))
+                    // await processReceivedFrequentItemSets(output, this.props.featureMetaData);
+                    processReceivedFrequentItemSets(output, this.props.featureMetaData)
                         .then(processedRules => {
+                            console.log(processedRules);
                             this.props.onUpdateMinedRules(processedRules);
                         });
                     break;

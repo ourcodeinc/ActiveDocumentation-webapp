@@ -13,7 +13,7 @@ class MinedRulePad extends Component {
 
     constructor(props) {
         super(props);
-        // elementId [optional], rulePadState (guiTree, guiElements), styleClass [optional] << for styling
+        // elementId [optional], rulePadState (guiTree, guiElements), ruleIndex, styleClass [optional] << for styling
 
         this.state = {};
 
@@ -230,7 +230,7 @@ class MinedRulePad extends Component {
         return (
             <div key={index} id={`id__${this.props.ruleIndex}__${childId}`}
                  className={className}>
-                <div>
+                <div onClick={()=> console.log(childElement._data_)}>
                     <div className={"rowItem" + (childElement.activeElement ? "" : " inactiveText")}><b>{childCondition.pre}</b></div>
                     <div className={"inputTextDiv rowItem " + (childCondition.type === "wideText" ? "wideText" : "")}>
                         <span className={"minedRules inputText" + (childElement.activeElement ? " activeElement " : "")}>

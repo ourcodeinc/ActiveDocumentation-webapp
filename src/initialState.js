@@ -41,17 +41,7 @@
   * @typedef  {{fileGroup: string, frequentItemSets: initialFrequentItemSetType[]}[]} initialParsedOutputType
   * @typedef  {{fileGroup: string, frequentItemSets: frequentItemSetType[]}[]} parsedOutputType
   *
-  * @typedef {{frequentItemSetIds: number[], selectedSpecifier: number,
-  *            otherSpecifiers: Object<number, Object<number, number[]>>,
-  *            mergedFeatureIds: Object<string, Object<number, number[]>>,
-  *            ?grammarText: string,
-  *            subDivided: {frequentItemSetIds: number[], selectedSpecifier: number,
-  *                 otherSpecifiers: Object<number, Object<number, number[]>>,
-  *                 mergedFeatureIds: Object<string, Object<number, number[]>>,
-  *                 ?grammarText: string
-  *            }[]}} dividedType
-  *
-  * @typedef  {{fileGroup: string, frequentItemSets: initialFrequentItemSetType[], divided: dividedType[]}
+  * @typedef  {{fileGroup: string, frequentItemSets: initialFrequentItemSetType[], builtObjects: Array}
   *             []} extendedParsedOutputType
   */
 

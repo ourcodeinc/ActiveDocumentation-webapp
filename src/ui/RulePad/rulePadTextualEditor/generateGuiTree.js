@@ -435,9 +435,10 @@ const createGuiElementTree = (parseTree) => {
  * build a new tree based on the tree data
  * @param grammarTree
  * @param guiTree
+ * @param isForMiningRules if true, the additional data should be included.
  * @return {{newGuiElements, newElementTree, grammarTree: *, guiTree: *}}
  */
-const updateGuiElements = (grammarTree, guiTree) => {
+const updateGuiElements = (grammarTree, guiTree, isForMiningRules = false) => {
     if (!guiTree) return {};
     let newGuiElements = JSON.parse(JSON.stringify(initial_graphicalElements));
     let newElementTree = JSON.parse(JSON.stringify(initial_graphicalElementTree));
@@ -480,8 +481,19 @@ const updateGuiElements = (grammarTree, guiTree) => {
         if (grammarNode.value)
             newGuiElements[guiNode.elementId][grammarNode.value.type] = grammarNode.value.word;
 
+        if (isForMiningRules) {
+            newGuiElements[guiNode.elementId]._data_ = grammarNode;
+        }
+
     };
 
     checkNode(grammarTree, guiTree);
     return {newGuiElements, newElementTree, grammarTree, guiTree}
 };
+
+
+export const processRulePadForMiningRules = (builtObject) => {
+    let treeOfIDs = createGuiElementTree(builtObject);
+    let data = updateGuiElements(builtObject, treeOfIDs, true)
+    return {guiElements: data.newGuiElements, guiTree: data.newElementTree}
+}
