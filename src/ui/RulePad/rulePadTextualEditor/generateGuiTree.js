@@ -7,6 +7,8 @@ import pluralize from "pluralize";
 import {generateTreeForElement, getConditionByName} from "../rulePadGraphicalEditor/graphicalEditorConstants";
 import {grammar_keywords, special_word} from "./textualEditorConstant";
 import {initial_graphicalElementTree, initial_graphicalElements} from "../../../initialState";
+import {defaultFeatures} from "../../../miningRulesCore/featureConfig";
+import Utilities from "../../../core/utilities";
 
 /**
  * create the quantifier and the constraint guiTree based on the grammar parse tree
@@ -314,10 +316,12 @@ const reverseParentChildOrder = (node) => {
 
 /**
  * build a tree from GUI element IDs
- * @param parseTree {{isConstraint: boolean, key: string, ?selectedElement: boolean, withChildren: Array}}
+ * @param parseTree {{isConstraint: boolean, key: string, ?selectedElement: boolean, withChildren: Array, ?_data_: {}}}
+ * @param isForMiningRules {boolean}
  * return false or a tree of ids corresponding to the input tree
  */
-const createGuiElementTree = (parseTree) => {
+const createGuiElementTree = (parseTree,
+                              isForMiningRules = false) => {
 
     let newGuiElements = JSON.parse(JSON.stringify(initial_graphicalElements));
     let newElementTree = JSON.parse(JSON.stringify(initial_graphicalElementTree));
@@ -373,6 +377,8 @@ const createGuiElementTree = (parseTree) => {
                     parentId: parent_id,
                     isConstraint: node.isConstraint ? node.isConstraint : false // sometimes it is undefined
                 };
+                if (isForMiningRules)
+                    newNode._data_ = JSON.parse(JSON.stringify(node));
                 if (neighbor) newNode.neighbor = neighbor;
                 visitedIDs.push(elem_id);
 
@@ -492,8 +498,13 @@ const updateGuiElements = (grammarTree, guiTree, isForMiningRules = false) => {
 };
 
 
+/**
+ * Creates rulePad state for rendering the rules.
+ * @param builtObject {{key: string, withChildren: Array, selectedElement: boolean, _data_: {}, isConstraint: boolean}}
+ * @returns {{guiTree: any, guiElements: any}}
+ */
 export const processRulePadForMiningRules = (builtObject) => {
-    let treeOfIDs = createGuiElementTree(builtObject);
+    let treeOfIDs = createGuiElementTree(builtObject, true);
     let data = updateGuiElements(builtObject, treeOfIDs, true)
     return {guiElements: data.newGuiElements, guiTree: data.newElementTree}
 }

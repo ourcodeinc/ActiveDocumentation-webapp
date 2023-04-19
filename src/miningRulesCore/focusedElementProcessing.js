@@ -1,4 +1,4 @@
-import {discard_time, focusElementType} from "./featureConfig";
+import {DOI_DISCARD_TIME, focusElementType} from "./featureConfig";
 import {runXPathSingleNode} from "./xPathQueryExecutor";
 import {getNodesFromOffsets} from "./featureSelectionProcessing";
 
@@ -68,54 +68,10 @@ export const getDataForFocusedElement = (xmlFile, startOffset) => {
     let mapFocusedElementToFeaturesKey = filtered[0].mapFocusedElementToFeaturesKey;
     let identifier = runXPathSingleNode(ancestorNode, filtered[0].identifierXpath).join("");
     return {mapFocusedElementToFeaturesKey, identifier}
-
-
-    // let filePathWithoutProjectPath = xmlFile.filePath.replace(projectPath, "");
-    // // find the parent for each category
-    // let parentNodes = {};
-    // for (let parentCategories of [...Object.keys(nodesForSelectedScope)]) {
-    //     let parentType = nodesForSelectedScope[parentCategories].nodeName;
-    //     let node = selectedNode;
-    //     while (node != null) {
-    //         if (node.nodeName === parentType) {
-    //             parentNodes[parentType] = node;
-    //             break;
-    //         }
-    //         node = node.parentNode;
-    //     }
-    // }
-    //
-    // // find the identifiers used in the metaData
-    // let identifiers = {};
-    // for (let category of [...Object.keys(nodesForSelectedScope)]) {
-    //     if (!parentNodes.hasOwnProperty(nodesForSelectedScope[category].nodeName))
-    //         continue;
-    //     let result = returnNodeIterator(xml, nodesForSelectedScope[category].query);
-    //     if (result === -1)
-    //         continue; // invalid xml
-    //     let targetNode = result.iterateNext();
-    //     let counterPerFile = 0;
-    //     while (targetNode) {
-    //         if (targetNode.isEqualNode(parentNodes[nodesForSelectedScope[category].nodeName])) {
-    //             identifiers[category] = `${category}_${counterPerFile}`;
-    //             break;
-    //         }
-    //         targetNode = result.iterateNext();
-    //         counterPerFile++;
-    //     }
-    // }
-    //
-    // // ** the only place containing a hard-coded value
-    // for (let category in identifiers) {
-    //     if (category !== "class")
-    //         identifiers[category] = `${filePathWithoutProjectPath}_${identifiers["class"]}_${identifiers[category]}`;
-    // }
-    // identifiers["class"] = `${filePathWithoutProjectPath}_${identifiers["class"]}`;
-    // return identifiers;
 }
 
 /**
- * process the doi information and remove information prior to discard_time
+ * process the doi information and remove information prior to DOI_DISCARD_TIME
  * @param recentVisitedFiles {[{timeStamp, filePath}]}
  * @param recentSearchKeyWords {[{timeStamp, filePath, keyword}]} filePath can be 'none'
  * @param recentVisitedElements {[{timeStamp, filePath, startOffset, endOffset}]}
@@ -133,7 +89,7 @@ export const processDoiInformation = (recentVisitedFiles,
     let now = Date.now();
 
     let files = recentVisitedFiles
-        .filter(d => Math.abs(+d.timeStamp - now) < discard_time)
+        .filter(d => Math.abs(+d.timeStamp - now) < DOI_DISCARD_TIME)
         .map(d => {
             return {
                 timeStamp: new Date(+d.timeStamp),
@@ -142,7 +98,7 @@ export const processDoiInformation = (recentVisitedFiles,
         });
 
     let searches = recentSearchKeyWords
-        .filter(d => Math.abs(+d.timeStamp - now) < discard_time)
+        .filter(d => Math.abs(+d.timeStamp - now) < DOI_DISCARD_TIME)
         .map(d => {
             return {
                 timeStamp: new Date(+d.timeStamp),
@@ -152,7 +108,7 @@ export const processDoiInformation = (recentVisitedFiles,
         });
 
     let elements = recentVisitedElements
-        .filter(d => Math.abs(+d.timeStamp - now) < discard_time)
+        .filter(d => Math.abs(+d.timeStamp - now) < DOI_DISCARD_TIME)
         .map(d => {
             let xmlCaretFiles = xmlFiles.filter(dd => dd.filePath === d.filePath);
             if (xmlCaretFiles.length === 1) {

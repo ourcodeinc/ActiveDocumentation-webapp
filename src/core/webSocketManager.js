@@ -206,6 +206,7 @@ class WebSocketManager extends Component {
                     break;
 
                 case webSocketReceiveMessage.element_info_for_mine_rules:
+                    window.location.hash = `#/${hashConst.learnDesignRules}/`;
                     let focusedElementFile = xmlData.filter(d => d.filePath === message.data["filePath"]);
                     if (focusedElementFile.length > 0) {
                         let focusedElementData = getDataForFocusedElement(
@@ -239,9 +240,8 @@ class WebSocketManager extends Component {
                     // await processReceivedFrequentItemSets(output, this.props.featureMetaData);
                     processReceivedFrequentItemSets(output, this.props.featureMetaData)
                         .then(processedRules => {
-                            console.log(processedRules);
                             this.props.onUpdateMinedRules(processedRules);
-                        });
+                        }).catch(e => console.log("error happened in promise", e));
                     break;
 
                 default:

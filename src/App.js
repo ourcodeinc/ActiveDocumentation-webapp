@@ -102,33 +102,14 @@ class App extends Component {
         return null;
     }
 
-    /**
-     * render loading gif
-     * @return {null}
-     */
     renderLoading() {
         return (<div id={"loadingGif"}
              className={(this.state.loadingGif ? "" : "hidden")}>
-            <div style={{
-                padding: "20%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                overflow: "hidden",
-                position: "fixed",
-                width: "100%",
-                height: "100%",
-                zIndex: "1",
-                backgroundColor: "rgba(0,0,0,0.1)"
-            }}>
-                <div style={{
-                    padding: "20%",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    margin: "0 -5%",
-                    overflow: "hidden"
-                }}>
+            <div className={"overlayLoading"}>
+                <div className={"spinnerContainer"}>
+                    <div className={"loadingMinedRules"}>
+                        <h3>{"Loading Rules and Preprocessing"}</h3>
+                    </div>
                     <div className="spinner"/>
                 </div>
             </div>

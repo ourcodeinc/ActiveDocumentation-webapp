@@ -1,8 +1,8 @@
-/*
-This file contains methods that are responsible for generate groups
-using the featureConfig.groupingCategories and output them as groupingMetaData
-Currently, the grouping is done at the start of the project.
-In future, it can also update the grouping upon edits.
+/**
+ * This file contains methods that are responsible for generate groups
+ * using the featureConfig.groupingCategories and output them as groupingMetaData
+ * Currently, the grouping is done at the start of the project.
+ * In future, it can also update the grouping upon edits.
  */
 
 import {groupingCategories} from "./featureConfig";
@@ -69,7 +69,8 @@ const cleanGroupings = (xmlFile, groupingMetaData) => {
 }
 
 /**
- *
+ * Add the input file to the groupingMetaData according to the categories.
+ * Currently, there are two grouping categories; imports and packages.
  * @param xmlFile {{xml: string, filePath:string}}
  * @param groupingMetaData {groupingMetaDataType}
  */
@@ -95,7 +96,8 @@ const addToGroupings = (xmlFile, groupingMetaData) => {
 }
 
 /**
- * extract the values for queries used for grouping files
+ * Extract the values for queries used for grouping files.
+ * For example, finds the imported packages in the given file.
  * @param mainXml {string}
  * @param groupingCategory {{categoryIdPrefix: string, query: string, excludedValues: [] }}
  * @returns {string[]}

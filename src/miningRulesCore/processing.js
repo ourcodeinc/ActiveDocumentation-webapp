@@ -2,16 +2,16 @@
 This file contains methods for generating and processing features for
 mining design rules, given DOI information and a focused element.
 It also prepare texts that should be written in files designated as the
-output of mining algorithms.
+output of mining allAlgorithms.
  */
 
 import {extractFeaturesFromXmlFile} from "./extractFeatures";
 import {
-    algorithm,
+    selectedAlgorithm,
     attributeFileNames,
-    minOccurrence,
-    minUtility,
-    defaultFeatures
+    MIN_SUPPORT_FOR_MINING,
+    MIN_UTILITY_FOR_MINING, MAX_GROUP_SIZE,
+    defaultFeatures, allAlgorithms
 } from "./featureConfig";
 import {webSocketSendMessage} from "../core/coreConstants";
 
@@ -47,6 +47,10 @@ export const generateFeatures = (xmlFiles, projectPath,
         groupingMetaData.fileMapping[focusedElementFilePath].packages) ?
         groupingMetaData.fileMapping[focusedElementFilePath].packages : [];
 
+    let targetImports = (groupingMetaData.fileMapping[focusedElementFilePath] &&
+        groupingMetaData.fileMapping[focusedElementFilePath].imports) ?
+        groupingMetaData.fileMapping[focusedElementFilePath].imports : [];
+
     let fileToProcess = xmlFiles
         .filter((xmlFile) => {
             let path = xmlFile.filePath.replace(projectPath, "");
@@ -68,8 +72,10 @@ export const generateFeatures = (xmlFiles, projectPath,
                         groupingMetaData.fileMapping[path].imports : [];
                     if (fileImports) {
                         for (let fileImp of fileImports) {
-                            for (let pack of targetPackage) {
-                                if (fileImp === pack)
+                            // ignore import groups with more than MAX_GROUP_SIZE classes
+                            if (groupingMetaData.groupMapping.imports[fileImp].length > MAX_GROUP_SIZE) continue;
+                            for (let imp of targetImports) {
+                                if (fileImp === imp)
                                     return true;
                             }
                         }
@@ -83,20 +89,22 @@ export const generateFeatures = (xmlFiles, projectPath,
         extractFeaturesFromXmlFile(xmlFile, projectPath, focusedElementData, featureMetaData);
     });
 
-    removeMinOccurredFeatures(featureMetaData, minOccurrence);
+    removeMinOccurredFeatures(featureMetaData, MIN_SUPPORT_FOR_MINING);
 
-    let targetIds = featureMetaData.featureInfoContainers.featureMapReverse[focusedElementFilePath] ?
-        featureMetaData.featureInfoContainers.featureMapReverse[focusedElementFilePath] : [];
+    // find the featureIds of a file of focusedElement
+    // and increase their weights
+    let ids = featureMetaData.featureInfoContainers.featureMapReverse[focusedElementFilePath];
+    let targetIds = ids ? ids : [];
 
     let targetIdWeight = targetIds.map(featureId => {
-        return {featureId, weight: 10, action: "multiply"}
+        return {featureId, weight: 1.5, action: "multiply"}
     })
     UpdateFeatureWeights(targetIdWeight, featureMetaData);
     // updateFeatureWeightsDoi(doiInformation, featureMetaData, projectPath);
 }
 
 /**
- * remove features that appear less than minOccurrence from featureMaps
+ * remove features that appear less than MIN_SUPPORT_FOR_MINING from featureMaps
  * @param featureMetaData {featureMetaDataType}
  * @param minOccurrence {number}  positive number
  */
@@ -156,25 +164,25 @@ const removeMinOccurredFeatures = (featureMetaData,
  */
 const UpdateFeatureWeights = (featureIdWeights, featureMetaData) => {
     for (let featureIdWeight of featureIdWeights) {
-        let feature_desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureIdWeight.featureId];
-        if (!feature_desc) continue;
-        let feature_info = featureMetaData.featureInfoContainers.featureInfo[feature_desc];
-        if (!feature_info) continue;
-        let original_weight = featureMetaData.featureInfoContainers.featureInfo[feature_desc].weight ?
-            featureMetaData.featureInfoContainers.featureInfo[feature_desc].weight :
-            defaultFeatures[featureMetaData.featureInfoContainers.featureInfo[feature_desc].featureIndex].weight;
+        let featureDesc = featureMetaData.featureInfoContainers.featureInfoReverse[featureIdWeight.featureId];
+        if (!featureDesc) continue;
+        let featureInfo = featureMetaData.featureInfoContainers.featureInfo[featureDesc];
+        if (!featureInfo) continue;
+        let originalWeight = featureMetaData.featureInfoContainers.featureInfo[featureDesc].weight ?
+            featureMetaData.featureInfoContainers.featureInfo[featureDesc].weight :
+            defaultFeatures[featureMetaData.featureInfoContainers.featureInfo[featureDesc].featureIndex].weight;
         switch (featureIdWeight.action) {
             case "replace":
-                featureMetaData.featureInfoContainers.featureInfo[feature_desc].weight =
+                featureMetaData.featureInfoContainers.featureInfo[featureDesc].weight =
                     featureIdWeight.weight;
                 break;
             case "add":
-                featureMetaData.featureInfoContainers.featureInfo[feature_desc].weight =
-                    original_weight + featureIdWeight.weight
+                featureMetaData.featureInfoContainers.featureInfo[featureDesc].weight =
+                    originalWeight + featureIdWeight.weight
                 break;
             case "multiply":
-                featureMetaData.featureInfoContainers.featureInfo[feature_desc].weight =
-                    original_weight * featureIdWeight.weight
+                featureMetaData.featureInfoContainers.featureInfo[featureDesc].weight =
+                    originalWeight * featureIdWeight.weight
                 break;
             default:
                 break;
@@ -247,19 +255,21 @@ export const prepareFilesAndRequestMineRules = (featureMetaData) => {
         let featureIdsInLine = [], weights = [];
         let sumUtilities = 0;
         for (let featureId of featureIds) {
-            let feature_desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
-            if (!feature_desc) return null;
-            let feature_info = featureMetaData.featureInfoContainers.featureInfo[feature_desc];
-            if (!feature_info) return null;
+            let featureDesc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
+            if (!featureDesc) return null;
+            let featureInfo = featureMetaData.featureInfoContainers.featureInfo[featureDesc];
+            if (!featureInfo) return null;
             featureIdsInLine.push(featureId);
-            weights.push(feature_info.weight);
-            sumUtilities += feature_info.weight;
+            weights.push(featureInfo.weight);
+            sumUtilities += featureInfo.weight;
         }
+        if (selectedAlgorithm === allAlgorithms.FP_MAX)
+            return `${featureIdsInLine.join(" ")}`
         return `${featureIdsInLine.join(" ")}:${sumUtilities}:${weights.join(" ")}`
     }
 
     /**
-     * output: array of files with name: featureConfig.sortGroupInformation.key and contents created by processLine
+     * output: array of files with name: featureConfig.featureGroupInformation.key and contents created by processLine
      * @param group {"spec"|"usage"}
      */
     function processGroup(group) {
@@ -311,7 +321,7 @@ export const prepareFilesAndRequestMineRules = (featureMetaData) => {
         },
         {
             command: webSocketSendMessage.mine_design_rules_msg,
-            data: {utility : minUtility, algorithm}
+            data: {utility : MIN_UTILITY_FOR_MINING, algorithm: selectedAlgorithm}
         });
 
     return output;

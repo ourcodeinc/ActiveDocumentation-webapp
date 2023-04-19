@@ -615,7 +615,7 @@ body {
     height: 100%;
 }
 
-.overlay, .overlay .overlayLoading {
+.overlay {
     width: 100%;
     height: 100%;
     position: absolute;
@@ -809,13 +809,6 @@ img.tutorialSmallImage {
     padding: 3px;
 }
 
-.minedRulesComponent .generateRuleGui .minedRules.inputText:hover {
-    background-color: #f4f4f4 !important;
-}
-
-.minedRulesComponent .generateRuleGui .minedRules.inputText.activeElement:hover {
-    background-color: #c5c5c5 !important;
-}
 
 /*   Feature Selection  */
 
@@ -841,10 +834,27 @@ img.tutorialSmallImage {
     transform: rotate(90deg);
 }
 
-.loadingMinedRulesContainer {
-    text-align: center;
-    color: black;
-    background-color: white;
+.learningDesignRulesComponent .overlayLoading, #loadingGif .overlayLoading {
+    padding: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.learningDesignRulesComponent .spinnerContainer, #loadingGif .spinnerContainer {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: 100px;
+    align-items: center;
+    overflow: hidden;
+    padding: 15%;
 }
 
 .loadingMinedRules {
@@ -863,4 +873,24 @@ img.tutorialSmallImage {
 
 .minedRulesComponent .generateRuleGui .smallText {
     width: auto !important;
+}
+
+.minedRulesComponent .generateRuleGui .dropdown-menu {
+    width: max-content;
+}
+
+.frequency-0, .frequency-1, .frequency-2 {
+    background-color: #dbe4e6 !important;
+}
+
+.frequency-3, .frequency-4, .frequency-5 {
+    background-color: #a9d1e3 !important;
+}
+
+.frequency-6, .frequency-7, .frequency-8 {
+    background-color: #7cbcd8 !important;
+}
+
+.frequency-9, .frequency-10 {
+    background-color: #61b5d6 !important;
 }

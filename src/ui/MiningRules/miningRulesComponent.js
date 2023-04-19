@@ -1,5 +1,11 @@
 /**
- * Created by saharmehrpour on 11/1/17.
+ * Created by saharmehrpour.
+ * Rendering the page for mining design rules from code.
+ * 1. Initially, the tool 'pre-processes' the files to form groupings.
+ * The page renders a message to select an element in the IDE.
+ * 2. After selecting the element (receiving a message), the tool will extracts the features
+ * and renders the summary of features to get approval from the user.
+ * 3. After the approval, the tool mines the rules and displays the result.
  */
 
 import React, {Component} from "react";
@@ -14,9 +20,9 @@ import {reduxStoreMessages} from "../../reduxStoreConstants";
 import {createGroupingMetaData, formGroupings} from "../../miningRulesCore/preProcessing";
 import {createFeatureMetaDataMap} from "../../miningRulesCore/extractFeatures";
 import {generateFeatures, prepareFilesAndRequestMineRules} from "../../miningRulesCore/processing";
-import {focusElementType, sortGroupInformation} from "../../miningRulesCore/featureConfig";
-// import MinedDesignRules from "./minedDesignRules";
+import {focusElementType, featureGroupInformation} from "../../miningRulesCore/featureConfig";
 import MinedRulePad from "./minedRulePad";
+import GraphicalComponent from "../RulePad/rulePadGraphicalEditor/graphicalComponent";
 
 class MiningRulesComponent extends Component {
 
@@ -25,7 +31,10 @@ class MiningRulesComponent extends Component {
         this.state = {
             minedRules: [],
             loadingStatus: false, // for loading icons when mining rules
-            loadingTitle: "Mining Design Rules",
+            loadingTitle: "Mining Rules",
+            showSelectedCluster: false,
+            selectedClusterGroup: null,
+            selectedClusterIndex: null
         };
     }
 
@@ -34,11 +43,12 @@ class MiningRulesComponent extends Component {
             <div className={"learningDesignRulesComponent overlayContainer"}>
                 <div className={"mainDiv-overlay"}>
                 {this.renderDefaultView()}
-                <div className={"minedRulesComponent"}>
-                    {this.renderFocusedElementInfo()}
-                    {this.renderApproval()}
-                    {this.renderNewOutput()}
-                </div>
+                    {this.state.showSelectedCluster ? this.renderSelectedCluster() : (
+                        <div className={"minedRulesComponent"}>
+                            {this.renderFocusedElementInfo()}
+                            {this.renderMinedClusters()}
+                        </div>
+                    )}
                 </div>
                 {this.renderLoading()}
             </div>
@@ -51,9 +61,21 @@ class MiningRulesComponent extends Component {
                 this.preProcessGroupings();
                 break;
 
+            case reduxStoreMessages.update_focused_element_identifiers:
+                this.setState({
+                    minedRules: [],
+                    loadingTitle: "Extracting Features",
+                    loadingStatus: true,
+                    showSelectedCluster: false,
+                    selectedClusterGroup: null,
+                    selectedClusterIndex: null
+                });
+                break;
+
             case reduxStoreMessages.request_mine_rules_for_element_msg:
                 this.setState({
                     minedRules: [],
+                    loadingTitle: "Mining Rules",
                     loadingStatus: true,
                 }, () => {
                     this.processFeaturesForSelectedScope();
@@ -85,17 +107,12 @@ class MiningRulesComponent extends Component {
         }
     }
 
-    /**
-     * render the initial views
-     * @return {null|*}
-     */
     renderDefaultView() {
         if (this.state.minedRules.length > 0)
             return (
-                <div>
-                    {this.renderLoading()}
-                </div>
+                <div>{this.renderLoading()}</div>
             );
+        if (this.state.loadingStatus) return null;
         return (
             <div>
                 <h3>Pick an element in the IDE, and select <strong>Mine Rules</strong> from the context menu.</h3>
@@ -103,20 +120,17 @@ class MiningRulesComponent extends Component {
         )
     }
 
-
-    /**
-     * render loading gif
-     * @return {null}
-     */
     renderLoading() {
-        return this.state.loadingStatus ? (
-            <div className={"overlayLoading loadingMinedRulesContainer"}>
-                <div className={"loadingMinedRules"}><h3>{this.state.loadingTitle}</h3></div>
-                <div>
+        return (<div className={(this.state.loadingStatus ? "" : "hidden")}>
+            <div className={"overlayLoading"}>
+                <div className={"spinnerContainer"}>
+                    <div className={"loadingMinedRules"}>
+                        <h3>{this.state.loadingTitle}</h3>
+                    </div>
                     <div className="spinner"/>
                 </div>
             </div>
-        ) : null;
+        </div>);
     }
 
     renderFocusedElementInfo() {
@@ -140,35 +154,90 @@ class MiningRulesComponent extends Component {
         }
     }
 
-    renderApproval() {
-        if (this.state.minedRules.length > 0) return null;
-        return (
-            <div>
-                <Button onClick={() => this.sendFeaturesForMiningRules()}>Start Mining Rules</Button>
-            </div>
-        )
-    }
-
-    renderNewOutput() {
-        let process = (rulePadState, index) => {
+    renderMinedClusters() {
+        let process = (group, groupIndex, clusterIndex) => {
+            let clusterObject = group.clusters[clusterIndex];
+            let rulePadState = group.rulePadStates[clusterIndex];
+            let fileGroup = group.fileGroup;
             return (<div>
                 <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"}>
                     <Row>
-                        <Col md={10}>
-                            <MinedRulePad key={new Date()} rulePadState={rulePadState} ruleIndex={`mined_${index}`}/>
+                        <Col md={8}>
+                            <MinedRulePad key={new Date()} rulePadState={rulePadState}
+                                          ruleIndex={`mined_${groupIndex}_${clusterIndex}`}
+                                          featureMetaData={this.state.featureMetaData} fileGroup={fileGroup}/>
+                        </Col>
+                        <Col md={3}>
+                            <h5><strong>Sum of feature weights in the cluster: </strong>{clusterObject.sumWeights}</h5>
+                            <h5><strong>Size of the cluster: </strong>{clusterObject.cluster.length}</h5>
+                            <h5><strong>Average frequency (Support) of cluster members: </strong>
+                                {clusterObject.averageSupport}
+                            </h5>
+                            <Button onClick={() =>
+                                this.setState({selectedClusterGroup: group, selectedClusterIndex: clusterIndex},
+                                    () => this.setState({showSelectedCluster: true}))
+                            }>Explore</Button>
                         </Col>
                     </Row>
                 </div>
             </div>)
         }
-        return this.state.minedRules.map((gr, i) => {
-            return (
-                <div key={i}>
-                    <h4>{sortGroupInformation[gr.data.fileGroup].desc}</h4>
-                    {gr.rulePadStates.map((rp, j) => process(rp, `${i}_${j}`))}
-                </div>)
-
+        return this.state.minedRules.map((group, groupIndex) => {
+            if (group.rulePadStates.length === 0) {
+                return (
+                    <div key={groupIndex}>
+                        <h4><strong>{"No rules found for "}
+                            {featureGroupInformation[group.fileGroup].desc}</strong></h4>
+                    </div>)
+            } else {
+                return (
+                    <div key={groupIndex}>
+                        <h4>{featureGroupInformation[group.fileGroup].desc}</h4>
+                        {group.rulePadStates.map((_, clusterIndex) => process(group, groupIndex, clusterIndex))}
+                    </div>)
+            }
         })
+    }
+
+    renderSelectedCluster() {
+        let clusterObject = this.state.selectedClusterGroup.clusters[this.state.selectedClusterIndex];
+        let rulePadState = this.state.selectedClusterGroup.rulePadStates[this.state.selectedClusterIndex];
+        let fileGroup = this.state.selectedClusterGroup.fileGroup;
+        return (<div>
+            <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"}>
+                <Row>
+                    <Col md={8}>
+                        <MinedRulePad key={new Date()} rulePadState={rulePadState}
+                                      ruleIndex={`cluster_${this.state.selectedClusterIndex}`}
+                                      featureMetaData={this.state.featureMetaData} fileGroup={fileGroup}/>
+                    </Col>
+                    <Col md={3}>
+                        <h5><strong>Sum of feature weights in the cluster: </strong>{clusterObject.sumWeights}</h5>
+                        <h5><strong>Size of the cluster: </strong>{clusterObject.cluster.length}</h5>
+                        <h5><strong>Average frequency (Support) of cluster members: </strong>
+                            {clusterObject.averageSupport}
+                        </h5>
+                    </Col>
+                </Row>
+            </div>
+
+            <div className={"generateRuleGui guiBoundingBox"}>
+                <Row>
+                    <Col md={8}>
+                        <GraphicalComponent key={new Date()} ruleIndex={`cluster_${this.state.selectedClusterIndex}`}
+                                            elementId={"0"} root
+                                            rootTree={rulePadState.guiTree}
+                                            canBeStarredIDs={[]}
+                                            guiElements={rulePadState.guiElements}
+                                            changeGuiElementJobs={(ruleIndex, jobs) => {}}
+                        />
+                    </Col>
+                </Row>
+            </div>
+
+            <Button onClick={() => this.setState({showSelectedCluster: false,
+                selectedClusterGroup: null, selectedClusterIndex: null})}>Close</Button>
+        </div>)
     }
 
     /**
@@ -194,7 +263,6 @@ class MiningRulesComponent extends Component {
         this.setState({loadingStatus: false}
             , () => this.props.onUpdateFeatureMetaData(featureMetaData)
         );
-
     }
 
     /**

@@ -36,13 +36,11 @@
   * recentSearches: {timestamp: Date, filePath: string, keyword: string}[]}} doiInformationType
   *
   * @typedef {{support:number, utility:number, featureIds: number[]}} initialFrequentItemSetType
-  * @typedef {{support:number, utility:number, featureIds: Object<string, number[]>[]}} frequentItemSetType
-  *
   * @typedef  {{fileGroup: string, frequentItemSets: initialFrequentItemSetType[]}[]} initialParsedOutputType
-  * @typedef  {{fileGroup: string, frequentItemSets: frequentItemSetType[]}[]} parsedOutputType
   *
-  * @typedef  {{fileGroup: string, frequentItemSets: initialFrequentItemSetType[], builtObjects: Array}
-  *             []} extendedParsedOutputType
+  * @typedef {{fileGroup: string, clusters:
+  *               {key: string, withChildren: Array, selectedElement: boolean, isConstraint: boolean, _data_: {}}
+  *           []}[]} builtObjectRulePadOutputType
   */
 
 

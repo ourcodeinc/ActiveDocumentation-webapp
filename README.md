@@ -6,7 +6,7 @@ This app is written in "React" framework.
 
 ## spmf.jar
 
-This file is required for FPMax algorithm (for mining design rules) to execute. It can be downloaded from this repository or [here](http://www.philippe-fournier-viger.com/spmf/index.php?link=download.php).
+This file is required for FP_MAX selectedAlgorithm (for mining design rules) to execute. It can be downloaded from this repository or [here](http://www.philippe-fournier-viger.com/spmf/index.php?link=download.php).
 **The file should be copied/moved to the root directory of the project.**
 
 

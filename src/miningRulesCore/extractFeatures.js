@@ -46,67 +46,76 @@ export const createFeatureMetaDataMap = () => {
 export function extractFeaturesFromXmlFile(xmlFile, projectPath,
                                            focusedElementData,
                                            featureMetaData) {
+    // only select feature sets that belong to the same element group as the focusedElement
     let featuresToExtract = mapFocusedElementToFeatures[focusedElementData.mapFocusedElementToFeaturesKey];
 
     let xmlFeatureIds = [];
-    for (let i = 0; i < featuresToExtract.spec.length; i++) {
-        let spec_item = featuresToExtract.spec[i];
-        let container_xpath = (defaultFeatures[spec_item.container.node]).xpath;
-        // find the container nodes
-        let containerNodes = returnNodeArray(xmlFile.xml, container_xpath);
-        for (let j = 0; j < containerNodes.length; j++) {
-            let containerFeatureIds = [];
-            let containerNode = containerNodes[j];
-            // extract the default set of features for the container
-            for (let featureIndex of spec_item.container.featureSet) {
-                // prepare the XPath for running the default features on container nodes
-                let container_node_xpath = (spec_item.container.featureQueryPrefix ? spec_item.container.featureQueryPrefix : "") +
-                    (defaultFeatures[featureIndex].xpath);
-                containerFeatureIds = containerFeatureIds.concat(extractFeatureFromNode(containerNode, featureIndex,
-                    featureMetaData, container_node_xpath));
-            }
 
-            // for each group of specifications
-            for (let k = 0; k < spec_item.contentGroups.length; k++) {
-                let group = spec_item.contentGroups[k];
-                // find the parent nodes for extracting features
-                let groupNodes = [containerNode];
-                if (group.node) {
-                    let group_xpath = defaultFeatures[group.node].xpath;
-                    groupNodes = returnNodeArray(containerNode, group_xpath);
-                }
-
-                // for each parent node
-                for (let l = 0; l < groupNodes.length; l++) {
-                    let node = groupNodes[l];
-                    let groupFeatureIds = []
-                    // extract the features from the parent node
-                    for (let featureId of group.featureSet) {
-                        let xpath_feature = (group.featureQueryPrefix ? group.featureQueryPrefix : "") +
-                            (defaultFeatures[featureId].xpath);
-                        let result = extractFeatureFromNode(node, featureId, featureMetaData, xpath_feature);
-                        groupFeatureIds = groupFeatureIds.concat(result);
-                    }
-
-                    // populate the featureMetaData.featureGroups.spec
-                    let groupId = group.groupId;
-                    if (!featureMetaData.featureGroups.spec[groupId])
-                        featureMetaData.featureGroups.spec[groupId] = {elementFeatures: [], rule: {}};
-                    let element = `${xmlFile.filePath.replace(projectPath, "")}`
-                        + `_${spec_item.container.type}_${j}_${group.type}_${l}`;
-                    let featureIds = containerFeatureIds.concat(groupFeatureIds);
-                    // updating the featureMetaData
-                    featureMetaData.featureGroups.spec[groupId].elementFeatures.push({element, featureIds});
-                    xmlFeatureIds = [...new Set(xmlFeatureIds.concat(featureIds))];
-                }
-            }
-
-            // extract features for usages of each container node
-            let newUsageFeatureIds = processFeatureSetUsage(xmlFile, projectPath, focusedElementData,
-                featureMetaData, containerNode);
-            xmlFeatureIds = [...new Set(xmlFeatureIds.concat(newUsageFeatureIds))];
-        }
+    if (featuresToExtract.spec.length !== 1) {
+        console.log("Error happened for extracting the features for spec of " +
+            focusedElementData.mapFocusedElementToFeaturesKey);
+        return;
     }
+    // The object defining the features of the specifications of an element.
+    let specObject = featuresToExtract.spec[0];
+    // The object defining the features for the element containing the specification features.
+    let containerObject = specObject.container;
+    let containerXpath = (defaultFeatures[containerObject.node]).xpath;
+    // find the container nodes
+    let containerNodes = returnNodeArray(xmlFile.xml, containerXpath);
+    for (let j = 0; j < containerNodes.length; j++) {
+        let containerFeatureIds = [];
+        let containerNode = containerNodes[j];
+        // extract the default set of features for the container
+        for (let featureIndex of containerObject.featureSet) {
+            // prepare the XPath for running the default features on container nodes
+            let containerNodeXpath = (containerObject.featureQueryPrefix ? containerObject.featureQueryPrefix : "") +
+                (defaultFeatures[featureIndex].xpath);
+            containerFeatureIds = containerFeatureIds.concat(extractFeatureFromNode(containerNode, featureIndex,
+                featureMetaData, containerNodeXpath));
+        }
+
+        // for each group of specifications
+        for (let k = 0; k < specObject.contentGroups.length; k++) {
+            let group = specObject.contentGroups[k];
+            // find the parent nodes for extracting features
+            let groupNodes = [containerNode];
+            if (group.node) {
+                let groupXpath = defaultFeatures[group.node].xpath;
+                groupNodes = returnNodeArray(containerNode, groupXpath);
+            }
+
+            // for each parent node
+            for (let l = 0; l < groupNodes.length; l++) {
+                let node = groupNodes[l];
+                let groupFeatureIds = []
+                // extract the features from the parent node
+                for (let featureId of group.featureSet) {
+                    let xpathFeature = (group.featureQueryPrefix ? group.featureQueryPrefix : "") +
+                        (defaultFeatures[featureId].xpath);
+                    let result = extractFeatureFromNode(node, featureId, featureMetaData, xpathFeature);
+                    groupFeatureIds = groupFeatureIds.concat(result);
+                }
+
+                // populate the featureMetaData.featureGroups.spec
+                let groupId = group.groupId;
+                if (!featureMetaData.featureGroups.spec[groupId])
+                    featureMetaData.featureGroups.spec[groupId] = {elementFeatures: [], rule: {}};
+                let element = `${xmlFile.filePath.replace(projectPath, "")}`
+                    + `_${specObject.container.type}_${j}_${group.type}_${l}`;
+                let featureIds = containerFeatureIds.concat(groupFeatureIds);
+                // updating the featureMetaData
+                featureMetaData.featureGroups.spec[groupId].elementFeatures.push({element, featureIds});
+                xmlFeatureIds = [...new Set(xmlFeatureIds.concat(featureIds))];
+            }
+        }
+
+        // extract features for usages of each container node
+        let newUsageFeatureIds = processFeatureSetUsage(xmlFile, projectPath, focusedElementData,
+            featureMetaData, containerNode);
+        xmlFeatureIds = [...new Set(xmlFeatureIds.concat(newUsageFeatureIds))];
+    }
+
     addFeatureIdsToMap(xmlFeatureIds, xmlFile.filePath.replace(projectPath, ""), featureMetaData);
 }
 
@@ -134,26 +143,26 @@ const processFeatureSetUsage = (xmlFile, projectPath,
     for (let i = 0; i < featuresToExtract.usage.length; i++) {
         // find the container in the parentNode (container node of spec)
         // containing/using the focused element
-        let usage_item = featuresToExtract.usage[i];
-        let container_xpath = (defaultFeatures[usage_item.container.node]).xpath
+        let usageItem = featuresToExtract.usage[i];
+        let containerXpath = (defaultFeatures[usageItem.container.node]).xpath
             .replace(new RegExp("<IDENTIFIER>", "g"), identifier);
-        let containerNodes = returnNodeArray(parentNode, container_xpath);
+        let containerNodes = returnNodeArray(parentNode, containerXpath);
         // per each container node
         for (let j = 0; j < containerNodes.length; j++) {
             let containerFeatureIds = [];
             let containerNode = containerNodes[j];
             // extract the featureSet group
-            for (let featureId of usage_item.container.featureSet) {
+            for (let featureId of usageItem.container.featureSet) {
                 // prepare the XPath for running the default features on container nodes
-                let container_node_xpath = (usage_item.container.featureQueryPrefix ? usage_item.container.featureQueryPrefix : "") +
+                let containerNodeXpath = (usageItem.container.featureQueryPrefix ? usageItem.container.featureQueryPrefix : "") +
                     (defaultFeatures[featureId].xpath).replace(new RegExp("<IDENTIFIER>", "g"), identifier);
                 containerFeatureIds = containerFeatureIds.concat(extractFeatureFromNode(containerNode, featureId,
-                    featureMetaData, container_node_xpath));
+                    featureMetaData, containerNodeXpath));
             }
 
             // for each group of usages
-            for (let k = 0; k < usage_item.contentGroups.length; k++) {
-                let group = usage_item.contentGroups[k];
+            for (let k = 0; k < usageItem.contentGroups.length; k++) {
+                let group = usageItem.contentGroups[k];
                 // find the parent nodes for extracting features
                 let groupNodes = [containerNode];
                 if (group.node) {
@@ -176,7 +185,7 @@ const processFeatureSetUsage = (xmlFile, projectPath,
                     if (!featureMetaData.featureGroups.usage[groupId])
                         featureMetaData.featureGroups.usage[groupId] = {elementFeatures: [], rule: {}};
                     let element = `${xmlFile.filePath.replace(projectPath, "")}`
-                        + `_${usage_item.container.type}_${j}_${group.type}_${l}`;
+                        + `_${usageItem.container.type}_${j}_${group.type}_${l}`;
                     let featureIds = containerFeatureIds.concat(groupFeatureIds);
                     // updating the featureMetaData
                     featureMetaData.featureGroups.usage[groupId].elementFeatures.push({element, featureIds});
@@ -299,7 +308,7 @@ const extractMultipleTextsFeature = (mainNode, featureIndex, featureMetaData,
  * @return {*[]} returns the array of new featureIds
  */
 const extractSingleTextEndsWithFeature = (mainNode, featureIndex, featureMetaData,
-                                      xpath, startsWith = false) => {
+                                          xpath, startsWith = false) => {
     let ids = [];
     let result = runXPathSingleNode(mainNode, xpath);
     if (result.length === 0) return [];
