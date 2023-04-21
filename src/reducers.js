@@ -1,5 +1,4 @@
 import {initial_state, default_rulePanelState} from "./initialState";
-import {generateTreeForElement} from "./ui/RulePad/rulePadGraphicalEditor/graphicalEditorConstants";
 import {reduxStoreActions, reduxStoreMessages} from "./reduxStoreConstants";
 
 
@@ -343,195 +342,19 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
         /*
           {
-            type: "CHANGE_GUI_ELEMENT",
-            ruleIndex: ruleIndex,
-            group: group, // quantifier or constraint
-            tasks: tasks
+           type: "UPDATE_RULE_STATE",
+           data: {ruleIndex: *, updatedRuleState: *}
           }
-        */
-        case reduxStoreActions.action_change_gui_element:
-            // There can be several jobs.
-            // All changes are done on a copy
-            action.data["tasks"].forEach(job => {
-                switch (job["task"]) {
-                    // job = {elementId: "", task: "", value: `${childGroupName}`}
-                    case "ADD_EXTRA":
-                    case "REMOVE_EXTRA":
-                        // general function for adding and removing extra fields
-                        let processFunc = (array) => {
-                            // for "body" value should be in form of `body,${index}`
-                            let childGroup = job["value"].startsWith("body") ? "body" : job["value"];
-
-                            let filterFunction = (array, id) => {
-                                if (array.guiElements[id].activeElement)
-                                    return true;
-                                delete array.guiElements[id];
-
-                                // if the newly removed element is a selected element, un-select it
-                                if (array.guiTree.selectedElementID === id)
-                                    array.guiTree.selectedElementID = "";
-
-                                return false;
-                            };
-
-                            let childrenGroup = array.guiTree[job["elementId"]].children[childGroup];
-                            if (job["value"].startsWith("body")) childrenGroup = array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])];
-
-                            let newElementConditionName = array.guiElements[childrenGroup[0]].conditionName;
-                            if (job["task"] === "REMOVE_EXTRA") {
-                                // remove all inactive elements
-                                if (job["value"].startsWith("body"))
-                                    array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])] =
-                                        array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])].filter((id) => filterFunction(array, id));
-                                else
-                                    array.guiTree[job["elementId"]].children[childGroup] =
-                                        array.guiTree[job["elementId"]].children[childGroup].filter((id) => filterFunction(array, id));
-                            }
-                            let newElementId = Math.floor(new Date().getTime() / 10).toString();
-                            let newElementsData = generateTreeForElement(newElementConditionName, newElementId, job["elementId"]);
-                            // updating the existing tree
-                            if (job["value"].startsWith("body"))
-                                array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])].push(newElementId);
-                            else
-                                array.guiTree[job["elementId"]].children[childGroup].push(newElementId);
-                            // adding new trees
-                            newElementsData.trees.forEach(tree => array.guiTree[tree.id] = tree.node);
-                            // adding new elements
-                            newElementsData.elements.forEach(elem => array.guiElements[elem.id] = elem.node);
-
-                            return array;
-                        };
-
-
-                        if (action.data["ruleIndex"] !== -1)
-                            copiedState.ruleTable = copiedState.ruleTable.map(rule => {
-                                if (rule.index !== action.data["ruleIndex"]) return rule;
-                                rule.rulePanelState.graphicalEditorState = processFunc(rule.rulePanelState.graphicalEditorState);
-                                return rule;
-                            });
-                        else
-                            copiedState.rulePadState.graphicalEditorState = processFunc(copiedState.rulePadState.graphicalEditorState);
-
-                        break;
-
-                    // job = {elementId: "", task: "UPDATE_ELEMENT", value: {props: newValues}}
-                    case "UPDATE_ELEMENT":
-                        if (action.data["ruleIndex"] !== -1) {
-                            copiedState.ruleTable = copiedState.ruleTable.map(rule => {
-                                if (rule.index !== action.data["ruleIndex"]) return rule;
-                                rule.rulePanelState.graphicalEditorState.guiElements[job["elementId"]] = {
-                                    ...rule.rulePanelState.graphicalEditorState.guiElements[job["elementId"]],
-                                    ...job["value"]
-                                };
-
-                                return rule;
-                            });
-                        }
-                        else {
-                            copiedState.rulePadState.graphicalEditorState.guiElements[job["elementId"]] = {
-                                ...copiedState.rulePadState.graphicalEditorState.guiElements[job["elementId"]],
-                                ...job["value"]
-                            };
-                        }
-                        break;
-
-                    // job = {elementId: "", task: "REMOVE_ELEMENT", value: {parentId: ""}}
-                    case "REMOVE_ELEMENT":
-
-                        // search in parent children and remove elementId
-                        // toBeDeletedIDs=[] to be removed from ...graphicalEditorState.${group}.guiElements and ....graphicalEditorState["quantifier/constraint"]
-                        // build a stack=[elementId] for going through tree of elementId
-                        // while stack.size()>0
-                        //  pop one newId, add it to storeIDs
-                        //  add ids of children of the popped id tree to the stack
-                        // delete toBeDeletedIDs from ...graphicalEditorState.${group}.guiElements and ....graphicalEditorState["quantifier/constraint"]
-                        let processRemoveElement = (array) => {
-                            let parentTree = array.guiTree[job["value"]["parentId"]];
-                            Object.keys(parentTree.children).forEach(childGroup => {
-                                if (childGroup !== "body")
-                                    array.guiTree[job["value"]["parentId"]].children[childGroup] = parentTree.children[childGroup].filter(elemId => elemId !== job["elementId"]);
-                                else
-                                    array.guiTree[job["value"]["parentId"]].children["body"] = parentTree.children["body"].map(subGroup => {
-                                        return subGroup.filter(elemId => elemId !== job["elementId"])
-                                    });
-                            });
-
-                            let toBeDeletedIDs = [], stackIDs = [job["elementId"]];
-                            while (stackIDs.length > 0) {
-                                let tempId = stackIDs.pop();
-                                toBeDeletedIDs.push(tempId);
-
-                                let tempTree = array.guiTree[tempId];
-                                let childrenIds = [];
-
-                                Object.keys(tempTree.children).forEach(childGroup => {
-                                    if (childGroup !== "body") childrenIds = childrenIds.concat(tempTree.children[childGroup]);
-                                    else
-                                        tempTree.children["body"].forEach(subGroup => {
-                                            childrenIds = childrenIds.concat(subGroup)
-                                        });
-                                });
-                                stackIDs = stackIDs.concat(childrenIds);
-                            }
-
-                            stackIDs.forEach(elemId => {
-                                delete array.guiElements[elemId];
-                                delete array.guiTree[elemId];
-
-                                // if the newly removed element is a selected element, un-select it
-                                if (array.guiTree.selectedElementID === elemId)
-                                    array.guiTree.selectedElementID = "";
-                            });
-
-                            return array;
-                        };
-
-                        if (action.data["ruleIndex"] !== -1)
-                            copiedState.ruleTable = copiedState.ruleTable.map(rule => {
-                                if (rule.index !== action.data["ruleIndex"]) return rule;
-                                rule.rulePanelState.graphicalEditorState = processRemoveElement(rule.rulePanelState.graphicalEditorState);
-                                return rule;
-                            });
-                        else
-                            copiedState.rulePadState.graphicalEditorState = processRemoveElement(copiedState.rulePadState.graphicalEditorState);
-
-                        break;
-
-                    // job = {elementId: "", task: "SELECT_ELEMENT", value: true/false}
-                    case "SELECT_ELEMENT":
-                        let processSelectElement = (array) => {
-                            let oldSelectedElementId = array.guiTree.selectedElementID;
-                            // if selectedElement exists update its state as well
-                            if (array.guiElements.hasOwnProperty(oldSelectedElementId))
-                                array.guiElements[oldSelectedElementId] = {
-                                    ...array.guiElements[oldSelectedElementId],
-                                    selectedElement: !job["value"]
-                                };
-                            array.guiTree.selectedElementID = job["elementId"];
-                            if (array.guiElements.hasOwnProperty(job["elementId"]))
-                                array.guiElements[job["elementId"]] = {
-                                    ...array.guiElements[job["elementId"]],
-                                    selectedElement: job["value"]
-                                };
-                            return array;
-                        };
-
-                        if (action.data["ruleIndex"] !== -1) {
-                            copiedState.ruleTable = copiedState.ruleTable.map(rule => {
-                                if (rule.index !== action.data["ruleIndex"]) return rule;
-                                rule.rulePanelState.graphicalEditorState = processSelectElement(rule.rulePanelState.graphicalEditorState);
-                                return rule;
-                            });
-                        }
-                        else
-                            copiedState.rulePadState.graphicalEditorState = processSelectElement(copiedState.rulePadState.graphicalEditorState);
-
-                        break;
-
-                    default:
-                        break;
-                }
-            });
+         */
+        case reduxStoreActions.action_update_rule_state:
+            if (action.data["ruleIndex"] !== -1)
+                copiedState.ruleTable = copiedState.ruleTable.map(rule => {
+                    if (rule.index !== action.data["ruleIndex"]) return rule;
+                    rule.rulePanelState = action.data["updatedRuleState"];
+                    return rule;
+                });
+            else
+                copiedState.rulePadState = action.data["updatedRuleState"];
 
             return Object.assign({}, state, {
                 ruleTable: copiedState.ruleTable,

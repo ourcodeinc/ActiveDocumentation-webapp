@@ -8,7 +8,7 @@ import "../../../App.css";
 import {connect} from "react-redux";
 
 import GraphicalComponent from "./graphicalComponent";
-import {changeAutoCompleteTextFromGUI, changeGuiElement} from "../../../actions";
+import {changeAutoCompleteTextFromGUI, changeRuleState} from "../../../actions";
 import {generateTreeForElement, getConditionByName} from "./graphicalEditorConstants";
 import {autoComplete_suggestion, skip_words_from_TE} from "../rulePadTextualEditor/textualEditorConstant";
 
@@ -141,7 +141,7 @@ class GraphicalEditor extends Component {
                         if (newSubTree) nodeChildren[childGroup].push(newSubTree)
                     });
                 else
-                    guiTree[nodeId].children["body"].forEach((subGroup, i) => {
+                    guiTree[nodeId].children["body"].forEach((subGroup) => {
                         subGroup.forEach(childId => {
                             if (visitedNodeId.indexOf(childId) !== -1) return null;
                             if (childId === "" || !guiElements[childId].activeElement) return null;
@@ -752,10 +752,9 @@ class GraphicalEditor extends Component {
                                 });
                         });
 
-                        let toBeDeletedIDs = [], stackIDs = [job["elementId"]];
+                        let stackIDs = [job["elementId"]];
                         while (stackIDs.length > 0) {
                             let tempId = stackIDs.pop();
-                            toBeDeletedIDs.push(tempId);
 
                             let tempTree = guiTree[tempId];
                             let childrenIds = [];
@@ -819,8 +818,156 @@ class GraphicalEditor extends Component {
         let selectJobs = this.lowestCommonAncestor(guiElements, guiTree);
         jobs = jobs.concat(selectJobs.jobs);
 
-        this.props.onChangeGuiElement(this.ruleIndex, jobs);
+        let ruleState = this.props.rulePadState;
+        if (this.ruleIndex !== -1) {
+            let rules = this.props.rules.filter(rule => rule.index === this.ruleIndex)
+            if (rules.length === 1)
+                ruleState = rules[0].rulePanelState;
+        }
+        ruleState = this.applyTasks(jobs, ruleState);
+        this.props.onChangeRuleState(this.ruleIndex, ruleState);
+    }
 
+    applyTasks(tasks, ruleState) {
+        // general function for adding and removing extra fields
+        let processFunc = (array, job) => {
+            // for "body" value should be in form of `body,${index}`
+            let childGroup = job["value"].startsWith("body") ? "body" : job["value"];
+
+            let filterFunction = (array, id) => {
+                if (array.guiElements[id].activeElement)
+                    return true;
+                delete array.guiElements[id];
+
+                // if the newly removed element is a selected element, un-select it
+                if (array.guiTree.selectedElementID === id)
+                    array.guiTree.selectedElementID = "";
+
+                return false;
+            };
+
+            let childrenGroup = array.guiTree[job["elementId"]].children[childGroup];
+            if (job["value"].startsWith("body")) childrenGroup = array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])];
+
+            let newElementConditionName = array.guiElements[childrenGroup[0]].conditionName;
+            if (job["task"] === "REMOVE_EXTRA") {
+                // remove all inactive elements
+                if (job["value"].startsWith("body"))
+                    array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])] =
+                        array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])].filter((id) => filterFunction(array, id));
+                else
+                    array.guiTree[job["elementId"]].children[childGroup] =
+                        array.guiTree[job["elementId"]].children[childGroup].filter((id) => filterFunction(array, id));
+            }
+            let newElementId = Math.floor(new Date().getTime() / 10).toString();
+            let newElementsData = generateTreeForElement(newElementConditionName, newElementId, job["elementId"]);
+            // updating the existing tree
+            if (job["value"].startsWith("body"))
+                array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])].push(newElementId);
+            else
+                array.guiTree[job["elementId"]].children[childGroup].push(newElementId);
+            // adding new trees
+            newElementsData.trees.forEach(tree => array.guiTree[tree.id] = tree.node);
+            // adding new elements
+            newElementsData.elements.forEach(elem => array.guiElements[elem.id] = elem.node);
+
+            return array;
+        };
+
+        // search in parent children and remove elementId
+        // toBeDeletedIDs=[] to be removed from ...graphicalEditorState.${group}.guiElements and ....graphicalEditorState["quantifier/constraint"]
+        // build a stack=[elementId] for going through tree of elementId
+        // while stack.size()>0
+        //  pop one newId, add it to storeIDs
+        //  add ids of children of the popped id tree to the stack
+        // delete toBeDeletedIDs from ...graphicalEditorState.${group}.guiElements and ....graphicalEditorState["quantifier/constraint"]
+        let processRemoveElement = (array, job) => {
+            let parentTree = array.guiTree[job["value"]["parentId"]];
+            Object.keys(parentTree.children).forEach(childGroup => {
+                if (childGroup !== "body")
+                    array.guiTree[job["value"]["parentId"]].children[childGroup] = parentTree.children[childGroup].filter(elemId => elemId !== job["elementId"]);
+                else
+                    array.guiTree[job["value"]["parentId"]].children["body"] = parentTree.children["body"].map(subGroup => {
+                        return subGroup.filter(elemId => elemId !== job["elementId"])
+                    });
+            });
+
+            let stackIDs = [job["elementId"]];
+            while (stackIDs.length > 0) {
+                let tempId = stackIDs.pop();
+
+                let tempTree = array.guiTree[tempId];
+                let childrenIds = [];
+
+                Object.keys(tempTree.children).forEach(childGroup => {
+                    if (childGroup !== "body") childrenIds = childrenIds.concat(tempTree.children[childGroup]);
+                    else
+                        tempTree.children["body"].forEach(subGroup => {
+                            childrenIds = childrenIds.concat(subGroup)
+                        });
+                });
+                stackIDs = stackIDs.concat(childrenIds);
+            }
+
+            stackIDs.forEach(elemId => {
+                delete array.guiElements[elemId];
+                delete array.guiTree[elemId];
+
+                // if the newly removed element is a selected element, un-select it
+                if (array.guiTree.selectedElementID === elemId)
+                    array.guiTree.selectedElementID = "";
+            });
+
+            return array;
+        };
+
+        let processSelectElement = (array, job) => {
+            let oldSelectedElementId = array.guiTree.selectedElementID;
+            // if selectedElement exists update its state as well
+            if (array.guiElements.hasOwnProperty(oldSelectedElementId))
+                array.guiElements[oldSelectedElementId] = {
+                    ...array.guiElements[oldSelectedElementId],
+                    selectedElement: !job["value"]
+                };
+            array.guiTree.selectedElementID = job["elementId"];
+            if (array.guiElements.hasOwnProperty(job["elementId"]))
+                array.guiElements[job["elementId"]] = {
+                    ...array.guiElements[job["elementId"]],
+                    selectedElement: job["value"]
+                };
+            return array;
+        };
+        tasks.forEach(job => {
+            switch (job["task"]) {
+                // job = {elementId: "", task: "", value: `${childGroupName}`}
+                case "ADD_EXTRA":
+                case "REMOVE_EXTRA":
+                    ruleState.graphicalEditorState = processFunc(ruleState.graphicalEditorState, job);
+                    break;
+
+                // job = {elementId: "", task: "UPDATE_ELEMENT", value: {props: newValues}}
+                case "UPDATE_ELEMENT":
+                    ruleState.graphicalEditorState.guiElements[job["elementId"]] = {
+                        ...ruleState.graphicalEditorState.guiElements[job["elementId"]],
+                        ...job["value"]
+                    };
+                    break;
+
+                // job = {elementId: "", task: "REMOVE_ELEMENT", value: {parentId: ""}}
+                case "REMOVE_ELEMENT":
+                    ruleState.graphicalEditorState = processRemoveElement(ruleState.graphicalEditorState, job);
+                    break;
+
+                // job = {elementId: "", task: "SELECT_ELEMENT", value: true/false}
+                case "SELECT_ELEMENT":
+                    ruleState.graphicalEditorState = processSelectElement(ruleState.graphicalEditorState, job);
+                    break;
+
+                default:
+                    break;
+            }
+        });
+        return ruleState
     }
 }
 
@@ -829,6 +976,7 @@ function mapStateToProps(state) {
         rules: state.ruleTable,
         ws: state.ws,
 
+        rulePadState: state.rulePadState,
         guiTree: state.rulePadState.graphicalEditorState.guiTree,
         guiElements: state.rulePadState.graphicalEditorState.guiElements,
         autoCompleteArray: state.rulePadState.autoCompleteArray,
@@ -837,7 +985,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        onChangeGuiElement: (ruleIndex, jobs) => dispatch(changeGuiElement(ruleIndex, jobs)),
+        onChangeRuleState: (ruleIndex, ruleState) => dispatch(changeRuleState(ruleIndex, ruleState)),
         onChangeAutoCompleteTextFromGUI: (ruleIndex, newAutoCompleteArray) => dispatch(changeAutoCompleteTextFromGUI(ruleIndex, newAutoCompleteArray))
     }
 }

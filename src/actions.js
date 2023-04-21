@@ -265,19 +265,17 @@ export const matchMessages = (ruleIndex, sentMessages, receivedMessages, quantif
 
 
 /**
- * tasks is an array of form [{elementId: "", task: "ADD_EXTRA/REMOVE_EXTRA/UPDATE_ELEMENT", value}]
- * for add/remove we have the children group name as value
- * for update we have an object {prop: newValue}
+ * update the rule
  * @param ruleIndex number
- * @param tasks array [**]
- * @return {{ruleIndex: *, type: string, tasks: *}}
+ * @param updatedRuleState
+ * @return {{type: string, data: {ruleIndex: *, updatedRuleState: *}}}
  */
-export const changeGuiElement = (ruleIndex, tasks) => {
+export const changeRuleState = (ruleIndex, updatedRuleState) => {
     return {
-        type: reduxStoreActions.action_change_gui_element,
+        type: reduxStoreActions.action_update_rule_state,
         data: {
             ruleIndex: ruleIndex,
-            tasks: tasks
+            updatedRuleState: updatedRuleState
         }
     };
 };

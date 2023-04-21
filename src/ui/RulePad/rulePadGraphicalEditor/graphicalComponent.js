@@ -1008,7 +1008,7 @@ class GraphicalComponent extends Component {
 export default GraphicalComponent;
 
 
-class CustomDropDown extends Component {
+export class CustomDropDown extends Component {
     constructor(props) {
         super(props);
 

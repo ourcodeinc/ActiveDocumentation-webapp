@@ -71,7 +71,7 @@ export const reduxStoreActions = {
     action_send_expr_stmt_xml: "SEND_EXPR_STMT_XML",
     action_receive_expr_stmt_xml: "RECEIVE_EXPR_STMT_XML",
     action_matched_messages: "MATCHED_MESSAGES",
-    action_change_gui_element: "CHANGE_GUI_ELEMENT",
+    action_update_rule_state: "UPDATE_RULE_STATE",
     action_change_autocomplete_text: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI",
     action_update_xpath: "UPDATE_XPATH",
 
