@@ -24,6 +24,7 @@ import {createFeatureMetaDataMap} from "../../miningRulesCore/extractFeatures";
 import {generateFeatures, prepareFilesAndRequestMineRules} from "../../miningRulesCore/processing";
 import {focusElementType, featureGroupInformation} from "../../miningRulesCore/featureConfig";
 import MinedClusterRulePad from "./MinedClusterRulePad";
+import {constantRuleIndex} from "../uiConstants";
 import RulePad from "../RulePad/rulePad";
 
 class MiningRulesComponent extends Component {
@@ -230,7 +231,7 @@ class MiningRulesComponent extends Component {
             <div className={"generateRuleGui guiBoundingBox"}>
                 <Row>
                     <Col md={8}>
-                        <RulePad ruleIndex={-2}/>
+                        <RulePad ruleIndex={constantRuleIndex.minedRuleIndex}/>
                     </Col>
                 </Row>
             </div>

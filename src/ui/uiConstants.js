@@ -17,3 +17,8 @@ export const hashConst = {
 }
 
 export const none_filePath = "none";
+
+export const constantRuleIndex = {
+    newRuleIndex: -1,
+    minedRuleIndex: -2
+}

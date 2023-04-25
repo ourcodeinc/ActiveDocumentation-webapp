@@ -11,6 +11,7 @@ import GraphicalComponent from "./graphicalComponent";
 import {changeAutoCompleteTextFromGUI, changeRuleState} from "../../../actions";
 import {generateTreeForElement, getConditionByName} from "./graphicalEditorConstants";
 import {autoComplete_suggestion, skip_words_from_TE} from "../rulePadTextualEditor/textualEditorConstant";
+import {constantRuleIndex} from "../../uiConstants";
 
 
 class GraphicalEditor extends Component {
@@ -47,7 +48,7 @@ class GraphicalEditor extends Component {
                 this.state.autoCompleteArray = this.ruleI.rulePanelState.autoCompleteArray;
             }
         }
-        else if (this.ruleIndex === -2) {
+        else if (this.ruleIndex === constantRuleIndex.minedRuleIndex) {
             if (props.minedRulePadState && props.minedRulePadState.graphicalEditorState) {
                 this.state.guiTree = props.minedRulePadState.graphicalEditorState.guiTree;
                 this.state.guiElements = props.minedRulePadState.graphicalEditorState.guiElements;
@@ -88,7 +89,7 @@ class GraphicalEditor extends Component {
                     }, this.receiveStateData);
             }
         }
-        else if (this.ruleIndex === -1) {
+        else if (this.ruleIndex === constantRuleIndex.newRuleIndex) {
             this.setState(nextProps, this.receiveStateData);
         }
         else {
@@ -838,7 +839,7 @@ class GraphicalEditor extends Component {
             if (rules.length === 1)
                 ruleState = rules[0].rulePanelState;
         }
-        else if (this.ruleIndex === -2) {
+        else if (this.ruleIndex === constantRuleIndex.minedRuleIndex) {
             ruleState = this.props.minedRulePadState;
         }
         ruleState = this.applyTasks(jobs, ruleState);

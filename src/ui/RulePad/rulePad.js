@@ -53,6 +53,7 @@ import {checkRulesForAll} from "../../core/ruleExecutor";
 import ProjectHierarchy from "./projectHierarchy";
 import {webSocketSendMessage} from "../../core/coreConstants";
 import {reduxStoreMessages} from "../../reduxStoreConstants";
+import {constantRuleIndex} from "../uiConstants";
 
 
 class RulePad extends Component {
@@ -60,11 +61,11 @@ class RulePad extends Component {
     constructor(props) {
         super(props);
 
-        this.ruleIndex = props["ruleIndex"] !== undefined ? props["ruleIndex"] : -1;
+        this.ruleIndex = props["ruleIndex"] !== undefined ? props["ruleIndex"] : constantRuleIndex.newRuleIndex;
         this.ruleI = null;
-        this.newRuleRequest = this.ruleIndex === -1;
+        this.newRuleRequest = this.ruleIndex === constantRuleIndex.newRuleIndex;
 
-        if (this.ruleIndex !== -2 && !props["changeEditMode"])
+        if (this.ruleIndex !== constantRuleIndex.minedRuleIndex && !props["changeEditMode"])
             console.error(`'changeEditMode' is required in props when creating/editing a rule.`);
 
         /*
@@ -371,7 +372,7 @@ class RulePad extends Component {
             }
         }
         // new rule
-        else if (this.ruleIndex === -1) {
+        else if (this.ruleIndex === constantRuleIndex.newRuleIndex) {
             this.state.title = props.title;
             this.state.description = props.description;
             this.state.ruleTags = props.ruleTags;
@@ -388,7 +389,7 @@ class RulePad extends Component {
     render() {
         return (
             <div className={"rulePanelDiv" + (this.ruleIndex < 0 ? " edit-bg" : "")}>
-                {this.ruleIndex === -2 ? null : (
+                {this.ruleIndex === constantRuleIndex.minedRuleIndex ? null : (
                     <Fragment>
                         <div style={{float: "right"}}>
                             <FaQuestionCircle size={20} className={"faQuestionCircle react-icons"}
@@ -408,7 +409,7 @@ class RulePad extends Component {
                 {this.renderGUI()}
                 {this.renderTextUI()}
                 {this.renderFeedbackSnippet()}
-                {this.ruleIndex === -2 ? null : (
+                {this.ruleIndex === constantRuleIndex.minedRuleIndex ? null : (
                     <Fragment>
                         <ButtonToolbar className={"submitButtons"}>
                             <Button bsStyle="primary"
@@ -1029,7 +1030,7 @@ class RulePad extends Component {
                 });
             }
             // new rule
-            else if (this.ruleIndex === -1) {
+            else if (this.ruleIndex === constantRuleIndex.newRuleIndex) {
                 let xPathQueryResult = this.updateFeedbackSnippet(nextProps.quantifierXPath, nextProps.constraintXPath,
                     nextProps.folderConstraint ? nextProps.folderConstraint : "INCLUDE", nextProps.filesFolders);
 
