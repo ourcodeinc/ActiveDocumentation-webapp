@@ -31,13 +31,7 @@ class MinedClusterRulePad extends Component {
 
     render() {
         return (
-            <div className={"overlayContainer " + this.styleClass}
-                 onMouseEnter={() => this.setState({hover: true})}
-                 onMouseLeave={(e) => {
-                     e.stopPropagation();
-                     this.setState({hover: false})
-                 }}
-            >
+            <div className={"overlayContainer " + this.styleClass}>
                 <div
                     className={"mainDiv-overlay elementDiv" + (this.state.thisElement.activeElement ? " activeElement" : "")
                     + (this.state.thisElement.selectedElement ? " selectedElement" : "")

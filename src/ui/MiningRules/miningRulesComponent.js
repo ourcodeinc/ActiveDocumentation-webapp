@@ -23,7 +23,7 @@ import {createGroupingMetaData, formGroupings} from "../../miningRulesCore/prePr
 import {createFeatureMetaDataMap} from "../../miningRulesCore/extractFeatures";
 import {generateFeatures, prepareFilesAndRequestMineRules} from "../../miningRulesCore/processing";
 import {focusElementType, featureGroupInformation} from "../../miningRulesCore/featureConfig";
-import MinedClusterRulePad from "./MinedClusterRulePad";
+import MinedClusterRulePad from "./minedClusterRulePad";
 import {constantRuleIndex} from "../uiConstants";
 import RulePad from "../RulePad/rulePad";
 
