@@ -717,7 +717,24 @@ export const initial_state = {
             recentVisitedElements: []
         },
         minedRules: [],
-        mergedRules: []
+
+        minedRulePadState: {
+            selectedGroupIndex: null, // the index of the mined group, number
+            selectedClusterIndex: null, // the index of the cluster in the group, number
+            folderConstraint: "",
+            filesFolders: [],
+            autoCompleteArray: [],
+            quantifierXPath: "", // only produced by autoComplete grammar
+            constraintXPath: "", // only produced by autoComplete grammar
+            sentMessages: [],
+            receivedMessages: [],
+
+            graphicalEditorState: {
+                ruleType: "", // "Must" or "MustBeEqualTo"
+                guiTree: {...initial_graphicalElementTree},
+                guiElements: {...initial_graphicalElements}
+            }
+        }
     },
     featureSelection: {
         filePath: "",

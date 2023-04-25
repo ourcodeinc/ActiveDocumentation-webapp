@@ -820,21 +820,9 @@ img.tutorialSmallImage {
     background-color: #d9d9d9;
 }
 
-/* mining rules */
+/* loading */
 
-.learningDesignRulesComponent {
-    min-height: 700px;
-}
-
-.learningDesignRulesComponent .visitedElements {
-    font-weight: bold;
-}
-
-.learningDesignRulesComponent .rotateGlyph {
-    transform: rotate(90deg);
-}
-
-.learningDesignRulesComponent .overlayLoading, #loadingGif .overlayLoading {
+.overlayLoading {
     padding: 20%;
     display: flex;
     justify-content: center;
@@ -847,7 +835,7 @@ img.tutorialSmallImage {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
-.learningDesignRulesComponent .spinnerContainer, #loadingGif .spinnerContainer {
+.spinnerContainer {
     display: flex;
     justify-content: center;
     position: absolute;
@@ -857,10 +845,16 @@ img.tutorialSmallImage {
     padding: 15%;
 }
 
-.loadingMinedRules {
+.loadingTitle {
     margin-top: 250px;
     margin-left: 50px;
     color: #349ec3;
+}
+
+/* mining rules */
+
+.miningRulesComponent {
+    min-height: 700px;
 }
 
 .padding-bottom-25 {

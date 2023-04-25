@@ -7,15 +7,14 @@
 import React, {Component, Fragment} from "react";
 
 import {getConditionByName} from "../RulePad/rulePadGraphicalEditor/graphicalEditorConstants";
-import {RootCloseWrapper} from "react-overlays";
-import {Dropdown, MenuItem} from "react-bootstrap";
+import {CustomDropDown} from "../RulePad/rulePadGraphicalEditor/graphicalComponent";
 
-
-class MinedRulePad extends Component {
+class MinedClusterRulePad extends Component {
 
     constructor(props) {
         super(props);
-        // elementId [optional], rulePadState (guiTree, guiElements), ruleIndex, styleClass [optional] << for styling
+        // no need for ruleIndex
+        // elementId [optional], rulePadState (guiTree, guiElements), styleClass [optional] << for styling
         // fileGroup
 
         this.state = {};
@@ -26,52 +25,8 @@ class MinedRulePad extends Component {
         this.state.elementId = props.elementId ? props.elementId : "0";
         this.state.thisElement = this.state.guiElements[this.state.elementId];
 
-        /*
-           {type: "element",
-            children: {
-                top: "class_annotation",
-                before_1: "class_memory",
-                before_2: "class_visibility",
-                before_3: "",
-                after_1: "class_name",
-                after_2: "class_implements",
-                after_3: "class_extends",
-                body: [
-                    "declaration_statement_el",
-                    "constructor_el",
-                    "function_el",
-                    "abstract_function_el"
-                ]
-            },
-            grammar: "class",
-            pre_before_1: "",
-            pre_before_2: "",
-            pre_before_3: "",
-            pre_after_1: "class",
-            pre_after_2: "",
-            pre_after_3: "",
-            post_after_3: "",
-            pre_body: "{",
-            post_body: "}",
-            canBeSelected: true
-        }
-        */
         this.state.elementCondition = getConditionByName(this.state.thisElement.conditionName);
-        /*
-           {top: ["0.0.0"],
-            before_1: ["0.1.0"],
-            before_2: ["0.2.0"],
-            before_3: ["0.3.0"],
-            after_1: ["0.4.0"],
-            after_2: ["0.5.0"],
-            after_3: ["0.6.0"],
-            body: [["0.7.0"], ["0.7.1"], ["0.7.2"], ["0.7.3"]]
-        }
-        */
         this.state.elementNode = props.rulePadState.guiTree[this.state.elementId];
-
-        // when hover over an element, color coding regarding the frequency of the element would be shown.
-        this.state.hover = false;
     }
 
     render() {
@@ -86,8 +41,8 @@ class MinedRulePad extends Component {
                 <div
                     className={"mainDiv-overlay elementDiv" + (this.state.thisElement.activeElement ? " activeElement" : "")
                     + (this.state.thisElement.selectedElement ? " selectedElement" : "")
-                    + (this.state.thisElement.isConstraint ? " constraintElement" : "")}
-                    id={`id__${this.props.ruleIndex}__${this.state.elementId}`}>
+                    // + (this.state.thisElement.isConstraint ? " constraintElement" : "")
+                    }>
                     <div className={"rowGroup"}>
                         {this.renderGroup("top")}
                     </div>
@@ -114,7 +69,6 @@ class MinedRulePad extends Component {
             </div>
         )
     }
-
 
     renderGroup(group) {
         // remove empty top (its only annotation yet)
@@ -230,7 +184,7 @@ class MinedRulePad extends Component {
         return (
             <Fragment key={index}>
                 <div className={group === "body" ? "rowGroup" : "rowItem"}>
-                    <MinedRulePad key={new Date()} ruleIndex={this.props.ruleIndex} elementId={childId}
+                    <MinedClusterRulePad key={new Date()} elementId={childId}
                                   rulePadState={this.props.rulePadState} styleClass={""}
                                   featureMetaData={this.props.featureMetaData} fileGroup={this.props.fileGroup}
                     />
@@ -244,18 +198,16 @@ class MinedRulePad extends Component {
             + (childCondition.type === "wideText" ? "rowGroup"
                 : childCondition.type === "smallText" ? "smallText rowItem"
                     : "rowItem");
-
         // color coding the features based on their frequencies in mined design rules.
         let colorCoding = this.computeColorCoding(childElement);
         return (
-            <div key={index} id={`id__${this.props.ruleIndex}__${childId}`}
-                 className={className}>
+            <div key={index} className={className}>
                 <div>
                     <div className={"rowItem" + (childElement.activeElement ? "" : " inactiveText")}>
                         <b>{childCondition.pre}</b></div>
                     <div className={"inputTextDiv rowItem " + (childCondition.type === "wideText" ? "wideText" : "")}>
                         <span
-                            className={"minedRules inputText" +
+                            className={"minedRuleEditor inputText" +
                             (childElement.activeElement ? " activeElement " + colorCoding : "")}>
                             {childElement.text ? childElement.text : childCondition.placeholder}</span>
                     </div>
@@ -269,10 +221,8 @@ class MinedRulePad extends Component {
             + (childCondition.type === "wideText" ? "rowGroup"
                 : childCondition.type === "smallText" ? "smallText rowItem"
                     : "rowItem");
-
         // color coding the features based on their frequencies in mined design rules.
         let colorCoding = this.computeColorCoding(childElement);
-
         let allFeatures = Object.keys(childElement._data_._data_).map(d => {
             let desc = this.props.featureMetaData.featureInfoContainers.featureInfoReverse[d];
             let info = this.props.featureMetaData.featureInfoContainers.featureInfo[desc];
@@ -281,16 +231,15 @@ class MinedRulePad extends Component {
         let info = Object.keys(childElement._data_._data_).map(d => childElement._data_._data_[d].length);
 
         return (
-            <div key={index} id={`id__${this.props.ruleIndex}__${childId}`}
-                 className={className}>
+            <div key={index} className={className}>
                 <div>
                     <div className={"rowItem"}>
                         <b>{childCondition.pre}</b></div>
                     <div
-                        className={"inputTextDiv rowItem " + (childCondition.type === "wideText" ? "wideText" : "")}>
+                        className={"inputTextDiv rowItem " + (childCondition.type === "wideText" ? "wideText" : "")}
+                    >
                         <CustomDropDown
-                            className={"minedRules activeElement " //+ (this.state.hover ? colorCoding : "")
-                            + colorCoding}
+                            className={"minedRuleEditor activeElement " + colorCoding}
                             menuItemsText={allFeatures}
                             menuItemsInfo={info}
                             menuItemsEvent={allFeatures.map((item, i) => item === "N/A" ? childCondition.placeholder
@@ -341,96 +290,5 @@ class MinedRulePad extends Component {
     }
 }
 
-export default MinedRulePad;
+export default MinedClusterRulePad;
 
-class CustomDropDown extends Component {
-    constructor(props) {
-        super(props);
-
-        if (!props.menuItemsText || !props.onSelectFunction || !props.menuItemsEvent)
-            console.error(`'menuItemsEvent', 'menuItemsText' and 'onSelectFunction' are required in props`);
-
-        this.state = {
-            menuItemsText: props.menuItemsText,
-            menuItemsInfo: props.menuItemsInfo ? props.menuItemsInfo : new Array(props.menuItemsText.length).fill(""),
-            menuItemsEvent: props.menuItemsEvent,
-            onSelectFunction: props.onSelectFunction,
-            menuDefault: props.menuDefault ? props.menuDefault : "select",
-            id: props.id ? props.id : "dropdown-custom-menu",
-            open: false
-        }
-    }
-
-    render() {
-        return (
-            <RootCloseWrapper onRootClose={() => this.setState({open: false})}>
-                <Dropdown id={this.state.id} open={this.state.open}
-                          className={"dropdownToggle " + (this.props["className"] ? this.props["className"] : "")}
-                          onToggle={() => this.setState({open: !this.state.open})}>
-                    <CustomToggle bsRole="toggle">
-                        {this.state.menuDefault}
-                        <span className={"caret"}/>
-                    </CustomToggle>
-                    <CustomMenu bsRole="menu" style={{width: "max-content"}}>
-                        {this.state.menuItemsEvent.map((el, i) =>
-                            (<MenuItem eventKey={el} key={i}
-                                       onSelect={(evt) => {
-                                           this.setState({menuDefault: evt, open: false},
-                                               () => this.state.onSelectFunction(evt)
-                                           )
-                                       }}
-                            > {this.state.menuItemsText[i]}<span
-                                style={{float: "right"}}>{this.state.menuItemsInfo[i]}</span>
-                            </MenuItem>)
-                        )}
-                    </CustomMenu>
-                </Dropdown>
-            </RootCloseWrapper>
-        )
-    }
-
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        this.setState({
-            menuItemsText: nextProps.menuItemsText,
-            menuItemsEvent: nextProps.menuItemsEvent,
-            menuItemsInfo: nextProps.menuItemsInfo ? nextProps.menuItemsInfo : this.state.menuItemsInfo,
-            onSelectFunction: nextProps.onSelectFunction,
-            id: nextProps.id ? nextProps.id : "dropdown-custom-menu"
-        });
-
-    }
-}
-
-class CustomMenu extends Component {
-
-    render() {
-        const {children} = this.props;
-
-        return (
-            <div className="dropdown-menu">
-                {React.Children.toArray(children)}
-            </div>
-        );
-    }
-}
-
-class CustomToggle extends Component {
-    constructor(props, context) {
-        super(props, context);
-
-        this.handleClick = this.handleClick.bind(this);
-    }
-
-    handleClick(e) {
-        e.preventDefault();
-        this.props.onClick(e);
-    }
-
-    render() {
-        return (
-            <span onClick={this.handleClick}>
-        {this.props.children}
-        </span>
-        );
-    }
-}

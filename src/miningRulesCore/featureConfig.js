@@ -42,7 +42,7 @@ export const groupingCategories = {
 
 /* extracting features  */
 
-// types of features extracted from a codebase
+// types of features prepareProperties from a codebase
 export const featureTypes = {
     node: "node_is_selected",
     no_node: "no_node_is_selected",
@@ -254,13 +254,13 @@ export const featureGroupInformation = {
 
 /**
  * spec: features defining the specifications of the element
- * container: the containing element for with primary featureSet and other featureSets in contentGroups are extracted
+ * container: the containing element for with primary featureSet and other featureSets in contentGroups are prepareProperties
  * container.node: type of the container node. The information in defaultFeature is used to query the code
  * container.type: the string that is used to create the feature metadata
- * container.featureSet: the set of features extracted in this group
+ * container.featureSet: the set of features prepareProperties in this group
  * container.featureQueryPrefix: "" or "/", a prefix added to the XPath of the container
  *
- * contentGroups: the group of features extracted on the container nodes
+ * contentGroups: the group of features prepareProperties on the container nodes
  * contentGroups[i].groupId: used as a key in feature MetaData
  *
  * usage: the group of features defined to find the usages of the element
@@ -512,7 +512,7 @@ export const mapFocusedElementToFeatures = {
  *       withChildren: {key: string, value: {word: string, type: string}}|
  *                     {key: string, withChildren:{key: string, value: {word: string, type: string}}}}
  *   }>}
- * the key of the objects are used as the feature ID in the extracted files
+ * the key of the objects are used as the feature ID in the prepareProperties files
  * type: used to run the XPath query
  * XPath: used to extract features on code
  * description: used to label features in featureMetaData
@@ -651,7 +651,7 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "class",
-            withChildren: {key: "comment", value: {word: "\"No Constructor\"", type: "text"}}
+            withChildren: {key: "comment", value: {word: "No Constructor", type: "text"}}
         }
     },
     class_no_func: {
@@ -661,7 +661,7 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "class",
-            withChildren: {key: "comment", value: {word: "\"No Function\"", type: "text"}}
+            withChildren: {key: "comment", value: {word: "No Function", type: "text"}}
         }
     },
 
@@ -793,7 +793,7 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "subclass",
-            withChildren: {key: "comment", value: {word: "\"No Constructor\"", type: "text"}}
+            withChildren: {key: "comment", value: {word: "No Constructor", type: "text"}}
         }
     },
     subclass_no_func: {
@@ -803,7 +803,7 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "subclass",
-            withChildren: {key: "comment", value: {word: "\"No Function\"", type: "text"}}
+            withChildren: {key: "comment", value: {word: "No Function", type: "text"}}
         }
     },
 
@@ -845,7 +845,7 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "constructor",
-            withChildren: {key: "comment", value: {word: "\"Empty Body\"", type: "text"}}
+            withChildren: {key: "comment", value: {word: "Empty Body", type: "text"}}
         }
     },
     constr_param_type: {
@@ -976,7 +976,7 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "function",
-            withChildren: {key: "comment", value: {word: "\"No Parameter\"", type: "text"}}
+            withChildren: {key: "comment", value: {word: "No Parameter", type: "text"}}
         }
     },
     func_param_type: {
@@ -1110,7 +1110,7 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "comment", value: {word: "\"Initialization\"", type: "text"}}
+            withChildren: {key: "comment", value: {word: "Initialization", type: "text"}}
         }
     },
 
@@ -1124,7 +1124,7 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "constructor",
-            withChildren: {key: "comment", value: {word: "\"Calling Constructor: <TEMP_0>\"", type: "text"}}
+            withChildren: {key: "comment", value: {word: "Calling Constructor: <TEMP_0>", type: "text"}}
         }
     },
     constr_call_func: {
@@ -1137,7 +1137,7 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "constructor",
-            withChildren: {key: "comment", value: {word: "\"Calling Function: <TEMP_0>\"", type: "text"}}
+            withChildren: {key: "comment", value: {word: "Calling Function: <TEMP_0>", type: "text"}}
         }
     },
     constr_modify_field: {
@@ -1151,7 +1151,7 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "constructor",
-            withChildren: {key: "comment", value: {word: "\"Modifying Field: <TEMP_0>\"", type: "text"}}
+            withChildren: {key: "comment", value: {word: "Modifying Field: <TEMP_0>", type: "text"}}
         }
     },
 
@@ -1165,7 +1165,7 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "function",
-            withChildren: {key: "comment", value: {word: "\"Calling Constructor: <TEMP_0>\"", type: "text"}}
+            withChildren: {key: "comment", value: {word: "Calling Constructor: <TEMP_0>", type: "text"}}
         }
     },
     func_call_func: {
@@ -1178,7 +1178,7 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "function",
-            withChildren: {key: "comment", value: {word: "\"Calling Function: <TEMP_0>\"", type: "text"}}
+            withChildren: {key: "comment", value: {word: "Calling Function: <TEMP_0>", type: "text"}}
         }
     },
     func_modify_field: {
@@ -1192,7 +1192,7 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "function",
-            withChildren: {key: "comment", value: {word: "\"Modifying Field: <TEMP_0>\"", type: "text"}}
+            withChildren: {key: "comment", value: {word: "Modifying Field: <TEMP_0>", type: "text"}}
         }
     },
 
@@ -1274,7 +1274,7 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "comment", value: {word: "\"Initialization\"", type: "text"}}
+            withChildren: {key: "comment", value: {word: "Initialization", type: "text"}}
         }
     },
     decl_call_function: {
@@ -1289,7 +1289,7 @@ export const defaultFeatures = {
             key: "declaration statement",
             withChildren: {
                 key: "comment",
-                value: {word: "\"Initialized by Calling Function: <TEMP_0>\"", type: "text"}
+                value: {word: "Initialized by Calling Function: <TEMP_0>", type: "text"}
             }
         }
     },
@@ -1313,7 +1313,7 @@ export const defaultFeatures = {
             key: "declaration statement",
             withChildren: {
                 key: "comment",
-                value: {word: "\"Initialized by Calling a Function With Argument: <TEMP_0>\"", type: "text"}
+                value: {word: "Initialized by Calling a Function With Argument: <TEMP_0>", type: "text"}
             }
         }
     },
@@ -1326,7 +1326,7 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "comment", value: {word: "\"Initialization <TEMP_0>\"", type: "text"}}
+            withChildren: {key: "comment", value: {word: "Initialization <TEMP_0>", type: "text"}}
         }
     },
 
@@ -1340,7 +1340,7 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "expression statement",
-            withChildren: {key: "comment", value: {word: "\"Calling Function: <TEMP_0>\"", type: "text"}}
+            withChildren: {key: "comment", value: {word: "Calling Function: <TEMP_0>", type: "text"}}
         }
     },
     expr_call_function_argument: {
@@ -1363,7 +1363,7 @@ export const defaultFeatures = {
             key: "expression statement",
             withChildren: {
                 key: "comment",
-                value: {word: "\"Calling a Function With Argument: <TEMP_0>\"", type: "text"}
+                value: {word: "Calling a Function With Argument: <TEMP_0>", type: "text"}
             }
         }
     },
@@ -1376,7 +1376,7 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "expression statement",
-            withChildren: {key: "comment", value: {word: "\"Caller: <TEMP_0>\"", type: "text"}}
+            withChildren: {key: "comment", value: {word: "Caller: <TEMP_0>", type: "text"}}
         }
     },
     expr_assignment_callee_value: {
@@ -1390,7 +1390,7 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "expression statement",
-            withChildren: {key: "comment", value: {word: "\"Assigned Value: <TEMP_0>\"", type: "text"}}
+            withChildren: {key: "comment", value: {word: "Assigned Value: <TEMP_0>", type: "text"}}
         }
     },
     expr_assignment_callee_call_function: {
@@ -1405,7 +1405,7 @@ export const defaultFeatures = {
             key: "expression statement",
             withChildren: {
                 key: "comment",
-                value: {word: "\"Initialized by Calling Function: <TEMP_0>\"", type: "text"}
+                value: {word: "Initialized by Calling Function: <TEMP_0>", type: "text"}
             }
         }
     },
@@ -1429,7 +1429,7 @@ export const defaultFeatures = {
             key: "expression statement",
             withChildren: {
                 key: "comment",
-                value: {word: "\"Initialized by Calling a Function With Argument: <TEMP_0>\"", type: "text"}
+                value: {word: "Initialized by Calling a Function With Argument: <TEMP_0>", type: "text"}
             }
         }
     },

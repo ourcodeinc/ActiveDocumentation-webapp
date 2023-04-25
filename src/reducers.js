@@ -178,7 +178,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             });
 
         case reduxStoreActions.action_edit_rule_form:
-            if (action.data["ruleIndex"] !== -1) {
+            if (action.data["ruleIndex"] >= 0) {
                 rules = JSON.parse(JSON.stringify(state.ruleTable));
                 rules = rules.map(d => {
                     let a = Object.assign({}, d);
@@ -195,7 +195,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     message: reduxStoreMessages.edit_rule_form_msg
                 });
             }
-            else
+            else if (action.data["ruleIndex"] === -1) {
                 return Object.assign({}, state, {
                     rulePadState: {
                         ...state.rulePadState,
@@ -207,9 +207,23 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     },
                     message: reduxStoreMessages.edit_rule_form_msg
                 });
+            }
+            else {
+                return Object.assign({}, state, {
+                    minedRulesState: {
+                        ...state.minedRulesState,
+                        minedRulePadState: {
+                            ...state.minedRulesState.minedRulePadState,
+                            folderConstraint: action.data["folderConstraint"],
+                            filesFolders: action.data["filesFolders"]
+                        }
+                    },
+                    message: reduxStoreMessages.edit_rule_form_msg
+                });
+            }
 
         case reduxStoreActions.action_change_edit_mode:
-            if (action.data["ruleIndex"] !== -1) {
+            if (action.data["ruleIndex"] >= 0) {
                 let editCount_ = copiedState.ruleTable.reduce((count, element) => {
                     if (element.index !== action.data["ruleIndex"]) return count + element.rulePanelState.editMode ? 1 : 0;
                     return count + action.data["newEditMode"] ? 1 : 0;
@@ -256,7 +270,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 });
 
         case reduxStoreActions.action_receive_gui_tree:
-            if (action.data["ruleIndex"] !== -1) {
+            if (action.data["ruleIndex"] >= 0) {
                 let rules = JSON.parse(JSON.stringify(state.ruleTable));
                 rules = rules.map(d => {
                     let a = Object.assign({}, d);
@@ -275,7 +289,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     ruleTable: rules
                 });
             }
-            else
+            else if (action.data["ruleIndex"] === -1) {
                 return Object.assign({}, state, {
                     message: reduxStoreMessages.receive_gui_tree_msg,
                     rulePadState: {
@@ -289,6 +303,25 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         }
                     }
                 });
+            }
+            else {
+                return Object.assign({}, state, {
+                    message: reduxStoreMessages.receive_gui_tree_msg,
+                    minedRulesState: {
+                        ...state.minedRulesState,
+                        minedRulePadState: {
+                            ...state.minedRulesState.minedRulePadState,
+                            quantifierXPath: action.data["quantifierXPath"],
+                            constraintXPath: action.data["constraintXPath"],
+                            autoCompleteArray: action.data["autoCompleteArray"],
+                            graphicalEditorState: {
+                                ...state.rulePadState.graphicalEditorState,
+                                ...action.data["newTreeData"]
+                            }
+                        }
+                    }
+                });
+            }
 
         case reduxStoreActions.action_send_expr_stmt_xml:
             return Object.assign({}, state, {
@@ -309,7 +342,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             });
 
         case reduxStoreActions.action_matched_messages:
-            if (action.data["ruleIndex"] !== -1) {
+            if (action.data["ruleIndex"] >= 0) {
                 rules = JSON.parse(JSON.stringify(state.ruleTable));
                 rules = rules.map(d => {
                     let a = Object.assign({}, d);
@@ -328,7 +361,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     },
                 });
             }
-            else
+            else if (action.data["ruleIndex"] === -1) {
                 return Object.assign({}, state, {
                     rulePadState: {
                         ...state.rulePadState,
@@ -339,6 +372,22 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     },
                     message: reduxStoreMessages.matched_messages_msg
                 });
+            }
+            else {
+                return Object.assign({}, state, {
+                    minedRulesState: {
+                        ...state.minedRulesState,
+                        minedRulePadState: {
+                            ...state.minedRulesState.minedRulePadState,
+                            quantifierXPath: action.data["quantifierXPath"],
+                            constraintXPath: action.data["constraintXPath"],
+                            sentMessages: action.data["sentMessages"],
+                            receivedMessages: action.data["receivedMessages"]
+                        }
+                    },
+                    message: reduxStoreMessages.matched_messages_msg
+                });
+            }
 
         /*
           {
@@ -363,7 +412,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             });
 
         case reduxStoreActions.action_change_autocomplete_text:
-            if (action.data["ruleIndex"] !== -1) {
+            if (action.data["ruleIndex"] >= 0) {
                 let rules = JSON.parse(JSON.stringify(state.ruleTable));
                 rules = rules.map(d => {
                     if (d.index !== action.data["ruleIndex"]) return d;
@@ -379,7 +428,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     message: reduxStoreMessages.change_autocomplete_text_msg
                 });
             }
-            else
+            else if (action.data["ruleIndex"] === -1) {
                 return Object.assign({}, state, {
                     rulePadState: {
                         ...state.rulePadState,
@@ -387,9 +436,22 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     },
                     message: reduxStoreMessages.change_autocomplete_text_msg
                 });
+            }
+            else {
+                return Object.assign({}, state, {
+                    minedRulesState: {
+                        ...state.minedRulesState,
+                        minedRulePadState : {
+                            ...state.minedRulesState.minedRulePadState,
+                            autoCompleteArray: action.data["newAutoCompleteArray"]
+                        }
+                    },
+                    message: reduxStoreMessages.change_autocomplete_text_msg
+                });
+            }
 
         case reduxStoreActions.action_update_xpath:
-            if (action.data["ruleIndex"] !== -1) {
+            if (action.data["ruleIndex"] >= 0) {
                 let rules = JSON.parse(JSON.stringify(state.ruleTable));
                 rules = rules.map(d => {
                     let a = Object.assign({}, d);
@@ -403,7 +465,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     ruleTable: rules
                 });
             }
-            else
+            else if (action.data["ruleIndex"] === -1) {
                 return Object.assign({}, state, {
                     rulePadState: {
                         ...state.rulePadState,
@@ -412,6 +474,20 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     },
                     message: reduxStoreMessages.update_xpath_msg
                 });
+            }
+            else {
+                return Object.assign({}, state, {
+                    minedRulesState: {
+                        ...state.minedRulesState,
+                        minedRulePadState: {
+                            ...state.minedRulesState.minedRulePadState,
+                            quantifierXPath: action.data["quantifierXPath"],
+                            constraintXPath: action.data["constraintXPath"]
+                        }
+                    },
+                    message: reduxStoreMessages.update_xpath_msg
+                });
+            }
 
             /*
                 Mining Rules
@@ -469,6 +545,31 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     minedRules: action.data["minedRules"]
                 }
             });
+
+        case reduxStoreActions.action_update_selected_mined_cluster:
+            try {
+                let newGraphicalEditorState = Object.assign({},{
+                        ...state.minedRulesState.minedRules[action.data["selectedGroupIndex"]]
+                            .rulePadStates[action.data["selectedClusterIndex"]]
+                    });
+                return Object.assign({}, state, {
+                    message: reduxStoreMessages.updated_selected_mined_cluster_msg,
+                    minedRulesState: {
+                        ...state.minedRulesState,
+                        minedRulePadState: {
+                            ...state.minedRulesState.minedRulePadState,
+                            selectedGroupIndex: action.data["selectedGroupIndex"],
+                            selectedClusterIndex: action.data["selectedClusterIndex"],
+                            graphicalEditorState: newGraphicalEditorState
+                        }
+                    }
+                });
+            } catch (e) {
+                console.log(`Error happened in assigning the minedRulePadState ` +
+                    `for groupIndex=${action.data["selectedGroupIndex"]} and ` +
+                    `clusterIndex=${action.data["selectedClusterIndex"]}`, e);
+                return Object.assign({}, state);
+            }
 
         case reduxStoreActions.action_update_feature_selection :
             return Object.assign({}, state, {

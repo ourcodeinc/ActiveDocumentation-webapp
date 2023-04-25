@@ -64,7 +64,7 @@ class RulePad extends Component {
         this.ruleI = null;
         this.newRuleRequest = this.ruleIndex === -1;
 
-        if (!props["changeEditMode"])
+        if (this.ruleIndex !== -2 && !props["changeEditMode"])
             console.error(`'changeEditMode' is required in props when creating/editing a rule.`);
 
         /*
@@ -348,7 +348,7 @@ class RulePad extends Component {
         };
 
         // existing rule
-        if (this.ruleIndex !== -1) {
+        if (this.ruleIndex >= 0) {
             let indices = props.rules.map(d => d.index);
             let arrayIndex = indices.indexOf(this.ruleIndex);
             if (arrayIndex === -1)
@@ -371,7 +371,7 @@ class RulePad extends Component {
             }
         }
         // new rule
-        else {
+        else if (this.ruleIndex === -1) {
             this.state.title = props.title;
             this.state.description = props.description;
             this.state.ruleTags = props.ruleTags;
@@ -383,46 +383,53 @@ class RulePad extends Component {
             this.state.constraintXPath = props.constraintXPath;
             this.state.autoCompleteArray = props.autoCompleteArray;
         }
-
     }
 
     render() {
         return (
-            <div className={"rulePanelDiv" + (this.ruleIndex === -1 ? " edit-bg" : "")}>
-                <div style={{float: "right"}}>
-                    <FaQuestionCircle size={20} className={"faQuestionCircle react-icons"}
-                                      onClick={() => this.setState({
-                                          tourShouldRun: true,
-                                          isTourGuide: true
-                                      })}/>
-                    <MdEdit size={20} className={"mdEdit react-icons"}
-                            onClick={() => this.changeEditMode()}/>
-                </div>
-                {this.renderTitleAndDescription()}
-                {this.renderTags()}
+            <div className={"rulePanelDiv" + (this.ruleIndex < 0 ? " edit-bg" : "")}>
+                {this.ruleIndex === -2 ? null : (
+                    <Fragment>
+                        <div style={{float: "right"}}>
+                            <FaQuestionCircle size={20} className={"faQuestionCircle react-icons"}
+                                              onClick={() => this.setState({
+                                                  tourShouldRun: true,
+                                                  isTourGuide: true
+                                              })}/>
+                            <MdEdit size={20} className={"mdEdit react-icons"}
+                                    onClick={() => this.changeEditMode()}/>
+                        </div>
+                        {this.renderTitleAndDescription()}
+                        {this.renderTags()}
+                    </Fragment>
+                )}
                 {this.renderFileConstraints()}
                 {this.renderTutorial()}
                 {this.renderGUI()}
                 {this.renderTextUI()}
                 {this.renderFeedbackSnippet()}
-                <ButtonToolbar className={"submitButtons"}>
-                    <Button bsStyle="primary"
-                            onClick={() => this.newRuleRequest ? this.onSubmitNewRule() : this.onSubmitUpdatedRule()}>
-                        Submit</Button>
-                    <Button bsStyle="default" onClick={() => this.changeEditMode()}>Cancel</Button>
-                    {!this.newRuleRequest ? null :
-                        <Button bsStyle="default"
-                                onClick={() => {
-                                    this.setState({
-                                        activeTab: 0,
-                                        xPathQueryResult: [],
-                                        shouldUpdateSnippets: false
-                                    }, this.props.onClearForm);
-                                }}>Clear Form</Button>}
-                </ButtonToolbar>
+                {this.ruleIndex === -2 ? null : (
+                    <Fragment>
+                        <ButtonToolbar className={"submitButtons"}>
+                            <Button bsStyle="primary"
+                                    onClick={() => this.newRuleRequest ? this.onSubmitNewRule() : this.onSubmitUpdatedRule()}>
+                                Submit</Button>
+                            <Button bsStyle="default" onClick={() => this.changeEditMode()}>Cancel</Button>
+                            {!this.newRuleRequest ? null :
+                                <Button bsStyle="default"
+                                        onClick={() => {
+                                            this.setState({
+                                                activeTab: 0,
+                                                xPathQueryResult: [],
+                                                shouldUpdateSnippets: false
+                                            }, this.props.onClearForm);
+                                        }}>Clear Form</Button>}
+                        </ButtonToolbar>
 
-                {this.renderNewTagModalDialog()}
-                {this.renderErrorInSubmission()}
+                        {this.renderNewTagModalDialog()}
+                        {this.renderErrorInSubmission()}
+                    </Fragment>
+                )}
                 {this.renderTourGuide()}
             </div>
         );
@@ -989,7 +996,7 @@ class RulePad extends Component {
         else {
             this.ruleIndex = nextProps.ruleIndex;
             // existing rule
-            if (this.ruleIndex !== -1) {
+            if (this.ruleIndex >= 0) {
                 let indices = nextProps.rules.map(d => d.index);
                 let arrayIndex = indices.indexOf(this.ruleIndex);
                 if (arrayIndex === -1)
@@ -1022,7 +1029,7 @@ class RulePad extends Component {
                 });
             }
             // new rule
-            else {
+            else if (this.ruleIndex === -1) {
                 let xPathQueryResult = this.updateFeedbackSnippet(nextProps.quantifierXPath, nextProps.constraintXPath,
                     nextProps.folderConstraint ? nextProps.folderConstraint : "INCLUDE", nextProps.filesFolders);
 
@@ -1042,6 +1049,25 @@ class RulePad extends Component {
                     monacoFormStatus: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "has-error" : nextProps.message === "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? "has-warning" : this.state.monacoFormStatus,
                     errorPoint: -1,
 
+                    shouldUpdateSnippets: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? true : this.state.shouldUpdateSnippets,
+                    xPathQueryResult
+                });
+            }
+            // mined rule
+            else {
+                let xPathQueryResult = this.updateFeedbackSnippet(nextProps.minedQuantifierXPath, nextProps.minedConstraintXPath,
+                    nextProps.minedFolderConstraint ? nextProps.minedFolderConstraint : "INCLUDE", nextProps.minedFilesFolders);
+
+                this.setState({
+                    folderConstraint: nextProps.minedFolderConstraint ? nextProps.minedFolderConstraint : "INCLUDE",
+                    filesFolders: nextProps.minedFilesFolders,
+
+                    autoCompleteArray: nextProps.minedAutoCompleteArray,
+                    quantifierXPath: nextProps.minedQuantifierXPath,
+                    constraintXPath: nextProps.minedConstraintXPath,
+                    editorError: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "" : this.state.editorError,
+                    monacoFormStatus: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "has-error" : nextProps.message === "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? "has-warning" : this.state.monacoFormStatus,
+                    errorPoint: -1,
                     shouldUpdateSnippets: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? true : this.state.shouldUpdateSnippets,
                     xPathQueryResult
                 });
@@ -1208,7 +1234,6 @@ class RulePad extends Component {
      * @param errorIndex
      */
     processLanguageProcessingError(error, errorIndex = 400) {
-        // console.log(error);
         switch (error) {
             case "ERROR_INDEX":
                 if (errorIndex === -1)
@@ -1524,7 +1549,17 @@ function mapStateToProps(state) {
         // for submitting the rule
         numberOfSentMessages: state.rulePadState.sentMessages.length,
 
-        displayEditRuleTutorial: state.displayEditRuleTutorial
+        displayEditRuleTutorial: state.displayEditRuleTutorial,
+
+        // for mined rules
+        minedFolderConstraint: state.minedRulesState.minedRulePadState.folderConstraint,
+        minedFilesFolders: state.minedRulesState.minedRulePadState.filesFolders,
+        minedAutoCompleteArray: state.minedRulesState.minedRulePadState.autoCompleteArray,
+        minedQuantifierXPath: state.minedRulesState.minedRulePadState.quantifierXPath,
+        minedConstraintXPath: state.minedRulesState.minedRulePadState.constraintXPath,
+        minedSentMessages: state.minedRulesState.minedRulePadState.sentMessages,
+        minedReceivedMessages: state.minedRulesState.minedRulePadState.receivedMessages,
+
     };
 }
 

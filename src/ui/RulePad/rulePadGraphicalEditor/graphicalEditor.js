@@ -33,7 +33,7 @@ class GraphicalEditor extends Component {
         this.class = (props["className"] ? props["className"] : "generateRuleGui") + " guiBoundingBox";
 
         // existing rule
-        if (this.ruleIndex !== -1) {
+        if (this.ruleIndex >= 0) {
             let indices = props.rules.map(d => d.index);
             let arrayIndex = indices.indexOf(this.ruleIndex);
             if (arrayIndex === -1)
@@ -47,7 +47,12 @@ class GraphicalEditor extends Component {
                 this.state.autoCompleteArray = this.ruleI.rulePanelState.autoCompleteArray;
             }
         }
-
+        else if (this.ruleIndex === -2) {
+            if (props.minedRulePadState && props.minedRulePadState.graphicalEditorState) {
+                this.state.guiTree = props.minedRulePadState.graphicalEditorState.guiTree;
+                this.state.guiElements = props.minedRulePadState.graphicalEditorState.guiElements;
+            }
+        }
     }
 
     render() {
@@ -65,7 +70,7 @@ class GraphicalEditor extends Component {
 
     //componentDidUpdate doesn't work
     UNSAFE_componentWillReceiveProps(nextProps) {
-        if (this.ruleIndex !== -1) {
+        if (this.ruleIndex >= 0) {
             let indices = nextProps.rules.map(d => d.index);
             let arrayIndex = indices.indexOf(this.ruleIndex);
             if (arrayIndex === -1)
@@ -83,8 +88,17 @@ class GraphicalEditor extends Component {
                     }, this.receiveStateData);
             }
         }
-        else {
+        else if (this.ruleIndex === -1) {
             this.setState(nextProps, this.receiveStateData);
+        }
+        else {
+            this.setState({
+                ws: nextProps.ws,
+                rulePadState: nextProps.minedRulePadState,
+                guiTree: nextProps.minedGuiTree,
+                guiElements: nextProps.minedGuiElements,
+                autoCompleteArray: nextProps.minedAutoCompleteArray
+            }, this.receiveStateData);
         }
     }
 
@@ -114,7 +128,7 @@ class GraphicalEditor extends Component {
 
         // check the selected element
         let selectJobs = this.lowestCommonAncestor(guiElements, guiTree);
-        if (selectJobs.jobs.length !== 0) {console.log(this.canBeStarredIDs);
+        if (selectJobs.jobs.length !== 0) {
             console.log("error: not EoI", selectJobs.jobs);
             // this.props.onChangeGuiElement(this.ruleIndex, selectJobs.jobs);
             return;
@@ -819,10 +833,13 @@ class GraphicalEditor extends Component {
         jobs = jobs.concat(selectJobs.jobs);
 
         let ruleState = this.props.rulePadState;
-        if (this.ruleIndex !== -1) {
+        if (this.ruleIndex >= 0) {
             let rules = this.props.rules.filter(rule => rule.index === this.ruleIndex)
             if (rules.length === 1)
                 ruleState = rules[0].rulePanelState;
+        }
+        else if (this.ruleIndex === -2) {
+            ruleState = this.props.minedRulePadState;
         }
         ruleState = this.applyTasks(jobs, ruleState);
         this.props.onChangeRuleState(this.ruleIndex, ruleState);
@@ -980,6 +997,12 @@ function mapStateToProps(state) {
         guiTree: state.rulePadState.graphicalEditorState.guiTree,
         guiElements: state.rulePadState.graphicalEditorState.guiElements,
         autoCompleteArray: state.rulePadState.autoCompleteArray,
+
+        // mined rule
+        minedRulePadState: state.minedRulesState.minedRulePadState,
+        minedGuiTree: state.minedRulesState.minedRulePadState.graphicalEditorState.guiTree,
+        minedGuiElements: state.minedRulesState.minedRulePadState.graphicalEditorState.guiElements,
+        minedAutoCompleteArray: state.minedRulesState.minedRulePadState.autoCompleteArray,
     };
 }
 

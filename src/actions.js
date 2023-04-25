@@ -382,6 +382,22 @@ export const updatedMinedRules = (minedRules) => {
 };
 
 /**
+ * update the rule
+ * @param clusterIndex
+ * @param groupIndex
+ * @return {{type: string, data: {selectedClusterIndex: number, selectedGroupIndex: number}}}
+ */
+export const updateSelectedMinedCluster = (clusterIndex, groupIndex) => {
+    return {
+        type: reduxStoreActions.action_update_selected_mined_cluster,
+        data: {
+            selectedClusterIndex: clusterIndex,
+            selectedGroupIndex: groupIndex
+        }
+    };
+}
+
+/**
  *
  * @param dataObject filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText, selectedText,
  *         xpath, modifiedSelectedText, idMap, displayTextArray

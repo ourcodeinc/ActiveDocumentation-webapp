@@ -39,6 +39,7 @@ export const reduxStoreMessages = {
     update_doi_information_msg: "UPDATE_DOI_INFORMATION",
     request_mine_rules_for_element_msg: "REQUEST_MINE_RULES_FOR_ELEMENT",
     update_mined_rules_msg: "UPDATE_MINED_RULES",
+    updated_selected_mined_cluster_msg: "UPDATED_SELECTED_MINED_CLUSTER",
 
     update_feature_selection_msg: "UPDATE_FEATURE_SELECTION",
     reset_feature_selection_msg: "RESET_FEATURE_SELECTION",
@@ -81,6 +82,7 @@ export const reduxStoreActions = {
     action_update_doi_information: "UPDATE_DOI_INFORMATION",
     action_request_mine_rules_for_element: "REQUEST_MINE_RULES_FOR_ELEMENT",
     action_update_mined_rules: "UPDATE_MINED_RULES",
+    action_update_selected_mined_cluster: "UPDATE_SELECTED_MINED_CLUSTER",
 
     action_update_feature_selection: "UPDATE_FEATURE_SELECTION",
     action_reset_feature_selection: "RESET_FEATURE_SELECTION",

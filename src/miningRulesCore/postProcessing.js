@@ -211,6 +211,9 @@ const createBuiltObject = (combinedFeaturesOutput,
                 let featureChild = {...{_data_: combinedFeatures[featureKey],
                         _occurrence_: maxOccurrence, _featureId_: maxFeatureId},
                 ...createWithChildrenForFeature(featureInfo)};
+                if (featureObject.key === mergeKeys[0]) {
+                    featureChild.isConstraint = true;
+                }
 
                 let repeatedChildIndex = builtObjects[featureObject.key].withChildren
                     .findIndex(child => child.key === featureChild.key);

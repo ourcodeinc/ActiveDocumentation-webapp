@@ -107,7 +107,7 @@ class App extends Component {
              className={(this.state.loadingGif ? "" : "hidden")}>
             <div className={"overlayLoading"}>
                 <div className={"spinnerContainer"}>
-                    <div className={"loadingMinedRules"}>
+                    <div className={"loadingTitle"}>
                         <h3>{"Loading Rules and Preprocessing"}</h3>
                     </div>
                     <div className="spinner"/>

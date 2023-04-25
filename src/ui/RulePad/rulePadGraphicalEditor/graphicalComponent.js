@@ -454,14 +454,16 @@ class GraphicalComponent extends Component {
 
         return (
             <Fragment key={index}>
-                <div className={group === "body" ? "rowGroup" : "rowItem"}>
-                    <GraphicalComponent key={new Date()} ruleIndex={this.props.ruleIndex} elementId={childId}
-                                        rootTree={this.props["rootTree"]} guiElements={this.state.guiElements}
-                                        canBeStarredIDs={this.props["canBeStarredIDs"]}
-                                        changeGuiElementJobs={this.props["changeGuiElementJobs"]}
-                    />
-                </div>
-                {(index === array.length - 1 && this.state.guiElements[childId].activeElement) ? (
+                {(this.state.guiElements[childId].activeElement || index < array.length - 1) ? (
+                    <div className={group === "body" ? "rowGroup" : "rowItem"}>
+                        <GraphicalComponent key={new Date()} ruleIndex={this.props.ruleIndex} elementId={childId}
+                                            rootTree={this.props["rootTree"]} guiElements={this.state.guiElements}
+                                            canBeStarredIDs={this.props["canBeStarredIDs"]}
+                                            changeGuiElementJobs={this.props["changeGuiElementJobs"]}
+                        />
+                    </div>
+                ) : null}
+                {index === array.length - 1 ? (
                     <div className={"rowItem"}>
                         <Button onClick={processAddElement}>Add {childCondition.grammar}</Button>
                     </div>
