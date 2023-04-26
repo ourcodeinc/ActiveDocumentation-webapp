@@ -217,7 +217,7 @@ class MiningRulesComponent extends Component {
                 <Row>
                     <Col md={8}>
                         <MinedClusterRulePad key={new Date()} rulePadState={rulePadState}
-                                      featureMetaData={this.state.featureMetaData} fileGroup={fileGroup}/>
+                                             featureMetaData={this.state.featureMetaData} fileGroup={fileGroup}/>
                     </Col>
                     <Col md={3}>
                         <h5><strong>Sum of feature weights in the cluster: </strong>{clusterObject.sumWeights}</h5>
@@ -228,10 +228,12 @@ class MiningRulesComponent extends Component {
                     </Col>
                 </Row>
             </div>
-
+            <div>
+                <h3>Example Rule from this cluster.</h3>
+            </div>
             <div className={"generateRuleGui guiBoundingBox"}>
                 <Row>
-                    <Col md={8}>
+                    <Col md={12}>
                         <RulePad ruleIndex={constantRuleIndex.minedRuleIndex}/>
                     </Col>
                 </Row>
