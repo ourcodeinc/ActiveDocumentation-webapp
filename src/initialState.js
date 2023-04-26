@@ -735,19 +735,6 @@ export const initial_state = {
                 guiElements: {...initial_graphicalElements}
             }
         }
-    },
-    featureSelection: {
-        filePath: "",
-        startOffset: "",
-        endOffset: "",
-        startLineOffset: "",
-        lineNumber: "",
-        lineText: "",
-        selectedText: "",
-        xpath: "",
-        modifiedSelectedText: "",
-        idMap: {},
-        displayTextArray: []
     }
 
 };

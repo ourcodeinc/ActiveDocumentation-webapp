@@ -12,7 +12,6 @@ import RuleTable from "./ui/ruleTable";
 import NavBar from "./ui/navBar";
 import HeaderBar from "./ui/headerBar";
 import MiningRulesComponent from "./ui/MiningRules/miningRulesComponent";
-import FeatureSelection from "./ui/MiningRules/featureSelection";
 import {hashConst} from "./ui/uiConstants";
 
 class App extends Component {
@@ -83,12 +82,6 @@ class App extends Component {
                              ([hashConst.learnDesignRules].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
                          }>
                         <MiningRulesComponent/>
-                    </div>
-                    <div id={"featureSelection"}
-                         className={
-                             ([hashConst.featureSelection].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
-                         }>
-                        <FeatureSelection/>
                     </div>
                     <div style={{width: "100%", height: "100px"}}/>
                 </div>

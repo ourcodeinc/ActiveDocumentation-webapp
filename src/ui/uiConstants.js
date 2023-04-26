@@ -3,7 +3,6 @@ export const hashConst = {
     rules: "rules",
     violatedRules: "violatedRules",
     learnDesignRules: "learnDesignRules",
-    featureSelection: "featureSelection",
 
     tag: "tag",
     rule: "rule",

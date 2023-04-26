@@ -1,6 +1,5 @@
 import {DOI_DISCARD_TIME, focusElementType} from "./featureConfig";
 import {runXPathSingleNode} from "./xPathQueryExecutor";
-import {getNodesFromOffsets} from "./featureSelectionProcessing";
 
 /**
  * finding the start and end xml nodes in srcML data
@@ -131,6 +130,63 @@ export const processDoiInformation = (recentVisitedFiles,
         });
 
     return {recentVisitedFiles: files, recentSearches: searches, recentVisitedElements: elements};
+}
+
+/**
+ * finding the start and end xml nodes in srcML data
+ * @param mainXml
+ * @param startOffset index
+ * @param endOffset index
+ * @return {{startNode: Node, endNode: Node, selectedText: string}}
+ */
+export const getNodesFromOffsets = (mainXml, startOffset, endOffset) => {
+    let xml = mainXml.slice(0); // copy of xml data
+
+    let parser = new DOMParser();
+    let xmlDoc = parser.parseFromString(xml,"text/xml");
+
+    let str = "",        // string to keep track of the offset
+        selectedText = "";
+    let offsetToCheck = +startOffset + 1;
+    let startNode = null,
+        endNode = null;
+
+    let traverseNodes = (node) => {
+        for (let i = 0; i < node.childNodes.length; i++) {
+            if (node.childNodes[i].nodeName === "#text") {
+                str += node.childNodes[i].nodeValue;
+                if (!!startNode)
+                    selectedText += node.childNodes[i].nodeValue;
+
+                if (str.length >= offsetToCheck) {
+                    if (offsetToCheck === (+startOffset + 1)) {
+                        startNode = node;
+                        offsetToCheck = endOffset;
+                        selectedText += node.childNodes[i].nodeValue;
+
+                        // if the startOffset and endOffset are both belong to the same text node
+                        if (str.length >= offsetToCheck) {
+                            endNode = node;
+                            offsetToCheck = Infinity;
+                            return "end";
+                        }
+                    } else {
+                        endNode = node;
+                        offsetToCheck = Infinity;
+                        return "end";
+                    }
+                }
+            }
+            else {
+                let res = traverseNodes(node.childNodes[i]);
+                if (res === "end")
+                    return res;
+            }
+        }
+        return "";
+    };
+    traverseNodes(xmlDoc);
+    return {endNode, startNode, selectedText};
 }
 
 

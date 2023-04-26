@@ -40,8 +40,6 @@ export const webSocketReceiveMessage = {
     request_mine_rules_for_element: "MINE_RULES_FOR_ELEMENT",
     mined_design_rules: "MINED_DESIGN_RULES",
 
-    feature_selection_msg: "FEATURE_SELECTION",
-
     enter_chat_msg: "ENTER",
     left_chat_msg: "LEFT"
 };

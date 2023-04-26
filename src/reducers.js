@@ -601,48 +601,6 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     }
                 });
 
-        case reduxStoreActions.action_update_feature_selection :
-            return Object.assign({}, state, {
-                message: reduxStoreMessages.update_feature_selection_msg,
-                featureSelection: {
-                    filePath: action.data["filePath"],
-                    startOffset: action.data["startOffset"],
-                    endOffset: action.data["endOffset"],
-                    startLineOffset: action.data["startLineOffset"],
-                    lineNumber: action.data["lineNumber"],
-                    lineText: action.data["lineText"],
-                    selectedText: action.data["selectedText"],
-                    xpath: action.data["xpath"],
-                    modifiedSelectedText: action.data["modifiedSelectedText"],
-                    idMap: action.data["idMap"],
-                    displayTextArray: action.data["displayTextArray"]
-                }
-            });
-
-        case reduxStoreActions.action_reset_feature_selection:
-            return Object.assign({}, state, {
-                message: reduxStoreMessages.reset_feature_selection_msg,
-                featureSelection: {
-                    ...JSON.parse(JSON.stringify(initial_state.featureSelection))
-                }
-            });
-
-        case reduxStoreActions.action_save_feature_selection:
-            return Object.assign({}, state, {
-                message: reduxStoreMessages.save_feature_selection_msg,
-                featureSelection: {
-                    ...JSON.parse(JSON.stringify(initial_state.featureSelection))
-                },
-                doiInformation: {
-                    ...state.doiInformation,
-                    customFeatures: state.doiInformation.customFeatures.concat([{
-                        featureDescription: action.data["featureDescription"],
-                        featureXpath: action.data["featureXpath"],
-                        srcmlXpath: action.data["srcmlXpath"]
-                    }])
-                }
-            });
-
         default:
             return Object.assign({}, state);
     }

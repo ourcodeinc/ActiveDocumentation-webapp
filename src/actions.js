@@ -407,35 +407,3 @@ export const updateMinedRulePadState = (groupIndex, clusterIndex, rulePadState) 
         }
     };
 }
-
-/**
- *
- * @param dataObject filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText, selectedText,
- *         xpath, modifiedSelectedText, idMap, displayTextArray
- * @return {{data, type: string}}
- */
-export const updateFeatureSelection = (dataObject) => {
-    return {
-        type: reduxStoreActions.action_update_feature_selection,
-        data: {...dataObject}
-    }
-};
-
-export const updateResetFeatureSelection = () => {
-    return {
-        type: reduxStoreActions.action_reset_feature_selection
-    }
-};
-
-/**
- * @param featureDescription string
- * @param featureXpath string
- * @param srcmlXpath xpath without the leading 'src:' for tags
- * @return {{data: {featureDescription: *, featureXpath: *}, type: string}}
- */
-export const updateSaveFeatureSelection = (featureDescription, featureXpath, srcmlXpath) => {
-    return {
-        type: reduxStoreActions.action_save_feature_selection,
-        data: {featureDescription, featureXpath, srcmlXpath}
-    }
-};

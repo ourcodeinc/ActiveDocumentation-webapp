@@ -10,12 +10,10 @@ import {
     ignoreFileChange, updateFilePath,
     updateRuleTable, updateTagTable,
     updateWS, updateXmlFiles,
-    updateProjectHierarchyData, updatedMinedRules,
-    updateFeatureSelection, updateProjectPath,
+    updateProjectHierarchyData, updatedMinedRules, updateProjectPath,
     updateLoadingGif, updateFocusedElementData, updateDoiInformation, requestMineRulesForElement
 } from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from "./ruleExecutor";
-import {getXpathForFeature} from "../miningRulesCore/featureSelectionProcessing";
 import {webSocketReceiveMessage} from "./coreConstants";
 import {processReceivedFrequentItemSets} from "../miningRulesCore/postProcessing";
 import {getDataForFocusedElement, processDoiInformation} from "../miningRulesCore/focusedElementProcessing";
@@ -185,26 +183,6 @@ class WebSocketManager extends Component {
 
                 /* Mining Rules */
 
-                case webSocketReceiveMessage.feature_selection_msg:
-                    let selected = xmlData.filter(d => d.filePath === message.data["filePath"]);
-                    if (selected.length > 0) {
-                        //  {{xpath: string, selectedText: string, idMap, displayTextArray: Array}}
-                        let textXpathData = getXpathForFeature(selected[0].xml, message.data["startOffset"], message.data["endOffset"]);
-                        window.location.hash = `#/${hashConst.featureSelection}`;
-
-                        // filePath, startOffset, endOffset, startLineOffset, lineNumber, lineText, selectedText,
-                        //         xpath, modifiedSelectedText, idMap, displayTextArray
-                        this.props.onUpdateFeatureSelection({
-                            ...message.data,
-                            selectedText: message.data["text"] ? message.data["text"] : "",
-                            xpath: textXpathData.xpath,
-                            modifiedSelectedText: textXpathData.selectedText,
-                            idMap: textXpathData.idMap,
-                            displayTextArray: textXpathData.displayTextArray
-                        });
-                    }
-                    break;
-
                 case webSocketReceiveMessage.element_info_for_mine_rules:
                     window.location.hash = `#/${hashConst.learnDesignRules}/`;
                     let focusedElementFile = xmlData.filter(d => d.filePath === message.data["filePath"]);
@@ -282,8 +260,6 @@ function mapDispatchToProps(dispatch) {
         onUpdateDoiInformation: (doiInformation) => dispatch(updateDoiInformation(doiInformation)),
         onRequestMineRulesForElement: () => dispatch(requestMineRulesForElement()),
         onUpdateMinedRules: (modifiedOutput) => dispatch(updatedMinedRules(modifiedOutput)),
-
-        onUpdateFeatureSelection: (dataObject) => dispatch(updateFeatureSelection(dataObject))
     }
 }
 
