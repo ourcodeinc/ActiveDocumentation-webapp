@@ -344,7 +344,7 @@ export const createRulePadStateForItemSet = (frequentItemSet, fileGroup, feature
     for (let featureId of frequentItemSet.featureIds) {
         let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
         let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
-        let featureIndex = featureInfo.featureIndex;
+        let featureIndex = featureInfo.featureIndex.replace(/(_starts_with)|(_ends_with)/, '');
         if (!(featureIndex in combinedFeatures)) {
             combinedFeatures[featureIndex] = [];
         }

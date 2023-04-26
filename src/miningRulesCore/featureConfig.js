@@ -507,7 +507,7 @@ export const mapFocusedElementToFeatures = {
 /**
  * general description of features
  * @type {Object.<string, {type: string, xpath:string, description:string, weight: number,
- * ?FeatureSortGroup: string, ?nodes: string[]|undefined,
+ * ?nodes: string[]|undefined,
  * FeatureObject: {key: string,
  *       withChildren: {key: string, value: {word: string, type: string}}|
  *                     {key: string, withChildren:{key: string, value: {word: string, type: string}}}}
@@ -518,7 +518,6 @@ export const mapFocusedElementToFeatures = {
  * description: used to label features in featureMetaData
  * <TEMP_?> are used as the key
  * weight: default value set as a utility of a feature
- * FeatureSortGroup: used to order features to group similar design rules
  * FeatureObject: object readable by rulePadTextualEditor/generateGuiTree.createGuiElementTree
  * key: the grammar keyword also defined in src/ui/RulePad/rulePadGraphicalEditor/graphicalEditorConstants.element_conditions
  */

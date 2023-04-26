@@ -314,9 +314,16 @@ const extractSingleTextEndsWithFeature = (mainNode, featureIndex, featureMetaDat
     if (result.length === 0) return [];
     for (let j = 0; j < result.length; j++) {
 
-        // break the text based on camelCase letters
-        let parts = result[j].replace(/([A-Z])/g, ' $1').trim().split(" ");
-        if (parts.length <= 1) continue;
+        // break the text based on camelCase letters or symbols
+        // add spaces where the string needs to break
+        let processedString = result[j]
+            .replace(/([a-z0-9])([A-Z])/g, '$1 $2') // camelCase
+            .replace(/(_)/g, ' $1 ') // underscore
+        let parts = processedString
+            .split(" ")
+            .map(d => d.trim())
+            .filter(d => d.length > 0);
+        if (parts === null || parts.length <= 1) continue;
 
         let commonPart = "";
         let startPartIndex = startsWith ? 0 : 1;
