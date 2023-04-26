@@ -9,9 +9,7 @@ import Traverse from "./generateXPath";
  */
 export default async function verifyTextBasedOnGrammar(autoCompleteText) {
     if (autoCompleteText === "") return Promise.reject("EMPTY_FIELD");
-    let replacedPhrases = replacePhrase(autoCompleteText);
-    if (replacedPhrases === "") return Promise.reject("NO_INPUT_AFTER_REPLACING_PHRASES");
-    let returnValue = await lemmatize(replacedPhrases);
+    let returnValue = await lemmatize(autoCompleteText);
     if (returnValue.lemmatized === "") return Promise.reject("NO_INPUT_AFTER_LEMMATIZATION");
     let returnedObj = antlr(returnValue.lemmatized.trim() + " ");
     if (returnedObj.hasOwnProperty("grammarErrors") || returnedObj.hasOwnProperty("xpathTraverseErrors"))
@@ -25,17 +23,6 @@ export default async function verifyTextBasedOnGrammar(autoCompleteText) {
         })
     };
 }
-
-/**
- * replace phrases based on stored phrases
- * @returns {string} replaced string
- */
-const replacePhrase = (input) => {
-    // let keys = Object.keys(constants.replace_phrase);
-    // for (let j = 0; j < keys.length; j++)
-    //     input = input.replace(keys[j], constants.replace_phrase[keys[j]]);
-    return input;
-};
 
 
 /**
@@ -73,17 +60,6 @@ const lemmatize = (input) => {
     return {lemmatized: lemmatized.join("").trim(), wordArray: wordArray};
 };
 
-
-/**
- *  same as Utilities.stringReplaceAll
- * @param str
- * @param search
- * @param replacement
- * @returns {string|XML|*|void}
- */
-// const stringReplaceAll = (str, search, replacement) => {
-//     return str.replace(new RegExp(search, "g"), replacement);
-// };
 
 /**
  * check the text against grammar and returns the XPaths for quantifier and constraint
