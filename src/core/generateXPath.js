@@ -7,6 +7,7 @@ import Utilities from "./utilities";
 import store from "../reduxStore";
 import {sendExpressionStatementXML} from "../actions";
 import {webSocketSendMessage} from "./coreConstants";
+import {mapCommentsToXPath, mapCommentsWithNodesToXPath} from "../miningRulesCore/featureConfig";
 
 class GenerateXPath {
 
@@ -119,7 +120,7 @@ class GenerateXPath {
 
                     break;
 
-                case "commentsContext":
+                case "CommentsContext":
                     this.commentsContextTraversal(node, isConstraintCondition);
                     break;
 
@@ -270,9 +271,26 @@ class GenerateXPath {
             else if (node.getChild(k).constructor.name === "SymbolsContext")
                 word += node.getChild(k).getChild(0).getSymbol().text;
         }
-        // todo look in the meta data
-        // if (!isConstraintCondition) this.XPathQ += word;
-        // this.XPathC += word;
+        let predefinedComments = mapCommentsToXPath.map(d => d.comment);
+        let index = predefinedComments.indexOf(word);
+        if (index !== -1) {
+            if (!isConstraintCondition)
+                this.XPathQ += mapCommentsToXPath[index].xpath;
+            this.XPathC += mapCommentsToXPath[index].xpath;
+            return;
+        }
+        let predefinedCommentsWithNodes = mapCommentsWithNodesToXPath.map(d => d.comment);
+        index = predefinedCommentsWithNodes.findIndex(d => word.startsWith(d));
+        if (index !== -1) {
+            let nodeValue = word.replace(predefinedCommentsWithNodes[index], "");
+            let xpath = mapCommentsWithNodesToXPath[index].xpath.replace(/<TEMP_0>/g, nodeValue)
+            if (!isConstraintCondition) this.XPathQ += xpath;
+            this.XPathC += xpath;
+            return;
+        }
+        if (!isConstraintCondition)
+            this.XPathQ += '[]';
+        this.XPathC += '[]';
     }
 
     classesContextTraversal(node, isConstraintCondition, isSubclass = false) {

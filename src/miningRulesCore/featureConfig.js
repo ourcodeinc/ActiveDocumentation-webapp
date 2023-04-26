@@ -1188,7 +1188,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text,
         xpath: "/src:function/src:block//src:expr_stmt/src:expr/src:operator[text()=\"=\"]" +
             "/preceding-sibling::src:name[src:name/text()=\"this\"]/src:name[position()=2]/text()",
-        description: "function with ( \"Modifying Field <TEMP_0>\" )",
+        description: "function with ( \"Modifying Field: <TEMP_0>\" )",
         weight: 10,
         FeatureObject: {
             key: "function",
@@ -1567,3 +1567,100 @@ export const defaultFeatures = {
     },
 
 }
+
+/**
+ * Used to generate XPath from the grammar
+ * @type {{xpath: string, comment: string}[]}
+ */
+export const mapCommentsToXPath = [
+    {comment: "No Constructor", xpath: "not(src:block/src:constructor)"},  // class_no_constr , subclass_no_constr
+    {comment: "No Function", xpath: "not(src:block/src:function)"},  // class_no_func , subclass_no_func
+    {comment: "Empty Body", xpath: "not(src:block/*[not(self::src:comment)])"}, // constr_empty_body
+    {comment: "No Parameter", xpath: "src:parameter_list[not(src:parameter)]"}, // func_no_param
+    {comment: "Initialization", xpath: "src:init"}, // field_has_init , decl_has_init
+];
+
+/**
+ * Used to generate XPath from the grammar
+ * @type {{xpath: string, comment: string}[]}
+ */
+export const mapCommentsWithNodesToXPath = [
+    {
+        comment: "Calling Constructor: ", //   constr_call_constr , func_call_constr
+        xpath: "src:block//src:expr_stmt/src:expr/src:operator[text()=\"new\"]" +
+            "/following-sibling::src:call/src:name[text()=<TEMP_0>]|" +
+            "src:block//src:decl_stmt/src:decl/src:init/src:expr/src:operator[text()=\"new\"]" +
+            "/following-sibling::src:call/src:name[text()=<TEMP_0>]"},
+    {
+        comment: "Calling Function: ",  //      constr_call_func , func_call_func , expr_call_function
+        xpath0: "src:block//src:decl_stmt/src:decl/src:init/src:expr/src:call/src:name[not(src:name)][text()=<TEMP_0>]|" +
+            "src:block//src:decl_stmt/src:decl/src:init/src:expr/src:call/src:name/src:name[last()][text()=<TEMP_0>]|" +
+            "src:block//src:expr_stmt/src:expr/src:call/src:name[not(src:name)][text()=<TEMP_0>]|" +
+            "src:block//src:expr_stmt/src:expr/src:call/src:name/src:name[last()][text()=<TEMP_0>]|" +
+            "*[position()=1 and self::src:call]/src:name[not(src:name)][text()=<TEMP_0>]|" +
+            "*[position()=1 and self::src:call]/src:name/src:name[last()][text()=<TEMP_0>]",
+    },
+    {
+        comment: "Modifying Field: ",  //       constr_modify_field , func_modify_field
+        xpath: "src:block//src:expr_stmt/src:expr/src:operator[text()=\"=\"]" +
+            "/preceding-sibling::src:name[src:name/text()=\"this\"]/src:name[position()=2][text()=<TEMP_0>]"},
+    {
+        comment: "Calling a Function With Argument: ",  //     expr_call_function_argument
+        xpath: "*[position()=1 and self::src:call]/src:argument_list" +
+            "/src:argument/src:expr/src:literal[text()=<TEMP_0>]|" +
+            "*[position()=1 and self::src:call]/src:argument_list" +
+            "/src:argument/src:expr/src:name[not(src:name)][text()=<TEMP_0>]|" +
+            "*[position()=1 and self::src:call]/src:argument_list" +
+            "/src:argument/src:expr/src:name/src:name[last()][text()=<TEMP_0>]|" +
+            "*[position()=1 and self::src:call]/src:argument_list" +
+            "/src:argument/src:expr/src:call/src:name[not(src:name)][text()=<TEMP_0>]|" +
+            "*[position()=1 and self::src:call]/src:argument_list" +
+            "/src:argument/src:expr/src:call/src:name/src:name[last()][text()=<TEMP_0>]"
+    },
+    {
+        comment: "Initialized by Calling Function: ",  //    decl_call_function , expr_assignment_callee_call_function
+        xpath: "src:init/src:expr/src:call/src:name[not(src:name)][text()=<TEMP_0>]|" +
+            "src:init/src:expr/src:call/src:name/src:name[last()][text()=<TEMP_0>]|" +
+            "src:operator[text()=\"=\"]/following-sibling::src:call/src:name[not(src:name)][text()=<TEMP_0>]|" +
+            "src:operator[text()=\"=\"]/following-sibling::src:call/src:name/src:name[last()][text()=<TEMP_0>]"
+    },
+    {  //   decl_call_function_argument , expr_assignment_callee_call_function_argument
+        comment: "Initialized by Calling a Function With Argument: ",
+        xpath: "src:init/src:expr/src:call/src:argument_list" +
+            "/src:argument/src:expr/src:literal[text()=<TEMP_0>]|" +
+            "src:init/src:expr/src:call/src:argument_list" +
+            "/src:argument/src:expr/src:name[not(src:name)][text()=<TEMP_0>]|" +
+            "src:init/src:expr/src:call/src:argument_list" +
+            "/src:argument/src:expr/src:name/src:name[last()][text()=<TEMP_0>]|" +
+            "src:init/src:expr/src:call/src:argument_list" +
+            "/src:argument/src:expr/src:call/src:name[not(src:name)][text()=<TEMP_0>]|" +
+            "src:init/src:expr/src:call/src:argument_list" +
+            "/src:argument/src:expr/src:call/src:name/src:name[last()][text()=<TEMP_0>]|" +
+            "src:operator[text()=\"=\"]/following-sibling::src:call/" +
+            "src:argument_list/src:argument/src:expr/src:literal[text()=<TEMP_0>]|" +
+            "src:operator[text()=\"=\"]/following-sibling::src:call/" +
+            "src:argument_list/src:argument/src:expr/src:name[not(src:name)][text()=<TEMP_0>]|" +
+            "src:operator[text()=\"=\"]/following-sibling::src:call/" +
+            "src:argument_list/src:argument/src:expr/src:name/src:name[last()][text()=<TEMP_0>]|" +
+            "src:operator[text()=\"=\"]/following-sibling::src:call/" +
+            "src:argument_list/src:argument/src:expr/src:call/src:name[not(src:name)][text()=<TEMP_0>]|" +
+            "src:operator[text()=\"=\"]/following-sibling::src:call/" +
+            "src:argument_list/src:argument/src:expr/src:call/src:name/src:name[last()][text()=<TEMP_0>]",
+    },
+    {
+        comment: "Initialization ", //         decl_init_value
+        xpath: "src:init/src:expr/src:literal[text()=<TEMP_0>]|" +
+            "src:init/src:expr/src:name[not(src:name)][text()=<TEMP_0>]|" +
+            "src:init/src:expr/src:name/src:name[last()][text()=<TEMP_0>]"},
+    {
+        comment: "Caller: ",  //                expr_assignment_caller
+        xpath: "src:name[position()=1]/text()|/src:expr_stmt/src:expr/src:name[position()=1]/src:name[last()][text()=<TEMP_0>]",
+    },
+    {
+        comment: "Assigned Value: ",  //        expr_assignment_callee_value
+        xpath: "src:operator[text()=\"=\"]/following-sibling::src:name[not(src:name)][text()=<TEMP_0>]|" +
+            "src:operator[text()=\"=\"]/following-sibling::src:name/src:name[last()][text()=<TEMP_0>]|" +
+            "src:operator[text()=\"=\"]/following-sibling::src:literal/[text()=<TEMP_0>]",
+    },
+];
+
