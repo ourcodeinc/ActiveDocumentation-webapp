@@ -339,6 +339,14 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     ...state.rulePadState,
                     receivedMessages: state.rulePadState.receivedMessages.concat([action.data["xmlData"]])
                 },
+                minedRulesState: {
+                    ...state.minedRulesState,
+                    minedRulePadState: {
+                        ...state.minedRulesState.minedRulePadState,
+                        receivedMessages: state.minedRulesState.minedRulePadState.receivedMessages
+                            .concat([action.data["xmlData"]])
+                    }
+                },
                 message: reduxStoreMessages.receive_expr_stmt_xml_msg
             });
 
