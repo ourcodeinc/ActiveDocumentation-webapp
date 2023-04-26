@@ -268,6 +268,35 @@ const createWithChildrenForFeature = (featureInfo) => {
 }
 
 /**
+ * @param featureIndex {string}
+ * @param combinedFeature {number[]}
+ * @param featureMetaData {featureMetaDataType}
+ * @return {any}
+ */
+const createWithChildrenForCombinedFeatures = (featureIndex, combinedFeature, featureMetaData) => {
+    /**{key: string, withChildren:
+     *          ({key: string, value: {word: string, type: string}}|
+     *           {key: string, withChildren: {key: string, value: {word: string, type: string}}})}
+     */
+    let child = JSON.parse(JSON.stringify(defaultFeatures[featureIndex].FeatureObject.withChildren));
+    let values = [];
+    for (let featureId of combinedFeature) {
+        let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
+        let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
+        values.push(featureInfo.nodes[0])
+    }
+    if ("value" in child) {
+        child.value.word = child.value.word.replace(`<TEMP_0>`, values.join("||"));
+    } else if ("withChildren" in child) {
+        let grandChild = child.withChildren;
+        if ("value" in grandChild) {
+            grandChild.value.word = grandChild.value.word.replace(`<TEMP_0>`, values.join("||"));
+        }
+    }
+    return child;
+}
+
+/**
  * create an object readable by rulePadTextualEditor/generateGuiTree.createGuiElementTree
  * by combining FeatureObject property of each feature
  * @param clusteredParsedOutput {builtObjectRulePadOutputType}
@@ -310,17 +339,29 @@ const createRulePad = (clusteredParsedOutput, featureMetaData) => {
  * @param featureMetaData {featureMetaDataType}
  */
 export const createRulePadStateForItemSet = (frequentItemSet, fileGroup, featureMetaData) => {
+    // combine overlapping features
+    let combinedFeatures = {};
+    for (let featureId of frequentItemSet.featureIds) {
+        let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
+        let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
+        let featureIndex = featureInfo.featureIndex;
+        if (!(featureIndex in combinedFeatures)) {
+            combinedFeatures[featureIndex] = [];
+        }
+        combinedFeatures[featureIndex].push(featureId);
+    }
     let builtObjects = {};
     let mergeKeys = featureGroupInformation[fileGroup].mergeKeys;
     for (let mergeKey of mergeKeys) {
         builtObjects[mergeKey] = {key: mergeKey, withChildren: []};
     }
-    for (let featureId of frequentItemSet.featureIds) {
-        // add the feature to the builtObject
-        let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
+    let combinedFeaturesKeys = Object.keys(combinedFeatures);
+    for (let combinedFeatureKey of combinedFeaturesKeys) {
+        let desc = featureMetaData.featureInfoContainers.featureInfoReverse[combinedFeatures[combinedFeatureKey][0]];
         let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
         let featureObject = defaultFeatures[featureInfo.featureIndex].FeatureObject;
-        let featureChild = createWithChildrenForFeature(featureInfo);
+        let featureChild =
+                createWithChildrenForCombinedFeatures(combinedFeatureKey, combinedFeatures[combinedFeatureKey], featureMetaData);
         if (featureObject.key === mergeKeys[0]) {
             featureChild.isConstraint = true;
         }

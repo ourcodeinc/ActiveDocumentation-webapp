@@ -1,6 +1,7 @@
 import {initial_state, default_rulePanelState} from "./initialState";
 import {reduxStoreActions, reduxStoreMessages} from "./reduxStoreConstants";
 import {constantRuleIndex} from "./ui/uiConstants";
+import {fileFolderConstraints} from "./core/ruleExecutorConstants";
 
 
 /**
@@ -528,7 +529,12 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 message: reduxStoreMessages.update_focused_element_identifiers,
                 minedRulesState: {
                     ...state.minedRulesState,
-                    focusedElementData: action.data["focusedElementData"]
+                    focusedElementData: action.data["focusedElementData"],
+                    minedRulePadState: {
+                        ...state.minedRulesState.minedRulePadState,
+                        folderConstraint: fileFolderConstraints.include,
+                        filesFolders: [action.data["focusedElementData"].filePath]
+                    }
                 }
             });
 
