@@ -302,3 +302,33 @@ const createRulePad = (clusteredParsedOutput, featureMetaData) => {
         };
     })
 }
+
+/**
+ * Create the RulePadState for a single itemSet
+ * @param frequentItemSet {initialFrequentItemSetType}
+ * @param fileGroup {string}
+ * @param featureMetaData {featureMetaDataType}
+ */
+export const createRulePadStateForItemSet = (frequentItemSet, fileGroup, featureMetaData) => {
+    let builtObjects = {};
+    let mergeKeys = featureGroupInformation[fileGroup].mergeKeys;
+    for (let mergeKey of mergeKeys) {
+        builtObjects[mergeKey] = {key: mergeKey, withChildren: []};
+    }
+    for (let featureId of frequentItemSet.featureIds) {
+        // add the feature to the builtObject
+        let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
+        let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
+        let featureObject = defaultFeatures[featureInfo.featureIndex].FeatureObject;
+        let featureChild = createWithChildrenForFeature(featureInfo);
+        if (featureObject.key === mergeKeys[0]) {
+            featureChild.isConstraint = true;
+        }
+        builtObjects[featureObject.key].withChildren.push(featureChild);
+    }
+    let builtObject = builtObjects[mergeKeys[0]];
+    builtObject.withChildren.push(builtObjects[mergeKeys[1]]);
+    builtObject.selectedElement = true;
+    builtObject.isConstraint = false;
+    return processRulePadForMiningRules(builtObject);
+}

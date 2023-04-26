@@ -15,7 +15,7 @@ import {Button, Col, Row} from "react-bootstrap";
 import "rc-slider/assets/index.css";
 
 import {
-    updateFeatureMetaData, updateSelectedMinedCluster, updateGroupingMetaData
+    updateFeatureMetaData, updateSelectedMinedCluster, updateGroupingMetaData, updateMinedRulePadState
 } from "../../actions";
 import Utilities from "../../core/utilities";
 import {reduxStoreMessages} from "../../reduxStoreConstants";
@@ -26,6 +26,7 @@ import {focusElementType, featureGroupInformation} from "../../miningRulesCore/f
 import MinedClusterRulePad from "./minedClusterRulePad";
 import {constantRuleIndex} from "../uiConstants";
 import RulePad from "../RulePad/rulePad";
+import {createRulePadStateForItemSet} from "../../miningRulesCore/postProcessing";
 
 class MiningRulesComponent extends Component {
 
@@ -181,7 +182,7 @@ class MiningRulesComponent extends Component {
                             <h5><strong>Average frequency (Support) of cluster members: </strong>
                                 {clusterObject.averageSupport}
                             </h5>
-                            <Button onClick={() => this.props.onUpdateSelectedMinedCluster(clusterIndex, groupIndex)}>
+                            <Button onClick={() => this.updateSelectedMinedCluster(groupIndex, clusterIndex)}>
                                 Explore</Button>
                         </Col>
                     </Row>
@@ -276,6 +277,22 @@ class MiningRulesComponent extends Component {
         this.setState({loadingStatus: true});
     }
 
+    /**
+     * Nominate a frequent itemSet to be displayed in RulePad
+     * populate RulePad with the frequent itemSets from the cluster with the highest utility
+     * @param groupIndex {number}
+     * @param clusterIndex {number}
+     */
+    updateSelectedMinedCluster(groupIndex, clusterIndex) {
+        let allFrequentItemSetsInCluster = this.state.minedRules[groupIndex].clusters[clusterIndex].cluster;
+        const maxUtilityItemSet = allFrequentItemSetsInCluster.reduce((max, obj) =>
+            obj.utility > max.utility ? obj : max);
+        let rulePadState = createRulePadStateForItemSet(maxUtilityItemSet,
+            this.state.minedRules[groupIndex].fileGroup, this.props.featureMetaData);
+        this.props.onUpdateMinedRulePadState(groupIndex, clusterIndex, rulePadState);
+        // this.props.onUpdateSelectedMinedCluster(clusterIndex, groupIndex)
+    }
+
 }
 
 function mapStateToProps(state) {
@@ -298,8 +315,10 @@ function mapDispatchToProps(dispatch) {
     return {
         onUpdateFeatureMetaData: (featureMetaData) => dispatch(updateFeatureMetaData(featureMetaData)),
         onUpdateGroupingMetaData: (groupingMetaData) => dispatch(updateGroupingMetaData(groupingMetaData)),
-        onUpdateSelectedMinedCluster: (clusterIndex, groupIndex) =>
-            dispatch(updateSelectedMinedCluster(clusterIndex, groupIndex)),
+        onUpdateSelectedMinedCluster: (groupIndex, clusterIndex) =>
+            dispatch(updateSelectedMinedCluster(groupIndex, clusterIndex)),
+        onUpdateMinedRulePadState: (groupIndex, clusterIndex, rulePadState) =>
+            dispatch(updateMinedRulePadState(groupIndex, clusterIndex, rulePadState))
     }
 }
 

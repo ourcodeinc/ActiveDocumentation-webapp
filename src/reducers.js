@@ -581,6 +581,20 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 return Object.assign({}, state);
             }
 
+        case reduxStoreActions.action_update_mined_rulepad_state:
+                return Object.assign({}, state, {
+                    message: reduxStoreMessages.updated_selected_mined_cluster_msg,
+                    minedRulesState: {
+                        ...state.minedRulesState,
+                        minedRulePadState: {
+                            ...state.minedRulesState.minedRulePadState,
+                            selectedGroupIndex: action.data["selectedGroupIndex"],
+                            selectedClusterIndex: action.data["selectedClusterIndex"],
+                            graphicalEditorState: action.data["rulePadState"]
+                        }
+                    }
+                });
+
         case reduxStoreActions.action_update_feature_selection :
             return Object.assign({}, state, {
                 message: reduxStoreMessages.update_feature_selection_msg,

@@ -383,16 +383,27 @@ export const updatedMinedRules = (minedRules) => {
 
 /**
  * update the rule
- * @param clusterIndex
- * @param groupIndex
- * @return {{type: string, data: {selectedClusterIndex: number, selectedGroupIndex: number}}}
+ * @param groupIndex {number}
+ * @param clusterIndex {number}
+ * @return {{type: string, data: {selectedGroupIndex: number, selectedClusterIndex: number}}}
  */
-export const updateSelectedMinedCluster = (clusterIndex, groupIndex) => {
+export const updateSelectedMinedCluster = (groupIndex, clusterIndex) => {
     return {
         type: reduxStoreActions.action_update_selected_mined_cluster,
         data: {
+            selectedGroupIndex: groupIndex,
+            selectedClusterIndex: clusterIndex
+        }
+    };
+}
+
+export const updateMinedRulePadState = (groupIndex, clusterIndex, rulePadState) => {
+    return {
+        type: reduxStoreActions.action_update_mined_rulepad_state,
+        data: {
+            selectedGroupIndex: groupIndex,
             selectedClusterIndex: clusterIndex,
-            selectedGroupIndex: groupIndex
+            rulePadState: rulePadState
         }
     };
 }
