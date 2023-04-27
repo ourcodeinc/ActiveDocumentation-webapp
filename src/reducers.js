@@ -531,9 +531,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     ...state.minedRulesState,
                     focusedElementData: action.data["focusedElementData"],
                     minedRulePadState: {
-                        ...state.minedRulesState.minedRulePadState,
-                        folderConstraint: fileFolderConstraints.include,
-                        filesFolders: [action.data["focusedElementData"].filePath]
+                        ...state.minedRulesState.minedRulePadState
                     }
                 }
             });
@@ -594,6 +592,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         ...state.minedRulesState,
                         minedRulePadState: {
                             ...state.minedRulesState.minedRulePadState,
+                            folderConstraint: fileFolderConstraints.include,
+                            filesFolders: action.data["filesFolders"],
                             selectedGroupIndex: action.data["selectedGroupIndex"],
                             selectedClusterIndex: action.data["selectedClusterIndex"],
                             graphicalEditorState: action.data["rulePadState"]

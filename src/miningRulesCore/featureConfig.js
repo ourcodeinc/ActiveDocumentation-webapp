@@ -4,6 +4,7 @@ export const MIN_SUPPORT_FOR_MINING = 2; // minimum feature occurrences
 export const MIN_UTILITY_FOR_MINING = "0.05"; // % for MIN_SUPPORT_FOR_FILTER for FP_MAX and high number like 200 for CHUI-Miner
 export const MIN_SUPPORT_FOR_FILTER = 3;
 export const MIN_UTILITY_FOR_FILTER = 20;
+export const MIN_WEIGHT_TO_INCLUDE_FILE = 2; // min weight of a feature to include its files in RulePad
 
 // Constants for clustering similar itemSets
 export const SIMILARITY_THRESHOLD = 15; // Threshold for similarity measure

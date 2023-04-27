@@ -7,7 +7,7 @@ import {
     selectedAlgorithm, allAlgorithms,
     attributeFileNames,
     defaultFeatures, featureGroupInformation,
-    MIN_SUPPORT_FOR_FILTER, MIN_UTILITY_FOR_FILTER
+    MIN_SUPPORT_FOR_FILTER, MIN_UTILITY_FOR_FILTER, MIN_WEIGHT_TO_INCLUDE_FILE
 } from "./featureConfig";
 import {clusterSimilarItemSets} from "./clustering";
 import {processRulePadForMiningRules} from "../ui/RulePad/rulePadTextualEditor/generateGuiTree"
@@ -337,6 +337,7 @@ const createRulePad = (clusteredParsedOutput, featureMetaData) => {
  * @param frequentItemSet {initialFrequentItemSetType}
  * @param fileGroup {string}
  * @param featureMetaData {featureMetaDataType}
+ * @return {{guiTree: any, guiElements: any}}
  */
 export const createRulePadStateForItemSet = (frequentItemSet, fileGroup, featureMetaData) => {
     // combine overlapping features
@@ -362,14 +363,61 @@ export const createRulePadStateForItemSet = (frequentItemSet, fileGroup, feature
         let featureObject = defaultFeatures[featureInfo.featureIndex].FeatureObject;
         let featureChild =
                 createWithChildrenForCombinedFeatures(combinedFeatureKey, combinedFeatures[combinedFeatureKey], featureMetaData);
-        if (featureObject.key === mergeKeys[0]) {
+        if (featureObject.key === mergeKeys[1]) {
             featureChild.isConstraint = true;
         }
         builtObjects[featureObject.key].withChildren.push(featureChild);
     }
+    builtObjects[mergeKeys[1]].isConstraint = true;
     let builtObject = builtObjects[mergeKeys[0]];
     builtObject.withChildren.push(builtObjects[mergeKeys[1]]);
     builtObject.selectedElement = true;
     builtObject.isConstraint = false;
     return processRulePadForMiningRules(builtObject);
+}
+
+/**
+ * Find the paths on which the mined rule is going to be checked.
+ * @param maxUtilityItemSet {initialFrequentItemSetType}
+ * @param fileGroup {string}
+ * @param featureMetaData {featureMetaDataType}
+ * @return {string[]}
+ */
+export const findFileFoldersForItemSet = (maxUtilityItemSet, fileGroup,
+                                          featureMetaData) => {
+    // only adding the paths of files that contain the constraint feature.
+    let filesFolders = [];
+    let mergeKeys = featureGroupInformation[fileGroup].mergeKeys;
+    let featureIds = maxUtilityItemSet.featureIds;
+    for (let featureId of featureIds) {
+        let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
+        let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
+        let featureObject = defaultFeatures[featureInfo.featureIndex].FeatureObject;
+        if (featureInfo.weight >= MIN_WEIGHT_TO_INCLUDE_FILE && featureObject.key === mergeKeys[0]) {
+            filesFolders = filesFolders.concat(featureMetaData.featureInfoContainers.featureMap[featureId]);
+        }
+    }
+    let paths = [...new Set(filesFolders)];
+
+    // combine paths
+    // Create a dictionary to store paths by their common prefix
+    const pathDict = {};
+    for (const path of paths) {
+        const prefix = path.split('/').slice(0, -1).join('/');
+        if (!pathDict[prefix]) {
+            pathDict[prefix] = [];
+        }
+        pathDict[prefix].push(path);
+    }
+    // Iterate over the paths and combine them if necessary
+    const combinedPaths = [];
+    for (const prefix in pathDict) {
+        if (pathDict[prefix].length > 1) {
+            const combinedPath = prefix + '/';
+            combinedPaths.push(combinedPath);
+        } else {
+            combinedPaths.push(...pathDict[prefix]);
+        }
+    }
+    return combinedPaths;
 }

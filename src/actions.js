@@ -397,10 +397,19 @@ export const updateSelectedMinedCluster = (groupIndex, clusterIndex) => {
     };
 }
 
-export const updateMinedRulePadState = (groupIndex, clusterIndex, rulePadState) => {
+/**
+ * update the RulePad state shown for Mined Rules
+ * @param groupIndex {number}
+ * @param clusterIndex {number}
+ * @param rulePadState
+ * @param filesFolders {string[]}
+ * @return {{data: {selectedClusterIndex, filesFolders, rulePadState, selectedGroupIndex}, type: string}}
+ */
+export const updateMinedRulePadState = (groupIndex, clusterIndex, rulePadState, filesFolders) => {
     return {
         type: reduxStoreActions.action_update_mined_rulepad_state,
         data: {
+            filesFolders: filesFolders,
             selectedGroupIndex: groupIndex,
             selectedClusterIndex: clusterIndex,
             rulePadState: rulePadState

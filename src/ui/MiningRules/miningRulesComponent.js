@@ -26,7 +26,7 @@ import {focusElementType, featureGroupInformation} from "../../miningRulesCore/f
 import MinedClusterRulePad from "./minedClusterRulePad";
 import {constantRuleIndex} from "../uiConstants";
 import RulePad from "../RulePad/rulePad";
-import {createRulePadStateForItemSet} from "../../miningRulesCore/postProcessing";
+import {createRulePadStateForItemSet, findFileFoldersForItemSet} from "../../miningRulesCore/postProcessing";
 
 class MiningRulesComponent extends Component {
 
@@ -285,7 +285,9 @@ class MiningRulesComponent extends Component {
             obj.utility > max.utility ? obj : max);
         let rulePadState = createRulePadStateForItemSet(maxUtilityItemSet,
             this.state.minedRules[groupIndex].fileGroup, this.props.featureMetaData);
-        this.props.onUpdateMinedRulePadState(groupIndex, clusterIndex, rulePadState);
+        let filesFolders = findFileFoldersForItemSet(maxUtilityItemSet,
+            this.state.minedRules[groupIndex].fileGroup, this.props.featureMetaData);
+        this.props.onUpdateMinedRulePadState(groupIndex, clusterIndex, rulePadState, filesFolders);
         // this.props.onUpdateSelectedMinedCluster(clusterIndex, groupIndex)
     }
 
@@ -313,8 +315,8 @@ function mapDispatchToProps(dispatch) {
         onUpdateGroupingMetaData: (groupingMetaData) => dispatch(updateGroupingMetaData(groupingMetaData)),
         onUpdateSelectedMinedCluster: (groupIndex, clusterIndex) =>
             dispatch(updateSelectedMinedCluster(groupIndex, clusterIndex)),
-        onUpdateMinedRulePadState: (groupIndex, clusterIndex, rulePadState) =>
-            dispatch(updateMinedRulePadState(groupIndex, clusterIndex, rulePadState))
+        onUpdateMinedRulePadState: (groupIndex, clusterIndex, rulePadState, filesFolders) =>
+            dispatch(updateMinedRulePadState(groupIndex, clusterIndex, rulePadState, filesFolders))
     }
 }
 
