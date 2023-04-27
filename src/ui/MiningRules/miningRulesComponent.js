@@ -105,12 +105,6 @@ class MiningRulesComponent extends Component {
                 }, () => this.sendFeaturesForMiningRules());
                 break;
 
-            case reduxStoreMessages.save_feature_selection_msg:
-                this.setState({
-                    customFeatures: nextProps.customFeatures
-                });
-                break;
-
             default:
                 break;
 
