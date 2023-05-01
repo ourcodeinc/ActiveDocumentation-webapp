@@ -165,9 +165,6 @@ function mapStateToProps(state) {
         case hashConst.learnDesignRules:
             props.title = "Learn Design Rules";
             break;
-        case hashConst.featureSelection:
-            props.title = "Feature Selection";
-            break;
         default:
             props.content = "Error no page is found for: " + state.currentHash[0];
             break;
