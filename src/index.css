@@ -877,3 +877,7 @@ img.tutorialSmallImage {
 .frequency-9, .frequency-10 {
     background-color: #61b5d6 !important;
 }
+
+.focusedElementError {
+    color: #a94442;
+}

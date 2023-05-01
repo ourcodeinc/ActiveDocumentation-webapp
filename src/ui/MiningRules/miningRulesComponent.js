@@ -37,6 +37,7 @@ class MiningRulesComponent extends Component {
             loadingStatus: false, // for loading icons when mining rules
             loadingTitle: "Mining Rules",
             showSelectedCluster: false,
+            showErrorMessage: false,
             selectedGroupIndex: props.selectedGroupIndex,
             selectedClusterIndex: props.selectedClusterIndex
         };
@@ -46,7 +47,7 @@ class MiningRulesComponent extends Component {
         return (
             <div className={"miningRulesComponent overlayContainer"}>
                 <div className={"mainDiv-overlay"}>
-                {this.renderDefaultView()}
+                    {this.renderDefaultView()}
                     {this.state.showSelectedCluster ? this.renderSelectedCluster() : (
                         <div className={"minedRulesComponent"}>
                             {this.renderFocusedElementInfo()}
@@ -66,15 +67,26 @@ class MiningRulesComponent extends Component {
                 break;
 
             case reduxStoreMessages.update_focused_element_identifiers:
+                if (nextProps.focusedElementData.identifier === "") {
+                    this.setState({
+                        minedRules: [],
+                        showSelectedCluster: false,
+                        showErrorMessage: true
+                    });
+                    break;
+                }
                 this.setState({
                     minedRules: [],
                     loadingTitle: "Extracting Features",
                     loadingStatus: true,
-                    showSelectedCluster: false
+                    showSelectedCluster: false,
+                    showErrorMessage: false
                 });
                 break;
 
             case reduxStoreMessages.request_mine_rules_for_element_msg:
+                if (nextProps.focusedElementData.identifier === "")
+                    break;
                 this.setState({
                     minedRules: [],
                     loadingTitle: "Mining Rules",
@@ -119,7 +131,10 @@ class MiningRulesComponent extends Component {
         if (this.state.loadingStatus) return null;
         return (
             <div>
-                <h3>Pick an element in the IDE, and select <strong>Mine Rules</strong> from the context menu.</h3>
+                <h4>Pick an element in the IDE, and select <strong>Mine Rules</strong> from the context menu.</h4>
+                {this.state.showErrorMessage ? (
+                    <h4 className={"focusedElementError"}>The focused element should be Class, Field, or Method.</h4>)
+                    : null}
             </div>
         )
     }
@@ -184,19 +199,11 @@ class MiningRulesComponent extends Component {
             </div>)
         }
         return this.state.minedRules.map((group, groupIndex) => {
-            if (group.rulePadStates.length === 0) {
-                return (
-                    <div key={groupIndex}>
-                        <h4><strong>{"No rules found for "}
-                            {featureGroupInformation[group.fileGroup].desc}</strong></h4>
-                    </div>)
-            } else {
-                return (
-                    <div key={groupIndex}>
-                        <h4>{featureGroupInformation[group.fileGroup].desc}</h4>
-                        {group.rulePadStates.map((_, clusterIndex) => process(group, groupIndex, clusterIndex))}
-                    </div>)
-            }
+            return (group.rulePadStates.length === 0) ? null : (
+                <div key={groupIndex}>
+                    <h4><strong>{featureGroupInformation[group.fileGroup].desc}</strong></h4>
+                    {group.rulePadStates.map((_, clusterIndex) => process(group, groupIndex, clusterIndex))}
+                </div>)
         })
     }
 
