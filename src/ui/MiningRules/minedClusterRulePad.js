@@ -237,7 +237,7 @@ class MinedClusterRulePad extends Component {
                             menuItemsText={allFeatures}
                             menuItemsInfo={info}
                             menuItemsEvent={allFeatures.map((item, i) => item === "N/A" ? childCondition.placeholder
-                                : Object.keys(childElement._data_._data_)[i])}
+                                : item)}
                             menuDefault={childElement.text}
                             onSelectFunction={() => {}}
                         />
