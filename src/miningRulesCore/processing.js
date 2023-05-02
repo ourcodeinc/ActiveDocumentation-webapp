@@ -10,7 +10,7 @@ import {
     selectedAlgorithm,
     attributeFileNames,
     MIN_SUPPORT_FOR_MINING,
-    MIN_UTILITY_FOR_MINING, MAX_GROUP_SIZE,
+    MAX_GROUP_SIZE,
     defaultFeatures, allAlgorithms
 } from "./featureConfig";
 import {webSocketSendMessage} from "../core/coreConstants";
@@ -32,6 +32,7 @@ import {webSocketSendMessage} from "../core/coreConstants";
  * @param doiInformation {doiInformationType}
  * @param groupingMetaData {groupingMetaDataType}
  * @param featureMetaData {featureMetaDataType}
+ * @return {{command, data}[]}
  */
 export const generateFeatures = (xmlFiles, projectPath,
                                  focusedElementData,
@@ -85,6 +86,14 @@ export const generateFeatures = (xmlFiles, projectPath,
             return false;
         });
 
+    let message = {
+        command: webSocketSendMessage.learn_design_rules_helper_files_msg,
+        data: {
+            fileName: `files_to_process.txt`,
+            content: fileToProcess.map(d => d.filePath.replace(projectPath, "")).join("\n")
+        }
+    }
+
     fileToProcess.forEach(xmlFile => {
         extractFeaturesFromXmlFile(xmlFile, projectPath, focusedElementData, featureMetaData);
     });
@@ -101,6 +110,7 @@ export const generateFeatures = (xmlFiles, projectPath,
     })
     UpdateFeatureWeights(targetIdWeight, featureMetaData);
     updateFeatureWeightsDoi(doiInformation, featureMetaData, projectPath);
+    return [message];
 }
 
 /**
@@ -237,8 +247,10 @@ const updateFeatureWeightsDoi = (doiInformation,
 /**
  * create txt files for writing in files and processing for mining design rules
  * @param featureMetaData {featureMetaDataType}
- * @return {{command, data}[]} strings for writing in file and processing by CHUI-Miner */
-export const prepareFilesAndRequestMineRules = (featureMetaData) => {
+ * @param additionalMessages {{command, data}[]}
+ * @return {{command, data}[]} strings for writing in file and processing by the mining algorithm */
+export const prepareFilesAndRequestMineRules = (featureMetaData,
+                                                additionalMessages) => {
 
     /**
      * @type {{name: string, content: string}[]}
@@ -246,7 +258,7 @@ export const prepareFilesAndRequestMineRules = (featureMetaData) => {
     let files = [];
 
     /**
-     * transform input to CHUI transactions
+     * transform input to transactions
      * output: <featureId1> <featureId2>:<weight of featureId1> <weight of featureId2>
      * @param featureIds {number[]}
      * @return {string|null}
@@ -263,9 +275,14 @@ export const prepareFilesAndRequestMineRules = (featureMetaData) => {
             weights.push(Math.floor(featureInfo.weight));
             sumUtilities += Math.floor(featureInfo.weight);
         }
-        if (selectedAlgorithm === allAlgorithms.FP_MAX)
-            return `${featureIdsInLine.join(" ")}`
-        return `${featureIdsInLine.join(" ")}:${sumUtilities}:${weights.join(" ")}`
+        switch (selectedAlgorithm) {
+            case allAlgorithms.CHUI_MINER:
+            case allAlgorithms.CHUI_MINER_MAX:
+                return `${featureIdsInLine.join(" ")}:${sumUtilities}:${weights.join(" ")}`
+            case allAlgorithms.FP_MAX:
+            case allAlgorithms.FP_Close:
+                return `${featureIdsInLine.join(" ")}`
+        }
     }
 
     /**
@@ -315,13 +332,14 @@ export const prepareFilesAndRequestMineRules = (featureMetaData) => {
             }
         })
     }
+    output.push(...additionalMessages);
     output.push({
             command: webSocketSendMessage.learn_design_rules_features_msg,
             data: {fileName: attributeFileNames.featureFile, content: featureFile}
         },
         {
             command: webSocketSendMessage.mine_design_rules_msg,
-            data: {utility : MIN_UTILITY_FOR_MINING, algorithm: selectedAlgorithm}
+            data: {parameters: selectedAlgorithm.parameters, algorithm: selectedAlgorithm.key}
         });
 
     return output;

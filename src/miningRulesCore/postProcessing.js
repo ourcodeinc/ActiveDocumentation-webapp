@@ -48,21 +48,30 @@ const parseFrequentItemSets = (outputFiles, featureMetaData) => {
         let frequentItemSets = [];
         for (let line of outputLines) {
             let split = line.split(" #");
-            if (split.length < 3 &&
-                (selectedAlgorithm === allAlgorithms.CHUI_MINER_MAX || selectedAlgorithm === allAlgorithms.CHUI_MINER))
-                continue;
-            if (split.length < 2 && selectedAlgorithm === allAlgorithms.FP_MAX) continue;
-            let featureIds = (split[0]).split(" ")
-                .filter(d => d.trim() !== "")
-                .map(d => +d);
-            let support = +((split[1].trim()).replace("SUP: ", ""));
-            let utility = 0;
-            if (selectedAlgorithm === allAlgorithms.CHUI_MINER_MAX || selectedAlgorithm === allAlgorithms.CHUI_MINER)
-                utility = +((split[2].trim()).replace("UTIL: ", ""));
-            else if (selectedAlgorithm === allAlgorithms.FP_MAX)
-                utility = calculateUtility(featureIds, featureMetaData);
+            let featureIds = [], support = 0, utility = 0;
+            switch(selectedAlgorithm) {
+                case allAlgorithms.CHUI_MINER_MAX:
+                case allAlgorithms.CHUI_MINER:
+                    if (split.length < 3) break;
+                    featureIds = (split[0]).split(" ")
+                        .filter(d => d.trim() !== "")
+                        .map(d => +d);
+                    support = +((split[1].trim()).replace("SUP: ", ""));
+                    utility = +((split[2].trim()).replace("UTIL: ", ""));
+                    frequentItemSets.push({featureIds, support, utility});
+                    break;
 
-            frequentItemSets.push({featureIds, support, utility});
+                case allAlgorithms.FP_MAX:
+                case allAlgorithms.FP_Close:
+                    if (split.length < 2) break;
+                    featureIds = (split[0]).split(" ")
+                        .filter(d => d.trim() !== "")
+                        .map(d => +d);
+                    support = +((split[1].trim()).replace("SUP: ", ""));
+                    utility = calculateUtility(featureIds, featureMetaData);
+                    frequentItemSets.push({featureIds, support, utility});
+                    break;
+            }
         }
         results.push({fileGroup, frequentItemSets});
     }
@@ -98,7 +107,7 @@ const removeSparseItemSets = (initialParsedOutput) => {
     for (let group of initialParsedOutput) {
         group.frequentItemSets = group.frequentItemSets
             .filter(d => d.support >= MIN_SUPPORT_FOR_FILTER
-                && (selectedAlgorithm !== allAlgorithms.FP_MAX || d.utility >= MIN_UTILITY_FOR_FILTER)
+                && (d.utility >= MIN_UTILITY_FOR_FILTER)
                 && d.featureIds.length >= MIN_FEATURE_COUNT_FOR_FILTER
             )
     }

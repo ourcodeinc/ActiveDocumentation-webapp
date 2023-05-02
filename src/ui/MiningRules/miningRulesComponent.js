@@ -41,6 +41,7 @@ class MiningRulesComponent extends Component {
             selectedGroupIndex: props.selectedGroupIndex,
             selectedClusterIndex: props.selectedClusterIndex
         };
+        this.messagesToBeSent = []; // the messages that are going to the server to be written on files
     }
 
     render() {
@@ -264,8 +265,8 @@ class MiningRulesComponent extends Component {
      */
     processFeaturesForSelectedScope() {
         let featureMetaData = createFeatureMetaDataMap();
-        generateFeatures(this.props.xmlFiles, this.props.projectPath, this.props.focusedElementData,
-            this.props.doiInformation, this.props.groupingMetaData, featureMetaData);
+        this.messagesToBeSent = generateFeatures(this.props.xmlFiles, this.props.projectPath,
+            this.props.focusedElementData, this.props.doiInformation, this.props.groupingMetaData, featureMetaData);
 
         this.setState({loadingStatus: false}
             , () => this.props.onUpdateFeatureMetaData(featureMetaData)
@@ -276,7 +277,7 @@ class MiningRulesComponent extends Component {
      * selected features are sent to the server for mining rules
      */
     sendFeaturesForMiningRules() {
-        let messages = prepareFilesAndRequestMineRules(this.props.featureMetaData)
+        let messages = prepareFilesAndRequestMineRules(this.props.featureMetaData, this.messagesToBeSent)
         for (let message of messages) {
             Utilities.sendToServer(this.props.ws, message.command, message.data);
         }

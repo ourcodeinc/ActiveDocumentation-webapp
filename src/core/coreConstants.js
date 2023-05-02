@@ -11,6 +11,7 @@ export const webSocketSendMessage = {
     refresh_learn_design_rules_directory_msg: "REFRESH_LEARNING_DR_DIRECTORY",
     learn_design_rules_databases_msg: "LEARN_DESIGN_RULES_DATABASE",
     learn_design_rules_features_msg: "LEARN_DESIGN_RULES_FEATURES",
+    learn_design_rules_helper_files_msg: "LEARN_DESIGN_RULES_HELPER_FILES",
     mine_design_rules_msg: "MINE_DESIGN_RULES"
 
 };

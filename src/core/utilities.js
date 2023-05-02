@@ -59,14 +59,8 @@ class Utilities {
                     /*  mining rules  */
 
                 case webSocketSendMessage.learn_design_rules_databases_msg:
-                    if (data.content.length > this.BREAK_LINE) {
-                        this.sendChunkedData(messageJson, data.content.slice(0), data.fileName, ws);
-                        return;
-                    }
-                    messageJson.data = [[data.fileName, data.content]];
-                    break;
-
                 case webSocketSendMessage.learn_design_rules_features_msg:
+                case webSocketSendMessage.learn_design_rules_helper_files_msg:
                     if (data.content.length > this.BREAK_LINE) {
                         this.sendChunkedData(messageJson, data.content.slice(0), data.fileName, ws);
                         return;
@@ -76,8 +70,8 @@ class Utilities {
 
                 case webSocketSendMessage.mine_design_rules_msg:
                     messageJson.data = {
-                        utility : data.utility,
-                        algorithm: data.algorithm // "CHUI-Miner" or "CHUI-MinerMax"
+                        parameters : data.parameters, // should be an array
+                        algorithm: data.algorithm // selectedAlgorithm from allAlgorithms
                     };
                     break;
 
