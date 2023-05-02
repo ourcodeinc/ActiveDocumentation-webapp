@@ -198,6 +198,9 @@ class MiningRulesComponent extends Component {
                 </div>
             </div>)
         }
+        let countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
+        if (countRules === 0 && !this.state.loadingStatus)
+            return (<h4><strong>No rule is found yet.</strong></h4>)
         return this.state.minedRules.map((group, groupIndex) => {
             return (group.rulePadStates.length === 0) ? null : (
                 <div key={groupIndex}>

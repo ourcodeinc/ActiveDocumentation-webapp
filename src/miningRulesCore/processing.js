@@ -97,7 +97,7 @@ export const generateFeatures = (xmlFiles, projectPath,
     let targetIds = ids ? ids : [];
 
     let targetIdWeight = targetIds.map(featureId => {
-        return {featureId, weight: 1.5, action: "multiply"}
+        return {featureId, weight: 4, action: "multiply"}
     })
     UpdateFeatureWeights(targetIdWeight, featureMetaData);
     updateFeatureWeightsDoi(doiInformation, featureMetaData, projectPath);
@@ -260,8 +260,8 @@ export const prepareFilesAndRequestMineRules = (featureMetaData) => {
             let featureInfo = featureMetaData.featureInfoContainers.featureInfo[featureDesc];
             if (!featureInfo) return null;
             featureIdsInLine.push(featureId);
-            weights.push(featureInfo.weight);
-            sumUtilities += featureInfo.weight;
+            weights.push(Math.floor(featureInfo.weight));
+            sumUtilities += Math.floor(featureInfo.weight);
         }
         if (selectedAlgorithm === allAlgorithms.FP_MAX)
             return `${featureIdsInLine.join(" ")}`

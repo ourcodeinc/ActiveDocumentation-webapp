@@ -1,8 +1,9 @@
 export const MAX_GROUP_SIZE = 50; // when selecting related classes from groups, ignore groups with large sizes.
 export const DOI_DISCARD_TIME = 3000000; // 50 minutes in milliseconds
 export const MIN_SUPPORT_FOR_MINING = 2; // minimum feature occurrences
-export const MIN_UTILITY_FOR_MINING = "0.05"; // % for MIN_SUPPORT_FOR_FILTER for FP_MAX and high number like 200 for CHUI-Miner
-export const MIN_SUPPORT_FOR_FILTER = 3;
+export const MIN_UTILITY_FOR_MINING = 0.02; // 0.05 for FP_MAX and number like 400 for CHUI-Miner
+export const MIN_FEATURE_COUNT_FOR_FILTER = 3; // minimum number of features in a rule.
+export const MIN_SUPPORT_FOR_FILTER = 2;
 export const MIN_UTILITY_FOR_FILTER = 20;
 export const MIN_WEIGHT_TO_INCLUDE_FILE = 2; // min weight of a feature to include its files in RulePad
 
@@ -132,13 +133,13 @@ const featureSet = {
     func_spec: ["func_annotation", "func_vis", "func_specifier", "func_type", "func_name",
         "func_name_ends_with", "func_name_starts_with",
         "func_no_param",
-        // "func_param_type", "func_param_name", "func_param_name_ends_with", "func_param_name_starts_with",
+        "func_param_type", "func_param_name", //"func_param_name_ends_with", "func_param_name_starts_with",
         // "func_param_type_name"
     ],
     func_spec_body: ["func_annotation", "func_vis", "func_specifier", "func_type", "func_name",
         "func_name_ends_with", "func_name_starts_with",
         "func_no_param",
-        // "func_param_type", "func_param_name", "func_param_name_ends_with","func_param_name_starts_with",
+        "func_param_type", "func_param_name", //"func_param_name_ends_with","func_param_name_starts_with",
         // "func_param_type_name",
         "func_call_constr", "func_call_func", "func_modify_field"],
     expr_spec: [
@@ -568,7 +569,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_ends_with,
         xpath: "/src:class/src:name/text()",
         description: "class with ( name \"<TEMP_0>\" )",
-        weight: 20,
+        weight: 19,
         FeatureObject: {
             key: "class",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -578,7 +579,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_starts_with,
         xpath: "/src:class/src:name/text()",
         description: "class with ( name \"<TEMP_0>\" )",
-        weight: 20,
+        weight: 18,
         FeatureObject: {
             key: "class",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -598,7 +599,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_ends_with,
         xpath: "/src:class/src:super/src:extends/src:name/text()",
         description: "class with ( extension of \"<TEMP_0>\" )",
-        weight: 10,
+        weight: 9,
         FeatureObject: {
             key: "class",
             withChildren: {key: "extension", value: {word: "<TEMP_0>", type: "text"}}
@@ -608,7 +609,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_starts_with,
         xpath: "/src:class/src:super/src:extends/src:name/text()",
         description: "class with ( extension of \"<TEMP_0>\" )",
-        weight: 10,
+        weight: 8,
         FeatureObject: {
             key: "class",
             withChildren: {key: "extension", value: {word: "<TEMP_0>", type: "text"}}
@@ -628,7 +629,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_ends_with,
         xpath: "/src:class/src:super/src:implements/src:name/text()",
         description: "class with ( implementation of \"<TEMP_0>\" )",
-        weight: 10,
+        weight: 9,
         FeatureObject: {
             key: "class",
             withChildren: {key: "implementation", value: {word: "<TEMP_0>", type: "text"}}
@@ -638,7 +639,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_starts_with,
         xpath: "/src:class/src:super/src:implements/src:name/text()",
         description: "class with ( implementation of \"<TEMP_0>\" )",
-        weight: 10,
+        weight: 8,
         FeatureObject: {
             key: "class",
             withChildren: {key: "implementation", value: {word: "<TEMP_0>", type: "text"}}
@@ -710,7 +711,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_ends_with,
         xpath: "/src:class/src:name/text()",
         description: "subclass with ( name \"<TEMP_0>\" )",
-        weight: 20,
+        weight: 19,
         FeatureObject: {
             key: "subclass",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -720,7 +721,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_starts_with,
         xpath: "/src:class/src:name/text()",
         description: "subclass with ( name \"<TEMP_0>\" )",
-        weight: 20,
+        weight: 18,
         FeatureObject: {
             key: "subclass",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -740,7 +741,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_ends_with,
         xpath: "/src:class/src:super/src:extends/src:name/text()",
         description: "subclass with ( extension of \"<TEMP_0>\" )",
-        weight: 10,
+        weight: 9,
         FeatureObject: {
             key: "subclass",
             withChildren: {key: "extension", value: {word: "<TEMP_0>", type: "text"}}
@@ -750,7 +751,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_starts_with,
         xpath: "/src:class/src:super/src:extends/src:name/text()",
         description: "subclass with ( extension of \"<TEMP_0>\" )",
-        weight: 10,
+        weight: 8,
         FeatureObject: {
             key: "subclass",
             withChildren: {key: "extension", value: {word: "<TEMP_0>", type: "text"}}
@@ -770,7 +771,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_ends_with,
         xpath: "/src:class/src:super/src:implements/src:name/text()",
         description: "subclass with ( implementation of \"<TEMP_0>\" )",
-        weight: 10,
+        weight: 9,
         FeatureObject: {
             key: "subclass",
             withChildren: {key: "implementation", value: {word: "<TEMP_0>", type: "text"}}
@@ -780,7 +781,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_starts_with,
         xpath: "/src:class/src:super/src:implements/src:name/text()",
         description: "subclass with ( implementation of \"<TEMP_0>\" )",
-        weight: 10,
+        weight: 8,
         FeatureObject: {
             key: "subclass",
             withChildren: {key: "implementation", value: {word: "<TEMP_0>", type: "text"}}
@@ -818,7 +819,7 @@ export const defaultFeatures = {
             withChildren: {key: "annotation", value: {word: "<TEMP_0>", type: "text"}}
         }
     },
-    constr_name: { // todo add to grammar
+    constr_name: {
         type: featureTypes.single_node_text,
         xpath: "/src:constructor/src:name/text()",
         description: "constructor with ( name \"<TEMP_0>\" )",
@@ -877,7 +878,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_ends_with,
         xpath: "/src:constructor/src:parameter_list/src:parameter/src:decl/src:name/text()",
         description: "constructor with ( parameter with name  \"<TEMP_0>\" )",
-        weight: 10,
+        weight: 9,
         FeatureObject: {
             key: "constructor",
             withChildren: {
@@ -889,7 +890,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_starts_with,
         xpath: "/src:constructor/src:parameter_list/src:parameter/src:decl/src:name/text()",
         description: "constructor with ( parameter with name  \"<TEMP_0>\" )",
-        weight: 10,
+        weight: 8,
         FeatureObject: {
             key: "constructor",
             withChildren: {
@@ -953,7 +954,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_ends_with,
         xpath: "/src:function/src:name/text()",
         description: "function with ( name \"<TEMP_0>\" )",
-        weight: 20,
+        weight: 19,
         FeatureObject: {
             key: "function",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -963,7 +964,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_starts_with,
         xpath: "/src:function/src:name/text()",
         description: "function with ( name \"<TEMP_0>\" )",
-        weight: 20,
+        weight: 18,
         FeatureObject: {
             key: "function",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -988,7 +989,7 @@ export const defaultFeatures = {
             key: "function",
             withChildren: {
                 key: "parameter", withChildren:
-                    {key: "type", value: {word: "<TEMP_0>", type: "text"}}
+                    [{key: "type", value: {word: "<TEMP_0>", type: "text"}}]
             }
         }
     },
@@ -1001,7 +1002,7 @@ export const defaultFeatures = {
             key: "function",
             withChildren: {
                 key: "parameter", withChildren:
-                    {key: "name", value: {word: "<TEMP_0>", type: "text"}}
+                    [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
             }
         }
     },
@@ -1009,7 +1010,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_ends_with,
         xpath: "/src:function/src:parameter_list/src:parameter/src:decl/src:name/text()",
         description: "function with ( parameter with name  \"<TEMP_0>\" )",
-        weight: 5,
+        weight: 4,
         FeatureObject: {
             key: "function",
             withChildren: {
@@ -1022,7 +1023,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_starts_with,
         xpath: "/src:function/src:parameter_list/src:parameter/src:decl/src:name/text()",
         description: "function with ( parameter with name  \"<TEMP_0>\" )",
-        weight: 5,
+        weight: 3,
         FeatureObject: {
             key: "function",
             withChildren: {
@@ -1087,7 +1088,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_ends_with,
         xpath: "/src:decl_stmt/src:decl/src:name/text()",
         description: "declaration statement with ( name \"<TEMP_0>\" )",
-        weight: 20,
+        weight: 19,
         FeatureObject: {
             key: "declaration statement",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -1097,7 +1098,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_starts_with,
         xpath: "/src:decl_stmt/src:decl/src:name/text()",
         description: "declaration statement with ( name \"<TEMP_0>\" )",
-        weight: 20,
+        weight: 18,
         FeatureObject: {
             key: "declaration statement",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -1251,7 +1252,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_ends_with,
         xpath: "/src:decl_stmt/src:decl/src:name/text()",
         description: "declaration statement with ( name \"<TEMP_0>\" )",
-        weight: 20,
+        weight: 19,
         FeatureObject: {
             key: "declaration statement",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -1261,7 +1262,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_starts_with,
         xpath: "/src:decl_stmt/src:decl/src:name/text()",
         description: "declaration statement with ( name \"<TEMP_0>\" )",
-        weight: 20,
+        weight: 18,
         FeatureObject: {
             key: "declaration statement",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -1593,7 +1594,7 @@ export const mapCommentsWithNodesToXPath = [
             "/following-sibling::src:call/src:name[text()=<TEMP_0>]"},
     {
         comment: "Calling Function: ",  //      constr_call_func , func_call_func , expr_call_function
-        xpath0: "src:block//src:decl_stmt/src:decl/src:init/src:expr/src:call/src:name[not(src:name)][text()=<TEMP_0>]|" +
+        xpath: "src:block//src:decl_stmt/src:decl/src:init/src:expr/src:call/src:name[not(src:name)][text()=<TEMP_0>]|" +
             "src:block//src:decl_stmt/src:decl/src:init/src:expr/src:call/src:name/src:name[last()][text()=<TEMP_0>]|" +
             "src:block//src:expr_stmt/src:expr/src:call/src:name[not(src:name)][text()=<TEMP_0>]|" +
             "src:block//src:expr_stmt/src:expr/src:call/src:name/src:name[last()][text()=<TEMP_0>]|" +

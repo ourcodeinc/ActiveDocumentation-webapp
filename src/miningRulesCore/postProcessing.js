@@ -7,7 +7,7 @@ import {
     selectedAlgorithm, allAlgorithms,
     attributeFileNames,
     defaultFeatures, featureGroupInformation,
-    MIN_SUPPORT_FOR_FILTER, MIN_UTILITY_FOR_FILTER, MIN_WEIGHT_TO_INCLUDE_FILE
+    MIN_SUPPORT_FOR_FILTER, MIN_UTILITY_FOR_FILTER, MIN_WEIGHT_TO_INCLUDE_FILE, MIN_FEATURE_COUNT_FOR_FILTER
 } from "./featureConfig";
 import {clusterSimilarItemSets} from "./clustering";
 import {processRulePadForMiningRules} from "../ui/RulePad/rulePadTextualEditor/generateGuiTree"
@@ -48,14 +48,16 @@ const parseFrequentItemSets = (outputFiles, featureMetaData) => {
         let frequentItemSets = [];
         for (let line of outputLines) {
             let split = line.split(" #");
-            if (split.length < 3 && selectedAlgorithm === allAlgorithms.CHUI_MINER_MAX) continue;
+            if (split.length < 3 &&
+                (selectedAlgorithm === allAlgorithms.CHUI_MINER_MAX || selectedAlgorithm === allAlgorithms.CHUI_MINER))
+                continue;
             if (split.length < 2 && selectedAlgorithm === allAlgorithms.FP_MAX) continue;
             let featureIds = (split[0]).split(" ")
                 .filter(d => d.trim() !== "")
                 .map(d => +d);
             let support = +((split[1].trim()).replace("SUP: ", ""));
             let utility = 0;
-            if (selectedAlgorithm === allAlgorithms.CHUI_MINER_MAX)
+            if (selectedAlgorithm === allAlgorithms.CHUI_MINER_MAX || selectedAlgorithm === allAlgorithms.CHUI_MINER)
                 utility = +((split[2].trim()).replace("UTIL: ", ""));
             else if (selectedAlgorithm === allAlgorithms.FP_MAX)
                 utility = calculateUtility(featureIds, featureMetaData);
@@ -95,7 +97,10 @@ const calculateUtility = (featureIds, featureMetaData) => {
 const removeSparseItemSets = (initialParsedOutput) => {
     for (let group of initialParsedOutput) {
         group.frequentItemSets = group.frequentItemSets
-            .filter(d => d.support >= MIN_SUPPORT_FOR_FILTER && d.utility >= MIN_UTILITY_FOR_FILTER);
+            .filter(d => d.support >= MIN_SUPPORT_FOR_FILTER
+                && (selectedAlgorithm !== allAlgorithms.FP_MAX || d.utility >= MIN_UTILITY_FOR_FILTER)
+                && d.featureIds.length >= MIN_FEATURE_COUNT_FOR_FILTER
+            )
     }
 }
 
@@ -193,23 +198,25 @@ const createBuiltObject = (combinedFeaturesOutput,
             let combinedFeatures = cluster.combinedFeatures;
             let combinedFeaturesKeys = Object.keys(combinedFeatures);
             for (let featureKey of combinedFeaturesKeys) {
-                // find feature value with most occurrences
-                let maxOccurrence = 0;
+                // find feature value with the highest weight
+                let maxWeight = 0;
                 let maxFeatureId = -1;
                 Object.keys(combinedFeatures[featureKey]).forEach(featureId => {
-                    if (combinedFeatures[featureKey][featureId].length > maxOccurrence) {
-                        maxOccurrence = combinedFeatures[featureKey][featureId].length;
+                    let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
+                    let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
+                    if (featureInfo.weight > maxWeight) {
+                        maxWeight = featureInfo.weight;
                         maxFeatureId = featureId;
                     }
                 });
-                if (maxOccurrence === 0) continue;
+                if (maxWeight === 0) continue;
 
                 // add the feature to the builtObject
                 let desc = featureMetaData.featureInfoContainers.featureInfoReverse[maxFeatureId];
                 let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
                 let featureObject = defaultFeatures[featureInfo.featureIndex].FeatureObject;
                 let featureChild = {...{_data_: combinedFeatures[featureKey],
-                        _occurrence_: maxOccurrence, _featureId_: maxFeatureId},
+                        _weight_: maxWeight, _featureId_: maxFeatureId},
                 ...createWithChildrenForFeature(featureInfo)};
                 if (featureObject.key === mergeKeys[0]) {
                     featureChild.isConstraint = true;
@@ -222,8 +229,8 @@ const createBuiltObject = (combinedFeaturesOutput,
                         ...featureChild._data_,
                         ...builtObjects[featureObject.key].withChildren[repeatedChildIndex]._data_
                     };
-                    if (builtObjects[featureObject.key].withChildren[repeatedChildIndex]._occurrence_
-                        < featureChild._occurrence_) {
+                    if (builtObjects[featureObject.key].withChildren[repeatedChildIndex]._weight_
+                        < featureChild._weight_) {
                         featureChild._data_ = combinedData;
                         builtObjects[featureObject.key].withChildren[repeatedChildIndex] = featureChild;
                     }
@@ -259,9 +266,13 @@ const createWithChildrenForFeature = (featureInfo) => {
     if ("value" in child) {
         child.value.word = child.value.word.replace(`<TEMP_0>`, featureInfo.nodes[0]);
     } else if ("withChildren" in child) {
-        let grandChild = child.withChildren;
-        if ("value" in grandChild) {
-            grandChild.value.word = grandChild.value.word.replace(`<TEMP_0>`, featureInfo.nodes[0]);
+        let grandChildren = child.withChildren;
+        let index = 0; // if there are more than one node.
+        for (let grandChild of grandChildren) {
+            if ("value" in grandChild) {
+                grandChild.value.word = grandChild.value.word.replace(`<TEMP_${index}>`, featureInfo.nodes[index]);
+                index ++;
+            }
         }
     }
     return child;
