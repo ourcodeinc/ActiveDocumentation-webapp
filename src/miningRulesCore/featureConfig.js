@@ -1,9 +1,9 @@
 export const MAX_GROUP_SIZE = 50; // when selecting related classes from groups, ignore groups with large sizes.
-export const DOI_DISCARD_TIME = 3000000; // 50 minutes in milliseconds
+export const DOI_DISCARD_TIME = 900000; // 15 minutes in milliseconds
 export const MIN_SUPPORT_FOR_MINING = 2; // minimum feature occurrences
 export const MIN_FEATURE_COUNT_FOR_FILTER = 3; // minimum number of features in a rule.
-export const MIN_SUPPORT_FOR_FILTER = 2;
-export const MIN_UTILITY_FOR_FILTER = 20;
+export const MIN_SUPPORT_FOR_FILTER = 2; // minimum support for the itemSet
+export const MIN_UTILITY_FOR_FILTER = 200; // minimum utility for the itemSet
 export const MIN_WEIGHT_TO_INCLUDE_FILE = 2; // min weight of a feature to include its files in RulePad
 
 // Constants for clustering similar itemSets
@@ -11,6 +11,20 @@ export const SIMILARITY_THRESHOLD = 15; // Threshold for similarity measure
 export const BRANCHING_FACTOR = 50; // Branching factor for BIRCH tree
 export const MAX_LEAF_ENTRIES = 15; // Maximum number of itemSets in a BIRCH tree node
 
+
+/**
+ * Used to update the weights of features upon generation in processing phase
+ */
+export const weightUpdateActions = {
+    multiply: "multiply",
+    add: "add",
+    replace: "replace"
+}
+export const weightUpdateFactors = {
+    focusedFile: 20,
+    doiSearches: 10,
+    doiVisited: 5
+}
 /**
  * Key should be the exact name used in spmf.jar, there is no check in the server.
  * @type {Object<String, {parameters: number[], key: string}>}
@@ -18,7 +32,7 @@ export const MAX_LEAF_ENTRIES = 15; // Maximum number of itemSets in a BIRCH tre
 export const allAlgorithms = {
     FP_MAX: {
         key: "FPMax",
-        parameters: [0.02]
+        parameters: [0.005]
     },
     FP_Close: {  // Extracts many FIQs
         key: "FPClose",

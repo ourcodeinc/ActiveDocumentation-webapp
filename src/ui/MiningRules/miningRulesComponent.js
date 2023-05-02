@@ -188,6 +188,8 @@ class MiningRulesComponent extends Component {
                         </Col>
                         <Col md={3}>
                             <h5><strong>Sum of feature weights in the cluster: </strong>{clusterObject.sumWeights}</h5>
+                            <h5><strong>Average utility of itemSets in the cluster: </strong>
+                                {clusterObject.cluster.reduce((sum, itemSet) => sum + itemSet.utility, 0)}</h5>
                             <h5><strong>Size of the cluster: </strong>{clusterObject.cluster.length}</h5>
                             <h5><strong>Average frequency (Support) of cluster members: </strong>
                                 {clusterObject.averageSupport}
@@ -226,6 +228,8 @@ class MiningRulesComponent extends Component {
                     </Col>
                     <Col md={3}>
                         <h5><strong>Sum of feature weights in the cluster: </strong>{clusterObject.sumWeights}</h5>
+                        <h5><strong>Average utility of itemSets in the cluster: </strong>
+                            {clusterObject.cluster.reduce((sum, itemSet) => sum + itemSet.utility, 0)}</h5>
                         <h5><strong>Size of the cluster: </strong>{clusterObject.cluster.length}</h5>
                         <h5><strong>Average frequency (Support) of cluster members: </strong>
                             {clusterObject.averageSupport}

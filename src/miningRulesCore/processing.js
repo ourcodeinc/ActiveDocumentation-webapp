@@ -7,11 +7,10 @@ output of mining allAlgorithms.
 
 import {extractFeaturesFromXmlFile} from "./extractFeatures";
 import {
-    selectedAlgorithm,
-    attributeFileNames,
-    MIN_SUPPORT_FOR_MINING,
-    MAX_GROUP_SIZE,
-    defaultFeatures, allAlgorithms
+    attributeFileNames, defaultFeatures,
+    MIN_SUPPORT_FOR_MINING, MAX_GROUP_SIZE,
+    selectedAlgorithm, allAlgorithms,
+    weightUpdateFactors, weightUpdateActions
 } from "./featureConfig";
 import {webSocketSendMessage} from "../core/coreConstants";
 
@@ -106,7 +105,7 @@ export const generateFeatures = (xmlFiles, projectPath,
     let targetIds = ids ? ids : [];
 
     let targetIdWeight = targetIds.map(featureId => {
-        return {featureId, weight: 4, action: "multiply"}
+        return {featureId, weight: weightUpdateFactors.focusedFile, action: weightUpdateActions.multiply}
     })
     UpdateFeatureWeights(targetIdWeight, featureMetaData);
     updateFeatureWeightsDoi(doiInformation, featureMetaData, projectPath);
@@ -169,7 +168,7 @@ const removeMinOccurredFeatures = (featureMetaData,
 
 /**
  * update the weights of features
- * @param featureIdWeights {{featureId: number, weight: number, action: "replace"|"multiply"|"add"}[]}
+ * @param featureIdWeights {{featureId: number, weight: number, action: String}[]}
  * @param featureMetaData {featureMetaDataType}
  */
 const UpdateFeatureWeights = (featureIdWeights, featureMetaData) => {
@@ -182,15 +181,15 @@ const UpdateFeatureWeights = (featureIdWeights, featureMetaData) => {
             featureMetaData.featureInfoContainers.featureInfo[featureDesc].weight :
             defaultFeatures[featureMetaData.featureInfoContainers.featureInfo[featureDesc].featureIndex].weight;
         switch (featureIdWeight.action) {
-            case "replace":
+            case weightUpdateActions.replace:
                 featureMetaData.featureInfoContainers.featureInfo[featureDesc].weight =
                     featureIdWeight.weight;
                 break;
-            case "add":
+            case weightUpdateActions.add:
                 featureMetaData.featureInfoContainers.featureInfo[featureDesc].weight =
                     originalWeight + featureIdWeight.weight
                 break;
-            case "multiply":
+            case weightUpdateActions.multiply:
                 featureMetaData.featureInfoContainers.featureInfo[featureDesc].weight =
                     originalWeight * featureIdWeight.weight
                 break;
@@ -222,9 +221,8 @@ const updateFeatureWeightsDoi = (doiInformation,
         if (!nodeValues) continue;
         for (let value of nodeValues) {
             if (allKeywords.includes(value) || allElements.includes(value)) {
-                // todo update based on timestamp
-                let weight = 10;
-                featureIdWeights.push({featureId: feature.featureId, weight, action: "multiply"});
+                featureIdWeights.push({featureId: feature.featureId, weight: weightUpdateFactors.doiSearches,
+                    action: weightUpdateActions.multiply});
             }
         }
     }
@@ -234,9 +232,8 @@ const updateFeatureWeightsDoi = (doiInformation,
         let path = file.replace(projectPath, "");
         let featureIds = featureMetaData.featureInfoContainers.featureMapReverse[path] ?
             featureMetaData.featureInfoContainers.featureMapReverse[path] : [];
-        // todo update based on timestamp
         featureIds.forEach(id => {
-            featureIdWeights.push({featureId: id, weight: 5, action: "multiply"});
+            featureIdWeights.push({featureId: id, weight: weightUpdateFactors.doiVisited, action: weightUpdateActions.multiply});
         })
     });
 

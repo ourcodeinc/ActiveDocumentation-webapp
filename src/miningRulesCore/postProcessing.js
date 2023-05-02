@@ -166,8 +166,10 @@ const sortClusters = (combinedFeaturesOutput) => {
             cluster2.cluster.reduce((sum, itemSet) => sum + itemSet.utility, 0);
         let sumUtility1 =
             cluster1.cluster.reduce((sum, itemSet) => sum + itemSet.utility, 0);
-        if (sumUtility2 !== sumUtility1)
-            return  sumUtility2 - sumUtility1
+        let averageUtility2 = sumUtility2 / cluster2.cluster.length;
+        let averageUtility1 = sumUtility1 / cluster1.cluster.length;
+        if (averageUtility2 !== averageUtility1)
+            return  averageUtility2 - averageUtility1;
         // Step 2
         if (cluster2.cluster.length !== cluster1.cluster.length)
             return cluster2.cluster.length - cluster1.cluster.length;
