@@ -308,9 +308,13 @@ const createWithChildrenForCombinedFeatures = (featureIndex, combinedFeature, fe
     if ("value" in child) {
         child.value.word = child.value.word.replace(`<TEMP_0>`, values.join("||"));
     } else if ("withChildren" in child) {
-        let grandChild = child.withChildren;
-        if ("value" in grandChild) {
-            grandChild.value.word = grandChild.value.word.replace(`<TEMP_0>`, values.join("||"));
+        let grandChildren = child.withChildren;
+        let index = 0; // if there are more than one node.
+        for (let grandChild of grandChildren) {
+            if ("value" in grandChild) {
+                grandChild.value.word = grandChild.value.word.replace(`<TEMP_0>`, values.join("||"));
+                index ++;
+            }
         }
     }
     return child;
