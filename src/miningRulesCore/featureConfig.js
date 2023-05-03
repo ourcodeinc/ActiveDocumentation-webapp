@@ -1,3 +1,5 @@
+import {webSocketSendMessage} from "../core/coreConstants";
+
 export const MAX_GROUP_SIZE = 50; // when selecting related classes from groups, ignore groups with large sizes.
 export const DOI_DISCARD_TIME = 900000; // 15 minutes in milliseconds
 export const MIN_SUPPORT_FOR_MINING = 2; // minimum feature occurrences
@@ -48,6 +50,10 @@ export const allAlgorithms = {
     }
 }
 export const selectedAlgorithm = allAlgorithms.FP_MAX;
+export const tryAgainMessage = {
+    command: webSocketSendMessage.mine_design_rules_msg,
+    data: {parameters: allAlgorithms.FP_Close.parameters, algorithm: allAlgorithms.FP_Close.key}
+}
 
 /*  processing  */
 

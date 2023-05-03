@@ -22,7 +22,7 @@ import {reduxStoreMessages} from "../../reduxStoreConstants";
 import {createGroupingMetaData, formGroupings} from "../../miningRulesCore/preProcessing";
 import {createFeatureMetaDataMap} from "../../miningRulesCore/extractFeatures";
 import {generateFeatures, prepareFilesAndRequestMineRules} from "../../miningRulesCore/processing";
-import {focusElementType, featureGroupInformation} from "../../miningRulesCore/featureConfig";
+import {focusElementType, featureGroupInformation, tryAgainMessage} from "../../miningRulesCore/featureConfig";
 import MinedClusterRulePad from "./minedClusterRulePad";
 import {constantRuleIndex} from "../uiConstants";
 import RulePad from "../RulePad/rulePad";
@@ -202,8 +202,12 @@ class MiningRulesComponent extends Component {
             </div>)
         }
         let countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
-        if (countRules === 0 && !this.state.loadingStatus)
-            return (<h4><strong>No rule is found yet.</strong></h4>)
+        if (this.state.minedRules.length > 0 && countRules === 0 && !this.state.loadingStatus)
+            return (
+                <div>
+                    <h4><strong>No rule is found.</strong></h4>
+                    <Button onClick={()=> this.tryDifferentAlgorithm()}>Try again.</Button>
+                </div>)
         return this.state.minedRules.map((group, groupIndex) => {
             return (group.rulePadStates.length === 0) ? null : (
                 <div key={groupIndex}>
@@ -304,6 +308,11 @@ class MiningRulesComponent extends Component {
             this.state.minedRules[groupIndex].fileGroup, this.props.featureMetaData);
         this.props.onUpdateMinedRulePadState(groupIndex, clusterIndex, rulePadState, filesFolders);
         // this.props.onUpdateSelectedMinedCluster(clusterIndex, groupIndex)
+    }
+
+    tryDifferentAlgorithm() {
+        Utilities.sendToServer(this.props.ws, tryAgainMessage.command, tryAgainMessage.data);
+        this.setState({loadingStatus: true});
     }
 
 }
