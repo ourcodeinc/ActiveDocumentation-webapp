@@ -265,7 +265,7 @@ constructorCondition
 constructorExpression
     : LPAREN constructorExpression RPAREN
     | left=constructorExpression op=binary right=constructorExpression
-    | ( annotations | specifiers | visibilities | parameters | returnValues | declarationStatements
+    | ( annotations | specifiers | visibilities | names | parameters | returnValues | declarationStatements
         | expressionStatements  | comments )
     | constructorExpression SPACE
     ;
