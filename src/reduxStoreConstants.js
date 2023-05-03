@@ -78,6 +78,5 @@ export const reduxStoreActions = {
     action_update_doi_information: "UPDATE_DOI_INFORMATION",
     action_request_mine_rules_for_element: "REQUEST_MINE_RULES_FOR_ELEMENT",
     action_update_mined_rules: "UPDATE_MINED_RULES",
-    action_update_selected_mined_cluster: "UPDATE_SELECTED_MINED_CLUSTER",
     action_update_mined_rulepad_state: "ACTION_UPDATE_MINED_RULEPAD_STATE",
 };

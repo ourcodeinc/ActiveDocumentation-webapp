@@ -560,31 +560,6 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 }
             });
 
-        case reduxStoreActions.action_update_selected_mined_cluster:
-            try {
-                let newGraphicalEditorState = Object.assign({},{
-                        ...state.minedRulesState.minedRules[action.data["selectedGroupIndex"]]
-                            .rulePadStates[action.data["selectedClusterIndex"]]
-                    });
-                return Object.assign({}, state, {
-                    message: reduxStoreMessages.updated_selected_mined_cluster_msg,
-                    minedRulesState: {
-                        ...state.minedRulesState,
-                        minedRulePadState: {
-                            ...state.minedRulesState.minedRulePadState,
-                            selectedGroupIndex: action.data["selectedGroupIndex"],
-                            selectedClusterIndex: action.data["selectedClusterIndex"],
-                            graphicalEditorState: newGraphicalEditorState
-                        }
-                    }
-                });
-            } catch (e) {
-                console.log(`Error happened in assigning the minedRulePadState ` +
-                    `for groupIndex=${action.data["selectedGroupIndex"]} and ` +
-                    `clusterIndex=${action.data["selectedClusterIndex"]}`, e);
-                return Object.assign({}, state);
-            }
-
         case reduxStoreActions.action_update_mined_rulepad_state:
                 return Object.assign({}, state, {
                     message: reduxStoreMessages.updated_selected_mined_cluster_msg,

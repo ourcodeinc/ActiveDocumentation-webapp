@@ -14,9 +14,7 @@ import {connect} from "react-redux";
 import {Button, Col, Row} from "react-bootstrap";
 import "rc-slider/assets/index.css";
 
-import {
-    updateFeatureMetaData, updateSelectedMinedCluster, updateGroupingMetaData, updateMinedRulePadState
-} from "../../actions";
+import {updateFeatureMetaData, updateGroupingMetaData, updateMinedRulePadState} from "../../actions";
 import Utilities from "../../core/utilities";
 import {reduxStoreMessages} from "../../reduxStoreConstants";
 import {createGroupingMetaData, formGroupings} from "../../miningRulesCore/preProcessing";
@@ -307,7 +305,6 @@ class MiningRulesComponent extends Component {
         let filesFolders = findFileFoldersForItemSet(maxUtilityItemSet,
             this.state.minedRules[groupIndex].fileGroup, this.props.featureMetaData);
         this.props.onUpdateMinedRulePadState(groupIndex, clusterIndex, rulePadState, filesFolders);
-        // this.props.onUpdateSelectedMinedCluster(clusterIndex, groupIndex)
     }
 
     tryDifferentAlgorithm() {
@@ -337,8 +334,6 @@ function mapDispatchToProps(dispatch) {
     return {
         onUpdateFeatureMetaData: (featureMetaData) => dispatch(updateFeatureMetaData(featureMetaData)),
         onUpdateGroupingMetaData: (groupingMetaData) => dispatch(updateGroupingMetaData(groupingMetaData)),
-        onUpdateSelectedMinedCluster: (groupIndex, clusterIndex) =>
-            dispatch(updateSelectedMinedCluster(groupIndex, clusterIndex)),
         onUpdateMinedRulePadState: (groupIndex, clusterIndex, rulePadState, filesFolders) =>
             dispatch(updateMinedRulePadState(groupIndex, clusterIndex, rulePadState, filesFolders))
     }

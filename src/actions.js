@@ -382,22 +382,6 @@ export const updatedMinedRules = (minedRules) => {
 };
 
 /**
- * update the rule
- * @param groupIndex {number}
- * @param clusterIndex {number}
- * @return {{type: string, data: {selectedGroupIndex: number, selectedClusterIndex: number}}}
- */
-export const updateSelectedMinedCluster = (groupIndex, clusterIndex) => {
-    return {
-        type: reduxStoreActions.action_update_selected_mined_cluster,
-        data: {
-            selectedGroupIndex: groupIndex,
-            selectedClusterIndex: clusterIndex
-        }
-    };
-}
-
-/**
  * update the RulePad state shown for Mined Rules
  * @param groupIndex {number}
  * @param clusterIndex {number}
