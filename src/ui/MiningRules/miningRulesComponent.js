@@ -45,7 +45,8 @@ class MiningRulesComponent extends Component {
             loadingStatus: false, // for loading icons when mining rules
             loadingTitle: "Mining Rules",
             showSelectedCluster: false,
-            showErrorMessage: false,
+            showFocusedElementErrorMessage: false,
+            message: "",
             selectedGroupIndex: props.selectedGroupIndex,
             selectedClusterIndex: props.selectedClusterIndex
         };
@@ -60,7 +61,7 @@ class MiningRulesComponent extends Component {
                     {this.state.showSelectedCluster ? this.renderSelectedCluster() : (
                         <div className={"minedRulesComponent"}>
                             {this.renderFocusedElementInfo()}
-                            <Button onClick={()=> this.tryDifferentAlgorithm()}>Try again.</Button>
+                            {this.renderMessages()}
                             {this.renderMinedClusters()}
                         </div>
                     )}
@@ -81,7 +82,7 @@ class MiningRulesComponent extends Component {
                     this.setState({
                         minedRules: [],
                         showSelectedCluster: false,
-                        showErrorMessage: true
+                        showFocusedElementErrorMessage: true
                     });
                     break;
                 }
@@ -90,7 +91,7 @@ class MiningRulesComponent extends Component {
                     loadingTitle: "Extracting Features",
                     loadingStatus: true,
                     showSelectedCluster: false,
-                    showErrorMessage: false
+                    showFocusedElementErrorMessage: false
                 });
                 break;
 
@@ -118,12 +119,11 @@ class MiningRulesComponent extends Component {
                         };
                         Utilities.sendToServer(this.props.ws, message.command, message.data);
                     } else {
-                        // todo print error: no algorithm
-                        console.log("No rule is found.")
                         this.setState({
                             minedRules: nextProps.minedRules, // no rule
                             loadingStatus: false,
                             showSelectedCluster: false,
+                            message: "No rule is found.",
                         });
                     }
                 }
@@ -132,6 +132,7 @@ class MiningRulesComponent extends Component {
                         minedRules: nextProps.minedRules,
                         loadingStatus: false,
                         showSelectedCluster: false,
+                        message: `${countRules} rules are found.`,
                     });
                 }
                 break;
@@ -165,7 +166,7 @@ class MiningRulesComponent extends Component {
         return (
             <div>
                 <h4>Pick an element in the IDE, and select <strong>Mine Rules</strong> from the context menu.</h4>
-                {this.state.showErrorMessage ? (
+                {this.state.showFocusedElementErrorMessage ? (
                     <h4 className={"focusedElementError"}>The focused element should be Class, Field, or Method.</h4>)
                     : null}
             </div>
@@ -198,12 +199,28 @@ class MiningRulesComponent extends Component {
             filePath = this.props.focusedElementData.filePath;
             identifier = this.props.focusedElementData.identifier;
             return (
-                <div style={{marginBottom: "60px"}}>
+                <div style={{marginBottom: "40px"}}>
                     <h4><strong>Focused Element </strong>{nodeTitle} with identifier <code>{identifier}</code></h4>
                     <h4>{filePath}</h4>
                 </div>
             )
         }
+    }
+    
+    renderMessages() {
+        if (this.state.loadingStatus) {
+            return null;
+        }
+        let countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
+        let nextAlgorithmExist = !!switchAlgorithm(this.props.selectedAlgorithm);
+        return(
+            <div style={{marginBottom: "40px"}}>
+                <h4>{this.state.message}</h4>
+                {countRules === 0 || !nextAlgorithmExist ? null : (
+                    <Button onClick={()=> this.tryDifferentAlgorithm()}>Try again.</Button>
+                )}
+            </div>
+        )
     }
 
     renderMinedClusters() {
@@ -352,8 +369,7 @@ class MiningRulesComponent extends Component {
             Utilities.sendToServer(this.props.ws, message.command, message.data);
             this.setState({loadingStatus: true});
         } else {
-            // todo print error: no algorithm
-            console.log("No rule is found.");
+            this.setState({message: "No rule is found."});
         }
     }
 
