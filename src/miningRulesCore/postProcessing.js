@@ -27,7 +27,7 @@ export async function processReceivedFrequentItemSets (outputFiles, algorithm, f
     removeSparseItemSets(initialParsedOutput);
     let clusteredOutput = clusterSimilarItemSets(initialParsedOutput, featureMetaData);
     let combinedFeaturesOutput = combineFeatures(clusteredOutput, featureMetaData);
-    sortClusters(combinedFeaturesOutput);
+    sortClusters(combinedFeaturesOutput, featureMetaData);
     let clusteredParsedOutput = createBuiltObject(combinedFeaturesOutput, featureMetaData);
     return Promise.resolve(createRulePad(clusteredParsedOutput, featureMetaData));
 }
@@ -155,8 +155,10 @@ const combineFeatures = (clusteredOutput,
  * Sort clusters based on their utilities and supports
  * @param combinedFeaturesOutput {
  * {fileGroup: string, clusters: {combinedFeatures: {}, cluster: [initialFrequentItemSetType]}[]}[]}
+ * @param featureMetaData {featureMetaDataType}
  */
-const sortClusters = (combinedFeaturesOutput) => {
+const sortClusters = (combinedFeaturesOutput,
+                      featureMetaData) => {
     /**
      * First sort by sum of utilities, then cluster size, finally average support.
      * @param cluster1 {{combinedFeatures: {}, cluster: [initialFrequentItemSetType]}}
@@ -165,14 +167,21 @@ const sortClusters = (combinedFeaturesOutput) => {
     let sortFunction = (cluster1,
                         cluster2) => {
         // Step 1
-        let sumUtility2 =
-            cluster2.cluster.reduce((sum, itemSet) => sum + itemSet.utility, 0);
-        let sumUtility1 =
-            cluster1.cluster.reduce((sum, itemSet) => sum + itemSet.utility, 0);
-        let averageUtility2 = sumUtility2 / cluster2.cluster.length;
-        let averageUtility1 = sumUtility1 / cluster1.cluster.length;
-        if (averageUtility2 !== averageUtility1)
-            return  averageUtility2 - averageUtility1;
+        let allFeatures1 = cluster1.cluster.reduce((features, itemSet) => [...features, ...itemSet.featureIds], []);
+        allFeatures1 = [... new Set(allFeatures1)];
+        let sumWeights1 = allFeatures1.reduce((sum, featureId) => {
+            let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
+            return sum + featureMetaData.featureInfoContainers.featureInfo[desc].weight;
+        }, 0);
+        let allFeatures2 = cluster2.cluster.reduce((features, itemSet) => [...features, ...itemSet.featureIds], []);
+        allFeatures2 = [... new Set(allFeatures2)];
+        let sumWeights2 = allFeatures2.reduce((sum, featureId) => {
+            let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
+            return sum + featureMetaData.featureInfoContainers.featureInfo[desc].weight;
+        }, 0);
+        if (sumWeights1 !== sumWeights2)
+            return  sumWeights2 - sumWeights1;
+
         // Step 2
         if (cluster2.cluster.length !== cluster1.cluster.length)
             return cluster2.cluster.length - cluster1.cluster.length;
