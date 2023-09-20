@@ -8,7 +8,9 @@
  * featureCategories: {classType, constructorType, functionType}
  */
 
- /**
+ import {allAlgorithms} from "./miningRulesCore/featureConfig";
+
+/**
   * @typedef {{element: string, featureIds: number[]}} elementFeatures
   *
   * @typedef {Object.<string, Object.<string, string[]>>} groupMappingType
@@ -716,6 +718,7 @@ export const initial_state = {
             recentSearches: [],
             recentVisitedElements: []
         },
+        selectedAlgorithm: allAlgorithms.FP_MAX_DEFAULT,
         minedRules: [],
 
         minedRulePadState: {

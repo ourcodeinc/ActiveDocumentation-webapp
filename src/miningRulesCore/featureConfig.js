@@ -1,5 +1,3 @@
-import {webSocketSendMessage} from "../core/coreConstants";
-
 export const MAX_GROUP_SIZE = 50; // when selecting related classes from groups, ignore groups with large sizes.
 export const DOI_DISCARD_TIME = 900000; // 15 minutes in milliseconds
 export const MIN_SUPPORT_FOR_MINING = 2; // minimum feature occurrences
@@ -32,27 +30,30 @@ export const weightUpdateFactors = {
  * @type {Object<String, {parameters: number[], key: string}>}
  */
 export const allAlgorithms = {
-    FP_MAX: {
+    FP_MAX_DEFAULT: {
         key: "FPMax",
         parameters: [0.005]
     },
-    FP_Close: {  // Extracts many FIQs
+    FP_MAX_RELAXED: {
+        key: "FPMax",
+        parameters: [0.05]
+    },
+    FP_CLOSE: {  // Extracts many FIQs
         key: "FPClose",
         parameters: [0.02]
     },
-    CHUI_MINER: {
+    CHUI_MINER_DEFAULT: {
         key: "CHUI-Miner",
-        parameters: [400]
+        parameters: [1000]
+    },
+    CHUI_MINER_RELAXED: {
+        key: "CHUI-Miner",
+        parameters: [500]
     },
     CHUI_MINER_MAX: {
         key: "CHUI-MinerMax",
         parameters: [400]
     }
-}
-export const selectedAlgorithm = allAlgorithms.FP_MAX;
-export const tryAgainMessage = {
-    command: webSocketSendMessage.mine_design_rules_msg,
-    data: {parameters: allAlgorithms.FP_Close.parameters, algorithm: allAlgorithms.FP_Close.key}
 }
 
 /*  processing  */
@@ -60,6 +61,7 @@ export const tryAgainMessage = {
 // the prefix and postfix of files written for mining rules
 export const attributeFileNames = {
     prefix: "AttributeEncoding_",
+    weightedPrefix: "Weighted_AttributeEncoding_",
     postfix: "_File.txt",
     featureFile: "featureFile.txt",
 }
@@ -1278,7 +1280,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text,
         xpath: "/src:decl_stmt/src:decl/src:name/text()",
         description: "declaration statement with ( name \"<TEMP_0>\" )",
-        weight: 5,
+        weight: 20,
         FeatureObject: {
             key: "declaration statement",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}

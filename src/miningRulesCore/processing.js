@@ -9,7 +9,6 @@ import {extractFeaturesFromXmlFile} from "./extractFeatures";
 import {
     attributeFileNames, defaultFeatures,
     MIN_SUPPORT_FOR_MINING, MAX_GROUP_SIZE,
-    selectedAlgorithm, allAlgorithms,
     weightUpdateFactors, weightUpdateActions
 } from "./featureConfig";
 import {webSocketSendMessage} from "../core/coreConstants";
@@ -244,21 +243,27 @@ const updateFeatureWeightsDoi = (doiInformation,
 /**
  * create txt files for writing in files and processing for mining design rules
  * @param featureMetaData {featureMetaDataType}
+ * @param selectedAlgorithm {Object<String, {parameters: number[], key: string}>}
  * @param additionalMessages {{command, data}[]}
  * @return {{command, data}[]} strings for writing in file and processing by the mining algorithm */
 export const prepareFilesAndRequestMineRules = (featureMetaData,
+                                                selectedAlgorithm,
                                                 additionalMessages) => {
 
     /**
      * @type {{name: string, content: string}[]}
      */
     let files = [];
+    /**
+     * @type {{name: string, content: string}[]}
+     */
+    let weightedFiles = [];
 
     /**
      * transform input to transactions
      * output: <featureId1> <featureId2>:<weight of featureId1> <weight of featureId2>
      * @param featureIds {number[]}
-     * @return {string|null}
+     * @return {{unweighted:string, weighted: string}|null}
      */
     function processLine(featureIds) {
         let featureIdsInLine = [], weights = [];
@@ -272,14 +277,20 @@ export const prepareFilesAndRequestMineRules = (featureMetaData,
             weights.push(Math.floor(featureInfo.weight));
             sumUtilities += Math.floor(featureInfo.weight);
         }
-        switch (selectedAlgorithm) {
-            case allAlgorithms.CHUI_MINER:
-            case allAlgorithms.CHUI_MINER_MAX:
-                return `${featureIdsInLine.join(" ")}:${sumUtilities}:${weights.join(" ")}`
-            case allAlgorithms.FP_MAX:
-            case allAlgorithms.FP_Close:
-                return `${featureIdsInLine.join(" ")}`
-        }
+        return {
+            unweighted: `${featureIdsInLine.join(" ")}`,
+            weighted: `${featureIdsInLine.join(" ")}:${sumUtilities}:${weights.join(" ")}`
+        };
+        // switch (selectedAlgorithm) {
+        //     case allAlgorithms.CHUI_MINER_DEFAULT:
+        //     case allAlgorithms.CHUI_MINER_RELAXED:
+        //     case allAlgorithms.CHUI_MINER_MAX:
+        //         return `${featureIdsInLine.join(" ")}:${sumUtilities}:${weights.join(" ")}`
+        //     case allAlgorithms.FP_MAX_DEFAULT:
+        //     case allAlgorithms.FP_MAX_RELAXED:
+        //     case allAlgorithms.FP_CLOSE:
+        //         return `${featureIdsInLine.join(" ")}`
+        // }
     }
 
     /**
@@ -289,14 +300,17 @@ export const prepareFilesAndRequestMineRules = (featureMetaData,
     function processGroup(group) {
         // each group is a file
         for (let groupId of Object.keys(featureMetaData.featureGroups[group])) {
-            let file = {name: groupId, content: ""}
+            let file = {name: groupId, content: ""};
+            let weightedFile = {name: groupId, content: ""};
             // each element is a line
             for (let element of featureMetaData.featureGroups[group][groupId].elementFeatures) {
-                let line = processLine(element.featureIds);
-                if (!line) continue;
-                file.content += line + "\n";
+                let lines = processLine(element.featureIds);
+                if (!lines) continue;
+                file.content += lines.unweighted + "\n";
+                weightedFile.content += lines.weighted + "\n";
             }
             files.push(file);
+            weightedFiles.push(weightedFile);
         }
     }
 
@@ -325,6 +339,15 @@ export const prepareFilesAndRequestMineRules = (featureMetaData,
             command: webSocketSendMessage.learn_design_rules_databases_msg,
             data: {
                 fileName: `${attributeFileNames.prefix}${file.name}${attributeFileNames.postfix}`,
+                content: file.content
+            }
+        })
+    }
+    for (let file of weightedFiles) {
+        output.push({
+            command: webSocketSendMessage.learn_design_rules_databases_msg,
+            data: {
+                fileName: `${attributeFileNames.weightedPrefix}${file.name}${attributeFileNames.postfix}`,
                 content: file.content
             }
         })

@@ -214,9 +214,10 @@ class WebSocketManager extends Component {
                     break;
 
                 case webSocketReceiveMessage.mined_design_rules:
+                    // "minedFrequentItemSets", "algorithm"
                     let output = message.data["minedFrequentItemSets"];
-                    // await processReceivedFrequentItemSets(output, this.props.featureMetaData);
-                    processReceivedFrequentItemSets(output, this.props.featureMetaData)
+                    let algorithm = message.data["algorithm"];
+                    processReceivedFrequentItemSets(output, algorithm, this.props.featureMetaData)
                         .then(processedRules => {
                             this.props.onUpdateMinedRules(processedRules);
                         }).catch(e => console.log("error happened in promise", e));

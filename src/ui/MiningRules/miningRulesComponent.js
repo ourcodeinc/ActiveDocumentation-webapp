@@ -14,17 +14,27 @@ import {connect} from "react-redux";
 import {Button, Col, Row} from "react-bootstrap";
 import "rc-slider/assets/index.css";
 
-import {updateFeatureMetaData, updateGroupingMetaData, updateMinedRulePadState} from "../../actions";
+import {
+    updateFeatureMetaData,
+    updateGroupingMetaData,
+    updateMinedRulePadState,
+    updateSelectedAlgorithm
+} from "../../actions";
 import Utilities from "../../core/utilities";
 import {reduxStoreMessages} from "../../reduxStoreConstants";
 import {createGroupingMetaData, formGroupings} from "../../miningRulesCore/preProcessing";
 import {createFeatureMetaDataMap} from "../../miningRulesCore/extractFeatures";
 import {generateFeatures, prepareFilesAndRequestMineRules} from "../../miningRulesCore/processing";
-import {focusElementType, featureGroupInformation, tryAgainMessage} from "../../miningRulesCore/featureConfig";
+import {focusElementType, featureGroupInformation} from "../../miningRulesCore/featureConfig";
 import MinedClusterRulePad from "./minedClusterRulePad";
 import {constantRuleIndex} from "../uiConstants";
 import RulePad from "../RulePad/rulePad";
-import {createRulePadStateForItemSet, findFileFoldersForItemSet} from "../../miningRulesCore/postProcessing";
+import {
+    createRulePadStateForItemSet,
+    findFileFoldersForItemSet,
+    switchAlgorithm
+} from "../../miningRulesCore/postProcessing";
+import {webSocketSendMessage} from "../../core/coreConstants";
 
 class MiningRulesComponent extends Component {
 
@@ -50,6 +60,7 @@ class MiningRulesComponent extends Component {
                     {this.state.showSelectedCluster ? this.renderSelectedCluster() : (
                         <div className={"minedRulesComponent"}>
                             {this.renderFocusedElementInfo()}
+                            <Button onClick={()=> this.tryDifferentAlgorithm()}>Try again.</Button>
                             {this.renderMinedClusters()}
                         </div>
                     )}
@@ -95,11 +106,34 @@ class MiningRulesComponent extends Component {
                 break;
 
             case reduxStoreMessages.update_mined_rules_msg:
-                this.setState({
-                    minedRules: nextProps.minedRules,
-                    loadingStatus: false,
-                    showSelectedCluster: false,
-                });
+                let countRules = nextProps.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
+                if (countRules === 0) {
+                    let newAlgorithm = switchAlgorithm(this.props.selectedAlgorithm);
+                    if (newAlgorithm) {
+                        this.props.onUpdateSelectedAlgorithm(newAlgorithm);
+                        console.log("Trying the next algorithm: ", newAlgorithm);
+                        let message = {
+                            command: webSocketSendMessage.mine_design_rules_msg,
+                            data: {parameters: newAlgorithm.parameters, algorithm: newAlgorithm.key}
+                        };
+                        Utilities.sendToServer(this.props.ws, message.command, message.data);
+                    } else {
+                        // todo print error: no algorithm
+                        console.log("No rule is found.")
+                        this.setState({
+                            minedRules: nextProps.minedRules, // no rule
+                            loadingStatus: false,
+                            showSelectedCluster: false,
+                        });
+                    }
+                }
+                else {
+                    this.setState({
+                        minedRules: nextProps.minedRules,
+                        loadingStatus: false,
+                        showSelectedCluster: false,
+                    });
+                }
                 break;
 
             case reduxStoreMessages.updated_selected_mined_cluster_msg:
@@ -204,7 +238,6 @@ class MiningRulesComponent extends Component {
             return (
                 <div>
                     <h4><strong>No rule is found.</strong></h4>
-                    <Button onClick={()=> this.tryDifferentAlgorithm()}>Try again.</Button>
                 </div>)
         return this.state.minedRules.map((group, groupIndex) => {
             return (group.rulePadStates.length === 0) ? null : (
@@ -283,7 +316,8 @@ class MiningRulesComponent extends Component {
      * selected features are sent to the server for mining rules
      */
     sendFeaturesForMiningRules() {
-        let messages = prepareFilesAndRequestMineRules(this.props.featureMetaData, this.messagesToBeSent)
+        let messages = prepareFilesAndRequestMineRules(this.props.featureMetaData,
+            this.props.selectedAlgorithm, this.messagesToBeSent)
         for (let message of messages) {
             Utilities.sendToServer(this.props.ws, message.command, message.data);
         }
@@ -308,8 +342,19 @@ class MiningRulesComponent extends Component {
     }
 
     tryDifferentAlgorithm() {
-        Utilities.sendToServer(this.props.ws, tryAgainMessage.command, tryAgainMessage.data);
-        this.setState({loadingStatus: true});
+        let newAlgorithm = switchAlgorithm(this.props.selectedAlgorithm);
+        if (newAlgorithm) {
+            this.props.onUpdateSelectedAlgorithm(newAlgorithm);
+            let message = {
+                command: webSocketSendMessage.mine_design_rules_msg,
+                data: {parameters: newAlgorithm.parameters, algorithm: newAlgorithm.key}
+            };
+            Utilities.sendToServer(this.props.ws, message.command, message.data);
+            this.setState({loadingStatus: true});
+        } else {
+            // todo print error: no algorithm
+            console.log("No rule is found.");
+        }
     }
 
 }
@@ -319,12 +364,13 @@ function mapStateToProps(state) {
         message: state.message,
         ws: state.ws,
         xmlFiles: state.xmlFiles,
+        projectPath: state.projectPath,
         featureMetaData: state.minedRulesState.featureMetaData,
         groupingMetaData: state.minedRulesState.groupingMetaData,
         focusedElementData: state.minedRulesState.focusedElementData,
         doiInformation: state.minedRulesState.doiInformation,
+        selectedAlgorithm: state.minedRulesState.selectedAlgorithm,
         minedRules: state.minedRulesState.minedRules,
-        projectPath: state.projectPath,
         selectedGroupIndex: state.minedRulesState.minedRulePadState.selectedGroupIndex,
         selectedClusterIndex: state.minedRulesState.minedRulePadState.selectedClusterIndex
     }
@@ -335,7 +381,8 @@ function mapDispatchToProps(dispatch) {
         onUpdateFeatureMetaData: (featureMetaData) => dispatch(updateFeatureMetaData(featureMetaData)),
         onUpdateGroupingMetaData: (groupingMetaData) => dispatch(updateGroupingMetaData(groupingMetaData)),
         onUpdateMinedRulePadState: (groupIndex, clusterIndex, rulePadState, filesFolders) =>
-            dispatch(updateMinedRulePadState(groupIndex, clusterIndex, rulePadState, filesFolders))
+            dispatch(updateMinedRulePadState(groupIndex, clusterIndex, rulePadState, filesFolders)),
+        onUpdateSelectedAlgorithm: (newAlgorithm) => dispatch(updateSelectedAlgorithm(newAlgorithm)),
     }
 }
 

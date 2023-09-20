@@ -2,6 +2,7 @@ import {initial_state, default_rulePanelState} from "./initialState";
 import {reduxStoreActions, reduxStoreMessages} from "./reduxStoreConstants";
 import {constantRuleIndex} from "./ui/uiConstants";
 import {fileFolderConstraints} from "./core/ruleExecutorConstants";
+import {allAlgorithms} from "./miningRulesCore/featureConfig";
 
 
 /**
@@ -530,6 +531,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 minedRulesState: {
                     ...state.minedRulesState,
                     focusedElementData: action.data["focusedElementData"],
+                    selectedAlgorithm: allAlgorithms.FP_MAX_DEFAULT, // reset the algorithm
                     minedRulePadState: {
                         ...state.minedRulesState.minedRulePadState
                     }
@@ -558,6 +560,15 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     ...state.minedRulesState,
                     minedRules: action.data["minedRules"]
                 }
+            });
+
+        case reduxStoreActions.action_update_update_selected_algorithm:
+            return Object.assign({}, state, {
+               message: reduxStoreMessages.update_selected_algorithm_msg,
+               minedRulesState: {
+                   ...state.minedRulesState,
+                   selectedAlgorithm: action.data["selectedAlgorithm"]
+               }
             });
 
         case reduxStoreActions.action_update_mined_rulepad_state:

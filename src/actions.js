@@ -382,6 +382,17 @@ export const updatedMinedRules = (minedRules) => {
 };
 
 /**
+ * @param newAlgorithm {{parameters: number[], key: string}}
+ * @return {{data: {selectedAlgorithm}, type: string}}
+ */
+export const updateSelectedAlgorithm = (newAlgorithm) => {
+    return {
+        type: reduxStoreActions.action_update_update_selected_algorithm,
+        data: {selectedAlgorithm: newAlgorithm}
+    }
+}
+
+/**
  * update the RulePad state shown for Mined Rules
  * @param groupIndex {number}
  * @param clusterIndex {number}

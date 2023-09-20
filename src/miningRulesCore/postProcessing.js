@@ -4,9 +4,7 @@ transform them into formats displayable for RulePad.
  */
 
 import {
-    selectedAlgorithm, allAlgorithms,
-    attributeFileNames,
-    defaultFeatures, featureGroupInformation,
+    allAlgorithms, attributeFileNames, defaultFeatures, featureGroupInformation,
     MIN_SUPPORT_FOR_FILTER, MIN_UTILITY_FOR_FILTER, MIN_WEIGHT_TO_INCLUDE_FILE, MIN_FEATURE_COUNT_FOR_FILTER
 } from "./featureConfig";
 import {clusterSimilarItemSets} from "./clustering";
@@ -19,12 +17,13 @@ import {processRulePadForMiningRules} from "../ui/RulePad/rulePadTextualEditor/g
  * @typedef {import("../initialState")} builtObjectRulePadOutputType
  *
  * @param outputFiles array of {outputFileName: String of contents}
+ * @param algorithm {string}
  * @param featureMetaData {featureMetaDataType}
  *
  * each array is a frequent ItemSet
  */
-export async function processReceivedFrequentItemSets (outputFiles, featureMetaData) {
-    let initialParsedOutput = parseFrequentItemSets(outputFiles, featureMetaData);
+export async function processReceivedFrequentItemSets (outputFiles, algorithm, featureMetaData) {
+    let initialParsedOutput = parseFrequentItemSets(outputFiles, algorithm, featureMetaData);
     removeSparseItemSets(initialParsedOutput);
     let clusteredOutput = clusterSimilarItemSets(initialParsedOutput, featureMetaData);
     let combinedFeaturesOutput = combineFeatures(clusteredOutput, featureMetaData);
@@ -37,9 +36,10 @@ export async function processReceivedFrequentItemSets (outputFiles, featureMetaD
  * parse the output of smpf.jar
  * @param outputFiles array of {outputFileName: String of contents}
  * @param featureMetaData {featureMetaDataType}
+ * @param algorithm {string}
  * @return {initialParsedOutputType}
  */
-const parseFrequentItemSets = (outputFiles, featureMetaData) => {
+const parseFrequentItemSets = (outputFiles, algorithm, featureMetaData) => {
     let results = [];
     for (const [outputFileName, output] of Object.entries(outputFiles)) {
         let fileGroup = outputFileName.replace(attributeFileNames.prefix, "")
@@ -49,26 +49,27 @@ const parseFrequentItemSets = (outputFiles, featureMetaData) => {
         for (let line of outputLines) {
             let split = line.split(" #");
             let featureIds = [], support = 0, utility = 0;
-            switch(selectedAlgorithm) {
-                case allAlgorithms.CHUI_MINER_MAX:
-                case allAlgorithms.CHUI_MINER:
-                    if (split.length < 3) break;
-                    featureIds = (split[0]).split(" ")
-                        .filter(d => d.trim() !== "")
-                        .map(d => +d);
-                    support = +((split[1].trim()).replace("SUP: ", ""));
-                    utility = +((split[2].trim()).replace("UTIL: ", ""));
-                    frequentItemSets.push({featureIds, support, utility});
-                    break;
-
-                case allAlgorithms.FP_MAX:
-                case allAlgorithms.FP_Close:
+            switch(algorithm) {
+                case allAlgorithms.FP_MAX_DEFAULT.key:
+                case allAlgorithms.FP_MAX_RELAXED.key:
+                case allAlgorithms.FP_CLOSE.key:
                     if (split.length < 2) break;
                     featureIds = (split[0]).split(" ")
                         .filter(d => d.trim() !== "")
                         .map(d => +d);
                     support = +((split[1].trim()).replace("SUP: ", ""));
                     utility = calculateUtility(featureIds, featureMetaData);
+                    frequentItemSets.push({featureIds, support, utility});
+                    break;
+                case allAlgorithms.CHUI_MINER_DEFAULT.key:
+                case allAlgorithms.CHUI_MINER_RELAXED.key:
+                case allAlgorithms.CHUI_MINER_MAX.key:
+                    if (split.length < 3) break;
+                    featureIds = (split[0]).split(" ")
+                        .filter(d => d.trim() !== "")
+                        .map(d => +d);
+                    support = +((split[1].trim()).replace("SUP: ", ""));
+                    utility = +((split[2].trim()).replace("UTIL: ", ""));
                     frequentItemSets.push({featureIds, support, utility});
                     break;
             }
@@ -446,4 +447,32 @@ export const findFileFoldersForItemSet = (maxUtilityItemSet, fileGroup,
         }
     }
     return combinedPaths;
+}
+
+/**
+ * Find the next algorithm for a given algorithm.
+ * @param algorithm {{parameters: number[], key: string}}
+ * @return {{parameters: number[], key: string}|null}
+ */
+export const switchAlgorithm = (algorithm) => {
+    if(algorithm.key === allAlgorithms.FP_MAX_DEFAULT.key) {
+        if (algorithm.parameters[0] === allAlgorithms.FP_MAX_DEFAULT.parameters[0]) {
+            return allAlgorithms.FP_MAX_RELAXED;
+        }
+        if (algorithm.parameters[0] === allAlgorithms.FP_MAX_RELAXED.parameters[0]) {
+            return allAlgorithms.FP_CLOSE;
+        }
+    }
+    if (algorithm.key === allAlgorithms.FP_CLOSE.key) {
+        return allAlgorithms.CHUI_MINER_DEFAULT;
+    }
+    if (algorithm.key === allAlgorithms.CHUI_MINER_DEFAULT.key) {
+        if (algorithm.parameters[0] === allAlgorithms.CHUI_MINER_DEFAULT.parameters[0]) {
+            return allAlgorithms.CHUI_MINER_RELAXED;
+        }
+        if (algorithm.parameters[0] === allAlgorithms.CHUI_MINER_RELAXED.parameters[0]) {
+            return allAlgorithms.CHUI_MINER_MAX;
+        }
+    }
+    return null;
 }
