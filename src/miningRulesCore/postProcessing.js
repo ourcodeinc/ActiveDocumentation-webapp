@@ -42,7 +42,9 @@ export async function processReceivedFrequentItemSets (outputFiles, algorithm, f
 const parseFrequentItemSets = (outputFiles, algorithm, featureMetaData) => {
     let results = [];
     for (const [outputFileName, output] of Object.entries(outputFiles)) {
-        let fileGroup = outputFileName.replace(attributeFileNames.prefix, "")
+        let fileGroup = outputFileName
+            .replace(attributeFileNames.weightedPrefix, "")
+            .replace(attributeFileNames.prefix, "")
             .replace(attributeFileNames.postfix, "");
         let outputLines = output.split("\n");
         let frequentItemSets = [];
