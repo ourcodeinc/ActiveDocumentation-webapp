@@ -317,7 +317,7 @@ class GenerateXPath {
 
             if (nodeType === "TerminalNodeImpl") {
                 if (!isConstraintCondition) this.XPathQ += (isSubclass ? "/" : "") + "src:class";
-                this.XPathC += (isSubclass ? "/" : "") + "src:class";
+                this.XPathC += (isSubclass ? "src:block/" : "") + "src:class";
             }
 
             if (nodeType === "ClassConditionContext" || nodeType === "ClassExpressionContext" ||
