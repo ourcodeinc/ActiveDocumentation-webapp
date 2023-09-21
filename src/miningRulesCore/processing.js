@@ -281,16 +281,6 @@ export const prepareFilesAndRequestMineRules = (featureMetaData,
             unweighted: `${featureIdsInLine.join(" ")}`,
             weighted: `${featureIdsInLine.join(" ")}:${sumUtilities}:${weights.join(" ")}`
         };
-        // switch (selectedAlgorithm) {
-        //     case allAlgorithms.CHUI_MINER_DEFAULT:
-        //     case allAlgorithms.CHUI_MINER_RELAXED:
-        //     case allAlgorithms.CHUI_MINER_MAX:
-        //         return `${featureIdsInLine.join(" ")}:${sumUtilities}:${weights.join(" ")}`
-        //     case allAlgorithms.FP_MAX_DEFAULT:
-        //     case allAlgorithms.FP_MAX_RELAXED:
-        //     case allAlgorithms.FP_CLOSE:
-        //         return `${featureIdsInLine.join(" ")}`
-        // }
     }
 
     /**
