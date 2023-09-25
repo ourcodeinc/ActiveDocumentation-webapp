@@ -568,7 +568,7 @@ export const mapFocusedElementToFeatures = {
 export const defaultFeatures = {
     class_annotation: {
         type: featureTypes.single_node_text,
-        xpath: "/src:class/src:annotation/src:name/text()",
+        xpath: "src:class/src:annotation/src:name/text()",
         description: "class with ( annotation \"<TEMP_0>\" )",
         weight: 5,
         FeatureObject: {
@@ -578,7 +578,7 @@ export const defaultFeatures = {
     },
     class_vis: {
         type: featureTypes.single_node_text,
-        xpath: "/src:class/src:specifier[contains(\"public private protected\",text())]/text()",
+        xpath: "src:class/src:specifier[contains(\"public private protected\",text())]/text()",
         description: "class with ( visibility \"<TEMP_0>\" )",
         weight: 1,
         FeatureObject: {
@@ -588,7 +588,7 @@ export const defaultFeatures = {
     },
     class_specifier: {
         type: featureTypes.single_node_text,
-        xpath: "/src:class/src:specifier" +
+        xpath: "src:class/src:specifier" +
             "[not(contains(\"public private protected\",text()))]/text()",
         description: "class with ( specifier \"<TEMP_0>\" )",
         weight: 5,
@@ -599,7 +599,7 @@ export const defaultFeatures = {
     },
     class_name: {
         type: featureTypes.single_node_text,
-        xpath: "/src:class/src:name/text()",
+        xpath: "src:class/src:name/text()",
         description: "class with ( name \"<TEMP_0>\" )",
         weight: 20,
         FeatureObject: {
@@ -609,7 +609,7 @@ export const defaultFeatures = {
     },
     class_name_ends_with: {
         type: featureTypes.single_node_text_ends_with,
-        xpath: "/src:class/src:name/text()",
+        xpath: "src:class/src:name/text()",
         description: "class with ( name \"<TEMP_0>\" )",
         weight: 19,
         FeatureObject: {
@@ -619,7 +619,7 @@ export const defaultFeatures = {
     },
     class_name_starts_with: {
         type: featureTypes.single_node_text_starts_with,
-        xpath: "/src:class/src:name/text()",
+        xpath: "src:class/src:name/text()",
         description: "class with ( name \"<TEMP_0>\" )",
         weight: 18,
         FeatureObject: {
@@ -629,7 +629,7 @@ export const defaultFeatures = {
     },
     class_extend: {
         type: featureTypes.single_node_text,
-        xpath: "/src:class/src:super/src:extends/src:name/text()",
+        xpath: "src:class/src:super/src:extends/src:name/text()",
         description: "class with ( extension of \"<TEMP_0>\" )",
         weight: 10,
         FeatureObject: {
@@ -639,7 +639,7 @@ export const defaultFeatures = {
     },
     class_extend_ends_with: {
         type: featureTypes.single_node_text_ends_with,
-        xpath: "/src:class/src:super/src:extends/src:name/text()",
+        xpath: "src:class/src:super/src:extends/src:name/text()",
         description: "class with ( extension of \"<TEMP_0>\" )",
         weight: 9,
         FeatureObject: {
@@ -649,7 +649,7 @@ export const defaultFeatures = {
     },
     class_extend_starts_with: {
         type: featureTypes.single_node_text_starts_with,
-        xpath: "/src:class/src:super/src:extends/src:name/text()",
+        xpath: "src:class/src:super/src:extends/src:name/text()",
         description: "class with ( extension of \"<TEMP_0>\" )",
         weight: 8,
         FeatureObject: {
@@ -659,7 +659,7 @@ export const defaultFeatures = {
     },
     class_impl: {
         type: featureTypes.single_node_text,
-        xpath: "/src:class/src:super/src:implements/src:name/text()",
+        xpath: "src:class/src:super/src:implements/src:name/text()",
         description: "class with ( implementation of \"<TEMP_0>\" )",
         weight: 10,
         FeatureObject: {
@@ -669,7 +669,7 @@ export const defaultFeatures = {
     },
     class_impl_ends_with: {
         type: featureTypes.single_node_text_ends_with,
-        xpath: "/src:class/src:super/src:implements/src:name/text()",
+        xpath: "src:class/src:super/src:implements/src:name/text()",
         description: "class with ( implementation of \"<TEMP_0>\" )",
         weight: 9,
         FeatureObject: {
@@ -679,7 +679,7 @@ export const defaultFeatures = {
     },
     class_impl_starts_with: {
         type: featureTypes.single_node_text_starts_with,
-        xpath: "/src:class/src:super/src:implements/src:name/text()",
+        xpath: "src:class/src:super/src:implements/src:name/text()",
         description: "class with ( implementation of \"<TEMP_0>\" )",
         weight: 8,
         FeatureObject: {
@@ -689,7 +689,7 @@ export const defaultFeatures = {
     },
     class_no_constr: {
         type: featureTypes.no_node,
-        xpath: "/src:class[not(src:block/src:constructor)]",
+        xpath: "src:class[not(src:block/src:constructor)]",
         description: "class with ( \"No Constructor\" )",
         weight: 5,
         FeatureObject: {
@@ -699,7 +699,7 @@ export const defaultFeatures = {
     },
     class_no_func: {
         type: featureTypes.no_node,
-        xpath: "/src:class[not(src:block/src:function)]",
+        xpath: "src:class[not(src:block/src:function)]",
         description: "class with ( \"No Function\" )",
         weight: 5,
         FeatureObject: {
@@ -710,7 +710,7 @@ export const defaultFeatures = {
 
     subclass_annotation: {
         type: featureTypes.single_node_text,
-        xpath: "/src:class/src:annotation/src:name/text()",
+        xpath: "/src:class/src:block/src:class/src:annotation/src:name/text()",
         description: "subclass with ( annotation \"<TEMP_0>\" )",
         weight: 10,
         FeatureObject: {
@@ -720,7 +720,7 @@ export const defaultFeatures = {
     },
     subclass_vis: {
         type: featureTypes.single_node_text,
-        xpath: "/src:class/src:specifier[contains(\"public private protected\",text())]/text()",
+        xpath: "/src:class/src:block/src:class/src:specifier[contains(\"public private protected\",text())]/text()",
         description: "subclass with ( visibility \"<TEMP_0>\" )",
         weight: 5,
         FeatureObject: {
@@ -730,7 +730,7 @@ export const defaultFeatures = {
     },
     subclass_specifier: {
         type: featureTypes.single_node_text,
-        xpath: "/src:class/src:specifier" +
+        xpath: "/src:class/src:block/src:class/src:specifier" +
             "[not(contains(\"public private protected\",text()))]/text()",
         description: "subclass with ( specifier \"<TEMP_0>\" )",
         weight: 5,
@@ -741,7 +741,7 @@ export const defaultFeatures = {
     },
     subclass_name: {
         type: featureTypes.single_node_text,
-        xpath: "/src:class/src:name/text()",
+        xpath: "/src:class/src:block/src:class/src:name/text()",
         description: "subclass with ( name \"<TEMP_0>\" )",
         weight: 20,
         FeatureObject: {
@@ -751,7 +751,7 @@ export const defaultFeatures = {
     },
     subclass_name_ends_with: {
         type: featureTypes.single_node_text_ends_with,
-        xpath: "/src:class/src:name/text()",
+        xpath: "/src:class/src:block/src:class/src:name/text()",
         description: "subclass with ( name \"<TEMP_0>\" )",
         weight: 19,
         FeatureObject: {
@@ -761,7 +761,7 @@ export const defaultFeatures = {
     },
     subclass_name_starts_with: {
         type: featureTypes.single_node_text_starts_with,
-        xpath: "/src:class/src:name/text()",
+        xpath: "/src:class/src:block/src:class/src:name/text()",
         description: "subclass with ( name \"<TEMP_0>\" )",
         weight: 18,
         FeatureObject: {
@@ -771,7 +771,7 @@ export const defaultFeatures = {
     },
     subclass_extend: {
         type: featureTypes.single_node_text,
-        xpath: "/src:class/src:super/src:extends/src:name/text()",
+        xpath: "/src:class/src:block/src:class/src:super/src:extends/src:name/text()",
         description: "subclass with ( extension of \"<TEMP_0>\" )",
         weight: 10,
         FeatureObject: {
@@ -781,7 +781,7 @@ export const defaultFeatures = {
     },
     subclass_extend_ends_with: {
         type: featureTypes.single_node_text_ends_with,
-        xpath: "/src:class/src:super/src:extends/src:name/text()",
+        xpath: "/src:class/src:block/src:class/src:super/src:extends/src:name/text()",
         description: "subclass with ( extension of \"<TEMP_0>\" )",
         weight: 9,
         FeatureObject: {
@@ -791,7 +791,7 @@ export const defaultFeatures = {
     },
     subclass_extend_starts_with: {
         type: featureTypes.single_node_text_starts_with,
-        xpath: "/src:class/src:super/src:extends/src:name/text()",
+        xpath: "/src:class/src:block/src:class/src:super/src:extends/src:name/text()",
         description: "subclass with ( extension of \"<TEMP_0>\" )",
         weight: 8,
         FeatureObject: {
@@ -801,7 +801,7 @@ export const defaultFeatures = {
     },
     subclass_impl: {
         type: featureTypes.single_node_text,
-        xpath: "/src:class/src:super/src:implements/src:name/text()",
+        xpath: "/src:class/src:block/src:class/src:super/src:implements/src:name/text()",
         description: "subclass with ( implementation of \"<TEMP_0>\" )",
         weight: 10,
         FeatureObject: {
@@ -811,7 +811,7 @@ export const defaultFeatures = {
     },
     subclass_impl_ends_with: {
         type: featureTypes.single_node_text_ends_with,
-        xpath: "/src:class/src:super/src:implements/src:name/text()",
+        xpath: "/src:class/src:block/src:class/src:super/src:implements/src:name/text()",
         description: "subclass with ( implementation of \"<TEMP_0>\" )",
         weight: 9,
         FeatureObject: {
@@ -821,7 +821,7 @@ export const defaultFeatures = {
     },
     subclass_impl_starts_with: {
         type: featureTypes.single_node_text_starts_with,
-        xpath: "/src:class/src:super/src:implements/src:name/text()",
+        xpath: "/src:class/src:block/src:class/src:super/src:implements/src:name/text()",
         description: "subclass with ( implementation of \"<TEMP_0>\" )",
         weight: 8,
         FeatureObject: {
@@ -831,7 +831,7 @@ export const defaultFeatures = {
     },
     subclass_no_constr: {
         type: featureTypes.no_node,
-        xpath: "/src:class[not(src:block/src:constructor)]",
+        xpath: "/src:class/src:block/src:class[not(src:block/src:constructor)]",
         description: "subclass with ( \"No Constructor\" )",
         weight: 5,
         FeatureObject: {
@@ -841,7 +841,7 @@ export const defaultFeatures = {
     },
     subclass_no_func: {
         type: featureTypes.no_node,
-        xpath: "/src:class[not(src:block/src:function)]",
+        xpath: "/src:class/src:block/src:class[not(src:block/src:function)]",
         description: "subclass with ( \"No Function\" )",
         weight: 5,
         FeatureObject: {
@@ -1502,7 +1502,7 @@ export const defaultFeatures = {
     },
     class_subclass_node: {
         type: featureTypes.node,
-        xpath: "/src:class/src:block/src:class",
+        xpath: "src:class",
         description: "class with subclass",
     },
 
