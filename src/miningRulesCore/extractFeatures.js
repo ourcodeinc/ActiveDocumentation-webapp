@@ -3,12 +3,14 @@ This file contains methods for extracting features using the sets of predefined
 features as in featureConfig.js
  */
 
-import {featureTypes, mapFocusedElementToFeatures, defaultFeatures} from "./featureConfig";
+import {defaultFeatures, featureTypes, mapFocusedElementToFeatures} from "./featureConfig";
 import {
     returnNodeArray,
-    runXPathMultipleNodes, runXPathMultipleNodesAndChildren,
+    runXPathMultipleNodes,
+    runXPathMultipleNodesAndChildren,
     runXPathNoNode,
-    runXPathSingleNode, runXPathSingleNodeAndChildren
+    runXPathSingleNode,
+    runXPathSingleNodeAndChildren
 } from "./xPathQueryExecutor";
 
 

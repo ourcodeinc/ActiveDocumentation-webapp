@@ -4,8 +4,14 @@ transform them into formats displayable for RulePad.
  */
 
 import {
-    allAlgorithms, attributeFileNames, defaultFeatures, featureGroupInformation,
-    MIN_SUPPORT_FOR_FILTER, MIN_UTILITY_FOR_FILTER, MIN_WEIGHT_TO_INCLUDE_FILE, MIN_FEATURE_COUNT_FOR_FILTER
+    allAlgorithms,
+    attributeFileNames,
+    defaultFeatures,
+    featureGroupInformation,
+    MIN_FEATURE_COUNT_FOR_FILTER,
+    MIN_SUPPORT_FOR_FILTER,
+    MIN_UTILITY_FOR_FILTER,
+    MIN_WEIGHT_TO_INCLUDE_FILE
 } from "./featureConfig";
 import {clusterSimilarItemSets} from "./clustering";
 import {processRulePadForMiningRules} from "../ui/RulePad/rulePadTextualEditor/generateGuiTree"
@@ -22,7 +28,7 @@ import {processRulePadForMiningRules} from "../ui/RulePad/rulePadTextualEditor/g
  *
  * each array is a frequent ItemSet
  */
-export async function processReceivedFrequentItemSets (outputFiles, algorithm, featureMetaData) {
+export async function processReceivedFrequentItemSets(outputFiles, algorithm, featureMetaData) {
     let initialParsedOutput = parseFrequentItemSets(outputFiles, algorithm, featureMetaData);
     removeSparseItemSets(initialParsedOutput);
     let clusteredOutput = clusterSimilarItemSets(initialParsedOutput, featureMetaData);
@@ -51,7 +57,7 @@ const parseFrequentItemSets = (outputFiles, algorithm, featureMetaData) => {
         for (let line of outputLines) {
             let split = line.split(" #");
             let featureIds = [], support = 0, utility = 0;
-            switch(algorithm) {
+            switch (algorithm) {
                 case allAlgorithms.FP_MAX_DEFAULT.key:
                 case allAlgorithms.FP_MAX_RELAXED.key:
                 case allAlgorithms.FP_MAX_EXTRA_RELAXED:
@@ -169,19 +175,19 @@ const sortClusters = (combinedFeaturesOutput,
                         cluster2) => {
         // Step 1
         let allFeatures1 = cluster1.cluster.reduce((features, itemSet) => [...features, ...itemSet.featureIds], []);
-        allFeatures1 = [... new Set(allFeatures1)];
+        allFeatures1 = [...new Set(allFeatures1)];
         let sumWeights1 = allFeatures1.reduce((sum, featureId) => {
             let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
             return sum + featureMetaData.featureInfoContainers.featureInfo[desc].weight;
         }, 0);
         let allFeatures2 = cluster2.cluster.reduce((features, itemSet) => [...features, ...itemSet.featureIds], []);
-        allFeatures2 = [... new Set(allFeatures2)];
+        allFeatures2 = [...new Set(allFeatures2)];
         let sumWeights2 = allFeatures2.reduce((sum, featureId) => {
             let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
             return sum + featureMetaData.featureInfoContainers.featureInfo[desc].weight;
         }, 0);
         if (sumWeights1 !== sumWeights2)
-            return  sumWeights2 - sumWeights1;
+            return sumWeights2 - sumWeights1;
 
         // Step 2
         if (cluster2.cluster.length !== cluster1.cluster.length)
@@ -216,8 +222,10 @@ const createBuiltObject = (combinedFeaturesOutput,
             let builtObjects = {};
             let mergeKeys = featureGroupInformation[fileGroup.fileGroup].mergeKeys;
             for (let mergeKey of mergeKeys) {
-                builtObjects[mergeKey] = {key: mergeKey, withChildren: [],
-                    _data_: {cluster: cluster.cluster}};
+                builtObjects[mergeKey] = {
+                    key: mergeKey, withChildren: [],
+                    _data_: {cluster: cluster.cluster}
+                };
             }
             let combinedFeatures = cluster.combinedFeatures;
             let combinedFeaturesKeys = Object.keys(combinedFeatures);
@@ -239,9 +247,13 @@ const createBuiltObject = (combinedFeaturesOutput,
                 let desc = featureMetaData.featureInfoContainers.featureInfoReverse[maxFeatureId];
                 let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
                 let featureObject = defaultFeatures[featureInfo.featureIndex].FeatureObject;
-                let featureChild = {...{_data_: combinedFeatures[featureKey],
-                        _weight_: maxWeight, _featureId_: maxFeatureId},
-                ...createWithChildrenForFeature(featureInfo)};
+                let featureChild = {
+                    ...{
+                        _data_: combinedFeatures[featureKey],
+                        _weight_: maxWeight, _featureId_: maxFeatureId
+                    },
+                    ...createWithChildrenForFeature(featureInfo)
+                };
                 if (featureObject.key === mergeKeys[0]) {
                     featureChild.isConstraint = true;
                 }
@@ -257,11 +269,9 @@ const createBuiltObject = (combinedFeaturesOutput,
                         < featureChild._weight_) {
                         featureChild._data_ = combinedData;
                         builtObjects[featureObject.key].withChildren[repeatedChildIndex] = featureChild;
-                    }
-                    else
+                    } else
                         builtObjects[featureObject.key].withChildren[repeatedChildIndex]._data_ = combinedData;
-                }
-                else
+                } else
                     builtObjects[featureObject.key].withChildren.push(featureChild);
             }
             let builtObject = builtObjects[mergeKeys[0]];
@@ -295,7 +305,7 @@ const createWithChildrenForFeature = (featureInfo) => {
         for (let grandChild of grandChildren) {
             if ("value" in grandChild) {
                 grandChild.value.word = grandChild.value.word.replace(`<TEMP_${index}>`, featureInfo.nodes[index]);
-                index ++;
+                index++;
             }
         }
     }
@@ -328,7 +338,7 @@ const createWithChildrenForCombinedFeatures = (featureIndex, combinedFeature, fe
         for (let grandChild of grandChildren) {
             if ("value" in grandChild) {
                 grandChild.value.word = grandChild.value.word.replace(`<TEMP_0>`, values.join("||"));
-                index ++;
+                index++;
             }
         }
     }
@@ -350,11 +360,11 @@ const createRulePad = (clusteredParsedOutput, featureMetaData) => {
         let clusters = fileGroup.clusters.map(d => {
             let cluster = d._data_.cluster;
             let allFeatures = cluster.reduce((features, itemSet) => [...features, ...itemSet.featureIds], []);
-            allFeatures = [... new Set(allFeatures)];
+            allFeatures = [...new Set(allFeatures)];
             let sumWeights = allFeatures.reduce((sum, featureId) => {
                 let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
                 return sum + featureMetaData.featureInfoContainers.featureInfo[desc].weight;
-                }, 0)
+            }, 0)
             return {
                 cluster,
                 sumWeights,
@@ -401,7 +411,7 @@ export const createRulePadStateForItemSet = (frequentItemSet, fileGroup, feature
         let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
         let featureObject = defaultFeatures[featureInfo.featureIndex].FeatureObject;
         let featureChild =
-                createWithChildrenForCombinedFeatures(combinedFeatureKey, combinedFeatures[combinedFeatureKey], featureMetaData);
+            createWithChildrenForCombinedFeatures(combinedFeatureKey, combinedFeatures[combinedFeatureKey], featureMetaData);
         if (featureObject.key === mergeKeys[1]) {
             featureChild.isConstraint = true;
         }
@@ -467,7 +477,7 @@ export const findFileFoldersForItemSet = (maxUtilityItemSet, fileGroup,
  * @return {{parameters: number[], key: string}|null}
  */
 export const switchAlgorithm = (algorithm) => {
-    if(algorithm.key === allAlgorithms.FP_MAX_DEFAULT.key) {
+    if (algorithm.key === allAlgorithms.FP_MAX_DEFAULT.key) {
         if (algorithm.parameters[0] === allAlgorithms.FP_MAX_DEFAULT.parameters[0]) {
             return allAlgorithms.FP_MAX_RELAXED;
         }

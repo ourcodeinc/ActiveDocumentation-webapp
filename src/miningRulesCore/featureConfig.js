@@ -1633,7 +1633,8 @@ export const mapCommentsWithNodesToXPath = [
         xpath: "src:block//src:expr_stmt/src:expr/src:operator[text()=\"new\"]" +
             "/following-sibling::src:call/src:name[text()=<TEMP_0>]|" +
             "src:block//src:decl_stmt/src:decl/src:init/src:expr/src:operator[text()=\"new\"]" +
-            "/following-sibling::src:call/src:name[text()=<TEMP_0>]"},
+            "/following-sibling::src:call/src:name[text()=<TEMP_0>]"
+    },
     {
         comment: "Calling Function: ",  //      constr_call_func , func_call_func , expr_call_function
         xpath: "src:block//src:decl_stmt/src:decl/src:init/src:expr/src:call/src:name[not(src:name)][text()=<TEMP_0>]|" +
@@ -1646,7 +1647,8 @@ export const mapCommentsWithNodesToXPath = [
     {
         comment: "Modifying Field: ",  //       constr_modify_field , func_modify_field
         xpath: "src:block//src:expr_stmt/src:expr/src:operator[text()=\"=\"]" +
-            "/preceding-sibling::src:name[src:name/text()=\"this\"]/src:name[position()=2][text()=<TEMP_0>]"},
+            "/preceding-sibling::src:name[src:name/text()=\"this\"]/src:name[position()=2][text()=<TEMP_0>]"
+    },
     {
         comment: "Calling a Function With Argument: ",  //     expr_call_function_argument
         xpath: "*[position()=1 and self::src:call]/src:argument_list" +
@@ -1694,7 +1696,8 @@ export const mapCommentsWithNodesToXPath = [
         comment: "Initialization ", //         decl_init_value
         xpath: "src:init/src:expr/src:literal[text()=<TEMP_0>]|" +
             "src:init/src:expr/src:name[not(src:name)][text()=<TEMP_0>]|" +
-            "src:init/src:expr/src:name/src:name[last()][text()=<TEMP_0>]"},
+            "src:init/src:expr/src:name/src:name[last()][text()=<TEMP_0>]"
+    },
     {
         comment: "Caller: ",  //                expr_assignment_caller
         xpath: "src:name[position()=1]/text()|/src:expr_stmt/src:expr/src:name[position()=1]/src:name[last()][text()=<TEMP_0>]",

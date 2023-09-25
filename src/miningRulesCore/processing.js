@@ -7,9 +7,12 @@ output of mining allAlgorithms.
 
 import {extractFeaturesFromXmlFile} from "./extractFeatures";
 import {
-    attributeFileNames, defaultFeatures,
-    MIN_SUPPORT_FOR_MINING, MAX_GROUP_SIZE,
-    weightUpdateFactors, weightUpdateActions
+    attributeFileNames,
+    defaultFeatures,
+    MAX_GROUP_SIZE,
+    MIN_SUPPORT_FOR_MINING,
+    weightUpdateActions,
+    weightUpdateFactors
 } from "./featureConfig";
 import {webSocketSendMessage} from "../core/coreConstants";
 
@@ -204,8 +207,8 @@ const UpdateFeatureWeights = (featureIdWeights, featureMetaData) => {
  * @param projectPath {string}
  */
 const updateFeatureWeightsDoi = (doiInformation,
-                                        featureMetaData,
-                                        projectPath) => {
+                                 featureMetaData,
+                                 projectPath) => {
 
     let featureIdWeights = [];
     let allKeywords = doiInformation.recentSearches.map(d => d.keyword);
@@ -220,8 +223,11 @@ const updateFeatureWeightsDoi = (doiInformation,
         if (!nodeValues) continue;
         for (let value of nodeValues) {
             if (allKeywords.includes(value) || allElements.includes(value)) {
-                featureIdWeights.push({featureId: feature.featureId, weight: weightUpdateFactors.doiSearches,
-                    action: weightUpdateActions.multiply});
+                featureIdWeights.push({
+                    featureId: feature.featureId,
+                    weight: weightUpdateFactors.doiSearches,
+                    action: weightUpdateActions.multiply
+                });
             }
         }
     }
@@ -232,7 +238,11 @@ const updateFeatureWeightsDoi = (doiInformation,
         let featureIds = featureMetaData.featureInfoContainers.featureMapReverse[path] ?
             featureMetaData.featureInfoContainers.featureMapReverse[path] : [];
         featureIds.forEach(id => {
-            featureIdWeights.push({featureId: id, weight: weightUpdateFactors.doiVisited, action: weightUpdateActions.multiply});
+            featureIdWeights.push({
+                featureId: id,
+                weight: weightUpdateFactors.doiVisited,
+                action: weightUpdateActions.multiply
+            });
         })
     });
 

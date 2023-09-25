@@ -25,7 +25,7 @@ import {reduxStoreMessages} from "../../reduxStoreConstants";
 import {createGroupingMetaData, formGroupings} from "../../miningRulesCore/preProcessing";
 import {createFeatureMetaDataMap} from "../../miningRulesCore/extractFeatures";
 import {generateFeatures, prepareFilesAndRequestMineRules} from "../../miningRulesCore/processing";
-import {focusElementType, featureGroupInformation} from "../../miningRulesCore/featureConfig";
+import {featureGroupInformation, focusElementType} from "../../miningRulesCore/featureConfig";
 import MinedClusterRulePad from "./minedClusterRulePad";
 import {constantRuleIndex} from "../uiConstants";
 import RulePad from "../RulePad/rulePad";
@@ -126,8 +126,7 @@ class MiningRulesComponent extends Component {
                             message: "No rule is found.",
                         });
                     }
-                }
-                else {
+                } else {
                     this.setState({
                         minedRules: nextProps.minedRules,
                         loadingStatus: false,
@@ -167,7 +166,7 @@ class MiningRulesComponent extends Component {
             <div>
                 <h4>Pick an element in the IDE, and select <strong>Mine Rules</strong> from the context menu.</h4>
                 {this.state.showFocusedElementErrorMessage ? (
-                    <h4 className={"focusedElementError"}>The focused element should be Class, Field, or Method.</h4>)
+                        <h4 className={"focusedElementError"}>The focused element should be Class, Field, or Method.</h4>)
                     : null}
             </div>
         )
@@ -206,18 +205,18 @@ class MiningRulesComponent extends Component {
             )
         }
     }
-    
+
     renderMessages() {
         if (this.state.loadingStatus) {
             return null;
         }
         let countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
         let nextAlgorithmExist = !!switchAlgorithm(this.props.selectedAlgorithm);
-        return(
+        return (
             <div style={{marginBottom: "40px"}}>
                 <h4>{this.state.message}</h4>
                 {countRules === 0 || !nextAlgorithmExist ? null : (
-                    <Button onClick={()=> this.tryDifferentAlgorithm()}>Try again.</Button>
+                    <Button onClick={() => this.tryDifferentAlgorithm()}>Try again.</Button>
                 )}
             </div>
         )
@@ -233,7 +232,7 @@ class MiningRulesComponent extends Component {
                     <Row>
                         <Col md={8}>
                             <MinedClusterRulePad key={new Date()} rulePadState={rulePadState}
-                                          featureMetaData={this.state.featureMetaData} fileGroup={fileGroup}/>
+                                                 featureMetaData={this.state.featureMetaData} fileGroup={fileGroup}/>
                         </Col>
                         <Col md={3}>
                             <h5><strong>Sum of feature weights in the cluster: </strong>{clusterObject.sumWeights}</h5>

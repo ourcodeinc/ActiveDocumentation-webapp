@@ -35,7 +35,6 @@ class MinedClusterRulePad extends Component {
                 <div
                     className={"mainDiv-overlay elementDiv" + (this.state.thisElement.activeElement ? " activeElement" : "")
                     + (this.state.thisElement.selectedElement ? " selectedElement" : "")
-                    // + (this.state.thisElement.isConstraint ? " constraintElement" : "")
                     }>
                     <div className={"rowGroup"}>
                         {this.renderGroup("top")}
@@ -179,8 +178,8 @@ class MinedClusterRulePad extends Component {
             <Fragment key={index}>
                 <div className={group === "body" ? "rowGroup" : "rowItem"}>
                     <MinedClusterRulePad key={new Date()} elementId={childId}
-                                  rulePadState={this.props.rulePadState} styleClass={""}
-                                  featureMetaData={this.props.featureMetaData} fileGroup={this.props.fileGroup}
+                                         rulePadState={this.props.rulePadState} styleClass={""}
+                                         featureMetaData={this.props.featureMetaData} fileGroup={this.props.fileGroup}
                     />
                 </div>
             </Fragment>
@@ -236,10 +235,11 @@ class MinedClusterRulePad extends Component {
                             className={"minedRuleEditor activeElement " + colorCoding}
                             menuItemsText={allFeatures}
                             menuItemsInfo={info}
-                            menuItemsEvent={allFeatures.map((item, i) => item === "N/A" ? childCondition.placeholder
+                            menuItemsEvent={allFeatures.map((item) => item === "N/A" ? childCondition.placeholder
                                 : item)}
                             menuDefault={childElement.text}
-                            onSelectFunction={() => {}}
+                            onSelectFunction={() => {
+                            }}
                         />
                     </div>
                     <div className={"informationDiv rowGroup"}>

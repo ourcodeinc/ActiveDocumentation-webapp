@@ -61,7 +61,10 @@ const findSimilarNode = (itemSet, node, featureMetaData) => {
             }
         }
     }
-    return maxSimilarity >= SIMILARITY_THRESHOLD ? {maxSimilarity, similarNode} : {maxSimilarity: -1, similarNode: node};
+    return maxSimilarity >= SIMILARITY_THRESHOLD ? {maxSimilarity, similarNode} : {
+        maxSimilarity: -1,
+        similarNode: node
+    };
 }
 
 /**

@@ -38,7 +38,7 @@ export const getDataForFocusedElement = (xmlFile, startOffset) => {
     // find the selected node in the IDE
     traverseNodes(xmlDoc);
 
-    if (selectedNode === null) return {mapFocusedElementToFeaturesKey:"", identifier:""};
+    if (selectedNode === null) return {mapFocusedElementToFeaturesKey: "", identifier: ""};
 
     /**
      * find an ancestor of a node that is listed as a focused_element
@@ -50,11 +50,10 @@ export const getDataForFocusedElement = (xmlFile, startOffset) => {
         if (node.nodeName === "unit") return node;
         let acceptedNodeType = focusElementType.map(d => d.nodeName);
         if (acceptedNodeType.includes(node.nodeName)) {
-            if (node.nodeName !== "class" && findAncestorNode(node.parentNode).nodeName!=="class")
+            if (node.nodeName !== "class" && findAncestorNode(node.parentNode).nodeName !== "class")
                 return findAncestorNode(node.parentNode);
             return node;
-        }
-        else {
+        } else {
             return findAncestorNode(node.parentNode)
         }
     }
@@ -62,7 +61,7 @@ export const getDataForFocusedElement = (xmlFile, startOffset) => {
     let ancestorNode = findAncestorNode(selectedNode);
     let filtered = focusElementType.filter(d => d.nodeName === ancestorNode.nodeName);
     if (filtered.length === 0)
-        return {mapFocusedElementToFeaturesKey:"", identifier:""};
+        return {mapFocusedElementToFeaturesKey: "", identifier: ""};
 
     let mapFocusedElementToFeaturesKey = filtered[0].mapFocusedElementToFeaturesKey;
     let identifier = runXPathSingleNode(ancestorNode, filtered[0].identifierXpath).join("");
@@ -143,7 +142,7 @@ export const getNodesFromOffsets = (mainXml, startOffset, endOffset) => {
     let xml = mainXml.slice(0); // copy of xml data
 
     let parser = new DOMParser();
-    let xmlDoc = parser.parseFromString(xml,"text/xml");
+    let xmlDoc = parser.parseFromString(xml, "text/xml");
 
     let str = "",        // string to keep track of the offset
         selectedText = "";
@@ -176,8 +175,7 @@ export const getNodesFromOffsets = (mainXml, startOffset, endOffset) => {
                         return "end";
                     }
                 }
-            }
-            else {
+            } else {
                 let res = traverseNodes(node.childNodes[i]);
                 if (res === "end")
                     return res;

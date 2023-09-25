@@ -6,7 +6,7 @@ import {nsResolver} from "../core/coreConstants";
  * @param xPath {string}
  * @return {Node[]}
  */
-export const returnNodeArray= (mainNode, xPath) => {
+export const returnNodeArray = (mainNode, xPath) => {
     let NodesIterator = returnNodeIterator(mainNode, xPath);
     if (NodesIterator === -1) return [];
     let nodeArray = [];
