@@ -131,7 +131,7 @@ class MiningRulesComponent extends Component {
                         minedRules: nextProps.minedRules,
                         loadingStatus: false,
                         showSelectedCluster: false,
-                        message: `${countRules} rules are found.`,
+                        message: `${countRules} potential rules are found.`,
                     });
                 }
                 break;
@@ -224,24 +224,20 @@ class MiningRulesComponent extends Component {
 
     renderMinedClusters() {
         let process = (group, groupIndex, clusterIndex) => {
-            let clusterObject = group.clusters[clusterIndex];
             let rulePadState = group.rulePadStates[clusterIndex];
             let fileGroup = group.fileGroup;
-            return (<div onClick={() => console.log(clusterObject)}>
+            return (<div>
                 <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"}>
                     <Row>
-                        <Col md={8}>
+                        <Col md={10}>
                             <MinedClusterRulePad key={new Date()} rulePadState={rulePadState}
                                                  featureMetaData={this.state.featureMetaData} fileGroup={fileGroup}/>
                         </Col>
-                        <Col md={3}>
-                            <h5><strong>Sum of feature weights in the cluster: </strong>{clusterObject.sumWeights}</h5>
-                            <h5><strong>Size of the cluster: </strong>{clusterObject.cluster.length}</h5>
-                            <h5><strong>Average frequency (Support) of cluster members: </strong>
-                                {clusterObject.averageSupport}
-                            </h5>
-                            <Button onClick={() => this.updateSelectedMinedCluster(groupIndex, clusterIndex)}>
-                                Explore</Button>
+                        <Col md={2}>
+                            <div style={{"paddingTop": "15px"}}>
+                                <Button onClick={() => this.updateSelectedMinedCluster(groupIndex, clusterIndex)}>
+                                    Explore</Button>
+                            </div>
                         </Col>
                     </Row>
                 </div>
