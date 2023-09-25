@@ -104,6 +104,7 @@ export function extractFeaturesFromXmlFile(xmlFile, projectPath,
                 let element = `${xmlFile.filePath.replace(projectPath, "")}`
                     + `_${specObject.container.type}_${j}_${group.type}_${l}`;
                 let featureIds = containerFeatureIds.concat(groupFeatureIds);
+                featureIds = Array.from(new Set(featureIds));
                 // updating the featureMetaData
                 featureMetaData.featureGroups.spec[groupId].elementFeatures.push({element, featureIds});
                 xmlFeatureIds = [...new Set(xmlFeatureIds.concat(featureIds))];
@@ -187,6 +188,7 @@ const processFeatureSetUsage = (xmlFile, projectPath,
                     let element = `${xmlFile.filePath.replace(projectPath, "")}`
                         + `_${usageItem.container.type}_${j}_${group.type}_${l}`;
                     let featureIds = containerFeatureIds.concat(groupFeatureIds);
+                    featureIds = Array.from(new Set(featureIds));
                     // updating the featureMetaData
                     featureMetaData.featureGroups.usage[groupId].elementFeatures.push({element, featureIds});
                     newUsageFeatureIds = [...new Set(newUsageFeatureIds.concat(featureIds))];
