@@ -38,6 +38,10 @@ export const allAlgorithms = {
         key: "FPMax",
         parameters: [0.05]
     },
+    FP_MAX_EXTRA_RELAXED: {
+        key: "FPMax",
+        parameters: [0.1]
+    },
     FP_CLOSE: {  // Extracts many FIQs
         key: "FPClose",
         parameters: [0.02]

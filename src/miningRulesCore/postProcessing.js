@@ -54,6 +54,7 @@ const parseFrequentItemSets = (outputFiles, algorithm, featureMetaData) => {
             switch(algorithm) {
                 case allAlgorithms.FP_MAX_DEFAULT.key:
                 case allAlgorithms.FP_MAX_RELAXED.key:
+                case allAlgorithms.FP_MAX_EXTRA_RELAXED:
                 case allAlgorithms.FP_CLOSE.key:
                     if (split.length < 2) break;
                     featureIds = (split[0]).split(" ")
@@ -471,6 +472,9 @@ export const switchAlgorithm = (algorithm) => {
             return allAlgorithms.FP_MAX_RELAXED;
         }
         if (algorithm.parameters[0] === allAlgorithms.FP_MAX_RELAXED.parameters[0]) {
+            return allAlgorithms.FP_MAX_EXTRA_RELAXED;
+        }
+        if (algorithm.parameters[0] === allAlgorithms.FP_MAX_EXTRA_RELAXED.parameters[0]) {
             return allAlgorithms.FP_CLOSE;
         }
     }
