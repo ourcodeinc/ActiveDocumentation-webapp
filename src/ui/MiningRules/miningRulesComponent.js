@@ -357,6 +357,7 @@ class MiningRulesComponent extends Component {
 
     tryDifferentAlgorithm() {
         let newAlgorithm = switchAlgorithm(this.props.selectedAlgorithm);
+        console.log("Trying the next algorithm: ", newAlgorithm);
         if (newAlgorithm) {
             this.props.onUpdateSelectedAlgorithm(newAlgorithm);
             let message = {
