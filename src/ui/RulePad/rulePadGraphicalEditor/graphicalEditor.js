@@ -509,35 +509,7 @@ class GraphicalEditor extends Component {
      * @returns {{jobs: Array}}
      */
     connectElements(guiElements, guiTree) {
-
-        let jobs = [];
-
-        // for each active element, find the path from root to the node.
-        let treePaths = Object.keys(guiElements)
-            .filter(id => guiElements[id].activeElement)
-            .map(id => {
-                let path = [id];
-                let tempID = id;
-                while (guiTree[tempID].parentId !== "") {
-                    path.push(guiTree[tempID].parentId);
-                    tempID = guiTree[tempID].parentId;
-                }
-                return path.reverse(); // return root to node path
-            });
-
-        // activate the elements between root and the node
-        treePaths.forEach(path => {
-            for (let i = 0; i < path.length; i++) {
-                if (!guiElements[path[i]].activeElement)
-                    jobs.push({
-                        elementId: path[i],
-                        task: "UPDATE_ELEMENT",
-                        value: {activeElement: true}
-                    });
-            }
-        });
-
-        return {jobs: jobs};
+        return this.lowestCommonAncestor(guiElements, guiTree, "activeElement");
     }
 
 
@@ -578,17 +550,18 @@ class GraphicalEditor extends Component {
     }
 
     /**
-     *
+     * find the lowest common ancestor to activate
      * @param guiElements
      * @param guiTree
+     * @param property {'isConstraint' | 'activeElement'}
      * @returns {{jobs: Array, error: boolean}} array of jobs for "CHANGE_GUI_ELEMENT"
      */
-    lowestCommonAncestor(guiElements, guiTree) {
+    lowestCommonAncestor(guiElements, guiTree, property = "isConstraint") {
         let jobs = [];
         // lowest common ancestor elementId
         let lcaID = "", lcaIndex;
         // element ids we need to find their common ancestor
-        let elementIDs = Object.keys(guiElements).filter(id => guiElements[id].isConstraint);
+        let elementIDs = Object.keys(guiElements).filter(id => guiElements[id][property]);
 
         if (elementIDs.length === 0) return {jobs: [], error: true};
 
@@ -619,7 +592,7 @@ class GraphicalEditor extends Component {
                     // or their parents are different
                     // or reached a node that can't be selected
                     if (treePaths[i].length <= lcaIndex + 1 ||
-                        (i !== treePaths.length - 1 && ( treePaths[i + 1].length <= lcaIndex + 1 || treePaths[i][lcaIndex + 1] !== treePaths[i + 1][lcaIndex + 1])) ||
+                        (i !== treePaths.length - 1 && (treePaths[i + 1].length <= lcaIndex + 1 || treePaths[i][lcaIndex + 1] !== treePaths[i + 1][lcaIndex + 1])) ||
                         (i === treePaths.length - 1 && treePaths[i][lcaIndex + 1] !== treePaths[i - 1][lcaIndex + 1]) ||
                         // treePaths[i][lcaIndex] === guiTree.selectedElementID ||
                         !getConditionByName(guiElements[treePaths[i][lcaIndex + 1]].conditionName).canBeSelected) {
@@ -631,12 +604,12 @@ class GraphicalEditor extends Component {
             }
             // if there is no common ancestor return error >>> this should not happen
             if (lcaIndex === -1) return {jobs: [], error: true};
-            this.canBeStarredIDs = treePaths[0].slice(0, lcaIndex + 1);
+            if (property === "isConstraint") {
+                this.canBeStarredIDs = treePaths[0].slice(0, lcaIndex + 1);
+            }
             if (lcaIndexNominated !== -1) lcaIndex = lcaIndexNominated;
             lcaID = treePaths[0][lcaIndex];
-        }
-
-        else if (elementIDs.length === 1) {
+        } else if (elementIDs.length === 1) {
             lcaIndex = treePaths[0].length - 1;
             lcaID = elementIDs[0];
             // find ancestor that can be selected
@@ -647,25 +620,32 @@ class GraphicalEditor extends Component {
             // if no ancestor can be selected, return error >>> should not happen based on guiConstants
             if (!getConditionByName(guiElements[lcaID].conditionName).canBeSelected && guiTree[lcaID].parentId === "")
                 return {jobs: [], error: true};
-            this.canBeStarredIDs = [lcaID];
-            if (elementIDs[0] === lcaID && guiTree[lcaID].parentId !== "")
-                this.canBeStarredIDs.push(guiTree[lcaID].parentId)
+            if (property === "isConstraint") {
+                this.canBeStarredIDs = [lcaID];
+                if (elementIDs[0] === lcaID && guiTree[lcaID].parentId !== "")
+                    this.canBeStarredIDs.push(guiTree[lcaID].parentId)
+            }
         }
 
+        let value = {};
+        value[property] = true;
         // activate the elements between LCA and the node
         treePaths.forEach(path => {
             for (let i = lcaIndex; i < path.length; i++) {
-                if (i > lcaIndex && !guiElements[path[i]].isConstraint)
+                if (i > lcaIndex && !guiElements[path[i]][property])
                     jobs.push({
                         elementId: path[i],
                         task: "UPDATE_ELEMENT",
-                        value: {isConstraint: true}
+                        value
                     });
             }
         });
 
         // update the selected element if changed
-        if (this.canBeStarredIDs.indexOf(guiTree.selectedElementID) === -1)
+        if (property === "isConstraint" && this.canBeStarredIDs.indexOf(guiTree.selectedElementID) === -1)
+            jobs.push({elementId: lcaID, task: "SELECT_ELEMENT", value: true});
+
+        else if (property === "activeElement" && lcaID !== guiTree.selectedElementID)
             jobs.push({elementId: lcaID, task: "SELECT_ELEMENT", value: true});
 
         return {jobs: jobs, error: false};
