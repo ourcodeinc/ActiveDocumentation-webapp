@@ -60,8 +60,24 @@ emptyLine
     : NL
     ;
 
+identifier
+    : Alphabet+
+    ;
+
+identifiers
+    : (identifier '||' | identifier '&&')* identifier
+    ;
+
+commentPrefix
+    : 'No Constructor' | 'No Function' | 'Empty Body' | 'No Parameter' | 'Initialization'
+    | 'Calling Constructor: ' | 'Calling Function: ' | 'Modifying Field: '
+    | 'Calling a Function With Argument: ' | 'Initialized by Calling Function: '
+    | 'Initialized by Calling a Function With Argument: ' | 'Initialized with: '
+    | 'Caller: ' | 'Assigned Value: '
+    ;
+
 comments
-    : '"'(Alphabet | symbols | SPACE)+'"'
+    : '"' commentPrefix identifiers? '"'
     ;
 
 /*

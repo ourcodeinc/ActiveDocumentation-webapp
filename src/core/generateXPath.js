@@ -7,7 +7,7 @@ import Utilities from "./utilities";
 import store from "../reduxStore";
 import {sendExpressionStatementXML} from "../actions";
 import {webSocketSendMessage} from "./coreConstants";
-import {mapCommentsToXPath, mapCommentsWithNodesToXPath} from "../miningRulesCore/featureConfig";
+import {mapCommentsToXPath} from "../miningRulesCore/featureConfig";
 
 class GenerateXPath {
 
@@ -260,32 +260,17 @@ class GenerateXPath {
     }
 
     commentsContextTraversal(node, isConstraintCondition) {
-        let word = "";
-
         // based on the grammar the first and last children are quotation marks
-        if (node.children.length <= 2) return word;
-
-        for (let k = 1; k < node.children.length - 1; k++) {
-            if (node.getChild(k).constructor.name === "TerminalNodeImpl")
-                word += node.getChild(k).getSymbol().text;
-            else if (node.getChild(k).constructor.name === "SymbolsContext")
-                word += node.getChild(k).getChild(0).getSymbol().text;
-        }
+        if (node.children.length <= 2) return "";
+        let commentPrefix = node.getChild(1).getChild(0).getSymbol().text;
+        let identifiers = node.children.length === 4 ? this.identifiersContextTraversal(node.getChild(2)) : "";
         let predefinedComments = mapCommentsToXPath.map(d => d.comment);
-        let index = predefinedComments.indexOf(word);
+        let index = predefinedComments.indexOf(commentPrefix);
         if (index !== -1) {
-            if (!isConstraintCondition)
-                this.XPathQ += mapCommentsToXPath[index].xpath;
-            this.XPathC += mapCommentsToXPath[index].xpath;
-            return;
-        }
-        let predefinedCommentsWithNodes = mapCommentsWithNodesToXPath.map(d => d.comment);
-        index = predefinedCommentsWithNodes.findIndex(d => word.startsWith(d));
-        if (index !== -1) {
-            let nodeValue = word.replace(predefinedCommentsWithNodes[index], "");
-            let xpath = mapCommentsWithNodesToXPath[index].xpath.replace(/<TEMP_0>/g, nodeValue)
-            if (!isConstraintCondition) this.XPathQ += xpath;
-            this.XPathC += xpath;
+            if (!isConstraintCondition) {
+                this.XPathQ += mapCommentsToXPath[index].xpath.replace(/<TEMP_0>/g, identifiers);
+            }
+            this.XPathC += mapCommentsToXPath[index].xpath.replace(/<TEMP_0>/g, identifiers);
             return;
         }
         if (!isConstraintCondition)
@@ -376,8 +361,6 @@ class GenerateXPath {
                 this.XPathC += "]";
             }
 
-            // console.log("name", node);
-
             if (nodeType === "TerminalNodeImpl") {
                 if (this.XPathQ === "" && !isConstraintCondition) this.XPathQ += "/";
                 if (this.XPathC === "") this.XPathC += "/";
@@ -398,6 +381,28 @@ class GenerateXPath {
 
             }
         }
+    }
+
+    // simplified version of wordsContextTraversal
+    identifiersContextTraversal(node) {
+        let identifierTraversal = (node) => {
+            let identifier = "\"";
+            for (let i = 0; i < node.children.length; i++) {
+                identifier += node.getChild(i).getSymbol().text;
+            }
+            identifier += "\"";
+            return "text()=" + identifier;
+        }
+        let result = "";
+        for (let i = 0; i < node.children.length; i++) {
+            if (node.getChild(i) instanceof TerminalNodeImpl) {
+                if (node.getChild(i).getSymbol().text === "&&") result += " and ";
+                else if (node.getChild(i).getSymbol().text === "||") result += " or ";
+            }
+            else
+                result += identifierTraversal(node.getChild(i))
+        }
+        return result;
     }
 
     annotationsContextTraversal(node, isConstraintCondition) {
@@ -950,8 +955,8 @@ class GenerateXPath {
     sendTextDataToSrcML(text, elementType, messageID) {
         if (text === "") return;
         let code;
-        let query = "";
-        let cuttingLength = 9; // for cutting XPath after receiving and processing the message
+        let query;
+        let cuttingLength; // for cutting XPath after receiving and processing the message
         // let messageID = Math.floor(new Date().getTime() / 1000); // to match send and receive messages
 
         switch (elementType) {

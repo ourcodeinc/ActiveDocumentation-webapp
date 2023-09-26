@@ -83,6 +83,33 @@ myGrammarListener.prototype.exitEmptyLine = function(ctx) {
 };
 
 
+// Enter a parse tree produced by myGrammarParser#identifier.
+myGrammarListener.prototype.enterIdentifier = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#identifier.
+myGrammarListener.prototype.exitIdentifier = function(ctx) {
+};
+
+
+// Enter a parse tree produced by myGrammarParser#identifiers.
+myGrammarListener.prototype.enterIdentifiers = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#identifiers.
+myGrammarListener.prototype.exitIdentifiers = function(ctx) {
+};
+
+
+// Enter a parse tree produced by myGrammarParser#commentPrefix.
+myGrammarListener.prototype.enterCommentPrefix = function(ctx) {
+};
+
+// Exit a parse tree produced by myGrammarParser#commentPrefix.
+myGrammarListener.prototype.exitCommentPrefix = function(ctx) {
+};
+
+
 // Enter a parse tree produced by myGrammarParser#comments.
 myGrammarListener.prototype.enterComments = function(ctx) {
 };
