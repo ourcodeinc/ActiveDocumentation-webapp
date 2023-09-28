@@ -80,7 +80,7 @@ export const runXPathSingleNodeAndChildren = (mainNode, xPath) => {
     let parentNodes = returnNodeIterator(mainNode, xPath);
     let res = parentNodes.iterateNext();
     while (res !== null) {
-        result.push(runXPathSingleNode(res, "//*/text()").join(""));
+        result.push(extractTextFromXML(res));
         res = parentNodes.iterateNext();
     }
     return result;
@@ -140,7 +140,7 @@ export const runXPathMultipleNodesAndChildren = (mainNode, xPath, nodes) => {
             let tempResult = [];
             for (let i = 0; i < nodes.length; i++) {
                 let childNode = resCopy.evaluate(nodes[i], resCopy, nsResolver, XPathResult.ANY_TYPE, null);
-                let child = runXPathSingleNode(childNode.iterateNext(), "//*/text()").join("");
+                let child = extractTextFromXML(childNode.iterateNext());
                 tempResult.push(child);
             }
             result.push(tempResult);
@@ -155,3 +155,24 @@ export const runXPathMultipleNodesAndChildren = (mainNode, xPath, nodes) => {
     }
     return result;
 };
+
+/**
+ * returns the text of an XML node
+ * @param xmlNode
+ * @return {string}
+ */
+function extractTextFromXML(xmlNode) {
+    function traverse(node) {
+        let text = "";
+        for (let i = 0; i < node.childNodes.length; i++) {
+            const childNode = node.childNodes[i];
+            if (childNode.nodeType === Node.TEXT_NODE) {
+                text += childNode.textContent;
+            } else if (childNode.nodeType === Node.ELEMENT_NODE) {
+                text += traverse(childNode);
+            }
+        }
+        return text;
+    }
+    return traverse(xmlNode);
+}
