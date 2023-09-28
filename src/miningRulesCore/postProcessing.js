@@ -331,7 +331,7 @@ const createWithChildrenForCombinedFeatures = (featureIndex, combinedFeature, fe
         values.push(
             featureInfo.nodes[0]
                 .replace(/\.{3}/g, '\u0007') // temporary character to replace 3dots
-                .replace(/[^A-Za-z0-9\-!_\u0007]+/g, '')
+                .replace(/[^A-Za-z0-9\-!_<>\u0007]+/g, '')
                 .replace(/\u0007/g, '...')
         )
     }
