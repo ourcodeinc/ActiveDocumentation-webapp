@@ -328,12 +328,14 @@ const createWithChildrenForCombinedFeatures = (featureIndex, combinedFeature, fe
     for (let featureId of combinedFeature) {
         let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
         let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
-        values.push(
-            featureInfo.nodes[0]
-                .replace(/\.{3}/g, '\u0007') // temporary character to replace 3dots
-                .replace(/[^A-Za-z0-9\-!_<>\u0007]+/g, '')
-                .replace(/\u0007/g, '...')
-        )
+        if (featureInfo.nodes.length > 0) {
+            values.push(
+                featureInfo.nodes[0]
+                    .replace(/\.{3}/g, '\u0007') // temporary character to replace 3dots
+                    .replace(/[^A-Za-z0-9\-!_<>\u0007]+/g, '')
+                    .replace(/\u0007/g, '...')
+            )
+        }
     }
     if ("value" in child) {
         child.value.word = child.value.word.replace(`<TEMP_0>`, values.join("||"));
@@ -411,6 +413,7 @@ export const createRulePadStateForItemSet = (frequentItemSet, fileGroup, feature
         builtObjects[mergeKey] = {key: mergeKey, withChildren: []};
     }
     let combinedFeaturesKeys = Object.keys(combinedFeatures);
+    console.log({combinedFeatures, combinedFeaturesKeys});
     for (let combinedFeatureKey of combinedFeaturesKeys) {
         let desc = featureMetaData.featureInfoContainers.featureInfoReverse[combinedFeatures[combinedFeatureKey][0]];
         let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
@@ -427,6 +430,8 @@ export const createRulePadStateForItemSet = (frequentItemSet, fileGroup, feature
     builtObject.withChildren.push(builtObjects[mergeKeys[1]]);
     builtObject.selectedElement = true;
     builtObject.isConstraint = false;
+
+    console.log({'builtObject': builtObject});
     return processRulePadForMiningRules(builtObject);
 }
 
