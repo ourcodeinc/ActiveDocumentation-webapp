@@ -61,7 +61,7 @@ emptyLine
     ;
 
 identifier
-    : Alphabet+
+    : (Alphabet | symbols | SPACE)+
     ;
 
 identifiers
