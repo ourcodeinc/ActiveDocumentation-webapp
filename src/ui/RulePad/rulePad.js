@@ -713,9 +713,12 @@ class RulePad extends Component {
      */
     renderAutoCompleteError() {
         if (this.state.editorError !== "") console.log(this.state.editorError);
+        if (this.state.editorError === "" || this.state.editorError.message === "") {
+            return null;
+        }
         return (
             <Fragment>
-                {this.state.editorError === "" ? null : !this.state.showAlert ? null : (
+                {!this.state.showAlert ? null : (
                     <Alert bsStyle={this.state.editorError.alertType}>
                         <div>
                             <div className={"controlButtonDiv"}>
@@ -749,7 +752,7 @@ class RulePad extends Component {
                     </Alert>
 
                 )}
-                {this.state.showAlert || this.state.editorError === "" ? null : (
+                {this.state.showAlert ? null : (
                     <Alert bsStyle={this.state.editorError.alertType}>
                         <div className={"controlButtonDiv controlButton"}>
                             <div data-tip={"React-tooltip"} data-for={"maximize"}>
