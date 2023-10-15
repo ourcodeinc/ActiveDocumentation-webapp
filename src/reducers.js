@@ -587,6 +587,17 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     }
                 });
 
+        case reduxStoreActions.action_update_new_rule_from_mined_rules:
+            return Object.assign({}, state, {
+                message: reduxStoreMessages.update_new_rule_from_mined_rules,
+                ignoreFileChange: true,
+                displayEditRuleTutorial: false,
+                rulePadState: {
+                    ...state.minedRulesState.minedRulePadState,
+                    isEditMode: true,
+                },
+            });
+
         default:
             return Object.assign({}, state);
     }

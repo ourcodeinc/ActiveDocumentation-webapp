@@ -18,6 +18,7 @@ import {
     updateFeatureMetaData,
     updateGroupingMetaData,
     updateMinedRulePadState,
+    updateNewRuleFromMinedRules,
     updateSelectedAlgorithm
 } from "../../actions";
 import Utilities from "../../core/utilities";
@@ -284,7 +285,18 @@ class MiningRulesComponent extends Component {
                 </Row>
             </div>
 
-            <Button onClick={() => this.setState({showSelectedCluster: false})}>Close</Button>
+            <div>
+                <div style={{"padding": "10px", "float": "left"}}>
+                    <Button onClick={() => this.setState({showSelectedCluster: false})}>Close</Button>
+                </div>
+                <div style={{"padding": "10px"}}>
+                    <Button onClick={() => {
+                        window.location.hash = `#/rules`;
+                        window.scrollTo({top: 0, behavior: 'smooth'});
+                        this.props.onUpdateNewRuleFromMinedRules();
+                    }}>Add Rule</Button>
+                </div>
+            </div>
         </div>)
     }
 
@@ -384,6 +396,7 @@ function mapDispatchToProps(dispatch) {
         onUpdateMinedRulePadState: (groupIndex, clusterIndex, rulePadState, filesFolders) =>
             dispatch(updateMinedRulePadState(groupIndex, clusterIndex, rulePadState, filesFolders)),
         onUpdateSelectedAlgorithm: (newAlgorithm) => dispatch(updateSelectedAlgorithm(newAlgorithm)),
+        onUpdateNewRuleFromMinedRules: () => dispatch(updateNewRuleFromMinedRules()),
     }
 }
 

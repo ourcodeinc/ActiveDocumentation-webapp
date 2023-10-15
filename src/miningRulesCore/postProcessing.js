@@ -413,7 +413,6 @@ export const createRulePadStateForItemSet = (frequentItemSet, fileGroup, feature
         builtObjects[mergeKey] = {key: mergeKey, withChildren: []};
     }
     let combinedFeaturesKeys = Object.keys(combinedFeatures);
-    console.log({combinedFeatures, combinedFeaturesKeys});
     for (let combinedFeatureKey of combinedFeaturesKeys) {
         let desc = featureMetaData.featureInfoContainers.featureInfoReverse[combinedFeatures[combinedFeatureKey][0]];
         let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
@@ -431,7 +430,6 @@ export const createRulePadStateForItemSet = (frequentItemSet, fileGroup, feature
     builtObject.selectedElement = true;
     builtObject.isConstraint = false;
 
-    console.log({'builtObject': builtObject});
     return processRulePadForMiningRules(builtObject);
 }
 

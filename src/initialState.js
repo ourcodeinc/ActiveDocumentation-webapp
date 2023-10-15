@@ -724,6 +724,9 @@ export const initial_state = {
         minedRulePadState: {
             selectedGroupIndex: null, // the index of the mined group, number
             selectedClusterIndex: null, // the index of the cluster in the group, number
+            title: "",
+            description: "",
+            ruleTags: [],
             folderConstraint: "",
             filesFolders: [],
             autoCompleteArray: [],

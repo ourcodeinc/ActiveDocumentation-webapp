@@ -411,3 +411,13 @@ export const updateMinedRulePadState = (groupIndex, clusterIndex, rulePadState, 
         }
     };
 }
+
+/**
+ * update the new rule in RulePad with the selected mined rule
+ * @return {{type: string}}
+ */
+export const updateNewRuleFromMinedRules = () => {
+    return {
+        type: reduxStoreActions.action_update_new_rule_from_mined_rules
+    }
+}
