@@ -1375,7 +1375,16 @@ class RulePad extends Component {
             return;
         }
 
-        if (rule.index || rule.title === "" || rule.description === "") {
+        if (!rule.index) {
+            this.setState({
+                errorTitle: "Error in Submitting the updated Rule",
+                errorMessage: "Internal error.",
+                showError: true
+            });
+            return;
+        }
+
+        if (rule.title === "" || rule.description === "") {
             this.setState({
                 errorTitle: "Error in Submitting the updated Rule",
                 errorMessage: "Make sure to enter 'title' and 'description' for the rule.",
