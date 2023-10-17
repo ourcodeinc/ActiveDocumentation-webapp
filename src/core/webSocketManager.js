@@ -156,9 +156,8 @@ class WebSocketManager extends Component {
                     break;
 
                 case webSocketReceiveMessage.new_tag_msg:
-                    // data: {tagID: longNumber, tag: {...}}
-                    let newAddedTag = Utilities.parseJson(message.data["tag"], "new Tag information", {});
-                    tagTable.push(newAddedTag);
+                    // data: {tagID: longNumber, tagInfo: {...}}
+                    tagTable.push(message.data["tagInfo"]);
                     this.props.onUpdateTagTable(tagTable);
                     break;
 

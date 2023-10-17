@@ -993,8 +993,12 @@ class RulePad extends Component {
             this.updateFeedbackSnippet(this.state.quantifierXPath, this.state.constraintXPath, this.state.folderConstraint, this.state.filesFolders);
         }
 
-        if (nextProps.message === reduxStoreMessages.hierarchy_data_msg) {
+        else if (nextProps.message === reduxStoreMessages.hierarchy_data_msg) {
             this.setState({projectHierarchy: nextProps.projectHierarchy})
+        }
+
+        else if (nextProps.message === reduxStoreMessages.update_tag_table_msg) {
+            this.setState({tags: nextProps.tags});
         }
 
         else {
@@ -1028,7 +1032,7 @@ class RulePad extends Component {
                     monacoFormStatus: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "has-error" : nextProps.message === "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? "has-warning" : this.state.monacoFormStatus,
                     errorPoint: -1,
 
-                    shouldUpdateSnippets: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? true : this.state.shouldUpdateSnippets,
+                    shouldUpdateSnippets: nextProps.message === "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? true : this.state.shouldUpdateSnippets,
                     xPathQueryResult
                 });
             }
