@@ -105,7 +105,7 @@ There is also another json file named `tagTable.json`. In this file we store inf
 
 This system is using ANTLR4.
 
-* The grammar is stored in `myGrammar.g4`
+* The grammar is stored in `rulePadGrammar.g4`
 * The generated code with ANTLR is created through `gradle` script.
 * The `gradle.build` file is located in the root directory of the project.
 * Run `gradle generateParser`

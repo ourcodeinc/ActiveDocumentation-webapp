@@ -1,4 +1,4 @@
-grammar myGrammar;
+grammar rulePadGrammar;
 
 inputSentence
     : (emptyLine* | mustClause) end? NL* EOF

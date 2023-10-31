@@ -69,8 +69,8 @@ const lemmatize = (input) => {
 const antlr = (input) => {
 
     let inputText = input + "";
-    let MyGrammarLexerModule = require("./generated-parser/myGrammarLexer");
-    let MyGrammarParserModule = require("./generated-parser/myGrammarParser");
+    let rulePadGrammarLexerModule = require("./generated-parser/rulePadGrammarLexer");
+    let rulePadGrammarParserModule = require("./generated-parser/rulePadGrammarParser");
 
     let ErrorListener = function (errors) {
         antlr4.error.ErrorListener.call(this);
@@ -87,20 +87,22 @@ const antlr = (input) => {
     let errors = [];
     let listener = new ErrorListener(errors);
 
-    let orgParser = new MyGrammarParserModule.myGrammarParser(new antlr4.CommonTokenStream(new MyGrammarLexerModule.myGrammarLexer(new antlr4.InputStream(input))));
+    let orgParser = new rulePadGrammarParserModule.rulePadGrammarParser(
+        new antlr4.CommonTokenStream(
+            new rulePadGrammarLexerModule.rulePadGrammarLexer(new antlr4.InputStream(input))));
     orgParser.buildParseTrees = true;
     orgParser.removeErrorListeners();
     orgParser.addErrorListener(listener);
     let orgTree = orgParser.inputSentence();
 
     let chars = new antlr4.InputStream(input);
-    let lexer = new MyGrammarLexerModule.myGrammarLexer(chars);
+    let lexer = new rulePadGrammarLexerModule.rulePadGrammarLexer(chars);
     let tokens = new antlr4.CommonTokenStream(lexer);
-    let parser = new MyGrammarParserModule.myGrammarParser(tokens);
+    let parser = new rulePadGrammarParserModule.rulePadGrammarParser(tokens);
     parser.buildParseTrees = true;
 
     parser.removeErrorListeners();
-    parser.addErrorListener(listener);
+    parser.addErrorListener(listener)
     let tree = parser.inputSentence();
 
     if (errors.length !== 0)
@@ -127,8 +129,8 @@ const antlr = (input) => {
  */
 export const verifyPartialTextBasedOnGrammar = (input) => {
 
-    let MyGrammarLexerModule = require("./generated-parser/myGrammarLexer");
-    let MyGrammarParserModule = require("./generated-parser/myGrammarParser");
+    let rulePadGrammarLexerModule = require("./generated-parser/rulePadGrammarLexer");
+    let rulePadGrammarParserModule = require("./generated-parser/rulePadGrammarParser");
 
     let ErrorListener = function (errors) {
         antlr4.error.ErrorListener.call(this);
@@ -145,7 +147,9 @@ export const verifyPartialTextBasedOnGrammar = (input) => {
     let errors = [];
     let listener = new ErrorListener(errors);
 
-    let orgParser = new MyGrammarParserModule.myGrammarParser(new antlr4.CommonTokenStream(new MyGrammarLexerModule.myGrammarLexer(new antlr4.InputStream(input))));
+    let orgParser = new rulePadGrammarParserModule.rulePadGrammarParser(
+        new antlr4.CommonTokenStream(new rulePadGrammarLexerModule.rulePadGrammarLexer(
+            new antlr4.InputStream(input))));
     orgParser.buildParseTrees = true;
     orgParser.removeErrorListeners();
     orgParser.addErrorListener(listener);

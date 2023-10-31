@@ -52,7 +52,7 @@ class GenerateXPath {
                 channel: number
                 column: number
                 line: number
-                source: [myGrammarLexer, InputStream]
+                source: [rulePadGrammarLexer, InputStream]
                 start: number
                 stop: number
                 tokenIndex: number
@@ -88,7 +88,7 @@ class GenerateXPath {
              exception: null ?
              invokingState: number
              parentCtx: {parentNode}
-             parser: myGrammarParser {...}
+             parser: rulePadGrammarParser {...}
              ruleIndex: number
              start: CommonToken {source: Array(2), type: 21, channel: 0, start: 8, stop: 8, …}
              stop: CommonToken {source: Array(2), type: 26, channel: 0, start: 66, stop: 66, …}

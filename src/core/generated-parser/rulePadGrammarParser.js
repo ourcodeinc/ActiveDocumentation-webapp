@@ -1,9 +1,8 @@
-// Generated from myGrammar.g4 by ANTLR 4.7.1
+// Generated from rulePadGrammar.g4 by ANTLR 4.7.1
 // jshint ignore: start
-/* eslint-disable */
 var antlr4 = require('antlr4/index');
-var myGrammarListener = require('./myGrammarListener').myGrammarListener;
-var grammarFileName = "myGrammar.g4";
+var rulePadGrammarListener = require('./rulePadGrammarListener').rulePadGrammarListener;
+var grammarFileName = "rulePadGrammar.g4";
 
 var serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964",
     "\u0003<\u02e0\u0004\u0002\t\u0002\u0004\u0003\t\u0003\u0004\u0004\t",
@@ -551,7 +550,7 @@ var ruleNames =  [ "inputSentence", "mustClause", "words", "word", "combinatoria
                    "classes", "classCondition", "classExpression", "subclasses", 
                    "subclassOf", "subclassCondition", "subclassExpression" ];
 
-function myGrammarParser (input) {
+function rulePadGrammarParser (input) {
 	antlr4.Parser.call(this, input);
     this._interp = new antlr4.atn.ParserATNSimulator(this, atn, decisionsToDFA, sharedContextCache);
     this.ruleNames = ruleNames;
@@ -560,145 +559,145 @@ function myGrammarParser (input) {
     return this;
 }
 
-myGrammarParser.prototype = Object.create(antlr4.Parser.prototype);
-myGrammarParser.prototype.constructor = myGrammarParser;
+rulePadGrammarParser.prototype = Object.create(antlr4.Parser.prototype);
+rulePadGrammarParser.prototype.constructor = rulePadGrammarParser;
 
-Object.defineProperty(myGrammarParser.prototype, "atn", {
+Object.defineProperty(rulePadGrammarParser.prototype, "atn", {
 	get : function() {
 		return atn;
 	}
 });
 
-myGrammarParser.EOF = antlr4.Token.EOF;
-myGrammarParser.T__0 = 1;
-myGrammarParser.T__1 = 2;
-myGrammarParser.T__2 = 3;
-myGrammarParser.T__3 = 4;
-myGrammarParser.T__4 = 5;
-myGrammarParser.T__5 = 6;
-myGrammarParser.T__6 = 7;
-myGrammarParser.T__7 = 8;
-myGrammarParser.T__8 = 9;
-myGrammarParser.T__9 = 10;
-myGrammarParser.T__10 = 11;
-myGrammarParser.T__11 = 12;
-myGrammarParser.T__12 = 13;
-myGrammarParser.T__13 = 14;
-myGrammarParser.T__14 = 15;
-myGrammarParser.T__15 = 16;
-myGrammarParser.T__16 = 17;
-myGrammarParser.T__17 = 18;
-myGrammarParser.T__18 = 19;
-myGrammarParser.T__19 = 20;
-myGrammarParser.T__20 = 21;
-myGrammarParser.T__21 = 22;
-myGrammarParser.T__22 = 23;
-myGrammarParser.T__23 = 24;
-myGrammarParser.T__24 = 25;
-myGrammarParser.T__25 = 26;
-myGrammarParser.T__26 = 27;
-myGrammarParser.T__27 = 28;
-myGrammarParser.T__28 = 29;
-myGrammarParser.T__29 = 30;
-myGrammarParser.T__30 = 31;
-myGrammarParser.T__31 = 32;
-myGrammarParser.T__32 = 33;
-myGrammarParser.SPACE = 34;
-myGrammarParser.Alphabet = 35;
-myGrammarParser.NL = 36;
-myGrammarParser.LPAREN = 37;
-myGrammarParser.RPAREN = 38;
-myGrammarParser.NAME = 39;
-myGrammarParser.ANNOTATION = 40;
-myGrammarParser.EXTENSION = 41;
-myGrammarParser.SUPERCLASS = 42;
-myGrammarParser.IMPLEMENTATION = 43;
-myGrammarParser.INTERFACE = 44;
-myGrammarParser.FUNCTION = 45;
-myGrammarParser.AbstractFunctions = 46;
-myGrammarParser.CONSTRUCTOR = 47;
-myGrammarParser.PARAMETER = 48;
-myGrammarParser.TYPES = 49;
-myGrammarParser.SPECIFIER = 50;
-myGrammarParser.VISIBILITY = 51;
-myGrammarParser.ReturnValue = 52;
-myGrammarParser.DeclarationStatement = 53;
-myGrammarParser.ExpressionStatement = 54;
-myGrammarParser.VALUE = 55;
-myGrammarParser.InitialValue = 56;
-myGrammarParser.CLASSES = 57;
-myGrammarParser.SUBCLASSES = 58;
+rulePadGrammarParser.EOF = antlr4.Token.EOF;
+rulePadGrammarParser.T__0 = 1;
+rulePadGrammarParser.T__1 = 2;
+rulePadGrammarParser.T__2 = 3;
+rulePadGrammarParser.T__3 = 4;
+rulePadGrammarParser.T__4 = 5;
+rulePadGrammarParser.T__5 = 6;
+rulePadGrammarParser.T__6 = 7;
+rulePadGrammarParser.T__7 = 8;
+rulePadGrammarParser.T__8 = 9;
+rulePadGrammarParser.T__9 = 10;
+rulePadGrammarParser.T__10 = 11;
+rulePadGrammarParser.T__11 = 12;
+rulePadGrammarParser.T__12 = 13;
+rulePadGrammarParser.T__13 = 14;
+rulePadGrammarParser.T__14 = 15;
+rulePadGrammarParser.T__15 = 16;
+rulePadGrammarParser.T__16 = 17;
+rulePadGrammarParser.T__17 = 18;
+rulePadGrammarParser.T__18 = 19;
+rulePadGrammarParser.T__19 = 20;
+rulePadGrammarParser.T__20 = 21;
+rulePadGrammarParser.T__21 = 22;
+rulePadGrammarParser.T__22 = 23;
+rulePadGrammarParser.T__23 = 24;
+rulePadGrammarParser.T__24 = 25;
+rulePadGrammarParser.T__25 = 26;
+rulePadGrammarParser.T__26 = 27;
+rulePadGrammarParser.T__27 = 28;
+rulePadGrammarParser.T__28 = 29;
+rulePadGrammarParser.T__29 = 30;
+rulePadGrammarParser.T__30 = 31;
+rulePadGrammarParser.T__31 = 32;
+rulePadGrammarParser.T__32 = 33;
+rulePadGrammarParser.SPACE = 34;
+rulePadGrammarParser.Alphabet = 35;
+rulePadGrammarParser.NL = 36;
+rulePadGrammarParser.LPAREN = 37;
+rulePadGrammarParser.RPAREN = 38;
+rulePadGrammarParser.NAME = 39;
+rulePadGrammarParser.ANNOTATION = 40;
+rulePadGrammarParser.EXTENSION = 41;
+rulePadGrammarParser.SUPERCLASS = 42;
+rulePadGrammarParser.IMPLEMENTATION = 43;
+rulePadGrammarParser.INTERFACE = 44;
+rulePadGrammarParser.FUNCTION = 45;
+rulePadGrammarParser.AbstractFunctions = 46;
+rulePadGrammarParser.CONSTRUCTOR = 47;
+rulePadGrammarParser.PARAMETER = 48;
+rulePadGrammarParser.TYPES = 49;
+rulePadGrammarParser.SPECIFIER = 50;
+rulePadGrammarParser.VISIBILITY = 51;
+rulePadGrammarParser.ReturnValue = 52;
+rulePadGrammarParser.DeclarationStatement = 53;
+rulePadGrammarParser.ExpressionStatement = 54;
+rulePadGrammarParser.VALUE = 55;
+rulePadGrammarParser.InitialValue = 56;
+rulePadGrammarParser.CLASSES = 57;
+rulePadGrammarParser.SUBCLASSES = 58;
 
-myGrammarParser.RULE_inputSentence = 0;
-myGrammarParser.RULE_mustClause = 1;
-myGrammarParser.RULE_words = 2;
-myGrammarParser.RULE_word = 3;
-myGrammarParser.RULE_combinatorialWords = 4;
-myGrammarParser.RULE_symbols = 5;
-myGrammarParser.RULE_end = 6;
-myGrammarParser.RULE_emptyLine = 7;
-myGrammarParser.RULE_identifier = 8;
-myGrammarParser.RULE_identifiers = 9;
-myGrammarParser.RULE_commentPrefix = 10;
-myGrammarParser.RULE_comments = 11;
-myGrammarParser.RULE_must = 12;
-myGrammarParser.RULE_of = 13;
-myGrammarParser.RULE_and = 14;
-myGrammarParser.RULE_or = 15;
-myGrammarParser.RULE_have = 16;
-myGrammarParser.RULE_withWord = 17;
-myGrammarParser.RULE_binary = 18;
-myGrammarParser.RULE_names = 19;
-myGrammarParser.RULE_nameCondition = 20;
-myGrammarParser.RULE_annotations = 21;
-myGrammarParser.RULE_annotationCondition = 22;
-myGrammarParser.RULE_extensions = 23;
-myGrammarParser.RULE_extensionCondition = 24;
-myGrammarParser.RULE_implementations = 25;
-myGrammarParser.RULE_implementationCondition = 26;
-myGrammarParser.RULE_functions = 27;
-myGrammarParser.RULE_functionOf = 28;
-myGrammarParser.RULE_functionCondition = 29;
-myGrammarParser.RULE_functionExpression = 30;
-myGrammarParser.RULE_abstractFunctions = 31;
-myGrammarParser.RULE_abstractFunctionOf = 32;
-myGrammarParser.RULE_abstractFunctionCondition = 33;
-myGrammarParser.RULE_abstractFunctionExpression = 34;
-myGrammarParser.RULE_constructors = 35;
-myGrammarParser.RULE_constructorOf = 36;
-myGrammarParser.RULE_constructorCondition = 37;
-myGrammarParser.RULE_constructorExpression = 38;
-myGrammarParser.RULE_parameters = 39;
-myGrammarParser.RULE_parameterCondition = 40;
-myGrammarParser.RULE_parameterExpression = 41;
-myGrammarParser.RULE_types = 42;
-myGrammarParser.RULE_typeCondition = 43;
-myGrammarParser.RULE_specifiers = 44;
-myGrammarParser.RULE_specifierCondition = 45;
-myGrammarParser.RULE_visibilities = 46;
-myGrammarParser.RULE_visibilityCondition = 47;
-myGrammarParser.RULE_returnValues = 48;
-myGrammarParser.RULE_returnValueCondition = 49;
-myGrammarParser.RULE_declarationStatements = 50;
-myGrammarParser.RULE_declarationStatementOf = 51;
-myGrammarParser.RULE_declarationStatementCondition = 52;
-myGrammarParser.RULE_declarationStatementExpression = 53;
-myGrammarParser.RULE_expressionStatements = 54;
-myGrammarParser.RULE_expressionStatementOf = 55;
-myGrammarParser.RULE_expressionStatementCondition = 56;
-myGrammarParser.RULE_expressionStatementExpression = 57;
-myGrammarParser.RULE_value = 58;
-myGrammarParser.RULE_valueCondition = 59;
-myGrammarParser.RULE_initialValues = 60;
-myGrammarParser.RULE_initialValueOf = 61;
-myGrammarParser.RULE_initialValueCondition = 62;
-myGrammarParser.RULE_classes = 63;
-myGrammarParser.RULE_classCondition = 64;
-myGrammarParser.RULE_classExpression = 65;
-myGrammarParser.RULE_subclasses = 66;
-myGrammarParser.RULE_subclassOf = 67;
-myGrammarParser.RULE_subclassCondition = 68;
-myGrammarParser.RULE_subclassExpression = 69;
+rulePadGrammarParser.RULE_inputSentence = 0;
+rulePadGrammarParser.RULE_mustClause = 1;
+rulePadGrammarParser.RULE_words = 2;
+rulePadGrammarParser.RULE_word = 3;
+rulePadGrammarParser.RULE_combinatorialWords = 4;
+rulePadGrammarParser.RULE_symbols = 5;
+rulePadGrammarParser.RULE_end = 6;
+rulePadGrammarParser.RULE_emptyLine = 7;
+rulePadGrammarParser.RULE_identifier = 8;
+rulePadGrammarParser.RULE_identifiers = 9;
+rulePadGrammarParser.RULE_commentPrefix = 10;
+rulePadGrammarParser.RULE_comments = 11;
+rulePadGrammarParser.RULE_must = 12;
+rulePadGrammarParser.RULE_of = 13;
+rulePadGrammarParser.RULE_and = 14;
+rulePadGrammarParser.RULE_or = 15;
+rulePadGrammarParser.RULE_have = 16;
+rulePadGrammarParser.RULE_withWord = 17;
+rulePadGrammarParser.RULE_binary = 18;
+rulePadGrammarParser.RULE_names = 19;
+rulePadGrammarParser.RULE_nameCondition = 20;
+rulePadGrammarParser.RULE_annotations = 21;
+rulePadGrammarParser.RULE_annotationCondition = 22;
+rulePadGrammarParser.RULE_extensions = 23;
+rulePadGrammarParser.RULE_extensionCondition = 24;
+rulePadGrammarParser.RULE_implementations = 25;
+rulePadGrammarParser.RULE_implementationCondition = 26;
+rulePadGrammarParser.RULE_functions = 27;
+rulePadGrammarParser.RULE_functionOf = 28;
+rulePadGrammarParser.RULE_functionCondition = 29;
+rulePadGrammarParser.RULE_functionExpression = 30;
+rulePadGrammarParser.RULE_abstractFunctions = 31;
+rulePadGrammarParser.RULE_abstractFunctionOf = 32;
+rulePadGrammarParser.RULE_abstractFunctionCondition = 33;
+rulePadGrammarParser.RULE_abstractFunctionExpression = 34;
+rulePadGrammarParser.RULE_constructors = 35;
+rulePadGrammarParser.RULE_constructorOf = 36;
+rulePadGrammarParser.RULE_constructorCondition = 37;
+rulePadGrammarParser.RULE_constructorExpression = 38;
+rulePadGrammarParser.RULE_parameters = 39;
+rulePadGrammarParser.RULE_parameterCondition = 40;
+rulePadGrammarParser.RULE_parameterExpression = 41;
+rulePadGrammarParser.RULE_types = 42;
+rulePadGrammarParser.RULE_typeCondition = 43;
+rulePadGrammarParser.RULE_specifiers = 44;
+rulePadGrammarParser.RULE_specifierCondition = 45;
+rulePadGrammarParser.RULE_visibilities = 46;
+rulePadGrammarParser.RULE_visibilityCondition = 47;
+rulePadGrammarParser.RULE_returnValues = 48;
+rulePadGrammarParser.RULE_returnValueCondition = 49;
+rulePadGrammarParser.RULE_declarationStatements = 50;
+rulePadGrammarParser.RULE_declarationStatementOf = 51;
+rulePadGrammarParser.RULE_declarationStatementCondition = 52;
+rulePadGrammarParser.RULE_declarationStatementExpression = 53;
+rulePadGrammarParser.RULE_expressionStatements = 54;
+rulePadGrammarParser.RULE_expressionStatementOf = 55;
+rulePadGrammarParser.RULE_expressionStatementCondition = 56;
+rulePadGrammarParser.RULE_expressionStatementExpression = 57;
+rulePadGrammarParser.RULE_value = 58;
+rulePadGrammarParser.RULE_valueCondition = 59;
+rulePadGrammarParser.RULE_initialValues = 60;
+rulePadGrammarParser.RULE_initialValueOf = 61;
+rulePadGrammarParser.RULE_initialValueCondition = 62;
+rulePadGrammarParser.RULE_classes = 63;
+rulePadGrammarParser.RULE_classCondition = 64;
+rulePadGrammarParser.RULE_classExpression = 65;
+rulePadGrammarParser.RULE_subclasses = 66;
+rulePadGrammarParser.RULE_subclassOf = 67;
+rulePadGrammarParser.RULE_subclassCondition = 68;
+rulePadGrammarParser.RULE_subclassExpression = 69;
 
 function InputSentenceContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -709,7 +708,7 @@ function InputSentenceContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_inputSentence;
+    this.ruleIndex = rulePadGrammarParser.RULE_inputSentence;
     return this;
 }
 
@@ -717,7 +716,7 @@ InputSentenceContext.prototype = Object.create(antlr4.ParserRuleContext.prototyp
 InputSentenceContext.prototype.constructor = InputSentenceContext;
 
 InputSentenceContext.prototype.EOF = function() {
-    return this.getToken(myGrammarParser.EOF, 0);
+    return this.getToken(rulePadGrammarParser.EOF, 0);
 };
 
 InputSentenceContext.prototype.mustClause = function() {
@@ -733,9 +732,9 @@ InputSentenceContext.prototype.NL = function(i) {
 		i = null;
 	}
     if(i===null) {
-        return this.getTokens(myGrammarParser.NL);
+        return this.getTokens(rulePadGrammarParser.NL);
     } else {
-        return this.getToken(myGrammarParser.NL, i);
+        return this.getToken(rulePadGrammarParser.NL, i);
     }
 };
 
@@ -752,13 +751,13 @@ InputSentenceContext.prototype.emptyLine = function(i) {
 };
 
 InputSentenceContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterInputSentence(this);
 	}
 };
 
 InputSentenceContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitInputSentence(this);
 	}
 };
@@ -766,21 +765,21 @@ InputSentenceContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.InputSentenceContext = InputSentenceContext;
+rulePadGrammarParser.InputSentenceContext = InputSentenceContext;
 
-myGrammarParser.prototype.inputSentence = function() {
+rulePadGrammarParser.prototype.inputSentence = function() {
 
     var localctx = new InputSentenceContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 0, myGrammarParser.RULE_inputSentence);
+    this.enterRule(localctx, 0, rulePadGrammarParser.RULE_inputSentence);
     var _la = 0; // Token type
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 147;
         this._errHandler.sync(this);
         switch(this._input.LA(1)) {
-        case myGrammarParser.EOF:
-        case myGrammarParser.T__6:
-        case myGrammarParser.NL:
+        case rulePadGrammarParser.EOF:
+        case rulePadGrammarParser.T__6:
+        case rulePadGrammarParser.NL:
             this.state = 143;
             this._errHandler.sync(this);
             var _alt = this._interp.adaptivePredict(this._input,0,this._ctx)
@@ -795,13 +794,13 @@ myGrammarParser.prototype.inputSentence = function() {
             }
 
             break;
-        case myGrammarParser.FUNCTION:
-        case myGrammarParser.AbstractFunctions:
-        case myGrammarParser.CONSTRUCTOR:
-        case myGrammarParser.PARAMETER:
-        case myGrammarParser.DeclarationStatement:
-        case myGrammarParser.CLASSES:
-        case myGrammarParser.SUBCLASSES:
+        case rulePadGrammarParser.FUNCTION:
+        case rulePadGrammarParser.AbstractFunctions:
+        case rulePadGrammarParser.CONSTRUCTOR:
+        case rulePadGrammarParser.PARAMETER:
+        case rulePadGrammarParser.DeclarationStatement:
+        case rulePadGrammarParser.CLASSES:
+        case rulePadGrammarParser.SUBCLASSES:
             this.state = 146;
             this.mustClause();
             break;
@@ -811,7 +810,7 @@ myGrammarParser.prototype.inputSentence = function() {
         this.state = 150;
         this._errHandler.sync(this);
         _la = this._input.LA(1);
-        if(_la===myGrammarParser.T__6) {
+        if(_la===rulePadGrammarParser.T__6) {
             this.state = 149;
             this.end();
         }
@@ -819,15 +818,15 @@ myGrammarParser.prototype.inputSentence = function() {
         this.state = 155;
         this._errHandler.sync(this);
         _la = this._input.LA(1);
-        while(_la===myGrammarParser.NL) {
+        while(_la===rulePadGrammarParser.NL) {
             this.state = 152;
-            this.match(myGrammarParser.NL);
+            this.match(rulePadGrammarParser.NL);
             this.state = 157;
             this._errHandler.sync(this);
             _la = this._input.LA(1);
         }
         this.state = 158;
-        this.match(myGrammarParser.EOF);
+        this.match(rulePadGrammarParser.EOF);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -851,7 +850,7 @@ function MustClauseContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_mustClause;
+    this.ruleIndex = rulePadGrammarParser.RULE_mustClause;
     return this;
 }
 
@@ -923,13 +922,13 @@ MustClauseContext.prototype.subclassExpression = function() {
 };
 
 MustClauseContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterMustClause(this);
 	}
 };
 
 MustClauseContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitMustClause(this);
 	}
 };
@@ -937,17 +936,17 @@ MustClauseContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.MustClauseContext = MustClauseContext;
+rulePadGrammarParser.MustClauseContext = MustClauseContext;
 
-myGrammarParser.prototype.mustClause = function() {
+rulePadGrammarParser.prototype.mustClause = function() {
 
     var localctx = new MustClauseContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 2, myGrammarParser.RULE_mustClause);
+    this.enterRule(localctx, 2, rulePadGrammarParser.RULE_mustClause);
     try {
         this.state = 195;
         this._errHandler.sync(this);
         switch(this._input.LA(1)) {
-        case myGrammarParser.FUNCTION:
+        case rulePadGrammarParser.FUNCTION:
             this.enterOuterAlt(localctx, 1);
             this.state = 160;
             this.functions();
@@ -958,7 +957,7 @@ myGrammarParser.prototype.mustClause = function() {
             this.state = 163;
             this.functionExpression(0);
             break;
-        case myGrammarParser.AbstractFunctions:
+        case rulePadGrammarParser.AbstractFunctions:
             this.enterOuterAlt(localctx, 2);
             this.state = 165;
             this.abstractFunctions();
@@ -969,7 +968,7 @@ myGrammarParser.prototype.mustClause = function() {
             this.state = 168;
             this.abstractFunctionExpression(0);
             break;
-        case myGrammarParser.CONSTRUCTOR:
+        case rulePadGrammarParser.CONSTRUCTOR:
             this.enterOuterAlt(localctx, 3);
             this.state = 170;
             this.constructors();
@@ -980,7 +979,7 @@ myGrammarParser.prototype.mustClause = function() {
             this.state = 173;
             this.constructorExpression(0);
             break;
-        case myGrammarParser.CLASSES:
+        case rulePadGrammarParser.CLASSES:
             this.enterOuterAlt(localctx, 4);
             this.state = 175;
             this.classes();
@@ -991,7 +990,7 @@ myGrammarParser.prototype.mustClause = function() {
             this.state = 178;
             this.classExpression(0);
             break;
-        case myGrammarParser.PARAMETER:
+        case rulePadGrammarParser.PARAMETER:
             this.enterOuterAlt(localctx, 5);
             this.state = 180;
             this.parameters();
@@ -1002,7 +1001,7 @@ myGrammarParser.prototype.mustClause = function() {
             this.state = 183;
             this.parameterExpression(0);
             break;
-        case myGrammarParser.DeclarationStatement:
+        case rulePadGrammarParser.DeclarationStatement:
             this.enterOuterAlt(localctx, 6);
             this.state = 185;
             this.declarationStatements();
@@ -1013,7 +1012,7 @@ myGrammarParser.prototype.mustClause = function() {
             this.state = 188;
             this.declarationStatementExpression(0);
             break;
-        case myGrammarParser.SUBCLASSES:
+        case rulePadGrammarParser.SUBCLASSES:
             this.enterOuterAlt(localctx, 7);
             this.state = 190;
             this.subclasses();
@@ -1050,7 +1049,7 @@ function WordsContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_words;
+    this.ruleIndex = rulePadGrammarParser.RULE_words;
     return this;
 }
 
@@ -1069,13 +1068,13 @@ WordsContext.prototype.word = function(i) {
 };
 
 WordsContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterWords(this);
 	}
 };
 
 WordsContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitWords(this);
 	}
 };
@@ -1083,16 +1082,16 @@ WordsContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.WordsContext = WordsContext;
+rulePadGrammarParser.WordsContext = WordsContext;
 
-myGrammarParser.prototype.words = function() {
+rulePadGrammarParser.prototype.words = function() {
 
     var localctx = new WordsContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 4, myGrammarParser.RULE_words);
+    this.enterRule(localctx, 4, rulePadGrammarParser.RULE_words);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 197;
-        this.match(myGrammarParser.T__0);
+        this.match(rulePadGrammarParser.T__0);
         this.state = 206;
         this._errHandler.sync(this);
         var _alt = this._interp.adaptivePredict(this._input,6,this._ctx)
@@ -1106,14 +1105,14 @@ myGrammarParser.prototype.words = function() {
                     this.state = 198;
                     this.word();
                     this.state = 199;
-                    this.match(myGrammarParser.T__1);
+                    this.match(rulePadGrammarParser.T__1);
                     break;
 
                 case 2:
                     this.state = 201;
                     this.word();
                     this.state = 202;
-                    this.match(myGrammarParser.T__2);
+                    this.match(rulePadGrammarParser.T__2);
                     break;
 
                 } 
@@ -1126,7 +1125,7 @@ myGrammarParser.prototype.words = function() {
         this.state = 209;
         this.word();
         this.state = 210;
-        this.match(myGrammarParser.T__0);
+        this.match(rulePadGrammarParser.T__0);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -1150,7 +1149,7 @@ function WordContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_word;
+    this.ruleIndex = rulePadGrammarParser.RULE_word;
     return this;
 }
 
@@ -1162,21 +1161,21 @@ WordContext.prototype.Alphabet = function(i) {
 		i = null;
 	}
     if(i===null) {
-        return this.getTokens(myGrammarParser.Alphabet);
+        return this.getTokens(rulePadGrammarParser.Alphabet);
     } else {
-        return this.getToken(myGrammarParser.Alphabet, i);
+        return this.getToken(rulePadGrammarParser.Alphabet, i);
     }
 };
 
 
 WordContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterWord(this);
 	}
 };
 
 WordContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitWord(this);
 	}
 };
@@ -1184,12 +1183,12 @@ WordContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.WordContext = WordContext;
+rulePadGrammarParser.WordContext = WordContext;
 
-myGrammarParser.prototype.word = function() {
+rulePadGrammarParser.prototype.word = function() {
 
     var localctx = new WordContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 6, myGrammarParser.RULE_word);
+    this.enterRule(localctx, 6, rulePadGrammarParser.RULE_word);
     var _la = 0; // Token type
     try {
         this.state = 262;
@@ -1203,59 +1202,59 @@ myGrammarParser.prototype.word = function() {
             _la = this._input.LA(1);
             do {
                 this.state = 212;
-                this.match(myGrammarParser.Alphabet);
+                this.match(rulePadGrammarParser.Alphabet);
                 this.state = 215; 
                 this._errHandler.sync(this);
                 _la = this._input.LA(1);
-            } while(_la===myGrammarParser.Alphabet);
+            } while(_la===rulePadGrammarParser.Alphabet);
             break;
 
         case 2:
             this.enterOuterAlt(localctx, 2);
             this.state = 217;
-            this.match(myGrammarParser.T__3);
+            this.match(rulePadGrammarParser.T__3);
             this.state = 219; 
             this._errHandler.sync(this);
             _la = this._input.LA(1);
             do {
                 this.state = 218;
-                this.match(myGrammarParser.Alphabet);
+                this.match(rulePadGrammarParser.Alphabet);
                 this.state = 221; 
                 this._errHandler.sync(this);
                 _la = this._input.LA(1);
-            } while(_la===myGrammarParser.Alphabet);
+            } while(_la===rulePadGrammarParser.Alphabet);
             break;
 
         case 3:
             this.enterOuterAlt(localctx, 3);
             this.state = 223;
-            this.match(myGrammarParser.T__4);
+            this.match(rulePadGrammarParser.T__4);
             this.state = 225; 
             this._errHandler.sync(this);
             _la = this._input.LA(1);
             do {
                 this.state = 224;
-                this.match(myGrammarParser.Alphabet);
+                this.match(rulePadGrammarParser.Alphabet);
                 this.state = 227; 
                 this._errHandler.sync(this);
                 _la = this._input.LA(1);
-            } while(_la===myGrammarParser.Alphabet);
+            } while(_la===rulePadGrammarParser.Alphabet);
             break;
 
         case 4:
             this.enterOuterAlt(localctx, 4);
             this.state = 229;
-            this.match(myGrammarParser.T__5);
+            this.match(rulePadGrammarParser.T__5);
             this.state = 231; 
             this._errHandler.sync(this);
             _la = this._input.LA(1);
             do {
                 this.state = 230;
-                this.match(myGrammarParser.Alphabet);
+                this.match(rulePadGrammarParser.Alphabet);
                 this.state = 233; 
                 this._errHandler.sync(this);
                 _la = this._input.LA(1);
-            } while(_la===myGrammarParser.Alphabet);
+            } while(_la===rulePadGrammarParser.Alphabet);
             break;
 
         case 5:
@@ -1265,67 +1264,67 @@ myGrammarParser.prototype.word = function() {
             _la = this._input.LA(1);
             do {
                 this.state = 235;
-                this.match(myGrammarParser.Alphabet);
+                this.match(rulePadGrammarParser.Alphabet);
                 this.state = 238; 
                 this._errHandler.sync(this);
                 _la = this._input.LA(1);
-            } while(_la===myGrammarParser.Alphabet);
+            } while(_la===rulePadGrammarParser.Alphabet);
             this.state = 240;
-            this.match(myGrammarParser.T__4);
+            this.match(rulePadGrammarParser.T__4);
             break;
 
         case 6:
             this.enterOuterAlt(localctx, 6);
             this.state = 241;
-            this.match(myGrammarParser.T__3);
+            this.match(rulePadGrammarParser.T__3);
             this.state = 243; 
             this._errHandler.sync(this);
             _la = this._input.LA(1);
             do {
                 this.state = 242;
-                this.match(myGrammarParser.Alphabet);
+                this.match(rulePadGrammarParser.Alphabet);
                 this.state = 245; 
                 this._errHandler.sync(this);
                 _la = this._input.LA(1);
-            } while(_la===myGrammarParser.Alphabet);
+            } while(_la===rulePadGrammarParser.Alphabet);
             this.state = 247;
-            this.match(myGrammarParser.T__4);
+            this.match(rulePadGrammarParser.T__4);
             break;
 
         case 7:
             this.enterOuterAlt(localctx, 7);
             this.state = 248;
-            this.match(myGrammarParser.T__4);
+            this.match(rulePadGrammarParser.T__4);
             this.state = 250; 
             this._errHandler.sync(this);
             _la = this._input.LA(1);
             do {
                 this.state = 249;
-                this.match(myGrammarParser.Alphabet);
+                this.match(rulePadGrammarParser.Alphabet);
                 this.state = 252; 
                 this._errHandler.sync(this);
                 _la = this._input.LA(1);
-            } while(_la===myGrammarParser.Alphabet);
+            } while(_la===rulePadGrammarParser.Alphabet);
             this.state = 254;
-            this.match(myGrammarParser.T__4);
+            this.match(rulePadGrammarParser.T__4);
             break;
 
         case 8:
             this.enterOuterAlt(localctx, 8);
             this.state = 255;
-            this.match(myGrammarParser.T__5);
+            this.match(rulePadGrammarParser.T__5);
             this.state = 257; 
             this._errHandler.sync(this);
             _la = this._input.LA(1);
             do {
                 this.state = 256;
-                this.match(myGrammarParser.Alphabet);
+                this.match(rulePadGrammarParser.Alphabet);
                 this.state = 259; 
                 this._errHandler.sync(this);
                 _la = this._input.LA(1);
-            } while(_la===myGrammarParser.Alphabet);
+            } while(_la===rulePadGrammarParser.Alphabet);
             this.state = 261;
-            this.match(myGrammarParser.T__4);
+            this.match(rulePadGrammarParser.T__4);
             break;
 
         }
@@ -1352,7 +1351,7 @@ function CombinatorialWordsContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_combinatorialWords;
+    this.ruleIndex = rulePadGrammarParser.RULE_combinatorialWords;
     return this;
 }
 
@@ -1364,9 +1363,9 @@ CombinatorialWordsContext.prototype.Alphabet = function(i) {
 		i = null;
 	}
     if(i===null) {
-        return this.getTokens(myGrammarParser.Alphabet);
+        return this.getTokens(rulePadGrammarParser.Alphabet);
     } else {
-        return this.getToken(myGrammarParser.Alphabet, i);
+        return this.getToken(rulePadGrammarParser.Alphabet, i);
     }
 };
 
@@ -1387,21 +1386,21 @@ CombinatorialWordsContext.prototype.SPACE = function(i) {
 		i = null;
 	}
     if(i===null) {
-        return this.getTokens(myGrammarParser.SPACE);
+        return this.getTokens(rulePadGrammarParser.SPACE);
     } else {
-        return this.getToken(myGrammarParser.SPACE, i);
+        return this.getToken(rulePadGrammarParser.SPACE, i);
     }
 };
 
 
 CombinatorialWordsContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterCombinatorialWords(this);
 	}
 };
 
 CombinatorialWordsContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitCombinatorialWords(this);
 	}
 };
@@ -1409,17 +1408,17 @@ CombinatorialWordsContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.CombinatorialWordsContext = CombinatorialWordsContext;
+rulePadGrammarParser.CombinatorialWordsContext = CombinatorialWordsContext;
 
-myGrammarParser.prototype.combinatorialWords = function() {
+rulePadGrammarParser.prototype.combinatorialWords = function() {
 
     var localctx = new CombinatorialWordsContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 8, myGrammarParser.RULE_combinatorialWords);
+    this.enterRule(localctx, 8, rulePadGrammarParser.RULE_combinatorialWords);
     var _la = 0; // Token type
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 264;
-        this.match(myGrammarParser.T__0);
+        this.match(rulePadGrammarParser.T__0);
         this.state = 268; 
         this._errHandler.sync(this);
         _la = this._input.LA(1);
@@ -1427,25 +1426,25 @@ myGrammarParser.prototype.combinatorialWords = function() {
             this.state = 268;
             this._errHandler.sync(this);
             switch(this._input.LA(1)) {
-            case myGrammarParser.Alphabet:
+            case rulePadGrammarParser.Alphabet:
                 this.state = 265;
-                this.match(myGrammarParser.Alphabet);
+                this.match(rulePadGrammarParser.Alphabet);
                 break;
-            case myGrammarParser.T__6:
-            case myGrammarParser.T__7:
-            case myGrammarParser.T__8:
-            case myGrammarParser.T__9:
-            case myGrammarParser.T__10:
-            case myGrammarParser.T__11:
-            case myGrammarParser.T__12:
-            case myGrammarParser.LPAREN:
-            case myGrammarParser.RPAREN:
+            case rulePadGrammarParser.T__6:
+            case rulePadGrammarParser.T__7:
+            case rulePadGrammarParser.T__8:
+            case rulePadGrammarParser.T__9:
+            case rulePadGrammarParser.T__10:
+            case rulePadGrammarParser.T__11:
+            case rulePadGrammarParser.T__12:
+            case rulePadGrammarParser.LPAREN:
+            case rulePadGrammarParser.RPAREN:
                 this.state = 266;
                 this.symbols();
                 break;
-            case myGrammarParser.SPACE:
+            case rulePadGrammarParser.SPACE:
                 this.state = 267;
-                this.match(myGrammarParser.SPACE);
+                this.match(rulePadGrammarParser.SPACE);
                 break;
             default:
                 throw new antlr4.error.NoViableAltException(this);
@@ -1453,9 +1452,9 @@ myGrammarParser.prototype.combinatorialWords = function() {
             this.state = 270; 
             this._errHandler.sync(this);
             _la = this._input.LA(1);
-        } while(((((_la - 7)) & ~0x1f) == 0 && ((1 << (_la - 7)) & ((1 << (myGrammarParser.T__6 - 7)) | (1 << (myGrammarParser.T__7 - 7)) | (1 << (myGrammarParser.T__8 - 7)) | (1 << (myGrammarParser.T__9 - 7)) | (1 << (myGrammarParser.T__10 - 7)) | (1 << (myGrammarParser.T__11 - 7)) | (1 << (myGrammarParser.T__12 - 7)) | (1 << (myGrammarParser.SPACE - 7)) | (1 << (myGrammarParser.Alphabet - 7)) | (1 << (myGrammarParser.LPAREN - 7)) | (1 << (myGrammarParser.RPAREN - 7)))) !== 0));
+        } while(((((_la - 7)) & ~0x1f) == 0 && ((1 << (_la - 7)) & ((1 << (rulePadGrammarParser.T__6 - 7)) | (1 << (rulePadGrammarParser.T__7 - 7)) | (1 << (rulePadGrammarParser.T__8 - 7)) | (1 << (rulePadGrammarParser.T__9 - 7)) | (1 << (rulePadGrammarParser.T__10 - 7)) | (1 << (rulePadGrammarParser.T__11 - 7)) | (1 << (rulePadGrammarParser.T__12 - 7)) | (1 << (rulePadGrammarParser.SPACE - 7)) | (1 << (rulePadGrammarParser.Alphabet - 7)) | (1 << (rulePadGrammarParser.LPAREN - 7)) | (1 << (rulePadGrammarParser.RPAREN - 7)))) !== 0));
         this.state = 272;
-        this.match(myGrammarParser.T__0);
+        this.match(rulePadGrammarParser.T__0);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -1479,7 +1478,7 @@ function SymbolsContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_symbols;
+    this.ruleIndex = rulePadGrammarParser.RULE_symbols;
     return this;
 }
 
@@ -1488,13 +1487,13 @@ SymbolsContext.prototype.constructor = SymbolsContext;
 
 
 SymbolsContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterSymbols(this);
 	}
 };
 
 SymbolsContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitSymbols(this);
 	}
 };
@@ -1502,18 +1501,18 @@ SymbolsContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.SymbolsContext = SymbolsContext;
+rulePadGrammarParser.SymbolsContext = SymbolsContext;
 
-myGrammarParser.prototype.symbols = function() {
+rulePadGrammarParser.prototype.symbols = function() {
 
     var localctx = new SymbolsContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 10, myGrammarParser.RULE_symbols);
+    this.enterRule(localctx, 10, rulePadGrammarParser.RULE_symbols);
     var _la = 0; // Token type
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 274;
         _la = this._input.LA(1);
-        if(!(((((_la - 7)) & ~0x1f) == 0 && ((1 << (_la - 7)) & ((1 << (myGrammarParser.T__6 - 7)) | (1 << (myGrammarParser.T__7 - 7)) | (1 << (myGrammarParser.T__8 - 7)) | (1 << (myGrammarParser.T__9 - 7)) | (1 << (myGrammarParser.T__10 - 7)) | (1 << (myGrammarParser.T__11 - 7)) | (1 << (myGrammarParser.T__12 - 7)) | (1 << (myGrammarParser.LPAREN - 7)) | (1 << (myGrammarParser.RPAREN - 7)))) !== 0))) {
+        if(!(((((_la - 7)) & ~0x1f) == 0 && ((1 << (_la - 7)) & ((1 << (rulePadGrammarParser.T__6 - 7)) | (1 << (rulePadGrammarParser.T__7 - 7)) | (1 << (rulePadGrammarParser.T__8 - 7)) | (1 << (rulePadGrammarParser.T__9 - 7)) | (1 << (rulePadGrammarParser.T__10 - 7)) | (1 << (rulePadGrammarParser.T__11 - 7)) | (1 << (rulePadGrammarParser.T__12 - 7)) | (1 << (rulePadGrammarParser.LPAREN - 7)) | (1 << (rulePadGrammarParser.RPAREN - 7)))) !== 0))) {
         this._errHandler.recoverInline(this);
         }
         else {
@@ -1543,7 +1542,7 @@ function EndContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_end;
+    this.ruleIndex = rulePadGrammarParser.RULE_end;
     return this;
 }
 
@@ -1552,13 +1551,13 @@ EndContext.prototype.constructor = EndContext;
 
 
 EndContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterEnd(this);
 	}
 };
 
 EndContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitEnd(this);
 	}
 };
@@ -1566,16 +1565,16 @@ EndContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.EndContext = EndContext;
+rulePadGrammarParser.EndContext = EndContext;
 
-myGrammarParser.prototype.end = function() {
+rulePadGrammarParser.prototype.end = function() {
 
     var localctx = new EndContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 12, myGrammarParser.RULE_end);
+    this.enterRule(localctx, 12, rulePadGrammarParser.RULE_end);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 276;
-        this.match(myGrammarParser.T__6);
+        this.match(rulePadGrammarParser.T__6);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -1599,7 +1598,7 @@ function EmptyLineContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_emptyLine;
+    this.ruleIndex = rulePadGrammarParser.RULE_emptyLine;
     return this;
 }
 
@@ -1607,17 +1606,17 @@ EmptyLineContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
 EmptyLineContext.prototype.constructor = EmptyLineContext;
 
 EmptyLineContext.prototype.NL = function() {
-    return this.getToken(myGrammarParser.NL, 0);
+    return this.getToken(rulePadGrammarParser.NL, 0);
 };
 
 EmptyLineContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterEmptyLine(this);
 	}
 };
 
 EmptyLineContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitEmptyLine(this);
 	}
 };
@@ -1625,16 +1624,16 @@ EmptyLineContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.EmptyLineContext = EmptyLineContext;
+rulePadGrammarParser.EmptyLineContext = EmptyLineContext;
 
-myGrammarParser.prototype.emptyLine = function() {
+rulePadGrammarParser.prototype.emptyLine = function() {
 
     var localctx = new EmptyLineContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 14, myGrammarParser.RULE_emptyLine);
+    this.enterRule(localctx, 14, rulePadGrammarParser.RULE_emptyLine);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 278;
-        this.match(myGrammarParser.NL);
+        this.match(rulePadGrammarParser.NL);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -1658,7 +1657,7 @@ function IdentifierContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_identifier;
+    this.ruleIndex = rulePadGrammarParser.RULE_identifier;
     return this;
 }
 
@@ -1670,9 +1669,9 @@ IdentifierContext.prototype.Alphabet = function(i) {
 		i = null;
 	}
     if(i===null) {
-        return this.getTokens(myGrammarParser.Alphabet);
+        return this.getTokens(rulePadGrammarParser.Alphabet);
     } else {
-        return this.getToken(myGrammarParser.Alphabet, i);
+        return this.getToken(rulePadGrammarParser.Alphabet, i);
     }
 };
 
@@ -1693,21 +1692,21 @@ IdentifierContext.prototype.SPACE = function(i) {
 		i = null;
 	}
     if(i===null) {
-        return this.getTokens(myGrammarParser.SPACE);
+        return this.getTokens(rulePadGrammarParser.SPACE);
     } else {
-        return this.getToken(myGrammarParser.SPACE, i);
+        return this.getToken(rulePadGrammarParser.SPACE, i);
     }
 };
 
 
 IdentifierContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterIdentifier(this);
 	}
 };
 
 IdentifierContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitIdentifier(this);
 	}
 };
@@ -1715,12 +1714,12 @@ IdentifierContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.IdentifierContext = IdentifierContext;
+rulePadGrammarParser.IdentifierContext = IdentifierContext;
 
-myGrammarParser.prototype.identifier = function() {
+rulePadGrammarParser.prototype.identifier = function() {
 
     var localctx = new IdentifierContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 16, myGrammarParser.RULE_identifier);
+    this.enterRule(localctx, 16, rulePadGrammarParser.RULE_identifier);
     var _la = 0; // Token type
     try {
         this.enterOuterAlt(localctx, 1);
@@ -1731,25 +1730,25 @@ myGrammarParser.prototype.identifier = function() {
             this.state = 283;
             this._errHandler.sync(this);
             switch(this._input.LA(1)) {
-            case myGrammarParser.Alphabet:
+            case rulePadGrammarParser.Alphabet:
                 this.state = 280;
-                this.match(myGrammarParser.Alphabet);
+                this.match(rulePadGrammarParser.Alphabet);
                 break;
-            case myGrammarParser.T__6:
-            case myGrammarParser.T__7:
-            case myGrammarParser.T__8:
-            case myGrammarParser.T__9:
-            case myGrammarParser.T__10:
-            case myGrammarParser.T__11:
-            case myGrammarParser.T__12:
-            case myGrammarParser.LPAREN:
-            case myGrammarParser.RPAREN:
+            case rulePadGrammarParser.T__6:
+            case rulePadGrammarParser.T__7:
+            case rulePadGrammarParser.T__8:
+            case rulePadGrammarParser.T__9:
+            case rulePadGrammarParser.T__10:
+            case rulePadGrammarParser.T__11:
+            case rulePadGrammarParser.T__12:
+            case rulePadGrammarParser.LPAREN:
+            case rulePadGrammarParser.RPAREN:
                 this.state = 281;
                 this.symbols();
                 break;
-            case myGrammarParser.SPACE:
+            case rulePadGrammarParser.SPACE:
                 this.state = 282;
-                this.match(myGrammarParser.SPACE);
+                this.match(rulePadGrammarParser.SPACE);
                 break;
             default:
                 throw new antlr4.error.NoViableAltException(this);
@@ -1757,7 +1756,7 @@ myGrammarParser.prototype.identifier = function() {
             this.state = 285; 
             this._errHandler.sync(this);
             _la = this._input.LA(1);
-        } while(((((_la - 7)) & ~0x1f) == 0 && ((1 << (_la - 7)) & ((1 << (myGrammarParser.T__6 - 7)) | (1 << (myGrammarParser.T__7 - 7)) | (1 << (myGrammarParser.T__8 - 7)) | (1 << (myGrammarParser.T__9 - 7)) | (1 << (myGrammarParser.T__10 - 7)) | (1 << (myGrammarParser.T__11 - 7)) | (1 << (myGrammarParser.T__12 - 7)) | (1 << (myGrammarParser.SPACE - 7)) | (1 << (myGrammarParser.Alphabet - 7)) | (1 << (myGrammarParser.LPAREN - 7)) | (1 << (myGrammarParser.RPAREN - 7)))) !== 0));
+        } while(((((_la - 7)) & ~0x1f) == 0 && ((1 << (_la - 7)) & ((1 << (rulePadGrammarParser.T__6 - 7)) | (1 << (rulePadGrammarParser.T__7 - 7)) | (1 << (rulePadGrammarParser.T__8 - 7)) | (1 << (rulePadGrammarParser.T__9 - 7)) | (1 << (rulePadGrammarParser.T__10 - 7)) | (1 << (rulePadGrammarParser.T__11 - 7)) | (1 << (rulePadGrammarParser.T__12 - 7)) | (1 << (rulePadGrammarParser.SPACE - 7)) | (1 << (rulePadGrammarParser.Alphabet - 7)) | (1 << (rulePadGrammarParser.LPAREN - 7)) | (1 << (rulePadGrammarParser.RPAREN - 7)))) !== 0));
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -1781,7 +1780,7 @@ function IdentifiersContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_identifiers;
+    this.ruleIndex = rulePadGrammarParser.RULE_identifiers;
     return this;
 }
 
@@ -1800,13 +1799,13 @@ IdentifiersContext.prototype.identifier = function(i) {
 };
 
 IdentifiersContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterIdentifiers(this);
 	}
 };
 
 IdentifiersContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitIdentifiers(this);
 	}
 };
@@ -1814,12 +1813,12 @@ IdentifiersContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.IdentifiersContext = IdentifiersContext;
+rulePadGrammarParser.IdentifiersContext = IdentifiersContext;
 
-myGrammarParser.prototype.identifiers = function() {
+rulePadGrammarParser.prototype.identifiers = function() {
 
     var localctx = new IdentifiersContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 18, myGrammarParser.RULE_identifiers);
+    this.enterRule(localctx, 18, rulePadGrammarParser.RULE_identifiers);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 295;
@@ -1835,14 +1834,14 @@ myGrammarParser.prototype.identifiers = function() {
                     this.state = 287;
                     this.identifier();
                     this.state = 288;
-                    this.match(myGrammarParser.T__1);
+                    this.match(rulePadGrammarParser.T__1);
                     break;
 
                 case 2:
                     this.state = 290;
                     this.identifier();
                     this.state = 291;
-                    this.match(myGrammarParser.T__2);
+                    this.match(rulePadGrammarParser.T__2);
                     break;
 
                 } 
@@ -1877,7 +1876,7 @@ function CommentPrefixContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_commentPrefix;
+    this.ruleIndex = rulePadGrammarParser.RULE_commentPrefix;
     return this;
 }
 
@@ -1886,13 +1885,13 @@ CommentPrefixContext.prototype.constructor = CommentPrefixContext;
 
 
 CommentPrefixContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterCommentPrefix(this);
 	}
 };
 
 CommentPrefixContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitCommentPrefix(this);
 	}
 };
@@ -1900,18 +1899,18 @@ CommentPrefixContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.CommentPrefixContext = CommentPrefixContext;
+rulePadGrammarParser.CommentPrefixContext = CommentPrefixContext;
 
-myGrammarParser.prototype.commentPrefix = function() {
+rulePadGrammarParser.prototype.commentPrefix = function() {
 
     var localctx = new CommentPrefixContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 20, myGrammarParser.RULE_commentPrefix);
+    this.enterRule(localctx, 20, rulePadGrammarParser.RULE_commentPrefix);
     var _la = 0; // Token type
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 300;
         _la = this._input.LA(1);
-        if(!((((_la) & ~0x1f) == 0 && ((1 << _la) & ((1 << myGrammarParser.T__13) | (1 << myGrammarParser.T__14) | (1 << myGrammarParser.T__15) | (1 << myGrammarParser.T__16) | (1 << myGrammarParser.T__17) | (1 << myGrammarParser.T__18) | (1 << myGrammarParser.T__19) | (1 << myGrammarParser.T__20) | (1 << myGrammarParser.T__21) | (1 << myGrammarParser.T__22) | (1 << myGrammarParser.T__23) | (1 << myGrammarParser.T__24) | (1 << myGrammarParser.T__25) | (1 << myGrammarParser.T__26))) !== 0))) {
+        if(!((((_la) & ~0x1f) == 0 && ((1 << _la) & ((1 << rulePadGrammarParser.T__13) | (1 << rulePadGrammarParser.T__14) | (1 << rulePadGrammarParser.T__15) | (1 << rulePadGrammarParser.T__16) | (1 << rulePadGrammarParser.T__17) | (1 << rulePadGrammarParser.T__18) | (1 << rulePadGrammarParser.T__19) | (1 << rulePadGrammarParser.T__20) | (1 << rulePadGrammarParser.T__21) | (1 << rulePadGrammarParser.T__22) | (1 << rulePadGrammarParser.T__23) | (1 << rulePadGrammarParser.T__24) | (1 << rulePadGrammarParser.T__25) | (1 << rulePadGrammarParser.T__26))) !== 0))) {
         this._errHandler.recoverInline(this);
         }
         else {
@@ -1941,7 +1940,7 @@ function CommentsContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_comments;
+    this.ruleIndex = rulePadGrammarParser.RULE_comments;
     return this;
 }
 
@@ -1957,13 +1956,13 @@ CommentsContext.prototype.identifiers = function() {
 };
 
 CommentsContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterComments(this);
 	}
 };
 
 CommentsContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitComments(this);
 	}
 };
@@ -1971,29 +1970,29 @@ CommentsContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.CommentsContext = CommentsContext;
+rulePadGrammarParser.CommentsContext = CommentsContext;
 
-myGrammarParser.prototype.comments = function() {
+rulePadGrammarParser.prototype.comments = function() {
 
     var localctx = new CommentsContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 22, myGrammarParser.RULE_comments);
+    this.enterRule(localctx, 22, rulePadGrammarParser.RULE_comments);
     var _la = 0; // Token type
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 302;
-        this.match(myGrammarParser.T__0);
+        this.match(rulePadGrammarParser.T__0);
         this.state = 303;
         this.commentPrefix();
         this.state = 305;
         this._errHandler.sync(this);
         _la = this._input.LA(1);
-        if(((((_la - 7)) & ~0x1f) == 0 && ((1 << (_la - 7)) & ((1 << (myGrammarParser.T__6 - 7)) | (1 << (myGrammarParser.T__7 - 7)) | (1 << (myGrammarParser.T__8 - 7)) | (1 << (myGrammarParser.T__9 - 7)) | (1 << (myGrammarParser.T__10 - 7)) | (1 << (myGrammarParser.T__11 - 7)) | (1 << (myGrammarParser.T__12 - 7)) | (1 << (myGrammarParser.SPACE - 7)) | (1 << (myGrammarParser.Alphabet - 7)) | (1 << (myGrammarParser.LPAREN - 7)) | (1 << (myGrammarParser.RPAREN - 7)))) !== 0)) {
+        if(((((_la - 7)) & ~0x1f) == 0 && ((1 << (_la - 7)) & ((1 << (rulePadGrammarParser.T__6 - 7)) | (1 << (rulePadGrammarParser.T__7 - 7)) | (1 << (rulePadGrammarParser.T__8 - 7)) | (1 << (rulePadGrammarParser.T__9 - 7)) | (1 << (rulePadGrammarParser.T__10 - 7)) | (1 << (rulePadGrammarParser.T__11 - 7)) | (1 << (rulePadGrammarParser.T__12 - 7)) | (1 << (rulePadGrammarParser.SPACE - 7)) | (1 << (rulePadGrammarParser.Alphabet - 7)) | (1 << (rulePadGrammarParser.LPAREN - 7)) | (1 << (rulePadGrammarParser.RPAREN - 7)))) !== 0)) {
             this.state = 304;
             this.identifiers();
         }
 
         this.state = 307;
-        this.match(myGrammarParser.T__0);
+        this.match(rulePadGrammarParser.T__0);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -2017,7 +2016,7 @@ function MustContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_must;
+    this.ruleIndex = rulePadGrammarParser.RULE_must;
     return this;
 }
 
@@ -2026,13 +2025,13 @@ MustContext.prototype.constructor = MustContext;
 
 
 MustContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterMust(this);
 	}
 };
 
 MustContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitMust(this);
 	}
 };
@@ -2040,16 +2039,16 @@ MustContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.MustContext = MustContext;
+rulePadGrammarParser.MustContext = MustContext;
 
-myGrammarParser.prototype.must = function() {
+rulePadGrammarParser.prototype.must = function() {
 
     var localctx = new MustContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 24, myGrammarParser.RULE_must);
+    this.enterRule(localctx, 24, rulePadGrammarParser.RULE_must);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 309;
-        this.match(myGrammarParser.T__27);
+        this.match(rulePadGrammarParser.T__27);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -2073,7 +2072,7 @@ function OfContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_of;
+    this.ruleIndex = rulePadGrammarParser.RULE_of;
     return this;
 }
 
@@ -2082,13 +2081,13 @@ OfContext.prototype.constructor = OfContext;
 
 
 OfContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterOf(this);
 	}
 };
 
 OfContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitOf(this);
 	}
 };
@@ -2096,16 +2095,16 @@ OfContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.OfContext = OfContext;
+rulePadGrammarParser.OfContext = OfContext;
 
-myGrammarParser.prototype.of = function() {
+rulePadGrammarParser.prototype.of = function() {
 
     var localctx = new OfContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 26, myGrammarParser.RULE_of);
+    this.enterRule(localctx, 26, rulePadGrammarParser.RULE_of);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 311;
-        this.match(myGrammarParser.T__28);
+        this.match(rulePadGrammarParser.T__28);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -2129,7 +2128,7 @@ function AndContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_and;
+    this.ruleIndex = rulePadGrammarParser.RULE_and;
     return this;
 }
 
@@ -2138,13 +2137,13 @@ AndContext.prototype.constructor = AndContext;
 
 
 AndContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterAnd(this);
 	}
 };
 
 AndContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitAnd(this);
 	}
 };
@@ -2152,16 +2151,16 @@ AndContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.AndContext = AndContext;
+rulePadGrammarParser.AndContext = AndContext;
 
-myGrammarParser.prototype.and = function() {
+rulePadGrammarParser.prototype.and = function() {
 
     var localctx = new AndContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 28, myGrammarParser.RULE_and);
+    this.enterRule(localctx, 28, rulePadGrammarParser.RULE_and);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 313;
-        this.match(myGrammarParser.T__29);
+        this.match(rulePadGrammarParser.T__29);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -2185,7 +2184,7 @@ function OrContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_or;
+    this.ruleIndex = rulePadGrammarParser.RULE_or;
     return this;
 }
 
@@ -2194,13 +2193,13 @@ OrContext.prototype.constructor = OrContext;
 
 
 OrContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterOr(this);
 	}
 };
 
 OrContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitOr(this);
 	}
 };
@@ -2208,16 +2207,16 @@ OrContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.OrContext = OrContext;
+rulePadGrammarParser.OrContext = OrContext;
 
-myGrammarParser.prototype.or = function() {
+rulePadGrammarParser.prototype.or = function() {
 
     var localctx = new OrContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 30, myGrammarParser.RULE_or);
+    this.enterRule(localctx, 30, rulePadGrammarParser.RULE_or);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 315;
-        this.match(myGrammarParser.T__30);
+        this.match(rulePadGrammarParser.T__30);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -2241,7 +2240,7 @@ function HaveContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_have;
+    this.ruleIndex = rulePadGrammarParser.RULE_have;
     return this;
 }
 
@@ -2250,13 +2249,13 @@ HaveContext.prototype.constructor = HaveContext;
 
 
 HaveContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterHave(this);
 	}
 };
 
 HaveContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitHave(this);
 	}
 };
@@ -2264,16 +2263,16 @@ HaveContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.HaveContext = HaveContext;
+rulePadGrammarParser.HaveContext = HaveContext;
 
-myGrammarParser.prototype.have = function() {
+rulePadGrammarParser.prototype.have = function() {
 
     var localctx = new HaveContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 32, myGrammarParser.RULE_have);
+    this.enterRule(localctx, 32, rulePadGrammarParser.RULE_have);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 317;
-        this.match(myGrammarParser.T__31);
+        this.match(rulePadGrammarParser.T__31);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -2297,7 +2296,7 @@ function WithWordContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_withWord;
+    this.ruleIndex = rulePadGrammarParser.RULE_withWord;
     return this;
 }
 
@@ -2306,13 +2305,13 @@ WithWordContext.prototype.constructor = WithWordContext;
 
 
 WithWordContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterWithWord(this);
 	}
 };
 
 WithWordContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitWithWord(this);
 	}
 };
@@ -2320,16 +2319,16 @@ WithWordContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.WithWordContext = WithWordContext;
+rulePadGrammarParser.WithWordContext = WithWordContext;
 
-myGrammarParser.prototype.withWord = function() {
+rulePadGrammarParser.prototype.withWord = function() {
 
     var localctx = new WithWordContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 34, myGrammarParser.RULE_withWord);
+    this.enterRule(localctx, 34, rulePadGrammarParser.RULE_withWord);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 319;
-        this.match(myGrammarParser.T__32);
+        this.match(rulePadGrammarParser.T__32);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -2353,7 +2352,7 @@ function BinaryContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_binary;
+    this.ruleIndex = rulePadGrammarParser.RULE_binary;
     return this;
 }
 
@@ -2369,13 +2368,13 @@ BinaryContext.prototype.or = function() {
 };
 
 BinaryContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterBinary(this);
 	}
 };
 
 BinaryContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitBinary(this);
 	}
 };
@@ -2383,22 +2382,22 @@ BinaryContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.BinaryContext = BinaryContext;
+rulePadGrammarParser.BinaryContext = BinaryContext;
 
-myGrammarParser.prototype.binary = function() {
+rulePadGrammarParser.prototype.binary = function() {
 
     var localctx = new BinaryContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 36, myGrammarParser.RULE_binary);
+    this.enterRule(localctx, 36, rulePadGrammarParser.RULE_binary);
     try {
         this.state = 323;
         this._errHandler.sync(this);
         switch(this._input.LA(1)) {
-        case myGrammarParser.T__29:
+        case rulePadGrammarParser.T__29:
             this.enterOuterAlt(localctx, 1);
             this.state = 321;
             this.and();
             break;
-        case myGrammarParser.T__30:
+        case rulePadGrammarParser.T__30:
             this.enterOuterAlt(localctx, 2);
             this.state = 322;
             this.or();
@@ -2429,7 +2428,7 @@ function NamesContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_names;
+    this.ruleIndex = rulePadGrammarParser.RULE_names;
     return this;
 }
 
@@ -2437,7 +2436,7 @@ NamesContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
 NamesContext.prototype.constructor = NamesContext;
 
 NamesContext.prototype.NAME = function() {
-    return this.getToken(myGrammarParser.NAME, 0);
+    return this.getToken(rulePadGrammarParser.NAME, 0);
 };
 
 NamesContext.prototype.nameCondition = function() {
@@ -2445,13 +2444,13 @@ NamesContext.prototype.nameCondition = function() {
 };
 
 NamesContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterNames(this);
 	}
 };
 
 NamesContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitNames(this);
 	}
 };
@@ -2459,16 +2458,16 @@ NamesContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.NamesContext = NamesContext;
+rulePadGrammarParser.NamesContext = NamesContext;
 
-myGrammarParser.prototype.names = function() {
+rulePadGrammarParser.prototype.names = function() {
 
     var localctx = new NamesContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 38, myGrammarParser.RULE_names);
+    this.enterRule(localctx, 38, rulePadGrammarParser.RULE_names);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 325;
-        this.match(myGrammarParser.NAME);
+        this.match(rulePadGrammarParser.NAME);
         this.state = 327;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,24,this._ctx);
@@ -2500,7 +2499,7 @@ function NameConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_nameCondition;
+    this.ruleIndex = rulePadGrammarParser.RULE_nameCondition;
     return this;
 }
 
@@ -2512,17 +2511,17 @@ NameConditionContext.prototype.words = function() {
 };
 
 NameConditionContext.prototype.SPACE = function() {
-    return this.getToken(myGrammarParser.SPACE, 0);
+    return this.getToken(rulePadGrammarParser.SPACE, 0);
 };
 
 NameConditionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterNameCondition(this);
 	}
 };
 
 NameConditionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitNameCondition(this);
 	}
 };
@@ -2530,18 +2529,18 @@ NameConditionContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.NameConditionContext = NameConditionContext;
+rulePadGrammarParser.NameConditionContext = NameConditionContext;
 
-myGrammarParser.prototype.nameCondition = function() {
+rulePadGrammarParser.prototype.nameCondition = function() {
 
     var localctx = new NameConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 40, myGrammarParser.RULE_nameCondition);
+    this.enterRule(localctx, 40, rulePadGrammarParser.RULE_nameCondition);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 329;
         this.words();
         this.state = 330;
-        this.match(myGrammarParser.SPACE);
+        this.match(rulePadGrammarParser.SPACE);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -2565,7 +2564,7 @@ function AnnotationsContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_annotations;
+    this.ruleIndex = rulePadGrammarParser.RULE_annotations;
     return this;
 }
 
@@ -2573,7 +2572,7 @@ AnnotationsContext.prototype = Object.create(antlr4.ParserRuleContext.prototype)
 AnnotationsContext.prototype.constructor = AnnotationsContext;
 
 AnnotationsContext.prototype.ANNOTATION = function() {
-    return this.getToken(myGrammarParser.ANNOTATION, 0);
+    return this.getToken(rulePadGrammarParser.ANNOTATION, 0);
 };
 
 AnnotationsContext.prototype.annotationCondition = function() {
@@ -2581,13 +2580,13 @@ AnnotationsContext.prototype.annotationCondition = function() {
 };
 
 AnnotationsContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterAnnotations(this);
 	}
 };
 
 AnnotationsContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitAnnotations(this);
 	}
 };
@@ -2595,16 +2594,16 @@ AnnotationsContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.AnnotationsContext = AnnotationsContext;
+rulePadGrammarParser.AnnotationsContext = AnnotationsContext;
 
-myGrammarParser.prototype.annotations = function() {
+rulePadGrammarParser.prototype.annotations = function() {
 
     var localctx = new AnnotationsContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 42, myGrammarParser.RULE_annotations);
+    this.enterRule(localctx, 42, rulePadGrammarParser.RULE_annotations);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 332;
-        this.match(myGrammarParser.ANNOTATION);
+        this.match(rulePadGrammarParser.ANNOTATION);
         this.state = 334;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,25,this._ctx);
@@ -2636,7 +2635,7 @@ function AnnotationConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_annotationCondition;
+    this.ruleIndex = rulePadGrammarParser.RULE_annotationCondition;
     return this;
 }
 
@@ -2648,17 +2647,17 @@ AnnotationConditionContext.prototype.combinatorialWords = function() {
 };
 
 AnnotationConditionContext.prototype.SPACE = function() {
-    return this.getToken(myGrammarParser.SPACE, 0);
+    return this.getToken(rulePadGrammarParser.SPACE, 0);
 };
 
 AnnotationConditionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterAnnotationCondition(this);
 	}
 };
 
 AnnotationConditionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitAnnotationCondition(this);
 	}
 };
@@ -2666,18 +2665,18 @@ AnnotationConditionContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.AnnotationConditionContext = AnnotationConditionContext;
+rulePadGrammarParser.AnnotationConditionContext = AnnotationConditionContext;
 
-myGrammarParser.prototype.annotationCondition = function() {
+rulePadGrammarParser.prototype.annotationCondition = function() {
 
     var localctx = new AnnotationConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 44, myGrammarParser.RULE_annotationCondition);
+    this.enterRule(localctx, 44, rulePadGrammarParser.RULE_annotationCondition);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 336;
         this.combinatorialWords();
         this.state = 337;
-        this.match(myGrammarParser.SPACE);
+        this.match(rulePadGrammarParser.SPACE);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -2701,7 +2700,7 @@ function ExtensionsContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_extensions;
+    this.ruleIndex = rulePadGrammarParser.RULE_extensions;
     return this;
 }
 
@@ -2709,7 +2708,7 @@ ExtensionsContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
 ExtensionsContext.prototype.constructor = ExtensionsContext;
 
 ExtensionsContext.prototype.EXTENSION = function() {
-    return this.getToken(myGrammarParser.EXTENSION, 0);
+    return this.getToken(rulePadGrammarParser.EXTENSION, 0);
 };
 
 ExtensionsContext.prototype.extensionCondition = function() {
@@ -2717,13 +2716,13 @@ ExtensionsContext.prototype.extensionCondition = function() {
 };
 
 ExtensionsContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterExtensions(this);
 	}
 };
 
 ExtensionsContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitExtensions(this);
 	}
 };
@@ -2731,16 +2730,16 @@ ExtensionsContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.ExtensionsContext = ExtensionsContext;
+rulePadGrammarParser.ExtensionsContext = ExtensionsContext;
 
-myGrammarParser.prototype.extensions = function() {
+rulePadGrammarParser.prototype.extensions = function() {
 
     var localctx = new ExtensionsContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 46, myGrammarParser.RULE_extensions);
+    this.enterRule(localctx, 46, rulePadGrammarParser.RULE_extensions);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 339;
-        this.match(myGrammarParser.EXTENSION);
+        this.match(rulePadGrammarParser.EXTENSION);
         this.state = 340;
         this.extensionCondition();
     } catch (re) {
@@ -2766,7 +2765,7 @@ function ExtensionConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_extensionCondition;
+    this.ruleIndex = rulePadGrammarParser.RULE_extensionCondition;
     return this;
 }
 
@@ -2782,21 +2781,21 @@ ExtensionConditionContext.prototype.words = function() {
 };
 
 ExtensionConditionContext.prototype.SPACE = function() {
-    return this.getToken(myGrammarParser.SPACE, 0);
+    return this.getToken(rulePadGrammarParser.SPACE, 0);
 };
 
 ExtensionConditionContext.prototype.SUPERCLASS = function() {
-    return this.getToken(myGrammarParser.SUPERCLASS, 0);
+    return this.getToken(rulePadGrammarParser.SUPERCLASS, 0);
 };
 
 ExtensionConditionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterExtensionCondition(this);
 	}
 };
 
 ExtensionConditionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitExtensionCondition(this);
 	}
 };
@@ -2804,12 +2803,12 @@ ExtensionConditionContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.ExtensionConditionContext = ExtensionConditionContext;
+rulePadGrammarParser.ExtensionConditionContext = ExtensionConditionContext;
 
-myGrammarParser.prototype.extensionCondition = function() {
+rulePadGrammarParser.prototype.extensionCondition = function() {
 
     var localctx = new ExtensionConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 48, myGrammarParser.RULE_extensionCondition);
+    this.enterRule(localctx, 48, rulePadGrammarParser.RULE_extensionCondition);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 342;
@@ -2817,15 +2816,15 @@ myGrammarParser.prototype.extensionCondition = function() {
         this.state = 347;
         this._errHandler.sync(this);
         switch(this._input.LA(1)) {
-        case myGrammarParser.T__0:
+        case rulePadGrammarParser.T__0:
             this.state = 343;
             this.words();
             this.state = 344;
-            this.match(myGrammarParser.SPACE);
+            this.match(rulePadGrammarParser.SPACE);
             break;
-        case myGrammarParser.SUPERCLASS:
+        case rulePadGrammarParser.SUPERCLASS:
             this.state = 346;
-            this.match(myGrammarParser.SUPERCLASS);
+            this.match(rulePadGrammarParser.SUPERCLASS);
             break;
         default:
             throw new antlr4.error.NoViableAltException(this);
@@ -2853,7 +2852,7 @@ function ImplementationsContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_implementations;
+    this.ruleIndex = rulePadGrammarParser.RULE_implementations;
     return this;
 }
 
@@ -2861,7 +2860,7 @@ ImplementationsContext.prototype = Object.create(antlr4.ParserRuleContext.protot
 ImplementationsContext.prototype.constructor = ImplementationsContext;
 
 ImplementationsContext.prototype.IMPLEMENTATION = function() {
-    return this.getToken(myGrammarParser.IMPLEMENTATION, 0);
+    return this.getToken(rulePadGrammarParser.IMPLEMENTATION, 0);
 };
 
 ImplementationsContext.prototype.implementationCondition = function() {
@@ -2869,13 +2868,13 @@ ImplementationsContext.prototype.implementationCondition = function() {
 };
 
 ImplementationsContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterImplementations(this);
 	}
 };
 
 ImplementationsContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitImplementations(this);
 	}
 };
@@ -2883,16 +2882,16 @@ ImplementationsContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.ImplementationsContext = ImplementationsContext;
+rulePadGrammarParser.ImplementationsContext = ImplementationsContext;
 
-myGrammarParser.prototype.implementations = function() {
+rulePadGrammarParser.prototype.implementations = function() {
 
     var localctx = new ImplementationsContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 50, myGrammarParser.RULE_implementations);
+    this.enterRule(localctx, 50, rulePadGrammarParser.RULE_implementations);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 349;
-        this.match(myGrammarParser.IMPLEMENTATION);
+        this.match(rulePadGrammarParser.IMPLEMENTATION);
         this.state = 350;
         this.implementationCondition();
     } catch (re) {
@@ -2918,7 +2917,7 @@ function ImplementationConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_implementationCondition;
+    this.ruleIndex = rulePadGrammarParser.RULE_implementationCondition;
     return this;
 }
 
@@ -2934,21 +2933,21 @@ ImplementationConditionContext.prototype.words = function() {
 };
 
 ImplementationConditionContext.prototype.SPACE = function() {
-    return this.getToken(myGrammarParser.SPACE, 0);
+    return this.getToken(rulePadGrammarParser.SPACE, 0);
 };
 
 ImplementationConditionContext.prototype.INTERFACE = function() {
-    return this.getToken(myGrammarParser.INTERFACE, 0);
+    return this.getToken(rulePadGrammarParser.INTERFACE, 0);
 };
 
 ImplementationConditionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterImplementationCondition(this);
 	}
 };
 
 ImplementationConditionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitImplementationCondition(this);
 	}
 };
@@ -2956,12 +2955,12 @@ ImplementationConditionContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.ImplementationConditionContext = ImplementationConditionContext;
+rulePadGrammarParser.ImplementationConditionContext = ImplementationConditionContext;
 
-myGrammarParser.prototype.implementationCondition = function() {
+rulePadGrammarParser.prototype.implementationCondition = function() {
 
     var localctx = new ImplementationConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 52, myGrammarParser.RULE_implementationCondition);
+    this.enterRule(localctx, 52, rulePadGrammarParser.RULE_implementationCondition);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 352;
@@ -2969,15 +2968,15 @@ myGrammarParser.prototype.implementationCondition = function() {
         this.state = 357;
         this._errHandler.sync(this);
         switch(this._input.LA(1)) {
-        case myGrammarParser.T__0:
+        case rulePadGrammarParser.T__0:
             this.state = 353;
             this.words();
             this.state = 354;
-            this.match(myGrammarParser.SPACE);
+            this.match(rulePadGrammarParser.SPACE);
             break;
-        case myGrammarParser.INTERFACE:
+        case rulePadGrammarParser.INTERFACE:
             this.state = 356;
-            this.match(myGrammarParser.INTERFACE);
+            this.match(rulePadGrammarParser.INTERFACE);
             break;
         default:
             throw new antlr4.error.NoViableAltException(this);
@@ -3005,7 +3004,7 @@ function FunctionsContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_functions;
+    this.ruleIndex = rulePadGrammarParser.RULE_functions;
     return this;
 }
 
@@ -3013,7 +3012,7 @@ FunctionsContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
 FunctionsContext.prototype.constructor = FunctionsContext;
 
 FunctionsContext.prototype.FUNCTION = function() {
-    return this.getToken(myGrammarParser.FUNCTION, 0);
+    return this.getToken(rulePadGrammarParser.FUNCTION, 0);
 };
 
 FunctionsContext.prototype.functionCondition = function() {
@@ -3025,13 +3024,13 @@ FunctionsContext.prototype.functionOf = function() {
 };
 
 FunctionsContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterFunctions(this);
 	}
 };
 
 FunctionsContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitFunctions(this);
 	}
 };
@@ -3039,16 +3038,16 @@ FunctionsContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.FunctionsContext = FunctionsContext;
+rulePadGrammarParser.FunctionsContext = FunctionsContext;
 
-myGrammarParser.prototype.functions = function() {
+rulePadGrammarParser.prototype.functions = function() {
 
     var localctx = new FunctionsContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 54, myGrammarParser.RULE_functions);
+    this.enterRule(localctx, 54, rulePadGrammarParser.RULE_functions);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 359;
-        this.match(myGrammarParser.FUNCTION);
+        this.match(rulePadGrammarParser.FUNCTION);
         this.state = 361;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,28,this._ctx);
@@ -3088,7 +3087,7 @@ function FunctionOfContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_functionOf;
+    this.ruleIndex = rulePadGrammarParser.RULE_functionOf;
     return this;
 }
 
@@ -3104,13 +3103,13 @@ FunctionOfContext.prototype.classes = function() {
 };
 
 FunctionOfContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterFunctionOf(this);
 	}
 };
 
 FunctionOfContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitFunctionOf(this);
 	}
 };
@@ -3118,12 +3117,12 @@ FunctionOfContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.FunctionOfContext = FunctionOfContext;
+rulePadGrammarParser.FunctionOfContext = FunctionOfContext;
 
-myGrammarParser.prototype.functionOf = function() {
+rulePadGrammarParser.prototype.functionOf = function() {
 
     var localctx = new FunctionOfContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 56, myGrammarParser.RULE_functionOf);
+    this.enterRule(localctx, 56, rulePadGrammarParser.RULE_functionOf);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 366;
@@ -3153,7 +3152,7 @@ function FunctionConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_functionCondition;
+    this.ruleIndex = rulePadGrammarParser.RULE_functionCondition;
     return this;
 }
 
@@ -3169,13 +3168,13 @@ FunctionConditionContext.prototype.functionExpression = function() {
 };
 
 FunctionConditionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterFunctionCondition(this);
 	}
 };
 
 FunctionConditionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitFunctionCondition(this);
 	}
 };
@@ -3183,12 +3182,12 @@ FunctionConditionContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.FunctionConditionContext = FunctionConditionContext;
+rulePadGrammarParser.FunctionConditionContext = FunctionConditionContext;
 
-myGrammarParser.prototype.functionCondition = function() {
+rulePadGrammarParser.prototype.functionCondition = function() {
 
     var localctx = new FunctionConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 58, myGrammarParser.RULE_functionCondition);
+    this.enterRule(localctx, 58, rulePadGrammarParser.RULE_functionCondition);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 369;
@@ -3218,7 +3217,7 @@ function FunctionExpressionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_functionExpression;
+    this.ruleIndex = rulePadGrammarParser.RULE_functionExpression;
     this.left = null; // FunctionExpressionContext
     this.op = null; // BinaryContext
     this.right = null; // FunctionExpressionContext
@@ -3229,7 +3228,7 @@ FunctionExpressionContext.prototype = Object.create(antlr4.ParserRuleContext.pro
 FunctionExpressionContext.prototype.constructor = FunctionExpressionContext;
 
 FunctionExpressionContext.prototype.LPAREN = function() {
-    return this.getToken(myGrammarParser.LPAREN, 0);
+    return this.getToken(rulePadGrammarParser.LPAREN, 0);
 };
 
 FunctionExpressionContext.prototype.functionExpression = function(i) {
@@ -3244,7 +3243,7 @@ FunctionExpressionContext.prototype.functionExpression = function(i) {
 };
 
 FunctionExpressionContext.prototype.RPAREN = function() {
-    return this.getToken(myGrammarParser.RPAREN, 0);
+    return this.getToken(rulePadGrammarParser.RPAREN, 0);
 };
 
 FunctionExpressionContext.prototype.annotations = function() {
@@ -3292,24 +3291,24 @@ FunctionExpressionContext.prototype.binary = function() {
 };
 
 FunctionExpressionContext.prototype.SPACE = function() {
-    return this.getToken(myGrammarParser.SPACE, 0);
+    return this.getToken(rulePadGrammarParser.SPACE, 0);
 };
 
 FunctionExpressionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterFunctionExpression(this);
 	}
 };
 
 FunctionExpressionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitFunctionExpression(this);
 	}
 };
 
 
 
-myGrammarParser.prototype.functionExpression = function(_p) {
+rulePadGrammarParser.prototype.functionExpression = function(_p) {
 	if(_p===undefined) {
 	    _p = 0;
 	}
@@ -3318,70 +3317,70 @@ myGrammarParser.prototype.functionExpression = function(_p) {
     var localctx = new FunctionExpressionContext(this, this._ctx, _parentState);
     var _prevctx = localctx;
     var _startState = 60;
-    this.enterRecursionRule(localctx, 60, myGrammarParser.RULE_functionExpression, _p);
+    this.enterRecursionRule(localctx, 60, rulePadGrammarParser.RULE_functionExpression, _p);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 389;
         this._errHandler.sync(this);
         switch(this._input.LA(1)) {
-        case myGrammarParser.LPAREN:
+        case rulePadGrammarParser.LPAREN:
             this.state = 373;
-            this.match(myGrammarParser.LPAREN);
+            this.match(rulePadGrammarParser.LPAREN);
             this.state = 374;
             this.functionExpression(0);
             this.state = 375;
-            this.match(myGrammarParser.RPAREN);
+            this.match(rulePadGrammarParser.RPAREN);
             break;
-        case myGrammarParser.T__0:
-        case myGrammarParser.NAME:
-        case myGrammarParser.ANNOTATION:
-        case myGrammarParser.PARAMETER:
-        case myGrammarParser.TYPES:
-        case myGrammarParser.SPECIFIER:
-        case myGrammarParser.VISIBILITY:
-        case myGrammarParser.ReturnValue:
-        case myGrammarParser.DeclarationStatement:
-        case myGrammarParser.ExpressionStatement:
+        case rulePadGrammarParser.T__0:
+        case rulePadGrammarParser.NAME:
+        case rulePadGrammarParser.ANNOTATION:
+        case rulePadGrammarParser.PARAMETER:
+        case rulePadGrammarParser.TYPES:
+        case rulePadGrammarParser.SPECIFIER:
+        case rulePadGrammarParser.VISIBILITY:
+        case rulePadGrammarParser.ReturnValue:
+        case rulePadGrammarParser.DeclarationStatement:
+        case rulePadGrammarParser.ExpressionStatement:
             this.state = 387;
             this._errHandler.sync(this);
             switch(this._input.LA(1)) {
-            case myGrammarParser.ANNOTATION:
+            case rulePadGrammarParser.ANNOTATION:
                 this.state = 377;
                 this.annotations();
                 break;
-            case myGrammarParser.SPECIFIER:
+            case rulePadGrammarParser.SPECIFIER:
                 this.state = 378;
                 this.specifiers();
                 break;
-            case myGrammarParser.VISIBILITY:
+            case rulePadGrammarParser.VISIBILITY:
                 this.state = 379;
                 this.visibilities();
                 break;
-            case myGrammarParser.TYPES:
+            case rulePadGrammarParser.TYPES:
                 this.state = 380;
                 this.types();
                 break;
-            case myGrammarParser.NAME:
+            case rulePadGrammarParser.NAME:
                 this.state = 381;
                 this.names();
                 break;
-            case myGrammarParser.PARAMETER:
+            case rulePadGrammarParser.PARAMETER:
                 this.state = 382;
                 this.parameters();
                 break;
-            case myGrammarParser.ReturnValue:
+            case rulePadGrammarParser.ReturnValue:
                 this.state = 383;
                 this.returnValues();
                 break;
-            case myGrammarParser.DeclarationStatement:
+            case rulePadGrammarParser.DeclarationStatement:
                 this.state = 384;
                 this.declarationStatements();
                 break;
-            case myGrammarParser.ExpressionStatement:
+            case rulePadGrammarParser.ExpressionStatement:
                 this.state = 385;
                 this.expressionStatements();
                 break;
-            case myGrammarParser.T__0:
+            case rulePadGrammarParser.T__0:
                 this.state = 386;
                 this.comments();
                 break;
@@ -3409,7 +3408,7 @@ myGrammarParser.prototype.functionExpression = function(_p) {
                 case 1:
                     localctx = new FunctionExpressionContext(this, _parentctx, _parentState);
                     localctx.left = _prevctx;
-                    this.pushNewRecursionContext(localctx, _startState, myGrammarParser.RULE_functionExpression);
+                    this.pushNewRecursionContext(localctx, _startState, rulePadGrammarParser.RULE_functionExpression);
                     this.state = 391;
                     if (!( this.precpred(this._ctx, 3))) {
                         throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 3)");
@@ -3422,13 +3421,13 @@ myGrammarParser.prototype.functionExpression = function(_p) {
 
                 case 2:
                     localctx = new FunctionExpressionContext(this, _parentctx, _parentState);
-                    this.pushNewRecursionContext(localctx, _startState, myGrammarParser.RULE_functionExpression);
+                    this.pushNewRecursionContext(localctx, _startState, rulePadGrammarParser.RULE_functionExpression);
                     this.state = 395;
                     if (!( this.precpred(this._ctx, 1))) {
                         throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 1)");
                     }
                     this.state = 396;
-                    this.match(myGrammarParser.SPACE);
+                    this.match(rulePadGrammarParser.SPACE);
                     break;
 
                 } 
@@ -3461,7 +3460,7 @@ function AbstractFunctionsContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_abstractFunctions;
+    this.ruleIndex = rulePadGrammarParser.RULE_abstractFunctions;
     return this;
 }
 
@@ -3469,7 +3468,7 @@ AbstractFunctionsContext.prototype = Object.create(antlr4.ParserRuleContext.prot
 AbstractFunctionsContext.prototype.constructor = AbstractFunctionsContext;
 
 AbstractFunctionsContext.prototype.AbstractFunctions = function() {
-    return this.getToken(myGrammarParser.AbstractFunctions, 0);
+    return this.getToken(rulePadGrammarParser.AbstractFunctions, 0);
 };
 
 AbstractFunctionsContext.prototype.abstractFunctionCondition = function() {
@@ -3481,13 +3480,13 @@ AbstractFunctionsContext.prototype.abstractFunctionOf = function() {
 };
 
 AbstractFunctionsContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterAbstractFunctions(this);
 	}
 };
 
 AbstractFunctionsContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitAbstractFunctions(this);
 	}
 };
@@ -3495,16 +3494,16 @@ AbstractFunctionsContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.AbstractFunctionsContext = AbstractFunctionsContext;
+rulePadGrammarParser.AbstractFunctionsContext = AbstractFunctionsContext;
 
-myGrammarParser.prototype.abstractFunctions = function() {
+rulePadGrammarParser.prototype.abstractFunctions = function() {
 
     var localctx = new AbstractFunctionsContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 62, myGrammarParser.RULE_abstractFunctions);
+    this.enterRule(localctx, 62, rulePadGrammarParser.RULE_abstractFunctions);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 402;
-        this.match(myGrammarParser.AbstractFunctions);
+        this.match(rulePadGrammarParser.AbstractFunctions);
         this.state = 404;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,34,this._ctx);
@@ -3544,7 +3543,7 @@ function AbstractFunctionOfContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_abstractFunctionOf;
+    this.ruleIndex = rulePadGrammarParser.RULE_abstractFunctionOf;
     return this;
 }
 
@@ -3560,13 +3559,13 @@ AbstractFunctionOfContext.prototype.classes = function() {
 };
 
 AbstractFunctionOfContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterAbstractFunctionOf(this);
 	}
 };
 
 AbstractFunctionOfContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitAbstractFunctionOf(this);
 	}
 };
@@ -3574,12 +3573,12 @@ AbstractFunctionOfContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.AbstractFunctionOfContext = AbstractFunctionOfContext;
+rulePadGrammarParser.AbstractFunctionOfContext = AbstractFunctionOfContext;
 
-myGrammarParser.prototype.abstractFunctionOf = function() {
+rulePadGrammarParser.prototype.abstractFunctionOf = function() {
 
     var localctx = new AbstractFunctionOfContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 64, myGrammarParser.RULE_abstractFunctionOf);
+    this.enterRule(localctx, 64, rulePadGrammarParser.RULE_abstractFunctionOf);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 409;
@@ -3609,7 +3608,7 @@ function AbstractFunctionConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_abstractFunctionCondition;
+    this.ruleIndex = rulePadGrammarParser.RULE_abstractFunctionCondition;
     return this;
 }
 
@@ -3625,13 +3624,13 @@ AbstractFunctionConditionContext.prototype.abstractFunctionExpression = function
 };
 
 AbstractFunctionConditionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterAbstractFunctionCondition(this);
 	}
 };
 
 AbstractFunctionConditionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitAbstractFunctionCondition(this);
 	}
 };
@@ -3639,12 +3638,12 @@ AbstractFunctionConditionContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.AbstractFunctionConditionContext = AbstractFunctionConditionContext;
+rulePadGrammarParser.AbstractFunctionConditionContext = AbstractFunctionConditionContext;
 
-myGrammarParser.prototype.abstractFunctionCondition = function() {
+rulePadGrammarParser.prototype.abstractFunctionCondition = function() {
 
     var localctx = new AbstractFunctionConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 66, myGrammarParser.RULE_abstractFunctionCondition);
+    this.enterRule(localctx, 66, rulePadGrammarParser.RULE_abstractFunctionCondition);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 412;
@@ -3674,7 +3673,7 @@ function AbstractFunctionExpressionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_abstractFunctionExpression;
+    this.ruleIndex = rulePadGrammarParser.RULE_abstractFunctionExpression;
     this.left = null; // AbstractFunctionExpressionContext
     this.op = null; // BinaryContext
     this.right = null; // AbstractFunctionExpressionContext
@@ -3685,7 +3684,7 @@ AbstractFunctionExpressionContext.prototype = Object.create(antlr4.ParserRuleCon
 AbstractFunctionExpressionContext.prototype.constructor = AbstractFunctionExpressionContext;
 
 AbstractFunctionExpressionContext.prototype.LPAREN = function() {
-    return this.getToken(myGrammarParser.LPAREN, 0);
+    return this.getToken(rulePadGrammarParser.LPAREN, 0);
 };
 
 AbstractFunctionExpressionContext.prototype.abstractFunctionExpression = function(i) {
@@ -3700,7 +3699,7 @@ AbstractFunctionExpressionContext.prototype.abstractFunctionExpression = functio
 };
 
 AbstractFunctionExpressionContext.prototype.RPAREN = function() {
-    return this.getToken(myGrammarParser.RPAREN, 0);
+    return this.getToken(rulePadGrammarParser.RPAREN, 0);
 };
 
 AbstractFunctionExpressionContext.prototype.annotations = function() {
@@ -3732,24 +3731,24 @@ AbstractFunctionExpressionContext.prototype.binary = function() {
 };
 
 AbstractFunctionExpressionContext.prototype.SPACE = function() {
-    return this.getToken(myGrammarParser.SPACE, 0);
+    return this.getToken(rulePadGrammarParser.SPACE, 0);
 };
 
 AbstractFunctionExpressionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterAbstractFunctionExpression(this);
 	}
 };
 
 AbstractFunctionExpressionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitAbstractFunctionExpression(this);
 	}
 };
 
 
 
-myGrammarParser.prototype.abstractFunctionExpression = function(_p) {
+rulePadGrammarParser.prototype.abstractFunctionExpression = function(_p) {
 	if(_p===undefined) {
 	    _p = 0;
 	}
@@ -3758,50 +3757,50 @@ myGrammarParser.prototype.abstractFunctionExpression = function(_p) {
     var localctx = new AbstractFunctionExpressionContext(this, this._ctx, _parentState);
     var _prevctx = localctx;
     var _startState = 68;
-    this.enterRecursionRule(localctx, 68, myGrammarParser.RULE_abstractFunctionExpression, _p);
+    this.enterRecursionRule(localctx, 68, rulePadGrammarParser.RULE_abstractFunctionExpression, _p);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 428;
         this._errHandler.sync(this);
         switch(this._input.LA(1)) {
-        case myGrammarParser.LPAREN:
+        case rulePadGrammarParser.LPAREN:
             this.state = 416;
-            this.match(myGrammarParser.LPAREN);
+            this.match(rulePadGrammarParser.LPAREN);
             this.state = 417;
             this.abstractFunctionExpression(0);
             this.state = 418;
-            this.match(myGrammarParser.RPAREN);
+            this.match(rulePadGrammarParser.RPAREN);
             break;
-        case myGrammarParser.NAME:
-        case myGrammarParser.ANNOTATION:
-        case myGrammarParser.PARAMETER:
-        case myGrammarParser.TYPES:
-        case myGrammarParser.SPECIFIER:
-        case myGrammarParser.VISIBILITY:
+        case rulePadGrammarParser.NAME:
+        case rulePadGrammarParser.ANNOTATION:
+        case rulePadGrammarParser.PARAMETER:
+        case rulePadGrammarParser.TYPES:
+        case rulePadGrammarParser.SPECIFIER:
+        case rulePadGrammarParser.VISIBILITY:
             this.state = 426;
             this._errHandler.sync(this);
             switch(this._input.LA(1)) {
-            case myGrammarParser.ANNOTATION:
+            case rulePadGrammarParser.ANNOTATION:
                 this.state = 420;
                 this.annotations();
                 break;
-            case myGrammarParser.SPECIFIER:
+            case rulePadGrammarParser.SPECIFIER:
                 this.state = 421;
                 this.specifiers();
                 break;
-            case myGrammarParser.VISIBILITY:
+            case rulePadGrammarParser.VISIBILITY:
                 this.state = 422;
                 this.visibilities();
                 break;
-            case myGrammarParser.TYPES:
+            case rulePadGrammarParser.TYPES:
                 this.state = 423;
                 this.types();
                 break;
-            case myGrammarParser.NAME:
+            case rulePadGrammarParser.NAME:
                 this.state = 424;
                 this.names();
                 break;
-            case myGrammarParser.PARAMETER:
+            case rulePadGrammarParser.PARAMETER:
                 this.state = 425;
                 this.parameters();
                 break;
@@ -3829,7 +3828,7 @@ myGrammarParser.prototype.abstractFunctionExpression = function(_p) {
                 case 1:
                     localctx = new AbstractFunctionExpressionContext(this, _parentctx, _parentState);
                     localctx.left = _prevctx;
-                    this.pushNewRecursionContext(localctx, _startState, myGrammarParser.RULE_abstractFunctionExpression);
+                    this.pushNewRecursionContext(localctx, _startState, rulePadGrammarParser.RULE_abstractFunctionExpression);
                     this.state = 430;
                     if (!( this.precpred(this._ctx, 3))) {
                         throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 3)");
@@ -3842,13 +3841,13 @@ myGrammarParser.prototype.abstractFunctionExpression = function(_p) {
 
                 case 2:
                     localctx = new AbstractFunctionExpressionContext(this, _parentctx, _parentState);
-                    this.pushNewRecursionContext(localctx, _startState, myGrammarParser.RULE_abstractFunctionExpression);
+                    this.pushNewRecursionContext(localctx, _startState, rulePadGrammarParser.RULE_abstractFunctionExpression);
                     this.state = 434;
                     if (!( this.precpred(this._ctx, 1))) {
                         throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 1)");
                     }
                     this.state = 435;
-                    this.match(myGrammarParser.SPACE);
+                    this.match(rulePadGrammarParser.SPACE);
                     break;
 
                 } 
@@ -3881,7 +3880,7 @@ function ConstructorsContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_constructors;
+    this.ruleIndex = rulePadGrammarParser.RULE_constructors;
     return this;
 }
 
@@ -3889,7 +3888,7 @@ ConstructorsContext.prototype = Object.create(antlr4.ParserRuleContext.prototype
 ConstructorsContext.prototype.constructor = ConstructorsContext;
 
 ConstructorsContext.prototype.CONSTRUCTOR = function() {
-    return this.getToken(myGrammarParser.CONSTRUCTOR, 0);
+    return this.getToken(rulePadGrammarParser.CONSTRUCTOR, 0);
 };
 
 ConstructorsContext.prototype.constructorCondition = function() {
@@ -3901,13 +3900,13 @@ ConstructorsContext.prototype.constructorOf = function() {
 };
 
 ConstructorsContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterConstructors(this);
 	}
 };
 
 ConstructorsContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitConstructors(this);
 	}
 };
@@ -3915,16 +3914,16 @@ ConstructorsContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.ConstructorsContext = ConstructorsContext;
+rulePadGrammarParser.ConstructorsContext = ConstructorsContext;
 
-myGrammarParser.prototype.constructors = function() {
+rulePadGrammarParser.prototype.constructors = function() {
 
     var localctx = new ConstructorsContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 70, myGrammarParser.RULE_constructors);
+    this.enterRule(localctx, 70, rulePadGrammarParser.RULE_constructors);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 441;
-        this.match(myGrammarParser.CONSTRUCTOR);
+        this.match(rulePadGrammarParser.CONSTRUCTOR);
         this.state = 443;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,40,this._ctx);
@@ -3964,7 +3963,7 @@ function ConstructorOfContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_constructorOf;
+    this.ruleIndex = rulePadGrammarParser.RULE_constructorOf;
     return this;
 }
 
@@ -3980,13 +3979,13 @@ ConstructorOfContext.prototype.classes = function() {
 };
 
 ConstructorOfContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterConstructorOf(this);
 	}
 };
 
 ConstructorOfContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitConstructorOf(this);
 	}
 };
@@ -3994,12 +3993,12 @@ ConstructorOfContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.ConstructorOfContext = ConstructorOfContext;
+rulePadGrammarParser.ConstructorOfContext = ConstructorOfContext;
 
-myGrammarParser.prototype.constructorOf = function() {
+rulePadGrammarParser.prototype.constructorOf = function() {
 
     var localctx = new ConstructorOfContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 72, myGrammarParser.RULE_constructorOf);
+    this.enterRule(localctx, 72, rulePadGrammarParser.RULE_constructorOf);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 448;
@@ -4029,7 +4028,7 @@ function ConstructorConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_constructorCondition;
+    this.ruleIndex = rulePadGrammarParser.RULE_constructorCondition;
     return this;
 }
 
@@ -4045,13 +4044,13 @@ ConstructorConditionContext.prototype.constructorExpression = function() {
 };
 
 ConstructorConditionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterConstructorCondition(this);
 	}
 };
 
 ConstructorConditionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitConstructorCondition(this);
 	}
 };
@@ -4059,12 +4058,12 @@ ConstructorConditionContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.ConstructorConditionContext = ConstructorConditionContext;
+rulePadGrammarParser.ConstructorConditionContext = ConstructorConditionContext;
 
-myGrammarParser.prototype.constructorCondition = function() {
+rulePadGrammarParser.prototype.constructorCondition = function() {
 
     var localctx = new ConstructorConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 74, myGrammarParser.RULE_constructorCondition);
+    this.enterRule(localctx, 74, rulePadGrammarParser.RULE_constructorCondition);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 451;
@@ -4094,7 +4093,7 @@ function ConstructorExpressionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_constructorExpression;
+    this.ruleIndex = rulePadGrammarParser.RULE_constructorExpression;
     this.left = null; // ConstructorExpressionContext
     this.op = null; // BinaryContext
     this.right = null; // ConstructorExpressionContext
@@ -4105,7 +4104,7 @@ ConstructorExpressionContext.prototype = Object.create(antlr4.ParserRuleContext.
 ConstructorExpressionContext.prototype.constructor = ConstructorExpressionContext;
 
 ConstructorExpressionContext.prototype.LPAREN = function() {
-    return this.getToken(myGrammarParser.LPAREN, 0);
+    return this.getToken(rulePadGrammarParser.LPAREN, 0);
 };
 
 ConstructorExpressionContext.prototype.constructorExpression = function(i) {
@@ -4120,7 +4119,7 @@ ConstructorExpressionContext.prototype.constructorExpression = function(i) {
 };
 
 ConstructorExpressionContext.prototype.RPAREN = function() {
-    return this.getToken(myGrammarParser.RPAREN, 0);
+    return this.getToken(rulePadGrammarParser.RPAREN, 0);
 };
 
 ConstructorExpressionContext.prototype.annotations = function() {
@@ -4164,24 +4163,24 @@ ConstructorExpressionContext.prototype.binary = function() {
 };
 
 ConstructorExpressionContext.prototype.SPACE = function() {
-    return this.getToken(myGrammarParser.SPACE, 0);
+    return this.getToken(rulePadGrammarParser.SPACE, 0);
 };
 
 ConstructorExpressionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterConstructorExpression(this);
 	}
 };
 
 ConstructorExpressionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitConstructorExpression(this);
 	}
 };
 
 
 
-myGrammarParser.prototype.constructorExpression = function(_p) {
+rulePadGrammarParser.prototype.constructorExpression = function(_p) {
 	if(_p===undefined) {
 	    _p = 0;
 	}
@@ -4190,65 +4189,65 @@ myGrammarParser.prototype.constructorExpression = function(_p) {
     var localctx = new ConstructorExpressionContext(this, this._ctx, _parentState);
     var _prevctx = localctx;
     var _startState = 76;
-    this.enterRecursionRule(localctx, 76, myGrammarParser.RULE_constructorExpression, _p);
+    this.enterRecursionRule(localctx, 76, rulePadGrammarParser.RULE_constructorExpression, _p);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 470;
         this._errHandler.sync(this);
         switch(this._input.LA(1)) {
-        case myGrammarParser.LPAREN:
+        case rulePadGrammarParser.LPAREN:
             this.state = 455;
-            this.match(myGrammarParser.LPAREN);
+            this.match(rulePadGrammarParser.LPAREN);
             this.state = 456;
             this.constructorExpression(0);
             this.state = 457;
-            this.match(myGrammarParser.RPAREN);
+            this.match(rulePadGrammarParser.RPAREN);
             break;
-        case myGrammarParser.T__0:
-        case myGrammarParser.NAME:
-        case myGrammarParser.ANNOTATION:
-        case myGrammarParser.PARAMETER:
-        case myGrammarParser.SPECIFIER:
-        case myGrammarParser.VISIBILITY:
-        case myGrammarParser.ReturnValue:
-        case myGrammarParser.DeclarationStatement:
-        case myGrammarParser.ExpressionStatement:
+        case rulePadGrammarParser.T__0:
+        case rulePadGrammarParser.NAME:
+        case rulePadGrammarParser.ANNOTATION:
+        case rulePadGrammarParser.PARAMETER:
+        case rulePadGrammarParser.SPECIFIER:
+        case rulePadGrammarParser.VISIBILITY:
+        case rulePadGrammarParser.ReturnValue:
+        case rulePadGrammarParser.DeclarationStatement:
+        case rulePadGrammarParser.ExpressionStatement:
             this.state = 468;
             this._errHandler.sync(this);
             switch(this._input.LA(1)) {
-            case myGrammarParser.ANNOTATION:
+            case rulePadGrammarParser.ANNOTATION:
                 this.state = 459;
                 this.annotations();
                 break;
-            case myGrammarParser.SPECIFIER:
+            case rulePadGrammarParser.SPECIFIER:
                 this.state = 460;
                 this.specifiers();
                 break;
-            case myGrammarParser.VISIBILITY:
+            case rulePadGrammarParser.VISIBILITY:
                 this.state = 461;
                 this.visibilities();
                 break;
-            case myGrammarParser.NAME:
+            case rulePadGrammarParser.NAME:
                 this.state = 462;
                 this.names();
                 break;
-            case myGrammarParser.PARAMETER:
+            case rulePadGrammarParser.PARAMETER:
                 this.state = 463;
                 this.parameters();
                 break;
-            case myGrammarParser.ReturnValue:
+            case rulePadGrammarParser.ReturnValue:
                 this.state = 464;
                 this.returnValues();
                 break;
-            case myGrammarParser.DeclarationStatement:
+            case rulePadGrammarParser.DeclarationStatement:
                 this.state = 465;
                 this.declarationStatements();
                 break;
-            case myGrammarParser.ExpressionStatement:
+            case rulePadGrammarParser.ExpressionStatement:
                 this.state = 466;
                 this.expressionStatements();
                 break;
-            case myGrammarParser.T__0:
+            case rulePadGrammarParser.T__0:
                 this.state = 467;
                 this.comments();
                 break;
@@ -4276,7 +4275,7 @@ myGrammarParser.prototype.constructorExpression = function(_p) {
                 case 1:
                     localctx = new ConstructorExpressionContext(this, _parentctx, _parentState);
                     localctx.left = _prevctx;
-                    this.pushNewRecursionContext(localctx, _startState, myGrammarParser.RULE_constructorExpression);
+                    this.pushNewRecursionContext(localctx, _startState, rulePadGrammarParser.RULE_constructorExpression);
                     this.state = 472;
                     if (!( this.precpred(this._ctx, 3))) {
                         throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 3)");
@@ -4289,13 +4288,13 @@ myGrammarParser.prototype.constructorExpression = function(_p) {
 
                 case 2:
                     localctx = new ConstructorExpressionContext(this, _parentctx, _parentState);
-                    this.pushNewRecursionContext(localctx, _startState, myGrammarParser.RULE_constructorExpression);
+                    this.pushNewRecursionContext(localctx, _startState, rulePadGrammarParser.RULE_constructorExpression);
                     this.state = 476;
                     if (!( this.precpred(this._ctx, 1))) {
                         throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 1)");
                     }
                     this.state = 477;
-                    this.match(myGrammarParser.SPACE);
+                    this.match(rulePadGrammarParser.SPACE);
                     break;
 
                 } 
@@ -4328,7 +4327,7 @@ function ParametersContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_parameters;
+    this.ruleIndex = rulePadGrammarParser.RULE_parameters;
     return this;
 }
 
@@ -4336,7 +4335,7 @@ ParametersContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
 ParametersContext.prototype.constructor = ParametersContext;
 
 ParametersContext.prototype.PARAMETER = function() {
-    return this.getToken(myGrammarParser.PARAMETER, 0);
+    return this.getToken(rulePadGrammarParser.PARAMETER, 0);
 };
 
 ParametersContext.prototype.parameterCondition = function() {
@@ -4344,13 +4343,13 @@ ParametersContext.prototype.parameterCondition = function() {
 };
 
 ParametersContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterParameters(this);
 	}
 };
 
 ParametersContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitParameters(this);
 	}
 };
@@ -4358,16 +4357,16 @@ ParametersContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.ParametersContext = ParametersContext;
+rulePadGrammarParser.ParametersContext = ParametersContext;
 
-myGrammarParser.prototype.parameters = function() {
+rulePadGrammarParser.prototype.parameters = function() {
 
     var localctx = new ParametersContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 78, myGrammarParser.RULE_parameters);
+    this.enterRule(localctx, 78, rulePadGrammarParser.RULE_parameters);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 483;
-        this.match(myGrammarParser.PARAMETER);
+        this.match(rulePadGrammarParser.PARAMETER);
         this.state = 485;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,46,this._ctx);
@@ -4399,7 +4398,7 @@ function ParameterConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_parameterCondition;
+    this.ruleIndex = rulePadGrammarParser.RULE_parameterCondition;
     return this;
 }
 
@@ -4415,13 +4414,13 @@ ParameterConditionContext.prototype.parameterExpression = function() {
 };
 
 ParameterConditionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterParameterCondition(this);
 	}
 };
 
 ParameterConditionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitParameterCondition(this);
 	}
 };
@@ -4429,12 +4428,12 @@ ParameterConditionContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.ParameterConditionContext = ParameterConditionContext;
+rulePadGrammarParser.ParameterConditionContext = ParameterConditionContext;
 
-myGrammarParser.prototype.parameterCondition = function() {
+rulePadGrammarParser.prototype.parameterCondition = function() {
 
     var localctx = new ParameterConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 80, myGrammarParser.RULE_parameterCondition);
+    this.enterRule(localctx, 80, rulePadGrammarParser.RULE_parameterCondition);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 487;
@@ -4464,7 +4463,7 @@ function ParameterExpressionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_parameterExpression;
+    this.ruleIndex = rulePadGrammarParser.RULE_parameterExpression;
     this.left = null; // ParameterExpressionContext
     this.op = null; // BinaryContext
     this.right = null; // ParameterExpressionContext
@@ -4475,7 +4474,7 @@ ParameterExpressionContext.prototype = Object.create(antlr4.ParserRuleContext.pr
 ParameterExpressionContext.prototype.constructor = ParameterExpressionContext;
 
 ParameterExpressionContext.prototype.LPAREN = function() {
-    return this.getToken(myGrammarParser.LPAREN, 0);
+    return this.getToken(rulePadGrammarParser.LPAREN, 0);
 };
 
 ParameterExpressionContext.prototype.parameterExpression = function(i) {
@@ -4490,7 +4489,7 @@ ParameterExpressionContext.prototype.parameterExpression = function(i) {
 };
 
 ParameterExpressionContext.prototype.RPAREN = function() {
-    return this.getToken(myGrammarParser.RPAREN, 0);
+    return this.getToken(rulePadGrammarParser.RPAREN, 0);
 };
 
 ParameterExpressionContext.prototype.types = function() {
@@ -4506,24 +4505,24 @@ ParameterExpressionContext.prototype.binary = function() {
 };
 
 ParameterExpressionContext.prototype.SPACE = function() {
-    return this.getToken(myGrammarParser.SPACE, 0);
+    return this.getToken(rulePadGrammarParser.SPACE, 0);
 };
 
 ParameterExpressionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterParameterExpression(this);
 	}
 };
 
 ParameterExpressionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitParameterExpression(this);
 	}
 };
 
 
 
-myGrammarParser.prototype.parameterExpression = function(_p) {
+rulePadGrammarParser.prototype.parameterExpression = function(_p) {
 	if(_p===undefined) {
 	    _p = 0;
 	}
@@ -4532,30 +4531,30 @@ myGrammarParser.prototype.parameterExpression = function(_p) {
     var localctx = new ParameterExpressionContext(this, this._ctx, _parentState);
     var _prevctx = localctx;
     var _startState = 82;
-    this.enterRecursionRule(localctx, 82, myGrammarParser.RULE_parameterExpression, _p);
+    this.enterRecursionRule(localctx, 82, rulePadGrammarParser.RULE_parameterExpression, _p);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 499;
         this._errHandler.sync(this);
         switch(this._input.LA(1)) {
-        case myGrammarParser.LPAREN:
+        case rulePadGrammarParser.LPAREN:
             this.state = 491;
-            this.match(myGrammarParser.LPAREN);
+            this.match(rulePadGrammarParser.LPAREN);
             this.state = 492;
             this.parameterExpression(0);
             this.state = 493;
-            this.match(myGrammarParser.RPAREN);
+            this.match(rulePadGrammarParser.RPAREN);
             break;
-        case myGrammarParser.NAME:
-        case myGrammarParser.TYPES:
+        case rulePadGrammarParser.NAME:
+        case rulePadGrammarParser.TYPES:
             this.state = 497;
             this._errHandler.sync(this);
             switch(this._input.LA(1)) {
-            case myGrammarParser.TYPES:
+            case rulePadGrammarParser.TYPES:
                 this.state = 495;
                 this.types();
                 break;
-            case myGrammarParser.NAME:
+            case rulePadGrammarParser.NAME:
                 this.state = 496;
                 this.names();
                 break;
@@ -4583,7 +4582,7 @@ myGrammarParser.prototype.parameterExpression = function(_p) {
                 case 1:
                     localctx = new ParameterExpressionContext(this, _parentctx, _parentState);
                     localctx.left = _prevctx;
-                    this.pushNewRecursionContext(localctx, _startState, myGrammarParser.RULE_parameterExpression);
+                    this.pushNewRecursionContext(localctx, _startState, rulePadGrammarParser.RULE_parameterExpression);
                     this.state = 501;
                     if (!( this.precpred(this._ctx, 3))) {
                         throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 3)");
@@ -4596,13 +4595,13 @@ myGrammarParser.prototype.parameterExpression = function(_p) {
 
                 case 2:
                     localctx = new ParameterExpressionContext(this, _parentctx, _parentState);
-                    this.pushNewRecursionContext(localctx, _startState, myGrammarParser.RULE_parameterExpression);
+                    this.pushNewRecursionContext(localctx, _startState, rulePadGrammarParser.RULE_parameterExpression);
                     this.state = 505;
                     if (!( this.precpred(this._ctx, 1))) {
                         throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 1)");
                     }
                     this.state = 506;
-                    this.match(myGrammarParser.SPACE);
+                    this.match(rulePadGrammarParser.SPACE);
                     break;
 
                 } 
@@ -4635,7 +4634,7 @@ function TypesContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_types;
+    this.ruleIndex = rulePadGrammarParser.RULE_types;
     return this;
 }
 
@@ -4643,7 +4642,7 @@ TypesContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
 TypesContext.prototype.constructor = TypesContext;
 
 TypesContext.prototype.TYPES = function() {
-    return this.getToken(myGrammarParser.TYPES, 0);
+    return this.getToken(rulePadGrammarParser.TYPES, 0);
 };
 
 TypesContext.prototype.typeCondition = function() {
@@ -4651,13 +4650,13 @@ TypesContext.prototype.typeCondition = function() {
 };
 
 TypesContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterTypes(this);
 	}
 };
 
 TypesContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitTypes(this);
 	}
 };
@@ -4665,16 +4664,16 @@ TypesContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.TypesContext = TypesContext;
+rulePadGrammarParser.TypesContext = TypesContext;
 
-myGrammarParser.prototype.types = function() {
+rulePadGrammarParser.prototype.types = function() {
 
     var localctx = new TypesContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 84, myGrammarParser.RULE_types);
+    this.enterRule(localctx, 84, rulePadGrammarParser.RULE_types);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 512;
-        this.match(myGrammarParser.TYPES);
+        this.match(rulePadGrammarParser.TYPES);
         this.state = 514;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,51,this._ctx);
@@ -4706,7 +4705,7 @@ function TypeConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_typeCondition;
+    this.ruleIndex = rulePadGrammarParser.RULE_typeCondition;
     return this;
 }
 
@@ -4718,7 +4717,7 @@ TypeConditionContext.prototype.combinatorialWords = function() {
 };
 
 TypeConditionContext.prototype.SPACE = function() {
-    return this.getToken(myGrammarParser.SPACE, 0);
+    return this.getToken(rulePadGrammarParser.SPACE, 0);
 };
 
 TypeConditionContext.prototype.words = function() {
@@ -4726,13 +4725,13 @@ TypeConditionContext.prototype.words = function() {
 };
 
 TypeConditionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterTypeCondition(this);
 	}
 };
 
 TypeConditionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitTypeCondition(this);
 	}
 };
@@ -4740,12 +4739,12 @@ TypeConditionContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.TypeConditionContext = TypeConditionContext;
+rulePadGrammarParser.TypeConditionContext = TypeConditionContext;
 
-myGrammarParser.prototype.typeCondition = function() {
+rulePadGrammarParser.prototype.typeCondition = function() {
 
     var localctx = new TypeConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 86, myGrammarParser.RULE_typeCondition);
+    this.enterRule(localctx, 86, rulePadGrammarParser.RULE_typeCondition);
     try {
         this.state = 522;
         this._errHandler.sync(this);
@@ -4756,7 +4755,7 @@ myGrammarParser.prototype.typeCondition = function() {
             this.state = 516;
             this.combinatorialWords();
             this.state = 517;
-            this.match(myGrammarParser.SPACE);
+            this.match(rulePadGrammarParser.SPACE);
             break;
 
         case 2:
@@ -4764,7 +4763,7 @@ myGrammarParser.prototype.typeCondition = function() {
             this.state = 519;
             this.words();
             this.state = 520;
-            this.match(myGrammarParser.SPACE);
+            this.match(rulePadGrammarParser.SPACE);
             break;
 
         }
@@ -4791,7 +4790,7 @@ function SpecifiersContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_specifiers;
+    this.ruleIndex = rulePadGrammarParser.RULE_specifiers;
     return this;
 }
 
@@ -4799,7 +4798,7 @@ SpecifiersContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
 SpecifiersContext.prototype.constructor = SpecifiersContext;
 
 SpecifiersContext.prototype.SPECIFIER = function() {
-    return this.getToken(myGrammarParser.SPECIFIER, 0);
+    return this.getToken(rulePadGrammarParser.SPECIFIER, 0);
 };
 
 SpecifiersContext.prototype.specifierCondition = function() {
@@ -4807,13 +4806,13 @@ SpecifiersContext.prototype.specifierCondition = function() {
 };
 
 SpecifiersContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterSpecifiers(this);
 	}
 };
 
 SpecifiersContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitSpecifiers(this);
 	}
 };
@@ -4821,16 +4820,16 @@ SpecifiersContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.SpecifiersContext = SpecifiersContext;
+rulePadGrammarParser.SpecifiersContext = SpecifiersContext;
 
-myGrammarParser.prototype.specifiers = function() {
+rulePadGrammarParser.prototype.specifiers = function() {
 
     var localctx = new SpecifiersContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 88, myGrammarParser.RULE_specifiers);
+    this.enterRule(localctx, 88, rulePadGrammarParser.RULE_specifiers);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 524;
-        this.match(myGrammarParser.SPECIFIER);
+        this.match(rulePadGrammarParser.SPECIFIER);
         this.state = 526;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,53,this._ctx);
@@ -4862,7 +4861,7 @@ function SpecifierConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_specifierCondition;
+    this.ruleIndex = rulePadGrammarParser.RULE_specifierCondition;
     return this;
 }
 
@@ -4874,17 +4873,17 @@ SpecifierConditionContext.prototype.words = function() {
 };
 
 SpecifierConditionContext.prototype.SPACE = function() {
-    return this.getToken(myGrammarParser.SPACE, 0);
+    return this.getToken(rulePadGrammarParser.SPACE, 0);
 };
 
 SpecifierConditionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterSpecifierCondition(this);
 	}
 };
 
 SpecifierConditionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitSpecifierCondition(this);
 	}
 };
@@ -4892,18 +4891,18 @@ SpecifierConditionContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.SpecifierConditionContext = SpecifierConditionContext;
+rulePadGrammarParser.SpecifierConditionContext = SpecifierConditionContext;
 
-myGrammarParser.prototype.specifierCondition = function() {
+rulePadGrammarParser.prototype.specifierCondition = function() {
 
     var localctx = new SpecifierConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 90, myGrammarParser.RULE_specifierCondition);
+    this.enterRule(localctx, 90, rulePadGrammarParser.RULE_specifierCondition);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 528;
         this.words();
         this.state = 529;
-        this.match(myGrammarParser.SPACE);
+        this.match(rulePadGrammarParser.SPACE);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -4927,7 +4926,7 @@ function VisibilitiesContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_visibilities;
+    this.ruleIndex = rulePadGrammarParser.RULE_visibilities;
     return this;
 }
 
@@ -4935,7 +4934,7 @@ VisibilitiesContext.prototype = Object.create(antlr4.ParserRuleContext.prototype
 VisibilitiesContext.prototype.constructor = VisibilitiesContext;
 
 VisibilitiesContext.prototype.VISIBILITY = function() {
-    return this.getToken(myGrammarParser.VISIBILITY, 0);
+    return this.getToken(rulePadGrammarParser.VISIBILITY, 0);
 };
 
 VisibilitiesContext.prototype.visibilityCondition = function() {
@@ -4943,13 +4942,13 @@ VisibilitiesContext.prototype.visibilityCondition = function() {
 };
 
 VisibilitiesContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterVisibilities(this);
 	}
 };
 
 VisibilitiesContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitVisibilities(this);
 	}
 };
@@ -4957,16 +4956,16 @@ VisibilitiesContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.VisibilitiesContext = VisibilitiesContext;
+rulePadGrammarParser.VisibilitiesContext = VisibilitiesContext;
 
-myGrammarParser.prototype.visibilities = function() {
+rulePadGrammarParser.prototype.visibilities = function() {
 
     var localctx = new VisibilitiesContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 92, myGrammarParser.RULE_visibilities);
+    this.enterRule(localctx, 92, rulePadGrammarParser.RULE_visibilities);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 531;
-        this.match(myGrammarParser.VISIBILITY);
+        this.match(rulePadGrammarParser.VISIBILITY);
         this.state = 533;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,54,this._ctx);
@@ -4998,7 +4997,7 @@ function VisibilityConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_visibilityCondition;
+    this.ruleIndex = rulePadGrammarParser.RULE_visibilityCondition;
     return this;
 }
 
@@ -5010,17 +5009,17 @@ VisibilityConditionContext.prototype.words = function() {
 };
 
 VisibilityConditionContext.prototype.SPACE = function() {
-    return this.getToken(myGrammarParser.SPACE, 0);
+    return this.getToken(rulePadGrammarParser.SPACE, 0);
 };
 
 VisibilityConditionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterVisibilityCondition(this);
 	}
 };
 
 VisibilityConditionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitVisibilityCondition(this);
 	}
 };
@@ -5028,18 +5027,18 @@ VisibilityConditionContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.VisibilityConditionContext = VisibilityConditionContext;
+rulePadGrammarParser.VisibilityConditionContext = VisibilityConditionContext;
 
-myGrammarParser.prototype.visibilityCondition = function() {
+rulePadGrammarParser.prototype.visibilityCondition = function() {
 
     var localctx = new VisibilityConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 94, myGrammarParser.RULE_visibilityCondition);
+    this.enterRule(localctx, 94, rulePadGrammarParser.RULE_visibilityCondition);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 535;
         this.words();
         this.state = 536;
-        this.match(myGrammarParser.SPACE);
+        this.match(rulePadGrammarParser.SPACE);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -5063,7 +5062,7 @@ function ReturnValuesContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_returnValues;
+    this.ruleIndex = rulePadGrammarParser.RULE_returnValues;
     return this;
 }
 
@@ -5071,7 +5070,7 @@ ReturnValuesContext.prototype = Object.create(antlr4.ParserRuleContext.prototype
 ReturnValuesContext.prototype.constructor = ReturnValuesContext;
 
 ReturnValuesContext.prototype.ReturnValue = function() {
-    return this.getToken(myGrammarParser.ReturnValue, 0);
+    return this.getToken(rulePadGrammarParser.ReturnValue, 0);
 };
 
 ReturnValuesContext.prototype.returnValueCondition = function() {
@@ -5079,13 +5078,13 @@ ReturnValuesContext.prototype.returnValueCondition = function() {
 };
 
 ReturnValuesContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterReturnValues(this);
 	}
 };
 
 ReturnValuesContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitReturnValues(this);
 	}
 };
@@ -5093,16 +5092,16 @@ ReturnValuesContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.ReturnValuesContext = ReturnValuesContext;
+rulePadGrammarParser.ReturnValuesContext = ReturnValuesContext;
 
-myGrammarParser.prototype.returnValues = function() {
+rulePadGrammarParser.prototype.returnValues = function() {
 
     var localctx = new ReturnValuesContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 96, myGrammarParser.RULE_returnValues);
+    this.enterRule(localctx, 96, rulePadGrammarParser.RULE_returnValues);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 538;
-        this.match(myGrammarParser.ReturnValue);
+        this.match(rulePadGrammarParser.ReturnValue);
         this.state = 540;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,55,this._ctx);
@@ -5134,7 +5133,7 @@ function ReturnValueConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_returnValueCondition;
+    this.ruleIndex = rulePadGrammarParser.RULE_returnValueCondition;
     return this;
 }
 
@@ -5146,17 +5145,17 @@ ReturnValueConditionContext.prototype.combinatorialWords = function() {
 };
 
 ReturnValueConditionContext.prototype.SPACE = function() {
-    return this.getToken(myGrammarParser.SPACE, 0);
+    return this.getToken(rulePadGrammarParser.SPACE, 0);
 };
 
 ReturnValueConditionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterReturnValueCondition(this);
 	}
 };
 
 ReturnValueConditionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitReturnValueCondition(this);
 	}
 };
@@ -5164,18 +5163,18 @@ ReturnValueConditionContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.ReturnValueConditionContext = ReturnValueConditionContext;
+rulePadGrammarParser.ReturnValueConditionContext = ReturnValueConditionContext;
 
-myGrammarParser.prototype.returnValueCondition = function() {
+rulePadGrammarParser.prototype.returnValueCondition = function() {
 
     var localctx = new ReturnValueConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 98, myGrammarParser.RULE_returnValueCondition);
+    this.enterRule(localctx, 98, rulePadGrammarParser.RULE_returnValueCondition);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 542;
         this.combinatorialWords();
         this.state = 543;
-        this.match(myGrammarParser.SPACE);
+        this.match(rulePadGrammarParser.SPACE);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -5199,7 +5198,7 @@ function DeclarationStatementsContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_declarationStatements;
+    this.ruleIndex = rulePadGrammarParser.RULE_declarationStatements;
     return this;
 }
 
@@ -5207,7 +5206,7 @@ DeclarationStatementsContext.prototype = Object.create(antlr4.ParserRuleContext.
 DeclarationStatementsContext.prototype.constructor = DeclarationStatementsContext;
 
 DeclarationStatementsContext.prototype.DeclarationStatement = function() {
-    return this.getToken(myGrammarParser.DeclarationStatement, 0);
+    return this.getToken(rulePadGrammarParser.DeclarationStatement, 0);
 };
 
 DeclarationStatementsContext.prototype.declarationStatementCondition = function() {
@@ -5219,13 +5218,13 @@ DeclarationStatementsContext.prototype.declarationStatementOf = function() {
 };
 
 DeclarationStatementsContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterDeclarationStatements(this);
 	}
 };
 
 DeclarationStatementsContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitDeclarationStatements(this);
 	}
 };
@@ -5233,16 +5232,16 @@ DeclarationStatementsContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.DeclarationStatementsContext = DeclarationStatementsContext;
+rulePadGrammarParser.DeclarationStatementsContext = DeclarationStatementsContext;
 
-myGrammarParser.prototype.declarationStatements = function() {
+rulePadGrammarParser.prototype.declarationStatements = function() {
 
     var localctx = new DeclarationStatementsContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 100, myGrammarParser.RULE_declarationStatements);
+    this.enterRule(localctx, 100, rulePadGrammarParser.RULE_declarationStatements);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 545;
-        this.match(myGrammarParser.DeclarationStatement);
+        this.match(rulePadGrammarParser.DeclarationStatement);
         this.state = 547;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,56,this._ctx);
@@ -5282,7 +5281,7 @@ function DeclarationStatementOfContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_declarationStatementOf;
+    this.ruleIndex = rulePadGrammarParser.RULE_declarationStatementOf;
     return this;
 }
 
@@ -5306,13 +5305,13 @@ DeclarationStatementOfContext.prototype.constructors = function() {
 };
 
 DeclarationStatementOfContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterDeclarationStatementOf(this);
 	}
 };
 
 DeclarationStatementOfContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitDeclarationStatementOf(this);
 	}
 };
@@ -5320,12 +5319,12 @@ DeclarationStatementOfContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.DeclarationStatementOfContext = DeclarationStatementOfContext;
+rulePadGrammarParser.DeclarationStatementOfContext = DeclarationStatementOfContext;
 
-myGrammarParser.prototype.declarationStatementOf = function() {
+rulePadGrammarParser.prototype.declarationStatementOf = function() {
 
     var localctx = new DeclarationStatementOfContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 102, myGrammarParser.RULE_declarationStatementOf);
+    this.enterRule(localctx, 102, rulePadGrammarParser.RULE_declarationStatementOf);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 552;
@@ -5333,15 +5332,15 @@ myGrammarParser.prototype.declarationStatementOf = function() {
         this.state = 556;
         this._errHandler.sync(this);
         switch(this._input.LA(1)) {
-        case myGrammarParser.CLASSES:
+        case rulePadGrammarParser.CLASSES:
             this.state = 553;
             this.classes();
             break;
-        case myGrammarParser.FUNCTION:
+        case rulePadGrammarParser.FUNCTION:
             this.state = 554;
             this.functions();
             break;
-        case myGrammarParser.CONSTRUCTOR:
+        case rulePadGrammarParser.CONSTRUCTOR:
             this.state = 555;
             this.constructors();
             break;
@@ -5371,7 +5370,7 @@ function DeclarationStatementConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_declarationStatementCondition;
+    this.ruleIndex = rulePadGrammarParser.RULE_declarationStatementCondition;
     return this;
 }
 
@@ -5387,13 +5386,13 @@ DeclarationStatementConditionContext.prototype.declarationStatementExpression = 
 };
 
 DeclarationStatementConditionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterDeclarationStatementCondition(this);
 	}
 };
 
 DeclarationStatementConditionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitDeclarationStatementCondition(this);
 	}
 };
@@ -5401,12 +5400,12 @@ DeclarationStatementConditionContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.DeclarationStatementConditionContext = DeclarationStatementConditionContext;
+rulePadGrammarParser.DeclarationStatementConditionContext = DeclarationStatementConditionContext;
 
-myGrammarParser.prototype.declarationStatementCondition = function() {
+rulePadGrammarParser.prototype.declarationStatementCondition = function() {
 
     var localctx = new DeclarationStatementConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 104, myGrammarParser.RULE_declarationStatementCondition);
+    this.enterRule(localctx, 104, rulePadGrammarParser.RULE_declarationStatementCondition);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 558;
@@ -5436,7 +5435,7 @@ function DeclarationStatementExpressionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_declarationStatementExpression;
+    this.ruleIndex = rulePadGrammarParser.RULE_declarationStatementExpression;
     this.left = null; // DeclarationStatementExpressionContext
     this.op = null; // BinaryContext
     this.right = null; // DeclarationStatementExpressionContext
@@ -5447,7 +5446,7 @@ DeclarationStatementExpressionContext.prototype = Object.create(antlr4.ParserRul
 DeclarationStatementExpressionContext.prototype.constructor = DeclarationStatementExpressionContext;
 
 DeclarationStatementExpressionContext.prototype.LPAREN = function() {
-    return this.getToken(myGrammarParser.LPAREN, 0);
+    return this.getToken(rulePadGrammarParser.LPAREN, 0);
 };
 
 DeclarationStatementExpressionContext.prototype.declarationStatementExpression = function(i) {
@@ -5462,7 +5461,7 @@ DeclarationStatementExpressionContext.prototype.declarationStatementExpression =
 };
 
 DeclarationStatementExpressionContext.prototype.RPAREN = function() {
-    return this.getToken(myGrammarParser.RPAREN, 0);
+    return this.getToken(rulePadGrammarParser.RPAREN, 0);
 };
 
 DeclarationStatementExpressionContext.prototype.annotations = function() {
@@ -5498,24 +5497,24 @@ DeclarationStatementExpressionContext.prototype.binary = function() {
 };
 
 DeclarationStatementExpressionContext.prototype.SPACE = function() {
-    return this.getToken(myGrammarParser.SPACE, 0);
+    return this.getToken(rulePadGrammarParser.SPACE, 0);
 };
 
 DeclarationStatementExpressionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterDeclarationStatementExpression(this);
 	}
 };
 
 DeclarationStatementExpressionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitDeclarationStatementExpression(this);
 	}
 };
 
 
 
-myGrammarParser.prototype.declarationStatementExpression = function(_p) {
+rulePadGrammarParser.prototype.declarationStatementExpression = function(_p) {
 	if(_p===undefined) {
 	    _p = 0;
 	}
@@ -5524,55 +5523,55 @@ myGrammarParser.prototype.declarationStatementExpression = function(_p) {
     var localctx = new DeclarationStatementExpressionContext(this, this._ctx, _parentState);
     var _prevctx = localctx;
     var _startState = 106;
-    this.enterRecursionRule(localctx, 106, myGrammarParser.RULE_declarationStatementExpression, _p);
+    this.enterRecursionRule(localctx, 106, rulePadGrammarParser.RULE_declarationStatementExpression, _p);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 575;
         this._errHandler.sync(this);
         switch(this._input.LA(1)) {
-        case myGrammarParser.LPAREN:
+        case rulePadGrammarParser.LPAREN:
             this.state = 562;
-            this.match(myGrammarParser.LPAREN);
+            this.match(rulePadGrammarParser.LPAREN);
             this.state = 563;
             this.declarationStatementExpression(0);
             this.state = 564;
-            this.match(myGrammarParser.RPAREN);
+            this.match(rulePadGrammarParser.RPAREN);
             break;
-        case myGrammarParser.T__0:
-        case myGrammarParser.NAME:
-        case myGrammarParser.ANNOTATION:
-        case myGrammarParser.TYPES:
-        case myGrammarParser.SPECIFIER:
-        case myGrammarParser.VISIBILITY:
-        case myGrammarParser.InitialValue:
+        case rulePadGrammarParser.T__0:
+        case rulePadGrammarParser.NAME:
+        case rulePadGrammarParser.ANNOTATION:
+        case rulePadGrammarParser.TYPES:
+        case rulePadGrammarParser.SPECIFIER:
+        case rulePadGrammarParser.VISIBILITY:
+        case rulePadGrammarParser.InitialValue:
             this.state = 573;
             this._errHandler.sync(this);
             switch(this._input.LA(1)) {
-            case myGrammarParser.ANNOTATION:
+            case rulePadGrammarParser.ANNOTATION:
                 this.state = 566;
                 this.annotations();
                 break;
-            case myGrammarParser.SPECIFIER:
+            case rulePadGrammarParser.SPECIFIER:
                 this.state = 567;
                 this.specifiers();
                 break;
-            case myGrammarParser.VISIBILITY:
+            case rulePadGrammarParser.VISIBILITY:
                 this.state = 568;
                 this.visibilities();
                 break;
-            case myGrammarParser.TYPES:
+            case rulePadGrammarParser.TYPES:
                 this.state = 569;
                 this.types();
                 break;
-            case myGrammarParser.NAME:
+            case rulePadGrammarParser.NAME:
                 this.state = 570;
                 this.names();
                 break;
-            case myGrammarParser.InitialValue:
+            case rulePadGrammarParser.InitialValue:
                 this.state = 571;
                 this.initialValues();
                 break;
-            case myGrammarParser.T__0:
+            case rulePadGrammarParser.T__0:
                 this.state = 572;
                 this.comments();
                 break;
@@ -5600,7 +5599,7 @@ myGrammarParser.prototype.declarationStatementExpression = function(_p) {
                 case 1:
                     localctx = new DeclarationStatementExpressionContext(this, _parentctx, _parentState);
                     localctx.left = _prevctx;
-                    this.pushNewRecursionContext(localctx, _startState, myGrammarParser.RULE_declarationStatementExpression);
+                    this.pushNewRecursionContext(localctx, _startState, rulePadGrammarParser.RULE_declarationStatementExpression);
                     this.state = 577;
                     if (!( this.precpred(this._ctx, 3))) {
                         throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 3)");
@@ -5613,13 +5612,13 @@ myGrammarParser.prototype.declarationStatementExpression = function(_p) {
 
                 case 2:
                     localctx = new DeclarationStatementExpressionContext(this, _parentctx, _parentState);
-                    this.pushNewRecursionContext(localctx, _startState, myGrammarParser.RULE_declarationStatementExpression);
+                    this.pushNewRecursionContext(localctx, _startState, rulePadGrammarParser.RULE_declarationStatementExpression);
                     this.state = 581;
                     if (!( this.precpred(this._ctx, 1))) {
                         throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 1)");
                     }
                     this.state = 582;
-                    this.match(myGrammarParser.SPACE);
+                    this.match(rulePadGrammarParser.SPACE);
                     break;
 
                 } 
@@ -5652,7 +5651,7 @@ function ExpressionStatementsContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_expressionStatements;
+    this.ruleIndex = rulePadGrammarParser.RULE_expressionStatements;
     return this;
 }
 
@@ -5660,7 +5659,7 @@ ExpressionStatementsContext.prototype = Object.create(antlr4.ParserRuleContext.p
 ExpressionStatementsContext.prototype.constructor = ExpressionStatementsContext;
 
 ExpressionStatementsContext.prototype.ExpressionStatement = function() {
-    return this.getToken(myGrammarParser.ExpressionStatement, 0);
+    return this.getToken(rulePadGrammarParser.ExpressionStatement, 0);
 };
 
 ExpressionStatementsContext.prototype.expressionStatementCondition = function() {
@@ -5672,13 +5671,13 @@ ExpressionStatementsContext.prototype.expressionStatementOf = function() {
 };
 
 ExpressionStatementsContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterExpressionStatements(this);
 	}
 };
 
 ExpressionStatementsContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitExpressionStatements(this);
 	}
 };
@@ -5686,16 +5685,16 @@ ExpressionStatementsContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.ExpressionStatementsContext = ExpressionStatementsContext;
+rulePadGrammarParser.ExpressionStatementsContext = ExpressionStatementsContext;
 
-myGrammarParser.prototype.expressionStatements = function() {
+rulePadGrammarParser.prototype.expressionStatements = function() {
 
     var localctx = new ExpressionStatementsContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 108, myGrammarParser.RULE_expressionStatements);
+    this.enterRule(localctx, 108, rulePadGrammarParser.RULE_expressionStatements);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 588;
-        this.match(myGrammarParser.ExpressionStatement);
+        this.match(rulePadGrammarParser.ExpressionStatement);
         this.state = 590;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,63,this._ctx);
@@ -5735,7 +5734,7 @@ function ExpressionStatementOfContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_expressionStatementOf;
+    this.ruleIndex = rulePadGrammarParser.RULE_expressionStatementOf;
     return this;
 }
 
@@ -5755,13 +5754,13 @@ ExpressionStatementOfContext.prototype.constructors = function() {
 };
 
 ExpressionStatementOfContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterExpressionStatementOf(this);
 	}
 };
 
 ExpressionStatementOfContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitExpressionStatementOf(this);
 	}
 };
@@ -5769,12 +5768,12 @@ ExpressionStatementOfContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.ExpressionStatementOfContext = ExpressionStatementOfContext;
+rulePadGrammarParser.ExpressionStatementOfContext = ExpressionStatementOfContext;
 
-myGrammarParser.prototype.expressionStatementOf = function() {
+rulePadGrammarParser.prototype.expressionStatementOf = function() {
 
     var localctx = new ExpressionStatementOfContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 110, myGrammarParser.RULE_expressionStatementOf);
+    this.enterRule(localctx, 110, rulePadGrammarParser.RULE_expressionStatementOf);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 595;
@@ -5822,7 +5821,7 @@ function ExpressionStatementConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_expressionStatementCondition;
+    this.ruleIndex = rulePadGrammarParser.RULE_expressionStatementCondition;
     return this;
 }
 
@@ -5838,13 +5837,13 @@ ExpressionStatementConditionContext.prototype.expressionStatementExpression = fu
 };
 
 ExpressionStatementConditionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterExpressionStatementCondition(this);
 	}
 };
 
 ExpressionStatementConditionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitExpressionStatementCondition(this);
 	}
 };
@@ -5852,12 +5851,12 @@ ExpressionStatementConditionContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.ExpressionStatementConditionContext = ExpressionStatementConditionContext;
+rulePadGrammarParser.ExpressionStatementConditionContext = ExpressionStatementConditionContext;
 
-myGrammarParser.prototype.expressionStatementCondition = function() {
+rulePadGrammarParser.prototype.expressionStatementCondition = function() {
 
     var localctx = new ExpressionStatementConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 112, myGrammarParser.RULE_expressionStatementCondition);
+    this.enterRule(localctx, 112, rulePadGrammarParser.RULE_expressionStatementCondition);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 601;
@@ -5887,7 +5886,7 @@ function ExpressionStatementExpressionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_expressionStatementExpression;
+    this.ruleIndex = rulePadGrammarParser.RULE_expressionStatementExpression;
     this.left = null; // ExpressionStatementExpressionContext
     this.op = null; // BinaryContext
     this.right = null; // ExpressionStatementExpressionContext
@@ -5898,7 +5897,7 @@ ExpressionStatementExpressionContext.prototype = Object.create(antlr4.ParserRule
 ExpressionStatementExpressionContext.prototype.constructor = ExpressionStatementExpressionContext;
 
 ExpressionStatementExpressionContext.prototype.LPAREN = function() {
-    return this.getToken(myGrammarParser.LPAREN, 0);
+    return this.getToken(rulePadGrammarParser.LPAREN, 0);
 };
 
 ExpressionStatementExpressionContext.prototype.expressionStatementExpression = function(i) {
@@ -5913,7 +5912,7 @@ ExpressionStatementExpressionContext.prototype.expressionStatementExpression = f
 };
 
 ExpressionStatementExpressionContext.prototype.RPAREN = function() {
-    return this.getToken(myGrammarParser.RPAREN, 0);
+    return this.getToken(rulePadGrammarParser.RPAREN, 0);
 };
 
 ExpressionStatementExpressionContext.prototype.comments = function() {
@@ -5929,24 +5928,24 @@ ExpressionStatementExpressionContext.prototype.binary = function() {
 };
 
 ExpressionStatementExpressionContext.prototype.SPACE = function() {
-    return this.getToken(myGrammarParser.SPACE, 0);
+    return this.getToken(rulePadGrammarParser.SPACE, 0);
 };
 
 ExpressionStatementExpressionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterExpressionStatementExpression(this);
 	}
 };
 
 ExpressionStatementExpressionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitExpressionStatementExpression(this);
 	}
 };
 
 
 
-myGrammarParser.prototype.expressionStatementExpression = function(_p) {
+rulePadGrammarParser.prototype.expressionStatementExpression = function(_p) {
 	if(_p===undefined) {
 	    _p = 0;
 	}
@@ -5955,30 +5954,30 @@ myGrammarParser.prototype.expressionStatementExpression = function(_p) {
     var localctx = new ExpressionStatementExpressionContext(this, this._ctx, _parentState);
     var _prevctx = localctx;
     var _startState = 114;
-    this.enterRecursionRule(localctx, 114, myGrammarParser.RULE_expressionStatementExpression, _p);
+    this.enterRecursionRule(localctx, 114, rulePadGrammarParser.RULE_expressionStatementExpression, _p);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 613;
         this._errHandler.sync(this);
         switch(this._input.LA(1)) {
-        case myGrammarParser.LPAREN:
+        case rulePadGrammarParser.LPAREN:
             this.state = 605;
-            this.match(myGrammarParser.LPAREN);
+            this.match(rulePadGrammarParser.LPAREN);
             this.state = 606;
             this.expressionStatementExpression(0);
             this.state = 607;
-            this.match(myGrammarParser.RPAREN);
+            this.match(rulePadGrammarParser.RPAREN);
             break;
-        case myGrammarParser.T__0:
-        case myGrammarParser.VALUE:
+        case rulePadGrammarParser.T__0:
+        case rulePadGrammarParser.VALUE:
             this.state = 611;
             this._errHandler.sync(this);
             switch(this._input.LA(1)) {
-            case myGrammarParser.T__0:
+            case rulePadGrammarParser.T__0:
                 this.state = 609;
                 this.comments();
                 break;
-            case myGrammarParser.VALUE:
+            case rulePadGrammarParser.VALUE:
                 this.state = 610;
                 this.value();
                 break;
@@ -6006,7 +6005,7 @@ myGrammarParser.prototype.expressionStatementExpression = function(_p) {
                 case 1:
                     localctx = new ExpressionStatementExpressionContext(this, _parentctx, _parentState);
                     localctx.left = _prevctx;
-                    this.pushNewRecursionContext(localctx, _startState, myGrammarParser.RULE_expressionStatementExpression);
+                    this.pushNewRecursionContext(localctx, _startState, rulePadGrammarParser.RULE_expressionStatementExpression);
                     this.state = 615;
                     if (!( this.precpred(this._ctx, 3))) {
                         throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 3)");
@@ -6019,13 +6018,13 @@ myGrammarParser.prototype.expressionStatementExpression = function(_p) {
 
                 case 2:
                     localctx = new ExpressionStatementExpressionContext(this, _parentctx, _parentState);
-                    this.pushNewRecursionContext(localctx, _startState, myGrammarParser.RULE_expressionStatementExpression);
+                    this.pushNewRecursionContext(localctx, _startState, rulePadGrammarParser.RULE_expressionStatementExpression);
                     this.state = 619;
                     if (!( this.precpred(this._ctx, 1))) {
                         throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 1)");
                     }
                     this.state = 620;
-                    this.match(myGrammarParser.SPACE);
+                    this.match(rulePadGrammarParser.SPACE);
                     break;
 
                 } 
@@ -6058,7 +6057,7 @@ function ValueContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_value;
+    this.ruleIndex = rulePadGrammarParser.RULE_value;
     return this;
 }
 
@@ -6066,7 +6065,7 @@ ValueContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
 ValueContext.prototype.constructor = ValueContext;
 
 ValueContext.prototype.VALUE = function() {
-    return this.getToken(myGrammarParser.VALUE, 0);
+    return this.getToken(rulePadGrammarParser.VALUE, 0);
 };
 
 ValueContext.prototype.valueCondition = function() {
@@ -6074,13 +6073,13 @@ ValueContext.prototype.valueCondition = function() {
 };
 
 ValueContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterValue(this);
 	}
 };
 
 ValueContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitValue(this);
 	}
 };
@@ -6088,16 +6087,16 @@ ValueContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.ValueContext = ValueContext;
+rulePadGrammarParser.ValueContext = ValueContext;
 
-myGrammarParser.prototype.value = function() {
+rulePadGrammarParser.prototype.value = function() {
 
     var localctx = new ValueContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 116, myGrammarParser.RULE_value);
+    this.enterRule(localctx, 116, rulePadGrammarParser.RULE_value);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 626;
-        this.match(myGrammarParser.VALUE);
+        this.match(rulePadGrammarParser.VALUE);
         this.state = 628;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,70,this._ctx);
@@ -6129,7 +6128,7 @@ function ValueConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_valueCondition;
+    this.ruleIndex = rulePadGrammarParser.RULE_valueCondition;
     return this;
 }
 
@@ -6141,17 +6140,17 @@ ValueConditionContext.prototype.combinatorialWords = function() {
 };
 
 ValueConditionContext.prototype.SPACE = function() {
-    return this.getToken(myGrammarParser.SPACE, 0);
+    return this.getToken(rulePadGrammarParser.SPACE, 0);
 };
 
 ValueConditionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterValueCondition(this);
 	}
 };
 
 ValueConditionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitValueCondition(this);
 	}
 };
@@ -6159,18 +6158,18 @@ ValueConditionContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.ValueConditionContext = ValueConditionContext;
+rulePadGrammarParser.ValueConditionContext = ValueConditionContext;
 
-myGrammarParser.prototype.valueCondition = function() {
+rulePadGrammarParser.prototype.valueCondition = function() {
 
     var localctx = new ValueConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 118, myGrammarParser.RULE_valueCondition);
+    this.enterRule(localctx, 118, rulePadGrammarParser.RULE_valueCondition);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 630;
         this.combinatorialWords();
         this.state = 631;
-        this.match(myGrammarParser.SPACE);
+        this.match(rulePadGrammarParser.SPACE);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -6194,7 +6193,7 @@ function InitialValuesContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_initialValues;
+    this.ruleIndex = rulePadGrammarParser.RULE_initialValues;
     return this;
 }
 
@@ -6202,7 +6201,7 @@ InitialValuesContext.prototype = Object.create(antlr4.ParserRuleContext.prototyp
 InitialValuesContext.prototype.constructor = InitialValuesContext;
 
 InitialValuesContext.prototype.InitialValue = function() {
-    return this.getToken(myGrammarParser.InitialValue, 0);
+    return this.getToken(rulePadGrammarParser.InitialValue, 0);
 };
 
 InitialValuesContext.prototype.initialValueCondition = function() {
@@ -6214,13 +6213,13 @@ InitialValuesContext.prototype.initialValueOf = function() {
 };
 
 InitialValuesContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterInitialValues(this);
 	}
 };
 
 InitialValuesContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitInitialValues(this);
 	}
 };
@@ -6228,16 +6227,16 @@ InitialValuesContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.InitialValuesContext = InitialValuesContext;
+rulePadGrammarParser.InitialValuesContext = InitialValuesContext;
 
-myGrammarParser.prototype.initialValues = function() {
+rulePadGrammarParser.prototype.initialValues = function() {
 
     var localctx = new InitialValuesContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 120, myGrammarParser.RULE_initialValues);
+    this.enterRule(localctx, 120, rulePadGrammarParser.RULE_initialValues);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 633;
-        this.match(myGrammarParser.InitialValue);
+        this.match(rulePadGrammarParser.InitialValue);
         this.state = 635;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,71,this._ctx);
@@ -6277,7 +6276,7 @@ function InitialValueOfContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_initialValueOf;
+    this.ruleIndex = rulePadGrammarParser.RULE_initialValueOf;
     return this;
 }
 
@@ -6293,13 +6292,13 @@ InitialValueOfContext.prototype.declarationStatements = function() {
 };
 
 InitialValueOfContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterInitialValueOf(this);
 	}
 };
 
 InitialValueOfContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitInitialValueOf(this);
 	}
 };
@@ -6307,12 +6306,12 @@ InitialValueOfContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.InitialValueOfContext = InitialValueOfContext;
+rulePadGrammarParser.InitialValueOfContext = InitialValueOfContext;
 
-myGrammarParser.prototype.initialValueOf = function() {
+rulePadGrammarParser.prototype.initialValueOf = function() {
 
     var localctx = new InitialValueOfContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 122, myGrammarParser.RULE_initialValueOf);
+    this.enterRule(localctx, 122, rulePadGrammarParser.RULE_initialValueOf);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 640;
@@ -6342,7 +6341,7 @@ function InitialValueConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_initialValueCondition;
+    this.ruleIndex = rulePadGrammarParser.RULE_initialValueCondition;
     return this;
 }
 
@@ -6354,17 +6353,17 @@ InitialValueConditionContext.prototype.combinatorialWords = function() {
 };
 
 InitialValueConditionContext.prototype.SPACE = function() {
-    return this.getToken(myGrammarParser.SPACE, 0);
+    return this.getToken(rulePadGrammarParser.SPACE, 0);
 };
 
 InitialValueConditionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterInitialValueCondition(this);
 	}
 };
 
 InitialValueConditionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitInitialValueCondition(this);
 	}
 };
@@ -6372,18 +6371,18 @@ InitialValueConditionContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.InitialValueConditionContext = InitialValueConditionContext;
+rulePadGrammarParser.InitialValueConditionContext = InitialValueConditionContext;
 
-myGrammarParser.prototype.initialValueCondition = function() {
+rulePadGrammarParser.prototype.initialValueCondition = function() {
 
     var localctx = new InitialValueConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 124, myGrammarParser.RULE_initialValueCondition);
+    this.enterRule(localctx, 124, rulePadGrammarParser.RULE_initialValueCondition);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 643;
         this.combinatorialWords();
         this.state = 644;
-        this.match(myGrammarParser.SPACE);
+        this.match(rulePadGrammarParser.SPACE);
     } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
@@ -6407,7 +6406,7 @@ function ClassesContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_classes;
+    this.ruleIndex = rulePadGrammarParser.RULE_classes;
     return this;
 }
 
@@ -6415,7 +6414,7 @@ ClassesContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
 ClassesContext.prototype.constructor = ClassesContext;
 
 ClassesContext.prototype.CLASSES = function() {
-    return this.getToken(myGrammarParser.CLASSES, 0);
+    return this.getToken(rulePadGrammarParser.CLASSES, 0);
 };
 
 ClassesContext.prototype.classCondition = function() {
@@ -6423,13 +6422,13 @@ ClassesContext.prototype.classCondition = function() {
 };
 
 ClassesContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterClasses(this);
 	}
 };
 
 ClassesContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitClasses(this);
 	}
 };
@@ -6437,16 +6436,16 @@ ClassesContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.ClassesContext = ClassesContext;
+rulePadGrammarParser.ClassesContext = ClassesContext;
 
-myGrammarParser.prototype.classes = function() {
+rulePadGrammarParser.prototype.classes = function() {
 
     var localctx = new ClassesContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 126, myGrammarParser.RULE_classes);
+    this.enterRule(localctx, 126, rulePadGrammarParser.RULE_classes);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 646;
-        this.match(myGrammarParser.CLASSES);
+        this.match(rulePadGrammarParser.CLASSES);
         this.state = 648;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,73,this._ctx);
@@ -6478,7 +6477,7 @@ function ClassConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_classCondition;
+    this.ruleIndex = rulePadGrammarParser.RULE_classCondition;
     return this;
 }
 
@@ -6494,13 +6493,13 @@ ClassConditionContext.prototype.classExpression = function() {
 };
 
 ClassConditionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterClassCondition(this);
 	}
 };
 
 ClassConditionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitClassCondition(this);
 	}
 };
@@ -6508,12 +6507,12 @@ ClassConditionContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.ClassConditionContext = ClassConditionContext;
+rulePadGrammarParser.ClassConditionContext = ClassConditionContext;
 
-myGrammarParser.prototype.classCondition = function() {
+rulePadGrammarParser.prototype.classCondition = function() {
 
     var localctx = new ClassConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 128, myGrammarParser.RULE_classCondition);
+    this.enterRule(localctx, 128, rulePadGrammarParser.RULE_classCondition);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 650;
@@ -6543,7 +6542,7 @@ function ClassExpressionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_classExpression;
+    this.ruleIndex = rulePadGrammarParser.RULE_classExpression;
     this.left = null; // ClassExpressionContext
     this.op = null; // BinaryContext
     this.right = null; // ClassExpressionContext
@@ -6554,7 +6553,7 @@ ClassExpressionContext.prototype = Object.create(antlr4.ParserRuleContext.protot
 ClassExpressionContext.prototype.constructor = ClassExpressionContext;
 
 ClassExpressionContext.prototype.LPAREN = function() {
-    return this.getToken(myGrammarParser.LPAREN, 0);
+    return this.getToken(rulePadGrammarParser.LPAREN, 0);
 };
 
 ClassExpressionContext.prototype.classExpression = function(i) {
@@ -6569,7 +6568,7 @@ ClassExpressionContext.prototype.classExpression = function(i) {
 };
 
 ClassExpressionContext.prototype.RPAREN = function() {
-    return this.getToken(myGrammarParser.RPAREN, 0);
+    return this.getToken(rulePadGrammarParser.RPAREN, 0);
 };
 
 ClassExpressionContext.prototype.annotations = function() {
@@ -6629,24 +6628,24 @@ ClassExpressionContext.prototype.binary = function() {
 };
 
 ClassExpressionContext.prototype.SPACE = function() {
-    return this.getToken(myGrammarParser.SPACE, 0);
+    return this.getToken(rulePadGrammarParser.SPACE, 0);
 };
 
 ClassExpressionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterClassExpression(this);
 	}
 };
 
 ClassExpressionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitClassExpression(this);
 	}
 };
 
 
 
-myGrammarParser.prototype.classExpression = function(_p) {
+rulePadGrammarParser.prototype.classExpression = function(_p) {
 	if(_p===undefined) {
 	    _p = 0;
 	}
@@ -6655,85 +6654,85 @@ myGrammarParser.prototype.classExpression = function(_p) {
     var localctx = new ClassExpressionContext(this, this._ctx, _parentState);
     var _prevctx = localctx;
     var _startState = 130;
-    this.enterRecursionRule(localctx, 130, myGrammarParser.RULE_classExpression, _p);
+    this.enterRecursionRule(localctx, 130, rulePadGrammarParser.RULE_classExpression, _p);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 673;
         this._errHandler.sync(this);
         switch(this._input.LA(1)) {
-        case myGrammarParser.LPAREN:
+        case rulePadGrammarParser.LPAREN:
             this.state = 654;
-            this.match(myGrammarParser.LPAREN);
+            this.match(rulePadGrammarParser.LPAREN);
             this.state = 655;
             this.classExpression(0);
             this.state = 656;
-            this.match(myGrammarParser.RPAREN);
+            this.match(rulePadGrammarParser.RPAREN);
             break;
-        case myGrammarParser.T__0:
-        case myGrammarParser.NAME:
-        case myGrammarParser.ANNOTATION:
-        case myGrammarParser.EXTENSION:
-        case myGrammarParser.IMPLEMENTATION:
-        case myGrammarParser.FUNCTION:
-        case myGrammarParser.AbstractFunctions:
-        case myGrammarParser.CONSTRUCTOR:
-        case myGrammarParser.SPECIFIER:
-        case myGrammarParser.VISIBILITY:
-        case myGrammarParser.ReturnValue:
-        case myGrammarParser.DeclarationStatement:
-        case myGrammarParser.SUBCLASSES:
+        case rulePadGrammarParser.T__0:
+        case rulePadGrammarParser.NAME:
+        case rulePadGrammarParser.ANNOTATION:
+        case rulePadGrammarParser.EXTENSION:
+        case rulePadGrammarParser.IMPLEMENTATION:
+        case rulePadGrammarParser.FUNCTION:
+        case rulePadGrammarParser.AbstractFunctions:
+        case rulePadGrammarParser.CONSTRUCTOR:
+        case rulePadGrammarParser.SPECIFIER:
+        case rulePadGrammarParser.VISIBILITY:
+        case rulePadGrammarParser.ReturnValue:
+        case rulePadGrammarParser.DeclarationStatement:
+        case rulePadGrammarParser.SUBCLASSES:
             this.state = 671;
             this._errHandler.sync(this);
             switch(this._input.LA(1)) {
-            case myGrammarParser.ANNOTATION:
+            case rulePadGrammarParser.ANNOTATION:
                 this.state = 658;
                 this.annotations();
                 break;
-            case myGrammarParser.SPECIFIER:
+            case rulePadGrammarParser.SPECIFIER:
                 this.state = 659;
                 this.specifiers();
                 break;
-            case myGrammarParser.VISIBILITY:
+            case rulePadGrammarParser.VISIBILITY:
                 this.state = 660;
                 this.visibilities();
                 break;
-            case myGrammarParser.NAME:
+            case rulePadGrammarParser.NAME:
                 this.state = 661;
                 this.names();
                 break;
-            case myGrammarParser.EXTENSION:
+            case rulePadGrammarParser.EXTENSION:
                 this.state = 662;
                 this.extensions();
                 break;
-            case myGrammarParser.IMPLEMENTATION:
+            case rulePadGrammarParser.IMPLEMENTATION:
                 this.state = 663;
                 this.implementations();
                 break;
-            case myGrammarParser.FUNCTION:
+            case rulePadGrammarParser.FUNCTION:
                 this.state = 664;
                 this.functions();
                 break;
-            case myGrammarParser.AbstractFunctions:
+            case rulePadGrammarParser.AbstractFunctions:
                 this.state = 665;
                 this.abstractFunctions();
                 break;
-            case myGrammarParser.CONSTRUCTOR:
+            case rulePadGrammarParser.CONSTRUCTOR:
                 this.state = 666;
                 this.constructors();
                 break;
-            case myGrammarParser.DeclarationStatement:
+            case rulePadGrammarParser.DeclarationStatement:
                 this.state = 667;
                 this.declarationStatements();
                 break;
-            case myGrammarParser.ReturnValue:
+            case rulePadGrammarParser.ReturnValue:
                 this.state = 668;
                 this.returnValues();
                 break;
-            case myGrammarParser.T__0:
+            case rulePadGrammarParser.T__0:
                 this.state = 669;
                 this.comments();
                 break;
-            case myGrammarParser.SUBCLASSES:
+            case rulePadGrammarParser.SUBCLASSES:
                 this.state = 670;
                 this.subclasses();
                 break;
@@ -6761,7 +6760,7 @@ myGrammarParser.prototype.classExpression = function(_p) {
                 case 1:
                     localctx = new ClassExpressionContext(this, _parentctx, _parentState);
                     localctx.left = _prevctx;
-                    this.pushNewRecursionContext(localctx, _startState, myGrammarParser.RULE_classExpression);
+                    this.pushNewRecursionContext(localctx, _startState, rulePadGrammarParser.RULE_classExpression);
                     this.state = 675;
                     if (!( this.precpred(this._ctx, 3))) {
                         throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 3)");
@@ -6774,13 +6773,13 @@ myGrammarParser.prototype.classExpression = function(_p) {
 
                 case 2:
                     localctx = new ClassExpressionContext(this, _parentctx, _parentState);
-                    this.pushNewRecursionContext(localctx, _startState, myGrammarParser.RULE_classExpression);
+                    this.pushNewRecursionContext(localctx, _startState, rulePadGrammarParser.RULE_classExpression);
                     this.state = 679;
                     if (!( this.precpred(this._ctx, 1))) {
                         throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 1)");
                     }
                     this.state = 680;
-                    this.match(myGrammarParser.SPACE);
+                    this.match(rulePadGrammarParser.SPACE);
                     break;
 
                 } 
@@ -6813,7 +6812,7 @@ function SubclassesContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_subclasses;
+    this.ruleIndex = rulePadGrammarParser.RULE_subclasses;
     return this;
 }
 
@@ -6821,7 +6820,7 @@ SubclassesContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
 SubclassesContext.prototype.constructor = SubclassesContext;
 
 SubclassesContext.prototype.SUBCLASSES = function() {
-    return this.getToken(myGrammarParser.SUBCLASSES, 0);
+    return this.getToken(rulePadGrammarParser.SUBCLASSES, 0);
 };
 
 SubclassesContext.prototype.subclassCondition = function() {
@@ -6833,13 +6832,13 @@ SubclassesContext.prototype.subclassOf = function() {
 };
 
 SubclassesContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterSubclasses(this);
 	}
 };
 
 SubclassesContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitSubclasses(this);
 	}
 };
@@ -6847,16 +6846,16 @@ SubclassesContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.SubclassesContext = SubclassesContext;
+rulePadGrammarParser.SubclassesContext = SubclassesContext;
 
-myGrammarParser.prototype.subclasses = function() {
+rulePadGrammarParser.prototype.subclasses = function() {
 
     var localctx = new SubclassesContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 132, myGrammarParser.RULE_subclasses);
+    this.enterRule(localctx, 132, rulePadGrammarParser.RULE_subclasses);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 686;
-        this.match(myGrammarParser.SUBCLASSES);
+        this.match(rulePadGrammarParser.SUBCLASSES);
         this.state = 688;
         this._errHandler.sync(this);
         var la_ = this._interp.adaptivePredict(this._input,78,this._ctx);
@@ -6896,7 +6895,7 @@ function SubclassOfContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_subclassOf;
+    this.ruleIndex = rulePadGrammarParser.RULE_subclassOf;
     return this;
 }
 
@@ -6912,13 +6911,13 @@ SubclassOfContext.prototype.classes = function() {
 };
 
 SubclassOfContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterSubclassOf(this);
 	}
 };
 
 SubclassOfContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitSubclassOf(this);
 	}
 };
@@ -6926,12 +6925,12 @@ SubclassOfContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.SubclassOfContext = SubclassOfContext;
+rulePadGrammarParser.SubclassOfContext = SubclassOfContext;
 
-myGrammarParser.prototype.subclassOf = function() {
+rulePadGrammarParser.prototype.subclassOf = function() {
 
     var localctx = new SubclassOfContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 134, myGrammarParser.RULE_subclassOf);
+    this.enterRule(localctx, 134, rulePadGrammarParser.RULE_subclassOf);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 693;
@@ -6961,7 +6960,7 @@ function SubclassConditionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_subclassCondition;
+    this.ruleIndex = rulePadGrammarParser.RULE_subclassCondition;
     return this;
 }
 
@@ -6977,13 +6976,13 @@ SubclassConditionContext.prototype.subclassExpression = function() {
 };
 
 SubclassConditionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterSubclassCondition(this);
 	}
 };
 
 SubclassConditionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitSubclassCondition(this);
 	}
 };
@@ -6991,12 +6990,12 @@ SubclassConditionContext.prototype.exitRule = function(listener) {
 
 
 
-myGrammarParser.SubclassConditionContext = SubclassConditionContext;
+rulePadGrammarParser.SubclassConditionContext = SubclassConditionContext;
 
-myGrammarParser.prototype.subclassCondition = function() {
+rulePadGrammarParser.prototype.subclassCondition = function() {
 
     var localctx = new SubclassConditionContext(this, this._ctx, this.state);
-    this.enterRule(localctx, 136, myGrammarParser.RULE_subclassCondition);
+    this.enterRule(localctx, 136, rulePadGrammarParser.RULE_subclassCondition);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 696;
@@ -7026,7 +7025,7 @@ function SubclassExpressionContext(parser, parent, invokingState) {
 	}
 	antlr4.ParserRuleContext.call(this, parent, invokingState);
     this.parser = parser;
-    this.ruleIndex = myGrammarParser.RULE_subclassExpression;
+    this.ruleIndex = rulePadGrammarParser.RULE_subclassExpression;
     this.left = null; // SubclassExpressionContext
     this.op = null; // BinaryContext
     this.right = null; // SubclassExpressionContext
@@ -7037,7 +7036,7 @@ SubclassExpressionContext.prototype = Object.create(antlr4.ParserRuleContext.pro
 SubclassExpressionContext.prototype.constructor = SubclassExpressionContext;
 
 SubclassExpressionContext.prototype.LPAREN = function() {
-    return this.getToken(myGrammarParser.LPAREN, 0);
+    return this.getToken(rulePadGrammarParser.LPAREN, 0);
 };
 
 SubclassExpressionContext.prototype.subclassExpression = function(i) {
@@ -7052,7 +7051,7 @@ SubclassExpressionContext.prototype.subclassExpression = function(i) {
 };
 
 SubclassExpressionContext.prototype.RPAREN = function() {
-    return this.getToken(myGrammarParser.RPAREN, 0);
+    return this.getToken(rulePadGrammarParser.RPAREN, 0);
 };
 
 SubclassExpressionContext.prototype.annotations = function() {
@@ -7112,24 +7111,24 @@ SubclassExpressionContext.prototype.binary = function() {
 };
 
 SubclassExpressionContext.prototype.SPACE = function() {
-    return this.getToken(myGrammarParser.SPACE, 0);
+    return this.getToken(rulePadGrammarParser.SPACE, 0);
 };
 
 SubclassExpressionContext.prototype.enterRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.enterSubclassExpression(this);
 	}
 };
 
 SubclassExpressionContext.prototype.exitRule = function(listener) {
-    if(listener instanceof myGrammarListener ) {
+    if(listener instanceof rulePadGrammarListener ) {
         listener.exitSubclassExpression(this);
 	}
 };
 
 
 
-myGrammarParser.prototype.subclassExpression = function(_p) {
+rulePadGrammarParser.prototype.subclassExpression = function(_p) {
 	if(_p===undefined) {
 	    _p = 0;
 	}
@@ -7138,7 +7137,7 @@ myGrammarParser.prototype.subclassExpression = function(_p) {
     var localctx = new SubclassExpressionContext(this, this._ctx, _parentState);
     var _prevctx = localctx;
     var _startState = 138;
-    this.enterRecursionRule(localctx, 138, myGrammarParser.RULE_subclassExpression, _p);
+    this.enterRecursionRule(localctx, 138, rulePadGrammarParser.RULE_subclassExpression, _p);
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 720;
@@ -7147,11 +7146,11 @@ myGrammarParser.prototype.subclassExpression = function(_p) {
         switch(la_) {
         case 1:
             this.state = 700;
-            this.match(myGrammarParser.LPAREN);
+            this.match(rulePadGrammarParser.LPAREN);
             this.state = 701;
             this.subclassExpression(0);
             this.state = 702;
-            this.match(myGrammarParser.RPAREN);
+            this.match(rulePadGrammarParser.RPAREN);
             break;
 
         case 2:
@@ -7248,7 +7247,7 @@ myGrammarParser.prototype.subclassExpression = function(_p) {
                 case 1:
                     localctx = new SubclassExpressionContext(this, _parentctx, _parentState);
                     localctx.left = _prevctx;
-                    this.pushNewRecursionContext(localctx, _startState, myGrammarParser.RULE_subclassExpression);
+                    this.pushNewRecursionContext(localctx, _startState, rulePadGrammarParser.RULE_subclassExpression);
                     this.state = 722;
                     if (!( this.precpred(this._ctx, 3))) {
                         throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 3)");
@@ -7261,13 +7260,13 @@ myGrammarParser.prototype.subclassExpression = function(_p) {
 
                 case 2:
                     localctx = new SubclassExpressionContext(this, _parentctx, _parentState);
-                    this.pushNewRecursionContext(localctx, _startState, myGrammarParser.RULE_subclassExpression);
+                    this.pushNewRecursionContext(localctx, _startState, rulePadGrammarParser.RULE_subclassExpression);
                     this.state = 726;
                     if (!( this.precpred(this._ctx, 1))) {
                         throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 1)");
                     }
                     this.state = 727;
-                    this.match(myGrammarParser.SPACE);
+                    this.match(rulePadGrammarParser.SPACE);
                     break;
 
                 } 
@@ -7292,7 +7291,7 @@ myGrammarParser.prototype.subclassExpression = function(_p) {
 };
 
 
-myGrammarParser.prototype.sempred = function(localctx, ruleIndex, predIndex) {
+rulePadGrammarParser.prototype.sempred = function(localctx, ruleIndex, predIndex) {
 	switch(ruleIndex) {
 	case 30:
 			return this.functionExpression_sempred(localctx, predIndex);
@@ -7315,7 +7314,7 @@ myGrammarParser.prototype.sempred = function(localctx, ruleIndex, predIndex) {
    }
 };
 
-myGrammarParser.prototype.functionExpression_sempred = function(localctx, predIndex) {
+rulePadGrammarParser.prototype.functionExpression_sempred = function(localctx, predIndex) {
 	switch(predIndex) {
 		case 0:
 			return this.precpred(this._ctx, 3);
@@ -7326,7 +7325,7 @@ myGrammarParser.prototype.functionExpression_sempred = function(localctx, predIn
 	}
 };
 
-myGrammarParser.prototype.abstractFunctionExpression_sempred = function(localctx, predIndex) {
+rulePadGrammarParser.prototype.abstractFunctionExpression_sempred = function(localctx, predIndex) {
 	switch(predIndex) {
 		case 2:
 			return this.precpred(this._ctx, 3);
@@ -7337,7 +7336,7 @@ myGrammarParser.prototype.abstractFunctionExpression_sempred = function(localctx
 	}
 };
 
-myGrammarParser.prototype.constructorExpression_sempred = function(localctx, predIndex) {
+rulePadGrammarParser.prototype.constructorExpression_sempred = function(localctx, predIndex) {
 	switch(predIndex) {
 		case 4:
 			return this.precpred(this._ctx, 3);
@@ -7348,7 +7347,7 @@ myGrammarParser.prototype.constructorExpression_sempred = function(localctx, pre
 	}
 };
 
-myGrammarParser.prototype.parameterExpression_sempred = function(localctx, predIndex) {
+rulePadGrammarParser.prototype.parameterExpression_sempred = function(localctx, predIndex) {
 	switch(predIndex) {
 		case 6:
 			return this.precpred(this._ctx, 3);
@@ -7359,7 +7358,7 @@ myGrammarParser.prototype.parameterExpression_sempred = function(localctx, predI
 	}
 };
 
-myGrammarParser.prototype.declarationStatementExpression_sempred = function(localctx, predIndex) {
+rulePadGrammarParser.prototype.declarationStatementExpression_sempred = function(localctx, predIndex) {
 	switch(predIndex) {
 		case 8:
 			return this.precpred(this._ctx, 3);
@@ -7370,7 +7369,7 @@ myGrammarParser.prototype.declarationStatementExpression_sempred = function(loca
 	}
 };
 
-myGrammarParser.prototype.expressionStatementExpression_sempred = function(localctx, predIndex) {
+rulePadGrammarParser.prototype.expressionStatementExpression_sempred = function(localctx, predIndex) {
 	switch(predIndex) {
 		case 10:
 			return this.precpred(this._ctx, 3);
@@ -7381,7 +7380,7 @@ myGrammarParser.prototype.expressionStatementExpression_sempred = function(local
 	}
 };
 
-myGrammarParser.prototype.classExpression_sempred = function(localctx, predIndex) {
+rulePadGrammarParser.prototype.classExpression_sempred = function(localctx, predIndex) {
 	switch(predIndex) {
 		case 12:
 			return this.precpred(this._ctx, 3);
@@ -7392,7 +7391,7 @@ myGrammarParser.prototype.classExpression_sempred = function(localctx, predIndex
 	}
 };
 
-myGrammarParser.prototype.subclassExpression_sempred = function(localctx, predIndex) {
+rulePadGrammarParser.prototype.subclassExpression_sempred = function(localctx, predIndex) {
 	switch(predIndex) {
 		case 14:
 			return this.precpred(this._ctx, 3);
@@ -7404,4 +7403,4 @@ myGrammarParser.prototype.subclassExpression_sempred = function(localctx, predIn
 };
 
 
-exports.myGrammarParser = myGrammarParser;
+exports.rulePadGrammarParser = rulePadGrammarParser;

@@ -1,6 +1,5 @@
-// Generated from myGrammar.g4 by ANTLR 4.7.1
+// Generated from rulePadGrammar.g4 by ANTLR 4.7.1
 // jshint ignore: start
-/* eslint-disable */
 var antlr4 = require('antlr4/index');
 
 
@@ -448,148 +447,156 @@ var atn = new antlr4.atn.ATNDeserializer().deserialize(serializedATN);
 
 var decisionsToDFA = atn.decisionToState.map( function(ds, index) { return new antlr4.dfa.DFA(ds, index); });
 
-function myGrammarLexer(input) {
+function rulePadGrammarLexer(input) {
 	antlr4.Lexer.call(this, input);
     this._interp = new antlr4.atn.LexerATNSimulator(this, atn, decisionsToDFA, new antlr4.PredictionContextCache());
     return this;
 }
 
-myGrammarLexer.prototype = Object.create(antlr4.Lexer.prototype);
-myGrammarLexer.prototype.constructor = myGrammarLexer;
+rulePadGrammarLexer.prototype = Object.create(antlr4.Lexer.prototype);
+rulePadGrammarLexer.prototype.constructor = rulePadGrammarLexer;
 
-Object.defineProperty(myGrammarLexer.prototype, "atn", {
+Object.defineProperty(rulePadGrammarLexer.prototype, "atn", {
         get : function() {
                 return atn;
         }
 });
 
-myGrammarLexer.EOF = antlr4.Token.EOF;
-myGrammarLexer.T__0 = 1;
-myGrammarLexer.T__1 = 2;
-myGrammarLexer.T__2 = 3;
-myGrammarLexer.T__3 = 4;
-myGrammarLexer.T__4 = 5;
-myGrammarLexer.T__5 = 6;
-myGrammarLexer.T__6 = 7;
-myGrammarLexer.T__7 = 8;
-myGrammarLexer.T__8 = 9;
-myGrammarLexer.T__9 = 10;
-myGrammarLexer.T__10 = 11;
-myGrammarLexer.T__11 = 12;
-myGrammarLexer.T__12 = 13;
-myGrammarLexer.T__13 = 14;
-myGrammarLexer.T__14 = 15;
-myGrammarLexer.T__15 = 16;
-myGrammarLexer.T__16 = 17;
-myGrammarLexer.T__17 = 18;
-myGrammarLexer.T__18 = 19;
-myGrammarLexer.T__19 = 20;
-myGrammarLexer.T__20 = 21;
-myGrammarLexer.T__21 = 22;
-myGrammarLexer.T__22 = 23;
-myGrammarLexer.T__23 = 24;
-myGrammarLexer.T__24 = 25;
-myGrammarLexer.T__25 = 26;
-myGrammarLexer.T__26 = 27;
-myGrammarLexer.T__27 = 28;
-myGrammarLexer.T__28 = 29;
-myGrammarLexer.T__29 = 30;
-myGrammarLexer.T__30 = 31;
-myGrammarLexer.T__31 = 32;
-myGrammarLexer.T__32 = 33;
-myGrammarLexer.SPACE = 34;
-myGrammarLexer.Alphabet = 35;
-myGrammarLexer.NL = 36;
-myGrammarLexer.LPAREN = 37;
-myGrammarLexer.RPAREN = 38;
-myGrammarLexer.NAME = 39;
-myGrammarLexer.ANNOTATION = 40;
-myGrammarLexer.EXTENSION = 41;
-myGrammarLexer.SUPERCLASS = 42;
-myGrammarLexer.IMPLEMENTATION = 43;
-myGrammarLexer.INTERFACE = 44;
-myGrammarLexer.FUNCTION = 45;
-myGrammarLexer.AbstractFunctions = 46;
-myGrammarLexer.CONSTRUCTOR = 47;
-myGrammarLexer.PARAMETER = 48;
-myGrammarLexer.TYPES = 49;
-myGrammarLexer.SPECIFIER = 50;
-myGrammarLexer.VISIBILITY = 51;
-myGrammarLexer.ReturnValue = 52;
-myGrammarLexer.DeclarationStatement = 53;
-myGrammarLexer.ExpressionStatement = 54;
-myGrammarLexer.VALUE = 55;
-myGrammarLexer.InitialValue = 56;
-myGrammarLexer.CLASSES = 57;
-myGrammarLexer.SUBCLASSES = 58;
+rulePadGrammarLexer.EOF = antlr4.Token.EOF;
+rulePadGrammarLexer.T__0 = 1;
+rulePadGrammarLexer.T__1 = 2;
+rulePadGrammarLexer.T__2 = 3;
+rulePadGrammarLexer.T__3 = 4;
+rulePadGrammarLexer.T__4 = 5;
+rulePadGrammarLexer.T__5 = 6;
+rulePadGrammarLexer.T__6 = 7;
+rulePadGrammarLexer.T__7 = 8;
+rulePadGrammarLexer.T__8 = 9;
+rulePadGrammarLexer.T__9 = 10;
+rulePadGrammarLexer.T__10 = 11;
+rulePadGrammarLexer.T__11 = 12;
+rulePadGrammarLexer.T__12 = 13;
+rulePadGrammarLexer.T__13 = 14;
+rulePadGrammarLexer.T__14 = 15;
+rulePadGrammarLexer.T__15 = 16;
+rulePadGrammarLexer.T__16 = 17;
+rulePadGrammarLexer.T__17 = 18;
+rulePadGrammarLexer.T__18 = 19;
+rulePadGrammarLexer.T__19 = 20;
+rulePadGrammarLexer.T__20 = 21;
+rulePadGrammarLexer.T__21 = 22;
+rulePadGrammarLexer.T__22 = 23;
+rulePadGrammarLexer.T__23 = 24;
+rulePadGrammarLexer.T__24 = 25;
+rulePadGrammarLexer.T__25 = 26;
+rulePadGrammarLexer.T__26 = 27;
+rulePadGrammarLexer.T__27 = 28;
+rulePadGrammarLexer.T__28 = 29;
+rulePadGrammarLexer.T__29 = 30;
+rulePadGrammarLexer.T__30 = 31;
+rulePadGrammarLexer.T__31 = 32;
+rulePadGrammarLexer.T__32 = 33;
+rulePadGrammarLexer.SPACE = 34;
+rulePadGrammarLexer.Alphabet = 35;
+rulePadGrammarLexer.NL = 36;
+rulePadGrammarLexer.LPAREN = 37;
+rulePadGrammarLexer.RPAREN = 38;
+rulePadGrammarLexer.NAME = 39;
+rulePadGrammarLexer.ANNOTATION = 40;
+rulePadGrammarLexer.EXTENSION = 41;
+rulePadGrammarLexer.SUPERCLASS = 42;
+rulePadGrammarLexer.IMPLEMENTATION = 43;
+rulePadGrammarLexer.INTERFACE = 44;
+rulePadGrammarLexer.FUNCTION = 45;
+rulePadGrammarLexer.AbstractFunctions = 46;
+rulePadGrammarLexer.CONSTRUCTOR = 47;
+rulePadGrammarLexer.PARAMETER = 48;
+rulePadGrammarLexer.TYPES = 49;
+rulePadGrammarLexer.SPECIFIER = 50;
+rulePadGrammarLexer.VISIBILITY = 51;
+rulePadGrammarLexer.ReturnValue = 52;
+rulePadGrammarLexer.DeclarationStatement = 53;
+rulePadGrammarLexer.ExpressionStatement = 54;
+rulePadGrammarLexer.VALUE = 55;
+rulePadGrammarLexer.InitialValue = 56;
+rulePadGrammarLexer.CLASSES = 57;
+rulePadGrammarLexer.SUBCLASSES = 58;
 
-myGrammarLexer.prototype.channelNames = [ "DEFAULT_TOKEN_CHANNEL", "HIDDEN" ];
+rulePadGrammarLexer.prototype.channelNames = [ "DEFAULT_TOKEN_CHANNEL", "HIDDEN" ];
 
-myGrammarLexer.prototype.modeNames = [ "DEFAULT_MODE" ];
+rulePadGrammarLexer.prototype.modeNames = [ "DEFAULT_MODE" ];
 
-myGrammarLexer.prototype.literalNames = [ null, "'\"'", "'||'", "'&&'", 
-                                          "'!'", "'...'", "'!...'", "'.'", 
-                                          "'='", "'>'", "'<'", "','", "'''", 
-                                          "'&'", "'No Constructor'", "'No Function'", 
-                                          "'Empty Body'", "'No Parameter'", 
-                                          "'Initialization'", "'Calling Constructor: '", 
-                                          "'Calling Function: '", "'Modifying Field: '", 
-                                          "'Calling a Function With Argument: '", 
-                                          "'Initialized by Calling Function: '", 
-                                          "'Initialized by Calling a Function With Argument: '", 
-                                          "'Initialized with: '", "'Caller: '", 
-                                          "'Assigned Value: '", "'must '", 
-                                          "'of '", "'and '", "'or '", "'have '", 
-                                          "'with '", null, null, null, "'('", 
-                                          "')'", "'name '", "'annotation '", 
-                                          "'extension '", "'Superclass'", 
-                                          "'implementation '", "'Interface '", 
-                                          "'function '", "'abstract function '", 
-                                          "'constructor '", "'parameter '", 
-                                          "'type '", "'specifier '", "'visibility '", 
-                                          "'return value '", "'declaration statement '", 
-                                          "'expression statement '", "'value '", 
-                                          "'initial value '", "'class '", 
-                                          "'subclass '" ];
+rulePadGrammarLexer.prototype.literalNames = [ null, "'\"'", "'||'", "'&&'", 
+                                               "'!'", "'...'", "'!...'", 
+                                               "'.'", "'='", "'>'", "'<'", 
+                                               "','", "'''", "'&'", "'No Constructor'", 
+                                               "'No Function'", "'Empty Body'", 
+                                               "'No Parameter'", "'Initialization'", 
+                                               "'Calling Constructor: '", 
+                                               "'Calling Function: '", "'Modifying Field: '", 
+                                               "'Calling a Function With Argument: '", 
+                                               "'Initialized by Calling Function: '", 
+                                               "'Initialized by Calling a Function With Argument: '", 
+                                               "'Initialized with: '", "'Caller: '", 
+                                               "'Assigned Value: '", "'must '", 
+                                               "'of '", "'and '", "'or '", 
+                                               "'have '", "'with '", null, 
+                                               null, null, "'('", "')'", 
+                                               "'name '", "'annotation '", 
+                                               "'extension '", "'Superclass'", 
+                                               "'implementation '", "'Interface '", 
+                                               "'function '", "'abstract function '", 
+                                               "'constructor '", "'parameter '", 
+                                               "'type '", "'specifier '", 
+                                               "'visibility '", "'return value '", 
+                                               "'declaration statement '", 
+                                               "'expression statement '", 
+                                               "'value '", "'initial value '", 
+                                               "'class '", "'subclass '" ];
 
-myGrammarLexer.prototype.symbolicNames = [ null, null, null, null, null, 
-                                           null, null, null, null, null, 
-                                           null, null, null, null, null, 
-                                           null, null, null, null, null, 
-                                           null, null, null, null, null, 
-                                           null, null, null, null, null, 
-                                           null, null, null, null, "SPACE", 
-                                           "Alphabet", "NL", "LPAREN", "RPAREN", 
-                                           "NAME", "ANNOTATION", "EXTENSION", 
-                                           "SUPERCLASS", "IMPLEMENTATION", 
-                                           "INTERFACE", "FUNCTION", "AbstractFunctions", 
-                                           "CONSTRUCTOR", "PARAMETER", "TYPES", 
-                                           "SPECIFIER", "VISIBILITY", "ReturnValue", 
-                                           "DeclarationStatement", "ExpressionStatement", 
-                                           "VALUE", "InitialValue", "CLASSES", 
-                                           "SUBCLASSES" ];
+rulePadGrammarLexer.prototype.symbolicNames = [ null, null, null, null, 
+                                                null, null, null, null, 
+                                                null, null, null, null, 
+                                                null, null, null, null, 
+                                                null, null, null, null, 
+                                                null, null, null, null, 
+                                                null, null, null, null, 
+                                                null, null, null, null, 
+                                                null, null, "SPACE", "Alphabet", 
+                                                "NL", "LPAREN", "RPAREN", 
+                                                "NAME", "ANNOTATION", "EXTENSION", 
+                                                "SUPERCLASS", "IMPLEMENTATION", 
+                                                "INTERFACE", "FUNCTION", 
+                                                "AbstractFunctions", "CONSTRUCTOR", 
+                                                "PARAMETER", "TYPES", "SPECIFIER", 
+                                                "VISIBILITY", "ReturnValue", 
+                                                "DeclarationStatement", 
+                                                "ExpressionStatement", "VALUE", 
+                                                "InitialValue", "CLASSES", 
+                                                "SUBCLASSES" ];
 
-myGrammarLexer.prototype.ruleNames = [ "T__0", "T__1", "T__2", "T__3", "T__4", 
-                                       "T__5", "T__6", "T__7", "T__8", "T__9", 
-                                       "T__10", "T__11", "T__12", "T__13", 
-                                       "T__14", "T__15", "T__16", "T__17", 
-                                       "T__18", "T__19", "T__20", "T__21", 
-                                       "T__22", "T__23", "T__24", "T__25", 
-                                       "T__26", "T__27", "T__28", "T__29", 
-                                       "T__30", "T__31", "T__32", "SPACE", 
-                                       "Alphabet", "NL", "LPAREN", "RPAREN", 
-                                       "NAME", "ANNOTATION", "EXTENSION", 
-                                       "SUPERCLASS", "IMPLEMENTATION", "INTERFACE", 
-                                       "FUNCTION", "AbstractFunctions", 
-                                       "CONSTRUCTOR", "PARAMETER", "TYPES", 
-                                       "SPECIFIER", "VISIBILITY", "ReturnValue", 
-                                       "DeclarationStatement", "ExpressionStatement", 
-                                       "VALUE", "InitialValue", "CLASSES", 
-                                       "SUBCLASSES" ];
+rulePadGrammarLexer.prototype.ruleNames = [ "T__0", "T__1", "T__2", "T__3", 
+                                            "T__4", "T__5", "T__6", "T__7", 
+                                            "T__8", "T__9", "T__10", "T__11", 
+                                            "T__12", "T__13", "T__14", "T__15", 
+                                            "T__16", "T__17", "T__18", "T__19", 
+                                            "T__20", "T__21", "T__22", "T__23", 
+                                            "T__24", "T__25", "T__26", "T__27", 
+                                            "T__28", "T__29", "T__30", "T__31", 
+                                            "T__32", "SPACE", "Alphabet", 
+                                            "NL", "LPAREN", "RPAREN", "NAME", 
+                                            "ANNOTATION", "EXTENSION", "SUPERCLASS", 
+                                            "IMPLEMENTATION", "INTERFACE", 
+                                            "FUNCTION", "AbstractFunctions", 
+                                            "CONSTRUCTOR", "PARAMETER", 
+                                            "TYPES", "SPECIFIER", "VISIBILITY", 
+                                            "ReturnValue", "DeclarationStatement", 
+                                            "ExpressionStatement", "VALUE", 
+                                            "InitialValue", "CLASSES", "SUBCLASSES" ];
 
-myGrammarLexer.prototype.grammarFileName = "myGrammar.g4";
+rulePadGrammarLexer.prototype.grammarFileName = "rulePadGrammar.g4";
 
 
 
-exports.myGrammarLexer = myGrammarLexer;
+exports.rulePadGrammarLexer = rulePadGrammarLexer;
 
