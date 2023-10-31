@@ -147,19 +147,21 @@ class RulePanel extends Component {
         let newState = {};
         this.ruleIndex = nextProps.ruleIndex !== undefined ? nextProps.ruleIndex : -1;
         let arrayIndex = nextProps.rules.map(d => d.index).indexOf(this.ruleIndex);
-        if (arrayIndex === -1)
-            console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
+        if (this.ruleIndex >= 0) {
+            if (arrayIndex === -1)
+                console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
                 Only ${nextProps.rules.map(d => d.index).toString()} are found as indices.`);
-        else {
-            this.ruleI = nextProps.rules[arrayIndex];
-            newState = {
-                title: this.ruleI.title,
-                description: this.ruleI.description,
-                ruleTags: this.ruleI.tags,
-                folderConstraint: this.ruleI.checkForFilesFoldersConstraints,
-                filesFolders: this.ruleI.checkForFilesFolders,
-                editMode: false
-            };
+            else {
+                this.ruleI = nextProps.rules[arrayIndex];
+                newState = {
+                    title: this.ruleI.title,
+                    description: this.ruleI.description,
+                    ruleTags: this.ruleI.tags,
+                    folderConstraint: this.ruleI.checkForFilesFoldersConstraints,
+                    filesFolders: this.ruleI.checkForFilesFolders,
+                    editMode: false
+                };
+            }
         }
 
         if (nextProps.message === reduxStoreMessages.hash_msg) {
