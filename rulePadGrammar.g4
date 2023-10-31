@@ -157,6 +157,7 @@ annotations
 
 annotationCondition
     : combinatorialWords SPACE
+    | words SPACE
     ;
 
 

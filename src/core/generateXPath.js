@@ -438,6 +438,11 @@ class GenerateXPath {
                         if (!isConstraintCondition) this.XPathQ += "[" + messageID + tempText + "]";
                         this.XPathC += "[" + messageID + tempText + "]";
                     }
+                    else if (nodeChildren[i].getChild(j).constructor.name === "WordsContext") {
+                        tempText = this.wordsContextTraversal(nodeChildren[i].getChild(j));
+                        if (!isConstraintCondition) this.XPathQ += "/src:name[" + tempText + "]";
+                        this.XPathC += "/src:name[" + tempText + "]";
+                    }
                 }
             }
         }

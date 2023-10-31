@@ -8,7 +8,7 @@ const element_conditions = {
         placeholder: "annotation",
         unique: true,
         grammar: "annotation",
-        wordValidation: "combinatorial"
+        wordValidation: "both"
     },
     visibility: {
         type: "dropdown",
