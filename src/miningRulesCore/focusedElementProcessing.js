@@ -49,12 +49,13 @@ export const getDataForFocusedElement = (xmlFile, startOffset) => {
         if (node === null) return null;
         if (node.nodeName === "unit") return node;
         let acceptedNodeType = focusElementType.map(d => d.nodeName);
+        let ancestor = findAncestorNode(node.parentNode);
         if (acceptedNodeType.includes(node.nodeName)) {
-            if (node.nodeName !== "class" && findAncestorNode(node.parentNode).nodeName !== "class")
-                return findAncestorNode(node.parentNode);
+            if (node.nodeName !== "class" && ancestor.nodeName !== "class")
+                return ancestor;
             return node;
         } else {
-            return findAncestorNode(node.parentNode)
+            return ancestor
         }
     }
 
