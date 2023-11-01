@@ -103,25 +103,25 @@ export const focusElementType = [
     {
         nodeName: "class",
         mapFocusedElementToFeaturesKey: "class_spec_body",
-        identifierXpath: "/src:class/src:name/text()",
+        identifierXpath: "/src:class/src:name//text()",
         title: "class"
     },
     {
         nodeName: "constructor",
         mapFocusedElementToFeaturesKey: "constr_spec_body",
-        identifierXpath: "/src:constructor/src:name/text()",
+        identifierXpath: "/src:constructor/src:name//text()",
         title: "class constructor"
     },
     {
         nodeName: "function",
         mapFocusedElementToFeaturesKey: "func_spec_body",
-        identifierXpath: "/src:function/src:name/text()",
+        identifierXpath: "/src:function/src:name//text()",
         title: "class function"
     },
     {
         nodeName: "decl_stmt",
         mapFocusedElementToFeaturesKey: "field_spec",
-        identifierXpath: "/src:decl_stmt/src:decl/src:name/text()",
+        identifierXpath: "/src:decl_stmt/src:decl/src:name//text()",
         title: "class field"
     },
 ]
