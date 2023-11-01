@@ -107,7 +107,7 @@ const element_conditions = {
         placeholder: "className",
         unique: true,
         grammar: "name",
-        wordValidation: "word"
+        wordValidation: "both"
     },
     class_implements: {
         type: "text",
@@ -118,7 +118,7 @@ const element_conditions = {
         unique: true,
         grammar: "implementation",
         required: "of ",
-        wordValidation: "word"
+        wordValidation: "both"
     },
     class_extends: {
         type: "text",
@@ -129,7 +129,7 @@ const element_conditions = {
         unique: true,
         grammar: "extension",
         required: "of ",
-        wordValidation: "word"
+        wordValidation: "both"
     },
     function_el: {
         type: "element",

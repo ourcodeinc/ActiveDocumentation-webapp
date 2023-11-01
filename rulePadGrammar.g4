@@ -143,6 +143,14 @@ nameCondition
     ;
 
 
+classNames
+    : NAME classNameCondition?
+    ;
+
+classNameCondition
+    : combinatorialWords SPACE
+    ;
+
 /*
     annotations
 */
@@ -178,7 +186,7 @@ extensions
     ;
 
 extensionCondition
-    : of ( words SPACE | SUPERCLASS)
+    : of ( combinatorialWords SPACE | words SPACE | SUPERCLASS)
     ;
 
 
@@ -199,7 +207,7 @@ implementations
     ;
 
 implementationCondition
-    : of ( words SPACE | INTERFACE )
+    : of ( combinatorialWords SPACE | words SPACE | INTERFACE )
     ;
 
 
@@ -490,7 +498,7 @@ classCondition
 classExpression
     : LPAREN classExpression RPAREN
     | left=classExpression op=binary right=classExpression
-    | ( annotations | specifiers | visibilities | names | extensions | implementations | functions
+    | ( annotations | specifiers | visibilities | classNames | extensions | implementations | functions
             | abstractFunctions | constructors | declarationStatements | returnValues  | comments | subclasses)
     | classExpression SPACE
     ;
@@ -519,7 +527,7 @@ subclassCondition
 subclassExpression
     : LPAREN subclassExpression RPAREN
     | left=subclassExpression op=binary right=subclassExpression
-    | ( annotations | specifiers | visibilities | names | extensions | implementations | functions | subclasses |
+    | ( annotations | specifiers | visibilities | classNames | extensions | implementations | functions | subclasses |
             | abstractFunctions | constructors | declarationStatements | returnValues  | comments )
     | subclassExpression SPACE
     ;

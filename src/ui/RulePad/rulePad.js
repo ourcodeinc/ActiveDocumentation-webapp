@@ -659,7 +659,7 @@ class RulePad extends Component {
                                    }}
                                onUpdate={(newAutoCompleteText) => {
                                        if (this.state.autoCompleteArray.map(d => d.text).join(" ") !== newAutoCompleteText
-                                           || this.state.constraintXPath === "" || this.state.quantifierXPath === "" || this.state.shouldUpdateSnippets)
+                                           || this.state.constraintXPath === "" || this.state.quantifierXPath === "") {
                                            verifyTextBasedOnGrammar(newAutoCompleteText)
                                                .then((data) => {
                                                    if (this.state.quantifierXPath !== data.quantifierXPath || this.state.constraintXPath !== data.constraintXPath) {
@@ -684,6 +684,12 @@ class RulePad extends Component {
                                                        shouldUpdateSnippets: false
                                                    })
                                                });
+                                       } else if (this.state.shouldUpdateSnippets) {
+                                           this.setState({
+                                               shouldUpdateSnippets: false,
+                                               editorError: ""
+                                           });
+                                       }
                                    }}
                                onError={(errorIndex) => this.processLanguageProcessingError("ERROR_INDEX", errorIndex)}
                 />

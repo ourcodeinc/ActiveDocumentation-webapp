@@ -173,8 +173,12 @@ const traverseNormalNode = (treeNode, isConstraint = false) => {
 
     // context nodes
     let keywords = grammar_keywords.slice().map(w => pluralize(w).split(" ").map(a => a.charAt(0).toUpperCase() + a.slice(1)).join(""));
+    // ClassNames is not included Grammar keywords
+    keywords.push("ClassNames");
     if (keywords.indexOf(treeNode.nodeType.replace("Context", "")) !== -1) {
-        guiNode.key = grammar_keywords[keywords.indexOf(treeNode.nodeType.replace("Context", ""))];
+        let nodeKey = treeNode.nodeType.replace("Context", "")
+            .replace("ClassNames", "Names");
+        guiNode.key = grammar_keywords[keywords.indexOf(nodeKey)];
         if (treeNode.children) {
             treeNode.children.forEach(child => {
                 if (child.nodeType.endsWith("OfContext")) {

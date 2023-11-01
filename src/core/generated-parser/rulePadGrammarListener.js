@@ -200,6 +200,24 @@ rulePadGrammarListener.prototype.exitNameCondition = function(ctx) {
 };
 
 
+// Enter a parse tree produced by rulePadGrammarParser#classNames.
+rulePadGrammarListener.prototype.enterClassNames = function(ctx) {
+};
+
+// Exit a parse tree produced by rulePadGrammarParser#classNames.
+rulePadGrammarListener.prototype.exitClassNames = function(ctx) {
+};
+
+
+// Enter a parse tree produced by rulePadGrammarParser#classNameCondition.
+rulePadGrammarListener.prototype.enterClassNameCondition = function(ctx) {
+};
+
+// Exit a parse tree produced by rulePadGrammarParser#classNameCondition.
+rulePadGrammarListener.prototype.exitClassNameCondition = function(ctx) {
+};
+
+
 // Enter a parse tree produced by rulePadGrammarParser#annotations.
 rulePadGrammarListener.prototype.enterAnnotations = function(ctx) {
 };

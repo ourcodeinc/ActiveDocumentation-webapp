@@ -140,6 +140,10 @@ class GenerateXPath {
                     this.namesContextTraversal(node, isConstraintCondition);
                     break;
 
+                case "ClassNamesContext":
+                    this.classNamesContextTraversal(node, isConstraintCondition);
+                    break;
+
                 case "AnnotationsContext":
                     this.annotationsContextTraversal(node, isConstraintCondition);
                     break;
@@ -383,6 +387,44 @@ class GenerateXPath {
         }
     }
 
+    classNamesContextTraversal(node, isConstraintCondition) {
+        let nodeChildren = node.children.slice(0);
+
+        for (let i = 0; i < node.children.length; i++) {
+            let nodeType = nodeChildren[i].constructor.name;
+
+            // process ofContext
+            if (nodeType === "NameOfContext") {
+                if (!isConstraintCondition) this.XPathQ += "[ancestor-or-self::";
+                this.XPathC += "[ancestor-or-self::";
+                this.traverseNode(nodeChildren[i], isConstraintCondition);
+                if (!isConstraintCondition) this.XPathQ += "]";
+                this.XPathC += "]";
+            }
+
+            if (nodeType === "TerminalNodeImpl") {
+                if (this.XPathQ === "" && !isConstraintCondition) this.XPathQ += "/";
+                if (this.XPathC === "") this.XPathC += "/";
+
+                if (!isConstraintCondition) this.XPathQ += "src:name";
+                this.XPathC += "src:name";
+            }
+
+            if (nodeType === "ClassNameConditionContext") {
+                let tempText = "";
+                let messageID = Math.floor(new Date().getTime() / 1000); // to match send and receive messages
+                for (let j = 0; j < nodeChildren[i].children.length; j++) {
+                    if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
+                        tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
+                        this.sendTextDataToSrcML(tempText, "className", messageID);
+                        if (!isConstraintCondition) this.XPathQ += "[" + messageID + tempText + "]";
+                        this.XPathC += "[" + messageID + tempText + "]";
+                    }
+                }
+            }
+        }
+    }
+
     // simplified version of wordsContextTraversal
     identifiersContextTraversal(node) {
         let identifierTraversal = (node) => {
@@ -473,11 +515,18 @@ class GenerateXPath {
 
             if (nodeType === "ExtensionConditionContext") {
                 let tempText = "";
+                let messageID = Math.floor(new Date().getTime() / 1000); // to match send and receive messages
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
                     if (nodeChildren[i].getChild(j).constructor.name === "WordsContext") {
                         tempText = this.wordsContextTraversal(nodeChildren[i].getChild(j));
                         if (!isConstraintCondition) this.XPathQ += "/src:name[" + tempText + "]";
                         this.XPathC += "/src:name[" + tempText + "]";
+                    }
+                    else if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
+                        tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
+                        this.sendTextDataToSrcML(tempText, "extensionImplementationName", messageID);
+                        if (!isConstraintCondition) this.XPathQ += "[" + messageID + tempText + "]";
+                        this.XPathC += "[" + messageID + tempText + "]";
                     }
                 }
             }
@@ -509,11 +558,18 @@ class GenerateXPath {
 
             if (nodeType === "ImplementationConditionContext") {
                 let tempText = "";
+                let messageID = Math.floor(new Date().getTime() / 1000); // to match send and receive messages
                 for (let j = 0; j < nodeChildren[i].children.length; j++) {
                     if (nodeChildren[i].getChild(j).constructor.name === "WordsContext") {
                         tempText = this.wordsContextTraversal(nodeChildren[i].getChild(j));
                         if (!isConstraintCondition) this.XPathQ += "/src:name[" + tempText + "]";
                         this.XPathC += "/src:name[" + tempText + "]";
+                    }
+                    else if (nodeChildren[i].getChild(j).constructor.name === "CombinatorialWordsContext") {
+                        tempText = this.combinatorialWordsContextTraversal(nodeChildren[i].getChild(j));
+                        this.sendTextDataToSrcML(tempText, "extensionImplementationName", messageID);
+                        if (!isConstraintCondition) this.XPathQ += "[" + messageID + tempText + "]";
+                        this.XPathC += "[" + messageID + tempText + "]";
                     }
                 }
             }
@@ -974,6 +1030,16 @@ class GenerateXPath {
                 code = text + " dummy_variable = 0;";
                 query = "//src:unit[count(src:decl_stmt)=1]/src:decl_stmt/src:decl/src:type";
                 cuttingLength = 9; // src:type[
+                break;
+            case "className":
+                code = "class " + text + " {}";
+                query = "//src:unit[count(src:class)=1]/src:class/src:name";
+                cuttingLength = 9; // src:name[
+                break;
+            case "extensionImplementationName":
+                code = text;
+                query = "//src:unit[count(src:expr_stmt)=1]/src:expr_stmt/src:expr";
+                cuttingLength = 9; // src:expr[
                 break;
             case "returnValue":
             case "expressionStatement":
