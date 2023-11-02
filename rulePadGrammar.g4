@@ -149,6 +149,7 @@ classNames
 
 classNameCondition
     : combinatorialWords SPACE
+    | words SPACE
     ;
 
 /*
