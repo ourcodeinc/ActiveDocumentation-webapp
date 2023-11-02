@@ -718,7 +718,7 @@ export const initial_state = {
             recentSearches: [],
             recentVisitedElements: []
         },
-        selectedAlgorithm: allAlgorithms.FP_MAX_DEFAULT,
+        selectedAlgorithm: allAlgorithms.CHUI_MINER_DEFAULT,
         minedRules: [],
 
         minedRulePadState: {

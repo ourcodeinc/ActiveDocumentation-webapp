@@ -531,7 +531,7 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 minedRulesState: {
                     ...state.minedRulesState,
                     focusedElementData: action.data["focusedElementData"],
-                    selectedAlgorithm: allAlgorithms.FP_MAX_DEFAULT, // reset the algorithm
+                    selectedAlgorithm: allAlgorithms.CHUI_MINER_DEFAULT, // reset the algorithm
                     minedRulePadState: {
                         ...state.minedRulesState.minedRulePadState
                     }

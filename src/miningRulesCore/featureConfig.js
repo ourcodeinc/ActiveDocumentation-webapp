@@ -30,6 +30,18 @@ export const weightUpdateFactors = {
  * @type {Object<String, {parameters: number[], key: string}>}
  */
 export const allAlgorithms = {
+    CHUI_MINER_DEFAULT: {
+        key: "CHUI-Miner",
+        parameters: [1000]
+    },
+    CHUI_MINER_RELAXED: {
+        key: "CHUI-Miner",
+        parameters: [500]
+    },
+    CHUI_MINER_MAX: {
+        key: "CHUI-MinerMax",
+        parameters: [400]
+    },
     FP_MAX_DEFAULT: {
         key: "FPMax",
         parameters: [0.005]
@@ -45,18 +57,6 @@ export const allAlgorithms = {
     FP_CLOSE: {  // Extracts many FIQs
         key: "FPClose",
         parameters: [0.02]
-    },
-    CHUI_MINER_DEFAULT: {
-        key: "CHUI-Miner",
-        parameters: [1000]
-    },
-    CHUI_MINER_RELAXED: {
-        key: "CHUI-Miner",
-        parameters: [500]
-    },
-    CHUI_MINER_MAX: {
-        key: "CHUI-MinerMax",
-        parameters: [400]
     }
 }
 

@@ -485,6 +485,17 @@ export const findFileFoldersForItemSet = (maxUtilityItemSet, fileGroup,
  * @return {{parameters: number[], key: string}|null}
  */
 export const switchAlgorithm = (algorithm) => {
+    if (algorithm.key === allAlgorithms.CHUI_MINER_DEFAULT.key) {
+        if (algorithm.parameters[0] === allAlgorithms.CHUI_MINER_DEFAULT.parameters[0]) {
+            return allAlgorithms.CHUI_MINER_RELAXED;
+        }
+        if (algorithm.parameters[0] === allAlgorithms.CHUI_MINER_RELAXED.parameters[0]) {
+            return allAlgorithms.CHUI_MINER_MAX;
+        }
+    }
+    if (algorithm.key === allAlgorithms.CHUI_MINER_MAX.key) {
+        return allAlgorithms.FP_MAX_DEFAULT;
+    }
     if (algorithm.key === allAlgorithms.FP_MAX_DEFAULT.key) {
         if (algorithm.parameters[0] === allAlgorithms.FP_MAX_DEFAULT.parameters[0]) {
             return allAlgorithms.FP_MAX_RELAXED;
@@ -494,17 +505,6 @@ export const switchAlgorithm = (algorithm) => {
         }
         if (algorithm.parameters[0] === allAlgorithms.FP_MAX_EXTRA_RELAXED.parameters[0]) {
             return allAlgorithms.FP_CLOSE;
-        }
-    }
-    if (algorithm.key === allAlgorithms.FP_CLOSE.key) {
-        return allAlgorithms.CHUI_MINER_DEFAULT;
-    }
-    if (algorithm.key === allAlgorithms.CHUI_MINER_DEFAULT.key) {
-        if (algorithm.parameters[0] === allAlgorithms.CHUI_MINER_DEFAULT.parameters[0]) {
-            return allAlgorithms.CHUI_MINER_RELAXED;
-        }
-        if (algorithm.parameters[0] === allAlgorithms.CHUI_MINER_RELAXED.parameters[0]) {
-            return allAlgorithms.CHUI_MINER_MAX;
         }
     }
     return null;
