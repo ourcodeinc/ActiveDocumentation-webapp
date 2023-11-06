@@ -134,7 +134,7 @@ class MiningRulesComponent extends Component {
                         minedRules: nextProps.minedRules,
                         loadingStatus: false,
                         showSelectedCluster: false,
-                        message: `${countRules} potential rules are found.`,
+                        message: "",
                     });
                 }
                 break;
