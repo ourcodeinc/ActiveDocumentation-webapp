@@ -174,7 +174,7 @@ const traverseNormalNode = (treeNode, isConstraint = false) => {
     // context nodes
     let keywords = grammar_keywords.slice().map(w => pluralize(w).split(" ").map(a => a.charAt(0).toUpperCase() + a.slice(1)).join(""));
     // ClassNames is not included Grammar keywords
-    keywords.push("ClassNames");
+
     if (keywords.indexOf(treeNode.nodeType.replace("Context", "")) !== -1) {
         let nodeKey = treeNode.nodeType.replace("Context", "")
             .replace("ClassNames", "Names");
@@ -267,6 +267,7 @@ const traverseExpressionNode = (ExpressionNode, isConstraint) => {
     let setIsConstraint = ExpressionNode.isConstraint || isConstraint;
     // context nodes
     let keywords = grammar_keywords.slice().map(w => pluralize(w).split(" ").map(a => a.charAt(0).toUpperCase() + a.slice(1)).join(""));
+    keywords.push("ClassNames");
 
     if (ExpressionNode.children) {
         ExpressionNode.children.forEach(child => {

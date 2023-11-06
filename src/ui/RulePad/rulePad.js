@@ -348,6 +348,8 @@ class RulePad extends Component {
             autoCompleteArray: []
         };
 
+        this.shouldUpdate = true;
+
         // existing rule
         if (this.ruleIndex >= 0) {
             let indices = props.rules.map(d => d.index);
@@ -658,8 +660,8 @@ class RulePad extends Component {
                                            });
                                    }}
                                onUpdate={(newAutoCompleteText) => {
-                                       if (this.state.autoCompleteArray.map(d => d.text).join(" ") !== newAutoCompleteText
-                                           || this.state.constraintXPath === "" || this.state.quantifierXPath === "") {
+                                       if (this.shouldUpdate) {
+                                           this.shouldUpdate = false;
                                            verifyTextBasedOnGrammar(newAutoCompleteText)
                                                .then((data) => {
                                                    if (this.state.quantifierXPath !== data.quantifierXPath || this.state.constraintXPath !== data.constraintXPath) {
@@ -1119,6 +1121,13 @@ class RulePad extends Component {
 
     componentWillUnmount() {
         this._mounted = false
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.autoCompleteArray.map(d => d.text).join(" ") !==
+            this.state.autoCompleteArray.map(d => d.text).join(" ")) {
+            this.shouldUpdate = true;
+        }
     }
 
 
