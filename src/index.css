@@ -881,3 +881,38 @@ img.tutorialSmallImage {
 .focusedElementError {
     color: #a94442;
 }
+
+.accordion {
+    width: 100%;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.accordion-item {
+    border-bottom: 1px solid #ccc;
+}
+
+.accordion-item-header {
+    background-color: #f1f1f1;
+    padding: 10px 15px;
+    cursor: pointer;
+    user-select: none;
+    font-weight: bold;
+}
+
+.accordion-item-header.open {
+    background-color: #ddd;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 5px;
+    z-index: 5;
+}
+
+.accordion-item-content {
+    padding: 10px 15px;
+}
+
+.accordion-item.open .accordion-item-content {
+    display: block;
+}

@@ -36,6 +36,7 @@ import {
     switchAlgorithm
 } from "../../miningRulesCore/postProcessing";
 import {webSocketSendMessage} from "../../core/coreConstants";
+import {FaCaretDown, FaCaretUp} from "react-icons/fa";
 
 class MiningRulesComponent extends Component {
 
@@ -52,6 +53,7 @@ class MiningRulesComponent extends Component {
             selectedClusterIndex: props.selectedClusterIndex
         };
         this.messagesToBeSent = []; // the messages that are going to the server to be written on files
+        this.clusterLimit = 10; // number of clusters in each category of mined rules.
     }
 
     render() {
@@ -250,18 +252,21 @@ class MiningRulesComponent extends Component {
                 <div>
                     <h4><strong>No rule is found.</strong></h4>
                 </div>)
-        return this.state.minedRules.map((group, groupIndex) => {
-            return (group.rulePadStates.length === 0) ? null : (
-                <div key={groupIndex}>
-                    <h4><strong>{featureGroupInformation[group.fileGroup].desc}</strong></h4>
-                    {group.rulePadStates.map((_, clusterIndex) => process(group, groupIndex, clusterIndex))}
-                </div>)
-        })
+        let minedRulesArray = this.state.minedRules.map((group, groupIndex) => {
+            let title = featureGroupInformation[group.fileGroup].desc;
+            let content;
+            if (group.rulePadStates.length === 0) {
+                content = `No rule is found in this category.`;
+            } else {
+                content = group.rulePadStates.filter((_, clusterIndex) => clusterIndex < this.clusterLimit)
+                    .map((_, clusterIndex) => process(group, groupIndex, clusterIndex))
+            }
+            return {title, content}
+        });
+        return (<Accordion items={minedRulesArray}/>);
     }
 
     renderSelectedCluster() {
-        let clusterObject = this.state.minedRules[this.state.selectedGroupIndex]
-            .clusters[this.state.selectedClusterIndex];
         let rulePadState = this.state.minedRules[this.state.selectedGroupIndex]
             .rulePadStates[this.state.selectedClusterIndex];
         let fileGroup = this.state.minedRules[this.state.selectedGroupIndex].fileGroup;
@@ -402,3 +407,58 @@ function mapDispatchToProps(dispatch) {
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(MiningRulesComponent);
+
+class AccordionItem extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isOpen: false,
+        };
+    }
+
+    render() {
+        const {title, content} = this.props;
+        this.caretClass = {
+            true: {cursor: "pointer", color: "black"},
+            false: {cursor: "pointer", color: "darkgrey"}
+        };
+        return (
+            <div className="accordion-item">
+                <div
+                    onClick={() => this.setState((prevState) => ({
+                        isOpen: !prevState.isOpen,
+                    }))}
+                    className={`accordion-item-header ${this.state.isOpen ? 'open' : ''}`}>
+                    {title}
+                    <div style={{float: "right"}}>
+                        <FaCaretUp size={20}
+                                   style={this.caretClass[this.state.isOpen.toString()]}
+                                   className={"react-icons"}/>
+                        <FaCaretDown size={20}
+                                     style={this.caretClass[(!this.state.isOpen).toString()]}
+                                     className={"react-icons"}/>
+                    </div>
+                </div>
+                {this.state.isOpen && <div className="accordion-item-content">{content}</div>}
+            </div>
+        );
+    }
+}
+
+export class Accordion extends Component {
+    render() {
+        const {items} = this.props;
+
+        return (
+            <div className="accordion">
+                {items.map((item, index) => (
+                    <AccordionItem
+                        key={index}
+                        title={item.title}
+                        content={item.content}
+                    />
+                ))}
+            </div>
+        );
+    }
+}
