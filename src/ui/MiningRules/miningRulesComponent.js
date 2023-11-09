@@ -412,7 +412,7 @@ class AccordionItem extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isOpen: false,
+            isOpen: props.isOpen,
         };
     }
 
@@ -456,6 +456,7 @@ export class Accordion extends Component {
                         key={index}
                         title={item.title}
                         content={item.content}
+                        isOpen={index === 0}
                     />
                 ))}
             </div>
