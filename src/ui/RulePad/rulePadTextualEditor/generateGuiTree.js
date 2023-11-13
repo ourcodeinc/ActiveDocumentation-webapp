@@ -15,6 +15,7 @@ import {initial_graphicalElementTree, initial_graphicalElements} from "../../../
  */
 export async function generateGuiTrees(grammarTree) {
     let trees = await createConstraintTree(grammarTree);
+    console.log(trees);
     if (Object.entries(trees).length === 0)
         return null;
     // // match with redux state: rulePadState.graphicalEditorState
@@ -31,12 +32,18 @@ export async function generateGuiTrees(grammarTree) {
  */
 const createConstraintTree = (tree) => {
     let combinedNodes = combineNode(tree);
+    console.log({combinedNodes})
     let combinedWordsNodes = combineWordsNode(combinedNodes);
+    console.log({combinedWordsNodes})
     let reorderedMustClause = reorderMustClause(combinedWordsNodes);
+    console.log({reorderedMustClause})
     let newTree = traverseNormalNode(reorderedMustClause);
     newTree.selectedElement = true;
+    console.log({newTree});
     let parentChildTree = reverseParentChildOrder(newTree);
+    console.log({parentChildTree});
     let treeOfIDs = createGuiElementTree(parentChildTree);
+    console.log({treeOfIDs})
     return updateGuiElements(parentChildTree, treeOfIDs);
 };
 
@@ -174,6 +181,7 @@ const traverseNormalNode = (treeNode, isConstraint = false) => {
     // context nodes
     let keywords = grammar_keywords.slice().map(w => pluralize(w).split(" ").map(a => a.charAt(0).toUpperCase() + a.slice(1)).join(""));
     // ClassNames is not included Grammar keywords
+    keywords.push("ClassNames");
 
     if (keywords.indexOf(treeNode.nodeType.replace("Context", "")) !== -1) {
         let nodeKey = treeNode.nodeType.replace("Context", "")
