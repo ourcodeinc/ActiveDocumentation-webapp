@@ -36,7 +36,8 @@ import {
     switchAlgorithm
 } from "../../miningRulesCore/postProcessing";
 import {webSocketSendMessage} from "../../core/coreConstants";
-import {FaCaretDown, FaCaretUp} from "react-icons/fa";
+import {FaCaretDown, FaCaretUp, FaSearch} from "react-icons/fa";
+import ReactToolTip from "react-tooltip";
 
 class MiningRulesComponent extends Component {
 
@@ -65,6 +66,7 @@ class MiningRulesComponent extends Component {
                         <div className={"minedRulesComponent"}>
                             {this.renderFocusedElementInfo()}
                             {this.renderMessages()}
+                            {this.renderDescription()}
                             {this.renderMinedClusters()}
                         </div>
                     )}
@@ -202,27 +204,40 @@ class MiningRulesComponent extends Component {
             identifier = this.props.focusedElementData.identifier;
             return (
                 <div style={{marginBottom: "40px"}}>
-                    <h4><strong>Focused Element </strong>{nodeTitle} with identifier <code>{identifier}</code></h4>
-                    <h4>{filePath}</h4>
+                    <h5>Potential design rules for <span>{nodeTitle}</span> <code>{identifier}</code></h5>
+                    <h5>{filePath}</h5>
                 </div>
             )
         }
     }
 
     renderMessages() {
-        if (this.state.loadingStatus) {
-            return null;
-        }
         let countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
         let nextAlgorithmExist = !!switchAlgorithm(this.props.selectedAlgorithm);
         return (
             <div style={{marginBottom: "40px"}}>
                 <h4>{this.state.message}</h4>
                 {countRules === 0 || !nextAlgorithmExist ? null : (
-                    <Button onClick={() => this.tryDifferentAlgorithm()}>Try again.</Button>
+                    <span>
+                        <span>Not finding what your are looking for? </span>
+                        <Button onClick={() => this.tryDifferentAlgorithm()}>Re-run the tool.</Button>
+                    </span>
                 )}
             </div>
         )
+    }
+
+    renderDescription() {
+        let countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
+        if (countRules === 0) return null;
+        return (<span>
+            <h5>The following code snippets illustrates potential design rules.</h5>
+            <h5>The purple background in the code shows how likely each element is in a design rule.</h5>
+            <h5><span className={"frequency-10"}>Darker purple</span> means it's more likely to be part of a rule,
+                and <span className={"frequency-1"}>lighter purple</span> means it is less likely to be part of a rule.
+            </h5>
+            <h5>You can explore a code snippet and explore the design rules that can be derived from it using <FaSearch/> icon.</h5>
+        </span>)
     }
 
     renderMinedClusters() {
@@ -232,15 +247,16 @@ class MiningRulesComponent extends Component {
             return (<div>
                 <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"}>
                     <Row>
-                        <Col md={10}>
+                        <Col md={12}>
+                            <div className={"exploreIcon"} data-tip={"React-tooltip"} data-for={"explore-icon"}
+                                 onClick={() => this.updateSelectedMinedCluster(groupIndex, clusterIndex)}>
+                                <FaSearch size={30}/>
+                                <ReactToolTip place={"bottom"} type={"dark"} effect={"solid"} id={"explore-icon"} delayShow={300}>
+                                    <span>{"Explore the rules derived from this code snippet."}</span>
+                                </ReactToolTip>
+                            </div>
                             <MinedClusterRulePad key={new Date()} rulePadState={rulePadState}
                                                  featureMetaData={this.state.featureMetaData} fileGroup={fileGroup}/>
-                        </Col>
-                        <Col md={2}>
-                            <div style={{"paddingTop": "15px"}}>
-                                <Button onClick={() => this.updateSelectedMinedCluster(groupIndex, clusterIndex)}>
-                                    Explore</Button>
-                            </div>
                         </Col>
                     </Row>
                 </div>
@@ -280,7 +296,7 @@ class MiningRulesComponent extends Component {
                 </Row>
             </div>
             <div>
-                <h3>Example Rule from this cluster.</h3>
+                <h3>Example Rule from this code snippet.</h3>
             </div>
             <div className={"generateRuleGui guiBoundingBox"}>
                 <Row>

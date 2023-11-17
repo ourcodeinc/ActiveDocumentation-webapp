@@ -780,11 +780,12 @@ img.tutorialSmallImage {
     box-shadow: 0 0 5px #99721c !important;
 }
 
-.minedRulesComponent .minedRuleBoundingBox {
-    padding: 10px;
-    border-radius: 5px;
-    background-color: antiquewhite;
-    margin-top: 20px;
+.minedRuleBoundingBox .exploreIcon {
+    position: absolute;
+    top: 5px;
+    right: 20px;
+    z-index: 4;
+    cursor: pointer;
 }
 
 .selectedTextEnv {
@@ -862,20 +863,29 @@ img.tutorialSmallImage {
     width: max-content;
 }
 
+.minedRulesComponent .generateRuleGui .inputText {
+    padding: 2px;
+    cursor: default;
+}
+
 .frequency-0, .frequency-1, .frequency-2 {
-    background-color: #dbe4e6 !important;
+    background-color: #e5dcef !important;
+}
+.frequency-3, .frequency-4 {
+    background-color: #ccb9df !important;
 }
 
-.frequency-3, .frequency-4, .frequency-5 {
-    background-color: #a9d1e3 !important;
+.frequency-5, .frequency-6, .frequency-unknown {
+    background-color: #a989cA !important;
 }
 
-.frequency-6, .frequency-7, .frequency-8 {
-    background-color: #7cbcd8 !important;
+.frequency-7, .frequency-8 {
+    background-color: #9872c0 !important;
 }
 
 .frequency-9, .frequency-10 {
-    background-color: #61b5d6 !important;
+    background-color: #4c2f6a !important;
+    color: #c7c7c7 !important;
 }
 
 .focusedElementError {

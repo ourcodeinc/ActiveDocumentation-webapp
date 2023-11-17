@@ -213,22 +213,22 @@ const elementType = {
 export const featureGroupInformation = {
     field_spec_in_class: {
         key: "field_spec_in_class",
-        desc: "Features of class fields in related classes",
+        desc: "Code snippets for class fields",
         mergeKeys: ["class", "declaration statement"],
     },
     constr_spec_in_class: {
         key: "constr_spec_in_class",
-        desc: "Features of class constructors in related classes",
+        desc: "Code snippets for class constructors",
         mergeKeys: ["class", "constructor"],
     },
     func_spec_in_class: {
         key: "func_spec_in_class",
-        desc: "Features of class functions in related classes",
+        desc: "Code snippets for class functions",
         mergeKeys: ["class", "function"],
     },
     subclass_spec_in_class: {
         key: "subclass_spec_in_class",
-        desc: "Features of subclasses in related classes",
+        desc: "Code snippets for subclasses",
         mergeKeys: ["class", "subclass"],
     },
 

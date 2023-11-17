@@ -267,20 +267,27 @@ class MinedClusterRulePad extends Component {
     }
 
     computeColorCoding(childElement) {
-        let featureItemSets = null, allItemSets = null;
-        if (childElement.activeElement) {
-            if (childElement._data_ && childElement._data_._data_) {
-                featureItemSets = [...new Set(childElement._data_._data_[+childElement._data_._featureId_])];
+        try {
+            let featureItemSets = null, allItemSets = null;
+            if (childElement.activeElement) {
+                if (childElement._data_ && childElement._data_._data_) {
+                    featureItemSets = [...new Set(childElement._data_._data_[+childElement._data_._featureId_])];
+                }
+                if (this.state.thisElement._data_ &&
+                    this.state.thisElement._data_._data_ &&
+                    this.state.thisElement._data_._data_.cluster) {
+                    allItemSets = [...new Set(this.state.thisElement._data_._data_.cluster)];
+                }
             }
-            if (this.state.thisElement._data_ &&
-                this.state.thisElement._data_._data_ &&
-                this.state.thisElement._data_._data_.cluster) {
-                allItemSets = [...new Set(this.state.thisElement._data_._data_.cluster)];
+            if (!featureItemSets || !allItemSets) {
+                featureItemSets = [...new Set(this.state.thisElement._data_._data_[+this.state.thisElement._data_._featureId_])];
+                allItemSets = [...new Set(Object.values(this.state.thisElement._data_._data_).flat())];
             }
+            return "frequency-" +
+                Math.floor(featureItemSets.length / allItemSets.length * 10);
+        } catch (e) {
+            return "frequency-unknown";
         }
-        if (!featureItemSets || !allItemSets) return "";
-        return "frequency-" +
-            Math.floor(featureItemSets.length / allItemSets.length * 10);
     }
 }
 
