@@ -1557,6 +1557,7 @@ class RulePad extends Component {
 }
 
 function mapStateToProps(state) {
+    console.log(state);
     return {
         rules: state.ruleTable,
         tags: state.tagTable,
@@ -1576,10 +1577,10 @@ function mapStateToProps(state) {
         constraintXPath: state.rulePadState.constraintXPath,
         message: state.message,
 
-        sentMessages: state.rulePadState.sentMessages,
-        receivedMessages: state.rulePadState.receivedMessages,
+        sentMessages: state.sentXpathMessages,
+        receivedMessages: state.receivedXpathMessages,
         // for submitting the rule
-        numberOfSentMessages: state.rulePadState.sentMessages.length,
+        numberOfSentMessages: state.sentXpathMessages.length,
 
         displayEditRuleTutorial: state.displayEditRuleTutorial,
 
@@ -1589,8 +1590,6 @@ function mapStateToProps(state) {
         minedAutoCompleteArray: state.minedRulesState.minedRulePadState.autoCompleteArray,
         minedQuantifierXPath: state.minedRulesState.minedRulePadState.quantifierXPath,
         minedConstraintXPath: state.minedRulesState.minedRulePadState.constraintXPath,
-        minedSentMessages: state.minedRulesState.minedRulePadState.sentMessages,
-        minedReceivedMessages: state.minedRulesState.minedRulePadState.receivedMessages,
 
     };
 }

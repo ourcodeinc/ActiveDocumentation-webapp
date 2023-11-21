@@ -682,8 +682,6 @@ export const initial_state = {
         autoCompleteArray: [],
         quantifierXPath: "", // only produced by autoComplete grammar
         constraintXPath: "", // only produced by autoComplete grammar
-        sentMessages: [],
-        receivedMessages: [],
 
         graphicalEditorState: {
             ruleType: "", // "Must" or "MustBeEqualTo"
@@ -691,6 +689,9 @@ export const initial_state = {
             guiElements: {...initial_graphicalElements}
         }
     },
+
+    sentXpathMessages: [],
+    receivedXpathMessages: [],
 
     // mining Rules
     minedRulesState: {
@@ -732,8 +733,6 @@ export const initial_state = {
             autoCompleteArray: [],
             quantifierXPath: "", // only produced by autoComplete grammar
             constraintXPath: "", // only produced by autoComplete grammar
-            sentMessages: [],
-            receivedMessages: [],
 
             graphicalEditorState: {
                 ruleType: "", // "Must" or "MustBeEqualTo"

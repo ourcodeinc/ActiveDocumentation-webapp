@@ -328,27 +328,13 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
 
         case reduxStoreActions.action_send_expr_stmt_xml:
             return Object.assign({}, state, {
-                rulePadState: {
-                    ...state.rulePadState,
-                    sentMessages: state.rulePadState.sentMessages.concat([action.data["codeTextAndID"]])
-                },
+                sentXpathMessages: state.sentXpathMessages.concat([action.data["codeTextAndID"]]),
                 message: reduxStoreMessages.send_expr_stmt_xml_msg
             });
 
         case reduxStoreActions.action_receive_expr_stmt_xml:
             return Object.assign({}, state, {
-                rulePadState: {
-                    ...state.rulePadState,
-                    receivedMessages: state.rulePadState.receivedMessages.concat([action.data["xmlData"]])
-                },
-                minedRulesState: {
-                    ...state.minedRulesState,
-                    minedRulePadState: {
-                        ...state.minedRulesState.minedRulePadState,
-                        receivedMessages: state.minedRulesState.minedRulePadState.receivedMessages
-                            .concat([action.data["xmlData"]])
-                    }
-                },
+                receivedXpathMessages: state.receivedXpathMessages.concat([action.data["xmlData"]]),
                 message: reduxStoreMessages.receive_expr_stmt_xml_msg
             });
 
@@ -359,9 +345,9 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         ...state.rulePadState,
                         quantifierXPath: action.data["quantifierXPath"],
                         constraintXPath: action.data["constraintXPath"],
-                        sentMessages: action.data["sentMessages"],
-                        receivedMessages: action.data["receivedMessages"]
                     },
+                    sentXpathMessages: action.data["sentMessages"],
+                    receivedXpathMessages: action.data["receivedMessages"],
                     message: reduxStoreMessages.matched_messages_msg
                 });
             }
@@ -373,10 +359,10 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                             ...state.minedRulesState.minedRulePadState,
                             quantifierXPath: action.data["quantifierXPath"],
                             constraintXPath: action.data["constraintXPath"],
-                            sentMessages: action.data["sentMessages"],
-                            receivedMessages: action.data["receivedMessages"]
                         }
                     },
+                    sentXpathMessages: action.data["sentMessages"],
+                    receivedXpathMessages: action.data["receivedMessages"],
                     message: reduxStoreMessages.matched_messages_msg
                 });
             }
@@ -392,11 +378,8 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 return Object.assign({}, state, {
                     message: reduxStoreMessages.matched_messages_msg,
                     ruleTable: rules,
-                    rulePadState: {
-                        ...state.rulePadState,
-                        sentMessages: action.data["sentMessages"],
-                        receivedMessages: action.data["receivedMessages"]
-                    },
+                    sentXpathMessages: action.data["sentMessages"],
+                    receivedXpathMessages: action.data["receivedMessages"],
                 });
             }
 
