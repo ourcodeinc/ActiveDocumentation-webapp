@@ -1557,7 +1557,6 @@ class RulePad extends Component {
 }
 
 function mapStateToProps(state) {
-    console.log(state);
     return {
         rules: state.ruleTable,
         tags: state.tagTable,
