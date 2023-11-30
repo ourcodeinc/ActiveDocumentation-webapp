@@ -20,6 +20,15 @@ rulePadGrammarListener.prototype.exitInputSentence = function(ctx) {
 };
 
 
+// Enter a parse tree produced by rulePadGrammarParser#partialClause.
+rulePadGrammarListener.prototype.enterPartialClause = function(ctx) {
+};
+
+// Exit a parse tree produced by rulePadGrammarParser#partialClause.
+rulePadGrammarListener.prototype.exitPartialClause = function(ctx) {
+};
+
+
 // Enter a parse tree produced by rulePadGrammarParser#mustClause.
 rulePadGrammarListener.prototype.enterMustClause = function(ctx) {
 };

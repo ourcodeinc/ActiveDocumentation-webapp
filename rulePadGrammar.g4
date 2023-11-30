@@ -4,6 +4,11 @@ inputSentence
     : (emptyLine* | mustClause) end? NL* EOF
     ;
 
+partialClause
+    : (functions | abstractFunctions | constructors | classes
+    | parameters | declarationStatements | subclasses) end? NL* EOF
+    ;
+
 mustClause
     : functions must have functionExpression
     | abstractFunctions must have abstractFunctionExpression
