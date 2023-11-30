@@ -338,6 +338,13 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                 message: reduxStoreMessages.receive_expr_stmt_xml_msg
             });
 
+        case reduxStoreActions.action_update_sent_received_messages:
+            return Object.assign({}, state, {
+                sentXpathMessages: action.data["sentMessages"],
+                receivedXpathMessages: action.data["receivedMessages"],
+                message: reduxStoreMessages.update_messages_msg
+            });
+
         case reduxStoreActions.action_matched_messages:
             if (action.data["ruleIndex"] === constantRuleIndex.newRuleIndex) {
                 return Object.assign({}, state, {

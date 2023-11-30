@@ -240,6 +240,16 @@ export const receiveExpressionStatementXML = (xmlData) => {
     }
 };
 
+export const updateSentReceivedMessages = (sentMessages, receivedMessages) => {
+    return {
+        type: reduxStoreActions.action_update_sent_received_messages,
+        data: {
+            sentMessages: sentMessages,
+            receivedMessages: receivedMessages
+        }
+    }
+}
+
 /**
  * messages are matched and XPaths are modified based on the received messages
  * @param ruleIndex number
