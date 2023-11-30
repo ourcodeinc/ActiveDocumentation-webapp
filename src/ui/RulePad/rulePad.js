@@ -1153,7 +1153,8 @@ class RulePad extends Component {
             for (let j = otherIndex; j < receivedMessages.length; j++) {
                 // matched messages
                 if (+sentMessages[index]["messageID"] === +receivedMessages[j]["messageID"]) {
-                    let resultXPath = this.traverseReceivedXml(receivedMessages[j]["xmlText"], sentMessages[index]);
+                    let resultXPath = '[' +
+                        this.traverseReceivedXml(receivedMessages[j]["xmlText"], sentMessages[index]) + ']';
                     // replace all occurrences of textAndXPath.originalText
 
                     while (quantifierXPath.indexOf(sentMessages[j]["lookFor"]) !== -1)

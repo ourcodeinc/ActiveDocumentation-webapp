@@ -1062,7 +1062,7 @@ class GenerateXPath {
         store.dispatch(sendExpressionStatementXML({
             "codeText": code,
             "messageID": messageID.toString(),
-            "lookFor": messageID + text,
+            "lookFor": `[${messageID + text}]`,
             "query": query,
             "cuttingLength": cuttingLength
         }));
