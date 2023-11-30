@@ -64,9 +64,10 @@ const lemmatize = (input) => {
 /**
  * check the text against grammar and returns the XPaths for quantifier and constraint
  * @param input
+ * @param clause {"full" | "partial"}
  * @returns {*} {"quantifier": xpath, "constraint": xpath}
  */
-const antlr = (input) => {
+export const antlr = (input, clause="full") => {
 
     let inputText = input + "";
     let rulePadGrammarLexerModule = require("./generated-parser/rulePadGrammarLexer");
@@ -93,7 +94,7 @@ const antlr = (input) => {
     orgParser.buildParseTrees = true;
     orgParser.removeErrorListeners();
     orgParser.addErrorListener(listener);
-    let orgTree = orgParser.inputSentence();
+    let orgTree = clause === "full" ? orgParser.inputSentence() : orgParser.partialClause();
 
     let chars = new antlr4.InputStream(input);
     let lexer = new rulePadGrammarLexerModule.rulePadGrammarLexer(chars);
@@ -103,10 +104,10 @@ const antlr = (input) => {
 
     parser.removeErrorListeners();
     parser.addErrorListener(listener)
-    let tree = parser.inputSentence();
+    let tree = clause === "full" ? parser.inputSentence() : parser.partialClause();
 
     if (errors.length !== 0)
-        return {grammarErrors: errors, inputText: inputText};
+        return {grammarErrors: errors, inputText: inputText, clause, tree};
 
     try {
         let traverse = new Traverse(tree);
