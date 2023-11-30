@@ -587,3 +587,52 @@ const isValidXPathQueries = (ruleI) => {
     }
     return true;
 };
+
+/**
+ * validate the xpath queries in ruleI
+ * @param xpathQuery {string}
+ * @return {boolean}
+ */
+export const isValidXPathQuery = (xpathQuery) => {
+    let parser = new DOMParser();
+    let xml = parser.parseFromString("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<unit xmlns=\"http://www.srcML.org/srcML/src\" revision=\"0.9.5\" language=\"Java\" filename=\"validate.java\"/>",
+        "text/xml");
+    try {
+        xml.evaluate(xpathQuery, xml, nsResolver, XPathResult.ANY_TYPE, null);
+    } catch (XPathException) {
+        return false;
+    }
+    return true;
+};
+
+
+/**
+ * runs the XPath query and compare results
+ * @param xmlFiles {{filePath, xml}[]}
+ * @param fileGroup {string}
+ * @param projectPath {string}
+ * @param xpathQuery {string}
+ * @returns {{snippets: {filePath: string, xml: string, snippet: string}[], files: {all: string[], found: string[]}}}
+ */
+export const runXpathQueryOnFileGroup = (xmlFiles, fileGroup,
+                                         projectPath, xpathQuery) => {
+    let snippets = [];
+    let files = {all: [], found: []};
+    let xmlFilesToVerify = xmlFiles.filter((d) => d.filePath.startsWith(projectPath + fileGroup));
+    files.all = xmlFilesToVerify.map(d => d.filePath.replace(projectPath, ""));
+
+    for (let j = 0; j < xmlFilesToVerify.length; j++) {
+        try {
+            let results = runXPathQuery(xmlFilesToVerify[j], xpathQuery);
+            if (results.length > 0) {
+                snippets = snippets.concat(results);
+                files.found.push(xmlFilesToVerify[j].filePath.replace(projectPath, ""))
+            }
+        } catch (e) {
+            console.log(`Error happened in running ${xpathQuery} on file ${xmlFilesToVerify[j].filePath}`);
+            console.log(e);
+        }
+    }
+    return {snippets, files};
+}
