@@ -48,12 +48,6 @@ class GraphicalEditor extends Component {
                 this.state.autoCompleteArray = this.ruleI.rulePanelState.autoCompleteArray;
             }
         }
-        else if (this.ruleIndex === constantRuleIndex.minedRuleIndex) {
-            if (props.minedRulePadState && props.minedRulePadState.graphicalEditorState) {
-                this.state.guiTree = props.minedRulePadState.graphicalEditorState.guiTree;
-                this.state.guiElements = props.minedRulePadState.graphicalEditorState.guiElements;
-            }
-        }
     }
 
     render() {
@@ -91,15 +85,6 @@ class GraphicalEditor extends Component {
         }
         else if (this.ruleIndex === constantRuleIndex.newRuleIndex) {
             this.setState(nextProps, this.receiveStateData);
-        }
-        else {
-            this.setState({
-                ws: nextProps.ws,
-                rulePadState: nextProps.minedRulePadState,
-                guiTree: nextProps.minedGuiTree,
-                guiElements: nextProps.minedGuiElements,
-                autoCompleteArray: nextProps.minedAutoCompleteArray
-            }, this.receiveStateData);
         }
     }
 
@@ -139,90 +124,10 @@ class GraphicalEditor extends Component {
             return;
         }
 
-        let visitedNodeId = [];
-
-        let buildTreeFromNodeId = (nodeId, group) => {
-            visitedNodeId.push(nodeId);
-
-            let nodeChildren = {};
-            Object.keys(guiTree[nodeId].children).forEach(childGroup => {
-                nodeChildren[childGroup] = [];
-                if (childGroup !== "body")
-                    guiTree[nodeId].children[childGroup].forEach(childId => {
-                        if (visitedNodeId.indexOf(childId) !== -1) return null;
-                        if (childId === "" || !guiElements[childId].activeElement) return null;
-                        if (group === "quantifier" && guiElements[childId].isConstraint) return null;
-                        let newSubTree = buildTreeFromNodeId(childId, group);
-                        if (newSubTree) nodeChildren[childGroup].push(newSubTree)
-                    });
-                else
-                    guiTree[nodeId].children["body"].forEach((subGroup) => {
-                        subGroup.forEach(childId => {
-                            if (visitedNodeId.indexOf(childId) !== -1) return null;
-                            if (childId === "" || !guiElements[childId].activeElement) return null;
-                            if (group === "quantifier" && guiElements[childId].isConstraint) return null;
-                            let newSubTree = buildTreeFromNodeId(childId, group);
-                            if (newSubTree) nodeChildren["body"].push(newSubTree)
-                        })
-                    })
-            });
-
-            let conditionByName = getConditionByName(guiElements[nodeId].conditionName);
-            return {
-                nodeId: nodeId,
-                properties: {
-                    ...guiElements[nodeId],
-                    elementGrammar: conditionByName.grammar,
-                    elementPlaceholder: conditionByName.required ? (conditionByName.required + conditionByName.placeholder) : ""
-                },
-                parentNode: {},
-                children: nodeChildren
-            };
-
-        };
-
-        let buildBottomUpTreeFromNodeId = (nodeId, group) => {
-            if (nodeId === "" || !guiElements[nodeId].activeElement) return {};
-            visitedNodeId.push(nodeId);
-
-            //children all children are 1D arrays even "body"
-            let nodeChildren = {};
-            Object.keys(guiTree[nodeId].children).forEach(childGroup => {
-                nodeChildren[childGroup] = [];
-                if (childGroup !== "body")
-                    guiTree[nodeId].children[childGroup].forEach(childId => {
-                        if (visitedNodeId.indexOf(childId) !== -1) return;
-                        if (childId === "" || !guiElements[childId].activeElement) return;
-                        if (guiElements[childId].isConstraint && group === "quantifier") return;
-                        let newSubTree = buildTreeFromNodeId(childId, group);
-                        if (newSubTree) nodeChildren[childGroup].push(newSubTree);
-                    });
-                else
-                    guiTree[nodeId].children["body"].forEach((subGroup) => {
-                        subGroup.forEach(childId => {
-                            if (visitedNodeId.indexOf(childId) !== -1) return;
-                            if (childId === "" || !guiElements[childId].activeElement) return;
-                            if (guiElements[childId].isConstraint && group === "quantifier") return;
-                            let newSubTree = buildTreeFromNodeId(childId, group);
-                            if (newSubTree) nodeChildren["body"].push(newSubTree);
-                        })
-                    })
-            });
-
-            return {
-                nodeId: nodeId,
-                properties: {
-                    ...guiElements[nodeId],
-                    elementGrammar: getConditionByName(guiElements[nodeId].conditionName).grammar,
-                },
-                parentNode: buildBottomUpTreeFromNodeId(guiTree[nodeId].parentId),
-                children: nodeChildren
-            };
-        };
         // reach root from selectedElementID
         return {
-            quantifierTree: buildBottomUpTreeFromNodeId(guiTree.selectedElementID, "quantifier"),
-            constraintTree: buildBottomUpTreeFromNodeId(guiTree.selectedElementID, "constraint")
+            quantifierTree: buildFromGUI (guiTree, guiElements, guiTree.selectedElementID, "quantifier"),
+            constraintTree: buildFromGUI (guiTree, guiElements, guiTree.selectedElementID, "constraint")
         };
     };
 
@@ -253,8 +158,8 @@ class GraphicalEditor extends Component {
 
         if (perms.length === 0 || filteredTextArray.length !== perms[0].length) {
             // return the trivial one from GUI.
-            let grammarTrivialTextQ = this.buildTrivialGrammar(quantifierTree);
-            let grammarTrivialTextC = this.buildTrivialGrammar(constraintTree, true);
+            let grammarTrivialTextQ = buildTrivialGrammar(quantifierTree);
+            let grammarTrivialTextC = buildTrivialGrammar(constraintTree, true);
 
             let trivialGuiArray = grammarTrivialTextQ
                 .concat([{text: "must", id: ""}, {text: "have", id: ""}])
@@ -290,8 +195,8 @@ class GraphicalEditor extends Component {
         }
         if (!found) {
             // return the trivial one from GUI.
-            let grammarTrivialTextQ = this.buildTrivialGrammar(quantifierTree);
-            let grammarTrivialTextC = this.buildTrivialGrammar(constraintTree, true);
+            let grammarTrivialTextQ = buildTrivialGrammar(quantifierTree);
+            let grammarTrivialTextC = buildTrivialGrammar(constraintTree, true);
 
             let trivialGuiArray = grammarTrivialTextQ
                 .concat([{text: "must", id: ""}, {text: "have", id: ""}])
@@ -367,63 +272,6 @@ class GraphicalEditor extends Component {
         if (Object.entries(rootNode.parentNode).length !== 0 && !constraintQuery) {
             grammarObject.push({text: "of", id: ""});
             grammarObject = grammarObject.concat(this.buildGrammarTree(rootNode.parentNode))
-        }
-
-        return grammarObject;
-    }
-
-    /**
-     * traverse the children of a node to generate grammar text
-     * @param rootNode
-     * @param constraintQuery
-     * @return {Array} of objects {text: "", id: ""}
-     */
-    buildTrivialGrammar(rootNode, constraintQuery = false) {
-        let grammarObject = []; // {text: "", id: ""}
-
-        // element name
-        if (!constraintQuery) {
-            if (!skip_words_from_TE.includes(rootNode["properties"].elementGrammar))
-                rootNode["properties"].elementGrammar.split(" ").forEach(part =>
-                    grammarObject.push({text: part, id: rootNode.nodeId}));
-        }
-
-        // text value
-        if (rootNode["properties"].text) {
-            if (autoComplete_suggestion[rootNode["properties"].elementGrammar].preWord)
-                grammarObject.push({
-                    text: autoComplete_suggestion[rootNode["properties"].elementGrammar].preWord,
-                    id: rootNode.nodeId
-                });
-            grammarObject.push({text: "\"" + rootNode["properties"].text + "\"", id: rootNode.nodeId});
-        }
-
-        if (rootNode["properties"].elementPlaceholder && !rootNode["properties"].text) {
-            rootNode["properties"].elementPlaceholder.split(" ").forEach(w => {
-                grammarObject.push({text: w, id: rootNode.nodeId});
-            });
-        }
-
-        // dropdown value
-        if (rootNode["properties"].value) {
-            grammarObject.push({text: "\"" + rootNode["properties"].value + "\"", id: rootNode.nodeId});
-        }
-
-        //children all children are 1D arrays even "body"
-        let allChildren = [];
-        Object.keys(rootNode.children).forEach(group => allChildren = allChildren.concat(rootNode.children[group]));
-        if (allChildren.length > 0 && !constraintQuery) grammarObject.push({text: "with", id: ""});
-        if (allChildren.length > 1 && !constraintQuery) grammarObject.push({text: "(", id: ""});
-        for (let i = 0; i < allChildren.length; i++) {
-            grammarObject = grammarObject.concat(this.buildTrivialGrammar(allChildren[i]));
-            if (i < allChildren.length - 1) grammarObject.push({text: "and", id: ""});
-        }
-        if (allChildren.length > 1 && !constraintQuery) grammarObject.push({text: ")", id: ""});
-
-        // parent
-        if (Object.entries(rootNode.parentNode).length !== 0 && !constraintQuery) {
-            grammarObject.push({text: "of", id: ""});
-            grammarObject = grammarObject.concat(this.buildTrivialGrammar(rootNode.parentNode))
         }
 
         return grammarObject;
@@ -819,9 +667,6 @@ class GraphicalEditor extends Component {
             if (rules.length === 1)
                 ruleState = rules[0].rulePanelState;
         }
-        else if (this.ruleIndex === constantRuleIndex.minedRuleIndex) {
-            ruleState = this.props.minedRulePadState;
-        }
         ruleState = this.applyTasks(jobs, ruleState);
         this.props.onChangeRuleState(this.ruleIndex, ruleState);
     }
@@ -969,6 +814,156 @@ class GraphicalEditor extends Component {
     }
 }
 
+/**
+ * create tree from GUI nodes
+ * @param guiTree
+ * @param guiElements
+ * @param nodeId
+ * @param group {"quantifier"|"constraint"}
+ * @return {any}
+ */
+export function buildFromGUI (guiTree, guiElements, nodeId, group="quantifier") {
+    let visitedNodeId = [];
+
+    let buildTreeFromNodeId = (nodeId, group) => {
+        visitedNodeId.push(nodeId);
+
+        let nodeChildren = {};
+        Object.keys(guiTree[nodeId].children).forEach(childGroup => {
+            nodeChildren[childGroup] = [];
+            if (childGroup !== "body")
+                guiTree[nodeId].children[childGroup].forEach(childId => {
+                    if (visitedNodeId.indexOf(childId) !== -1) return null;
+                    if (childId === "" || !guiElements[childId].activeElement) return null;
+                    if (group === "quantifier" && guiElements[childId].isConstraint) return null;
+                    let newSubTree = buildTreeFromNodeId(childId, group);
+                    if (newSubTree) nodeChildren[childGroup].push(newSubTree)
+                });
+            else
+                guiTree[nodeId].children["body"].forEach((subGroup) => {
+                    subGroup.forEach(childId => {
+                        if (visitedNodeId.indexOf(childId) !== -1) return null;
+                        if (childId === "" || !guiElements[childId].activeElement) return null;
+                        if (group === "quantifier" && guiElements[childId].isConstraint) return null;
+                        let newSubTree = buildTreeFromNodeId(childId, group);
+                        if (newSubTree) nodeChildren["body"].push(newSubTree)
+                    })
+                })
+        });
+
+        let conditionByName = getConditionByName(guiElements[nodeId].conditionName);
+        return {
+            nodeId: nodeId,
+            properties: {
+                ...guiElements[nodeId],
+                elementGrammar: conditionByName.grammar,
+                elementPlaceholder: conditionByName.required ? (conditionByName.required + conditionByName.placeholder) : ""
+            },
+            parentNode: {},
+            children: nodeChildren
+        };
+
+    };
+
+    let buildBottomUpTreeFromNodeId = (nodeId, group) => {
+        if (nodeId === "" || !guiElements[nodeId].activeElement) return {};
+        visitedNodeId.push(nodeId);
+
+        //children all children are 1D arrays even "body"
+        let nodeChildren = {};
+        Object.keys(guiTree[nodeId].children).forEach(childGroup => {
+            nodeChildren[childGroup] = [];
+            if (childGroup !== "body")
+                guiTree[nodeId].children[childGroup].forEach(childId => {
+                    if (visitedNodeId.indexOf(childId) !== -1) return;
+                    if (childId === "" || !guiElements[childId].activeElement) return;
+                    if (guiElements[childId].isConstraint && group === "quantifier") return;
+                    let newSubTree = buildTreeFromNodeId(childId, group);
+                    if (newSubTree) nodeChildren[childGroup].push(newSubTree);
+                });
+            else
+                guiTree[nodeId].children["body"].forEach((subGroup) => {
+                    subGroup.forEach(childId => {
+                        if (visitedNodeId.indexOf(childId) !== -1) return;
+                        if (childId === "" || !guiElements[childId].activeElement) return;
+                        if (guiElements[childId].isConstraint && group === "quantifier") return;
+                        let newSubTree = buildTreeFromNodeId(childId, group);
+                        if (newSubTree) nodeChildren["body"].push(newSubTree);
+                    })
+                })
+        });
+
+        return {
+            nodeId: nodeId,
+            properties: {
+                ...guiElements[nodeId],
+                elementGrammar: getConditionByName(guiElements[nodeId].conditionName).grammar,
+            },
+            parentNode: buildBottomUpTreeFromNodeId(guiTree[nodeId].parentId),
+            children: nodeChildren
+        };
+    };
+
+    return buildBottomUpTreeFromNodeId(nodeId, group);
+}
+
+/**
+ * traverse the children of a node to generate grammar text
+ * @param rootNode
+ * @param constraintQuery
+ * @return {Array} of objects {text: "", id: ""}
+ */
+export function buildTrivialGrammar(rootNode, constraintQuery = false) {
+    let grammarObject = []; // {text: "", id: ""}
+
+    // element name
+    if (!constraintQuery) {
+        if (!skip_words_from_TE.includes(rootNode["properties"].elementGrammar))
+            rootNode["properties"].elementGrammar.split(" ").forEach(part =>
+                grammarObject.push({text: part, id: rootNode.nodeId}));
+    }
+
+    // text value
+    if (rootNode["properties"].text) {
+        if (autoComplete_suggestion[rootNode["properties"].elementGrammar].preWord)
+            grammarObject.push({
+                text: autoComplete_suggestion[rootNode["properties"].elementGrammar].preWord,
+                id: rootNode.nodeId
+            });
+        grammarObject.push({text: "\"" + rootNode["properties"].text + "\"", id: rootNode.nodeId});
+    }
+
+    if (rootNode["properties"].elementPlaceholder && !rootNode["properties"].text) {
+        rootNode["properties"].elementPlaceholder.split(" ").forEach(w => {
+            grammarObject.push({text: w, id: rootNode.nodeId});
+        });
+    }
+
+    // dropdown value
+    if (rootNode["properties"].value) {
+        grammarObject.push({text: "\"" + rootNode["properties"].value + "\"", id: rootNode.nodeId});
+    }
+
+    //children all children are 1D arrays even "body"
+    let allChildren = [];
+    Object.keys(rootNode.children).forEach(group => allChildren = allChildren.concat(rootNode.children[group]));
+    if (allChildren.length > 0 && !constraintQuery) grammarObject.push({text: "with", id: ""});
+    if (allChildren.length > 1 && !constraintQuery) grammarObject.push({text: "(", id: ""});
+    for (let i = 0; i < allChildren.length; i++) {
+        grammarObject = grammarObject.concat(buildTrivialGrammar(allChildren[i]));
+        if (i < allChildren.length - 1) grammarObject.push({text: "and", id: ""});
+    }
+    if (allChildren.length > 1 && !constraintQuery) grammarObject.push({text: ")", id: ""});
+
+    // parent
+    if (Object.entries(rootNode.parentNode).length !== 0 && !constraintQuery) {
+        grammarObject.push({text: "of", id: ""});
+        grammarObject = grammarObject.concat(buildTrivialGrammar(rootNode.parentNode))
+    }
+
+    return grammarObject;
+}
+
 function mapStateToProps(state) {
     return {
         rules: state.ruleTable,
@@ -978,12 +973,6 @@ function mapStateToProps(state) {
         guiTree: state.rulePadState.graphicalEditorState.guiTree,
         guiElements: state.rulePadState.graphicalEditorState.guiElements,
         autoCompleteArray: state.rulePadState.autoCompleteArray,
-
-        // mined rule
-        minedRulePadState: state.minedRulesState.minedRulePadState,
-        minedGuiTree: state.minedRulesState.minedRulePadState.graphicalEditorState.guiTree,
-        minedGuiElements: state.minedRulesState.minedRulePadState.graphicalEditorState.guiElements,
-        minedAutoCompleteArray: state.minedRulesState.minedRulePadState.autoCompleteArray,
     };
 }
 

@@ -401,33 +401,3 @@ export const updateSelectedAlgorithm = (newAlgorithm) => {
         data: {selectedAlgorithm: newAlgorithm}
     }
 }
-
-/**
- * update the RulePad state shown for Mined Rules
- * @param groupIndex {number}
- * @param clusterIndex {number}
- * @param rulePadState
- * @param filesFolders {string[]}
- * @return {{data: {selectedClusterIndex, filesFolders, rulePadState, selectedGroupIndex}, type: string}}
- */
-export const updateMinedRulePadState = (groupIndex, clusterIndex, rulePadState, filesFolders) => {
-    return {
-        type: reduxStoreActions.action_update_mined_rulepad_state,
-        data: {
-            filesFolders: filesFolders,
-            selectedGroupIndex: groupIndex,
-            selectedClusterIndex: clusterIndex,
-            rulePadState: rulePadState
-        }
-    };
-}
-
-/**
- * update the new rule in RulePad with the selected mined rule
- * @return {{type: string}}
- */
-export const updateNewRuleFromMinedRules = () => {
-    return {
-        type: reduxStoreActions.action_update_new_rule_from_mined_rules
-    }
-}

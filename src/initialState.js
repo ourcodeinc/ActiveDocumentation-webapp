@@ -8,7 +8,7 @@
  * featureCategories: {classType, constructorType, functionType}
  */
 
- import {allAlgorithms} from "./miningRulesCore/featureConfig";
+import {allAlgorithms} from "./miningRulesCore/featureConfig";
 
 /**
   * @typedef {{element: string, featureIds: number[]}} elementFeatures
@@ -721,25 +721,6 @@ export const initial_state = {
         },
         selectedAlgorithm: allAlgorithms.CHUI_MINER_DEFAULT,
         minedRules: [],
-
-        minedRulePadState: {
-            selectedGroupIndex: null, // the index of the mined group, number
-            selectedClusterIndex: null, // the index of the cluster in the group, number
-            title: "",
-            description: "",
-            ruleTags: [],
-            folderConstraint: "",
-            filesFolders: [],
-            autoCompleteArray: [],
-            quantifierXPath: "", // only produced by autoComplete grammar
-            constraintXPath: "", // only produced by autoComplete grammar
-
-            graphicalEditorState: {
-                ruleType: "", // "Must" or "MustBeEqualTo"
-                guiTree: {...initial_graphicalElementTree},
-                guiElements: {...initial_graphicalElements}
-            }
-        }
     }
 
 };

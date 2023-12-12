@@ -41,8 +41,6 @@ export const reduxStoreMessages = {
     request_mine_rules_for_element_msg: "REQUEST_MINE_RULES_FOR_ELEMENT",
     update_mined_rules_msg: "UPDATE_MINED_RULES",
     update_selected_algorithm_msg: "UPDATE_SELECTED_ALGORITHM",
-    updated_selected_mined_cluster_msg: "UPDATED_SELECTED_MINED_CLUSTER",
-    update_new_rule_from_mined_rules: "UPDATE_NEW_RULE_FROM_MINED_RULES",
 };
 
 
@@ -83,6 +81,4 @@ export const reduxStoreActions = {
     action_request_mine_rules_for_element: "REQUEST_MINE_RULES_FOR_ELEMENT",
     action_update_mined_rules: "UPDATE_MINED_RULES",
     action_update_update_selected_algorithm: "UPDATE_UPDATE_SELECTED_ALGORITHM",
-    action_update_mined_rulepad_state: "UPDATE_MINED_RULEPAD_STATE",
-    action_update_new_rule_from_mined_rules: "UPDATE_NEW_RULE_FROM_MINED_RULES",
 };

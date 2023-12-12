@@ -1,7 +1,6 @@
 import {initial_state, default_rulePanelState} from "./initialState";
 import {reduxStoreActions, reduxStoreMessages} from "./reduxStoreConstants";
 import {constantRuleIndex} from "./ui/uiConstants";
-import {fileFolderConstraints} from "./core/ruleExecutorConstants";
 import {allAlgorithms} from "./miningRulesCore/featureConfig";
 
 
@@ -194,19 +193,6 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     message: reduxStoreMessages.edit_rule_form_msg
                 });
             }
-            else if (action.data["ruleIndex"] === constantRuleIndex.minedRuleIndex) {
-                return Object.assign({}, state, {
-                    minedRulesState: {
-                        ...state.minedRulesState,
-                        minedRulePadState: {
-                            ...state.minedRulesState.minedRulePadState,
-                            folderConstraint: action.data["folderConstraint"],
-                            filesFolders: action.data["filesFolders"]
-                        }
-                    },
-                    message: reduxStoreMessages.edit_rule_form_msg
-                });
-            }
             else {
                 rules = JSON.parse(JSON.stringify(state.ruleTable));
                 rules = rules.map(d => {
@@ -288,24 +274,6 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     }
                 });
             }
-            else if (action.data["ruleIndex"] === constantRuleIndex.minedRuleIndex){
-                return Object.assign({}, state, {
-                    message: reduxStoreMessages.receive_gui_tree_msg,
-                    minedRulesState: {
-                        ...state.minedRulesState,
-                        minedRulePadState: {
-                            ...state.minedRulesState.minedRulePadState,
-                            quantifierXPath: action.data["quantifierXPath"],
-                            constraintXPath: action.data["constraintXPath"],
-                            autoCompleteArray: action.data["autoCompleteArray"],
-                            graphicalEditorState: {
-                                ...state.rulePadState.graphicalEditorState,
-                                ...action.data["newTreeData"]
-                            }
-                        }
-                    }
-                });
-            }
             else {
                 let rules = JSON.parse(JSON.stringify(state.ruleTable));
                 rules = rules.map(d => {
@@ -360,14 +328,6 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
             }
             else if (action.data["ruleIndex"] === constantRuleIndex.minedRuleIndex){
                 return Object.assign({}, state, {
-                    minedRulesState: {
-                        ...state.minedRulesState,
-                        minedRulePadState: {
-                            ...state.minedRulesState.minedRulePadState,
-                            quantifierXPath: action.data["quantifierXPath"],
-                            constraintXPath: action.data["constraintXPath"],
-                        }
-                    },
                     sentXpathMessages: action.data["sentMessages"],
                     receivedXpathMessages: action.data["receivedMessages"],
                     message: reduxStoreMessages.matched_messages_msg
@@ -423,18 +383,6 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     message: reduxStoreMessages.change_autocomplete_text_msg
                 });
             }
-            else if (action.data["ruleIndex"] === constantRuleIndex.minedRuleIndex){
-                return Object.assign({}, state, {
-                    minedRulesState: {
-                        ...state.minedRulesState,
-                        minedRulePadState : {
-                            ...state.minedRulesState.minedRulePadState,
-                            autoCompleteArray: action.data["newAutoCompleteArray"]
-                        }
-                    },
-                    message: reduxStoreMessages.change_autocomplete_text_msg
-                });
-            }
             else {
                 let rules = JSON.parse(JSON.stringify(state.ruleTable));
                 rules = rules.map(d => {
@@ -459,19 +407,6 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                         ...state.rulePadState,
                         quantifierXPath: action.data["quantifierXPath"],
                         constraintXPath: action.data["constraintXPath"]
-                    },
-                    message: reduxStoreMessages.update_xpath_msg
-                });
-            }
-            else if (action.data["ruleIndex"] === constantRuleIndex.minedRuleIndex) {
-                return Object.assign({}, state, {
-                    minedRulesState: {
-                        ...state.minedRulesState,
-                        minedRulePadState: {
-                            ...state.minedRulesState.minedRulePadState,
-                            quantifierXPath: action.data["quantifierXPath"],
-                            constraintXPath: action.data["constraintXPath"]
-                        }
                     },
                     message: reduxStoreMessages.update_xpath_msg
                 });
@@ -522,9 +457,6 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                     ...state.minedRulesState,
                     focusedElementData: action.data["focusedElementData"],
                     selectedAlgorithm: allAlgorithms.CHUI_MINER_DEFAULT, // reset the algorithm
-                    minedRulePadState: {
-                        ...state.minedRulesState.minedRulePadState
-                    }
                 }
             });
 
@@ -559,33 +491,6 @@ const reducer = (state = JSON.parse(JSON.stringify(initial_state)), action) => {
                    ...state.minedRulesState,
                    selectedAlgorithm: action.data["selectedAlgorithm"]
                }
-            });
-
-        case reduxStoreActions.action_update_mined_rulepad_state:
-                return Object.assign({}, state, {
-                    message: reduxStoreMessages.updated_selected_mined_cluster_msg,
-                    minedRulesState: {
-                        ...state.minedRulesState,
-                        minedRulePadState: {
-                            ...state.minedRulesState.minedRulePadState,
-                            folderConstraint: fileFolderConstraints.include,
-                            filesFolders: action.data["filesFolders"],
-                            selectedGroupIndex: action.data["selectedGroupIndex"],
-                            selectedClusterIndex: action.data["selectedClusterIndex"],
-                            graphicalEditorState: action.data["rulePadState"]
-                        }
-                    }
-                });
-
-        case reduxStoreActions.action_update_new_rule_from_mined_rules:
-            return Object.assign({}, state, {
-                message: reduxStoreMessages.update_new_rule_from_mined_rules,
-                ignoreFileChange: true,
-                displayEditRuleTutorial: false,
-                rulePadState: {
-                    ...state.minedRulesState.minedRulePadState,
-                    isEditMode: true,
-                },
             });
 
         default:

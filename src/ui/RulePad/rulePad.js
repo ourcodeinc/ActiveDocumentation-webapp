@@ -65,7 +65,7 @@ class RulePad extends Component {
         this.ruleI = null;
         this.newRuleRequest = this.ruleIndex === constantRuleIndex.newRuleIndex;
 
-        if (this.ruleIndex !== constantRuleIndex.minedRuleIndex && !props["changeEditMode"])
+        if (!props["changeEditMode"])
             console.error(`'changeEditMode' is required in props when creating/editing a rule.`);
 
         /*
@@ -391,48 +391,45 @@ class RulePad extends Component {
     render() {
         return (
             <div className={"rulePanelDiv" + (this.ruleIndex < 0 ? " edit-bg" : "")}>
-                {this.ruleIndex === constantRuleIndex.minedRuleIndex ? null : (
-                    <Fragment>
-                        <div style={{float: "right"}}>
-                            <FaQuestionCircle size={20} className={"faQuestionCircle react-icons"}
-                                              onClick={() => this.setState({
-                                                  tourShouldRun: true,
-                                                  isTourGuide: true
-                                              })}/>
-                            <MdEdit size={20} className={"mdEdit react-icons"}
-                                    onClick={() => this.changeEditMode()}/>
-                        </div>
-                        {this.renderTitleAndDescription()}
-                        {this.renderTags()}
-                    </Fragment>
-                )}
+                <Fragment>
+                    <div style={{float: "right"}}>
+                        <FaQuestionCircle size={20} className={"faQuestionCircle react-icons"}
+                                          onClick={() => this.setState({
+                                              tourShouldRun: true,
+                                              isTourGuide: true
+                                          })}/>
+                        <MdEdit size={20} className={"mdEdit react-icons"}
+                                onClick={() => this.changeEditMode()}/>
+                    </div>
+                    {this.renderTitleAndDescription()}
+                    {this.renderTags()}
+                </Fragment>
                 {this.renderFileConstraints()}
                 {this.renderTutorial()}
                 {this.renderGUI()}
                 {this.renderTextUI()}
                 {this.renderFeedbackSnippet()}
-                {this.ruleIndex === constantRuleIndex.minedRuleIndex ? null : (
-                    <Fragment>
-                        <ButtonToolbar className={"submitButtons"}>
-                            <Button bsStyle="primary"
-                                    onClick={() => this.newRuleRequest ? this.onSubmitNewRule() : this.onSubmitUpdatedRule()}>
-                                Submit</Button>
-                            <Button bsStyle="default" onClick={() => this.changeEditMode()}>Cancel</Button>
-                            {!this.newRuleRequest ? null :
-                                <Button bsStyle="default"
-                                        onClick={() => {
-                                            this.setState({
-                                                activeTab: 0,
-                                                xPathQueryResult: [],
-                                                shouldUpdateSnippets: false
-                                            }, this.props.onClearForm);
-                                        }}>Clear Form</Button>}
-                        </ButtonToolbar>
 
-                        {this.renderNewTagModalDialog()}
-                        {this.renderErrorInSubmission()}
-                    </Fragment>
-                )}
+                <Fragment>
+                    <ButtonToolbar className={"submitButtons"}>
+                        <Button bsStyle="primary"
+                                onClick={() => this.newRuleRequest ? this.onSubmitNewRule() : this.onSubmitUpdatedRule()}>
+                            Submit</Button>
+                        <Button bsStyle="default" onClick={() => this.changeEditMode()}>Cancel</Button>
+                        {!this.newRuleRequest ? null :
+                            <Button bsStyle="default"
+                                    onClick={() => {
+                                        this.setState({
+                                            activeTab: 0,
+                                            xPathQueryResult: [],
+                                            shouldUpdateSnippets: false
+                                        }, this.props.onClearForm);
+                                    }}>Clear Form</Button>}
+                    </ButtonToolbar>
+
+                    {this.renderNewTagModalDialog()}
+                    {this.renderErrorInSubmission()}
+                </Fragment>
                 {this.renderTourGuide()}
             </div>
         );
@@ -1069,25 +1066,6 @@ class RulePad extends Component {
                     xPathQueryResult
                 });
             }
-            // mined rule
-            else {
-                let xPathQueryResult = this.updateFeedbackSnippet(nextProps.minedQuantifierXPath, nextProps.minedConstraintXPath,
-                    nextProps.minedFolderConstraint ? nextProps.minedFolderConstraint : "INCLUDE", nextProps.minedFilesFolders);
-
-                this.setState({
-                    folderConstraint: nextProps.minedFolderConstraint ? nextProps.minedFolderConstraint : "INCLUDE",
-                    filesFolders: nextProps.minedFilesFolders,
-
-                    autoCompleteArray: nextProps.minedAutoCompleteArray,
-                    quantifierXPath: nextProps.minedQuantifierXPath,
-                    constraintXPath: nextProps.minedConstraintXPath,
-                    editorError: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "" : this.state.editorError,
-                    monacoFormStatus: nextProps.message === "CLEAR_NEW_RULE_FORM" ? "has-error" : nextProps.message === "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? "has-warning" : this.state.monacoFormStatus,
-                    errorPoint: -1,
-                    shouldUpdateSnippets: "CHANGE_AUTOCOMPLETE_TEXT_FROM_GUI" ? true : this.state.shouldUpdateSnippets,
-                    xPathQueryResult
-                });
-            }
         }
     }
 
@@ -1583,14 +1561,6 @@ function mapStateToProps(state) {
         numberOfSentMessages: state.sentXpathMessages.length,
 
         displayEditRuleTutorial: state.displayEditRuleTutorial,
-
-        // for mined rules
-        minedFolderConstraint: state.minedRulesState.minedRulePadState.folderConstraint,
-        minedFilesFolders: state.minedRulesState.minedRulePadState.filesFolders,
-        minedAutoCompleteArray: state.minedRulesState.minedRulePadState.autoCompleteArray,
-        minedQuantifierXPath: state.minedRulesState.minedRulePadState.quantifierXPath,
-        minedConstraintXPath: state.minedRulesState.minedRulePadState.constraintXPath,
-
     };
 }
 
