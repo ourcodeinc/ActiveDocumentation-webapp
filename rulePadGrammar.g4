@@ -43,7 +43,7 @@ word
     ;
 
 combinatorialWords
-    : '"' (Alphabet | symbols | SPACE)+ '"'
+    : '"' (Alphabet* (symbols | SPACE)+ Alphabet*)+ '"'
     ;
 
 symbols
