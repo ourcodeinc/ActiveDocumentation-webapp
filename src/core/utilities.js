@@ -203,6 +203,22 @@ class Utilities {
         }
     }
 
+    /**
+     * find all indices of an element in an array
+     * @param arr
+     * @param element
+     * @return {*[]}
+     */
+    static findAllIndices(arr, element) {
+        let indices = [];
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i] === element) {
+                indices.push(i);
+            }
+        }
+        return indices;
+    }
+
 }
 
 export default Utilities;

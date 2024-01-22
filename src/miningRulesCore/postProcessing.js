@@ -18,6 +18,7 @@ import {
 import {processRulePadForMiningRules} from "../ui/RulePad/rulePadTextualEditor/generateGuiTree"
 import {antlr} from "../core/languageProcessing";
 import {buildFromGUI, buildTrivialGrammar} from "../ui/RulePad/rulePadGraphicalEditor/graphicalEditor";
+import Utilities from "../core/utilities";
 
 /**
  * @typedef {import("../initialState")} featureMetaDataType
@@ -391,34 +392,49 @@ const createBuiltObjects = (mergedClusters, featureMetaData) => {
                 if (featureObject.key === mergeKeys[0]) {
                     featureChild.isConstraint = true;
                 }
-                let repeatedChildIndex = builtObjects[featureObject.key].withChildren
-                    .findIndex(child => child.key === featureChild.key);
-                if (repeatedChildIndex > -1) {
-                    // for nested elements like parameters
-                    if (builtObjects[featureObject.key].withChildren[repeatedChildIndex].withChildren) {
-                        let repeatedGrandChildIndex = builtObjects[featureObject.key]
-                            .withChildren[repeatedChildIndex].withChildren
-                            .findIndex(grandChild => grandChild.key === featureChild.withChildren[0].key);
+                // When there are multiple child elements like parameters
+                let repeatedChildIndices =
+                    Utilities.findAllIndices(
+                        builtObjects[featureObject.key].withChildren.map(child => child.key), featureChild.key);
+                let isChildAdded = false;
+                if (repeatedChildIndices.length > 0) {
+                    for (let repeatedChildIndex of repeatedChildIndices) {
+                        // for nested elements like parameters
+                        if (builtObjects[featureObject.key].withChildren[repeatedChildIndex].withChildren) {
+                            let repeatedGrandChildIndex = builtObjects[featureObject.key]
+                                .withChildren[repeatedChildIndex].withChildren
+                                .findIndex(grandChild => grandChild.key === featureChild.withChildren[0].key);
 
-                        // if existing sub-element
-                        if (repeatedGrandChildIndex > -1) {
-                            builtObjects[featureObject.key].withChildren[repeatedChildIndex]
-                                .withChildren[repeatedGrandChildIndex]._data_ = {
+                            // if existing sub-element
+                            if (repeatedGrandChildIndex > -1) {
+                                builtObjects[featureObject.key].withChildren[repeatedChildIndex]
+                                    .withChildren[repeatedGrandChildIndex]._data_ = {
+                                    ...featureChild._data_,
+                                    ...builtObjects[featureObject.key].withChildren[repeatedChildIndex]
+                                        .withChildren[repeatedGrandChildIndex]._data_
+                                };
+                                isChildAdded = true;
+                                break;
+                            }
+                        } else { // If element has no children by definition, but is repeated
+                            builtObjects[featureObject.key].withChildren[repeatedChildIndex]._data_ = {
                                 ...featureChild._data_,
-                                ...builtObjects[featureObject.key].withChildren[repeatedChildIndex]
-                                    .withChildren[repeatedGrandChildIndex]._data_
+                                ...builtObjects[featureObject.key].withChildren[repeatedChildIndex]._data_
                             };
-                        } else {
-                            let newGrandChild = featureChild.withChildren[0];
-                            newGrandChild._data_ = featureChild._data_;
-                            builtObjects[featureObject.key].withChildren[repeatedChildIndex].withChildren
-                                .push(newGrandChild);
+                            isChildAdded = true;
+                            break;
                         }
-                    } else { // for repeated elements
-                        builtObjects[featureObject.key].withChildren[repeatedChildIndex]._data_ = {
-                            ...featureChild._data_,
-                            ...builtObjects[featureObject.key].withChildren[repeatedChildIndex]._data_
-                        };
+                    }
+                    // If no repeated grandChild is found
+                    if (!isChildAdded) {
+                        // For nested elements, like parameters.
+                        // When a grandChild is a new element, add a new child.
+                        // For example, when for parameter name and parameter type add two parameters.
+                        // The reason is to create a correct xPath; parameter with name x and parameter with type y
+                        if (featureChild.withChildren) {
+                            featureChild.withChildren[0]._data_ = featureChild._data_;
+                        }
+                        builtObjects[featureObject.key].withChildren.push(featureChild);
                     }
                 } else {
                     if (featureChild.withChildren) {
