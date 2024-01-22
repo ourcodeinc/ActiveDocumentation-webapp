@@ -148,8 +148,19 @@ const nodeType = {
     decl_call_field_node: "decl_call_field_node",
 }
 
+// the keys used for elements in guiElements of RulePad
+export const identifierKeysInRulePad = ["name"];
+
+export const identifierFeatures = {
+    class_identifier: ["class_name_ends_with", "class_name_starts_with", "class_name"],
+    subclass_identifier: ["subclass_name_ends_with", "subclass_name_starts_with", "subclass_name"],
+    field_identifier: ["field_name_ends_with", "field_name_starts_with", "field_name"],
+    constr_identifier: ["constr_name"],
+    func_identifier: ["func_name_ends_with", "func_name_starts_with", "func_name"],
+}
+
 // used for readability
-const featureSet = {
+export const featureSet = {
     class_spec: ["class_annotation", "class_vis", "class_specifier", "class_name",
         "class_name_ends_with", "class_name_starts_with",
         "class_extend", "class_extend_ends_with", "class_extend_starts_with",
@@ -204,95 +215,170 @@ const elementType = {
     declaration: "declaration"
 }
 
+const gui_element_ids = {
+    class_element_id : "0",
+    class_name_id : "0-4-0",
+
+    class_decl_stmt_id : "0-7-0",
+    class_decl_stmt_name_id : "0-7-0-4-0",
+
+    constr_element_id : "0-7-1",
+    constr_name_id : "0-7-1-4-0",
+    constr_expr_stmt_id : "0-7-1-7-0",
+    constr_decl_stmt_id : "0-7-1-7-1",
+
+    func_element_id : "0-7-2",
+    func_name_id : "0-7-2-4-0",
+    func_decl_stmt_id : "0-7-2-7-0",
+    func_expr_stmt_id : "0-7-2-7-1",
+
+    subclass_element_id : "0-7-5",
+    subclass_name_id : "0-7-5-4-0",
+}
+
+export const identifier_element_ids = [
+    gui_element_ids.class_name_id, gui_element_ids.class_decl_stmt_name_id,
+    gui_element_ids.constr_name_id, gui_element_ids.func_name_id, gui_element_ids.subclass_name_id
+];
+
 /**
  * key: key of the group used to access the object
  * desc: readable string used to describe the group for mining rules / not used anywhere yet
  * featureGroup: list of feature types in the group
- * @type {Object<string, {key: string, desc: string, mergeKeys: string[]}>}
+ * @type {Object<string, {key: string, desc: string, headers: string[], mergeKeys: string[],
+ *        categorizedFeatureSets: string[], rootId: string[]}>}
  */
 export const featureGroupInformation = {
     field_spec_in_class: {
         key: "field_spec_in_class",
-        desc: "Code snippets for class fields",
+        desc: "Code snippets for fields in similar classes",
+        headers: ["If a class has these properties:", "Then the class has these fields:"],
         mergeKeys: ["class", "declaration statement"],
+        categorizedFeatureSets: [["class_identifier", "class_spec"], ["field_identifier", "field_spec"]],
+        rootId: [gui_element_ids.class_element_id, gui_element_ids.class_decl_stmt_id],
     },
     constr_spec_in_class: {
         key: "constr_spec_in_class",
-        desc: "Code snippets for class constructors",
+        desc: "Code snippets for constructors in similar classes",
+        headers: ["If a class has these properties:", "Then the class has these constructors:"],
         mergeKeys: ["class", "constructor"],
+        categorizedFeatureSets: [["class_identifier", "class_spec"], ["constr_identifier", "constr_spec"]],
+        rootId: [gui_element_ids.class_element_id, gui_element_ids.constr_element_id],
     },
     func_spec_in_class: {
         key: "func_spec_in_class",
-        desc: "Code snippets for class functions",
+        desc: "Code snippets for functions in similar classes",
+        headers: ["If a class has these properties:", "Then the class has these functions:"],
         mergeKeys: ["class", "function"],
+        categorizedFeatureSets: [["class_identifier", "class_spec"], ["func_identifier", "func_spec"]],
+        rootId: [gui_element_ids.class_element_id, gui_element_ids.func_element_id],
     },
     subclass_spec_in_class: {
         key: "subclass_spec_in_class",
-        desc: "Code snippets for subclasses",
+        desc: "Code snippets for subclasses in similar classes",
+        headers: ["If a class has these properties:", "Then the class has these subclasses:"],
         mergeKeys: ["class", "subclass"],
+        categorizedFeatureSets: [["class_identifier", "class_spec"], ["subclass_identifier", "subclass_spec"]],
+        rootId: [gui_element_ids.class_element_id, gui_element_ids.subclass_element_id],
     },
 
     expr_spec_in_constr_calling_constr_focused_element: {
         key: "expr_spec_in_constr_calling_constr_focused_element",
-        desc: "Features of declaration statements in constructors calling the constructor (focused element)",
+        desc: "Code snippets for declaration statements in constructors calling the target constructor",
+        headers: ["If a constructor has these properties:", "Then the constructor has these declarations:"],
         mergeKeys: ["constructor", "expression statement"],
+        categorizedFeatureSets: [["constr_identifier", "constr_spec"], []],
+        rootId: [gui_element_ids.constr_element_id, gui_element_ids.constr_expr_stmt_id],
     },
     decl_spec_in_constr_calling_constr_focused_element: {
         key: "decl_spec_in_constr_calling_constr_focused_element",
-        desc: "Features of declaration statements in constructors calling the constructor (focused element)",
+        desc: "Code snippets for declaration statements in constructors calling the target constructor",
+        headers: ["If a constructor has these properties:", "Then the constructor has these declarations:"],
         mergeKeys: ["constructor", "declaration statement"],
+        categorizedFeatureSets: [["constr_identifier", "constr_spec"], []],
+        rootId: [gui_element_ids.constr_element_id, gui_element_ids.constr_decl_stmt_id],
     },
     expr_spec_in_func_calling_constr_focused_element: {
         key: "expr_spec_in_func_calling_constr_focused_element",
-        desc: "Features of expression statements in functions calling the constructor (focused element)",
+        desc: "Code snippets for expression statements in functions calling the target constructor",
+        headers: ["If a function has these properties:", "Then the function has these expressions:"],
         mergeKeys: ["function", "expression statement"],
+        categorizedFeatureSets: [["func_identifier", "func_spec"], []],
+        rootId: [gui_element_ids.func_element_id, gui_element_ids.func_expr_stmt_id],
     },
     decl_spec_in_func_calling_constr_focused_element: {
         key: "decl_spec_in_func_calling_constr_focused_element",
-        desc: "Features of declaration statements in functions calling the constructor (focused element)",
+        desc: "Code snippets for declaration statements in functions calling the target constructor",
+        headers: ["If a function has these properties:", "Then the function has these declarations:"],
         mergeKeys: ["function", "declaration statement"],
+        categorizedFeatureSets: [["func_identifier", "func_spec"], []],
+        rootId: [gui_element_ids.func_element_id, gui_element_ids.func_decl_stmt_id],
     },
 
     expr_spec_in_constr_calling_func_focused_element: {
         key: "expr_spec_in_constr_calling_func_focused_element",
-        desc: "Features of declaration statements in constructors calling the function (focused element)",
+        desc: "Code snippets for expression statements in constructors calling the target function",
+        headers: ["If a constructor has these properties:", "Then the function has these expressions:"],
         mergeKeys: ["constructor", "expression statement"],
+        categorizedFeatureSets: [["constr_identifier", "constr_spec"], []],
+        rootId: [gui_element_ids.constr_element_id, gui_element_ids.constr_expr_stmt_id],
     },
     decl_spec_in_constr_calling_func_focused_element: {
         key: "decl_spec_in_constr_calling_func_focused_element",
-        desc: "Features of declaration statements in constructors calling the function (focused element)",
+        desc: "Code snippets for declaration statements in constructors calling the target function",
+        headers: ["If a constructor has these properties:", "Then the function has these declarations:"],
         mergeKeys: ["constructor", "declaration statement"],
+        categorizedFeatureSets: [["constr_identifier", "constr_spec"], []],
+        rootId: [gui_element_ids.constr_element_id, gui_element_ids.constr_decl_stmt_id],
     },
     expr_spec_in_func_calling_func_focused_element: {
         key: "expr_spec_in_func_calling_func_focused_element",
-        desc: "Features of expression statements in functions calling the function (focused element)",
+        desc: "Code snippets for expression statements in functions calling the target function",
+        headers: ["If a function has these properties:", "Then the function has these expressions:"],
         mergeKeys: ["function", "expression statement"],
+        categorizedFeatureSets: [["func_identifier", "func_spec"], []],
+        rootId: [gui_element_ids.func_element_id, gui_element_ids.func_expr_stmt_id],
     },
     decl_spec_in_func_calling_func_focused_element: {
         key: "decl_spec_in_func_calling_func_focused_element",
-        desc: "Features of declaration statements in functions calling the function (focused element)",
+        desc: "Code snippets for declaration statements in functions calling the target function",
+        headers: ["If a function has these properties:", "Then the function has these declarations:"],
         mergeKeys: ["function", "declaration statement"],
+        categorizedFeatureSets: [["func_identifier", "func_spec"], []],
+        rootId: [gui_element_ids.func_element_id, gui_element_ids.func_decl_stmt_id],
     },
 
     expr_spec_in_constr_reading_modifying_field_focused_element: {
         key: "expr_spec_in_constr_reading_modifying_field_focused_element",
-        desc: "Features of expression statements in constructors reading / modifying the field (focused element)",
+        desc: "Code snippets for expression statements in constructors reading / modifying the target field",
+        headers: ["If a constructor has these properties:", "Then the function has these expressions:"],
         mergeKeys: ["constructor", "expression statement"],
+        categorizedFeatureSets: [["constr_identifier", "constr_spec"], []],
+        rootId: [gui_element_ids.constr_element_id, gui_element_ids.constr_expr_stmt_id],
     },
     decl_spec_in_constr_reading_modifying_field_focused_element: {
         key: "decl_spec_in_constr_reading_modifying_field_focused_element",
-        desc: "Features of declaration statements in constructors reading / modifying the field (focused element)",
+        desc: "Code snippets for declaration statements in constructors reading / modifying the target field",
+        headers: ["If a constructor has these properties:", "Then the constructor has these declarations:"],
         mergeKeys: ["constructor", "declaration statement"],
+        categorizedFeatureSets: [["constr_identifier", "constr_spec"], []],
+        rootId: [gui_element_ids.constr_element_id, gui_element_ids.constr_decl_stmt_id],
     },
     expr_spec_in_func_reading_modifying_field_focused_element: {
         key: "expr_spec_in_func_reading_modifying_field_focused_element",
-        desc: "Features of expression statements in functions reading / modifying the field (focused element)",
+        desc: "Code snippets for expression statements in functions reading / modifying the target field",
+        headers: ["If a function has these properties:", "Then the function has these expressions:"],
         mergeKeys: ["function", "expression statement"],
+        categorizedFeatureSets: [["func_identifier", "func_spec"], []],
+        rootId: [gui_element_ids.func_element_id, gui_element_ids.func_expr_stmt_id],
     },
     decl_spec_in_func_reading_modifying_field_focused_element: {
         key: "decl_spec_in_func_reading_modifying_field_focused_element",
-        desc: "Features of declaration statements in functions reading / modifying the field (focused element)",
+        desc: "Code snippets for declaration statements in functions reading / modifying the target field",
+        headers: ["If a function has these properties:", "Then the function has these declarations:"],
         mergeKeys: ["function", "declaration statement"],
+        categorizedFeatureSets: [["func_identifier", "func_spec"], []],
+        rootId: [gui_element_ids.func_element_id, gui_element_ids.func_decl_stmt_id],
     }
 };
 
@@ -601,7 +687,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text,
         xpath: "src:class/src:name/text()",
         description: "class with ( name \"<TEMP_0>\" )",
-        weight: 20,
+        weight: 50,
         FeatureObject: {
             key: "class",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -611,7 +697,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_ends_with,
         xpath: "src:class/src:name/text()",
         description: "class with ( name \"<TEMP_0>\" )",
-        weight: 19,
+        weight: 49,
         FeatureObject: {
             key: "class",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -621,7 +707,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_starts_with,
         xpath: "src:class/src:name/text()",
         description: "class with ( name \"<TEMP_0>\" )",
-        weight: 18,
+        weight: 48,
         FeatureObject: {
             key: "class",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -743,7 +829,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text,
         xpath: "/src:class/src:block/src:class/src:name/text()",
         description: "subclass with ( name \"<TEMP_0>\" )",
-        weight: 20,
+        weight: 40,
         FeatureObject: {
             key: "subclass",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -753,7 +839,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_ends_with,
         xpath: "/src:class/src:block/src:class/src:name/text()",
         description: "subclass with ( name \"<TEMP_0>\" )",
-        weight: 19,
+        weight: 39,
         FeatureObject: {
             key: "subclass",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -763,7 +849,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_starts_with,
         xpath: "/src:class/src:block/src:class/src:name/text()",
         description: "subclass with ( name \"<TEMP_0>\" )",
-        weight: 18,
+        weight: 38,
         FeatureObject: {
             key: "subclass",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -865,7 +951,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text,
         xpath: "/src:constructor/src:name/text()",
         description: "constructor with ( name \"<TEMP_0>\" )",
-        weight: 20,
+        weight: 40,
         FeatureObject: {
             key: "constructor",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -908,7 +994,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text,
         xpath: "/src:constructor/src:parameter_list/src:parameter/src:decl/src:name/text()",
         description: "constructor with ( parameter with name  \"<TEMP_0>\" )",
-        weight: 10,
+        weight: 30,
         FeatureObject: {
             key: "constructor",
             withChildren: {
@@ -920,7 +1006,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_ends_with,
         xpath: "/src:constructor/src:parameter_list/src:parameter/src:decl/src:name/text()",
         description: "constructor with ( parameter with name  \"<TEMP_0>\" )",
-        weight: 9,
+        weight: 29,
         FeatureObject: {
             key: "constructor",
             withChildren: {
@@ -932,7 +1018,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_starts_with,
         xpath: "/src:constructor/src:parameter_list/src:parameter/src:decl/src:name/text()",
         description: "constructor with ( parameter with name  \"<TEMP_0>\" )",
-        weight: 8,
+        weight: 28,
         FeatureObject: {
             key: "constructor",
             withChildren: {
@@ -986,7 +1072,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text,
         xpath: "/src:function/src:name/text()",
         description: "function with ( name \"<TEMP_0>\" )",
-        weight: 20,
+        weight: 40,
         FeatureObject: {
             key: "function",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -996,7 +1082,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_ends_with,
         xpath: "/src:function/src:name/text()",
         description: "function with ( name \"<TEMP_0>\" )",
-        weight: 19,
+        weight: 39,
         FeatureObject: {
             key: "function",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -1006,7 +1092,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_starts_with,
         xpath: "/src:function/src:name/text()",
         description: "function with ( name \"<TEMP_0>\" )",
-        weight: 18,
+        weight: 38,
         FeatureObject: {
             key: "function",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -1039,7 +1125,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text,
         xpath: "/src:function/src:parameter_list/src:parameter/src:decl/src:name/text()",
         description: "function with ( parameter with name  \"<TEMP_0>\" )",
-        weight: 5,
+        weight: 35,
         FeatureObject: {
             key: "function",
             withChildren: {
@@ -1052,7 +1138,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_ends_with,
         xpath: "/src:function/src:parameter_list/src:parameter/src:decl/src:name/text()",
         description: "function with ( parameter with name  \"<TEMP_0>\" )",
-        weight: 4,
+        weight: 34,
         FeatureObject: {
             key: "function",
             withChildren: {
@@ -1065,7 +1151,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_starts_with,
         xpath: "/src:function/src:parameter_list/src:parameter/src:decl/src:name/text()",
         description: "function with ( parameter with name  \"<TEMP_0>\" )",
-        weight: 3,
+        weight: 33,
         FeatureObject: {
             key: "function",
             withChildren: {
@@ -1120,7 +1206,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text,
         xpath: "/src:decl_stmt/src:decl/src:name/text()",
         description: "declaration statement with ( name \"<TEMP_0>\" )",
-        weight: 20,
+        weight: 40,
         FeatureObject: {
             key: "declaration statement",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -1130,7 +1216,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_ends_with,
         xpath: "/src:decl_stmt/src:decl/src:name/text()",
         description: "declaration statement with ( name \"<TEMP_0>\" )",
-        weight: 19,
+        weight: 39,
         FeatureObject: {
             key: "declaration statement",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -1140,7 +1226,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_starts_with,
         xpath: "/src:decl_stmt/src:decl/src:name/text()",
         description: "declaration statement with ( name \"<TEMP_0>\" )",
-        weight: 18,
+        weight: 38,
         FeatureObject: {
             key: "declaration statement",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -1284,7 +1370,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text,
         xpath: "/src:decl_stmt/src:decl/src:name/text()",
         description: "declaration statement with ( name \"<TEMP_0>\" )",
-        weight: 20,
+        weight: 40,
         FeatureObject: {
             key: "declaration statement",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -1294,7 +1380,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_ends_with,
         xpath: "/src:decl_stmt/src:decl/src:name/text()",
         description: "declaration statement with ( name \"<TEMP_0>\" )",
-        weight: 19,
+        weight: 39,
         FeatureObject: {
             key: "declaration statement",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
@@ -1304,7 +1390,7 @@ export const defaultFeatures = {
         type: featureTypes.single_node_text_starts_with,
         xpath: "/src:decl_stmt/src:decl/src:name/text()",
         description: "declaration statement with ( name \"<TEMP_0>\" )",
-        weight: 18,
+        weight: 38,
         FeatureObject: {
             key: "declaration statement",
             withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}

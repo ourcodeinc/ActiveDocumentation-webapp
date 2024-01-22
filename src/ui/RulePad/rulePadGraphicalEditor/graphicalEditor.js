@@ -12,6 +12,7 @@ import {changeAutoCompleteTextFromGUI, changeRuleState} from "../../../actions";
 import {generateTreeForElement, getConditionByName} from "./graphicalEditorConstants";
 import {autoComplete_suggestion, skip_words_from_TE} from "../rulePadTextualEditor/textualEditorConstant";
 import {constantRuleIndex} from "../../uiConstants";
+import {shouldIgnoreInfrequent} from "../../../miningRulesCore/postProcessing";
 
 
 class GraphicalEditor extends Component {
@@ -820,9 +821,11 @@ class GraphicalEditor extends Component {
  * @param guiElements
  * @param nodeId
  * @param group {"quantifier"|"constraint"}
+ * @param forMiningRules
  * @return {any}
  */
-export function buildFromGUI (guiTree, guiElements, nodeId, group="quantifier") {
+export function buildFromGUI (guiTree, guiElements, nodeId, group="quantifier",
+                              forMiningRules=false) {
     let visitedNodeId = [];
 
     let buildTreeFromNodeId = (nodeId, group) => {
@@ -878,6 +881,7 @@ export function buildFromGUI (guiTree, guiElements, nodeId, group="quantifier") 
                     if (visitedNodeId.indexOf(childId) !== -1) return;
                     if (childId === "" || !guiElements[childId].activeElement) return;
                     if (guiElements[childId].isConstraint && group === "quantifier") return;
+                    if (forMiningRules && shouldIgnoreInfrequent(guiElements[childId])) return;
                     let newSubTree = buildTreeFromNodeId(childId, group);
                     if (newSubTree) nodeChildren[childGroup].push(newSubTree);
                 });
@@ -887,6 +891,7 @@ export function buildFromGUI (guiTree, guiElements, nodeId, group="quantifier") 
                         if (visitedNodeId.indexOf(childId) !== -1) return;
                         if (childId === "" || !guiElements[childId].activeElement) return;
                         if (guiElements[childId].isConstraint && group === "quantifier") return;
+                        if (forMiningRules && shouldIgnoreInfrequent(guiElements[childId])) return;
                         let newSubTree = buildTreeFromNodeId(childId, group);
                         if (newSubTree) nodeChildren["body"].push(newSubTree);
                     })

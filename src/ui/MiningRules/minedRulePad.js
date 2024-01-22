@@ -8,14 +8,17 @@ import React, {Component, Fragment} from "react";
 
 import {getConditionByName} from "../RulePad/rulePadGraphicalEditor/graphicalEditorConstants";
 import {CustomDropDown} from "../RulePad/rulePadGraphicalEditor/graphicalComponent";
+import {identifier_element_ids} from "../../miningRulesCore/featureConfig";
 
-class MinedClusterRulePad extends Component {
+class MinedRulePad extends Component {
 
     constructor(props) {
         super(props);
         // no need for ruleIndex
         // elementId [optional], rulePadState (guiTree, guiElements), styleClass [optional] << for styling
         // fileGroup
+        // isCluster << for color coding the frequency
+        // featureMetaData
 
         this.state = {};
 
@@ -32,6 +35,7 @@ class MinedClusterRulePad extends Component {
     render() {
         return (
             <div className={"overlayContainer " + this.styleClass}>
+                {/*{this.renderExplore()}*/}
                 <div
                     className={"mainDiv-overlay elementDiv" + (this.state.thisElement.activeElement ? " activeElement" : "")
                     + (this.state.thisElement.selectedElement ? " selectedElement" : "")
@@ -83,7 +87,7 @@ class MinedClusterRulePad extends Component {
                 case "text":
                     // if there are multiple values for the element
                     if (childElement.activeElement && childElement._data_ &&
-                        childElement._data_._data_ && Object.keys(childElement._data_._data_).length > 1) {
+                        childElement._data_._data_ && Object.keys(childElement._data_._data_.elements).length > 1) {
                         return this.renderDropDownChild(group, null, i, childId, childElement, childCondition);
                     }
                     return this.renderTextChild(group, null, i, childId, childElement, childCondition);
@@ -173,13 +177,13 @@ class MinedClusterRulePad extends Component {
     renderElementChild(group, innerIndex, index, childId) {
         // remove empty child
         if (!this.state.guiElements[childId].activeElement) return null;
-
         return (
             <Fragment key={index}>
                 <div className={group === "body" ? "rowGroup" : "rowItem"}>
-                    <MinedClusterRulePad key={new Date()} elementId={childId}
-                                         rulePadState={this.props.rulePadState} styleClass={""}
-                                         featureMetaData={this.props.featureMetaData} fileGroup={this.props.fileGroup}
+                    <MinedRulePad key={new Date()} elementId={childId}
+                                  rulePadState={this.props.rulePadState} styleClass={""}
+                                  featureMetaData={this.props.featureMetaData} fileGroup={this.props.fileGroup}
+                                  isCluster={this.props.isCluster} depth={this.props.depth + 1}
                     />
                 </div>
             </Fragment>
@@ -192,7 +196,7 @@ class MinedClusterRulePad extends Component {
                 : childCondition.type === "smallText" ? "smallText rowItem"
                     : "rowItem");
         // color coding the features based on their frequencies in mined design rules.
-        let colorCoding = this.computeColorCoding(childElement);
+        let colorCoding = this.computeColorCoding(childElement, childId);
         return (
             <div key={index} className={className}>
                 <div>
@@ -215,13 +219,11 @@ class MinedClusterRulePad extends Component {
                 : childCondition.type === "smallText" ? "smallText rowItem"
                     : "rowItem");
         // color coding the features based on their frequencies in mined design rules.
-        let colorCoding = this.computeColorCoding(childElement);
-        let allFeatures = Object.keys(childElement._data_._data_).map(d => {
-            let desc = this.props.featureMetaData.featureInfoContainers.featureInfoReverse[d];
-            let info = this.props.featureMetaData.featureInfoContainers.featureInfo[desc];
+        let colorCoding = this.computeColorCoding(childElement, childId);
+        let allFeatures = childElement._data_._data_.elements.map(d => {
+            let info = this.props.featureMetaData.featureInfoContainers.featureInfo[d.desc];
             return info.nodes[0];
         });
-        let info = Object.keys(childElement._data_._data_).map(d => childElement._data_._data_[d].length);
 
         return (
             <div key={index} className={className}>
@@ -234,7 +236,6 @@ class MinedClusterRulePad extends Component {
                         <CustomDropDown
                             className={"minedRuleEditor activeElement " + colorCoding}
                             menuItemsText={allFeatures}
-                            menuItemsInfo={info}
                             menuItemsEvent={allFeatures.map((item) => item === "N/A" ? childCondition.placeholder
                                 : item)}
                             menuDefault={childElement.text}
@@ -266,30 +267,26 @@ class MinedClusterRulePad extends Component {
         )
     }
 
-    computeColorCoding(childElement) {
+    computeColorCoding(childElement, childId) {
+        if (!this.props.isCluster) return "";
         try {
-            let featureItemSets = null, allItemSets = null;
+            if (identifier_element_ids.includes(childId)) {
+                return "frequency-color frequency-identifier";
+            }
+            let frequency = 0;
             if (childElement.activeElement) {
-                if (childElement._data_ && childElement._data_._data_) {
-                    featureItemSets = [...new Set(childElement._data_._data_[+childElement._data_._featureId_])];
-                }
-                if (this.state.thisElement._data_ &&
-                    this.state.thisElement._data_._data_ &&
-                    this.state.thisElement._data_._data_.cluster) {
-                    allItemSets = [...new Set(this.state.thisElement._data_._data_.cluster)];
-                }
+                let elementIndex = childElement._data_._data_.elements
+                    .map(d => d.featureId)
+                    .indexOf(childElement._data_._data_.maxFeatureId);
+                frequency = childElement._data_._data_.elements[elementIndex].frequency;
             }
-            if (!featureItemSets || !allItemSets) {
-                featureItemSets = [...new Set(this.state.thisElement._data_._data_[+this.state.thisElement._data_._featureId_])];
-                allItemSets = [...new Set(Object.values(this.state.thisElement._data_._data_).flat())];
-            }
-            return "frequency-" +
-                Math.floor(featureItemSets.length / allItemSets.length * 10);
+            return "frequency-color frequency-" +
+                Math.floor(frequency * 10);
         } catch (e) {
-            return "frequency-unknown";
+            return "frequency-color frequency-unknown";
         }
     }
 }
 
-export default MinedClusterRulePad;
+export default MinedRulePad;
 

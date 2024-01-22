@@ -8,13 +8,16 @@ import {
     attributeFileNames,
     defaultFeatures,
     featureGroupInformation,
+    featureSet,
+    identifierFeatures, identifierKeysInRulePad,
     MIN_FEATURE_COUNT_FOR_FILTER,
     MIN_SUPPORT_FOR_FILTER,
     MIN_UTILITY_FOR_FILTER,
     MIN_WEIGHT_TO_INCLUDE_FILE
 } from "./featureConfig";
-import {clusterSimilarItemSets} from "./clustering";
 import {processRulePadForMiningRules} from "../ui/RulePad/rulePadTextualEditor/generateGuiTree"
+import {antlr} from "../core/languageProcessing";
+import {buildFromGUI, buildTrivialGrammar} from "../ui/RulePad/rulePadGraphicalEditor/graphicalEditor";
 
 /**
  * @typedef {import("../initialState")} featureMetaDataType
@@ -29,13 +32,21 @@ import {processRulePadForMiningRules} from "../ui/RulePad/rulePadTextualEditor/g
  * each array is a frequent ItemSet
  */
 export async function processReceivedFrequentItemSets(outputFiles, algorithm, featureMetaData) {
-    let initialParsedOutput = parseFrequentItemSets(outputFiles, algorithm, featureMetaData);
-    removeSparseItemSets(initialParsedOutput);
-    let clusteredOutput = clusterSimilarItemSets(initialParsedOutput, featureMetaData);
-    let combinedFeaturesOutput = combineFeatures(clusteredOutput, featureMetaData);
-    sortClusters(combinedFeaturesOutput, featureMetaData);
-    let clusteredParsedOutput = createBuiltObject(combinedFeaturesOutput, featureMetaData);
-    return Promise.resolve(createRulePad(clusteredParsedOutput, featureMetaData));
+    try {
+        let initialParsedOutput = parseFrequentItemSets(outputFiles, algorithm, featureMetaData);
+        removeSparseItemSets(initialParsedOutput);
+        let categorizedFeatures = categorizeFeatures(initialParsedOutput, featureMetaData);
+        let clusteredItemSets = clusterByIdentifiers(categorizedFeatures);
+        let filtered = filteredClusters(clusteredItemSets);
+        let mergedClusters = mergeClusterMembers(filtered, featureMetaData);
+        let builtObjects = createBuiltObjects(mergedClusters, featureMetaData);
+        sortBuiltObjectsByIdentifiers(builtObjects);
+        let rulePadStates = createRulePad(builtObjects);
+        return Promise.resolve(rulePadStates);
+    } catch (e) {
+        console.log(e);
+        return [];
+    }
 }
 
 /**
@@ -123,167 +134,425 @@ const removeSparseItemSets = (initialParsedOutput) => {
     }
 }
 
+
 /**
- * Combine the features in each cluster
- * @param clusteredOutput {[{fileGroup: string, clusters: [[initialFrequentItemSetType]]}]}
+ * categorize the features based on the feature sets
+ * @param initialParsedOutput {initialParsedOutputType}
  * @param featureMetaData {featureMetaDataType}
- * @return {{fileGroup: string, clusters: {combinedFeatures: {}, cluster: [initialFrequentItemSetType]}[]}[]}
+ * @returns {{fileGroup, categorized: *[]}[]}
  */
-const combineFeatures = (clusteredOutput,
-                         featureMetaData) => {
-    let results = [];
-    for (let fileGroup of clusteredOutput) {
-        let combinedClusters = [];
-        for (let cluster of fileGroup.clusters) {
-            let combinedFeatures = {};
-            for (let i = 0; i < cluster.length; i++) {
-                let itemSet = cluster[i];
-                for (let featureId of itemSet.featureIds) {
-                    let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
-                    let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
-                    let featureIndex = featureInfo.featureIndex;
-                    if (!(featureIndex in combinedFeatures)) {
-                        combinedFeatures[featureIndex] = {};
+const categorizeFeatures = (initialParsedOutput, featureMetaData) => {
+    return initialParsedOutput.map(fileGroupObject => {
+        let groupSetKeys = featureGroupInformation[fileGroupObject.fileGroup].categorizedFeatureSets.flat();
+        let categorizedFeatures = fileGroupObject.frequentItemSets.map((itemSet, itemSetIndex) => {
+            let categories = {};
+            groupSetKeys.forEach(key => categories[key] = {});
+            itemSet.featureIds.forEach(featureId => {
+                let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
+                let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
+                let featureWeight = featureMetaData.featureInfoContainers.featureInfo[desc].weight;
+                let featureIndex = featureInfo.featureIndex;
+                for (let key of groupSetKeys) {
+                    if ((key in identifierFeatures && identifierFeatures[key].includes(featureIndex)) ||
+                        (key in featureSet && featureSet[key].includes(featureIndex))) {
+                        categories[key][featureIndex] = {featureId, desc, featureIndex, featureWeight};
+                        return;
                     }
-                    if (!(featureId in combinedFeatures[featureIndex])) {
-                        combinedFeatures[featureIndex][featureId] = [];
-                    }
-                    combinedFeatures[featureIndex][featureId].push(i);
                 }
-            }
-            combinedClusters.push({combinedFeatures, cluster});
-        }
-        results.push({fileGroup: fileGroup.fileGroup, clusters: combinedClusters});
-    }
-    return results;
-}
-
-/**
- * Sort clusters based on their utilities and supports
- * @param combinedFeaturesOutput {
- * {fileGroup: string, clusters: {combinedFeatures: {}, cluster: [initialFrequentItemSetType]}[]}[]}
- * @param featureMetaData {featureMetaDataType}
- */
-const sortClusters = (combinedFeaturesOutput,
-                      featureMetaData) => {
-    /**
-     * First sort by sum of utilities, then cluster size, finally average support.
-     * @param cluster1 {{combinedFeatures: {}, cluster: [initialFrequentItemSetType]}}
-     * @param cluster2 {{combinedFeatures: {}, cluster: [initialFrequentItemSetType]}}
-     */
-    let sortFunction = (cluster1,
-                        cluster2) => {
-        // Step 1
-        let allFeatures1 = cluster1.cluster.reduce((features, itemSet) => [...features, ...itemSet.featureIds], []);
-        allFeatures1 = [...new Set(allFeatures1)];
-        let sumWeights1 = allFeatures1.reduce((sum, featureId) => {
-            let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
-            return sum + featureMetaData.featureInfoContainers.featureInfo[desc].weight;
-        }, 0);
-        let allFeatures2 = cluster2.cluster.reduce((features, itemSet) => [...features, ...itemSet.featureIds], []);
-        allFeatures2 = [...new Set(allFeatures2)];
-        let sumWeights2 = allFeatures2.reduce((sum, featureId) => {
-            let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
-            return sum + featureMetaData.featureInfoContainers.featureInfo[desc].weight;
-        }, 0);
-        if (sumWeights1 !== sumWeights2)
-            return sumWeights2 - sumWeights1;
-
-        // Step 2
-        if (cluster2.cluster.length !== cluster1.cluster.length)
-            return cluster2.cluster.length - cluster1.cluster.length;
-        // Step 3
-        let averageSupport2 =
-            (cluster2.cluster.reduce((sum, itemSet) => sum + itemSet.support, 0))
-            / cluster2.cluster.length;
-        let averageSupport1 =
-            (cluster1.cluster.reduce((sum, itemSet) => sum + itemSet.support, 0))
-            / cluster1.cluster.length;
-        return averageSupport2 - averageSupport1;
-    }
-
-    combinedFeaturesOutput.forEach(fileGroup => {
-        fileGroup.clusters.sort(sortFunction);
+            });
+            return {categories, itemSetIndex}
+        });
+        return {fileGroup: fileGroupObject, categorized: categorizedFeatures};
     });
 }
 
 /**
- * @param combinedFeaturesOutput {{fileGroup: string,
- * clusters: {combinedFeatures: {}, cluster: [initialFrequentItemSetType]}[]}[]}
- * @param featureMetaData {featureMetaDataType}
- * @return {builtObjectRulePadOutputType}
+ * @param categorizedFeatures {{fileGroup, categorized: *[]}[]}
+ * @returns {{fileGroup, clusters: Object<number, Object<number, {itemSets, categories}[]>>}[]}
  */
-const createBuiltObject = (combinedFeaturesOutput,
-                           featureMetaData) => {
-    let results = [];
-    for (let fileGroup of combinedFeaturesOutput) {
-        let builtClusters = [];
-        for (let cluster of fileGroup.clusters) {
-            let builtObjects = {};
-            let mergeKeys = featureGroupInformation[fileGroup.fileGroup].mergeKeys;
-            for (let mergeKey of mergeKeys) {
-                builtObjects[mergeKey] = {
-                    key: mergeKey, withChildren: [],
-                    _data_: {cluster: cluster.cluster}
-                };
-            }
-            let combinedFeatures = cluster.combinedFeatures;
-            let combinedFeaturesKeys = Object.keys(combinedFeatures);
-            for (let featureKey of combinedFeaturesKeys) {
-                // find feature value with the highest weight
-                let maxWeight = 0;
-                let maxFeatureId = -1;
-                Object.keys(combinedFeatures[featureKey]).forEach(featureId => {
-                    let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
-                    let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
-                    if (featureInfo.weight > maxWeight) {
-                        maxWeight = featureInfo.weight;
-                        maxFeatureId = featureId;
+const clusterByIdentifiers = (categorizedFeatures) => {
+    /**
+     * @param categorizedItemSets {*[]}
+     * @param clusterKey {string}
+     */
+    function clusterByLevel (categorizedItemSets, clusterKey) {
+        let clusters = {};
+        categorizedItemSets.forEach(categorizedItemSet => {
+            // if there are identifiers for the itemSet
+            // each itemSet may belong to multiple clusters
+            if (Object.keys(categorizedItemSet.categories[clusterKey]).length > 0) {
+                for (let key of identifierFeatures[clusterKey]) {
+                    if (key in categorizedItemSet.categories[clusterKey]) {
+                        let featureId = categorizedItemSet.categories[clusterKey][key].featureId;
+                        if (!(featureId in clusters)) {
+                            clusters[featureId] = [];
+                        }
+                        clusters[featureId].push(categorizedItemSet);
                     }
-                });
-                if (maxWeight === 0) continue;
+                }
+            }
+        })
+        return clusters;
+    }
 
-                // add the feature to the builtObject
-                let desc = featureMetaData.featureInfoContainers.featureInfoReverse[maxFeatureId];
-                let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
+    return categorizedFeatures.map(fileGroupObject => {
+        let groupSetKeys = featureGroupInformation[fileGroupObject.fileGroup.fileGroup].categorizedFeatureSets;
+        let clusters = {};
+        // if we can cluster itemSets based on the first level
+        if (groupSetKeys.length > 0 && groupSetKeys[0].length > 0) {
+            let level1ClusterKey = groupSetKeys[0][0];
+            clusters = clusterByLevel(fileGroupObject.categorized, level1ClusterKey);
+        }
+        // if we can cluster itemSets based on the second level
+        if (groupSetKeys.length > 1 && groupSetKeys[1].length > 0) {
+            let level2ClusterKey = groupSetKeys[1][0];
+            for (let key of Object.keys(clusters)) {
+                clusters[key] = clusterByLevel(clusters[key], level2ClusterKey);
+            }
+        }
+        return {fileGroup: fileGroupObject.fileGroup, clusters};
+    })
+}
+
+/**
+ * remove sub-clusters with only one instance
+ * @param clusteredItemSets {{fileGroup, clusters: Object<number, Object<number, {itemSets, categories}[]>>}[]}
+ * @returns {{fileGroup, clusters: Object<number, Object<number, {itemSets, categories}[]>>}[]}
+ */
+const filteredClusters = (clusteredItemSets) => {
+    return clusteredItemSets.map(fileGroup => {
+        let filteredClusters = {};
+        let level1Keys = Object.keys(fileGroup.clusters);
+        for (let key1 of level1Keys) {
+            let filteredCluster = {};
+            let level2Keys = Object.keys(fileGroup.clusters[key1]);
+            for (let key2 of level2Keys) {
+                let count = fileGroup.clusters[key1][key2].length;
+                if (count > 1) {
+                    filteredCluster[key2] = fileGroup.clusters[key1][key2];
+                }
+            }
+            if (Object.keys(filteredCluster).length > 0) {
+                filteredClusters[key1] = filteredCluster;
+            }
+        }
+        return {fileGroup: fileGroup.fileGroup, clusters: filteredClusters}
+    });
+}
+
+/**
+ * @param filteredClusters {{fileGroup, clusters: Object<number, Object<number, {itemSetIndex, categories}[]>>}[]}
+ * @param featureMetaData {featureMetaDataType}
+ * @returns {{fileGroup: {fileGroup: string, frequentItemSets: *[]},
+ * clusters: Object<number, {parent: Object<string, *[]>, children: Object<number, Object<string, *[]>>[]}>
+ *     }[]}
+ */
+const mergeClusterMembers = (filteredClusters,
+                                 featureMetaData) => {
+    /**
+     * combine objects
+     * @param obj {Object<string, {featureId, desc, featureIndex}>}
+     * @param itemSetIndex {number}
+     * @param key {string}
+     * @param combinedObj {Object<string, {featureId, desc, featureIndex, itemSetIndices?: number[],
+     *             frequency?: boolean}[]>}
+     */
+    function mergeObjects(obj, itemSetIndex, key, combinedObj) {
+        if (!combinedObj[key]) {
+            combinedObj[key] = [];
+        }
+        // Check for duplication based on featureId
+        const existingIndex = combinedObj[key].findIndex(item => item.featureId === obj[key].featureId);
+        if (existingIndex === -1) {
+            combinedObj[key].push(Object.assign({}, obj[key],
+                {itemSetIndices: [itemSetIndex]}
+            ));
+        } else {
+            combinedObj[key][existingIndex].itemSetIndices =
+                [...new Set([...combinedObj[key][existingIndex].itemSetIndices, itemSetIndex])];
+        }
+    }
+
+    return filteredClusters.map(fileGroupObject => {
+        let groupSetKeys = featureGroupInformation[fileGroupObject.fileGroup.fileGroup].categorizedFeatureSets;
+        let mergedFeatures = {};
+        let level1Keys = Object.keys(fileGroupObject.clusters);
+        for (let key1 of level1Keys) {
+            mergedFeatures[key1] = {parent: {}, children: {}};
+            let allItemSetIndices = [];
+            let level2Keys = Object.keys(fileGroupObject.clusters[key1]);
+            for (let key2 of level2Keys) {
+                mergedFeatures[key1].children[key2] = {};
+                let itemSetIndices = [];
+                for (let itemSetObject of fileGroupObject.clusters[key1][key2]) {
+                    itemSetIndices.push(itemSetObject.itemSetIndex);
+                    Object.keys(itemSetObject.categories[groupSetKeys[0][1]])
+                        .forEach(key => mergeObjects(
+                            itemSetObject.categories[groupSetKeys[0][1]], itemSetObject.itemSetIndex,
+                            key, mergedFeatures[key1].parent));
+                    Object.keys(itemSetObject.categories[groupSetKeys[1][1]])
+                        .forEach(key => mergeObjects(
+                            itemSetObject.categories[groupSetKeys[1][1]], itemSetObject.itemSetIndex,
+                            key, mergedFeatures[key1].children[key2]));
+                }
+                let desc = featureMetaData.featureInfoContainers.featureInfoReverse[key2];
+                let featureIndex = featureMetaData.featureInfoContainers.featureInfo[desc].featureIndex;
+                let featureWeight = featureMetaData.featureInfoContainers.featureInfo[desc].weight;
+                mergedFeatures[key1].children[key2][featureIndex] =
+                    [{featureId: +key2, desc, featureIndex, itemSetIndices, featureWeight}];
+                allItemSetIndices = [...new Set([...allItemSetIndices, ...itemSetIndices])];
+            }
+
+            let desc = featureMetaData.featureInfoContainers.featureInfoReverse[key1];
+            let featureIndex = featureMetaData.featureInfoContainers.featureInfo[desc].featureIndex;
+            let featureWeight = featureMetaData.featureInfoContainers.featureInfo[desc].weight;
+            mergedFeatures[key1].parent[featureIndex] =
+                [{featureId: +key1, desc, featureIndex, itemSetIndices: allItemSetIndices, featureWeight}];
+
+            // calculate the frequency of features. It is used for color coding the GUI and generating xPath queries.
+            for (let key2 of level2Keys) {
+                let fis = Object.keys(mergedFeatures[key1].children[key2]);
+                let subClusterItemSetCount = 0;
+                for (let fi of fis) {
+                    if (mergedFeatures[key1].children[key2][fi].length > 1) continue;
+                    let featureId = mergedFeatures[key1].children[key2][fi][0].featureId;
+                    if (featureId === +key2) {
+                        subClusterItemSetCount = mergedFeatures[key1].children[key2][fi][0].itemSetIndices.length;
+                        break;
+                    }
+                }
+                for (let fi of fis) {
+                    mergedFeatures[key1].children[key2][fi].forEach(item => {
+                        item.frequency = item.itemSetIndices.length / subClusterItemSetCount;
+                    });
+                }
+            }
+        }
+
+        // calculate the frequency of features. It is used for color coding the GUI and generating xPath queries.
+        for (let key1 of level1Keys) {
+            let fis = Object.keys(mergedFeatures[key1].parent);
+            let subClusterItemSetCount = 0;
+            for (let fi of fis) {
+                if (mergedFeatures[key1].parent[fi].length > 1) continue;
+                let featureId = mergedFeatures[key1].parent[fi][0].featureId;
+                if (featureId === +key1) {
+                    subClusterItemSetCount = mergedFeatures[key1].parent[fi][0].itemSetIndices.length;
+                    break;
+                }
+            }
+            for (let fi of fis) {
+                mergedFeatures[key1].parent[fi].forEach(item => {
+                    item.frequency = item.itemSetIndices.length / subClusterItemSetCount;
+                });
+            }
+        }
+
+        return {fileGroup: fileGroupObject.fileGroup, clusters: mergedFeatures}
+    });
+}
+
+/**
+ * @typedef {{parent: Object<string, *[]>, children: Object<number, Object<string, *[]>>[]}} clusterType
+ * @param mergedClusters {{fileGroup: {fileGroup: string, frequentItemSets: *[]},
+ * clusters: Object<number,clusterType>}[]}
+ * @param featureMetaData {featureMetaDataType}
+ * @returns {{fileGroup: {fileGroup: string, frequentItemSets: *[]},
+ * builtObjects: {builtObject}[]}[]}
+ */
+const createBuiltObjects = (mergedClusters, featureMetaData) => {
+
+    function createFeatureObject(featureObjects, mergeKeys, builtObjects) {
+        let featureKeys = Object.keys(featureObjects);
+        for (let featureKey of featureKeys) {
+            let maxWeight = 0;
+            let maxFeatureId = -1;
+            featureObjects[featureKey].forEach(featureObject => {
+                if (featureObject.featureWeight > maxWeight) {
+                    maxWeight = featureObject.featureWeight;
+                    maxFeatureId = featureObject.featureId;
+                }
+            });
+            if (maxWeight === 0) continue;
+
+            // add the feature to the builtObject
+            for (let feature of featureObjects[featureKey]) {
+                let featureInfo = featureMetaData.featureInfoContainers.featureInfo[feature.desc];
                 let featureObject = defaultFeatures[featureInfo.featureIndex].FeatureObject;
                 let featureChild = {
                     ...{
-                        _data_: combinedFeatures[featureKey],
-                        _weight_: maxWeight, _featureId_: maxFeatureId
+                        _data_: {
+                            elements: featureObjects[featureKey],
+                            maxFeatureId: maxFeatureId
+                        }
                     },
                     ...createWithChildrenForFeature(featureInfo)
                 };
                 if (featureObject.key === mergeKeys[0]) {
                     featureChild.isConstraint = true;
                 }
-
                 let repeatedChildIndex = builtObjects[featureObject.key].withChildren
                     .findIndex(child => child.key === featureChild.key);
                 if (repeatedChildIndex > -1) {
-                    let combinedData = {
-                        ...featureChild._data_,
-                        ...builtObjects[featureObject.key].withChildren[repeatedChildIndex]._data_
-                    };
-                    if (builtObjects[featureObject.key].withChildren[repeatedChildIndex]._weight_
-                        < featureChild._weight_) {
-                        featureChild._data_ = combinedData;
-                        builtObjects[featureObject.key].withChildren[repeatedChildIndex] = featureChild;
-                    } else
-                        builtObjects[featureObject.key].withChildren[repeatedChildIndex]._data_ = combinedData;
-                } else
+                    // for nested elements like parameters
+                    if (builtObjects[featureObject.key].withChildren[repeatedChildIndex].withChildren) {
+                        let repeatedGrandChildIndex = builtObjects[featureObject.key]
+                            .withChildren[repeatedChildIndex].withChildren
+                            .findIndex(grandChild => grandChild.key === featureChild.withChildren[0].key);
+
+                        // if existing sub-element
+                        if (repeatedGrandChildIndex > -1) {
+                            builtObjects[featureObject.key].withChildren[repeatedChildIndex]
+                                .withChildren[repeatedGrandChildIndex]._data_ = {
+                                ...featureChild._data_,
+                                ...builtObjects[featureObject.key].withChildren[repeatedChildIndex]
+                                    .withChildren[repeatedGrandChildIndex]._data_
+                            };
+                        } else {
+                            let newGrandChild = featureChild.withChildren[0];
+                            newGrandChild._data_ = featureChild._data_;
+                            builtObjects[featureObject.key].withChildren[repeatedChildIndex].withChildren
+                                .push(newGrandChild);
+                        }
+                    } else { // for repeated elements
+                        builtObjects[featureObject.key].withChildren[repeatedChildIndex]._data_ = {
+                            ...featureChild._data_,
+                            ...builtObjects[featureObject.key].withChildren[repeatedChildIndex]._data_
+                        };
+                    }
+                } else {
+                    if (featureChild.withChildren) {
+                        featureChild.withChildren[0]._data_ = featureChild._data_;
+                    }
                     builtObjects[featureObject.key].withChildren.push(featureChild);
+                }
+                builtObjects[featureObject.key]._data_ = {
+                    itemSetIndices: featureObjects[featureKey].map(d => d.itemSetIndices).flat()
+                }
             }
-            let builtObject = builtObjects[mergeKeys[0]];
-            builtObject.withChildren.push(builtObjects[mergeKeys[1]]);
-            builtObject._data_ = {cluster: cluster.cluster};
+        }
+    }
+
+    function createMasterObject(mergeKeys) {
+        let masterBuiltObjects = {};
+        for (let mergeKey of mergeKeys) {
+            masterBuiltObjects[mergeKey] = {
+                key: mergeKey,
+                withChildren: [],
+                _data_: []
+            };
+        }
+        return masterBuiltObjects;
+    }
+
+    function createGrammar(object) {
+        let grammarText = object.key;
+        if (object.withChildren) {
+            let children = object.withChildren.map(createGrammar);
+            grammarText += " with (" + children.join(" and ") + " )";
+        } else if (object.value) {
+            grammarText += ` "${object.value.word}"`;
+        }
+        return grammarText;
+    }
+
+    return mergedClusters.map(fileGroupObject => {
+        let mergeKeys = featureGroupInformation[fileGroupObject.fileGroup.fileGroup].mergeKeys;
+        let clusterKeys = Object.keys(fileGroupObject.clusters);
+        let builtObjects = [];
+        for (let key of clusterKeys) {
+            let featureObjects = fileGroupObject.clusters[key].parent;
+            let parentFeature = createMasterObject(mergeKeys);
+            createFeatureObject(featureObjects, mergeKeys, parentFeature);
+            let builtObject = {parent: parentFeature[mergeKeys[0]], children: []};
+            if (!builtObject.parent._data_) {
+                builtObject.parent._data_ = {};
+            }
+            builtObject.parent._data_.grammar = createGrammar(parentFeature[mergeKeys[0]]);
             builtObject.selectedElement = true;
             builtObject.isConstraint = false;
-            builtClusters.push(builtObject);
+            let childClusterKeys = Object.keys(fileGroupObject.clusters[key].children);
+            for (let childKey of childClusterKeys) {
+                let childFeatures = fileGroupObject.clusters[key].children[childKey];
+                let builtObjectForCluster = createMasterObject(mergeKeys);
+                createFeatureObject(childFeatures, mergeKeys, builtObjectForCluster);
+                if (!builtObjectForCluster[mergeKeys[1]]._data_) {
+                    builtObjectForCluster[mergeKeys[1]]._data_ = {};
+                }
+                builtObjectForCluster[mergeKeys[1]]._data_.grammar = createGrammar(builtObjectForCluster[mergeKeys[1]]);
+                builtObjectForCluster[mergeKeys[1]]._data_.fullGrammar =
+                    builtObject.parent._data_.grammar + " must have " +
+                    builtObjectForCluster[mergeKeys[1]]._data_.grammar;
+                builtObject.children.push(builtObjectForCluster[mergeKeys[1]]);
+            }
+            builtObjects.push({builtObject});
         }
-        results.push({fileGroup: fileGroup.fileGroup, clusters: builtClusters});
-    }
-    return results;
+        return {fileGroup: fileGroupObject.fileGroup, builtObjects};
+    })
+}
+
+/**
+ * @param builtObjects {{fileGroup,
+ * builtObjects: {builtObject: {children: [], parent: {key: string, withChildren:[], _data_: {}}}}[]}[]}
+ */
+const sortBuiltObjectsByIdentifiers = (builtObjects) => {
+    builtObjects.forEach(fileGroupObject => {
+        // sort level 1, parents
+        fileGroupObject.builtObjects.sort((builtObj1, builtObj2) => {
+            let parentFeatures1 = builtObj1.builtObject.parent.withChildren;
+            let parentIdentifier1 = parentFeatures1
+                .filter(feature => identifierKeysInRulePad.includes(feature.key));
+            if (parentIdentifier1.length !== 1) return -1;
+            let identifierWeight1 = +parentIdentifier1[0]._data_.elements[0].featureWeight;
+
+            let parentFeatures2 = builtObj2.builtObject.parent.withChildren;
+            let parentIdentifier2 = parentFeatures2
+                .filter(feature => identifierKeysInRulePad.includes(feature.key));
+            if (parentIdentifier2.length !== 1) return 1;
+            let identifierWeight2 = +parentIdentifier2[0]._data_.elements[0].featureWeight;
+
+            return identifierWeight2 - identifierWeight1;
+        });
+
+        // sort level 2, children
+        fileGroupObject.builtObjects.forEach(builtObj => {
+            builtObj.builtObject.children.sort((child1, child2) => {
+                let childFeatures1 = child1.withChildren;
+                let childIdentifier1 = childFeatures1
+                    .filter(feature => identifierKeysInRulePad.includes(feature.key));
+                if (childIdentifier1.length !== 1) return -1;
+                let identifierWeight1 = +childIdentifier1[0]._data_.elements[0].featureWeight;
+
+                let childFeatures2 = child2.withChildren;
+                let childIdentifier2 = childFeatures2
+                    .filter(feature => identifierKeysInRulePad.includes(feature.key));
+                if (childIdentifier2.length !== 1) return 1;
+                let identifierWeight2 = +childIdentifier2[0]._data_.elements[0].featureWeight;
+
+                return identifierWeight2 - identifierWeight1;
+            });
+        });
+    });
+}
+
+/**
+ * create an object readable by rulePadTextualEditor/generateGuiTree.createGuiElementTree
+ * by combining FeatureObject property of each feature
+ * xPath queries cannot be calculated here, because the received xmls should be processed.
+ * @param builtObjects {{fileGroup: {fileGroup: string, frequentItemSets: *[]},
+ * builtObjects: {cluster: clusterType, builtObject}[]}[]}
+ */
+const createRulePad = (builtObjects) => {
+    return builtObjects.map(fileGroupObject => {
+        let rulePadStates = [];
+        fileGroupObject.builtObjects.forEach(clusterObject => {
+            let rulePadState = {parent: {}, children: []};
+            rulePadState.parent = processRulePadForMiningRules(clusterObject.builtObject.parent);
+            rulePadState.children = clusterObject.builtObject.children.map(processRulePadForMiningRules);
+            rulePadStates.push(rulePadState);
+        });
+        return {fileGroup: fileGroupObject.fileGroup.fileGroup, rulePadStates};
+    });
 }
 
 /**
@@ -353,42 +622,6 @@ const createWithChildrenForCombinedFeatures = (featureIndex, combinedFeature, fe
 }
 
 /**
- * create an object readable by rulePadTextualEditor/generateGuiTree.createGuiElementTree
- * by combining FeatureObject property of each feature
- * @param clusteredParsedOutput {builtObjectRulePadOutputType}
- * @param featureMetaData {featureMetaDataType}
- * @return {{buildObjectData, rulePadStates}[]}
- */
-const createRulePad = (clusteredParsedOutput, featureMetaData) => {
-    return clusteredParsedOutput.map(fileGroup => {
-        let rulePadStates = fileGroup.clusters.map(cluster => {
-            return processRulePadForMiningRules(cluster)
-        });
-        let clusters = fileGroup.clusters.map(d => {
-            let cluster = d._data_.cluster;
-            let allFeatures = cluster.reduce((features, itemSet) => [...features, ...itemSet.featureIds], []);
-            allFeatures = [...new Set(allFeatures)];
-            let sumWeights = allFeatures.reduce((sum, featureId) => {
-                let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
-                return sum + featureMetaData.featureInfoContainers.featureInfo[desc].weight;
-            }, 0)
-            return {
-                cluster,
-                sumWeights,
-                averageSupport:
-                    Math.floor((cluster.reduce((sum, itemSet) => sum + itemSet.support, 0))
-                        / cluster.length)
-            }
-        });
-        return {
-            rulePadStates,
-            fileGroup: fileGroup.fileGroup,
-            clusters
-        };
-    })
-}
-
-/**
  * Create the RulePadState for a single itemSet
  * @param frequentItemSet {initialFrequentItemSetType}
  * @param fileGroup {string}
@@ -435,17 +668,16 @@ export const createRulePadStateForItemSet = (frequentItemSet, fileGroup, feature
 
 /**
  * Find the paths on which the mined rule is going to be checked.
- * @param maxUtilityItemSet {initialFrequentItemSetType}
+ * @param featureIds {number[]}
  * @param fileGroup {string}
  * @param featureMetaData {featureMetaDataType}
  * @return {string[]}
  */
-export const findFileFoldersForItemSet = (maxUtilityItemSet, fileGroup,
-                                          featureMetaData) => {
+export const findFileFoldersForFeatureIds = (featureIds, fileGroup,
+                                             featureMetaData) => {
     // only adding the paths of files that contain the constraint feature.
     let filesFolders = [];
     let mergeKeys = featureGroupInformation[fileGroup].mergeKeys;
-    let featureIds = maxUtilityItemSet.featureIds;
     for (let featureId of featureIds) {
         let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
         let featureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
@@ -477,6 +709,37 @@ export const findFileFoldersForItemSet = (maxUtilityItemSet, fileGroup,
         }
     }
     return combinedPaths;
+}
+
+/**
+ * create an xpath query from GUI
+ * @param guiTree
+ * @param guiElements
+ * @param rootElementId
+ * @return {*}
+ */
+export const createXPath = (guiTree, guiElements, rootElementId = guiTree.selectedElementID) => {
+    let constraintTree = buildFromGUI(guiTree, guiElements, rootElementId, "constraint", true);
+    let grammarTrivialTextC = buildTrivialGrammar(constraintTree);
+    let textC = grammarTrivialTextC.map(d => d.text).join(" ").replace(/\(\s/g, "(") + " ";
+    let results = antlr(textC, "partial");
+    return results.results?.constraint;
+}
+
+/**
+ * check if the gui element should be ignored based on its frequency.
+ * This function is used when generating the xPath
+ * @param guiElement
+ * @return {boolean}
+ */
+export const shouldIgnoreInfrequent = (guiElement) => {
+    try {
+        let nodeElements = guiElement._data_._data_.elements;
+        if (nodeElements.length !== 1) return true;
+        if (nodeElements[0].frequency !== 1) return true;
+    } catch (e) {
+        return false;
+    }
 }
 
 /**
