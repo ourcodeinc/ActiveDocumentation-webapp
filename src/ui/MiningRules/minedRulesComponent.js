@@ -104,7 +104,7 @@ class MinedRulesComponent extends Component {
                 }
                 this.setState({
                     minedRules: [],
-                    loadingTitle: "Extracting Features",
+                    loadingTitle: "Processing the codebase",
                     identifier: nextProps.focusedElementData.identifier,
                     view: this.views.loading_view,
                 });
@@ -398,7 +398,8 @@ class MinedRulesComponent extends Component {
                 data: {parameters: newAlgorithm.parameters, algorithm: newAlgorithm.key}
             };
             Utilities.sendToServer(this.props.ws, message.command, message.data);
-            this.setState({//loadingStatus: true,
+            this.setState({
+                loadingTitle: "Trying again",
                 view: this.views.loading_view
             });
         } else {
