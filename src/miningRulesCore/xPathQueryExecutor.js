@@ -10,6 +10,9 @@ export const returnNodeArray = (mainNode, xPath) => {
     let NodesIterator = returnNodeIterator(mainNode, xPath);
     if (NodesIterator === -1) return [];
     let nodeArray = [];
+    if (NodesIterator.resultType !== 4) {
+        return [];
+    }
     let res = NodesIterator.iterateNext();
     while (res !== null) {
         nodeArray.push(res);
