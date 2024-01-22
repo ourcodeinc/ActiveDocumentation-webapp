@@ -348,7 +348,6 @@ class MinedRulesComponent extends Component {
         )
     }
 
-
     /**
      * Find the groupings
      * Since the method is called after reduxStoreMessages.project_path_msg
@@ -721,6 +720,10 @@ class CodeSnippets extends Component {
             <div onClick={() => this.setState({isExpanded: !this.state.isExpanded})}>
                 <Badge variant="success">{`${count} Example Snippets`}</Badge>
             </div>);
+    }
+
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        this.setState({codeSnippets: nextProps.codeSnippets})
     }
 
     renderCodeSnippets() {
