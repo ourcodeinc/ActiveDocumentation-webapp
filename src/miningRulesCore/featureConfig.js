@@ -252,7 +252,7 @@ export const featureGroupInformation = {
     field_spec_in_class: {
         key: "field_spec_in_class",
         desc: "Code snippets for fields in similar classes",
-        headers: ["If a class has these properties:", "Then the class has these fields:"],
+        headers: ["If a class has these properties:", "Then the class may have these fields:"],
         mergeKeys: ["class", "declaration statement"],
         categorizedFeatureSets: [["class_identifier", "class_spec"], ["field_identifier", "field_spec"]],
         rootId: [gui_element_ids.class_element_id, gui_element_ids.class_decl_stmt_id],
@@ -260,7 +260,7 @@ export const featureGroupInformation = {
     constr_spec_in_class: {
         key: "constr_spec_in_class",
         desc: "Code snippets for constructors in similar classes",
-        headers: ["If a class has these properties:", "Then the class has these constructors:"],
+        headers: ["If a class has these properties:", "Then the class may have these constructors:"],
         mergeKeys: ["class", "constructor"],
         categorizedFeatureSets: [["class_identifier", "class_spec"], ["constr_identifier", "constr_spec"]],
         rootId: [gui_element_ids.class_element_id, gui_element_ids.constr_element_id],
@@ -268,7 +268,7 @@ export const featureGroupInformation = {
     func_spec_in_class: {
         key: "func_spec_in_class",
         desc: "Code snippets for functions in similar classes",
-        headers: ["If a class has these properties:", "Then the class has these functions:"],
+        headers: ["If a class has these properties:", "Then the class may have these functions:"],
         mergeKeys: ["class", "function"],
         categorizedFeatureSets: [["class_identifier", "class_spec"], ["func_identifier", "func_spec"]],
         rootId: [gui_element_ids.class_element_id, gui_element_ids.func_element_id],
@@ -276,7 +276,7 @@ export const featureGroupInformation = {
     subclass_spec_in_class: {
         key: "subclass_spec_in_class",
         desc: "Code snippets for subclasses in similar classes",
-        headers: ["If a class has these properties:", "Then the class has these subclasses:"],
+        headers: ["If a class has these properties:", "Then the class may have these subclasses:"],
         mergeKeys: ["class", "subclass"],
         categorizedFeatureSets: [["class_identifier", "class_spec"], ["subclass_identifier", "subclass_spec"]],
         rootId: [gui_element_ids.class_element_id, gui_element_ids.subclass_element_id],
@@ -285,7 +285,7 @@ export const featureGroupInformation = {
     expr_spec_in_constr_calling_constr_focused_element: {
         key: "expr_spec_in_constr_calling_constr_focused_element",
         desc: "Code snippets for declaration statements in constructors calling the target constructor",
-        headers: ["If a constructor has these properties:", "Then the constructor has these declarations:"],
+        headers: ["If a constructor has these properties:", "Then the constructor may have these declarations:"],
         mergeKeys: ["constructor", "expression statement"],
         categorizedFeatureSets: [["constr_identifier", "constr_spec"], []],
         rootId: [gui_element_ids.constr_element_id, gui_element_ids.constr_expr_stmt_id],
@@ -293,7 +293,7 @@ export const featureGroupInformation = {
     decl_spec_in_constr_calling_constr_focused_element: {
         key: "decl_spec_in_constr_calling_constr_focused_element",
         desc: "Code snippets for declaration statements in constructors calling the target constructor",
-        headers: ["If a constructor has these properties:", "Then the constructor has these declarations:"],
+        headers: ["If a constructor has these properties:", "Then the constructor may have these declarations:"],
         mergeKeys: ["constructor", "declaration statement"],
         categorizedFeatureSets: [["constr_identifier", "constr_spec"], []],
         rootId: [gui_element_ids.constr_element_id, gui_element_ids.constr_decl_stmt_id],
@@ -301,7 +301,7 @@ export const featureGroupInformation = {
     expr_spec_in_func_calling_constr_focused_element: {
         key: "expr_spec_in_func_calling_constr_focused_element",
         desc: "Code snippets for expression statements in functions calling the target constructor",
-        headers: ["If a function has these properties:", "Then the function has these expressions:"],
+        headers: ["If a function has these properties:", "Then the function may have these expressions:"],
         mergeKeys: ["function", "expression statement"],
         categorizedFeatureSets: [["func_identifier", "func_spec"], []],
         rootId: [gui_element_ids.func_element_id, gui_element_ids.func_expr_stmt_id],
@@ -309,7 +309,7 @@ export const featureGroupInformation = {
     decl_spec_in_func_calling_constr_focused_element: {
         key: "decl_spec_in_func_calling_constr_focused_element",
         desc: "Code snippets for declaration statements in functions calling the target constructor",
-        headers: ["If a function has these properties:", "Then the function has these declarations:"],
+        headers: ["If a function has these properties:", "Then the function may have these declarations:"],
         mergeKeys: ["function", "declaration statement"],
         categorizedFeatureSets: [["func_identifier", "func_spec"], []],
         rootId: [gui_element_ids.func_element_id, gui_element_ids.func_decl_stmt_id],
@@ -318,7 +318,7 @@ export const featureGroupInformation = {
     expr_spec_in_constr_calling_func_focused_element: {
         key: "expr_spec_in_constr_calling_func_focused_element",
         desc: "Code snippets for expression statements in constructors calling the target function",
-        headers: ["If a constructor has these properties:", "Then the function has these expressions:"],
+        headers: ["If a constructor has these properties:", "Then the function may have these expressions:"],
         mergeKeys: ["constructor", "expression statement"],
         categorizedFeatureSets: [["constr_identifier", "constr_spec"], []],
         rootId: [gui_element_ids.constr_element_id, gui_element_ids.constr_expr_stmt_id],
@@ -326,7 +326,7 @@ export const featureGroupInformation = {
     decl_spec_in_constr_calling_func_focused_element: {
         key: "decl_spec_in_constr_calling_func_focused_element",
         desc: "Code snippets for declaration statements in constructors calling the target function",
-        headers: ["If a constructor has these properties:", "Then the function has these declarations:"],
+        headers: ["If a constructor has these properties:", "Then the function may have these declarations:"],
         mergeKeys: ["constructor", "declaration statement"],
         categorizedFeatureSets: [["constr_identifier", "constr_spec"], []],
         rootId: [gui_element_ids.constr_element_id, gui_element_ids.constr_decl_stmt_id],
@@ -334,7 +334,7 @@ export const featureGroupInformation = {
     expr_spec_in_func_calling_func_focused_element: {
         key: "expr_spec_in_func_calling_func_focused_element",
         desc: "Code snippets for expression statements in functions calling the target function",
-        headers: ["If a function has these properties:", "Then the function has these expressions:"],
+        headers: ["If a function has these properties:", "Then the function may have these expressions:"],
         mergeKeys: ["function", "expression statement"],
         categorizedFeatureSets: [["func_identifier", "func_spec"], []],
         rootId: [gui_element_ids.func_element_id, gui_element_ids.func_expr_stmt_id],
@@ -342,7 +342,7 @@ export const featureGroupInformation = {
     decl_spec_in_func_calling_func_focused_element: {
         key: "decl_spec_in_func_calling_func_focused_element",
         desc: "Code snippets for declaration statements in functions calling the target function",
-        headers: ["If a function has these properties:", "Then the function has these declarations:"],
+        headers: ["If a function has these properties:", "Then the function may have these declarations:"],
         mergeKeys: ["function", "declaration statement"],
         categorizedFeatureSets: [["func_identifier", "func_spec"], []],
         rootId: [gui_element_ids.func_element_id, gui_element_ids.func_decl_stmt_id],
@@ -351,7 +351,7 @@ export const featureGroupInformation = {
     expr_spec_in_constr_reading_modifying_field_focused_element: {
         key: "expr_spec_in_constr_reading_modifying_field_focused_element",
         desc: "Code snippets for expression statements in constructors reading / modifying the target field",
-        headers: ["If a constructor has these properties:", "Then the function has these expressions:"],
+        headers: ["If a constructor has these properties:", "Then the function may have these expressions:"],
         mergeKeys: ["constructor", "expression statement"],
         categorizedFeatureSets: [["constr_identifier", "constr_spec"], []],
         rootId: [gui_element_ids.constr_element_id, gui_element_ids.constr_expr_stmt_id],
@@ -359,7 +359,7 @@ export const featureGroupInformation = {
     decl_spec_in_constr_reading_modifying_field_focused_element: {
         key: "decl_spec_in_constr_reading_modifying_field_focused_element",
         desc: "Code snippets for declaration statements in constructors reading / modifying the target field",
-        headers: ["If a constructor has these properties:", "Then the constructor has these declarations:"],
+        headers: ["If a constructor has these properties:", "Then the constructor may have these declarations:"],
         mergeKeys: ["constructor", "declaration statement"],
         categorizedFeatureSets: [["constr_identifier", "constr_spec"], []],
         rootId: [gui_element_ids.constr_element_id, gui_element_ids.constr_decl_stmt_id],
@@ -367,7 +367,7 @@ export const featureGroupInformation = {
     expr_spec_in_func_reading_modifying_field_focused_element: {
         key: "expr_spec_in_func_reading_modifying_field_focused_element",
         desc: "Code snippets for expression statements in functions reading / modifying the target field",
-        headers: ["If a function has these properties:", "Then the function has these expressions:"],
+        headers: ["If a function has these properties:", "Then the function may have these expressions:"],
         mergeKeys: ["function", "expression statement"],
         categorizedFeatureSets: [["func_identifier", "func_spec"], []],
         rootId: [gui_element_ids.func_element_id, gui_element_ids.func_expr_stmt_id],
@@ -375,7 +375,7 @@ export const featureGroupInformation = {
     decl_spec_in_func_reading_modifying_field_focused_element: {
         key: "decl_spec_in_func_reading_modifying_field_focused_element",
         desc: "Code snippets for declaration statements in functions reading / modifying the target field",
-        headers: ["If a function has these properties:", "Then the function has these declarations:"],
+        headers: ["If a function has these properties:", "Then the function may have these declarations:"],
         mergeKeys: ["function", "declaration statement"],
         categorizedFeatureSets: [["func_identifier", "func_spec"], []],
         rootId: [gui_element_ids.func_element_id, gui_element_ids.func_decl_stmt_id],

@@ -250,7 +250,9 @@ class MinedRulesComponent extends Component {
         let countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
         if (countRules === 0) return null;
         return (<span>
-            <h5>The following code snippets illustrates potential code patterns.</h5>
+            <h5>The following code snippets illustrates potential design rules.</h5>
+            <h5>The left column denote <strong>when</strong> a design rules applies (If part),
+                and the right column denotes <strong>how</strong> the rule is applied</h5>
             <h5>The purple background in the code shows how likely each element is in a design rule.</h5>
             <h5><span className={"frequency-color frequency-10"}>Darker purple</span> means it's more likely to be part of a rule,
                 and <span className={"frequency-color frequency-1"}>lighter purple</span> means it is less likely to be part of a rule.
@@ -346,70 +348,6 @@ class MinedRulesComponent extends Component {
         )
     }
 
-    n_renderDesignRules(group) {
-        return (
-            <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"}>
-                {group.rulePadStates
-                    .filter((_, clusterIndex) => clusterIndex < this.clusterLimit)
-                    .map((rulePadState, clusterIndex) => {
-                        let isClusterExpanded = this.state.isExpanded &&
-                            this.state.expandedFileGroup === group.fileGroup &&
-                            this.state.expandedClusterIndex === clusterIndex;
-                        let expandedClass = isClusterExpanded ? "expanded" : "";
-                        return (
-                            <div className={`cluster ${expandedClass}`}>
-                                <div className={"leftColumn"}>
-                                    <div className={`clusterRule ${expandedClass}`}>
-                                        <div className={"clusterParent"}>
-                                            <MinedRulePad key={new Date()} rulePadState={rulePadState.parent}
-                                                          isCluster={true}
-                                                          featureMetaData={this.props.featureMetaData}
-                                                          fileGroup={group.fileGroup}
-                                                          elementId={featureGroupInformation[group.fileGroup].rootId[0]}/>
-                                            {/*{<CodeSnippets codeSnippets={rulePadState.quantifierSnippets}*/}
-                                            {/*               ws={this.props.ws}/>}*/}
-                                        </div>
-                                        <div className={"expandIcons"}>
-                                            {isClusterExpanded ?
-                                                <FaAngleDoubleLeft size={20}
-                                                                   onClick={() => this.setState({isExpanded: false})}/>
-                                                :
-                                                <FaAngleDoubleRight size={20}
-                                                                    onClick={() => this.setState({
-                                                                        isExpanded: true,
-                                                                        expandedFileGroup: group.fileGroup,
-                                                                        expandedClusterIndex: clusterIndex,
-                                                                    })}/>}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className={"rightColumn"}>
-                                    {!isClusterExpanded ? null :
-                                        group.rulePadStates[clusterIndex].children
-                                            .map((child, i) => {
-                                                    return (
-                                                        <div className={"clusterRule"}>
-                                                            <div className={"clusterChild"}>
-                                                                <MinedRulePad key={new Date()} rulePadState={child}
-                                                                              isCluster={true}
-                                                                              featureMetaData={this.props.featureMetaData}
-                                                                              fileGroup={group.fileGroup}
-                                                                              elementId={featureGroupInformation[group.fileGroup].rootId[1]}/>
-                                                                {<CodeSnippets
-                                                                    codeSnippets={group.rulePadStates[clusterIndex].constraintsSnippets[i]}
-                                                                    ws={this.props.ws}/>}
-                                                            </div>
-                                                        </div>)
-                                                }
-                                            )
-                                    }
-                                </div>
-                            </div>
-                        );
-                    })}
-            </div>
-        )
-    }
 
     /**
      * Find the groupings
