@@ -216,7 +216,7 @@ const clusterByIdentifiers = (categorizedFeatures) => {
 }
 
 /**
- * remove sub-clusters with only one instance
+ * remove sub-clusters with no child instance
  * @param clusteredItemSets {{fileGroup, clusters: Object<number, Object<number, {itemSets, categories}[]>>}[]}
  * @returns {{fileGroup, clusters: Object<number, Object<number, {itemSets, categories}[]>>}[]}
  */
@@ -229,7 +229,7 @@ const filteredClusters = (clusteredItemSets) => {
             let level2Keys = Object.keys(fileGroup.clusters[key1]);
             for (let key2 of level2Keys) {
                 let count = fileGroup.clusters[key1][key2].length;
-                if (count > 1) {
+                if (count > 0) {
                     filteredCluster[key2] = fileGroup.clusters[key1][key2];
                 }
             }
