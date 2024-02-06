@@ -12,7 +12,14 @@ import React, {Component} from "react";
 import "../../App.css";
 import {connect} from "react-redux";
 import {Button} from "react-bootstrap";
-import {FaAngleDoubleLeft, FaAngleDoubleRight, FaCaretDown, FaCaretUp} from "react-icons/fa";
+import {
+    FaAngleDoubleDown,
+    FaAngleDoubleLeft,
+    FaAngleDoubleRight,
+    FaAngleDown,
+    FaCaretDown,
+    FaCaretUp
+} from "react-icons/fa";
 import "rc-slider/assets/index.css";
 
 import {
@@ -222,8 +229,8 @@ class MinedRulesComponent extends Component {
             filePath = this.props.focusedElementData.filePath;
             identifier = this.props.focusedElementData.identifier;
             return (
-                <div style={{marginBottom: "40px"}}>
-                    <h5>Potential code patterns for <span>{nodeTitle}</span> <code>{identifier}</code></h5>
+                <div style={{marginBottom: "20px"}}>
+                    <h5>Potential design rules for <span>{nodeTitle}</span> <code>{identifier}</code></h5>
                     <h5>{filePath}</h5>
                 </div>
             )
@@ -234,7 +241,7 @@ class MinedRulesComponent extends Component {
         let countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
         let nextAlgorithmExist = !!switchAlgorithm(this.props.selectedAlgorithm);
         return (
-            <div style={{marginBottom: "40px"}}>
+            <div style={{marginBottom: "20px"}}>
                 <h4>{this.state.message}</h4>
                 {countRules === 0 || !nextAlgorithmExist ? null : (
                     <span>
@@ -249,16 +256,36 @@ class MinedRulesComponent extends Component {
     renderDescription() {
         let countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
         if (countRules === 0) return null;
-        return (<span>
-            <h5>The following code snippets illustrates potential design rules.</h5>
-            <h5>The left column denote <strong>when</strong> a design rules applies (If part),
-                and the right column denotes <strong>how</strong> the rule is applied</h5>
-            <h5>The purple background in the code shows how likely each element is in a design rule.</h5>
-            <h5><span className={"frequency-color frequency-10"}>Darker purple</span> means it's more likely to be part of a rule,
-                and <span className={"frequency-color frequency-1"}>lighter purple</span> means it is less likely to be part of a rule.
-            </h5>
-            <h5><span className={"frequency-color frequency-identifier"}>Orange</span> background highlights the identifiers</h5>
-        </span>)
+        return (<div className={"descriptionContainer"}>
+            <span className={"descriptionTitle"}>Design Rules</span>
+            <div style={{marginBottom: "20px"}}>
+                <h5>The following code snippets illustrates potential design rules.</h5>
+                <h5>The left column denote <strong>when</strong> a design rules applies (IF part),
+                    and the right column denotes <strong>how</strong> the rule is applied (THEN part).</h5>
+                <div>
+                    <div className={"descriptionHeader"}>
+                        <div>
+                            <div>IF ... has these properties</div>
+                            <div><FaAngleDown size={20}/></div>
+                        </div>
+                        <div>
+                            <div>THEN ... may have these ...</div>
+                            <div><FaAngleDoubleDown size={20}/></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h5>The purple background in the code shows how likely each element is in a design rule.</h5>
+                <h5><span className={"frequency-color frequency-10"}>Darker purple</span> means it's more likely to be
+                    part of a rule,
+                    and <span className={"frequency-color frequency-1"}>lighter purple</span> means it is less likely to
+                    be part of a rule.
+                </h5>
+                <h5><span className={"frequency-color frequency-identifier"}>Orange</span> background highlights the
+                    identifiers.</h5>
+            </div>
+        </div>)
     }
 
     renderClusters() {
@@ -282,9 +309,9 @@ class MinedRulesComponent extends Component {
         let header = featureGroupInformation[group.fileGroup].headers;
         return (
             <div>
-                <div>
-                    <div className={"groupHeader"}>{header[0]}</div>
-                    <div className={"groupHeader"}>{header[1]}</div>
+                <div className={"groupHeaderContainer"}>
+                    <div className={"groupHeader"}><div>{header[0]}</div><div><FaAngleDown size={20}/></div></div>
+                    <div className={"groupHeader"}><div>{header[1]}</div><div><FaAngleDoubleDown size={20}/></div></div>
                 </div>
                 <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"}>
                     <div className={"leftColumn"}>
@@ -681,7 +708,7 @@ export class Accordion extends Component {
                         key={index}
                         title={item.title}
                         content={item.content}
-                        isOpen={index === 0}
+                        isOpen={false}
                     />
                 ))}
             </div>
@@ -718,7 +745,7 @@ class CodeSnippets extends Component {
         }
         let count = this.state.codeSnippets.reduce((sum, group) => sum + group.snippets.length, 0);
         return (
-            <div onClick={() => this.setState({isExpanded: !this.state.isExpanded})}>
+            <div onClick={() => this.setState({isExpanded: !this.state.isExpanded})} className={"badge"}>
                 <Badge variant="success">{`${count} Example Snippets`}</Badge>
             </div>);
     }

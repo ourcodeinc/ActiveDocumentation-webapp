@@ -934,7 +934,6 @@ img.tutorialSmallImage {
     padding: 10px 15px;
     cursor: pointer;
     user-select: none;
-    font-weight: bold;
 }
 
 .accordion-item-header.open {
@@ -1000,6 +999,7 @@ img.tutorialSmallImage {
 
 .minedRulesComponent .clusterRule .expandIcons {
     margin: auto 5px;
+    cursor: pointer;
 }
 
 .minedRulesComponent .rightColumn:not(:empty),
@@ -1007,11 +1007,58 @@ img.tutorialSmallImage {
     background-color: antiquewhite !important;
 }
 
+.minedRulesComponent .groupHeaderContainer {
+    position: sticky;
+    top: 45px;
+    z-index: 10;
+}
+
 .minedRulesComponent .groupHeader {
     float: left;
     width: 50%;
     padding: 5px 15px;
     font-weight: bold;
-    background-color: gray;
+    background-color: #333;
     color: white;
+}
+
+.minedRulesComponent .groupHeader > div {
+    float: left;
+    margin: auto 20px auto auto;
+}
+
+.minedRulesComponent .badge {
+    cursor: pointer;
+}
+
+.minedRulesComponent .descriptionContainer {
+    margin-bottom: 100px;
+    background: #07bcff24;
+    padding: 10px;
+    border: 1px solid rgba(7, 188, 255, 0.64);
+    border-radius: 4px;
+}
+
+.minedRulesComponent .descriptionContainer .descriptionTitle {
+    color: #039fda;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.minedRulesComponent .descriptionHeader {
+    padding: 5px 15px;
+    font-weight: bold;
+    background-color: #333;
+    color: white;
+    height: 30px;
+}
+
+.minedRulesComponent .descriptionHeader > div {
+    float: left;
+    width: 50%;
+}
+
+.minedRulesComponent .descriptionHeader > div > div:first-child {
+    float: left;
+    margin: auto 20px auto auto;
 }
