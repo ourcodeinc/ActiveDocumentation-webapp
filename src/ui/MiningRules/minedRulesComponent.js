@@ -381,7 +381,7 @@ class MinedRulesComponent extends Component {
      * the projectPath is not updated in the props yet.
      */
     preProcessGroupings() {
-        let groupingMetaData = new createGroupingMetaData();
+        let groupingMetaData = createGroupingMetaData();
         formGroupings(this.props.xmlFiles, this.props.projectPath, groupingMetaData);
         this.props.onUpdateGroupingMetaData(groupingMetaData);
     }
