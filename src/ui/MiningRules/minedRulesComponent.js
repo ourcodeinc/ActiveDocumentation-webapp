@@ -14,9 +14,7 @@ import {connect} from "react-redux";
 import {Button} from "react-bootstrap";
 import {
     FaAngleDoubleDown,
-    FaAngleDoubleLeft,
-    FaAngleDoubleRight,
-    FaAngleDown,
+    FaAngleDown, FaAngleUp,
     FaCaretDown,
     FaCaretUp
 } from "react-icons/fa";
@@ -34,7 +32,12 @@ import {reduxStoreMessages} from "../../reduxStoreConstants";
 import {createGroupingMetaData, formGroupings} from "../../miningRulesCore/preProcessing";
 import {createFeatureMetaDataMap} from "../../miningRulesCore/extractFeatures";
 import {generateFeatures, prepareFilesAndRequestMineRules} from "../../miningRulesCore/processing";
-import {featureGroupInformation, focusElementType, identifierKeysInRulePad} from "../../miningRulesCore/featureConfig";
+import {
+    defaultFeatures,
+    featureGroupInformation,
+    focusElementType,
+    identifierKeysInRulePad
+} from "../../miningRulesCore/featureConfig";
 import {createXPath, findFileFoldersForFeatureIds, switchAlgorithm} from "../../miningRulesCore/postProcessing";
 import {webSocketSendMessage} from "../../core/coreConstants";
 import {runXpathQueryMinedRules} from "../../core/ruleExecutor";
@@ -55,13 +58,13 @@ class MinedRulesComponent extends Component {
         this.state = {
             view: this.views.default_view,
             minedRules: [],
+            minedRulesGrouped: [], // [{key, value}]
             loadingTitle: "Mining Rules",
             message: "",
             cluster: [],
 
             isExpanded: false,
-            expandedFileGroup: "",
-            expandedClusterIndex: 0,
+            expandedIdentifierGroupIndex: 0,
         };
         this.messagesToBeSent = []; // the messages that are going to the server to be written on files
         this.clusterLimit = 10; // number of clusters in each category of mined rules.
@@ -104,6 +107,7 @@ class MinedRulesComponent extends Component {
                 if (nextProps.focusedElementData.identifier === "") {
                     this.setState({
                         minedRules: [],
+                        newMinedRulesGrouped: [],
                         identifier: "",
                         view: this.views.default_view,
                     });
@@ -111,6 +115,7 @@ class MinedRulesComponent extends Component {
                 }
                 this.setState({
                     minedRules: [],
+                    newMinedRulesGrouped: [],
                     loadingTitle: "Processing the codebase",
                     identifier: nextProps.focusedElementData.identifier,
                     view: this.views.loading_view,
@@ -122,6 +127,7 @@ class MinedRulesComponent extends Component {
                     break;
                 this.setState({
                     minedRules: [],
+                    newMinedRulesGrouped: [],
                     loadingTitle: "Mining Rules",
                     view: this.views.loading_view,
                 }, this.processFeaturesForSelectedScope);
@@ -142,15 +148,17 @@ class MinedRulesComponent extends Component {
                     } else {
                         this.setState({
                             minedRules: nextProps.minedRules, // no rule
+                            minedRulesGrouped: [],
                             view: this.views.clusters_view,
                             message: "No rule is found.",
                         });
                     }
                 } else {
-                    let newMinedRules = this.updateRulePadState(nextProps.minedRules);
-                    newMinedRules = this.updateCodeSnippets(newMinedRules);
+                    let minedRulesGrouped = this.groupByIdentifier(nextProps.minedRules);
+                    let newMinedRulesGrouped = this.updateRulePadState(minedRulesGrouped);
                     this.setState({
-                        minedRules: newMinedRules,
+                        minedRules: nextProps.minedRules,
+                        minedRulesGrouped: newMinedRulesGrouped,
                         view: this.views.clusters_view,
                     });
                 }
@@ -171,18 +179,18 @@ class MinedRulesComponent extends Component {
                 break;
 
             case reduxStoreMessages.receive_expr_stmt_xml_msg:
-                let newMinedRules = this.matchSentAndReceivedMessages(nextProps);
-                newMinedRules = this.updateCodeSnippets(newMinedRules);
+                let newMinedRulesGrouped2 = this.matchSentAndReceivedMessages(nextProps);
+                let newMinedRulesGrouped = this.updateCodeSnippets(newMinedRulesGrouped2);
                 if (nextProps.sentMessages.length === 1) {
                     this.setState({
-                        minedRules: newMinedRules,
+                        minedRulesGrouped: newMinedRulesGrouped,
                         view: this.views.clusters_view,
                         loadingTitle: "Done.",
                         message: "",
                     });
                 } else {
                     this.setState({
-                        minedRules: newMinedRules,
+                        minedRulesGrouped: newMinedRulesGrouped,
                     });
                 }
                 break;
@@ -260,20 +268,8 @@ class MinedRulesComponent extends Component {
             <span className={"descriptionTitle"}>Design Rules</span>
             <div style={{marginBottom: "20px"}}>
                 <h5>The following code snippets illustrates potential design rules.</h5>
-                <h5>The left column denote <strong>when</strong> a design rules applies (IF part),
-                    and the right column denotes <strong>how</strong> the rule is applied (THEN part).</h5>
-                <div>
-                    <div className={"descriptionHeader"}>
-                        <div>
-                            <div>IF ... has these properties</div>
-                            <div><FaAngleDown size={20}/></div>
-                        </div>
-                        <div>
-                            <div>THEN ... may have these ...</div>
-                            <div><FaAngleDoubleDown size={20}/></div>
-                        </div>
-                    </div>
-                </div>
+                <h5>The top snippet denotes <strong>when</strong> a design rules applies (IF part),
+                    and bottom components denote <strong>how</strong> the rule is applied (THEN part).</h5>
             </div>
             <div>
                 <h5>The purple background in the code shows how likely each element is in a design rule.</h5>
@@ -295,84 +291,148 @@ class MinedRulesComponent extends Component {
                 <div>
                     <h4><strong>No rule is found.</strong></h4>
                 </div>)
-        let minedRulesArray = this.state.minedRules
-            .filter(group => group.rulePadStates.length !== 0)
-            .map(group => {
-            let title = featureGroupInformation[group.fileGroup].desc;
-            let content = this.renderDesignRules(group);
-            return {title, content}
-        });
-        return (<Accordion items={minedRulesArray}/>);
-    }
 
-    renderDesignRules(group) {
-        let header = featureGroupInformation[group.fileGroup].headers;
-        return (
-            <div>
-                <div className={"groupHeaderContainer"}>
-                    <div className={"groupHeader"}><div>{header[0]}</div><div><FaAngleDown size={20}/></div></div>
-                    <div className={"groupHeader"}><div>{header[1]}</div><div><FaAngleDoubleDown size={20}/></div></div>
-                </div>
+        return this.state.minedRulesGrouped.map((identifierGroup, index) => {
+            let childrenKeys = Object.keys(identifierGroup.value.children);
+            if (childrenKeys.length === 0) {
+                return null;
+            }
+            let keyParts = identifierGroup.key.split('%');
+            let identifierType = keyParts[0];
+            let identifierValue = keyParts[1];
+            let parentElementId =
+                featureGroupInformation[identifierGroup.value.children[childrenKeys[0]].fileGroup].rootId[0];
+            let expandedClass = "expanded";
+
+            let thenParts = childrenKeys.map(key => {
+                let fileGroup = identifierGroup.value.children[key].fileGroup;
+                let title = featureGroupInformation[fileGroup].mergeKeys[1]
+                    .replace(/\b\w/g, char => char.toUpperCase());
+                let content = this.renderThenPart(key, identifierGroup);
+                return {title, content}
+            });
+
+            let isRuleExpanded = this.state.isExpanded && this.state.expandedIdentifierGroupIndex === index;
+            let hidden = !this.state.isExpanded || this.state.expandedIdentifierGroupIndex !== index;
+            let classNameHidden = hidden ? "hidden" : "";
+
+            return (
                 <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"}>
-                    <div className={"leftColumn"}>
-                        {group.rulePadStates
-                            .filter((_, clusterIndex) => clusterIndex < this.clusterLimit)
-                            .map((rulePadState, clusterIndex) => {
-                                let isClusterExpanded = this.state.isExpanded &&
-                                    this.state.expandedFileGroup === group.fileGroup &&
-                                    this.state.expandedClusterIndex === clusterIndex;
-                                let expandedClass = isClusterExpanded ? "expanded" : "";
-                                return (<div className={`clusterRule ${expandedClass}`}>
-                                        <div className={"clusterParent"}>
-                                            <MinedRulePad key={new Date()} rulePadState={rulePadState.parent}
-                                                          isCluster={true}
-                                                          featureMetaData={this.props.featureMetaData}
-                                                          fileGroup={group.fileGroup}
-                                                          elementId={featureGroupInformation[group.fileGroup].rootId[0]}/>
-                                            {/*{<CodeSnippets codeSnippets={rulePadState.quantifierSnippets}*/}
-                                            {/*               ws={this.props.ws}/>}*/}
-                                        </div>
-                                        <div className={"expandIcons"}>
-                                            {isClusterExpanded ?
-                                                <FaAngleDoubleLeft size={20}
-                                                                   onClick={() => this.setState({isExpanded: false})}/>
-                                                :
-                                                <FaAngleDoubleRight size={20}
-                                                                    onClick={() => this.setState({
-                                                                        isExpanded: true,
-                                                                        expandedFileGroup: group.fileGroup,
-                                                                        expandedClusterIndex: clusterIndex,
-                                                                    })}/>}
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                    </div>
-                    <div className={"rightColumn"}>
-                        {!this.state.isExpanded || this.state.expandedFileGroup !== group.fileGroup ||
-                        this.state.expandedClusterIndex < 0 || this.state.expandedClusterIndex >= group.rulePadStates.length ?
-                            null :
-                            group.rulePadStates[this.state.expandedClusterIndex].children
-                                .map((child, i) => {
-                                        return (
-                                            <div className={"clusterRule"}>
-                                                <div className={"clusterChild"}>
-                                                    <MinedRulePad key={new Date()} rulePadState={child} isCluster={true}
-                                                                  featureMetaData={this.props.featureMetaData}
-                                                                  fileGroup={group.fileGroup}
-                                                                  elementId={featureGroupInformation[group.fileGroup].rootId[1]}/>
-                                                    {<CodeSnippets
-                                                        codeSnippets={group.rulePadStates[this.state.expandedClusterIndex].constraintsSnippets[i]}
-                                                        ws={this.props.ws}/>}
-                                                </div>
-                                            </div>)
-                                    }
-                                )
+                    <div className={"identifierContainer"}>
+                        <div className={"identifierHeader"}>
+                            {"Rules related to "}
+                            <strong>{identifierType}</strong>
+                            {" with identifier "}
+                            <span
+                                className={"inputText activeElement frequency-color frequency-identifier"}>
+                                {identifierValue}
+                            </span>
+                        </div>
+                        {isRuleExpanded ?
+                            <div className={"expandIcons"}
+                                onClick={() => this.setState({isExpanded: false})}>
+                                <FaAngleUp size={20}/></div>
+                            :
+                            <div className={"expandIcons"}
+                                onClick={() => this.setState({isExpanded: true, expandedIdentifierGroupIndex: index})}>
+                                <FaAngleDown size={20}/>
+                            </div>
                         }
                     </div>
+                    <div className={`clusterRuleContainer ${classNameHidden}`}>
+                        <div className={"ifKeyword"}>
+                            <strong>{`IF a ${identifierType} has these properties:`}</strong></div>
+                        <div className={`ifPart ${expandedClass}`}>
+                            <MinedRulePad key={new Date()} rulePadState={identifierGroup.value.parent}
+                                          isCluster={true}
+                                          featureMetaData={this.props.featureMetaData}
+                                          fileGroup={identifierGroup.value.children[childrenKeys[0]].fileGroup}
+                                          elementId={parentElementId}/>
+                        </div>
+                        <div className={"thenKeyword"}><strong>{`THEN the ${identifierType} may have:`}</strong></div>
+                        <div className={"thenParts"}>
+                            <Accordion items={thenParts}/>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        )
+            )
+        })
+    }
+
+    renderThenPart(key, identifierGroup) {
+        return identifierGroup.value.children[key].contents.map((child, i) => {
+            return (
+                <div className={"thenPart"}>
+                    <MinedRulePad key={new Date()} rulePadState={child}
+                                  isCluster={true}
+                                  featureMetaData={this.props.featureMetaData}
+                                  fileGroup={identifierGroup.value.children[key].fileGroup}
+                                  elementId={featureGroupInformation[identifierGroup.value.children[key].fileGroup].rootId[1]}/>
+                    {identifierGroup.value.constraintsSnippets
+                    && identifierGroup.value.constraintsSnippets[key]
+                    && identifierGroup.value.constraintsSnippets[key][i] ?
+                        <CodeSnippets
+                            codeSnippets={identifierGroup.value.constraintsSnippets[key][i]}
+                            ws={this.props.ws}/> : null
+                    }
+                </div>
+            )
+        })
+    }
+
+    /**
+     * grouping the found rules by identifiers
+     * @param minedRules
+     * @return {{value: {parent: *, children: {}, identifierFeatureInfo: {}|*}, key: string}[]}
+     */
+    groupByIdentifier(minedRules) {
+        let grouped = {};
+        minedRules.forEach(group => {
+            // '_' added to fix the issue regarding 'constructor' keyword. Access the actual string by slice(1)
+            let groupType = "_" + featureGroupInformation[group.fileGroup].mergeKeys[1];
+            group.rulePadStates.forEach(rulePadState => {
+                let identifierType = defaultFeatures[rulePadState.identifierFeatureInfo.featureIndex].FeatureObject.key;
+                let identifierValue = rulePadState.identifierFeatureInfo.nodes[0];
+                // '%' is used as a separator of type and value
+                let key = `${identifierType}%${identifierValue}`;
+                if (!(key in grouped)) {
+                    grouped[key] = {};
+                }
+                if (!(groupType in grouped[key])) {
+                    grouped[key][groupType] = {'fileGroup': group.fileGroup, contents: []};
+                }
+                grouped[key][groupType].contents.push(rulePadState);
+            })
+        });
+
+        return Object.keys(grouped).map(key => {
+            let value = grouped[key];
+            let parent, identifierFeatureInfo;
+            let children = {};
+
+            for (let prop of Object.keys(value)) {
+                if (value[prop].contents.length > 0) {
+                    if (!parent) {
+                        // Assuming parent and identifierFeatureInfo are the same across all properties
+                        parent = value[prop].contents[0].parent;
+                        identifierFeatureInfo = value[prop].contents[0].identifierFeatureInfo;
+                    }
+                    // Collect fileGroup and children for each property
+                    children[prop] = {
+                        fileGroup: value[prop].fileGroup,
+                        contents: value[prop].contents.map(item => item.children).flat()
+                    };
+                }
+            }
+            return {
+                key: key,
+                value: {
+                    parent: parent,
+                    identifierFeatureInfo: identifierFeatureInfo,
+                    children: children
+                }
+            };
+        });
     }
 
     /**
@@ -437,54 +497,58 @@ class MinedRulesComponent extends Component {
     /**
      * update the xpath queries and snippets of each rulePadState
      */
-    updateRulePadState(minedRules) {
-        return minedRules.map(group => {
-            let fileGroup = group.fileGroup;
-            let rulePadStates = group.rulePadStates
-                .map(rulePadState => {
-                    // the rule is already updated
-                    if (rulePadState.quantifierXPathQuery) {
-                        return rulePadState;
-                    }
-                    let newRulePadStateData = Object.assign({}, rulePadState,
-                        {filesFolders: [], quantifierXPathQuery: "", constraintsXPathQuery: []});
-                    try {
-                        let rootIds = featureGroupInformation[fileGroup].rootId;
-                        // only considering the feature Ids of identifiers
-                        let featureIds = [];
-                        // adding parent featureIds
-                        rulePadState.parent.guiElements[rootIds[0]]._data_.withChildren.forEach(child => {
-                            if (identifierKeysInRulePad.includes(child.key))
-                                featureIds.push(...child._data_.elements.map(element => element.featureId));
-                        });
-                        newRulePadStateData.quantifierXPathQuery =
-                            createXPath(rulePadState.parent.guiTree, rulePadState.parent.guiElements, rootIds[0]);
+    updateRulePadState(minedRulesGrouped) {
+        return minedRulesGrouped.map(identifierGroup => {
+            let childrenKeys = Object.keys(identifierGroup.value.children);
+            if (childrenKeys.length === 0) {
+                return identifierGroup;
+            }
+            let parentFileGroup = identifierGroup.value.children[childrenKeys[0]].fileGroup;
+            let parentRootId = featureGroupInformation[parentFileGroup].rootId[0];
+            // the rule is already updated
+            if (identifierGroup.value.quantifierXPathQuery) {
+                return identifierGroup;
+            }
+            let newIdentifierGroupValue = Object.assign({}, identifierGroup.value,
+                {filesFolders: [], quantifierXPathQuery: "", constraintsXPathQuery: {}});
 
-                        // each child has a constraint query
-                        newRulePadStateData.constraintsXPathQuery = rulePadState.children.map(child => {
-                            // adding child featureIds
-                            child.guiElements[rootIds[1]]._data_.withChildren.forEach(child => {
-                                if (identifierKeysInRulePad.includes(child.key))
-                                    featureIds.push(...child._data_.elements.map(element => element.featureId));
-                            });
-                            let xpath = createXPath(child.guiTree, child.guiElements, rootIds[1]);
-                            return xpath + "[ancestor::" + newRulePadStateData.quantifierXPathQuery + "]";
-                        });
-                        newRulePadStateData.filesFolders =
-                            findFileFoldersForFeatureIds(featureIds, fileGroup, this.props.featureMetaData);
-                    } catch (e) {
-                        console.log("error happened in processing rulePadState data", rulePadState, e);
-                    }
-                    return newRulePadStateData;
-                });
-            return {fileGroup, rulePadStates};
+            // each identifierGroup has one quantifier query
+            newIdentifierGroupValue.quantifierXPathQuery = createXPath(newIdentifierGroupValue.parent.guiTree,
+                newIdentifierGroupValue.parent.guiElements, parentRootId);
+
+            // only considering the feature Ids of identifiers
+            let parentFeatureIds = [];
+            // adding parent featureIds
+            newIdentifierGroupValue.parent.guiElements[parentRootId]._data_.withChildren.forEach(child => {
+                if (identifierKeysInRulePad.includes(child.key)) {
+                    parentFeatureIds.push(...child._data_.elements.map(element => element.featureId));
+                }
+            });
+            // files and folders of the parent is enough
+            newIdentifierGroupValue.filesFolders =
+                findFileFoldersForFeatureIds(parentFeatureIds, parentFileGroup, this.props.featureMetaData);
+
+            // each child has a constraint query
+            for (let key of childrenKeys) {
+                newIdentifierGroupValue.constraintsXPathQuery[key] = [];
+
+                // for each group of children, we have a different fileGroup
+                let fileGroup = newIdentifierGroupValue.children[key].fileGroup;
+                let rootId = featureGroupInformation[fileGroup].rootId[1];
+                newIdentifierGroupValue.constraintsXPathQuery[key] =
+                    newIdentifierGroupValue.children[key].contents.map(child => {
+                        let xpath = createXPath(child.guiTree, child.guiElements, rootId);
+                        return xpath + "[ancestor::" + newIdentifierGroupValue.quantifierXPathQuery + "]";
+                    });
+            }
+            return {key: identifierGroup.key, value: newIdentifierGroupValue}
         });
     }
 
     matchSentAndReceivedMessages(nextProps) {
         let sentMessages = nextProps.sentMessages.map(a => ({...a})); // clone
         let receivedMessages = nextProps.receivedMessages.map(a => ({...a})); // clone
-        let minedRules = this.state.minedRules.slice(0);
+        let minedRulesGrouped = this.state.minedRulesGrouped.slice(0);
 
         sentMessages.sort((a, b) => a["messageID"] - b["messageID"]);
         receivedMessages.forEach(a => a["messageID"] = +a["messageID"]);
@@ -509,21 +573,21 @@ class MinedRulesComponent extends Component {
 
         // todo improve the running time, maybe have a storage for pointing where to check?
         function processXpathQueries(lookFor, resultXPath) {
-            minedRules.forEach(group => {
-                group.rulePadStates.forEach(rulePadState => {
+            minedRulesGrouped.forEach(identifierGroup => {
+                try {
                     // first check quantifierXpathQuery:
-                    try {
-                        rulePadState.quantifierXPathQuery = replaceMessagesInXpathQueries(
-                            rulePadState.quantifierXPathQuery, lookFor, resultXPath);
-                    } catch (e) {
-                        console.log("error quantifierXPathQuery", {rulePadState});
-                    }
+                    identifierGroup.value.quantifierXPathQuery = replaceMessagesInXpathQueries(
+                        identifierGroup.value.quantifierXPathQuery, lookFor, resultXPath);
                     // second check each constraintsXpathQuery
-                    for (let i = 0; i < rulePadState.constraintsXPathQuery.length; i++) {
-                        rulePadState.constraintsXPathQuery[i] = replaceMessagesInXpathQueries(
-                            rulePadState.constraintsXPathQuery[i], lookFor, resultXPath);
-                    }
-                })
+                    Object.keys(identifierGroup.value.constraintsXPathQuery).forEach(key => {
+                        identifierGroup.value.constraintsXPathQuery[key] =
+                            identifierGroup.value.constraintsXPathQuery[key].map(childQuery => {
+                                return replaceMessagesInXpathQueries(childQuery, lookFor, resultXPath);
+                            });
+                    });
+                } catch (e) {
+                    console.log("error quantifierXPathQuery/constraintsXPathQuery", {identifierGroup});
+                }
             })
         }
 
@@ -552,13 +616,10 @@ class MinedRulesComponent extends Component {
 
         // at least one message is responded
         if (matchedIndices.sent.length > 0) {
-            // rulePadStateData = this.updateCodeSnippets(rulePadStateData)
-            // this.setState({rulePadState: rulePadStateData},
-            //     () =>
             this.props.onUpdateSentReceivedMessages(sentMessages, receivedMessages)
-            //     );
         }
-        return minedRules;
+
+        return minedRulesGrouped;
     }
 
     /**
@@ -617,13 +678,17 @@ class MinedRulesComponent extends Component {
         return resultXPath;
     }
 
-    updateCodeSnippets(minedRules) {
-        return minedRules.map(group => {
-            let fileGroup = group.fileGroup;
-            let rulePadStates = group.rulePadStates.map(rulePadState => {
-                return runXpathQueryMinedRules(this.props.xmlFiles, fileGroup, this.props.projectPath, rulePadState)
-            })
-            return {fileGroup, rulePadStates};
+    updateCodeSnippets(minedRulesGrouped) {
+        return minedRulesGrouped.map(identifierGroup => {
+            try {
+                return {
+                    key: identifierGroup.key,
+                    value: runXpathQueryMinedRules(this.props.xmlFiles, this.props.projectPath, identifierGroup.value)
+                };
+            } catch (e) {
+                console.log("failed to runXpathQueryMinedRules on ", identifierGroup);
+                return identifierGroup;
+            }
         })
     }
 

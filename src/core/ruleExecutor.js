@@ -639,55 +639,64 @@ export const runXpathQueryOnFileGroup = (xmlFiles, fileGroup,
 
 
 /**
- * runs the XPath query and compare results
  * @param xmlFiles {{filePath, xml}[]}
- * @param fileGroup {string}
  * @param projectPath {string}
- * @param rulePadState
- * @return {*}
+ * @param identifierGroupValue {{children: {}, constraintsXPathQuery: {}, filesFolders: string[],
+ * identifierFeatureInfo: {}, parent: {}, quantifierXPathQuery: string,
+ * quantifierSnippets?: [], constraintsSnippets?: {} }}
+ * @returns {{children: {}, constraintsXPathQuery: {}, filesFolders: string[],
+ * identifierFeatureInfo: {}, parent: {}, quantifierXPathQuery: string,
+ * quantifierSnippets: *[], constraintsSnippets: {}}}
  */
-export const runXpathQueryMinedRules = (xmlFiles, fileGroup, projectPath,
-                                        rulePadState) => {
-    let newRulePadState = Object.assign({}, rulePadState);
+export const runXpathQueryMinedRules = (xmlFiles, projectPath, identifierGroupValue) => {
+    let newIdentifierGroupValue = JSON.parse(JSON.stringify(identifierGroupValue));
+
     // the quantifier xpath is already completed and the snippets are found
-    if (!newRulePadState.quantifierSnippets) {
+    if (!newIdentifierGroupValue.quantifierSnippets) {
         // first check the quantifier
-        let quantifierXPathQuery = newRulePadState.quantifierXPathQuery;
+        let quantifierXPathQuery = newIdentifierGroupValue.quantifierXPathQuery;
         quantifierXPathQuery = quantifierXPathQuery.startsWith("src:unit/") ? quantifierXPathQuery
             : "src:unit/" + quantifierXPathQuery;
         // received all messages
         if (isValidXPathQuery(quantifierXPathQuery)) {
-            newRulePadState.quantifierSnippets = [];
-            for (let fileGroup of newRulePadState.filesFolders) {
-                let results = runXpathQueryOnFileGroup(xmlFiles, fileGroup, projectPath,
-                    quantifierXPathQuery);
-                newRulePadState.quantifierSnippets
+            newIdentifierGroupValue.quantifierSnippets = [];
+            for (let fileGroup of newIdentifierGroupValue.filesFolders) {
+                let results = runXpathQueryOnFileGroup(xmlFiles, fileGroup, projectPath, quantifierXPathQuery);
+                newIdentifierGroupValue.quantifierSnippets
                     .push({fileGroup, snippets: results.snippets, files: results.files});
             }
         }
     }
+
+    let childrenKeys = Object.keys(newIdentifierGroupValue.constraintsXPathQuery);
     // create an array of false elements for constraints
-    if (!newRulePadState.constraintsSnippets) {
-        newRulePadState.constraintsSnippets =
-            new Array(newRulePadState.constraintsXPathQuery.length).fill(false);
+    if (!newIdentifierGroupValue.constraintsSnippets) {
+        newIdentifierGroupValue.constraintsSnippets = {};
+        for (let key of childrenKeys) {
+            newIdentifierGroupValue.constraintsSnippets[key] =
+                new Array(newIdentifierGroupValue.constraintsXPathQuery[key].length).fill(false);
+        }
     }
-    newRulePadState.constraintsXPathQuery.map((cXpath, index) => {
-        // if the constraint query is not checked yet
-        if (!newRulePadState.constraintsSnippets[index]) {
-            let constraintXPathQuery = newRulePadState.constraintsXPathQuery[index]
-            constraintXPathQuery = constraintXPathQuery.startsWith("src:unit/") ? constraintXPathQuery
-                : "src:unit/" + constraintXPathQuery;
-            // received all messages
-            if (isValidXPathQuery(constraintXPathQuery)) {
-                newRulePadState.constraintsSnippets[index] = [];
-                for (let fileGroup of newRulePadState.filesFolders) {
-                    let results = runXpathQueryOnFileGroup(xmlFiles, fileGroup, projectPath,
-                        constraintXPathQuery);
-                    newRulePadState.constraintsSnippets[index]
-                        .push({fileGroup, snippets: results.snippets, files: results.files});
+
+    for (let key of childrenKeys) {
+        newIdentifierGroupValue.constraintsXPathQuery[key].forEach((cXpath, index) => {
+            // if the constraint query is not checked yet
+            if (!newIdentifierGroupValue.constraintsSnippets[key][index]) {
+                let constraintXPathQuery = newIdentifierGroupValue.constraintsXPathQuery[key][index];
+                constraintXPathQuery = constraintXPathQuery.startsWith("src:unit/") ? constraintXPathQuery
+                    : "src:unit/" + constraintXPathQuery;
+                // received all messages
+                if (isValidXPathQuery(constraintXPathQuery)) {
+                    newIdentifierGroupValue.constraintsSnippets[key][index] = [];
+                    for (let fileGroup of newIdentifierGroupValue.filesFolders) {
+                        let results = runXpathQueryOnFileGroup(xmlFiles, fileGroup, projectPath,
+                            constraintXPathQuery);
+                        newIdentifierGroupValue.constraintsSnippets[key][index]
+                            .push({fileGroup, snippets: results.snippets, files: results.files});
+                    }
                 }
             }
-        }
-    });
-    return newRulePadState;
+        })
+    }
+    return newIdentifierGroupValue;
 }

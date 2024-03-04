@@ -931,7 +931,7 @@ img.tutorialSmallImage {
 
 .accordion-item-header {
     background-color: #f1f1f1;
-    padding: 10px 15px;
+    padding: 4px 10px;
     cursor: pointer;
     user-select: none;
 }
@@ -948,86 +948,60 @@ img.tutorialSmallImage {
     display: block;
 }
 
+.accordion-item-content {
+    max-height: 400px;
+    overflow: auto;
+    padding: 5px;
+}
+
 /* cluster view */
 
 .minedRulesComponent .snippetDiv pre {
     width: 100% !important;
 }
 
-.minedRulesComponent .rightColumn,
-.minedRulesComponent .leftColumn {
-    width: 50%;
+.minedRulesComponent .ifPart,
+.minedRulesComponent .thenParts {
+    padding: 5px 0;
 }
 
-.minedRulesComponent .rightColumn {
-    float: right;
-    padding-top: 10px;
+.minedRulesComponent .ifPart {
+    margin-left: 10px;
 }
 
-.minedRulesComponent .guiBoundingBox {
-    padding: 0 !important;
-    margin: 0 !important;
-    display: flex;
+.minedRulesComponent .thenParts {
+    margin-left: 30px;
 }
 
-.minedRulesComponent .clusterRule {
-    width: 100%;
-    display: flex;
+.minedRulesComponent .thenParts .thenPart {
+    background: #ededed !important;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
 }
 
-.minedRulesComponent .rightColumn .clusterRule {
-    padding: 10px 10px 10px 20px;
+.minedRulesComponent .clusterRuleContainer {
+    border: 1px solid #f5c88b;
+    border-radius: 4px;
+    padding: 5px;
+    background-color: antiquewhite;
 }
 
-.minedRulesComponent .leftColumn .clusterRule {
-    padding: 10px 0 10px 5px;
-    margin: 20px 0;
+.minedRulesComponent .thenParts .accordion-item-content {
+    background-color: #fff;
 }
 
-.minedRulesComponent .clusterRule .clusterParent,
-.minedRulesComponent .clusterRule .clusterChild {
-    float: left;
+.minedRulesComponent .ifKeyword,
+.minedRulesComponent .thenKeyword{
+    padding: 5px 0;
 }
 
-.minedRulesComponent .clusterRule .clusterParent {
-    width: 93%;
+.minedRulesComponent .clusterRuleContainer.hidden {
+    display: none;
 }
 
-.minedRulesComponent .clusterRule .clusterChild {
-    width: 100%;
-}
-
-.minedRulesComponent .clusterRule .expandIcons {
-    margin: auto 5px;
-    cursor: pointer;
-}
-
-.minedRulesComponent .rightColumn:not(:empty),
-.minedRulesComponent .expanded {
-    background-color: antiquewhite !important;
-}
-
-.minedRulesComponent .groupHeaderContainer {
-    position: sticky;
-    top: 45px;
-    z-index: 10;
-}
-
-.minedRulesComponent .groupHeader {
-    float: left;
-    width: 50%;
-    padding: 5px 5px 5px 15px;
-    font-weight: bold;
-    background-color: #333;
-    color: white;
-}
-
-.minedRulesComponent .groupHeader > div {
-    float: left;
-    margin: auto 5px auto auto;
-}
-
-.minedRulesComponent .badge {
+.minedRulesComponent .badge,
+.minedRulesComponent .expandIcons {
     cursor: pointer;
 }
 
@@ -1045,20 +1019,13 @@ img.tutorialSmallImage {
     font-weight: bold;
 }
 
-.minedRulesComponent .descriptionHeader {
-    padding: 5px 15px;
-    font-weight: bold;
-    background-color: #333;
-    color: white;
-    height: 30px;
+.minedRulesComponent .identifierContainer {
+    padding: 10px 20px;
+    border: 1px solid gray;
+    border-radius: 4px;
+    display: flex;
 }
 
-.minedRulesComponent .descriptionHeader > div {
-    float: left;
-    width: 50%;
-}
-
-.minedRulesComponent .descriptionHeader > div > div:first-child {
-    float: left;
-    margin: auto 20px auto auto;
+.minedRulesComponent .identifierContainer .identifierHeader {
+    width: 100%;
 }

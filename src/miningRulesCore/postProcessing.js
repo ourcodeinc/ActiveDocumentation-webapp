@@ -359,7 +359,7 @@ const mergeClusterMembers = (filteredClusters,
  * clusters: Object<number,clusterType>}[]}
  * @param featureMetaData {featureMetaDataType}
  * @returns {{fileGroup: {fileGroup: string, frequentItemSets: *[]},
- * builtObjects: {builtObject}[]}[]}
+ * builtObjects: {builtObject, identifierFeatureInfo}[]}[]}
  */
 const createBuiltObjects = (mergedClusters, featureMetaData) => {
 
@@ -501,7 +501,9 @@ const createBuiltObjects = (mergedClusters, featureMetaData) => {
                     builtObjectForCluster[mergeKeys[1]]._data_.grammar;
                 builtObject.children.push(builtObjectForCluster[mergeKeys[1]]);
             }
-            builtObjects.push({builtObject});
+            let desc = featureMetaData.featureInfoContainers.featureInfoReverse[key];
+            let identifierFeatureInfo = featureMetaData.featureInfoContainers.featureInfo[desc];
+            builtObjects.push({builtObject, identifierFeatureInfo});
         }
         return {fileGroup: fileGroupObject.fileGroup, builtObjects};
     })
@@ -509,7 +511,8 @@ const createBuiltObjects = (mergedClusters, featureMetaData) => {
 
 /**
  * @param builtObjects {{fileGroup,
- * builtObjects: {builtObject: {children: [], parent: {key: string, withChildren:[], _data_: {}}}}[]}[]}
+ * builtObjects: {builtObject: {children: [], parent: {key: string, withChildren:[], _data_: {}},
+ * identifierFeatureInfo}}[]}[]}
  */
 const sortBuiltObjectsByIdentifiers = (builtObjects) => {
     builtObjects.forEach(fileGroupObject => {
@@ -556,13 +559,16 @@ const sortBuiltObjectsByIdentifiers = (builtObjects) => {
  * by combining FeatureObject property of each feature
  * xPath queries cannot be calculated here, because the received xmls should be processed.
  * @param builtObjects {{fileGroup: {fileGroup: string, frequentItemSets: *[]},
- * builtObjects: {cluster: clusterType, builtObject}[]}[]}
+ * builtObjects: {cluster: clusterType, builtObject, identifierFeatureInfo}[]}[]}
  */
 const createRulePad = (builtObjects) => {
     return builtObjects.map(fileGroupObject => {
         let rulePadStates = [];
         fileGroupObject.builtObjects.forEach(clusterObject => {
-            let rulePadState = {parent: {}, children: []};
+            let rulePadState = {
+                parent: {}, children: [],
+                identifierFeatureInfo: clusterObject.identifierFeatureInfo,
+            };
             rulePadState.parent = processRulePadForMiningRules(clusterObject.builtObject.parent);
             rulePadState.children = clusterObject.builtObject.children.map(processRulePadForMiningRules);
             rulePadStates.push(rulePadState);
