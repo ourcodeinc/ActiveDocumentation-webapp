@@ -504,8 +504,14 @@ const getXmlData = (mainXml, query, index) => {
         i += 1;
     }
 
-    // get the first two line
-    let resTextArray = new XMLSerializer().serializeToString(res).split(/\r?\n/);
+    // Serialize the XML and remove unwanted tags
+    let serializedRes = new XMLSerializer().serializeToString(res);
+    let cleanedRes = serializedRes
+        .replace(/<annotation[^>]*>.*?<\/annotation>\s*\n?/g, '')
+        .replace(/<comment[^>]*>.*?<\/comment>\s*\n?/g, '');
+
+    // Get the first two lines
+    let resTextArray = cleanedRes.split(/\r?\n/).filter(line => line.trim() !== '');
     let resText = resTextArray.length > 1 ? resTextArray[0] + "\n" + resTextArray[1] : resTextArray[0];
 
 
