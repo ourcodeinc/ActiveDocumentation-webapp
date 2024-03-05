@@ -13,7 +13,6 @@ import "../../App.css";
 import {connect} from "react-redux";
 import {Button} from "react-bootstrap";
 import {
-    FaAngleDoubleDown,
     FaAngleDown, FaAngleUp,
     FaCaretDown,
     FaCaretUp
@@ -238,7 +237,7 @@ class MinedRulesComponent extends Component {
             identifier = this.props.focusedElementData.identifier;
             return (
                 <div style={{marginBottom: "20px"}}>
-                    <h5>Potential design rules for <span>{nodeTitle}</span> <code>{identifier}</code></h5>
+                    <h5>Potential design rules found based on <span>{nodeTitle}</span> <code>{identifier}</code></h5>
                     <h5>{filePath}</h5>
                 </div>
             )
@@ -265,7 +264,7 @@ class MinedRulesComponent extends Component {
         let countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
         if (countRules === 0) return null;
         return (<div className={"descriptionContainer"}>
-            <span className={"descriptionTitle"}>Design Rules</span>
+            <span className={"descriptionTitle"}>Tutorial</span>
             <div style={{marginBottom: "20px"}}>
                 <h5>The following code snippets illustrates potential design rules.</h5>
                 <h5>The top snippet denotes <strong>when</strong> a design rules applies (IF part),
@@ -320,9 +319,9 @@ class MinedRulesComponent extends Component {
                 <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"}>
                     <div className={"identifierContainer"}>
                         <div className={"identifierHeader"}>
-                            {"Rules related to "}
+                            {"Rules applied on "}
                             <strong>{identifierType}</strong>
-                            {" with identifier "}
+                            {" "}
                             <span
                                 className={"inputText activeElement frequency-color frequency-identifier"}>
                                 {identifierValue}
@@ -341,7 +340,7 @@ class MinedRulesComponent extends Component {
                     </div>
                     <div className={`clusterRuleContainer ${classNameHidden}`}>
                         <div className={"ifKeyword"}>
-                            <strong>{`IF a ${identifierType} has these properties:`}</strong></div>
+                            <strong>{`IF a ${identifierType} is named ${identifierValue}`}</strong></div>
                         <div className={`ifPart ${expandedClass}`}>
                             <MinedRulePad key={new Date()} rulePadState={identifierGroup.value.parent}
                                           isCluster={true}
@@ -390,7 +389,10 @@ class MinedRulesComponent extends Component {
         minedRules.forEach(group => {
             // '_' added to fix the issue regarding 'constructor' keyword. Access the actual string by slice(1)
             let groupType = "_" + featureGroupInformation[group.fileGroup].mergeKeys[1];
-            group.rulePadStates.forEach(rulePadState => {
+            group.rulePadStates.forEach((rulePadState, index) => {
+                if (index >= this.clusterLimit) {
+                    return;
+                }
                 let identifierType = defaultFeatures[rulePadState.identifierFeatureInfo.featureIndex].FeatureObject.key;
                 let identifierValue = rulePadState.identifierFeatureInfo.nodes[0];
                 // '%' is used as a separator of type and value

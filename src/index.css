@@ -858,6 +858,14 @@ img.tutorialSmallImage {
     cursor: default;
 }
 
+.minedRulesComponent .generateRuleGui .rowGroup {
+    margin-bottom: 0 !important;
+}
+
+.minedRulesComponent .generateRuleGui .bodyChildrenContainer {
+    padding-top: 0 !important;
+}
+
 .frequency-color {
     color: #f3f3f3 !important;
 }
@@ -949,12 +957,16 @@ img.tutorialSmallImage {
 }
 
 .accordion-item-content {
-    max-height: 400px;
+    max-height: 700px;
     overflow: auto;
-    padding: 5px;
+    padding: 15px;
 }
 
 /* cluster view */
+
+.minedRulesComponent .guiBoundingBox {
+    padding-top: 5px !important;
+}
 
 .minedRulesComponent .snippetDiv pre {
     width: 100% !important;
@@ -975,7 +987,7 @@ img.tutorialSmallImage {
 
 .minedRulesComponent .thenParts .thenPart {
     background: #ededed !important;
-    padding: 10px;
+    padding: 15px;
     border-radius: 4px;
     margin-bottom: 20px;
 }
@@ -1006,7 +1018,7 @@ img.tutorialSmallImage {
 }
 
 .minedRulesComponent .descriptionContainer {
-    margin-bottom: 100px;
+    margin-bottom: 50px;
     background: #07bcff24;
     padding: 10px;
     border: 1px solid rgba(7, 188, 255, 0.64);
@@ -1020,7 +1032,7 @@ img.tutorialSmallImage {
 }
 
 .minedRulesComponent .identifierContainer {
-    padding: 10px 20px;
+    padding: 5px 20px;
     border: 1px solid gray;
     border-radius: 4px;
     display: flex;
@@ -1028,4 +1040,5 @@ img.tutorialSmallImage {
 
 .minedRulesComponent .identifierContainer .identifierHeader {
     width: 100%;
+    margin: auto;
 }
