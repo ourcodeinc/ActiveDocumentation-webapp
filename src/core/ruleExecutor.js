@@ -514,24 +514,6 @@ const getXmlData = (mainXml, query, index) => {
     let resTextArray = cleanedRes.split(/\r?\n/).filter(line => line.trim() !== '');
     let resText = resTextArray.length > 1 ? resTextArray[0] + "\n" + resTextArray[1] : resTextArray[0];
 
-
-    /**
-     * remove first node sib, sib, parent sib, grandparent sib, grand-grandparent sib, ... <- recursive
-     * @param node
-     * @returns {*}
-     */
-    function removeSib(node) {
-        if (node.nodeName === "unit")
-            return node;
-        let sib = node.nextSibling;
-        while (sib && sib.nodeType !== -1) {
-            node.parentNode.removeChild(sib);
-            sib = node.nextSibling;
-        }
-        return removeSib(node.parentNode);
-    }
-
-
     let par = res, nameIndex, fileName = "";
     if (res.children) {
         for (nameIndex = 0; nameIndex < res.children.length; nameIndex++)
@@ -541,27 +523,26 @@ const getXmlData = (mainXml, query, index) => {
 
         // remove the extra children
         if (res.firstChild && res.firstChild.nodeType !== -1 && nameIndex !== -1 && nameIndex !== res.children.length)
-            par = removeSib(res.children[nameIndex]);
+            par = removeSiblings(res.children[nameIndex]);
 
         // if there is no extra children, remove sibling
         else if (res.nextSibling)
-            par = removeSib(res.nextSibling);
+            par = removeSiblings(res.nextSibling);
         else {
             par = res;
             // until we reach a sibling or the main ancestor, go up in the tree
             while (!par.nextSibling && par.nodeName !== "unit") {
                 par = par.parentNode;
             }
-            par = removeSib(res.parentNode);
+            par = removeSiblings(res.parentNode);
         }
         fileName = par.getAttribute("filename");
     }
 
-    let temp = new XMLSerializer().serializeToString(par);
     return {
         xmlJson: {
             fileName: fileName,
-            xml: temp
+            xml: new XMLSerializer().serializeToString(par)
         },
         xmlText: new XMLSerializer().serializeToString(par),
         snippet: resText
@@ -569,6 +550,21 @@ const getXmlData = (mainXml, query, index) => {
 
 };
 
+/**
+ * remove first node sib, sib, parent sib, grandparent sib, grand-grandparent sib, ... <- recursive
+ * @param node
+ * @returns {*}
+ */
+const removeSiblings = (node) => {
+    if (node.nodeName === "unit")
+        return node;
+    let sib = node.nextSibling;
+    while (sib && sib.nodeType !== -1) {
+        node.parentNode.removeChild(sib);
+        sib = node.nextSibling;
+    }
+    return removeSiblings(node.parentNode);
+}
 
 /**
  * validate the xpath queries in ruleI
