@@ -421,7 +421,8 @@ const runXPathQuery = (xmlFile, xpathQuery) => {
         result.push({
             filePath: xmlFile.filePath,
             xml: xmlAndText.xmlJson,
-            snippet: xmlAndText.snippet
+            snippet: xmlAndText.snippet,
+            surroundingNodes: xmlAndText.surroundingNodes
         });
         node = foundNodes.iterateNext();
         index += 1;
@@ -497,12 +498,17 @@ const getXmlData = (mainXml, query, index) => {
     let xml = Utilities.cloneXML(mainXml);
 
     let nodes = xml.evaluate(query, xml, nsResolver, XPathResult.ANY_TYPE, null);
+    let nodesCopy = xml.evaluate(query, xml, nsResolver, XPathResult.ANY_TYPE, null);
     let res = nodes.iterateNext();
+    let resNodes = nodesCopy.iterateNext();
     let i = 0;
     while (i < index) {
         res = nodes.iterateNext();
+        resNodes = nodesCopy.iterateNext();
         i += 1;
     }
+
+    let surroundingNodes = getSurroundingNodes(resNodes);
 
     // Serialize the XML and remove unwanted tags
     let serializedRes = new XMLSerializer().serializeToString(res);
@@ -545,6 +551,7 @@ const getXmlData = (mainXml, query, index) => {
             xml: new XMLSerializer().serializeToString(par)
         },
         xmlText: new XMLSerializer().serializeToString(par),
+        surroundingNodes: new XMLSerializer().serializeToString(surroundingNodes),
         snippet: resText
     };
 
@@ -565,6 +572,55 @@ const removeSiblings = (node) => {
     }
     return removeSiblings(node.parentNode);
 }
+
+/**
+ * Get the root node by removing children of siblings of each ancestor node.
+ * @param {Node} node - The node from which to start.
+ * @return {Node} - The root node.
+ */
+const getSurroundingNodes = (node) => {
+    removeSiblingsChildren(node);
+    let root = node;
+    while (root.parentNode) {
+        root = root.parentNode;
+    }
+    return root;
+};
+
+/**
+ * Remove child nodes of siblings, keeping the sibling nodes.
+ * @param {Node} node - The node whose siblings' children should be removed.
+ */
+const removeSiblingsChildren = (node) => {
+    const tagsToRemove = ["block"];
+    if (!node || !node.parentNode) {
+        return;
+    }
+    Array.from(node.parentNode.children).forEach((child) => {
+        if (child !== node) {
+            removeDescendantsByTagName(child, tagsToRemove);
+        }
+    });
+    removeSiblingsChildren(node.parentNode);
+};
+
+/**
+ * Remove descendants of a node by tag name.
+ * @param {Node} node - The node whose descendants should be removed.
+ * @param {string[]} tagsToRemove - The tag names of descendants to remove.
+ */
+const removeDescendantsByTagName = (node, tagsToRemove) => {
+    if (!node || !node.childNodes) {
+        return;
+    }
+    Array.from(node.childNodes).forEach((child) => {
+        if (child.tagName && tagsToRemove.includes(child.tagName.toLowerCase())) {
+            node.removeChild(child);
+        } else {
+            removeDescendantsByTagName(child, tagsToRemove);
+        }
+    });
+};
 
 /**
  * validate the xpath queries in ruleI
