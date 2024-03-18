@@ -496,9 +496,10 @@ const getXmlData = (mainXml, query, index) => {
     // and produces error for next nodes in the same query.
 
     let xml = Utilities.cloneXML(mainXml);
+    let xmlCopy = Utilities.cloneXML(mainXml);
 
     let nodes = xml.evaluate(query, xml, nsResolver, XPathResult.ANY_TYPE, null);
-    let nodesCopy = xml.evaluate(query, xml, nsResolver, XPathResult.ANY_TYPE, null);
+    let nodesCopy = xml.evaluate(query, xmlCopy, nsResolver, XPathResult.ANY_TYPE, null);
     let res = nodes.iterateNext();
     let resNodes = nodesCopy.iterateNext();
     let i = 0;
@@ -509,6 +510,10 @@ const getXmlData = (mainXml, query, index) => {
     }
 
     let surroundingNodes = getSurroundingNodes(resNodes);
+    let surroundingNodesText = new XMLSerializer().serializeToString(surroundingNodes)
+            .replace(/<package[^>]*>.*?<\/package>\s*\n?/g, '')
+            .replace(/<import[^>]*>.*?<\/import>\s*\n?/g, '')
+            .replaceAll("(?m)^\\s*\\r?\\n", ""); // remove empty lines after removing tags
 
     // Serialize the XML and remove unwanted tags
     let serializedRes = new XMLSerializer().serializeToString(res);
@@ -551,7 +556,7 @@ const getXmlData = (mainXml, query, index) => {
             xml: new XMLSerializer().serializeToString(par)
         },
         xmlText: new XMLSerializer().serializeToString(par),
-        surroundingNodes: new XMLSerializer().serializeToString(surroundingNodes),
+        surroundingNodes: surroundingNodesText,
         snippet: resText
     };
 
@@ -579,6 +584,13 @@ const removeSiblings = (node) => {
  * @return {Node} - The root node.
  */
 const getSurroundingNodes = (node) => {
+    while (node && node.parentNode) {
+        node = node.parentNode;
+        if (node.tagName && node.tagName.toLowerCase() === 'block') {
+            node = node.parentNode
+            break;
+        }
+    }
     removeSiblingsChildren(node);
     let root = node;
     while (root.parentNode) {
@@ -596,11 +608,21 @@ const removeSiblingsChildren = (node) => {
     if (!node || !node.parentNode) {
         return;
     }
-    Array.from(node.parentNode.children).forEach((child) => {
-        if (child !== node) {
-            removeDescendantsByTagName(child, tagsToRemove);
-        }
-    });
+
+    let currentNode = node;
+    // Loop over previous siblings
+    while (currentNode.previousSibling) {
+        currentNode = currentNode.previousSibling;
+        removeDescendantsByTagName(currentNode, tagsToRemove);
+    }
+    // Reset currentNode to the original node
+    currentNode = node;
+    // Loop over next siblings
+    while (currentNode.nextSibling) {
+        currentNode = currentNode.nextSibling;
+        removeDescendantsByTagName(currentNode, tagsToRemove);
+    }
+
     removeSiblingsChildren(node.parentNode);
 };
 
