@@ -421,7 +421,8 @@ const runXPathQuery = (xmlFile, xpathQuery) => {
         result.push({
             filePath: xmlFile.filePath,
             xml: xmlAndText.xmlJson,
-            snippet: xmlAndText.snippet
+            snippet: xmlAndText.snippet,
+            surroundingNodes: xmlAndText.surroundingNodes
         });
         node = foundNodes.iterateNext();
         index += 1;
@@ -495,14 +496,24 @@ const getXmlData = (mainXml, query, index) => {
     // and produces error for next nodes in the same query.
 
     let xml = Utilities.cloneXML(mainXml);
+    let xmlCopy = Utilities.cloneXML(mainXml);
 
     let nodes = xml.evaluate(query, xml, nsResolver, XPathResult.ANY_TYPE, null);
+    let nodesCopy = xml.evaluate(query, xmlCopy, nsResolver, XPathResult.ANY_TYPE, null);
     let res = nodes.iterateNext();
+    let resNodes = nodesCopy.iterateNext();
     let i = 0;
     while (i < index) {
         res = nodes.iterateNext();
+        resNodes = nodesCopy.iterateNext();
         i += 1;
     }
+
+    let surroundingNodes = getSurroundingNodes(resNodes);
+    let surroundingNodesText = new XMLSerializer().serializeToString(surroundingNodes)
+            .replace(/<package[^>]*>.*?<\/package>\s*\n?/g, '')
+            .replace(/<import[^>]*>.*?<\/import>\s*\n?/g, '')
+            .replaceAll("(?m)^\\s*\\r?\\n", ""); // remove empty lines after removing tags
 
     // Serialize the XML and remove unwanted tags
     let serializedRes = new XMLSerializer().serializeToString(res);
@@ -514,24 +525,6 @@ const getXmlData = (mainXml, query, index) => {
     let resTextArray = cleanedRes.split(/\r?\n/).filter(line => line.trim() !== '');
     let resText = resTextArray.length > 1 ? resTextArray[0] + "\n" + resTextArray[1] : resTextArray[0];
 
-
-    /**
-     * remove first node sib, sib, parent sib, grandparent sib, grand-grandparent sib, ... <- recursive
-     * @param node
-     * @returns {*}
-     */
-    function removeSib(node) {
-        if (node.nodeName === "unit")
-            return node;
-        let sib = node.nextSibling;
-        while (sib && sib.nodeType !== -1) {
-            node.parentNode.removeChild(sib);
-            sib = node.nextSibling;
-        }
-        return removeSib(node.parentNode);
-    }
-
-
     let par = res, nameIndex, fileName = "";
     if (res.children) {
         for (nameIndex = 0; nameIndex < res.children.length; nameIndex++)
@@ -541,34 +534,115 @@ const getXmlData = (mainXml, query, index) => {
 
         // remove the extra children
         if (res.firstChild && res.firstChild.nodeType !== -1 && nameIndex !== -1 && nameIndex !== res.children.length)
-            par = removeSib(res.children[nameIndex]);
+            par = removeSiblings(res.children[nameIndex]);
 
         // if there is no extra children, remove sibling
         else if (res.nextSibling)
-            par = removeSib(res.nextSibling);
+            par = removeSiblings(res.nextSibling);
         else {
             par = res;
             // until we reach a sibling or the main ancestor, go up in the tree
             while (!par.nextSibling && par.nodeName !== "unit") {
                 par = par.parentNode;
             }
-            par = removeSib(res.parentNode);
+            par = removeSiblings(res.parentNode);
         }
         fileName = par.getAttribute("filename");
     }
 
-    let temp = new XMLSerializer().serializeToString(par);
     return {
         xmlJson: {
             fileName: fileName,
-            xml: temp
+            xml: new XMLSerializer().serializeToString(par)
         },
         xmlText: new XMLSerializer().serializeToString(par),
+        surroundingNodes: surroundingNodesText,
         snippet: resText
     };
 
 };
 
+/**
+ * remove first node sib, sib, parent sib, grandparent sib, grand-grandparent sib, ... <- recursive
+ * @param node
+ * @returns {*}
+ */
+const removeSiblings = (node) => {
+    if (node.nodeName === "unit")
+        return node;
+    let sib = node.nextSibling;
+    while (sib && sib.nodeType !== -1) {
+        node.parentNode.removeChild(sib);
+        sib = node.nextSibling;
+    }
+    return removeSiblings(node.parentNode);
+}
+
+/**
+ * Get the root node by removing children of siblings of each ancestor node.
+ * @param {Node} node - The node from which to start.
+ * @return {Node} - The root node.
+ */
+const getSurroundingNodes = (node) => {
+    while (node && node.parentNode) {
+        node = node.parentNode;
+        if (node.tagName && node.tagName.toLowerCase() === 'block') {
+            node = node.parentNode
+            break;
+        }
+    }
+    removeSiblingsChildren(node);
+    let root = node;
+    while (root.parentNode) {
+        root = root.parentNode;
+    }
+    return root;
+};
+
+/**
+ * Remove child nodes of siblings, keeping the sibling nodes.
+ * @param {Node} node - The node whose siblings' children should be removed.
+ */
+const removeSiblingsChildren = (node) => {
+    const tagsToRemove = ["block"];
+    if (!node || !node.parentNode) {
+        return;
+    }
+
+    let currentNode = node;
+    // Loop over previous siblings
+    while (currentNode.previousSibling) {
+        currentNode = currentNode.previousSibling;
+        removeDescendantsByTagName(currentNode, tagsToRemove);
+    }
+    // Reset currentNode to the original node
+    currentNode = node;
+    // Loop over next siblings
+    while (currentNode.nextSibling) {
+        currentNode = currentNode.nextSibling;
+        removeDescendantsByTagName(currentNode, tagsToRemove);
+    }
+
+    removeSiblingsChildren(node.parentNode);
+};
+
+/**
+ * Remove descendants of a node by tag name.
+ * @param {Node} node - The node whose descendants should be removed.
+ * @param {string[]} tagsToRemove - The tag names of descendants to remove.
+ */
+const removeDescendantsByTagName = (node, tagsToRemove) => {
+    if (!node || !node.childNodes) {
+        return;
+    }
+    Array.from(node.childNodes).forEach((child) => {
+        if (child.tagName && tagsToRemove.includes(child.tagName.toLowerCase())) {
+            node.removeChild(child);
+        } else {
+            removeDescendantsByTagName(child, tagsToRemove);
+        }
+    });
+};
 
 /**
  * validate the xpath queries in ruleI
