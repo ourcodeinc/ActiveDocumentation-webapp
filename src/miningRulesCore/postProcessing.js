@@ -8,7 +8,7 @@ import {
     attributeFileNames,
     defaultFeatures,
     featureGroupInformation,
-    featureSet,
+    featureSet, identifier_element_ids,
     identifierFeatures, identifierKeysInRulePad,
     MIN_FEATURE_COUNT_FOR_FILTER,
     MIN_SUPPORT_FOR_FILTER,
@@ -19,6 +19,7 @@ import {processRulePadForMiningRules} from "../ui/RulePad/rulePadTextualEditor/g
 import {antlr} from "../core/languageProcessing";
 import {buildFromGUI, buildTrivialGrammar} from "../ui/RulePad/rulePadGraphicalEditor/graphicalEditor";
 import Utilities from "../core/utilities";
+import {getConditionByName} from "../ui/RulePad/rulePadGraphicalEditor/graphicalEditorConstants";
 
 /**
  * @typedef {import("../initialState")} featureMetaDataType
@@ -749,19 +750,16 @@ export const createXPath = (guiTree, guiElements, rootElementId = guiTree.select
 }
 
 /**
- * check if the gui element should be ignored based on its frequency.
- * This function is used when generating the xPath
- * @param guiElement
+ * Check if the guiElement is not an element or an identifier.
+ * It is used to create an XPath
+ * @param guiElements{{}} RulePad guiElements
+ * @param guiElementId{string}
  * @return {boolean}
  */
-export const shouldIgnoreInfrequent = (guiElement) => {
-    try {
-        let nodeElements = guiElement._data_._data_.elements;
-        if (nodeElements.length !== 1) return true;
-        if (nodeElements[0].frequency !== 1) return true;
-    } catch (e) {
-        return false;
-    }
+export const isNotElementOrIdentifier = (guiElements, guiElementId) => {
+    let elementType = getConditionByName(guiElements[guiElementId].conditionName).type;
+    if (elementType === "element") return false;
+    return !(identifier_element_ids.includes(guiElementId))
 }
 
 /**

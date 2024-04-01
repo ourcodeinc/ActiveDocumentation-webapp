@@ -540,6 +540,7 @@ class MinedRulesComponent extends Component {
                 newIdentifierGroupValue.constraintsXPathQuery[key] =
                     newIdentifierGroupValue.children[key].contents.map(child => {
                         let xpath = createXPath(child.guiTree, child.guiElements, rootId);
+                        if (!xpath.startsWith("/")) xpath = "/" + xpath;
                         return xpath + "[ancestor::" + newIdentifierGroupValue.quantifierXPathQuery + "]";
                     });
             }
