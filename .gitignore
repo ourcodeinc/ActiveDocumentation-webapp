@@ -19,6 +19,9 @@ package-lock.json
 .env.production.local
 .idea
 
+# activeLLM config
+/src/activeLLM/config.js
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

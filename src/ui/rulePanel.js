@@ -427,36 +427,11 @@ class RulePanel extends Component {
           <SnippetView
             key={i}
             d={d}
+            snippetGroup={group}
             description={this.state.description}
             ws={this.props.ws}
             onIgnoreFile={this.props.onIgnoreFile}
           />
-        );
-      });
-    };
-
-    let returnListNormal = (list) => {
-      if (list.length === 0) return <h5>No snippet</h5>;
-      return list.map((d, i) => {
-        return (
-          <div data-file-path={d.filePath} className="snippetDiv" key={i}>
-            <pre
-              className="link"
-              onClick={() => {
-                this.props.onIgnoreFile(true);
-                Utilities.sendToServer(
-                  this.props.ws,
-                  webSocketSendMessage.snippet_xml_msg,
-                  d.xml,
-                );
-              }}
-            >
-              <div
-                className="content"
-                dangerouslySetInnerHTML={{ __html: d.snippet }}
-              />
-            </pre>
-          </div>
         );
       });
     };
@@ -566,6 +541,7 @@ class SnippetView extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      snippetGroup: props.snippetGroup,
       d: props.d,
       description: props.description,
       suggestedSnippet: null,
@@ -673,19 +649,21 @@ class SnippetView extends Component {
               dangerouslySetInnerHTML={{ __html: this.state.d.snippet }}
             />
             <div style={buttonParent}>
-              {config.OPENAI_API_KEY != "" && !this.state.suggestedSnippet && (
-                <button
-                  onClick={() =>
-                    handleSuggestion(
-                      this.state.description,
-                      this.state.d.surroundingNodes,
-                    )
-                  }
-                  style={buttonStyle}
-                >
-                  Fix ✨
-                </button>
-              )}
+              {this.state.snippetGroup === "violated" &&
+                config.OPENAI_API_KEY != "" &&
+                !this.state.suggestedSnippet && (
+                  <button
+                    onClick={() =>
+                      handleSuggestion(
+                        this.state.description,
+                        this.state.d.surroundingNodes,
+                      )
+                    }
+                    style={buttonStyle}
+                  >
+                    Fix ✨
+                  </button>
+                )}
             </div>
 
             {this.state.suggestedSnippet && (
