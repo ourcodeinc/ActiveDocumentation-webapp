@@ -379,6 +379,9 @@ class RulePanel extends Component {
       (d) => d.filePath === this.state.filePath,
     );
 
+    let exampleSnippet = null;
+    let exampleFoundInOpenFile = false;
+
     switch (group) {
       case "all":
         if (this.state.filePath !== none_filePath) {
@@ -396,6 +399,7 @@ class RulePanel extends Component {
         if (this.state.filePath !== none_filePath) {
           if (file.length > 0) fileList = file[0].data.satisfiedResult;
         }
+
         for (let i = 0; i < this.ruleI.xPathQueryResult.length; i++) {
           if (this.ruleI.xPathQueryResult[i].filePath === this.state.filePath)
             continue;
@@ -409,8 +413,36 @@ class RulePanel extends Component {
           if (file.length > 0) fileList = file[0].data.violatedResult;
         }
         for (let i = 0; i < this.ruleI.xPathQueryResult.length; i++) {
-          if (this.ruleI.xPathQueryResult[i].filePath === this.state.filePath)
-            continue;
+          // NOTE: added example snippet
+          if (
+            exampleSnippet == null &&
+            this.ruleI.xPathQueryResult[i].data.satisfiedResult.length > 0
+          ) {
+            try {
+              exampleSnippet =
+                this.ruleI.xPathQueryResult[i].data.satisfiedResult[0]
+                  .surroundingNodes;
+            } catch (e) {
+              console.log(e);
+            }
+          }
+          if (this.ruleI.xPathQueryResult[i].filePath === this.state.filePath) {
+            // NOTE: added example snippet
+            if (
+              (exampleSnippet == null || !exampleFoundInOpenFile) &&
+              this.ruleI.xPathQueryResult[i].data.satisfiedResult.length > 0
+            ) {
+              try {
+                exampleSnippet =
+                  this.ruleI.xPathQueryResult[i].data.satisfiedResult[0]
+                    .surroundingNodes;
+                exampleFoundInOpenFile = true;
+              } catch (e) {
+                console.log(e);
+              }
+              continue;
+            }
+          }
           otherFilesList = otherFilesList.concat(
             this.ruleI.xPathQueryResult[i].data.violatedResult,
           );
@@ -428,6 +460,7 @@ class RulePanel extends Component {
             key={i}
             d={d}
             snippetGroup={group}
+            exampleSnippet={exampleSnippet}
             description={this.state.description}
             ws={this.props.ws}
             onIgnoreFile={this.props.onIgnoreFile}
@@ -544,6 +577,7 @@ class SnippetView extends Component {
       snippetGroup: props.snippetGroup,
       d: props.d,
       description: props.description,
+      exampleSnippet: props.exampleSnippet,
       suggestedSnippet: null,
       suggestionCreated: false,
       snippetExplanation: null,
@@ -571,11 +605,17 @@ class SnippetView extends Component {
     }
 
     /* Handle Click for the "Suggest A Fix" button */
-    const handleSuggestion = async (rule, snippet) => {
+    const handleSuggestion = async (rule, example, snippet) => {
       // parse the passed in snippet
       const parsedSnippet = removeAnnotations(snippet);
+      const parsedExample = removeAnnotations(example);
       if (!this.state.suggestionCreated) {
-        suggestFix(rule, parsedSnippet, this.setState.bind(this));
+        suggestFix(
+          rule,
+          parsedExample,
+          parsedSnippet,
+          this.setState.bind(this),
+        );
         this.setState({ suggestionCreated: true });
       }
     };
@@ -656,6 +696,7 @@ class SnippetView extends Component {
                     onClick={() =>
                       handleSuggestion(
                         this.state.description,
+                        this.state.exampleSnippet,
                         this.state.d.surroundingNodes,
                       )
                     }
@@ -684,6 +725,22 @@ class SnippetView extends Component {
                     __html: this.state.snippetExplanation,
                   }}
                 />
+                <button
+                  // send the suggested fix and the explanation to to plugin
+                  onClick={() => {
+                    this.props.onIgnoreFile(true);
+                    Utilities.sendToServer(
+                      this.props.ws,
+                      // filter string "convertedJava" which is the displayed snippet (short)
+                      // send {filepath: ..., convertedJava: ...}
+                      webSocketSendMessage.snippet_xml_msg,
+                      this.state.d.xml,
+                    );
+                  }}
+                  style={buttonStyle}
+                >
+                  Accept Fix
+                </button>
               </div>
             )}
           </pre>

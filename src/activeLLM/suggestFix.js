@@ -2,13 +2,17 @@ import { config } from "./config";
 import OpenAI from "openai";
 
 // creates a fix for a code snippet that violates a certain design rule
-export async function suggestFix(rule, snippet, setState) {
+export async function suggestFix(rule, example, snippet, setState) {
+  console.log("EXAMPLE: ", example, "\n");
+  console.log("SNIPPET: ", snippet);
+
   const prompt = `Here is a design rule and its description. ${rule} Now, 
     here is a code snippet that violates this design rule. ${snippet} Suggest 
     a fix to make this violation follow the given design rule? Generate code, 
     with the surrounding code included, to make this violation follow the given 
     design rule. Be sure to maintain proper whitespace with \\t and \\n. 
-    Give a brief explanation of your fix as well. Strictly output in JSON format. The JSON should have the following format:{"code": "...", "explanation": "..."}`;
+    Give a brief explanation of your fix as well. Strictly output in JSON format. 
+    The JSON should have the following format:{"code": "...", "explanation": "..."}`;
 
   try {
     const openai = new OpenAI({
