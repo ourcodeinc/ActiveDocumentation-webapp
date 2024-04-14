@@ -382,6 +382,7 @@ class RulePanel extends Component {
 
     let exampleSnippet = null;
     let exampleFoundInOpenFile = false;
+    let exampleFilePath = null;
 
     switch (group) {
       case "all":
@@ -423,6 +424,7 @@ class RulePanel extends Component {
               exampleSnippet =
                 this.ruleI.xPathQueryResult[i].data.satisfiedResult[0]
                   .surroundingNodes;
+              exampleFilePath = this.ruleI.xPathQueryResult[i].filePath;
             } catch (e) {
               console.log(e);
             }
@@ -438,6 +440,7 @@ class RulePanel extends Component {
                   this.ruleI.xPathQueryResult[i].data.satisfiedResult[0]
                     .surroundingNodes;
                 exampleFoundInOpenFile = true;
+                exampleFilePath = this.ruleI.xPathQueryResult[i].filePath;
               } catch (e) {
                 console.log(e);
               }
@@ -462,6 +465,7 @@ class RulePanel extends Component {
             d={d}
             snippetGroup={group}
             exampleSnippet={exampleSnippet}
+            exampleFilePath={exampleFilePath}
             description={this.state.description}
             ws={this.props.ws}
             onIgnoreFile={this.props.onIgnoreFile}
@@ -579,6 +583,7 @@ class SnippetView extends Component {
       d: props.d,
       description: props.description,
       exampleSnippet: props.exampleSnippet,
+      exampleFilePath: props.exampleFilePath,
       suggestedSnippet: null,
       suggestionCreated: false,
       snippetExplanation: null,
@@ -600,7 +605,13 @@ class SnippetView extends Component {
     }
 
     /* Handle Click for the "Suggest A Fix" button */
-    const handleSuggestion = async (rule, example, snippet) => {
+    const handleSuggestion = async (
+      rule,
+      example,
+      snippet,
+      exampleFilePath,
+      violationFilePath,
+    ) => {
       // parse the passed in snippet
       const parsedSnippet = removeAnnotations(snippet);
       const parsedExample = removeAnnotations(example);
@@ -609,6 +620,8 @@ class SnippetView extends Component {
           rule,
           parsedExample,
           parsedSnippet,
+          exampleFilePath,
+          violationFilePath,
           this.setState.bind(this),
         );
         this.setState({ suggestionCreated: true });
@@ -693,6 +706,8 @@ class SnippetView extends Component {
                         this.state.description,
                         this.state.exampleSnippet,
                         this.state.d.surroundingNodes,
+                        this.state.exampleFilePath,
+                        this.state.d.filePath,
                       )
                     }
                     style={buttonStyle}
