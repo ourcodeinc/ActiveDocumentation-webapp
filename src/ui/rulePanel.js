@@ -26,6 +26,7 @@ import { relatives } from "../core/ruleExecutorConstants";
 import { hashConst, none_filePath } from "./uiConstants";
 
 import { suggestFix } from "../activeLLM/suggestFix";
+// FIXME: Add config file to git, update git ignore message
 import { config } from "../activeLLM/config";
 
 class RulePanel extends Component {
@@ -594,12 +595,6 @@ class SnippetView extends Component {
       xmlString = xmlString.replace(/&gt;/g, ">");
       // replaces &amp; with &
       xmlString = xmlString.replace(/&amp;/g, "&");
-      // removes empty lines
-      // xmlString = xmlString.replace(/[\n\r]+/g, "\n");
-      // removes tab spaces
-      // xmlString = xmlString.replace(/[\t]+/g, "");
-      // removes leading spaces
-      // xmlString = xmlString.replace(/[\s]{2,}/g, "");
 
       return xmlString;
     }
@@ -652,7 +647,7 @@ class SnippetView extends Component {
       color: "white",
       border: "none",
       borderRadius: "5px",
-      padding: "5px 7.5px",
+      padding: "5px 5px",
       cursor: "pointer",
       outline: "none",
     };
@@ -725,6 +720,7 @@ class SnippetView extends Component {
                     __html: this.state.snippetExplanation,
                   }}
                 />
+                {/* TODO: Accept Fix button */}
                 <button
                   // send the suggested fix and the explanation to to plugin
                   onClick={() => {
