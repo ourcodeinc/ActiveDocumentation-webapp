@@ -4,7 +4,10 @@
 
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
+
+import "../index.css";
 import "../App.css";
+
 import {
   Tab,
   Tabs,
@@ -26,7 +29,6 @@ import { relatives } from "../core/ruleExecutorConstants";
 import { hashConst, none_filePath } from "./uiConstants";
 
 import { suggestFix } from "../activeLLM/suggestFix";
-// FIXME: Add config file to git, update git ignore message
 import { config } from "../activeLLM/config";
 
 class RulePanel extends Component {
@@ -587,10 +589,13 @@ class SnippetView extends Component {
       suggestedSnippet: null,
       suggestionCreated: false,
       snippetExplanation: null,
+      suggestionFileName: null,
+      llmModifiedFileContent: null,
     };
   }
 
   render() {
+    /* Cleanses snippets of srcml annotations */
     function removeAnnotations(xmlString) {
       // removes srcml tags
       xmlString = xmlString.replace(/<[^>]*>/g, "");
@@ -612,9 +617,9 @@ class SnippetView extends Component {
       exampleFilePath,
       violationFilePath,
     ) => {
-      // parse the passed in snippet
       const parsedSnippet = removeAnnotations(snippet);
       const parsedExample = removeAnnotations(example);
+      // prevent multiple calls to suggestFix
       if (!this.state.suggestionCreated) {
         suggestFix(
           rule,
@@ -624,43 +629,30 @@ class SnippetView extends Component {
           violationFilePath,
           this.setState.bind(this),
         );
+        // notify the component that this snippet now has a suggested fix
         this.setState({ suggestionCreated: true });
       }
     };
 
+    // NOTE: These styles can be moved to index.css in the future.
+    // There was an issue with that, so this is a quick fix
     const titleStyle = {
       color: "#333",
-      fontSize: "1em",
+      fontSize: "1.10em",
       width: "100%",
       fontWeight: "bold",
-      wordWrap: "break-word",
-    };
-
-    const codeStyle = {
-      color: "#333",
-      fontSize: "0.9em",
-      width: "100%",
-      wordWrap: "break-word",
-      whiteSpace: "pre-wrap",
-    };
-
-    const explanationStyle = {
-      color: "#333",
-      fontSize: "0.9em",
-      width: "100%",
-      wordWrap: "break-word",
-      whiteSpace: "pre-wrap",
-      textDecoration: "indent",
     };
 
     const buttonStyle = {
-      marginTop: "5px",
-      marginRight: "5px",
+      marginTop: "2px",
+      marginRight: "2.5px",
       backgroundColor: "#777",
       color: "white",
       border: "none",
       borderRadius: "5px",
-      padding: "5px 5px",
+      paddingRight: "5px",
+      paddingLeft: "5px",
+      fontWeight: "bold",
       cursor: "pointer",
       outline: "none",
     };
@@ -674,14 +666,8 @@ class SnippetView extends Component {
 
     return (
       <section>
-        <div
-          data-file-path={this.state.d.filePath}
-          className="snippetDiv"
-          style={{
-            position: "relative",
-          }}
-        >
-          <pre
+        <div data-file-path={this.state.d.filePath} className="snippetDiv">
+          <div
             className="link"
             onClick={() => {
               this.props.onIgnoreFile(true);
@@ -692,11 +678,13 @@ class SnippetView extends Component {
               );
             }}
           >
-            <div
+            <pre
               className="content"
               dangerouslySetInnerHTML={{ __html: this.state.d.snippet }}
             />
-            <div style={buttonParent}>
+
+            <span style={buttonParent}>
+              {/* render the following IF this is a violation of a rule and there is no fix yet */}
               {this.state.snippetGroup === "violated" &&
                 config.OPENAI_API_KEY != "" &&
                 !this.state.suggestedSnippet && (
@@ -715,46 +703,50 @@ class SnippetView extends Component {
                     Fix ✨
                   </button>
                 )}
-            </div>
+            </span>
+          </div>
 
-            {this.state.suggestedSnippet && (
-              <div>
-                <p style={titleStyle}>Suggested Snippet:</p>
-                <pre
-                  className="content"
-                  style={codeStyle}
-                  dangerouslySetInnerHTML={{
-                    __html: this.state.suggestedSnippet,
-                  }}
-                />
-                <p style={titleStyle}>Explanation:</p>
-                <pre
-                  className="content"
-                  style={explanationStyle}
-                  dangerouslySetInnerHTML={{
-                    __html: this.state.snippetExplanation,
-                  }}
-                />
-                {/* TODO: Accept Fix button */}
-                <button
-                  // send the suggested fix and the explanation to to plugin
-                  onClick={() => {
-                    this.props.onIgnoreFile(true);
-                    Utilities.sendToServer(
-                      this.props.ws,
-                      // filter string "convertedJava" which is the displayed snippet (short)
-                      // send {filepath: ..., convertedJava: ...}
-                      webSocketSendMessage.snippet_xml_msg,
-                      this.state.d.xml,
-                    );
-                  }}
-                  style={buttonStyle}
-                >
-                  Accept Fix
-                </button>
-              </div>
-            )}
-          </pre>
+          {/* render the following IF the component state has recieved snippet */}
+          {this.state.suggestedSnippet && (
+            <div>
+              <h2 style={titleStyle}>Suggested Fix:</h2>
+              <pre
+                className="content"
+                dangerouslySetInnerHTML={{
+                  __html: this.state.suggestedSnippet,
+                }}
+              />
+              <h2 style={titleStyle}>Suggestion Location:</h2>
+              <p
+                className="content"
+                dangerouslySetInnerHTML={{
+                  __html: this.state.suggestionFileName,
+                }}
+              />
+              <h2 style={titleStyle}>Explanation:</h2>
+              <p
+                className="content"
+                dangerouslySetInnerHTML={{
+                  __html: this.state.snippetExplanation,
+                }}
+              />
+
+              <button
+                // send the suggested fix and the explanation to to plugin
+                onClick={() => {
+                  this.props.onIgnoreFile(true);
+                  Utilities.sendToServer(
+                    this.props.ws,
+                    webSocketSendMessage.snippet_xml_msg,
+                    this.state.llmModifiedFileContent,
+                  );
+                }}
+                style={buttonStyle}
+              >
+                Accept Fix
+              </button>
+            </div>
+          )}
         </div>
       </section>
     );

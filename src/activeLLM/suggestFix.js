@@ -11,7 +11,7 @@ export async function suggestFix(
 ) {
   // console.log("Rule: ", rule);
   // console.log("Example: ", example);
-  // console.log("Snippet: ", snippet);
+  // console.log("Snippet: ", violation);
   // console.log("Example file path: ", exampleFilePath);
   // console.log("Violation file path: ", violationFilePath);
 
@@ -21,34 +21,58 @@ export async function suggestFix(
     Now, here is a code snippet that violates this design rule. ${violation} 
     The violated code's file path is ${violationFilePath}
     Suggest a fix to make this violation follow the given design rule? 
-    Generate a short explanation and only the code needed to achieve the fix. 
+    Generate code with surrounding code included that follows the design rule. 
     Be sure to maintain proper whitespace with \\t and \\n. 
     Give a brief explanation of your fix as well. Strictly output in JSON format. 
-    The JSON should have the following format:{"code": "...", "explanation": "..."}`;
+    Ensure that you include the fileName where the fix should be inserted at. 
+    This should just be in the format Example.java
+    The JSON should have the following format:{"code": "...", "explanation": "...", "fileName": "..."}`;
 
-  try {
-    const openai = new OpenAI({
-      // NOTE: open config.js and add your api key there
-      apiKey: config.OPENAI_API_KEY,
-      // FIXME: this is not secure.
-      dangerouslyAllowBrowser: true,
-    });
+  let attempt = 1;
+  let success = false;
 
-    const chatCompletion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      temperature: 0.75,
-      messages: [{ role: "user", content: prompt }],
-    });
+  while (attempt <= 3 && !success) {
+    try {
+      const openai = new OpenAI({
+        // NOTE: open config.js and add your api key there
+        apiKey: config.OPENAI_API_KEY,
+        dangerouslyAllowBrowser: true,
+      });
 
-    const suggestedSnippet = chatCompletion.choices[0].message.content;
-    const stripped = suggestedSnippet.replace(/^`json|`json$/g, "").trim();
-    const parsedJSON = JSON.parse(stripped);
+      const chatCompletion = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        temperature: 0.75,
+        messages: [{ role: "user", content: prompt }],
+      });
 
-    // sets the relevant state in the React component that made the request
-    // see ../ui/rulePanel.js for more details
-    setState({ suggestedSnippet: parsedJSON["code"] });
-    setState({ snippetExplanation: parsedJSON["explanation"] });
-  } catch (error) {
-    console.log(error);
+      const suggestedSnippet = chatCompletion.choices[0].message.content;
+      const stripped = suggestedSnippet.replace(/^`json|`json$/g, "").trim();
+      const parsedJSON = JSON.parse(stripped);
+
+      // sets the relevant state in the React component that made the request
+      // see ../ui/rulePanel.js for more details
+      setState({ suggestedSnippet: parsedJSON["code"] });
+      setState({ snippetExplanation: parsedJSON["explanation"] });
+      setState({ suggestionFileName: parsedJSON["fileName"] });
+
+      const llmModifiedFileContent = {
+        command: "LLM_MODIFIED_FILE_CONTENT",
+        data: {
+          filePath: `${violationFilePath}`,
+          fileToChange: `${parsedJSON["fileName"]}`,
+          modifiedFileContent: `${parsedJSON["code"]}`,
+          explanation: `${parsedJSON["explanation"]}`,
+        },
+      };
+
+      // set the modified content state, will be sent plugin
+      setState({ llmModifiedFileContent: llmModifiedFileContent });
+
+      success = true;
+    } catch (error) {
+      console.log(error);
+      success = false;
+      attempt++;
+    }
   }
 }
