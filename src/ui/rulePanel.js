@@ -666,7 +666,13 @@ class SnippetView extends Component {
 
     return (
       <section>
-        <div data-file-path={this.state.d.filePath} className="snippetDiv">
+        <div
+          data-file-path={this.state.d.filePath}
+          className="snippetDiv"
+          style={{
+            position: "relative",
+          }}
+        >
           <div
             className="link"
             onClick={() => {
