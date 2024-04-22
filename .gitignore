@@ -19,9 +19,6 @@ package-lock.json
 .env.production.local
 .idea
 
-# IMPORTANT: Do not remove this line when your api-key is present
-/src/activeLLM/config.js
-
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

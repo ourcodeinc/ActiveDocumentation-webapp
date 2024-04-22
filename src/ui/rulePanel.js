@@ -746,6 +746,7 @@ class SnippetView extends Component {
                     webSocketSendMessage.snippet_xml_msg,
                     this.state.llmModifiedFileContent,
                   );
+                  console.log(this.state.llmModifiedFileContent);
                 }}
                 style={buttonStyle}
               >
