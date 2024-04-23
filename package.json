@@ -13,6 +13,7 @@
     "monaco-editor": "0.21.2",
     "monaco-editor-webpack-plugin": "2.0.0",
     "npm": "6.14.13",
+    "openai": "^4.30.0",
     "path": "0.12.7",
     "pluralize": "7.0.0",
     "rc-slider": "8.7.1",
