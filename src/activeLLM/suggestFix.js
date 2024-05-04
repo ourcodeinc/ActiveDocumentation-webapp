@@ -1,4 +1,3 @@
-import { config } from "./config";
 import OpenAI from "openai";
 
 export async function suggestFix(
@@ -33,9 +32,12 @@ export async function suggestFix(
 
   while (attempt <= 3 && !success) {
     try {
+      // Read the API key from localStorage
+      const apiKey = localStorage.getItem("OPENAI_API_KEY");
+
+      // Create a new OpenAI instance with the API key from localStorage
       const openai = new OpenAI({
-        // NOTE: open config.js and add your api key there
-        apiKey: config.OPENAI_API_KEY,
+        apiKey,
         dangerouslyAllowBrowser: true,
       });
 

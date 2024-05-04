@@ -10,6 +10,8 @@ import { connect } from "react-redux";
 import { clickedOnBack, clickedOnForward } from "../actions";
 import { hashConst } from "./uiConstants";
 
+import ConfigComponent from "../ui/activeLLM/configComponent";
+
 export class NavBar extends Component {
   render() {
     return (
@@ -60,6 +62,10 @@ export class NavBar extends Component {
             <NavItem eventKey={4}>Learn Design Rules</NavItem>
           </Nav>
         </Navbar.Collapse>
+        {/* Opt-In to activeLLM button */}
+        <span>
+          <ConfigComponent />
+        </span>
       </Navbar>
     );
   }
@@ -93,4 +99,3 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavBar);
-
