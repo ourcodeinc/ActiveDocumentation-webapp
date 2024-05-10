@@ -601,14 +601,14 @@ const getSurroundingNodes = (node) => {
         return node;
     }
 
-        // case 3: other, statements (starting node within method or at method signature)
-    // Grab all code within method and function signatures and private fields adjacent/same level as method
+    // case 3: other, statements (starting node within method or at method signature)
+    // Grab all code within method and function signatures and fields adjacent/same level as method
     else {
         // find the parent function
         while (node && node.tagName && node.tagName.toLowerCase() !== "function" && node.parentNode) {
             node = node.parentNode;
         }
-        removeFunctionBodiesPublicFields(node);
+        removeSiblingFunctionBodies(node);
         // find the parent class
         if (node.parentNode) {
             node = node.parentNode;
@@ -654,34 +654,6 @@ function isClassOrField(node) {
 }
 
 /**
- * Remove child nodes of siblings, remove public fields
- * @param {Node} node - The node whose siblings' children should be removed.
- */
-const removeFunctionBodiesPublicFields = (node) => {
-    if (!node || !node.parentNode) {
-        return;
-    }
-
-    let currentNode = node;
-    // Loop over previous siblings
-    while (currentNode.previousSibling) {
-        currentNode = currentNode.previousSibling;
-        removeFunctionBodies(currentNode);
-        removePublicFields(currentNode);
-    }
-    // Reset currentNode to the original node
-    currentNode = node;
-    // Loop over next siblings
-    while (currentNode.nextSibling) {
-        currentNode = currentNode.nextSibling;
-        removeFunctionBodies(currentNode);
-        removePublicFields(currentNode);
-    }
-
-    removeFunctionBodiesPublicFields(node.parentNode);
-};
-
-/**
  * remove function bodies
  * @param node {Node}
  */
@@ -707,31 +679,30 @@ const removeFunctionBodies = (node) => {
 }
 
 /**
- * remove public fields
+ * remove bodies of sibling functions
  * @param node {Node}
  */
-const removePublicFields = (node) => {
+const removeSiblingFunctionBodies = (node) => {
     if (!node || node.nodeType !== Node.ELEMENT_NODE) {
         return;
     }
 
-    try {
-        if (node.tagName.toLowerCase() === "decl_stmt") {
-            for (let i = 0; i < node.childNodes[0].childNodes.length; i++) {
-                const child = node.childNodes[0].childNodes[i]; // "decl"
-
-                if (child.nodeType === Node.ELEMENT_NODE &&
-                    child.tagName.toLowerCase() === "specifier" &&
-                    child.textContent.trim() === "public") {
-                    let parent = node.parentNode;
-                    parent.removeChild(node);
-                    return;
-                }
-            }
-        }
-    } catch (e) {
-        console.log("error in removing public fields", e);
+    let currentNode = node;
+    // Loop over previous siblings
+    while (currentNode.previousSibling) {
+        currentNode = currentNode.previousSibling;
+        removeFunctionBodies(currentNode);
     }
+    // Reset currentNode to the original node
+    currentNode = node;
+
+    // Loop over next siblings
+    while (currentNode.nextSibling) {
+        currentNode = currentNode.nextSibling;
+        removeFunctionBodies(currentNode)
+    }
+
+    removeSiblingFunctionBodies(node.parentNode);
 }
 
 /**
