@@ -29,7 +29,6 @@ import { relatives } from "../core/ruleExecutorConstants";
 import { hashConst, none_filePath } from "./uiConstants";
 
 import { suggestFix } from "../activeLLM/suggestFix";
-import { config } from "../activeLLM/config";
 
 class RulePanel extends Component {
   constructor(props) {
@@ -692,7 +691,9 @@ class SnippetView extends Component {
             <span style={buttonParent}>
               {/* render the following IF this is a violation of a rule and there is no fix yet */}
               {this.state.snippetGroup === "violated" &&
-                config.OPENAI_API_KEY != "" &&
+                // Check if the API key stored in localStorage is not empty
+                localStorage.getItem("OPENAI_API_KEY") !== null &&
+                localStorage.getItem("OPENAI_API_KEY") !== "" &&
                 !this.state.suggestedSnippet && (
                   <button
                     onClick={() =>
