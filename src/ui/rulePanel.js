@@ -505,46 +505,44 @@ class SnippetView extends Component {
         };
     }
 
-    render() {
-        /* Cleanses snippets of srcml annotations */
-        function removeAnnotations(xmlString) {
-            // removes srcml tags
-            xmlString = xmlString.replace(/<[^>]*>/g, "");
-            // replaces &lt; with <
-            xmlString = xmlString.replace(/&lt;/g, "<");
-            // replaces &gt; with >
-            xmlString = xmlString.replace(/&gt;/g, ">");
-            // replaces &amp; with &
-            xmlString = xmlString.replace(/&amp;/g, "&");
+    removeAnnotations(xmlString) {
+        // removes srcml tags
+        xmlString = xmlString.replace(/<[^>]*>/g, "");
+        // replaces &lt; with <
+        xmlString = xmlString.replace(/&lt;/g, "<");
+        // replaces &gt; with >
+        xmlString = xmlString.replace(/&gt;/g, ">");
+        // replaces &amp; with &
+        xmlString = xmlString.replace(/&amp;/g, "&");
 
-            return xmlString;
+        return xmlString;
+    }
+
+    handleSuggestion = async (
+        rule,
+        example,
+        snippet,
+        exampleFilePath,
+        violationFilePath,
+    ) => {
+        const parsedSnippet = this.removeAnnotations(snippet);
+        const parsedExample = this.removeAnnotations(example);
+        // prevent multiple calls to suggestFix
+        if (!this.state.suggestionCreated) {
+            suggestFix(
+                rule,
+                parsedExample,
+                parsedSnippet,
+                exampleFilePath,
+                violationFilePath,
+                this.setState.bind(this),
+            );
+            // notify the component that this snippet now has a suggested fix
+            this.setState({ suggestionCreated: true });
         }
+    };
 
-        /* Handle Click for the "Suggest A Fix" button */
-        const handleSuggestion = async (
-            rule,
-            example,
-            snippet,
-            exampleFilePath,
-            violationFilePath,
-        ) => {
-            const parsedSnippet = removeAnnotations(snippet);
-            const parsedExample = removeAnnotations(example);
-            // prevent multiple calls to suggestFix
-            if (!this.state.suggestionCreated) {
-                suggestFix(
-                    rule,
-                    parsedExample,
-                    parsedSnippet,
-                    exampleFilePath,
-                    violationFilePath,
-                    this.setState.bind(this),
-                );
-                // notify the component that this snippet now has a suggested fix
-                this.setState({suggestionCreated: true});
-            }
-        };
-
+    render() {
         // NOTE: These styles can be moved to index.css in the future.
         // There was an issue with that, so this is a quick fix
         const titleStyle = {
@@ -580,9 +578,7 @@ class SnippetView extends Component {
                 <div
                     data-file-path={this.state.d.filePath}
                     className="snippetDiv"
-                    style={{
-                        position: "relative",
-                    }}
+                    style={{position: "relative"}}
                 >
                     <div
                         className="link"
@@ -595,13 +591,13 @@ class SnippetView extends Component {
                             );
                         }}
                     >
-            <pre
-                className="content"
-                dangerouslySetInnerHTML={{__html: this.state.d.snippet}}
-            />
+                        <pre
+                            className="content"
+                            dangerouslySetInnerHTML={{__html: this.state.d.snippet}}
+                        />
 
                         <span style={buttonParent}>
-              {/* render the following IF this is a violation of a rule and there is no fix yet */}
+                            {/* render the following IF this is a violation of a rule and there is no fix yet */}
                             {this.state.snippetGroup === "violated" &&
                             // Check if the API key stored in localStorage is not empty
                             localStorage.getItem("OPENAI_API_KEY") !== null &&
@@ -609,7 +605,7 @@ class SnippetView extends Component {
                             !this.state.suggestedSnippet && (
                                 <button
                                     onClick={() =>
-                                        handleSuggestion(
+                                        this.handleSuggestion(
                                             this.state.description,
                                             this.state.exampleSnippet,
                                             this.state.d.surroundingNodes,
@@ -622,10 +618,10 @@ class SnippetView extends Component {
                                     Fix ✨
                                 </button>
                             )}
-            </span>
+                        </span>
                     </div>
 
-                    {/* render the following IF the component state has recieved snippet */}
+                    {/* render the following IF the component state has received snippet */}
                     {this.state.suggestedSnippet && (
                         <div>
                             <h2 style={titleStyle}>Suggested Fix:</h2>
