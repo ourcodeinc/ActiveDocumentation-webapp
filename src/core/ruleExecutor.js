@@ -584,28 +584,106 @@ const removeSiblings = (node) => {
  * @return {Node} - The root node.
  */
 const getSurroundingNodes = (node) => {
-    while (node && node.parentNode) {
-        node = node.parentNode;
-        if (node.tagName && node.tagName.toLowerCase() === 'block') {
-            node = node.parentNode
-            break;
+    // case 1: static class
+    // Grab all code within static class
+    if (isStaticClass(node)) {
+        return node;
+    }
+
+    // case 2: class, field
+    // Grab all fields and function/nested class signatures
+    if (isClassOrField(node)) {
+        // find the parent class
+        while (node && node.tagName && node.tagName.toLowerCase() !== "class" && node.parentNode) {
+            node = node.parentNode;
         }
+        removeFunctionBodies(node);
+        return node;
     }
-    removeSiblingsChildren(node);
-    let root = node;
-    while (root.parentNode) {
-        root = root.parentNode;
+
+    // case 3: other, statements (starting node within method or at method signature)
+    // Grab all code within method and function signatures and fields adjacent/same level as method
+    else {
+        // find the parent function
+        while (node && node.tagName && node.tagName.toLowerCase() !== "function" && node.parentNode) {
+            node = node.parentNode;
+        }
+        removeSiblingFunctionBodies(node);
+        // find the parent class
+        if (node.parentNode) {
+            node = node.parentNode;
+        }
+        while (node && node.tagName && node.tagName.toLowerCase() !== "class" && node.parentNode) {
+            node = node.parentNode;
+        }
+        return node;
     }
-    return root;
 };
 
-/**
- * Remove child nodes of siblings, keeping the sibling nodes.
- * @param {Node} node - The node whose siblings' children should be removed.
+/** check if the node is a static class
+ * @param node {Node}
+ * @return {boolean}
  */
-const removeSiblingsChildren = (node) => {
-    const tagsToRemove = ["block"];
-    if (!node || !node.parentNode) {
+const isStaticClass = (node) => {
+    if (node.nodeType !== Node.ELEMENT_NODE || node.tagName.toLowerCase() !== "class") {
+        return false;
+    }
+    const children = node.childNodes;
+    for (let i = 0; i < children.length; i++) {
+        const child = children[i];
+        if (child.nodeType === Node.ELEMENT_NODE &&
+            child.tagName.toLowerCase() === "specifier" &&
+            child.textContent.trim() === "static") {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * check if the node is a class or a field.
+ * @param node {Node}
+ * @return {boolean}
+ */
+function isClassOrField(node) {
+    if (node.nodeType !== Node.ELEMENT_NODE) {
+        return false;
+    }
+    const tagName = node.tagName.toLowerCase();
+    return tagName === "class" || tagName === "decl_stmt";
+}
+
+/**
+ * remove function bodies
+ * @param node {Node}
+ */
+const removeFunctionBodies = (node) => {
+    if (!node || node.nodeType !== Node.ELEMENT_NODE) {
+        return;
+    }
+
+    if (node.tagName.toLowerCase() === "function") {
+        for (let i = 0; i < node.childNodes.length; i++) {
+            const child = node.childNodes[i];
+            if (child.tagName && child.tagName.toLowerCase() === "block") {
+                node.removeChild(child);
+                return;
+            }
+        }
+    } else {
+        for (let i = 0; i < node.childNodes.length; i++) {
+            const child = node.childNodes[i];
+            removeFunctionBodies(child);
+        }
+    }
+}
+
+/**
+ * remove bodies of sibling functions
+ * @param node {Node}
+ */
+const removeSiblingFunctionBodies = (node) => {
+    if (!node || node.nodeType !== Node.ELEMENT_NODE) {
         return;
     }
 
@@ -613,36 +691,19 @@ const removeSiblingsChildren = (node) => {
     // Loop over previous siblings
     while (currentNode.previousSibling) {
         currentNode = currentNode.previousSibling;
-        removeDescendantsByTagName(currentNode, tagsToRemove);
+        removeFunctionBodies(currentNode);
     }
     // Reset currentNode to the original node
     currentNode = node;
+
     // Loop over next siblings
     while (currentNode.nextSibling) {
         currentNode = currentNode.nextSibling;
-        removeDescendantsByTagName(currentNode, tagsToRemove);
+        removeFunctionBodies(currentNode)
     }
 
-    removeSiblingsChildren(node.parentNode);
-};
-
-/**
- * Remove descendants of a node by tag name.
- * @param {Node} node - The node whose descendants should be removed.
- * @param {string[]} tagsToRemove - The tag names of descendants to remove.
- */
-const removeDescendantsByTagName = (node, tagsToRemove) => {
-    if (!node || !node.childNodes) {
-        return;
-    }
-    Array.from(node.childNodes).forEach((child) => {
-        if (child.tagName && tagsToRemove.includes(child.tagName.toLowerCase())) {
-            node.removeChild(child);
-        } else {
-            removeDescendantsByTagName(child, tagsToRemove);
-        }
-    });
-};
+    removeSiblingFunctionBodies(node.parentNode);
+}
 
 /**
  * validate the xpath queries in ruleI
