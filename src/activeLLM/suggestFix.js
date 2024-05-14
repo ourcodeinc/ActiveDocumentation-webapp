@@ -1,20 +1,15 @@
 import OpenAI from "openai";
 
 export async function suggestFix(
-  rule,
-  example,
-  violation,
-  exampleFilePath,
-  violationFilePath,
-  setState,
+    rule,
+    example,
+    violation,
+    exampleFilePath,
+    violationFilePath,
+    setState,
 ) {
-  // console.log("Rule: ", rule);
-  // console.log("Example: ", example);
-  // console.log("Snippet: ", violation);
-  // console.log("Example file path: ", exampleFilePath);
-  // console.log("Violation file path: ", violationFilePath);
 
-  const prompt = `Here is a design rule and its description: ${rule} 
+    const prompt = `Here is a design rule and its description: ${rule} 
     Here is a code example that follows this design rule: ${example}
     The example file path is ${exampleFilePath}
     Now, here is a code snippet that violates this design rule. ${violation} 
@@ -27,54 +22,54 @@ export async function suggestFix(
     This should just be in the format Example.java
     The JSON should have the following format:{"code": "...", "explanation": "...", "fileName": "..."}`;
 
-  let attempt = 1;
-  let success = false;
+    let attempt = 1;
+    let success = false;
 
-  while (attempt <= 3 && !success) {
-    try {
-      // Read the API key from localStorage
-      const apiKey = localStorage.getItem("OPENAI_API_KEY");
+    while (attempt <= 3 && !success) {
+        try {
+            // Read the API key from localStorage
+            const apiKey = localStorage.getItem("OPENAI_API_KEY");
 
-      // Create a new OpenAI instance with the API key from localStorage
-      const openai = new OpenAI({
-        apiKey,
-        dangerouslyAllowBrowser: true,
-      });
+            // Create a new OpenAI instance with the API key from localStorage
+            const openai = new OpenAI({
+                apiKey,
+                dangerouslyAllowBrowser: true,
+            });
 
-      const chatCompletion = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        temperature: 0.75,
-        messages: [{ role: "user", content: prompt }],
-      });
+            const chatCompletion = await openai.chat.completions.create({
+                model: "gpt-3.5-turbo",
+                temperature: 0.75,
+                messages: [{role: "user", content: prompt}],
+            });
 
-      const suggestedSnippet = chatCompletion.choices[0].message.content;
-      const stripped = suggestedSnippet.replace(/^`json|`json$/g, "").trim();
-      const parsedJSON = JSON.parse(stripped);
+            const suggestedSnippet = chatCompletion.choices[0].message.content;
+            const stripped = suggestedSnippet.replace(/^`json|`json$/g, "").trim();
+            const parsedJSON = JSON.parse(stripped);
 
-      // sets the relevant state in the React component that made the request
-      // see ../ui/rulePanel.js for more details
-      setState({ suggestedSnippet: parsedJSON["code"] });
-      setState({ snippetExplanation: parsedJSON["explanation"] });
-      setState({ suggestionFileName: parsedJSON["fileName"] });
+            // sets the relevant state in the React component that made the request
+            // see ../ui/rulePanel.js for more details
+            setState({suggestedSnippet: parsedJSON["code"]});
+            setState({snippetExplanation: parsedJSON["explanation"]});
+            setState({suggestionFileName: parsedJSON["fileName"]});
 
-      const llmModifiedFileContent = {
-        command: "LLM_MODIFIED_FILE_CONTENT",
-        data: {
-          filePath: `${violationFilePath}`,
-          fileToChange: `${parsedJSON["fileName"]}`,
-          modifiedFileContent: `${parsedJSON["code"]}`,
-          explanation: `${parsedJSON["explanation"]}`,
-        },
-      };
+            const llmModifiedFileContent = {
+                command: "LLM_MODIFIED_FILE_CONTENT",
+                data: {
+                    filePath: `${violationFilePath}`,
+                    fileToChange: `${parsedJSON["fileName"]}`,
+                    modifiedFileContent: `${parsedJSON["code"]}`,
+                    explanation: `${parsedJSON["explanation"]}`,
+                },
+            };
 
-      // set the modified content state, will be sent plugin
-      setState({ llmModifiedFileContent: llmModifiedFileContent });
+            // set the modified content state, will be sent plugin
+            setState({llmModifiedFileContent: llmModifiedFileContent});
 
-      success = true;
-    } catch (error) {
-      console.log(error);
-      success = false;
-      attempt++;
+            success = true;
+        } catch (error) {
+            console.log(error);
+            success = false;
+            attempt++;
+        }
     }
-  }
 }
