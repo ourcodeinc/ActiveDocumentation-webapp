@@ -2,6 +2,7 @@ export const webSocketSendMessage = {
     modified_rule_msg: "MODIFIED_RULE",
     modified_tag_msg: "MODIFIED_TAG",
     snippet_xml_msg: "XML_RESULT",
+    converted_java_snippet_msg: "CONVERTED_JAVA_SNIPPET",
     code_to_xml_msg: "EXPR_STMT",
     new_rule_msg: "NEW_RULE",
     new_tag_msg: "NEW_TAG",
