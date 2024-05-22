@@ -259,24 +259,22 @@ const runXPathQueryWithin = (xmlFile, ruleI) => {
  * }]}}
  */
 const runXpathQueryBetween = (xmlFiles, ruleI) => {
-    let quantifierResult = [];
-    let constraintResult = [];
-    for (let j = 0; j < xmlFiles.length; j++) {
-        quantifierResult = quantifierResult.concat(runXPathQuery(xmlFiles[j], ruleI.quantifierXPathQuery[0]));
-        constraintResult = constraintResult.concat(runXPathQuery(xmlFiles[j], ruleI.constraintXPathQuery[0]));
-    }
-    // compare results
-    let violatedResult = violatedResults(quantifierResult, constraintResult);
-    let resultData = {
-        quantifierResult: quantifierResult,
-        satisfiedResult: constraintResult,
-        violatedResult: violatedResult,
-        satisfied: quantifierResult.length - violatedResult.length,
-        violated: violatedResult.length
-    };
     if (!ruleI.hasOwnProperty(ruleProperties.xPathQueryResult))
         ruleI.xPathQueryResult = [];
-    ruleI.xPathQueryResult = [{filePath: processFileFolder.between, data: resultData}];
+    for (let j = 0; j < xmlFiles.length; j++) {
+        let quantifierResult = runXPathQuery(xmlFiles[j], ruleI.quantifierXPathQuery[0]);
+        let constraintResult = runXPathQuery(xmlFiles[j], ruleI.constraintXPathQuery[0]);
+        // compare results
+        let violatedResult = violatedResults(quantifierResult, constraintResult);
+        let resultData = {
+            quantifierResult: quantifierResult,
+            satisfiedResult: constraintResult,
+            violatedResult: violatedResult,
+            satisfied: quantifierResult.length - violatedResult.length,
+            violated: violatedResult.length
+        };
+        ruleI.xPathQueryResult.push({filePath: xmlFiles[j].filePath, data: resultData});
+    }
     return ruleI;
 };
 
@@ -284,64 +282,71 @@ const runXpathQueryBetween = (xmlFiles, ruleI) => {
 /**
  * run Xpath query when a group has multiple XPath queries
  * @param xmlFiles {{filePath, xml}[]}
- * @param ruleI {{index:number, title:string, description:string, tags:[], grammar:string, 
- * checkForFilesFolders:[string], checkForFilesFoldersConstraints:"INCLUDE"|"EXCLUDE"|"NONE", processFilesFolders:"WITHIN", 
- * quantifierXPathQuery:[], constraintXPathQuery:[], quantifierQueryType:string, constraintQueryType:string, 
- * rulePanelState:{editMode:boolean, title:string, description:string, ruleTags:[], folderConstraint:string, filesFolders:[], 
- * constraintXPath:string, quantifierXPath:string, autoCompleteArray:[], 
- * graphicalEditorState:{guiTree:{},  guiElements:{},  ruleType:string}}, 
+ * @param ruleI {{index:number, title:string, description:string, tags:[], grammar:string,
+ * checkForFilesFolders:[string], checkForFilesFoldersConstraints:"INCLUDE"|"EXCLUDE"|"NONE", processFilesFolders:"WITHIN",
+ * quantifierXPathQuery:[], constraintXPathQuery:[], quantifierQueryType:string, constraintQueryType:string,
+ * rulePanelState:{editMode:boolean, title:string, description:string, ruleTags:[], folderConstraint:string, filesFolders:[],
+ * constraintXPath:string, quantifierXPath:string, autoCompleteArray:[],
+ * graphicalEditorState:{guiTree:{},  guiElements:{},  ruleType:string}},
  * xPathQueryResult:[{
- * data:{quantifierResult:[{filePath:string,  snippet:string,  xml:{fileName:string,  xml:string}}], 
- * satisfied:number, satisfiedResult:[], violated:number, violatedResult:[]}, 
+ * data:{quantifierResult:[{filePath:string,  snippet:string,  xml:{fileName:string,  xml:string}}],
+ * satisfied:number, satisfiedResult:[], violated:number, violatedResult:[]},
  * filePath:string
  * }]}}
- * @returns  {{index:number, title:string, description:string, tags:[], grammar:string, 
- * checkForFilesFolders:[string], checkForFilesFoldersConstraints:"INCLUDE"|"EXCLUDE"|"NONE", processFilesFolders:"WITHIN", 
- * quantifierXPathQuery:[], constraintXPathQuery:[], quantifierQueryType:string, constraintQueryType:string, 
- * rulePanelState:{editMode:boolean, title:string, description:string, ruleTags:[], folderConstraint:string, filesFolders:[], 
- * constraintXPath:string, quantifierXPath:string, autoCompleteArray:[], 
- * graphicalEditorState:{guiTree:{},  guiElements:{},  ruleType:string}}, 
+ * @returns  {{index:number, title:string, description:string, tags:[], grammar:string,
+ * checkForFilesFolders:[string], checkForFilesFoldersConstraints:"INCLUDE"|"EXCLUDE"|"NONE", processFilesFolders:"WITHIN",
+ * quantifierXPathQuery:[], constraintXPathQuery:[], quantifierQueryType:string, constraintQueryType:string,
+ * rulePanelState:{editMode:boolean, title:string, description:string, ruleTags:[], folderConstraint:string, filesFolders:[],
+ * constraintXPath:string, quantifierXPath:string, autoCompleteArray:[],
+ * graphicalEditorState:{guiTree:{},  guiElements:{},  ruleType:string}},
  * xPathQueryResult:[{
- * data:{quantifierResult:[{filePath:string,  snippet:string,  xml:{fileName:string,  xml:string}}], 
- * satisfied:number, satisfiedResult:[], violated:number, violatedResult:[]}, 
+ * data:{quantifierResult:[{filePath:string,  snippet:string,  xml:{fileName:string,  xml:string}}],
+ * satisfied:number, satisfiedResult:[], violated:number, violatedResult:[]},
  * filePath:string
  * }]}}
  */
 const runXpathQueryMixed = (xmlFiles, ruleI) => {
 
-    let quantifierResult = [];
-    let constraintResult = [];
+    let quantifierResultArray = [];
+    let constraintResultArray = [];
 
     if (ruleI.hasOwnProperty(ruleProperties.quantifierQueryType) && ruleI.quantifierQueryType === queryType.next_file)
-        quantifierResult = findFromText(xmlFiles, ruleI.quantifierXPathQuery);
+        quantifierResultArray = findFromText(xmlFiles, ruleI.quantifierXPathQuery);
     else if (ruleI.hasOwnProperty(ruleProperties.quantifierQueryType) && ruleI.quantifierQueryType === queryType.first_file)
-        quantifierResult = findAndReturnToBase(xmlFiles, ruleI.quantifierXPathQuery);
-    else
-        for (let j = 0; j < xmlFiles.length; j++)
-            quantifierResult = quantifierResult.concat(runXPathQuery(xmlFiles[j], ruleI.quantifierXPathQuery[0]));
+        quantifierResultArray = findAndReturnToBase(xmlFiles, ruleI.quantifierXPathQuery);
+    else {
+        for (let j = 0; j < xmlFiles.length; j++) {
+            quantifierResultArray.push({filePath: xmlFiles[j],
+                results: runXPathQuery(xmlFiles[j], ruleI.quantifierXPathQuery[0])});
+        }
+    }
 
     if (ruleI.hasOwnProperty(ruleProperties.constraintQueryType) && ruleI.constraintQueryType === queryType.next_file)
-        constraintResult = findFromText(xmlFiles, ruleI.constraintXPathQuery);
+        constraintResultArray = findFromText(xmlFiles, ruleI.constraintXPathQuery);
     else if (ruleI.hasOwnProperty(ruleProperties.constraintQueryType) && ruleI.constraintQueryType === queryType.first_file)
-        constraintResult = findAndReturnToBase(xmlFiles, ruleI.constraintXPathQuery);
-    else
-        for (let j = 0; j < xmlFiles.length; j++)
-            constraintResult = constraintResult.concat(runXPathQuery(xmlFiles[j], ruleI.constraintXPathQuery[0]));
-
-
-    // compare results
-    let violatedResult = containResults(constraintResult, quantifierResult);
-    let resultData = {
-        quantifierResult: quantifierResult,
-        satisfiedResult: constraintResult,
-        violatedResult: violatedResult,
-        satisfied: quantifierResult.length - violatedResult.length,
-        violated: violatedResult.length
-    };
+        constraintResultArray = findAndReturnToBase(xmlFiles, ruleI.constraintXPathQuery);
+    else {
+        for (let j = 0; j < xmlFiles.length; j++) {
+            constraintResultArray.push({filePath: xmlFiles[j],
+                results: runXPathQuery(xmlFiles[j], ruleI.constraintXPathQuery[0])});
+        }
+    }
 
     if (!ruleI.hasOwnProperty(ruleProperties.xPathQueryResult))
         ruleI.xPathQueryResult = [];
-    ruleI.xPathQueryResult = [{filePath: processFileFolder.mixed, data: resultData}];
+
+    for (let j = 0; j < xmlFiles.length; j++) {
+        // compare results
+        let violatedResult = containResults(constraintResultArray[j].results, quantifierResultArray[j].results);
+        let resultData = {
+            quantifierResult: quantifierResultArray[j].results,
+            satisfiedResult: constraintResultArray[j].results,
+            violatedResult: violatedResult,
+            satisfied: quantifierResultArray[j].results.length - violatedResult.length,
+            violated: violatedResult.length
+        };
+        ruleI.xPathQueryResult.push({filePath: xmlFiles[j].filePath, data: resultData});
+    }
     return ruleI;
 
 };
@@ -351,7 +356,7 @@ const runXpathQueryMixed = (xmlFiles, ruleI) => {
  * When a group consists of two XPath queries, the first query
  * @param xmlFiles {{filePath, xml}[]}
  * @param xpathQueries
- * @returns {Array}
+ * @returns {{filePath, results}[]}
  */
 const findFromText = (xmlFiles, xpathQueries) => {
     let result1 = [], result2 = [];
@@ -359,10 +364,13 @@ const findFromText = (xmlFiles, xpathQueries) => {
     for (let j = 0; j < xmlFiles.length; j++) {
         result1 = result1.concat(runXPathQuery(xmlFiles[j], xpathQuery));
     }
+    for (let j = 0; j < xmlFiles.length; j++) {
+        result2.push({filePath: xmlFiles[j], results: []});
+    }
     for (let i = 0; i < result1.length; i++) {
         xpathQuery = xpathQueries[1].replace("<TEMP>", result1[i].snippet);
         for (let j = 0; j < xmlFiles.length; j++) {
-            result2 = result2.concat(runXPathQuery(xmlFiles[j], xpathQuery));
+            result2[j].results = result2[j].results.concat(runXPathQuery(xmlFiles[j], xpathQuery));
         }
     }
     return result2;
@@ -374,10 +382,13 @@ const findFromText = (xmlFiles, xpathQueries) => {
  * When a group consists of 3 queries, the first and last queries are executed on the same file
  * @param xmlFiles {{filePath, xml}[]}
  * @param xpathQueries
- * @returns {Array}
+ * @returns {{filePath, results}[]}
  */
 const findAndReturnToBase = (xmlFiles, xpathQueries) => {
     let result1, result2, result3 = [];
+    for (let j = 0; j < xmlFiles.length; j++) {
+        result3.push({filePath: xmlFiles[j], results: []});
+    }
     for (let base = 0; base < xmlFiles.length; base++) {
         let xpathQuery = xpathQueries[0];
         result1 = runXPathQuery(xmlFiles[base], xpathQuery);
@@ -388,7 +399,7 @@ const findAndReturnToBase = (xmlFiles, xpathQueries) => {
 
                 for (let k = 0; k < result2.length; k++) {
                     xpathQuery = xpathQueries[2].replace("<TEMP>", result2[k].snippet);
-                    result3 = result3.concat(runXPathQuery(xmlFiles[base], xpathQuery));
+                    result3[base].results = result3[base].results.concat(runXPathQuery(xmlFiles[base], xpathQuery));
                 }
             }
         }
