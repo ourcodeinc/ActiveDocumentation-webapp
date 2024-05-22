@@ -14,6 +14,7 @@ class Utilities {
      */
     static sendToServer(ws, command, data) {
         let messageJson = {command: command};
+        let secondMessageJson = null;
 
         if (ws) {
             switch (command) {
@@ -33,6 +34,13 @@ class Utilities {
                     messageJson.data = {
                         fileName: data.fileName,
                         xml: data.xml
+                    };
+                    secondMessageJson = {
+                        command: webSocketSendMessage.converted_java_snippet_msg,
+                        data: {
+                            fileName: data.fileName,
+                            convertedJava: Utilities.removeSrcmlAnnotations(data.xml)
+                        }
                     };
                     break;
 
@@ -88,6 +96,8 @@ class Utilities {
             }
 
             ws.send(JSON.stringify(messageJson));
+            if (secondMessageJson)
+                ws.send(JSON.stringify(secondMessageJson))
         }
     }
 
@@ -217,6 +227,19 @@ class Utilities {
             }
         }
         return indices;
+    }
+
+    static removeSrcmlAnnotations(xmlString) {
+        // removes srcml tags
+        xmlString = xmlString.replace(/<[^>]*>/g, "");
+        // replaces &lt; with <
+        xmlString = xmlString.replace(/&lt;/g, "<");
+        // replaces &gt; with >
+        xmlString = xmlString.replace(/&gt;/g, ">");
+        // replaces &amp; with &
+        xmlString = xmlString.replace(/&amp;/g, "&");
+
+        return xmlString;
     }
 
 }

@@ -505,19 +505,6 @@ class SnippetView extends Component {
         };
     }
 
-    removeAnnotations(xmlString) {
-        // removes srcml tags
-        xmlString = xmlString.replace(/<[^>]*>/g, "");
-        // replaces &lt; with <
-        xmlString = xmlString.replace(/&lt;/g, "<");
-        // replaces &gt; with >
-        xmlString = xmlString.replace(/&gt;/g, ">");
-        // replaces &amp; with &
-        xmlString = xmlString.replace(/&amp;/g, "&");
-
-        return xmlString;
-    }
-
     handleSuggestion = async (
         rule,
         example,
@@ -525,8 +512,8 @@ class SnippetView extends Component {
         exampleFilePath,
         violationFilePath,
     ) => {
-        const parsedSnippet = this.removeAnnotations(snippet);
-        const parsedExample = this.removeAnnotations(example);
+        const parsedSnippet = Utilities.removeSrcmlAnnotations(snippet);
+        const parsedExample = Utilities.removeSrcmlAnnotations(example);
         // prevent multiple calls to suggestFix
         if (!this.state.suggestionCreated) {
             suggestFix(
