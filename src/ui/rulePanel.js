@@ -654,4 +654,13 @@ class SnippetView extends Component {
             </section>
         );
     }
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        this.setState({
+            snippetGroup: nextProps.snippetGroup,
+            d: nextProps.d,
+            description: nextProps.description,
+            exampleSnippet: nextProps.exampleSnippet,
+            exampleFilePath: nextProps.exampleFilePath
+        });
+    }
 }
