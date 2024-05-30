@@ -683,15 +683,15 @@ function isClassOrField(node) {
 }
 
 /**
- * remove function bodies
+ * remove function or constructor bodies
  * @param node {Node}
  */
-const removeFunctionBodies = (node) => {
+export const removeFunctionBodies = (node) => {
     if (!node || node.nodeType !== Node.ELEMENT_NODE) {
         return;
     }
 
-    if (node.tagName.toLowerCase() === "function") {
+    if (node.tagName.toLowerCase() === "function" || node.tagName.toLowerCase() === "constructor") {
         for (let i = 0; i < node.childNodes.length; i++) {
             const child = node.childNodes[i];
             if (child.tagName && child.tagName.toLowerCase() === "block") {
@@ -711,7 +711,7 @@ const removeFunctionBodies = (node) => {
  * remove bodies of sibling functions
  * @param node {Node}
  */
-const removeSiblingFunctionBodies = (node) => {
+export const removeSiblingFunctionBodies = (node) => {
     if (!node || node.nodeType !== Node.ELEMENT_NODE) {
         return;
     }
