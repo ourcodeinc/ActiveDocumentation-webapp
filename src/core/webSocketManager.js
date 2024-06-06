@@ -44,7 +44,7 @@ class WebSocketManager extends Component {
 
             let message = Utilities.parseJson(e.data, "the received message", {command: ""});
 
-            console.log("Received message: ");
+            //console.log("Received message: ");
             if (message.command !== "XML") {
                 console.log("Received message: ", message);
             }
