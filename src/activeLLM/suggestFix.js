@@ -21,6 +21,8 @@ export async function suggestFix(
     Ensure that you include the fileName where the fix should be inserted at in the format Example.java.
     Strictly output in JSON format. The JSON should have the following format:{"code": "...", "explanation": "...", "fileName": "..."}`;
 
+    //the following prompt is an older version. It is commented out because the one used right now is more 
+    //concise and produces better output
     /*const prompt = `Here is a design rule and its description: ${rule} 
     Here is a code example that follows this design rule: ${example}
     The example file path is ${exampleFilePath}
