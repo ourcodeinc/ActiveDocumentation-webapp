@@ -94,8 +94,7 @@ class Utilities {
                 default:
                     break;
             }
-            console.log("Sending Message: ");
-            console.log(messageJson);
+            console.log("Sending Message: ", messageJson);
             ws.send(JSON.stringify(messageJson));
             if (secondMessageJson){
                 console.log("Sending Second Message: ");
