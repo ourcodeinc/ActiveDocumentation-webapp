@@ -94,10 +94,14 @@ class Utilities {
                 default:
                     break;
             }
-
+            console.log("Sending Message: ");
+            console.log(messageJson);
             ws.send(JSON.stringify(messageJson));
-            if (secondMessageJson)
+            if (secondMessageJson){
+                console.log("Sending Second Message: ");
+                console.log(secondMessageJson);
                 ws.send(JSON.stringify(secondMessageJson))
+            }
         }
     }
 
