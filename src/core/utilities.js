@@ -97,8 +97,7 @@ class Utilities {
             console.log("Sending Message: ", messageJson);
             ws.send(JSON.stringify(messageJson));
             if (secondMessageJson){
-                console.log("Sending Second Message: ");
-                console.log(secondMessageJson);
+                console.log("Sending Second Message: ",secondMessageJson);
                 ws.send(JSON.stringify(secondMessageJson))
             }
         }

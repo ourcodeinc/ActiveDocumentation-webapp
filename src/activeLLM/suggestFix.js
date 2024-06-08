@@ -18,7 +18,7 @@ export async function suggestFix(
     Generate code with surrounding code included that follows the design rule.
     Be sure to maintain proper whitespace with \\t and \\n.
     Give a brief explanation of your fix as well.
-    Ensure that you include the fileName where the fix should be inserted at in the format Example.java.
+    Ensure to include the fileName of where to insert the fix in the format Example.java.
     Strictly output in JSON format. The JSON should have the following format:{"code": "...", "explanation": "...", "fileName": "..."}`;
 
     //the following prompt is an older version. It is commented out because the one used right now is more 
