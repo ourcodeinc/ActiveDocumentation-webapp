@@ -30,7 +30,6 @@ class WebSocketManager extends Component {
         let tagTable = [];
         let ws = new WebSocket("ws://localhost:8887");
         let projectPath = "";
-        let counter = 3;
 
         this.props.onUpdateWS(ws);
 
@@ -171,15 +170,11 @@ class WebSocketManager extends Component {
                 case webSocketReceiveMessage.file_change_in_ide_msg:
                     // data: "filePath"
                     let focusedFilePath = message.data;
-                    if (!this.props.ignoreFileChange) {
+                    if (this.props.ignoreFileChange) {
+                        this.props.onFalsifyIgnoreFile();
+                    } else {
                         this.props.onFilePathChange(focusedFilePath);
                         window.location.hash = `#/${hashConst.rulesForFile}/` + focusedFilePath.replace(/\//g, "%2F");
-                    } else {
-                        counter--;
-                        if (counter === 0) {
-                            this.props.onFalsifyIgnoreFile();
-                            counter = 3;
-                        }
                     }
                     break;
 
