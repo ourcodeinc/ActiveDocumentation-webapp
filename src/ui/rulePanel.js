@@ -2,26 +2,24 @@
  * Created by saharmehrpour on 9/6/17.
  */
 
-import React, { Component, Fragment } from "react";
-import { connect } from "react-redux";
+import React, {Component, Fragment} from "react";
+import {connect} from "react-redux";
 
 import "../index.css";
 import "../App.css";
-import {
-    Tab, Tabs, Badge, FormGroup, ControlLabel, Label, Collapse
-} from "react-bootstrap";
-import { FaCaretDown, FaCaretUp } from "react-icons/fa";
-import { MdEdit } from "react-icons/md";
+import {Badge, Collapse, ControlLabel, FormGroup, Label, Tab, Tabs} from "react-bootstrap";
+import {FaCaretDown, FaCaretUp} from "react-icons/fa";
+import {MdEdit} from "react-icons/md";
 
-import { changeEditMode, ignoreFileChange } from "../actions";
+import {changeEditMode, ignoreFileChange} from "../actions";
 import Utilities from "../core/utilities";
 import RulePad from "./RulePad/rulePad";
-import { reduxStoreMessages } from "../reduxStoreConstants";
-import { webSocketSendMessage } from "../core/coreConstants";
-import { relatives } from "../core/ruleExecutorConstants";
-import { hashConst, none_filePath } from "./uiConstants";
+import {reduxStoreMessages} from "../reduxStoreConstants";
+import {webSocketSendMessage} from "../core/coreConstants";
+import {relatives} from "../core/ruleExecutorConstants";
+import {hashConst, none_filePath} from "./uiConstants";
 
-import { suggestFix } from "../activeLLM/suggestFix";
+import {suggestFix} from "../activeLLM/suggestFix";
 
 class RulePanel extends Component {
 
@@ -86,13 +84,13 @@ class RulePanel extends Component {
         }
 
         this.caretClass = {
-            true: { cursor: "pointer", color: "black" },
-            false: { cursor: "pointer", color: "darkgrey" }
+            true: {cursor: "pointer", color: "black"},
+            false: {cursor: "pointer", color: "darkgrey"}
         };
 
         this.editIconClass = {
-            true: { color: "#337ab7", cursor: "pointer" },
-            false: { color: "black", cursor: "pointer" }
+            true: {color: "#337ab7", cursor: "pointer"},
+            false: {color: "black", cursor: "pointer"}
         };
     }
 
@@ -101,43 +99,45 @@ class RulePanel extends Component {
         if (this.state.editMode)
             return (
                 <RulePad ruleIndex={this.ruleIndex}
-                    changeEditMode={() => this.changeEditMode()} />);
+                         changeEditMode={() => this.changeEditMode()}/>);
         return (
             <div className={this.state.className}>
                 <FormGroup>
-                    <div style={{ float: "right" }}>
-                        <FaCaretUp size={20} onClick={() => this.setState({ openPanel: false })}
-                            style={this.caretClass[this.state.openPanel.toString()]}
-                            className={"react-icons"} />
-                        <FaCaretDown size={20} onClick={() => this.setState({ openPanel: true })}
-                            style={this.caretClass[(!this.state.openPanel).toString()]}
-                            className={"react-icons"} />
+                    <div style={{float: "right"}}>
+                        <FaCaretUp size={20} onClick={() => this.setState({openPanel: false})}
+                                   style={this.caretClass[this.state.openPanel.toString()]}
+                                   className={"react-icons"}/>
+                        <FaCaretDown size={20} onClick={() => this.setState({openPanel: true})}
+                                     style={this.caretClass[(!this.state.openPanel).toString()]}
+                                     className={"react-icons"}/>
                         <MdEdit size={20} style={this.editIconClass[this.state.editMode.toString()]}
-                            onClick={() => this.changeEditMode()}
-                            className={"react-icons"} />
+                                onClick={() => this.changeEditMode()}
+                                className={"react-icons"}/>
                     </div>
                     <ControlLabel>{this.state.title}</ControlLabel>
                     <p>{this.state.description}</p>
                 </FormGroup>
                 <Collapse in={this.state.openPanel}>
                     <div>
-                        <div style={{ paddingTop: "10px", clear: "both" }}>
+                        <div style={{paddingTop: "10px", clear: "both"}}>
                             {this.renderTags()}
                         </div>
-                        <div style={{ paddingTop: "10px", clear: "both" }}>
+                        <div style={{paddingTop: "10px", clear: "both"}}>
                             <Tabs animation={true} id={"rules_" + this.ruleIndex}
-                                activeKey={this.state.activeTab}
-                                onSelect={(key) => {
-                                    if (this.state.activeTab === key)
-                                        this.setState({ activeTab: 0 });
-                                    else
-                                        this.setState({ activeTab: key });
-                                }}>
-                                <Tab eventKey={0} disabled>{ }</Tab>
-                                <Tab eventKey={"satisfied"}
-                                    title={this.renderTabHeader("satisfied")}>{this.renderListOfSnippets("satisfied")}</Tab>
-                                <Tab eventKey={"violated"}
-                                    title={this.renderTabHeader("violated")}>{this.renderListOfSnippets("violated")}</Tab>
+                                  activeKey={this.state.activeTab}
+                                  onSelect={(key) => {
+                                      if (this.state.activeTab === key)
+                                          this.setState({activeTab: 0});
+                                      else
+                                          this.setState({activeTab: key});
+                                  }}>
+                                <Tab eventKey={0} disabled>{}</Tab>
+                                <Tab eventKey={"satisfied"} title={this.renderTabHeader("satisfied")}>
+                                    {this.renderListOfSnippets("satisfied")}
+                                </Tab>
+                                <Tab eventKey={"violated"} title={this.renderTabHeader("violated")}>
+                                    {this.renderListOfSnippets("violated")}
+                                </Tab>
                             </Tabs>
                         </div>
                     </div>
@@ -169,12 +169,11 @@ class RulePanel extends Component {
 
         if (nextProps.message === reduxStoreMessages.hash_msg) {
             let panelState = this.newUpdateStateUponCodeChange(nextProps.codeChanged, nextProps.filePath);
-            this.setState({ ...panelState, ...newState, filePath: nextProps.filePath });
+            this.setState({...panelState, ...newState, filePath: nextProps.filePath});
         }
-
-        else if (nextProps.message === reduxStoreMessages.file_path_update_msg)
-            this.setState({ ...newState, filePath: nextProps.filePath });
-
+        else if (nextProps.message === reduxStoreMessages.file_path_update_msg) {
+            this.setState({...newState, filePath: nextProps.filePath});
+        }
         else if (nextProps.message === reduxStoreMessages.change_edit_mode_msg) {
             let indices = nextProps.rules.map(d => d.index);
             let arrayIndex = indices.indexOf(this.ruleIndex);
@@ -185,7 +184,7 @@ class RulePanel extends Component {
                 else {
                     this.ruleI = nextProps.rules[arrayIndex];
                     newState.editMode = this.ruleI.rulePanelState.editMode;
-                    this.setState({ ...newState, filePath: nextProps.filePath });
+                    this.setState({...newState, filePath: nextProps.filePath});
                 }
             }
         }
@@ -195,12 +194,10 @@ class RulePanel extends Component {
             if (arrayIndex !== -1) {
                 if (this.ruleI.rulePanelState.editMode && !this.state.editMode) {
                     newState.editMode = true;
-                    this.setState({ ...newState, filePath: nextProps.filePath });
-                }
-
-                else {
+                    this.setState({...newState, filePath: nextProps.filePath});
+                } else {
                     let panelState = this.newUpdateStateUponCodeChange(nextProps.codeChanged, nextProps.filePath);
-                    this.setState({ ...newState, ...panelState, filePath: nextProps.filePath });
+                    this.setState({...newState, ...panelState, filePath: nextProps.filePath});
                 }
             }
         }
@@ -240,13 +237,13 @@ class RulePanel extends Component {
                         {this.state.filePath !== none_filePath ? (
                             <Fragment>
                                 <Badge className="forAll">{fileSatisfied + fileViolated}</Badge>
-                                <span style={{ color: "#777" }}>out of</span>
+                                <span style={{color: "#777"}}>out of</span>
                                 <Badge className="forAll">{totalSatisfied + totalViolated}</Badge>
                             </Fragment>
                         ) : (
                             <Badge className="forAll">{totalSatisfied + totalViolated}</Badge>
                         )}
-                        <Badge className="forFile hidden">{ }</Badge>
+                        <Badge className="forFile hidden">{}</Badge>
                     </span>);
             case "satisfied":
                 return (
@@ -254,13 +251,13 @@ class RulePanel extends Component {
                         {this.state.filePath !== none_filePath ? (
                             <Fragment>
                                 <Badge className="forAll">{fileSatisfied}</Badge>
-                                <span style={{ color: "#777" }}>out of</span>
+                                <span style={{color: "#777"}}>out of</span>
                                 <Badge className="forAll">{totalSatisfied}</Badge>
                             </Fragment>
                         ) : (
                             <Badge className="forAll">{totalSatisfied}</Badge>
                         )}
-                        <Badge className="forFile hidden">{ }</Badge>
+                        <Badge className="forFile hidden">{}</Badge>
                     </span>);
             case "violated":
                 return (
@@ -268,13 +265,13 @@ class RulePanel extends Component {
                         {this.state.filePath !== none_filePath ? (
                             <Fragment>
                                 <Badge className="forAll">{fileViolated}</Badge>
-                                <span style={{ color: "#777" }}>out of</span>
+                                <span style={{color: "#777"}}>out of</span>
                                 <Badge className="forAll">{totalViolated}</Badge>
                             </Fragment>
                         ) : (
                             <Badge className="forAll">{totalViolated}</Badge>
                         )}
-                        <Badge className="forFile hidden">{ }</Badge>
+                        <Badge className="forFile hidden">{}</Badge>
                     </span>);
             default:
                 break;
@@ -441,21 +438,21 @@ class RulePanel extends Component {
         let ruleIFile = file.length !== 0 ? file[0].data : {};
         if (ruleIFile.allChanged === relatives.greater && ruleIFile.satisfiedChanged === relatives.none
             && ruleIFile.violatedChanged === relatives.none) {
-            return { openPanel: true, className: "rulePanelDiv blue-bg" };
+            return {openPanel: true, className: "rulePanelDiv blue-bg"};
         }
         if (ruleIFile.satisfiedChanged === relatives.greater)
-            return { openPanel: true, className: "rulePanelDiv green-bg" };
+            return {openPanel: true, className: "rulePanelDiv green-bg"};
 
         if (ruleIFile.violatedChanged === relatives.greater)
-            return { openPanel: true, className: "rulePanelDiv red-bg" };
+            return {openPanel: true, className: "rulePanelDiv red-bg"};
 
         if (file.length > 0)
-            return { openPanel: true, className: "rulePanelDiv" };
+            return {openPanel: true, className: "rulePanelDiv"};
 
         if (ruleIFile.violated === 0)
-            return { openPanel: false, className: "rulePanelDiv" };
+            return {openPanel: false, className: "rulePanelDiv"};
 
-        return { openPanel: false, className: "rulePanelDiv" };
+        return {openPanel: false, className: "rulePanelDiv"};
     }
 
     /**
@@ -526,7 +523,7 @@ class SnippetView extends Component {
                 this.setState.bind(this),
             );
             // notify the component that this snippet now has a suggested fix
-            this.setState({ suggestionCreated: true });
+            this.setState({suggestionCreated: true});
         }
     };
 
@@ -566,81 +563,50 @@ class SnippetView extends Component {
 
         return (
             <section>
-                <div
-                    data-file-path={this.state.d.filePath}
-                    className="snippetDiv"
-                    style={{ position: "relative" }}
-                >
-                    <div
-                        className="link"
-                        onClick={() => {
-                            this.props.onIgnoreFile(true);
-                            Utilities.sendToServer(
-                                this.props.ws,
-                                webSocketSendMessage.snippet_xml_msg,
-                                this.state.d.xml,
-                            );
-                        }}
-                    >
-                        <pre
-                            className="content"
-                            dangerouslySetInnerHTML={{ __html: this.state.d.snippet }}
-                        />
+                <div data-file-path={this.state.d.filePath} className="snippetDiv"
+                     style={{position: "relative"}}>
+                    <div className="link" onClick={() => {
+                        this.props.onIgnoreFile(true);
+                        Utilities.sendToServer(this.props.ws, webSocketSendMessage.snippet_xml_msg,
+                            this.state.d.xml);
+                    }}>
+                        <pre className="content" dangerouslySetInnerHTML={{__html: this.state.d.snippet}}/>
 
                         <span style={buttonParent}>
                             {/* render the following IF this is a violation of a rule and there is no fix yet */}
                             {this.state.snippetGroup === "violated" &&
-                                // Use the apiKey variable in the conditional rendering check
-                                apiKey !== null &&
-                                apiKey !== "" &&
-                                !this.state.suggestedSnippet && (
-                                    <button
-                                        onClick={() =>
-                                            this.handleSuggestion(
-                                                this.state.description,
-                                                this.state.exampleSnippet,
-                                                this.state.d.surroundingNodes,
-                                                this.state.exampleFilePath,
-                                                this.state.d.filePath,
-                                            )
-                                        }
-                                        style={buttonStyle}
-                                    >
-                                        Fix ✨
-                                    </button>
-                                )}
+                            // Use the apiKey variable in the conditional rendering check
+                            apiKey !== null && apiKey !== "" && !this.state.suggestedSnippet && (
+                                <button
+                                    onClick={() => this.handleSuggestion(
+                                        this.state.description, this.state.exampleSnippet,
+                                        this.state.d.surroundingNodes, this.state.exampleFilePath,
+                                        this.state.d.filePath)}
+                                    style={buttonStyle}>{"Fix ✨"}
+                                </button>
+                            )}
                         </span>
                     </div>
 
                     {this.state.suggestionCreated && !this.state.suggestedSnippet && (
-                        <h2 style={{ color: 'black', fontSize: '1.25em', fontWeight:'bold' ,textAlign: 'center' }}>Loading Fix...</h2>
+                        <h2 style={{
+                            color: 'black',
+                            fontSize: '1.25em',
+                            fontWeight: 'bold',
+                            textAlign: 'center'
+                        }}>{"Loading Fix..."}</h2>
                     )}
 
 
                     {/* render the following IF the component state has received snippet */}
                     {this.state.suggestedSnippet && (
                         <div>
-                            <h2 style={titleStyle}>Suggested Fix:</h2>
-                            <pre
-                                className="content"
-                                dangerouslySetInnerHTML={{
-                                    __html: this.state.suggestedSnippet,
-                                }}
-                            />
-                            <h2 style={titleStyle}>Suggestion Location:</h2>
-                            <p
-                                className="content"
-                                dangerouslySetInnerHTML={{
-                                    __html: this.state.suggestionFileName,
-                                }}
-                            />
-                            <h2 style={titleStyle}>Explanation:</h2>
-                            <p
-                                className="content"
-                                dangerouslySetInnerHTML={{
-                                    __html: this.state.snippetExplanation,
-                                }}
-                            />
+                            <h2 style={titleStyle}>{"Suggested Fix:"}</h2>
+                            <pre className="content" dangerouslySetInnerHTML={{__html: this.state.suggestedSnippet}}/>
+                            <h2 style={titleStyle}>{"Suggestion Location:"}</h2>
+                            <p className="content" dangerouslySetInnerHTML={{__html: this.state.suggestionFileName}}/>
+                            <h2 style={titleStyle}>{"Explanation:"}</h2>
+                            <p className="content" dangerouslySetInnerHTML={{__html: this.state.snippetExplanation}}/>
 
                             <button
                                 // send the suggested fix and the explanation to to plugin
@@ -655,7 +621,7 @@ class SnippetView extends Component {
                                 }}
                                 style={buttonStyle}
                             >
-                                Accept Fix
+                                {"Accept Fix"}
                             </button>
                         </div>
                     )}
@@ -663,6 +629,7 @@ class SnippetView extends Component {
             </section>
         );
     }
+
     UNSAFE_componentWillReceiveProps(nextProps) {
         this.setState({
             snippetGroup: nextProps.snippetGroup,
