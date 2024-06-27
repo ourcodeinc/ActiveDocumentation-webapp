@@ -8,19 +8,17 @@ export async function suggestFix(
     violationFilePath,
     setState,
 ) {
-
-    const prompt = `Here is a design rule and its description: ${rule} 
+    const prompt = `Here is a design rule and its description: ${rule}
     Here is a code example that follows this design rule: ${example}
     The example file path is ${exampleFilePath}
-    Now, here is a code snippet that violates this design rule. ${violation} 
+    Now, here is a code snippet that violates this design rule: ${violation}
     The violated code's file path is ${violationFilePath}
-    Suggest a fix to make this violation follow the given design rule? 
-    Generate code with surrounding code included that follows the design rule. 
-    Be sure to maintain proper whitespace with \\t and \\n. 
-    Give a brief explanation of your fix as well. Strictly output in JSON format. 
-    Ensure that you include the fileName where the fix should be inserted at. 
-    This should just be in the format Example.java
-    The JSON should have the following format:{"code": "...", "explanation": "...", "fileName": "..."}`;
+    Can you suggest a fix to make this violation follow the given design rule?
+    Generate code with surrounding code included that follows the design rule.
+    Be sure to maintain proper whitespace with \\t and \\n.
+    Give a brief explanation of your fix as well.
+    Ensure to include the fileName of where to insert the fix in the format Example.java.
+    Strictly output in JSON format. The JSON should have the following format:{"code": "...", "explanation": "...", "fileName": "..."}`;
 
     let attempt = 1;
     let success = false;

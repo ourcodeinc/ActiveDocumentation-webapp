@@ -15,7 +15,7 @@ import {Button} from "react-bootstrap";
 import {
     FaAngleDown, FaAngleUp,
     FaCaretDown,
-    FaCaretUp
+    FaCaretUp,
 } from "react-icons/fa";
 import "rc-slider/assets/index.css";
 
@@ -24,7 +24,7 @@ import {
     updateFeatureMetaData,
     updateGroupingMetaData,
     updateSelectedAlgorithm,
-    updateSentReceivedMessages
+    updateSentReceivedMessages,
 } from "../../actions";
 import Utilities from "../../core/utilities";
 import {reduxStoreMessages} from "../../reduxStoreConstants";
@@ -35,7 +35,7 @@ import {
     defaultFeatures,
     featureGroupInformation,
     focusElementType,
-    identifierKeysInRulePad
+    identifierKeysInRulePad,
 } from "../../miningRulesCore/featureConfig";
 import {createXPath, findFileFoldersForFeatureIds, switchAlgorithm} from "../../miningRulesCore/postProcessing";
 import {webSocketSendMessage} from "../../core/coreConstants";
@@ -44,7 +44,6 @@ import MinedRulePad from "./minedRulePad";
 import Badge from "react-bootstrap/lib/Badge";
 
 class MinedRulesComponent extends Component {
-
     constructor(props) {
         super(props);
 
@@ -52,7 +51,7 @@ class MinedRulesComponent extends Component {
             default_view: 0,
             loading_view: 1,
             clusters_view: 2,
-        }
+        };
 
         this.state = {
             view: this.views.default_view,
@@ -122,8 +121,9 @@ class MinedRulesComponent extends Component {
                 break;
 
             case reduxStoreMessages.request_mine_rules_for_element_msg:
-                if (nextProps.focusedElementData.identifier === "")
+                if (nextProps.focusedElementData.identifier === "") {
                     break;
+                }
                 this.setState({
                     minedRules: [],
                     newMinedRulesGrouped: [],
@@ -133,15 +133,15 @@ class MinedRulesComponent extends Component {
                 break;
 
             case reduxStoreMessages.update_mined_rules_msg:
-                let countRules = nextProps.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
+                const countRules = nextProps.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
                 if (countRules === 0) {
-                    let newAlgorithm = switchAlgorithm(this.props.selectedAlgorithm);
+                    const newAlgorithm = switchAlgorithm(this.props.selectedAlgorithm);
                     if (newAlgorithm) {
                         this.props.onUpdateSelectedAlgorithm(newAlgorithm);
                         console.log("Trying the next algorithm: ", newAlgorithm);
-                        let message = {
+                        const message = {
                             command: webSocketSendMessage.mine_design_rules_msg,
-                            data: {parameters: newAlgorithm.parameters, algorithm: newAlgorithm.key}
+                            data: {parameters: newAlgorithm.parameters, algorithm: newAlgorithm.key},
                         };
                         Utilities.sendToServer(this.props.ws, message.command, message.data);
                     } else {
@@ -153,8 +153,8 @@ class MinedRulesComponent extends Component {
                         });
                     }
                 } else {
-                    let minedRulesGrouped = this.groupByIdentifier(nextProps.minedRules);
-                    let newMinedRulesGrouped = this.updateRulePadState(minedRulesGrouped);
+                    const minedRulesGrouped = this.groupByIdentifier(nextProps.minedRules);
+                    const newMinedRulesGrouped = this.updateRulePadState(minedRulesGrouped);
                     this.setState({
                         minedRules: nextProps.minedRules,
                         minedRulesGrouped: newMinedRulesGrouped,
@@ -165,7 +165,7 @@ class MinedRulesComponent extends Component {
 
             case reduxStoreMessages.update_feature_metadata_msg:
                 this.setState({
-                    featureMetaData: nextProps.featureMetaData
+                    featureMetaData: nextProps.featureMetaData,
                 }, () => this.sendFeaturesForMiningRules());
                 break;
 
@@ -178,8 +178,8 @@ class MinedRulesComponent extends Component {
                 break;
 
             case reduxStoreMessages.receive_expr_stmt_xml_msg:
-                let newMinedRulesGrouped2 = this.matchSentAndReceivedMessages(nextProps);
-                let newMinedRulesGrouped = this.updateCodeSnippets(newMinedRulesGrouped2);
+                const newMinedRulesGrouped2 = this.matchSentAndReceivedMessages(nextProps);
+                const newMinedRulesGrouped = this.updateCodeSnippets(newMinedRulesGrouped2);
                 if (nextProps.sentMessages.length === 1) {
                     this.setState({
                         minedRulesGrouped: newMinedRulesGrouped,
@@ -196,7 +196,6 @@ class MinedRulesComponent extends Component {
 
             default:
                 break;
-
         }
     }
 
@@ -205,10 +204,10 @@ class MinedRulesComponent extends Component {
             <div>
                 <h4>Pick an element in the IDE, and select <strong>Mine Rules</strong> from the context menu.</h4>
                 {this.state.identifier === "" ? (
-                        <h4 className={"focusedElementError"}>The focused element should be Class, Field, or Method.</h4>)
-                    : null}
+                    <h4 className={"focusedElementError"}>The focused element should be Class, Field, or Method.</h4>) :
+                    null}
             </div>
-        )
+        );
     }
 
     renderLoading() {
@@ -228,11 +227,12 @@ class MinedRulesComponent extends Component {
         let identifier = "";
         let nodeTitle = "";
         if (this.props.focusedElementData.mapFocusedElementToFeaturesKey !== "") {
-            let mapFilter = focusElementType
-                .filter(d => d.mapFocusedElementToFeaturesKey ===
+            const mapFilter = focusElementType
+                .filter((d) => d.mapFocusedElementToFeaturesKey ===
                     this.props.focusedElementData.mapFocusedElementToFeaturesKey);
-            if (mapFilter.length === 1)
+            if (mapFilter.length === 1) {
                 nodeTitle = mapFilter[0].title;
+            }
             filePath = this.props.focusedElementData.filePath;
             identifier = this.props.focusedElementData.identifier;
             return (
@@ -240,13 +240,13 @@ class MinedRulesComponent extends Component {
                     <h5>Potential design rules found based on <span>{nodeTitle}</span> <code>{identifier}</code></h5>
                     <h5>{filePath}</h5>
                 </div>
-            )
+            );
         }
     }
 
     renderMessages() {
-        let countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
-        let nextAlgorithmExist = !!switchAlgorithm(this.props.selectedAlgorithm);
+        const countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
+        const nextAlgorithmExist = !!switchAlgorithm(this.props.selectedAlgorithm);
         return (
             <div style={{marginBottom: "20px"}}>
                 <h4>{this.state.message}</h4>
@@ -257,11 +257,11 @@ class MinedRulesComponent extends Component {
                     </span>
                 )}
             </div>
-        )
+        );
     }
 
     renderDescription() {
-        let countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
+        const countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
         if (countRules === 0) return null;
         return (<div className={"descriptionContainer"}>
             <span className={"descriptionTitle"}>Tutorial</span>
@@ -280,43 +280,44 @@ class MinedRulesComponent extends Component {
                 <h5><span className={"frequency-color frequency-identifier"}>Orange</span> background highlights the
                     identifiers.</h5>
             </div>
-        </div>)
+        </div>);
     }
 
     renderClusters() {
-        let countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
-        if (this.state.minedRules.length > 0 && countRules === 0)
+        const countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
+        if (this.state.minedRules.length > 0 && countRules === 0) {
             return (
                 <div>
                     <h4><strong>No rule is found.</strong></h4>
-                </div>)
+                </div>);
+        }
 
         return this.state.minedRulesGrouped.map((identifierGroup, index) => {
-            let childrenKeys = Object.keys(identifierGroup.value.children);
+            const childrenKeys = Object.keys(identifierGroup.value.children);
             if (childrenKeys.length === 0) {
                 return null;
             }
-            let keyParts = identifierGroup.key.split('%');
-            let identifierType = keyParts[0];
-            let identifierValue = keyParts[1];
-            let parentElementId =
+            const keyParts = identifierGroup.key.split("%");
+            const identifierType = keyParts[0];
+            const identifierValue = keyParts[1];
+            const parentElementId =
                 featureGroupInformation[identifierGroup.value.children[childrenKeys[0]].fileGroup].rootId[0];
-            let expandedClass = "expanded";
+            const expandedClass = "expanded";
 
-            let thenParts = childrenKeys.map(key => {
-                let fileGroup = identifierGroup.value.children[key].fileGroup;
-                let title = featureGroupInformation[fileGroup].mergeKeys[1]
-                    .replace(/\b\w/g, char => char.toUpperCase());
-                let content = this.renderThenPart(key, identifierGroup);
-                return {title, content}
+            const thenParts = childrenKeys.map((key) => {
+                const fileGroup = identifierGroup.value.children[key].fileGroup;
+                const title = featureGroupInformation[fileGroup].mergeKeys[1]
+                    .replace(/\b\w/g, (char) => char.toUpperCase());
+                const content = this.renderThenPart(key, identifierGroup);
+                return {title, content};
             });
 
-            let isRuleExpanded = this.state.isExpanded && this.state.expandedIdentifierGroupIndex === index;
-            let hidden = !this.state.isExpanded || this.state.expandedIdentifierGroupIndex !== index;
-            let classNameHidden = hidden ? "hidden" : "";
+            const isRuleExpanded = this.state.isExpanded && this.state.expandedIdentifierGroupIndex === index;
+            const hidden = !this.state.isExpanded || this.state.expandedIdentifierGroupIndex !== index;
+            const classNameHidden = hidden ? "hidden" : "";
 
             return (
-                <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"}>
+                <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"} key={index}>
                     <div className={"identifierContainer"}>
                         <div className={"identifierHeader"}>
                             {"Rules applied on "}
@@ -330,8 +331,7 @@ class MinedRulesComponent extends Component {
                         {isRuleExpanded ?
                             <div className={"expandIcons"}
                                 onClick={() => this.setState({isExpanded: false})}>
-                                <FaAngleUp size={20}/></div>
-                            :
+                                <FaAngleUp size={20}/></div> :
                             <div className={"expandIcons"}
                                 onClick={() => this.setState({isExpanded: true, expandedIdentifierGroupIndex: index})}>
                                 <FaAngleDown size={20}/>
@@ -343,10 +343,10 @@ class MinedRulesComponent extends Component {
                             <strong>{`IF a ${identifierType} is named ${identifierValue}`}</strong></div>
                         <div className={`ifPart ${expandedClass}`}>
                             <MinedRulePad key={new Date()} rulePadState={identifierGroup.value.parent}
-                                          isCluster={true}
-                                          featureMetaData={this.props.featureMetaData}
-                                          fileGroup={identifierGroup.value.children[childrenKeys[0]].fileGroup}
-                                          elementId={parentElementId}/>
+                                isCluster={true}
+                                featureMetaData={this.props.featureMetaData}
+                                fileGroup={identifierGroup.value.children[childrenKeys[0]].fileGroup}
+                                elementId={parentElementId}/>
                         </div>
                         <div className={"thenKeyword"}><strong>{`THEN the ${identifierType} may have:`}</strong></div>
                         <div className={"thenParts"}>
@@ -354,29 +354,29 @@ class MinedRulesComponent extends Component {
                         </div>
                     </div>
                 </div>
-            )
-        })
+            );
+        });
     }
 
     renderThenPart(key, identifierGroup) {
         return identifierGroup.value.children[key].contents.map((child, i) => {
             return (
-                <div className={"thenPart"}>
+                <div className={"thenPart"} key={i}>
                     <MinedRulePad key={new Date()} rulePadState={child}
-                                  isCluster={true}
-                                  featureMetaData={this.props.featureMetaData}
-                                  fileGroup={identifierGroup.value.children[key].fileGroup}
-                                  elementId={featureGroupInformation[identifierGroup.value.children[key].fileGroup].rootId[1]}/>
-                    {identifierGroup.value.constraintsSnippets
-                    && identifierGroup.value.constraintsSnippets[key]
-                    && identifierGroup.value.constraintsSnippets[key][i] ?
+                        isCluster={true}
+                        featureMetaData={this.props.featureMetaData}
+                        fileGroup={identifierGroup.value.children[key].fileGroup}
+                        elementId={featureGroupInformation[identifierGroup.value.children[key].fileGroup].rootId[1]}/>
+                    {identifierGroup.value.constraintsSnippets &&
+                    identifierGroup.value.constraintsSnippets[key] &&
+                    identifierGroup.value.constraintsSnippets[key][i] ?
                         <CodeSnippets
                             codeSnippets={identifierGroup.value.constraintsSnippets[key][i]}
                             ws={this.props.ws}/> : null
                     }
                 </div>
-            )
-        })
+            );
+        });
     }
 
     /**
@@ -385,34 +385,34 @@ class MinedRulesComponent extends Component {
      * @return {{value: {parent: *, children: {}, identifierFeatureInfo: {}|*}, key: string}[]}
      */
     groupByIdentifier(minedRules) {
-        let grouped = {};
-        minedRules.forEach(group => {
+        const grouped = {};
+        minedRules.forEach((group) => {
             // '_' added to fix the issue regarding 'constructor' keyword. Access the actual string by slice(1)
-            let groupType = "_" + featureGroupInformation[group.fileGroup].mergeKeys[1];
+            const groupType = "_" + featureGroupInformation[group.fileGroup].mergeKeys[1];
             group.rulePadStates.forEach((rulePadState, index) => {
                 if (index >= this.clusterLimit) {
                     return;
                 }
-                let identifierType = defaultFeatures[rulePadState.identifierFeatureInfo.featureIndex].FeatureObject.key;
-                let identifierValue = rulePadState.identifierFeatureInfo.nodes[0];
+                const identifierType = defaultFeatures[rulePadState.identifierFeatureInfo.featureIndex].FeatureObject.key;
+                const identifierValue = rulePadState.identifierFeatureInfo.nodes[0];
                 // '%' is used as a separator of type and value
-                let key = `${identifierType}%${identifierValue}`;
+                const key = `${identifierType}%${identifierValue}`;
                 if (!(key in grouped)) {
                     grouped[key] = {};
                 }
                 if (!(groupType in grouped[key])) {
-                    grouped[key][groupType] = {'fileGroup': group.fileGroup, contents: []};
+                    grouped[key][groupType] = {"fileGroup": group.fileGroup, "contents": []};
                 }
                 grouped[key][groupType].contents.push(rulePadState);
-            })
+            });
         });
 
-        return Object.keys(grouped).map(key => {
-            let value = grouped[key];
-            let parent, identifierFeatureInfo;
-            let children = {};
+        return Object.keys(grouped).map((key) => {
+            const value = grouped[key];
+            let parent; let identifierFeatureInfo;
+            const children = {};
 
-            for (let prop of Object.keys(value)) {
+            for (const prop of Object.keys(value)) {
                 if (value[prop].contents.length > 0) {
                     if (!parent) {
                         // Assuming parent and identifierFeatureInfo are the same across all properties
@@ -422,7 +422,7 @@ class MinedRulesComponent extends Component {
                     // Collect fileGroup and children for each property
                     children[prop] = {
                         fileGroup: value[prop].fileGroup,
-                        contents: value[prop].contents.map(item => item.children).flat()
+                        contents: value[prop].contents.map((item) => item.children).flat(),
                     };
                 }
             }
@@ -431,8 +431,8 @@ class MinedRulesComponent extends Component {
                 value: {
                     parent: parent,
                     identifierFeatureInfo: identifierFeatureInfo,
-                    children: children
-                }
+                    children: children,
+                },
             };
         });
     }
@@ -443,7 +443,7 @@ class MinedRulesComponent extends Component {
      * the projectPath is not updated in the props yet.
      */
     preProcessGroupings() {
-        let groupingMetaData = createGroupingMetaData();
+        const groupingMetaData = createGroupingMetaData();
         formGroupings(this.props.xmlFiles, this.props.projectPath, groupingMetaData);
         this.props.onUpdateGroupingMetaData(groupingMetaData);
     }
@@ -453,12 +453,12 @@ class MinedRulesComponent extends Component {
      * populate the feature map and send the info to the server for mining process.
      */
     processFeaturesForSelectedScope() {
-        let featureMetaData = createFeatureMetaDataMap();
+        const featureMetaData = createFeatureMetaDataMap();
         this.messagesToBeSent = generateFeatures(this.props.xmlFiles, this.props.projectPath,
             this.props.focusedElementData, this.props.doiInformation, this.props.groupingMetaData, featureMetaData);
 
-        this.setState({}//{loadingStatus: false}
-            , () => this.props.onUpdateFeatureMetaData(featureMetaData)
+        this.setState({}// {loadingStatus: false}
+            , () => this.props.onUpdateFeatureMetaData(featureMetaData),
         );
     }
 
@@ -466,9 +466,9 @@ class MinedRulesComponent extends Component {
      * selected features are sent to the server for mining rules
      */
     sendFeaturesForMiningRules() {
-        let messages = prepareFilesAndRequestMineRules(this.props.featureMetaData,
-            this.props.selectedAlgorithm, this.messagesToBeSent)
-        for (let message of messages) {
+        const messages = prepareFilesAndRequestMineRules(this.props.featureMetaData,
+            this.props.selectedAlgorithm, this.messagesToBeSent);
+        for (const message of messages) {
             Utilities.sendToServer(this.props.ws, message.command, message.data);
         }
         this.setState({view: this.views.loading_view});
@@ -478,18 +478,18 @@ class MinedRulesComponent extends Component {
      * When a selected algorithm does not find design rules, switch to the next algorithm
      */
     tryDifferentAlgorithm() {
-        let newAlgorithm = switchAlgorithm(this.props.selectedAlgorithm);
+        const newAlgorithm = switchAlgorithm(this.props.selectedAlgorithm);
         console.log("Trying the next algorithm: ", newAlgorithm);
         if (newAlgorithm) {
             this.props.onUpdateSelectedAlgorithm(newAlgorithm);
-            let message = {
+            const message = {
                 command: webSocketSendMessage.mine_design_rules_msg,
-                data: {parameters: newAlgorithm.parameters, algorithm: newAlgorithm.key}
+                data: {parameters: newAlgorithm.parameters, algorithm: newAlgorithm.key},
             };
             Utilities.sendToServer(this.props.ws, message.command, message.data);
             this.setState({
                 loadingTitle: "Trying again",
-                view: this.views.loading_view
+                view: this.views.loading_view,
             });
         } else {
             this.setState({message: "No rule is found."});
@@ -500,18 +500,18 @@ class MinedRulesComponent extends Component {
      * update the xpath queries and snippets of each rulePadState
      */
     updateRulePadState(minedRulesGrouped) {
-        return minedRulesGrouped.map(identifierGroup => {
-            let childrenKeys = Object.keys(identifierGroup.value.children);
+        return minedRulesGrouped.map((identifierGroup) => {
+            const childrenKeys = Object.keys(identifierGroup.value.children);
             if (childrenKeys.length === 0) {
                 return identifierGroup;
             }
-            let parentFileGroup = identifierGroup.value.children[childrenKeys[0]].fileGroup;
-            let parentRootId = featureGroupInformation[parentFileGroup].rootId[0];
+            const parentFileGroup = identifierGroup.value.children[childrenKeys[0]].fileGroup;
+            const parentRootId = featureGroupInformation[parentFileGroup].rootId[0];
             // the rule is already updated
             if (identifierGroup.value.quantifierXPathQuery) {
                 return identifierGroup;
             }
-            let newIdentifierGroupValue = Object.assign({}, identifierGroup.value,
+            const newIdentifierGroupValue = Object.assign({}, identifierGroup.value,
                 {filesFolders: [], quantifierXPathQuery: "", constraintsXPathQuery: {}});
 
             // each identifierGroup has one quantifier query
@@ -519,11 +519,11 @@ class MinedRulesComponent extends Component {
                 newIdentifierGroupValue.parent.guiElements, parentRootId);
 
             // only considering the feature Ids of identifiers
-            let parentFeatureIds = [];
+            const parentFeatureIds = [];
             // adding parent featureIds
-            newIdentifierGroupValue.parent.guiElements[parentRootId]._data_.withChildren.forEach(child => {
+            newIdentifierGroupValue.parent.guiElements[parentRootId]._data_.withChildren.forEach((child) => {
                 if (identifierKeysInRulePad.includes(child.key)) {
-                    parentFeatureIds.push(...child._data_.elements.map(element => element.featureId));
+                    parentFeatureIds.push(...child._data_.elements.map((element) => element.featureId));
                 }
             });
             // files and folders of the parent is enough
@@ -531,33 +531,33 @@ class MinedRulesComponent extends Component {
                 findFileFoldersForFeatureIds(parentFeatureIds, parentFileGroup, this.props.featureMetaData);
 
             // each child has a constraint query
-            for (let key of childrenKeys) {
+            for (const key of childrenKeys) {
                 newIdentifierGroupValue.constraintsXPathQuery[key] = [];
 
                 // for each group of children, we have a different fileGroup
-                let fileGroup = newIdentifierGroupValue.children[key].fileGroup;
-                let rootId = featureGroupInformation[fileGroup].rootId[1];
+                const fileGroup = newIdentifierGroupValue.children[key].fileGroup;
+                const rootId = featureGroupInformation[fileGroup].rootId[1];
                 newIdentifierGroupValue.constraintsXPathQuery[key] =
-                    newIdentifierGroupValue.children[key].contents.map(child => {
+                    newIdentifierGroupValue.children[key].contents.map((child) => {
                         let xpath = createXPath(child.guiTree, child.guiElements, rootId);
                         if (!xpath.startsWith("/")) xpath = "/" + xpath;
                         return xpath + "[ancestor::" + newIdentifierGroupValue.quantifierXPathQuery + "]";
                     });
             }
-            return {key: identifierGroup.key, value: newIdentifierGroupValue}
+            return {key: identifierGroup.key, value: newIdentifierGroupValue};
         });
     }
 
     matchSentAndReceivedMessages(nextProps) {
-        let sentMessages = nextProps.sentMessages.map(a => ({...a})); // clone
-        let receivedMessages = nextProps.receivedMessages.map(a => ({...a})); // clone
-        let minedRulesGrouped = this.state.minedRulesGrouped.slice(0);
+        const sentMessages = nextProps.sentMessages.map((a) => ({...a})); // clone
+        const receivedMessages = nextProps.receivedMessages.map((a) => ({...a})); // clone
+        const minedRulesGrouped = this.state.minedRulesGrouped.slice(0);
 
         sentMessages.sort((a, b) => a["messageID"] - b["messageID"]);
-        receivedMessages.forEach(a => a["messageID"] = +a["messageID"]);
+        receivedMessages.forEach((a) => a["messageID"] = +a["messageID"]);
         receivedMessages.sort((a, b) => a["messageID"] - b["messageID"]);
 
-        let matchedIndices = {sent: [], received: []};
+        const matchedIndices = {sent: [], received: []};
 
         function replaceMessagesInXpathQueries(xpath, lookFor, resultXPath) {
             if (xpath.indexOf(lookFor) !== -1) {
@@ -576,22 +576,22 @@ class MinedRulesComponent extends Component {
 
         // todo improve the running time, maybe have a storage for pointing where to check?
         function processXpathQueries(lookFor, resultXPath) {
-            minedRulesGrouped.forEach(identifierGroup => {
+            minedRulesGrouped.forEach((identifierGroup) => {
                 try {
                     // first check quantifierXpathQuery:
                     identifierGroup.value.quantifierXPathQuery = replaceMessagesInXpathQueries(
                         identifierGroup.value.quantifierXPathQuery, lookFor, resultXPath);
                     // second check each constraintsXpathQuery
-                    Object.keys(identifierGroup.value.constraintsXPathQuery).forEach(key => {
+                    Object.keys(identifierGroup.value.constraintsXPathQuery).forEach((key) => {
                         identifierGroup.value.constraintsXPathQuery[key] =
-                            identifierGroup.value.constraintsXPathQuery[key].map(childQuery => {
+                            identifierGroup.value.constraintsXPathQuery[key].map((childQuery) => {
                                 return replaceMessagesInXpathQueries(childQuery, lookFor, resultXPath);
                             });
                     });
                 } catch (e) {
                     console.log("error quantifierXPathQuery/constraintsXPathQuery", {identifierGroup});
                 }
-            })
+            });
         }
 
         let otherIndex = 0;
@@ -603,8 +603,8 @@ class MinedRulesComponent extends Component {
                     matchedIndices.sent.push(index);
                     matchedIndices.received.push(j);
                     otherIndex = j + 1;
-                    let resultXPath = '[' +
-                        this.traverseReceivedXml(receivedMessages[j]["xmlText"], sentMessages[index]) + ']';
+                    const resultXPath = "[" +
+                        this.traverseReceivedXml(receivedMessages[j]["xmlText"], sentMessages[index]) + "]";
                     // replace all occurrences of textAndXPath.originalText
                     processXpathQueries(sentMessages[j]["lookFor"], resultXPath);
                     break;
@@ -612,14 +612,16 @@ class MinedRulesComponent extends Component {
             }
         }
         // remove matched messages from list of messages
-        for (let i = matchedIndices.sent.length - 1; i >= 0; i--)
+        for (let i = matchedIndices.sent.length - 1; i >= 0; i--) {
             sentMessages.splice(matchedIndices.sent[i], 1);
-        for (let i = matchedIndices.received.length - 1; i >= 0; i--)
+        }
+        for (let i = matchedIndices.received.length - 1; i >= 0; i--) {
             receivedMessages.splice(matchedIndices.received[i], 1);
+        }
 
         // at least one message is responded
         if (matchedIndices.sent.length > 0) {
-            this.props.onUpdateSentReceivedMessages(sentMessages, receivedMessages)
+            this.props.onUpdateSentReceivedMessages(sentMessages, receivedMessages);
         }
 
         return minedRulesGrouped;
@@ -633,23 +635,23 @@ class MinedRulesComponent extends Component {
      * derived from the originalText
      */
     traverseReceivedXml(xmlText, sentMessageData) {
-        let exprValidation = sentMessageData["query"];
-        let parser = new DOMParser();
+        const exprValidation = sentMessageData["query"];
+        const parser = new DOMParser();
 
         function nsResolver(prefix) {
-            let ns = {"src": "http://www.srcML.org/srcML/src"};
+            const ns = {"src": "http://www.srcML.org/srcML/src"};
             return ns[prefix] || null;
         }
 
         // checks validity of the XML
-        let xml = parser.parseFromString(xmlText, "text/xml");
+        const xml = parser.parseFromString(xmlText, "text/xml");
         if (!xml.evaluate) {
             console.log("error in xml.evaluate");
             return "";
         }
 
-        let validNodes = xml.evaluate(exprValidation, xml, nsResolver, XPathResult.ANY_TYPE, null);
-        let resultValidNode = validNodes.iterateNext();
+        const validNodes = xml.evaluate(exprValidation, xml, nsResolver, XPathResult.ANY_TYPE, null);
+        const resultValidNode = validNodes.iterateNext();
         if (!resultValidNode) {
             console.log("error: XPath is not valid.");
             return "";
@@ -661,13 +663,14 @@ class MinedRulesComponent extends Component {
          * @param parentNode
          * @returns string
          */
-        let traverseChildren = (parentNode) => {
-            let res = [];
-            let children = parentNode.childNodes;
+        const traverseChildren = (parentNode) => {
+            const res = [];
+            const children = parentNode.childNodes;
             for (let i = 0; i < children.length; i++) {
                 if (children[i].nodeName === "#text") {
-                    if (children.length === 1)
+                    if (children.length === 1) {
                         res.push(`text()='${children[i].nodeValue}'`);
+                    }
                 } else {
                     res.push(traverseChildren(children[i]));
                 }
@@ -682,19 +685,18 @@ class MinedRulesComponent extends Component {
     }
 
     updateCodeSnippets(minedRulesGrouped) {
-        return minedRulesGrouped.map(identifierGroup => {
+        return minedRulesGrouped.map((identifierGroup) => {
             try {
                 return {
                     key: identifierGroup.key,
-                    value: runXpathQueryMinedRules(this.props.xmlFiles, this.props.projectPath, identifierGroup.value)
+                    value: runXpathQueryMinedRules(this.props.xmlFiles, this.props.projectPath, identifierGroup.value),
                 };
             } catch (e) {
                 console.log("failed to runXpathQueryMinedRules on ", identifierGroup);
                 return identifierGroup;
             }
-        })
+        });
     }
-
 }
 
 function mapStateToProps(state) {
@@ -711,7 +713,7 @@ function mapStateToProps(state) {
         minedRules: state.minedRulesState.minedRules,
         sentMessages: state.sentXpathMessages,
         receivedMessages: state.receivedXpathMessages,
-    }
+    };
 }
 
 function mapDispatchToProps(dispatch) {
@@ -722,7 +724,7 @@ function mapDispatchToProps(dispatch) {
         onUpdateMinedRules: (modifiedOutput) => dispatch(updatedMinedRules(modifiedOutput)),
         onUpdateSentReceivedMessages: (sentMessages, receivedMessaged) =>
             dispatch(updateSentReceivedMessages(sentMessages, receivedMessaged)),
-    }
+    };
 }
 
 
@@ -740,7 +742,7 @@ class AccordionItem extends Component {
         const {title, content} = this.props;
         this.caretClass = {
             true: {cursor: "pointer", color: "black"},
-            false: {cursor: "pointer", color: "darkgrey"}
+            false: {cursor: "pointer", color: "darkgrey"},
         };
         return (
             <div className="accordion-item">
@@ -748,15 +750,15 @@ class AccordionItem extends Component {
                     onClick={() => this.setState((prevState) => ({
                         isOpen: !prevState.isOpen,
                     }))}
-                    className={`accordion-item-header ${this.state.isOpen ? 'open' : ''}`}>
+                    className={`accordion-item-header ${this.state.isOpen ? "open" : ""}`}>
                     {title}
                     <div style={{float: "right"}}>
                         <FaCaretUp size={20}
-                                   style={this.caretClass[this.state.isOpen.toString()]}
-                                   className={"react-icons"}/>
+                            style={this.caretClass[this.state.isOpen.toString()]}
+                            className={"react-icons"}/>
                         <FaCaretDown size={20}
-                                     style={this.caretClass[(!this.state.isOpen).toString()]}
-                                     className={"react-icons"}/>
+                            style={this.caretClass[(!this.state.isOpen).toString()]}
+                            className={"react-icons"}/>
                     </div>
                 </div>
                 {this.state.isOpen && <div className="accordion-item-content">{content}</div>}
@@ -795,7 +797,7 @@ class CodeSnippets extends Component {
              */
             codeSnippets: props.codeSnippets,
             isExpanded: false,
-        }
+        };
     }
 
     render() {
@@ -804,14 +806,14 @@ class CodeSnippets extends Component {
                 {this.renderBadges()}
                 {!this.state.isExpanded ? null : this.renderCodeSnippets()}
             </div>
-        )
+        );
     }
 
     renderBadges() {
         if (!this.state.codeSnippets) {
-            return <div>{"Unavailable"}</div>
+            return <div>{"Unavailable"}</div>;
         }
-        let count = this.state.codeSnippets.reduce((sum, group) => sum + group.snippets.length, 0);
+        const count = this.state.codeSnippets.reduce((sum, group) => sum + group.snippets.length, 0);
         return (
             <div onClick={() => this.setState({isExpanded: !this.state.isExpanded})} className={"badge"}>
                 <Badge variant="success">{`${count} Example Snippets`}</Badge>
@@ -819,27 +821,27 @@ class CodeSnippets extends Component {
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
-        this.setState({codeSnippets: nextProps.codeSnippets})
+        this.setState({codeSnippets: nextProps.codeSnippets});
     }
 
     renderCodeSnippets() {
         if (!this.state.codeSnippets) {
-            return <div>{"Unavailable"}</div>
+            return <div>{"Unavailable"}</div>;
         }
-        return this.state.codeSnippets.map(group => {
+        return this.state.codeSnippets.map((group) => {
             if (group.snippets.length === 0) {
                 return null;
             }
             return group.snippets.map((snippet, i) => {
                 return (
                     <div data-file-path={snippet.filePath} className={"snippetDiv"} key={i}>
-                            <pre className="link" onClick={() => {
-                                Utilities.sendToServer(this.props.ws, webSocketSendMessage.snippet_xml_msg, snippet.xml)
-                            }}>
-                                <div className="content" dangerouslySetInnerHTML={{__html: snippet.snippet}}/>
-                            </pre>
-                    </div>)
-            })
+                        <pre className="link" onClick={() => {
+                            Utilities.sendToServer(this.props.ws, webSocketSendMessage.snippet_xml_msg, snippet.xml);
+                        }}>
+                            <div className="content" dangerouslySetInnerHTML={{__html: snippet.snippet}}/>
+                        </pre>
+                    </div>);
+            });
         });
     }
 }

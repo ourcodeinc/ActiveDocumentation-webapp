@@ -13,7 +13,7 @@ export const webSocketSendMessage = {
     learn_design_rules_databases_msg: "LEARN_DESIGN_RULES_DATABASE",
     learn_design_rules_features_msg: "LEARN_DESIGN_RULES_FEATURES",
     learn_design_rules_helper_files_msg: "LEARN_DESIGN_RULES_HELPER_FILES",
-    mine_design_rules_msg: "MINE_DESIGN_RULES"
+    mine_design_rules_msg: "MINE_DESIGN_RULES",
 
 };
 
@@ -43,13 +43,13 @@ export const webSocketReceiveMessage = {
     mined_design_rules: "MINED_DESIGN_RULES",
 
     enter_chat_msg: "ENTER",
-    left_chat_msg: "LEFT"
+    left_chat_msg: "LEFT",
 };
 
 export const defaultXML = "<unit xmlns=\"http://www.srcML.org/srcML/src\" revision=\"0.9.5\" language=\"Java\">\n" +
     "</unit>";
 
 export const nsResolver = (prefix) => {
-    let ns = {"src": "http://www.srcML.org/srcML/src"};
+    const ns = {"src": "http://www.srcML.org/srcML/src"};
     return ns[prefix] || null;
-}
+};

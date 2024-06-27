@@ -14,18 +14,18 @@ import {hashConst} from "./uiConstants";
 import ConfigComponent from "../ui/activeLLM/configComponent";
 
 export class NavBar extends Component {
-
     render() {
         return (
             <Navbar inverse collapseOnSelect
-                    style={{backgroundColor: "transparent", backgroundImage: "none", border: "none"}}>
+                style={{backgroundColor: "transparent", backgroundImage: "none", border: "none"}}>
                 <Navbar.Toggle/>
                 <Navbar.Collapse>
                     <Nav
-                        onSelect={key => {
-                            if (key > 0)
-                                window.location.hash = (key === 1) ? `#/${hashConst.index}` : (key === 2) ? `#/${hashConst.rules}`
-                                    : (key === 3) ? `#/${hashConst.violatedRules}` : (key === 4) ? `#/${hashConst.learnDesignRules}` : `#/${hashConst.index}`
+                        onSelect={(key) => {
+                            if (key > 0) {
+                                window.location.hash = (key === 1) ? `#/${hashConst.index}` : (key === 2) ? `#/${hashConst.rules}` :
+                                    (key === 3) ? `#/${hashConst.violatedRules}` : (key === 4) ? `#/${hashConst.learnDesignRules}` : `#/${hashConst.index}`;
+                            }
                         }}>
                         <NavItem eventKey={-1} className={this.props.backDisable} onClick={() => this.props.backClick(this.props)}>
                             <FaArrowLeft size={20}/>
@@ -53,9 +53,8 @@ export class NavBar extends Component {
                     <ConfigComponent/>
                 </span>
             </Navbar>
-        )
+        );
     }
-
 }
 
 // map state to props
@@ -64,7 +63,7 @@ function mapStateToProps(state) {
         history: state.hashManager.history,
         activeHashIndex: state.hashManager.activeHashIndex,
         forwardDisable: state.hashManager.forwardDisable,
-        backDisable: state.hashManager.backDisable
+        backDisable: state.hashManager.backDisable,
     };
 }
 
@@ -81,8 +80,8 @@ function mapDispatchToProps(dispatch) {
                 dispatch(clickedOnForward());
                 window.location.hash = props.history[props.activeHashIndex + 1];
             }
-        }
-    }
+        },
+    };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavBar);

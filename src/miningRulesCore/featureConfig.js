@@ -18,13 +18,13 @@ export const MAX_LEAF_ENTRIES = 15; // Maximum number of itemSets in a BIRCH tre
 export const weightUpdateActions = {
     multiply: "multiply",
     add: "add",
-    replace: "replace"
-}
+    replace: "replace",
+};
 export const weightUpdateFactors = {
     focusedFile: 20,
     doiSearches: 10,
-    doiVisited: 5
-}
+    doiVisited: 5,
+};
 /**
  * Key should be the exact name used in spmf.jar, there is no check in the server.
  * @type {Object<String, {parameters: number[], key: string}>}
@@ -32,33 +32,33 @@ export const weightUpdateFactors = {
 export const allAlgorithms = {
     CHUI_MINER_DEFAULT: {
         key: "CHUI-Miner",
-        parameters: [1000]
+        parameters: [1000],
     },
     CHUI_MINER_RELAXED: {
         key: "CHUI-Miner",
-        parameters: [500]
+        parameters: [500],
     },
     CHUI_MINER_MAX: {
         key: "CHUI-MinerMax",
-        parameters: [400]
+        parameters: [400],
     },
     FP_MAX_DEFAULT: {
         key: "FPMax",
-        parameters: [0.005]
+        parameters: [0.005],
     },
     FP_MAX_RELAXED: {
         key: "FPMax",
-        parameters: [0.05]
+        parameters: [0.05],
     },
     FP_MAX_EXTRA_RELAXED: {
         key: "FPMax",
-        parameters: [0.1]
+        parameters: [0.1],
     },
-    FP_CLOSE: {  // Extracts many FIQs
+    FP_CLOSE: { // Extracts many FIQs
         key: "FPClose",
-        parameters: [0.02]
-    }
-}
+        parameters: [0.02],
+    },
+};
 
 /*  processing  */
 
@@ -68,7 +68,7 @@ export const attributeFileNames = {
     weightedPrefix: "Weighted_AttributeEncoding_",
     postfix: "_File.txt",
     featureFile: "featureFile.txt",
-}
+};
 
 /* pre-processing */
 
@@ -76,12 +76,12 @@ export const attributeFileNames = {
 export const groupingCategories = {
     imports: {
         query: "//src:import/src:name",
-        excludedValues: ["java.", "javax."]
+        excludedValues: ["java.", "javax."],
     },
     packages: {
         query: "//src:package/src:name",
-        excludedValues: []
-    }
+        excludedValues: [],
+    },
 };
 
 /* extracting features  */
@@ -104,27 +104,27 @@ export const focusElementType = [
         nodeName: "class",
         mapFocusedElementToFeaturesKey: "class_spec_body",
         identifierXpath: "/src:class/src:name//text()",
-        title: "class"
+        title: "class",
     },
     {
         nodeName: "constructor",
         mapFocusedElementToFeaturesKey: "constr_spec_body",
         identifierXpath: "/src:constructor/src:name//text()",
-        title: "class constructor"
+        title: "class constructor",
     },
     {
         nodeName: "function",
         mapFocusedElementToFeaturesKey: "func_spec_body",
         identifierXpath: "/src:function/src:name//text()",
-        title: "class function"
+        title: "class function",
     },
     {
         nodeName: "decl_stmt",
         mapFocusedElementToFeaturesKey: "field_spec",
         identifierXpath: "/src:decl_stmt/src:decl/src:name//text()",
-        title: "class field"
+        title: "class field",
     },
-]
+];
 
 // used for readability
 const nodeType = {
@@ -146,7 +146,7 @@ const nodeType = {
     decl_call_func_node: "decl_call_func_node",
     expr_call_field_node: "expr_call_field_node",
     decl_call_field_node: "decl_call_field_node",
-}
+};
 
 // the keys used for elements in guiElements of RulePad
 export const identifierKeysInRulePad = ["name"];
@@ -157,7 +157,7 @@ export const identifierFeatures = {
     field_identifier: ["field_name_ends_with", "field_name_starts_with", "field_name"],
     constr_identifier: ["constr_name"],
     func_identifier: ["func_name_ends_with", "func_name_starts_with", "func_name"],
-}
+};
 
 // used for readability
 export const featureSet = {
@@ -186,13 +186,13 @@ export const featureSet = {
     func_spec: ["func_annotation", "func_vis", "func_specifier", "func_type", "func_name",
         "func_name_ends_with", "func_name_starts_with",
         "func_no_param",
-        "func_param_type", "func_param_name", //"func_param_name_ends_with", "func_param_name_starts_with",
+        "func_param_type", "func_param_name", // "func_param_name_ends_with", "func_param_name_starts_with",
         // "func_param_type_name"
     ],
     func_spec_body: ["func_annotation", "func_vis", "func_specifier", "func_type", "func_name",
         "func_name_ends_with", "func_name_starts_with",
         "func_no_param",
-        "func_param_type", "func_param_name", //"func_param_name_ends_with","func_param_name_starts_with",
+        "func_param_type", "func_param_name", // "func_param_name_ends_with","func_param_name_starts_with",
         // "func_param_type_name",
         "func_call_constr", "func_call_func", "func_modify_field"],
     expr_spec: [
@@ -202,7 +202,7 @@ export const featureSet = {
         // "decl_type", "decl_name",
         "decl_has_init", // "decl_type_name",
         "decl_name_ends_with", "decl_name_starts_with",
-        "decl_call_function", "decl_call_function_argument", "decl_init_value"]
+        "decl_call_function", "decl_call_function_argument", "decl_init_value"],
 };
 
 // used for readability
@@ -212,33 +212,33 @@ const elementType = {
     constructor: "constructor",
     function: "function",
     expression: "expression",
-    declaration: "declaration"
-}
+    declaration: "declaration",
+};
 
 const gui_element_ids = {
-    class_element_id : "0",
-    class_name_id : "0-4-0",
+    class_element_id: "0",
+    class_name_id: "0-4-0",
 
-    class_decl_stmt_id : "0-7-0",
-    class_decl_stmt_name_id : "0-7-0-4-0",
+    class_decl_stmt_id: "0-7-0",
+    class_decl_stmt_name_id: "0-7-0-4-0",
 
-    constr_element_id : "0-7-1",
-    constr_name_id : "0-7-1-4-0",
-    constr_expr_stmt_id : "0-7-1-7-0",
-    constr_decl_stmt_id : "0-7-1-7-1",
+    constr_element_id: "0-7-1",
+    constr_name_id: "0-7-1-4-0",
+    constr_expr_stmt_id: "0-7-1-7-0",
+    constr_decl_stmt_id: "0-7-1-7-1",
 
-    func_element_id : "0-7-2",
-    func_name_id : "0-7-2-4-0",
-    func_decl_stmt_id : "0-7-2-7-0",
-    func_expr_stmt_id : "0-7-2-7-1",
+    func_element_id: "0-7-2",
+    func_name_id: "0-7-2-4-0",
+    func_decl_stmt_id: "0-7-2-7-0",
+    func_expr_stmt_id: "0-7-2-7-1",
 
-    subclass_element_id : "0-7-5",
-    subclass_name_id : "0-7-5-4-0",
-}
+    subclass_element_id: "0-7-5",
+    subclass_name_id: "0-7-5-4-0",
+};
 
 export const identifier_element_ids = [
     gui_element_ids.class_name_id, gui_element_ids.class_decl_stmt_name_id,
-    gui_element_ids.constr_name_id, gui_element_ids.func_name_id, gui_element_ids.subclass_name_id
+    gui_element_ids.constr_name_id, gui_element_ids.func_name_id, gui_element_ids.subclass_name_id,
 ];
 
 /**
@@ -379,7 +379,7 @@ export const featureGroupInformation = {
         mergeKeys: ["function", "declaration statement"],
         categorizedFeatureSets: [["func_identifier", "func_spec"], []],
         rootId: [gui_element_ids.func_element_id, gui_element_ids.func_decl_stmt_id],
-    }
+    },
 };
 
 /**
@@ -403,37 +403,37 @@ export const mapFocusedElementToFeatures = {
                     node: nodeType.class_node,
                     type: elementType.class,
                     featureSet: featureSet.class_spec,
-                    featureQueryPrefix: ""
+                    featureQueryPrefix: "",
                 },
                 contentGroups: [
                     {
                         node: nodeType.class_field_node,
                         type: elementType.field,
                         featureSet: featureSet.field_spec,
-                        groupId: featureGroupInformation.field_spec_in_class.key
+                        groupId: featureGroupInformation.field_spec_in_class.key,
                     },
                     {
                         node: nodeType.class_constr_node,
                         type: elementType.constructor,
                         featureSet: featureSet.constr_spec,
-                        groupId: featureGroupInformation.constr_spec_in_class.key
+                        groupId: featureGroupInformation.constr_spec_in_class.key,
                     },
                     {
                         node: nodeType.class_function_node,
                         type: elementType.function,
                         featureSet: featureSet.func_spec,
-                        groupId: featureGroupInformation.func_spec_in_class.key
+                        groupId: featureGroupInformation.func_spec_in_class.key,
                     },
                     {
                         node: nodeType.class_subclass_node,
                         type: elementType.class,
                         featureSet: featureSet.subclass_spec,
-                        groupId: featureGroupInformation.subclass_spec_in_class.key
-                    }
-                ]
-            }
+                        groupId: featureGroupInformation.subclass_spec_in_class.key,
+                    },
+                ],
+            },
         ],
-        usage: []
+        usage: [],
     },
     constr_spec_body: {
         spec: [
@@ -448,10 +448,10 @@ export const mapFocusedElementToFeatures = {
                         node: nodeType.class_constr_node,
                         type: elementType.constructor,
                         featureSet: featureSet.constr_spec_body,
-                        groupId: featureGroupInformation.constr_spec_in_class.key
+                        groupId: featureGroupInformation.constr_spec_in_class.key,
                     },
-                ]
-            }
+                ],
+            },
         ],
         usage: [
             {
@@ -459,46 +459,46 @@ export const mapFocusedElementToFeatures = {
                     node: nodeType.class_constr_call_constr_node,
                     type: elementType.constructor,
                     featureSet: featureSet.constr_spec,
-                    featureQueryPrefix: "/"
+                    featureQueryPrefix: "/",
                 },
                 contentGroups: [
                     {
                         node: nodeType.expr_call_constr_node,
                         type: elementType.expression,
                         featureSet: featureSet.expr_spec,
-                        groupId: featureGroupInformation.expr_spec_in_constr_calling_constr_focused_element.key
+                        groupId: featureGroupInformation.expr_spec_in_constr_calling_constr_focused_element.key,
                     },
                     {
                         node: nodeType.decl_call_constr_node,
                         type: elementType.declaration,
                         featureSet: featureSet.decl_spec,
-                        groupId: featureGroupInformation.decl_spec_in_constr_calling_constr_focused_element.key
-                    }
-                ]
+                        groupId: featureGroupInformation.decl_spec_in_constr_calling_constr_focused_element.key,
+                    },
+                ],
             },
             {
                 container: {
                     node: nodeType.class_func_call_constr_node,
                     type: elementType.function,
                     featureSet: featureSet.func_spec,
-                    featureQueryPrefix: "/"
+                    featureQueryPrefix: "/",
                 },
                 contentGroups: [
                     {
                         node: nodeType.expr_call_constr_node,
                         type: elementType.expression,
                         featureSet: featureSet.expr_spec,
-                        groupId: featureGroupInformation.expr_spec_in_func_calling_constr_focused_element.key
+                        groupId: featureGroupInformation.expr_spec_in_func_calling_constr_focused_element.key,
                     },
                     {
                         node: nodeType.decl_call_constr_node,
                         type: elementType.declaration,
                         featureSet: featureSet.decl_spec,
-                        groupId: featureGroupInformation.decl_spec_in_func_calling_constr_focused_element.key
-                    }
-                ]
-            }
-        ]
+                        groupId: featureGroupInformation.decl_spec_in_func_calling_constr_focused_element.key,
+                    },
+                ],
+            },
+        ],
     },
     func_spec_body: {
         spec: [
@@ -507,17 +507,17 @@ export const mapFocusedElementToFeatures = {
                     node: nodeType.class_node,
                     type: elementType.class,
                     featureSet: featureSet.class_spec,
-                    featureQueryPrefix: "/"
+                    featureQueryPrefix: "/",
                 },
                 contentGroups: [
                     {
                         node: nodeType.class_function_node,
                         type: elementType.function,
                         featureSet: featureSet.func_spec_body,
-                        groupId: featureGroupInformation.func_spec_in_class.key
+                        groupId: featureGroupInformation.func_spec_in_class.key,
                     },
-                ]
-            }
+                ],
+            },
         ],
         usage: [
             {
@@ -525,46 +525,46 @@ export const mapFocusedElementToFeatures = {
                     node: nodeType.class_constr_call_func_node,
                     type: elementType.constructor,
                     featureSet: featureSet.constr_spec,
-                    featureQueryPrefix: "/"
+                    featureQueryPrefix: "/",
                 },
                 contentGroups: [
                     {
                         node: nodeType.expr_call_func_node,
                         type: elementType.expression,
                         featureSet: featureSet.expr_spec,
-                        groupId: featureGroupInformation.expr_spec_in_constr_calling_func_focused_element.key
+                        groupId: featureGroupInformation.expr_spec_in_constr_calling_func_focused_element.key,
                     },
                     {
                         node: nodeType.decl_call_func_node,
                         type: elementType.declaration,
                         featureSet: featureSet.decl_spec,
-                        groupId: featureGroupInformation.decl_spec_in_constr_calling_func_focused_element.key
-                    }
-                ]
+                        groupId: featureGroupInformation.decl_spec_in_constr_calling_func_focused_element.key,
+                    },
+                ],
             },
             {
                 container: {
                     node: nodeType.class_func_call_func_node,
                     type: elementType.function,
                     featureSet: featureSet.func_spec,
-                    featureQueryPrefix: "/"
+                    featureQueryPrefix: "/",
                 },
                 contentGroups: [
                     {
                         node: nodeType.expr_call_func_node,
                         type: elementType.expression,
                         featureSet: featureSet.expr_spec,
-                        groupId: featureGroupInformation.expr_spec_in_func_calling_func_focused_element.key
+                        groupId: featureGroupInformation.expr_spec_in_func_calling_func_focused_element.key,
                     },
                     {
                         node: nodeType.decl_call_func_node,
                         type: elementType.declaration,
                         featureSet: featureSet.decl_spec,
-                        groupId: featureGroupInformation.decl_spec_in_func_calling_func_focused_element.key
-                    }
-                ]
-            }
-        ]
+                        groupId: featureGroupInformation.decl_spec_in_func_calling_func_focused_element.key,
+                    },
+                ],
+            },
+        ],
     },
     field_spec: {
         spec: [
@@ -573,17 +573,17 @@ export const mapFocusedElementToFeatures = {
                     node: nodeType.class_node,
                     type: elementType.class,
                     featureSet: featureSet.class_spec,
-                    featureQueryPrefix: "/"
+                    featureQueryPrefix: "/",
                 },
                 contentGroups: [
                     {
                         node: nodeType.class_field_node,
                         type: elementType.field,
                         featureSet: featureSet.field_spec,
-                        groupId: featureGroupInformation.field_spec_in_class.key
+                        groupId: featureGroupInformation.field_spec_in_class.key,
                     },
-                ]
-            }
+                ],
+            },
         ],
         usage: [
             {
@@ -598,39 +598,39 @@ export const mapFocusedElementToFeatures = {
                         node: nodeType.expr_call_field_node,
                         type: elementType.expression,
                         featureSet: featureSet.expr_spec,
-                        groupId: featureGroupInformation.expr_spec_in_constr_reading_modifying_field_focused_element.key
+                        groupId: featureGroupInformation.expr_spec_in_constr_reading_modifying_field_focused_element.key,
                     },
                     {
                         node: nodeType.decl_call_field_node,
                         type: elementType.declaration,
                         featureSet: featureSet.decl_spec,
-                        groupId: featureGroupInformation.decl_spec_in_constr_reading_modifying_field_focused_element.key
-                    }
-                ]
+                        groupId: featureGroupInformation.decl_spec_in_constr_reading_modifying_field_focused_element.key,
+                    },
+                ],
             },
             {
                 container: {
                     node: nodeType.class_func_call_field_node,
                     type: elementType.function,
                     featureSet: featureSet.func_spec,
-                    featureQueryPrefix: "/"
+                    featureQueryPrefix: "/",
                 },
                 contentGroups: [
                     {
                         node: nodeType.expr_call_field_node,
                         type: elementType.expression,
                         featureSet: featureSet.expr_spec,
-                        groupId: featureGroupInformation.expr_spec_in_func_reading_modifying_field_focused_element.key
+                        groupId: featureGroupInformation.expr_spec_in_func_reading_modifying_field_focused_element.key,
                     },
                     {
                         node: nodeType.decl_call_field_node,
                         type: elementType.declaration,
                         featureSet: featureSet.decl_spec,
-                        groupId: featureGroupInformation.decl_spec_in_func_reading_modifying_field_focused_element.key
-                    }
-                ]
-            }
-        ]
+                        groupId: featureGroupInformation.decl_spec_in_func_reading_modifying_field_focused_element.key,
+                    },
+                ],
+            },
+        ],
     },
 };
 
@@ -659,8 +659,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "class",
-            withChildren: {key: "annotation", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "annotation", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     class_vis: {
         type: featureTypes.single_node_text,
@@ -669,8 +669,8 @@ export const defaultFeatures = {
         weight: 1,
         FeatureObject: {
             key: "class",
-            withChildren: {key: "visibility", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "visibility", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     class_specifier: {
         type: featureTypes.single_node_text,
@@ -680,8 +680,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "class",
-            withChildren: {key: "specifier", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "specifier", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     class_name: {
         type: featureTypes.single_node_text,
@@ -690,8 +690,8 @@ export const defaultFeatures = {
         weight: 50,
         FeatureObject: {
             key: "class",
-            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     class_name_ends_with: {
         type: featureTypes.single_node_text_ends_with,
@@ -700,8 +700,8 @@ export const defaultFeatures = {
         weight: 49,
         FeatureObject: {
             key: "class",
-            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     class_name_starts_with: {
         type: featureTypes.single_node_text_starts_with,
@@ -710,8 +710,8 @@ export const defaultFeatures = {
         weight: 48,
         FeatureObject: {
             key: "class",
-            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     class_extend: {
         type: featureTypes.single_node_text,
@@ -720,8 +720,8 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "class",
-            withChildren: {key: "extension", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "extension", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     class_extend_ends_with: {
         type: featureTypes.single_node_text_ends_with,
@@ -730,8 +730,8 @@ export const defaultFeatures = {
         weight: 9,
         FeatureObject: {
             key: "class",
-            withChildren: {key: "extension", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "extension", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     class_extend_starts_with: {
         type: featureTypes.single_node_text_starts_with,
@@ -740,8 +740,8 @@ export const defaultFeatures = {
         weight: 8,
         FeatureObject: {
             key: "class",
-            withChildren: {key: "extension", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "extension", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     class_impl: {
         type: featureTypes.single_node_text,
@@ -750,8 +750,8 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "class",
-            withChildren: {key: "implementation", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "implementation", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     class_impl_ends_with: {
         type: featureTypes.single_node_text_ends_with,
@@ -760,8 +760,8 @@ export const defaultFeatures = {
         weight: 9,
         FeatureObject: {
             key: "class",
-            withChildren: {key: "implementation", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "implementation", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     class_impl_starts_with: {
         type: featureTypes.single_node_text_starts_with,
@@ -770,8 +770,8 @@ export const defaultFeatures = {
         weight: 8,
         FeatureObject: {
             key: "class",
-            withChildren: {key: "implementation", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "implementation", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     class_no_constr: {
         type: featureTypes.no_node,
@@ -780,8 +780,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "class",
-            withChildren: {key: "comment", value: {word: "No Constructor", type: "text"}}
-        }
+            withChildren: {key: "comment", value: {word: "No Constructor", type: "text"}},
+        },
     },
     class_no_func: {
         type: featureTypes.no_node,
@@ -790,8 +790,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "class",
-            withChildren: {key: "comment", value: {word: "No Function", type: "text"}}
-        }
+            withChildren: {key: "comment", value: {word: "No Function", type: "text"}},
+        },
     },
 
     subclass_annotation: {
@@ -801,8 +801,8 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "subclass",
-            withChildren: {key: "annotation", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "annotation", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     subclass_vis: {
         type: featureTypes.single_node_text,
@@ -811,8 +811,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "subclass",
-            withChildren: {key: "visibility", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "visibility", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     subclass_specifier: {
         type: featureTypes.single_node_text,
@@ -822,8 +822,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "subclass",
-            withChildren: {key: "specifier", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "specifier", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     subclass_name: {
         type: featureTypes.single_node_text,
@@ -832,8 +832,8 @@ export const defaultFeatures = {
         weight: 40,
         FeatureObject: {
             key: "subclass",
-            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     subclass_name_ends_with: {
         type: featureTypes.single_node_text_ends_with,
@@ -842,8 +842,8 @@ export const defaultFeatures = {
         weight: 39,
         FeatureObject: {
             key: "subclass",
-            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     subclass_name_starts_with: {
         type: featureTypes.single_node_text_starts_with,
@@ -852,8 +852,8 @@ export const defaultFeatures = {
         weight: 38,
         FeatureObject: {
             key: "subclass",
-            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     subclass_extend: {
         type: featureTypes.single_node_text,
@@ -862,8 +862,8 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "subclass",
-            withChildren: {key: "extension", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "extension", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     subclass_extend_ends_with: {
         type: featureTypes.single_node_text_ends_with,
@@ -872,8 +872,8 @@ export const defaultFeatures = {
         weight: 9,
         FeatureObject: {
             key: "subclass",
-            withChildren: {key: "extension", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "extension", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     subclass_extend_starts_with: {
         type: featureTypes.single_node_text_starts_with,
@@ -882,8 +882,8 @@ export const defaultFeatures = {
         weight: 8,
         FeatureObject: {
             key: "subclass",
-            withChildren: {key: "extension", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "extension", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     subclass_impl: {
         type: featureTypes.single_node_text,
@@ -892,8 +892,8 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "subclass",
-            withChildren: {key: "implementation", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "implementation", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     subclass_impl_ends_with: {
         type: featureTypes.single_node_text_ends_with,
@@ -902,8 +902,8 @@ export const defaultFeatures = {
         weight: 9,
         FeatureObject: {
             key: "subclass",
-            withChildren: {key: "implementation", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "implementation", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     subclass_impl_starts_with: {
         type: featureTypes.single_node_text_starts_with,
@@ -912,8 +912,8 @@ export const defaultFeatures = {
         weight: 8,
         FeatureObject: {
             key: "subclass",
-            withChildren: {key: "implementation", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "implementation", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     subclass_no_constr: {
         type: featureTypes.no_node,
@@ -922,8 +922,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "subclass",
-            withChildren: {key: "comment", value: {word: "No Constructor", type: "text"}}
-        }
+            withChildren: {key: "comment", value: {word: "No Constructor", type: "text"}},
+        },
     },
     subclass_no_func: {
         type: featureTypes.no_node,
@@ -932,8 +932,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "subclass",
-            withChildren: {key: "comment", value: {word: "No Function", type: "text"}}
-        }
+            withChildren: {key: "comment", value: {word: "No Function", type: "text"}},
+        },
     },
 
 
@@ -944,8 +944,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "constructor",
-            withChildren: {key: "annotation", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "annotation", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     constr_name: {
         type: featureTypes.single_node_text,
@@ -954,8 +954,8 @@ export const defaultFeatures = {
         weight: 40,
         FeatureObject: {
             key: "constructor",
-            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     constr_vis: {
         type: featureTypes.single_node_text,
@@ -964,8 +964,8 @@ export const defaultFeatures = {
         weight: 1,
         FeatureObject: {
             key: "constructor",
-            withChildren: {key: "visibility", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "visibility", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     constr_empty_body: {
         type: featureTypes.no_node,
@@ -974,8 +974,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "constructor",
-            withChildren: {key: "comment", value: {word: "Empty Body", type: "text"}}
-        }
+            withChildren: {key: "comment", value: {word: "Empty Body", type: "text"}},
+        },
     },
     constr_param_type: {
         type: featureTypes.single_node_and_children_text,
@@ -986,9 +986,9 @@ export const defaultFeatures = {
         FeatureObject: {
             key: "constructor",
             withChildren: {
-                key: "parameter", withChildren: {key: "type", value: {word: "<TEMP_0>", type: "text"}}
-            }
-        }
+                key: "parameter", withChildren: {key: "type", value: {word: "<TEMP_0>", type: "text"}},
+            },
+        },
     },
     constr_param_name: {
         type: featureTypes.single_node_text,
@@ -998,9 +998,9 @@ export const defaultFeatures = {
         FeatureObject: {
             key: "constructor",
             withChildren: {
-                key: "parameter", withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-            }
-        }
+                key: "parameter", withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+            },
+        },
     },
     constr_param_name_ends_with: {
         type: featureTypes.single_node_text_ends_with,
@@ -1010,9 +1010,9 @@ export const defaultFeatures = {
         FeatureObject: {
             key: "constructor",
             withChildren: {
-                key: "parameter", withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-            }
-        }
+                key: "parameter", withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+            },
+        },
     },
     constr_param_name_starts_with: {
         type: featureTypes.single_node_text_starts_with,
@@ -1022,9 +1022,9 @@ export const defaultFeatures = {
         FeatureObject: {
             key: "constructor",
             withChildren: {
-                key: "parameter", withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-            }
-        }
+                key: "parameter", withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+            },
+        },
     },
 
     func_annotation: {
@@ -1034,8 +1034,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "function",
-            withChildren: {key: "annotation", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "annotation", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     func_vis: {
         type: featureTypes.single_node_text,
@@ -1044,8 +1044,8 @@ export const defaultFeatures = {
         weight: 2,
         FeatureObject: {
             key: "function",
-            withChildren: {key: "visibility", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "visibility", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     func_specifier: {
         type: featureTypes.single_node_text,
@@ -1055,8 +1055,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "function",
-            withChildren: {key: "specifier", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "specifier", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     func_type: {
         type: featureTypes.single_node_and_children_text,
@@ -1065,8 +1065,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "function",
-            withChildren: {key: "type", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "type", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     func_name: {
         type: featureTypes.single_node_text,
@@ -1075,8 +1075,8 @@ export const defaultFeatures = {
         weight: 40,
         FeatureObject: {
             key: "function",
-            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     func_name_ends_with: {
         type: featureTypes.single_node_text_ends_with,
@@ -1085,8 +1085,8 @@ export const defaultFeatures = {
         weight: 39,
         FeatureObject: {
             key: "function",
-            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     func_name_starts_with: {
         type: featureTypes.single_node_text_starts_with,
@@ -1095,8 +1095,8 @@ export const defaultFeatures = {
         weight: 38,
         FeatureObject: {
             key: "function",
-            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     func_no_param: {
         type: featureTypes.no_node,
@@ -1105,8 +1105,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "function",
-            withChildren: {key: "comment", value: {word: "No Parameter", type: "text"}}
-        }
+            withChildren: {key: "comment", value: {word: "No Parameter", type: "text"}},
+        },
     },
     func_param_type: {
         type: featureTypes.single_node_and_children_text,
@@ -1117,9 +1117,9 @@ export const defaultFeatures = {
             key: "function",
             withChildren: {
                 key: "parameter", withChildren:
-                    [{key: "type", value: {word: "<TEMP_0>", type: "text"}}]
-            }
-        }
+                    [{key: "type", value: {word: "<TEMP_0>", type: "text"}}],
+            },
+        },
     },
     func_param_name: {
         type: featureTypes.single_node_text,
@@ -1130,9 +1130,9 @@ export const defaultFeatures = {
             key: "function",
             withChildren: {
                 key: "parameter", withChildren:
-                    [{key: "name", value: {word: "<TEMP_0>", type: "text"}}]
-            }
-        }
+                    [{key: "name", value: {word: "<TEMP_0>", type: "text"}}],
+            },
+        },
     },
     func_param_name_ends_with: {
         type: featureTypes.single_node_text_ends_with,
@@ -1143,9 +1143,9 @@ export const defaultFeatures = {
             key: "function",
             withChildren: {
                 key: "parameter", withChildren:
-                    {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-            }
-        }
+                    {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+            },
+        },
     },
     func_param_name_starts_with: {
         type: featureTypes.single_node_text_starts_with,
@@ -1156,9 +1156,9 @@ export const defaultFeatures = {
             key: "function",
             withChildren: {
                 key: "parameter", withChildren:
-                    {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-            }
-        }
+                    {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+            },
+        },
     },
 
     field_annotation: {
@@ -1168,8 +1168,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "annotation", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "annotation", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     field_vis: {
         type: featureTypes.single_node_text,
@@ -1178,8 +1178,8 @@ export const defaultFeatures = {
         weight: 1,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "visibility", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "visibility", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     field_specifier: {
         type: featureTypes.single_node_text,
@@ -1189,8 +1189,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "specifier", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "specifier", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     field_type: {
         type: featureTypes.single_node_and_children_text,
@@ -1199,8 +1199,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "type", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "type", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     field_name: {
         type: featureTypes.single_node_text,
@@ -1209,8 +1209,8 @@ export const defaultFeatures = {
         weight: 40,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     field_name_ends_with: {
         type: featureTypes.single_node_text_ends_with,
@@ -1219,8 +1219,8 @@ export const defaultFeatures = {
         weight: 39,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     field_name_starts_with: {
         type: featureTypes.single_node_text_starts_with,
@@ -1229,8 +1229,8 @@ export const defaultFeatures = {
         weight: 38,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     field_has_init: {
         type: featureTypes.no_node,
@@ -1239,8 +1239,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "comment", value: {word: "Initialization", type: "text"}}
-        }
+            withChildren: {key: "comment", value: {word: "Initialization", type: "text"}},
+        },
     },
 
     constr_call_constr: {
@@ -1253,8 +1253,8 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "constructor",
-            withChildren: {key: "comment", value: {word: "Calling Constructor: <TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "comment", value: {word: "Calling Constructor: <TEMP_0>", type: "text"}},
+        },
     },
     constr_call_func: {
         type: featureTypes.single_node_text,
@@ -1266,8 +1266,8 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "constructor",
-            withChildren: {key: "comment", value: {word: "Calling Function: <TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "comment", value: {word: "Calling Function: <TEMP_0>", type: "text"}},
+        },
     },
     constr_modify_field: {
         // xpath: "/src:constructor/src:block//src:expr_stmt/src:expr/src:operator[text()=\"=\"]" +
@@ -1280,8 +1280,8 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "constructor",
-            withChildren: {key: "comment", value: {word: "Modifying Field: <TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "comment", value: {word: "Modifying Field: <TEMP_0>", type: "text"}},
+        },
     },
 
     func_call_constr: {
@@ -1294,8 +1294,8 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "function",
-            withChildren: {key: "comment", value: {word: "Calling Constructor: <TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "comment", value: {word: "Calling Constructor: <TEMP_0>", type: "text"}},
+        },
     },
     func_call_func: {
         type: featureTypes.single_node_text,
@@ -1307,8 +1307,8 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "function",
-            withChildren: {key: "comment", value: {word: "Calling Function: <TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "comment", value: {word: "Calling Function: <TEMP_0>", type: "text"}},
+        },
     },
     func_modify_field: {
         // xpath: "/src:function/src:block//src:expr_stmt/src:expr/src:operator[text()=\"=\"]" +
@@ -1321,8 +1321,8 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "function",
-            withChildren: {key: "comment", value: {word: "Modifying Field: <TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "comment", value: {word: "Modifying Field: <TEMP_0>", type: "text"}},
+        },
     },
 
     decl_annotation: {
@@ -1332,8 +1332,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "annotation", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "annotation", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     decl_vis: {
         type: featureTypes.single_node_text,
@@ -1342,8 +1342,8 @@ export const defaultFeatures = {
         weight: 1,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "visibility", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "visibility", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     decl_specifier: {
         type: featureTypes.single_node_text,
@@ -1353,8 +1353,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "specifier", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "specifier", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     decl_type: {
         type: featureTypes.single_node_and_children_text,
@@ -1363,8 +1363,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "type", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "type", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     decl_name: {
         type: featureTypes.single_node_text,
@@ -1373,8 +1373,8 @@ export const defaultFeatures = {
         weight: 40,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     decl_name_ends_with: {
         type: featureTypes.single_node_text_ends_with,
@@ -1383,8 +1383,8 @@ export const defaultFeatures = {
         weight: 39,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     decl_name_starts_with: {
         type: featureTypes.single_node_text_starts_with,
@@ -1393,8 +1393,8 @@ export const defaultFeatures = {
         weight: 38,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "name", value: {word: "<TEMP_0>", type: "text"}},
+        },
     },
     decl_has_init: {
         type: featureTypes.no_node,
@@ -1403,8 +1403,8 @@ export const defaultFeatures = {
         weight: 5,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "comment", value: {word: "Initialization", type: "text"}}
-        }
+            withChildren: {key: "comment", value: {word: "Initialization", type: "text"}},
+        },
     },
     decl_call_function: {
         // xpath: "/src:decl_stmt/src:decl/src:init/src:expr/src:call/src:name",
@@ -1418,9 +1418,9 @@ export const defaultFeatures = {
             key: "declaration statement",
             withChildren: {
                 key: "comment",
-                value: {word: "Initialized by Calling Function: <TEMP_0>", type: "text"}
-            }
-        }
+                value: {word: "Initialized by Calling Function: <TEMP_0>", type: "text"},
+            },
+        },
     },
     decl_call_function_argument: {
         // xpath: "/src:decl_stmt/src:decl/src:init/src:expr/src:call/src:argument_list/src:argument",
@@ -1442,9 +1442,9 @@ export const defaultFeatures = {
             key: "declaration statement",
             withChildren: {
                 key: "comment",
-                value: {word: "Initialized by Calling a Function With Argument: <TEMP_0>", type: "text"}
-            }
-        }
+                value: {word: "Initialized by Calling a Function With Argument: <TEMP_0>", type: "text"},
+            },
+        },
     },
     decl_init_value: {
         type: featureTypes.single_node_text,
@@ -1455,8 +1455,8 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "declaration statement",
-            withChildren: {key: "comment", value: {word: "Initialized with: <TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "comment", value: {word: "Initialized with: <TEMP_0>", type: "text"}},
+        },
     },
 
     expr_call_function: {
@@ -1469,8 +1469,8 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "expression statement",
-            withChildren: {key: "comment", value: {word: "Calling Function: <TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "comment", value: {word: "Calling Function: <TEMP_0>", type: "text"}},
+        },
     },
     expr_call_function_argument: {
         // xpath: "/src:expr_stmt/src:expr/*[position()=1 and self::src:call]/src:argument_list/src:argument/src:expr",
@@ -1492,9 +1492,9 @@ export const defaultFeatures = {
             key: "expression statement",
             withChildren: {
                 key: "comment",
-                value: {word: "Calling a Function With Argument: <TEMP_0>", type: "text"}
-            }
-        }
+                value: {word: "Calling a Function With Argument: <TEMP_0>", type: "text"},
+            },
+        },
     },
     expr_assignment_caller: {
         // xpath: "/src:expr_stmt/src:expr/src:name[position()=1]",
@@ -1505,8 +1505,8 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "expression statement",
-            withChildren: {key: "comment", value: {word: "Caller: <TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "comment", value: {word: "Caller: <TEMP_0>", type: "text"}},
+        },
     },
     expr_assignment_callee_value: {
         // xpath: "/src:expr_stmt/src:expr/src:operator[text()="="]/following-sibling::*",
@@ -1519,8 +1519,8 @@ export const defaultFeatures = {
         weight: 10,
         FeatureObject: {
             key: "expression statement",
-            withChildren: {key: "comment", value: {word: "Assigned Value: <TEMP_0>", type: "text"}}
-        }
+            withChildren: {key: "comment", value: {word: "Assigned Value: <TEMP_0>", type: "text"}},
+        },
     },
     expr_assignment_callee_call_function: {
         // xpath: "/src:expr_stmt/src:expr/src:operator[text()=\"=\"]/following-sibling::src:call/src:name",
@@ -1534,9 +1534,9 @@ export const defaultFeatures = {
             key: "expression statement",
             withChildren: {
                 key: "comment",
-                value: {word: "Initialized by Calling Function: <TEMP_0>", type: "text"}
-            }
-        }
+                value: {word: "Initialized by Calling Function: <TEMP_0>", type: "text"},
+            },
+        },
     },
     expr_assignment_callee_call_function_argument: {
         // xpath: "/src:expr_stmt/src:expr/src:operator[text()=\"=\"]/following-sibling::src:call/src:argument_list/src:argument",
@@ -1558,9 +1558,9 @@ export const defaultFeatures = {
             key: "expression statement",
             withChildren: {
                 key: "comment",
-                value: {word: "Initialized by Calling a Function With Argument: <TEMP_0>", type: "text"}
-            }
-        }
+                value: {word: "Initialized by Calling a Function With Argument: <TEMP_0>", type: "text"},
+            },
+        },
     },
 
     /*
@@ -1695,7 +1695,7 @@ export const defaultFeatures = {
         description: "declaration statement with ( \"Calling Field <IDENTIFIER>\" )",
     },
 
-}
+};
 
 /**
  * Used to generate XPath from the grammar
@@ -1703,8 +1703,8 @@ export const defaultFeatures = {
  * @type {{xpath: string, comment: string}[]}
  */
 export const mapCommentsToXPath = [
-    {comment: "No Constructor", xpath: "not(src:block/src:constructor)"},  // class_no_constr , subclass_no_constr
-    {comment: "No Function", xpath: "not(src:block/src:function)"},  // class_no_func , subclass_no_func
+    {comment: "No Constructor", xpath: "not(src:block/src:constructor)"}, // class_no_constr , subclass_no_constr
+    {comment: "No Function", xpath: "not(src:block/src:function)"}, // class_no_func , subclass_no_func
     {comment: "Empty Body", xpath: "not(src:block/*[not(self::src:comment)])"}, // constr_empty_body
     {comment: "No Parameter", xpath: "src:parameter_list[not(src:parameter)]"}, // func_no_param
     {comment: "Initialization", xpath: "src:init"}, // field_has_init , decl_has_init
@@ -1713,10 +1713,10 @@ export const mapCommentsToXPath = [
         xpath: "src:block//src:expr_stmt/src:expr/src:operator[text()=\"new\"]" +
             "/following-sibling::src:call/src:name[<TEMP_0>]|" +
             "src:block//src:decl_stmt/src:decl/src:init/src:expr/src:operator[text()=\"new\"]" +
-            "/following-sibling::src:call/src:name[<TEMP_0>]"
+            "/following-sibling::src:call/src:name[<TEMP_0>]",
     },
     {
-        comment: "Calling Function: ",  //      constr_call_func , func_call_func , expr_call_function
+        comment: "Calling Function: ", //      constr_call_func , func_call_func , expr_call_function
         xpath: "src:block//src:decl_stmt/src:decl/src:init/src:expr/src:call/src:name[not(src:name)][<TEMP_0>]|" +
             "src:block//src:decl_stmt/src:decl/src:init/src:expr/src:call/src:name/src:name[last()][<TEMP_0>]|" +
             "src:block//src:expr_stmt/src:expr/src:call/src:name[not(src:name)][<TEMP_0>]|" +
@@ -1725,12 +1725,12 @@ export const mapCommentsToXPath = [
             "*[position()=1 and self::src:call]/src:name/src:name[last()][<TEMP_0>]",
     },
     {
-        comment: "Modifying Field: ",  //       constr_modify_field , func_modify_field
+        comment: "Modifying Field: ", //       constr_modify_field , func_modify_field
         xpath: "src:block//src:expr_stmt/src:expr/src:operator[text()=\"=\"]" +
-            "/preceding-sibling::src:name[src:name/text()=\"this\"]/src:name[position()=2][<TEMP_0>]"
+            "/preceding-sibling::src:name[src:name/text()=\"this\"]/src:name[position()=2][<TEMP_0>]",
     },
     {
-        comment: "Calling a Function With Argument: ",  //     expr_call_function_argument
+        comment: "Calling a Function With Argument: ", //     expr_call_function_argument
         xpath: "*[position()=1 and self::src:call]/src:argument_list" +
             "/src:argument/src:expr/src:literal[<TEMP_0>]|" +
             "*[position()=1 and self::src:call]/src:argument_list" +
@@ -1740,16 +1740,16 @@ export const mapCommentsToXPath = [
             "*[position()=1 and self::src:call]/src:argument_list" +
             "/src:argument/src:expr/src:call/src:name[not(src:name)][<TEMP_0>]|" +
             "*[position()=1 and self::src:call]/src:argument_list" +
-            "/src:argument/src:expr/src:call/src:name/src:name[last()][<TEMP_0>]"
+            "/src:argument/src:expr/src:call/src:name/src:name[last()][<TEMP_0>]",
     },
     {
-        comment: "Initialized by Calling Function: ",  //    decl_call_function , expr_assignment_callee_call_function
+        comment: "Initialized by Calling Function: ", //    decl_call_function , expr_assignment_callee_call_function
         xpath: "src:init/src:expr/src:call/src:name[not(src:name)][<TEMP_0>]|" +
             "src:init/src:expr/src:call/src:name/src:name[last()][<TEMP_0>]|" +
             "src:operator[text()=\"=\"]/following-sibling::src:call/src:name[not(src:name)][<TEMP_0>]|" +
-            "src:operator[text()=\"=\"]/following-sibling::src:call/src:name/src:name[last()][<TEMP_0>]"
+            "src:operator[text()=\"=\"]/following-sibling::src:call/src:name/src:name[last()][<TEMP_0>]",
     },
-    {  //   decl_call_function_argument , expr_assignment_callee_call_function_argument
+    { //   decl_call_function_argument , expr_assignment_callee_call_function_argument
         comment: "Initialized by Calling a Function With Argument: ",
         xpath: "src:init/src:expr/src:call/src:argument_list" +
             "/src:argument/src:expr/src:literal[<TEMP_0>]|" +
@@ -1776,14 +1776,14 @@ export const mapCommentsToXPath = [
         comment: "Initialized with: ", //         decl_init_value
         xpath: "src:init/src:expr/src:literal[<TEMP_0>]|" +
             "src:init/src:expr/src:name[not(src:name)][<TEMP_0>]|" +
-            "src:init/src:expr/src:name/src:name[last()][<TEMP_0>]"
+            "src:init/src:expr/src:name/src:name[last()][<TEMP_0>]",
     },
     {
-        comment: "Caller: ",  //                expr_assignment_caller
+        comment: "Caller: ", //                expr_assignment_caller
         xpath: "src:name[position()=1]/text()|/src:expr_stmt/src:expr/src:name[position()=1]/src:name[last()][<TEMP_0>]",
     },
     {
-        comment: "Assigned Value: ",  //        expr_assignment_callee_value
+        comment: "Assigned Value: ", //        expr_assignment_callee_value
         xpath: "src:operator[text()=\"=\"]/following-sibling::src:name[not(src:name)][<TEMP_0>]|" +
             "src:operator[text()=\"=\"]/following-sibling::src:name/src:name[last()][<TEMP_0>]|" +
             "src:operator[text()=\"=\"]/following-sibling::src:literal/[<TEMP_0>]",

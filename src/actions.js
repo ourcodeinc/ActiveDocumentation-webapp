@@ -6,9 +6,9 @@ export const updateLoadingGif = (status) => {
     return {
         type: reduxStoreActions.action_update_loading_gif,
         data: {
-            loadingGif: status
-        }
-    }
+            loadingGif: status,
+        },
+    };
 };
 
 /**
@@ -20,7 +20,7 @@ export const hashChange = (hash) => {
     return {
         type: reduxStoreActions.action_hash,
         data:
-            {currentHash: hash}
+            {currentHash: hash},
     };
 };
 
@@ -32,7 +32,7 @@ export const updateWS = (ws) => {
     return {
         type: reduxStoreActions.action_new_ws,
         data:
-            {ws: ws}
+            {ws: ws},
     };
 };
 
@@ -44,8 +44,8 @@ export const updateXmlFiles = (xmlFiles) => {
     return {
         type: reduxStoreActions.action_update_xml_files,
         data:
-            {xmlFiles: xmlFiles}
-    }
+            {xmlFiles: xmlFiles},
+    };
 };
 
 /**
@@ -55,7 +55,7 @@ export const updateXmlFiles = (xmlFiles) => {
 export const updateTagTable = (newTagTable) => {
     return {
         type: reduxStoreActions.action_update_tag_table,
-        data: {tagTable: newTagTable}
+        data: {tagTable: newTagTable},
     };
 };
 
@@ -66,7 +66,7 @@ export const updateTagTable = (newTagTable) => {
 export const updateRuleTable = (newRuleTable) => {
     return {
         type: reduxStoreActions.action_update_rule_table,
-        data: {ruleTable: newRuleTable}
+        data: {ruleTable: newRuleTable},
     };
 };
 
@@ -77,12 +77,12 @@ export const updateRule = () => {
 
 
 export const submitNewRule = () => {
-    return {type: reduxStoreActions.action_new_rule}
+    return {type: reduxStoreActions.action_new_rule};
 };
 
 
 export const submitNewTag = () => {
-    return {type: reduxStoreActions.action_new_tag}
+    return {type: reduxStoreActions.action_new_tag};
 };
 
 /**
@@ -92,7 +92,7 @@ export const submitNewTag = () => {
 export const updateProjectHierarchyData = (hierarchyData) => {
     return {
         type: reduxStoreActions.action_hierarchy_data,
-        data: {hierarchyData: hierarchyData}
+        data: {hierarchyData: hierarchyData},
     };
 };
 
@@ -103,8 +103,8 @@ export const updateProjectHierarchyData = (hierarchyData) => {
 export const updateProjectPath = (projectPath) => {
     return {
         type: reduxStoreActions.action_project_path,
-        data: {projectPath: projectPath}
-    }
+        data: {projectPath: projectPath},
+    };
 };
 
 /*
@@ -119,7 +119,7 @@ export const updateProjectPath = (projectPath) => {
 export const ignoreFileChange = (shouldIgnore) => {
     return {
         type: reduxStoreActions.action_ignore_file,
-        data: {shouldIgnore: shouldIgnore}
+        data: {shouldIgnore: shouldIgnore},
     };
 };
 
@@ -131,7 +131,7 @@ export const ignoreFileChange = (shouldIgnore) => {
 export const updateFilePath = (filePath) => {
     return {
         type: reduxStoreActions.action_file_path_update,
-        data: {openFilePath: filePath}
+        data: {openFilePath: filePath},
     };
 };
 
@@ -161,13 +161,13 @@ export const clickedOnBack = () => {
 export const updateDisplayEditTutorial = (shouldDisplay) => {
     return {
         type: reduxStoreActions.action_update_display_edit_tutorial,
-        data: {shouldDisplay: shouldDisplay}
+        data: {shouldDisplay: shouldDisplay},
     };
 };
 
 
 export const clearNewRuleForm = () => {
-    return {type: reduxStoreActions.action_clear_new_rule_form}
+    return {type: reduxStoreActions.action_clear_new_rule_form};
 };
 
 /**
@@ -188,9 +188,9 @@ export const editRuleForm = (ruleIndex, title, description, ruleTags, folderCons
             description: description,
             ruleTags: ruleTags,
             folderConstraint: folderConstraint,
-            filesFolders: filesFolders
-        }
-    }
+            filesFolders: filesFolders,
+        },
+    };
 };
 
 /**
@@ -201,8 +201,8 @@ export const editRuleForm = (ruleIndex, title, description, ruleTags, folderCons
 export const changeEditMode = (ruleIndex, newEditMode) => {
     return {
         type: reduxStoreActions.action_change_edit_mode,
-        data: {ruleIndex: ruleIndex, newEditMode: newEditMode}
-    }
+        data: {ruleIndex: ruleIndex, newEditMode: newEditMode},
+    };
 };
 
 /**
@@ -221,23 +221,23 @@ export const receiveGuiTree = (ruleIndex, newTreeData, autoCompleteArray, quanti
             newTreeData: newTreeData,
             autoCompleteArray: autoCompleteArray,
             quantifierXPath: quantifierXPath,
-            constraintXPath: constraintXPath
-        }
+            constraintXPath: constraintXPath,
+        },
     };
 };
 
 export const sendExpressionStatementXML = (codeTextAndIDData) => {
     return {
         type: reduxStoreActions.action_send_expr_stmt_xml,
-        data: {codeTextAndID: codeTextAndIDData}
-    }
+        data: {codeTextAndID: codeTextAndIDData},
+    };
 };
 
 export const receiveExpressionStatementXML = (xmlData) => {
     return {
         type: reduxStoreActions.action_receive_expr_stmt_xml,
-        data: {xmlData: xmlData}
-    }
+        data: {xmlData: xmlData},
+    };
 };
 
 export const updateSentReceivedMessages = (sentMessages, receivedMessages) => {
@@ -245,10 +245,10 @@ export const updateSentReceivedMessages = (sentMessages, receivedMessages) => {
         type: reduxStoreActions.action_update_sent_received_messages,
         data: {
             sentMessages: sentMessages,
-            receivedMessages: receivedMessages
-        }
-    }
-}
+            receivedMessages: receivedMessages,
+        },
+    };
+};
 
 /**
  * messages are matched and XPaths are modified based on the received messages
@@ -267,11 +267,10 @@ export const matchMessages = (ruleIndex, sentMessages, receivedMessages, quantif
             sentMessages: sentMessages,
             receivedMessages: receivedMessages,
             quantifierXPath: quantifierXPath,
-            constraintXPath: constraintXPath
-        }
-    }
+            constraintXPath: constraintXPath,
+        },
+    };
 };
-
 
 
 /**
@@ -285,8 +284,8 @@ export const changeRuleState = (ruleIndex, updatedRuleState) => {
         type: reduxStoreActions.action_update_rule_state,
         data: {
             ruleIndex: ruleIndex,
-            updatedRuleState: updatedRuleState
-        }
+            updatedRuleState: updatedRuleState,
+        },
     };
 };
 
@@ -300,8 +299,8 @@ export const changeAutoCompleteTextFromGUI = (ruleIndex, newAutoCompleteArray) =
         type: reduxStoreActions.action_change_autocomplete_text,
         data: {
             ruleIndex: ruleIndex,
-            newAutoCompleteArray: newAutoCompleteArray
-        }
+            newAutoCompleteArray: newAutoCompleteArray,
+        },
     };
 };
 
@@ -311,9 +310,9 @@ export const updateXPaths = (ruleIndex, quantifierXPath, constraintXPath) => {
         data: {
             ruleIndex: ruleIndex,
             quantifierXPath: quantifierXPath,
-            constraintXPath: constraintXPath
-        }
-    }
+            constraintXPath: constraintXPath,
+        },
+    };
 };
 
 /*
@@ -327,8 +326,8 @@ export const updateXPaths = (ruleIndex, quantifierXPath, constraintXPath) => {
 export const updateFeatureMetaData = (featureMetaData) => {
     return {
         type: reduxStoreActions.action_update_feature_metadata,
-        data: {featureMetaData: featureMetaData}
-    }
+        data: {featureMetaData: featureMetaData},
+    };
 };
 
 /**
@@ -338,9 +337,9 @@ export const updateFeatureMetaData = (featureMetaData) => {
 export const updateGroupingMetaData = (groupingMetaData) => {
     return {
         type: reduxStoreActions.action_update_grouping_metadata,
-        data: {groupingMetaData: groupingMetaData}
-    }
-}
+        data: {groupingMetaData: groupingMetaData},
+    };
+};
 
 /**
  * request to mine rules for a focused element
@@ -350,9 +349,9 @@ export const updateGroupingMetaData = (groupingMetaData) => {
 export const updateFocusedElementData = (focusedElementData) => {
     return {
         type: reduxStoreActions.action_update_focused_element_data,
-        data: {focusedElementData: focusedElementData}
-    }
-}
+        data: {focusedElementData: focusedElementData},
+    };
+};
 
 /**
  * update the doi information
@@ -365,9 +364,9 @@ export const updateFocusedElementData = (focusedElementData) => {
 export const updateDoiInformation = (doiInformation) => {
     return {
         type: reduxStoreActions.action_update_doi_information,
-        data: {doiInformation}
-    }
-}
+        data: {doiInformation},
+    };
+};
 
 /**
  * request to start mining rules for a previously sent focused element
@@ -376,9 +375,9 @@ export const updateDoiInformation = (doiInformation) => {
 export const requestMineRulesForElement = () => {
     return {
         type: reduxStoreActions.action_request_mine_rules_for_element,
-        data: {}
-    }
-}
+        data: {},
+    };
+};
 
 /**
  * @param minedRules **
@@ -387,8 +386,8 @@ export const requestMineRulesForElement = () => {
 export const updatedMinedRules = (minedRules) => {
     return {
         type: reduxStoreActions.action_update_mined_rules,
-        data: {minedRules: minedRules}
-    }
+        data: {minedRules: minedRules},
+    };
 };
 
 /**
@@ -398,6 +397,6 @@ export const updatedMinedRules = (minedRules) => {
 export const updateSelectedAlgorithm = (newAlgorithm) => {
     return {
         type: reduxStoreActions.action_update_update_selected_algorithm,
-        data: {selectedAlgorithm: newAlgorithm}
-    }
-}
+        data: {selectedAlgorithm: newAlgorithm},
+    };
+};

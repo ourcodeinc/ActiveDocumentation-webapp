@@ -1,0 +1,71 @@
+{
+  "env": {
+    "browser": true,
+    "node": true,
+    "jasmine": true,
+    "es6": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "google",
+    "plugin:import/errors",
+    "plugin:jsx-a11y/recommended",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:react-hooks/recommended"
+  ],
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "ecmaVersion": 2021,
+    "sourceType": "module",
+    "babelOptions": {
+      "presets": ["@babel/preset-react"]
+    }
+  },
+  "plugins": [
+    "react",
+    "import",
+    "jsx-a11y"
+  ],
+  "rules": {
+    "camelcase": "off",
+    "guard-for-in": "warn",
+    "import/default": "off",
+    "import/export": "off",
+    "import/namespace": "off",
+    "indent": ["error", 4, {"SwitchCase": 1}],
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-noninteractive-element-interactions": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "max-len": "off",
+    "new-cap": "off",
+    "no-case-declarations": "off",
+    "no-constant-condition": "off",
+    "no-control-regex": "off",
+    "no-invalid-this": "off",
+    "no-prototype-builtins": "off",
+    "no-unused-vars": ["error", {"varsIgnorePattern": "React", "argsIgnorePattern": "^_"}],
+    "object-curly-spacing": ["error", "never"],
+    "prefer-promise-reject-errors": "off",
+    "quotes": ["error", "double"],
+    "react/prop-types": "off",
+    "react/no-unescaped-entities": "off",
+    "require-jsdoc": "off",
+    "valid-jsdoc": "off"
+  },
+  "overrides": [
+    {
+      "files": ["*Constants.js", "*Constant.js", "*Config.js"],
+      "rules": {"camelcase": "off"}
+    },
+    {
+      "files": ["*.test.js", "src/ui/RulePad/rulePad.js"],
+      "rules": {"max-len": "off"}
+    }
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
+}

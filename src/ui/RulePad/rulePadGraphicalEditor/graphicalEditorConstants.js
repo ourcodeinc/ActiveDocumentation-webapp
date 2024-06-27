@@ -8,7 +8,7 @@ const element_conditions = {
         placeholder: "annotation",
         unique: true,
         grammar: "annotation",
-        wordValidation: "both"
+        wordValidation: "both",
     },
     visibility: {
         type: "dropdown",
@@ -16,7 +16,7 @@ const element_conditions = {
         post: "",
         placeholder: "visibility",
         items: ["public", "private", "protected", "N/A"],
-        grammar: "visibility"
+        grammar: "visibility",
     },
     specifier: {
         type: "smallText",
@@ -25,7 +25,7 @@ const element_conditions = {
         post: "",
         placeholder: "specifier",
         unique: true,
-        grammar: "specifier"
+        grammar: "specifier",
     },
     comment: {
         type: "wideText",
@@ -35,7 +35,7 @@ const element_conditions = {
         placeholder: "comment",
         unique: false,
         grammar: "comment", // is skipped in the TE
-        wordValidation: "combinatorial"
+        wordValidation: "combinatorial",
     },
 
     subclass_el: {
@@ -53,8 +53,8 @@ const element_conditions = {
                 "declaration_statement_el",
                 "constructor_el",
                 "function_el",
-                "abstract_function_el"
-            ]
+                "abstract_function_el",
+            ],
         },
         grammar: "subclass",
         pre_before_1: "",
@@ -66,7 +66,7 @@ const element_conditions = {
         post_after_3: "",
         pre_body: "{",
         post_body: "}",
-        canBeSelected: true
+        canBeSelected: true,
     },
 
     class_el: {
@@ -84,8 +84,8 @@ const element_conditions = {
                 "declaration_statement_el",
                 "constructor_el",
                 "function_el",
-                "abstract_function_el"
-            ]
+                "abstract_function_el",
+            ],
         },
         grammar: "class",
         pre_before_1: "",
@@ -97,7 +97,7 @@ const element_conditions = {
         post_after_3: "",
         pre_body: "{",
         post_body: "}",
-        canBeSelected: true
+        canBeSelected: true,
     },
     class_name: {
         type: "text",
@@ -107,7 +107,7 @@ const element_conditions = {
         placeholder: "className",
         unique: true,
         grammar: "name",
-        wordValidation: "both"
+        wordValidation: "both",
     },
     class_implements: {
         type: "text",
@@ -118,7 +118,7 @@ const element_conditions = {
         unique: true,
         grammar: "implementation",
         required: "of ",
-        wordValidation: "both"
+        wordValidation: "both",
     },
     class_extends: {
         type: "text",
@@ -129,7 +129,7 @@ const element_conditions = {
         unique: true,
         grammar: "extension",
         required: "of ",
-        wordValidation: "both"
+        wordValidation: "both",
     },
     function_el: {
         type: "element",
@@ -145,8 +145,8 @@ const element_conditions = {
                 "comment",
                 "declaration_statement_el",
                 "function_expression_statement",
-                "function_return_value"
-            ]
+                "function_return_value",
+            ],
         },
         grammar: "function",
         pre_before_1: "",
@@ -158,7 +158,7 @@ const element_conditions = {
         post_after_3: "",
         pre_body: "{",
         post_body: "}",
-        canBeSelected: true
+        canBeSelected: true,
     },
     function_return_type: {
         type: "text",
@@ -168,7 +168,7 @@ const element_conditions = {
         placeholder: "return type",
         unique: true,
         grammar: "type",
-        wordValidation: "both"
+        wordValidation: "both",
     },
     function_name: {
         type: "text",
@@ -178,7 +178,7 @@ const element_conditions = {
         placeholder: "functionName",
         unique: true,
         grammar: "name",
-        wordValidation: "word"
+        wordValidation: "word",
     },
     expression_el: {
         type: "wideText",
@@ -187,7 +187,7 @@ const element_conditions = {
         post: ";",
         placeholder: "expression statement",
         unique: false,
-        grammar: "value" // todo: expression statement?
+        grammar: "value", // todo: expression statement?
     },
     function_expression_statement: {
         type: "element",
@@ -199,7 +199,7 @@ const element_conditions = {
             after_1: "",
             after_2: "",
             after_3: "",
-            body: ["comment"]
+            body: ["comment"],
         },
         grammar: "expression statement",
         pre_before_1: "",
@@ -211,7 +211,7 @@ const element_conditions = {
         post_after_3: "",
         pre_body: "",
         post_body: "",
-        canBeSelected: false
+        canBeSelected: false,
     },
     function_return_value: {
         type: "wideText",
@@ -220,7 +220,7 @@ const element_conditions = {
         post: ";",
         placeholder: "return statement of function",
         unique: false,
-        grammar: "return value"
+        grammar: "return value",
     },
 
     constructor_el: {
@@ -236,8 +236,8 @@ const element_conditions = {
             body: [
                 "comment",
                 "constructor_expression_statement",
-                "declaration_statement_el"
-            ]
+                "declaration_statement_el",
+            ],
         },
         grammar: "constructor",
         pre_before_1: "",
@@ -249,7 +249,7 @@ const element_conditions = {
         post_after_3: "",
         pre_body: "{",
         post_body: "}",
-        canBeSelected: true
+        canBeSelected: true,
     },
     constructor_name: {
         type: "text",
@@ -259,7 +259,7 @@ const element_conditions = {
         placeholder: "className",
         unique: true,
         grammar: "name",
-        wordValidation: "word"
+        wordValidation: "word",
     },
     constructor_expression_statement: {
         type: "element",
@@ -271,7 +271,7 @@ const element_conditions = {
             after_1: "",
             after_2: "",
             after_3: "",
-            body: ["comment"]
+            body: ["comment"],
         },
         grammar: "expression statement",
         pre_before_1: "",
@@ -283,7 +283,7 @@ const element_conditions = {
         post_after_3: "",
         pre_body: "",
         post_body: "",
-        canBeSelected: false
+        canBeSelected: false,
     },
 
     abstract_function_el: {
@@ -296,7 +296,7 @@ const element_conditions = {
             after_1: "abstract_function_name",
             after_2: "parameter_el",
             after_3: "",
-            body: []
+            body: [],
         },
         grammar: "abstract function",
         pre_before_1: "",
@@ -308,7 +308,7 @@ const element_conditions = {
         post_after_3: ";",
         pre_body: "",
         post_body: "",
-        canBeSelected: true
+        canBeSelected: true,
     },
     abstract_function_return_type: {
         type: "text",
@@ -318,7 +318,7 @@ const element_conditions = {
         placeholder: "return type",
         unique: true,
         grammar: "type",
-        wordValidation: "both"
+        wordValidation: "both",
     },
     abstract_function_name: {
         type: "text",
@@ -328,7 +328,7 @@ const element_conditions = {
         placeholder: "abstractFunctionName",
         unique: true,
         grammar: "name",
-        wordValidation: "word"
+        wordValidation: "word",
     },
 
     declaration_statement_el: {
@@ -341,7 +341,7 @@ const element_conditions = {
             after_1: "declaration_statement_name",
             after_2: "declaration_statement_initialization",
             after_3: "",
-            body: ["comment"]
+            body: ["comment"],
         },
         grammar: "declaration statement",
         pre_before_1: "",
@@ -353,7 +353,7 @@ const element_conditions = {
         post_after_3: "",
         pre_body: "",
         post_body: "",
-        canBeSelected: true
+        canBeSelected: true,
     },
     declaration_statement_type: {
         type: "text",
@@ -363,7 +363,7 @@ const element_conditions = {
         placeholder: "variableType",
         unique: true,
         grammar: "type",
-        wordValidation: "both"
+        wordValidation: "both",
     },
     declaration_statement_name: {
         type: "text",
@@ -373,7 +373,7 @@ const element_conditions = {
         placeholder: "variableName",
         unique: true,
         grammar: "name",
-        wordValidation: "word"
+        wordValidation: "word",
     },
     declaration_statement_initialization: {
         type: "text",
@@ -383,7 +383,7 @@ const element_conditions = {
         placeholder: "variableInitialization",
         unique: true,
         grammar: "initial value",
-        wordValidation: "combinatorial"
+        wordValidation: "combinatorial",
     },
 
     parameter_el: {
@@ -396,7 +396,7 @@ const element_conditions = {
             after_1: "parameter_name",
             after_2: "",
             after_3: "",
-            body: []
+            body: [],
         },
         grammar: "parameter",
         pre_before_1: "",
@@ -408,7 +408,7 @@ const element_conditions = {
         post_after_3: "",
         pre_body: "",
         post_body: "",
-        canBeSelected: false
+        canBeSelected: false,
     },
     parameter_type: {
         type: "text",
@@ -418,7 +418,7 @@ const element_conditions = {
         placeholder: "parameter type",
         unique: true,
         grammar: "type",
-        wordValidation: "both"
+        wordValidation: "both",
     },
     parameter_name: {
         type: "text",
@@ -428,7 +428,7 @@ const element_conditions = {
         placeholder: "parameter name",
         unique: true,
         grammar: "name",
-        wordValidation: "word"
+        wordValidation: "word",
     },
 
 };
@@ -436,7 +436,6 @@ const element_conditions = {
 export function getConditionByName(conditionName) {
     if (!element_conditions.hasOwnProperty(conditionName)) return {};
     return element_conditions[conditionName];
-
 }
 
 export function elementState(el_name) {
@@ -444,7 +443,7 @@ export function elementState(el_name) {
 
     switch (element_conditions[el_name].type) {
         case "element":
-            let new_state = {
+            const new_state = {
                 conditionName: el_name,
                 activeElement: false,
                 selectedElement: false,
@@ -456,9 +455,9 @@ export function elementState(el_name) {
                     after_1: [elementState(element_conditions[el_name].children.after_1)],
                     after_2: [elementState(element_conditions[el_name].children.after_2)],
                     after_3: [elementState(element_conditions[el_name].children.after_3)],
-                    body: element_conditions[el_name].children.body.map(el => [elementState(el)])
+                    body: element_conditions[el_name].children.body.map((el) => [elementState(el)]),
                 },
-                texts: {}
+                texts: {},
             };
             new_state.texts = Object.assign({}, new_state.children);
             return new_state;
@@ -471,14 +470,12 @@ export function elementState(el_name) {
                 conditionName: el_name,
                 activeElement: false,
                 selectedElement: false,
-                text: ""
+                text: "",
             };
 
         default:
             return {};
-
     }
-
 }
 
 export function generateInitialElements(el_name, id) {
@@ -487,8 +484,9 @@ export function generateInitialElements(el_name, id) {
         case "element":
             console.log(`"${id}":{conditionName: "${el_name}", ...element_attributes},`);
             ["top", "before_1", "before_2", "before_3", "after_1", "after_2", "after_3"].forEach((group, i) => {
-                if (element_conditions[el_name].children[group] !== "")
+                if (element_conditions[el_name].children[group] !== "") {
                     generateInitialElements(element_conditions[el_name].children[group], `${id}-${i}-0`);
+                }
             });
 
             element_conditions[el_name].children["body"].forEach((subGroup, j) => {
@@ -515,26 +513,33 @@ export function generateInitialElementTreeNodes(el_name, elem_id, parent_id) {
     switch (element_conditions[el_name].type) {
         case "element":
             let el = `"${elem_id}":{parentId:"${parent_id}",children:{top:[`;
-            if (element_conditions[el_name].children.top !== "")
+            if (element_conditions[el_name].children.top !== "") {
                 el += `"${elem_id}-0-0"`;
+            }
             el += "],before_1:[";
-            if (element_conditions[el_name].children.before_1 !== "")
+            if (element_conditions[el_name].children.before_1 !== "") {
                 el += `"${elem_id}-1-0"`;
+            }
             el += "],before_2:[";
-            if (element_conditions[el_name].children.before_2 !== "")
+            if (element_conditions[el_name].children.before_2 !== "") {
                 el += `"${elem_id}-2-0"`;
+            }
             el += "],before_3:[";
-            if (element_conditions[el_name].children.before_3 !== "")
+            if (element_conditions[el_name].children.before_3 !== "") {
                 el += `"${elem_id}-3-0"`;
+            }
             el += "],after_1:[";
-            if (element_conditions[el_name].children.after_1 !== "")
+            if (element_conditions[el_name].children.after_1 !== "") {
                 el += `"${elem_id}-4-0"`;
+            }
             el += "],after_2:[";
-            if (element_conditions[el_name].children.after_2 !== "")
+            if (element_conditions[el_name].children.after_2 !== "") {
                 el += `"${elem_id}-5-0"`;
+            }
             el += "],after_3:[";
-            if (element_conditions[el_name].children.after_3 !== "")
+            if (element_conditions[el_name].children.after_3 !== "") {
                 el += `"${elem_id}-6-0"`;
+            }
 
             el += "],body:[";
             element_conditions[el_name].children.body.forEach((e, j) => el += `["${elem_id}-7-${j}"],`); // extra ,
@@ -550,8 +555,8 @@ export function generateInitialElementTreeNodes(el_name, elem_id, parent_id) {
                     after_1: [generateInitialElementTreeNodes(element_conditions[el_name].children.after_1, `${elem_id}-4-0`, elem_id)],
                     after_2: [generateInitialElementTreeNodes(element_conditions[el_name].children.after_2, `${elem_id}-5-0`, elem_id)],
                     after_3: [generateInitialElementTreeNodes(element_conditions[el_name].children.after_3, `${elem_id}-6-0`, elem_id)],
-                    body: element_conditions[el_name].children.body.map((el, j) => [generateInitialElementTreeNodes(el, `${elem_id}-7-${j}`, elem_id)])
-                }
+                    body: element_conditions[el_name].children.body.map((el, j) => [generateInitialElementTreeNodes(el, `${elem_id}-7-${j}`, elem_id)]),
+                },
             };
 
         case "text":
@@ -563,16 +568,15 @@ export function generateInitialElementTreeNodes(el_name, elem_id, parent_id) {
 
         default:
             return {};
-
     }
 }
 
 export function generateTreeForElement(el_name, elemId, parentId) {
-    let result = {elements: [], trees: []};
+    const result = {elements: [], trees: []};
     if (!element_conditions.hasOwnProperty(el_name)) return result;
 
     if (element_conditions[el_name].type === "element") {
-        let node = {
+        const node = {
             parentId: `${parentId}`,
             children: {
                 top: [],
@@ -582,14 +586,14 @@ export function generateTreeForElement(el_name, elemId, parentId) {
                 after_1: [],
                 after_2: [],
                 after_3: [],
-                body: []
-            }
+                body: [],
+            },
         };
 
         ["top", "before_1", "before_2", "before_3", "after_1", "after_2", "after_3"].forEach((group, i) => {
             if (element_conditions[el_name].children[group] !== "") {
                 node.children[group].push(`${elemId}-${i}-0`);
-                let newResult = generateTreeForElement(element_conditions[el_name].children[group], `${elemId}-${i}-0`, elemId);
+                const newResult = generateTreeForElement(element_conditions[el_name].children[group], `${elemId}-${i}-0`, elemId);
                 result.elements = result.elements.concat(newResult.elements);
                 result.trees = result.trees.concat(newResult.trees);
             }
@@ -597,14 +601,13 @@ export function generateTreeForElement(el_name, elemId, parentId) {
 
         element_conditions[el_name].children.body.forEach((e, j) => {
             node.children.body.push([`${elemId}-7-${j}`]);
-            let newResult = generateTreeForElement(element_conditions[el_name].children.body[j], `${elemId}-7-${j}`, elemId);
+            const newResult = generateTreeForElement(element_conditions[el_name].children.body[j], `${elemId}-7-${j}`, elemId);
             result.elements = result.elements.concat(newResult.elements);
             result.trees = result.trees.concat(newResult.trees);
         });
 
         result.trees.push({id: `${elemId}`, node: node});
-    }
-    else {
+    } else {
         result.trees.push({id: `${elemId}`, node: {parentId: `${parentId}`, children: {}}});
     }
 
@@ -614,8 +617,8 @@ export function generateTreeForElement(el_name, elemId, parentId) {
             node: {
                 conditionName: el_name,
                 activeElement: false,
-                selectedElement: false
-            }
+                selectedElement: false,
+            },
         });
     return result;
 }

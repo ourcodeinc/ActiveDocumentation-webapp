@@ -9,18 +9,19 @@ import Traverse from "./generateXPath";
  */
 export default async function verifyTextBasedOnGrammar(autoCompleteText) {
     if (autoCompleteText === "") return Promise.reject("EMPTY_FIELD");
-    let returnValue = await lemmatize(autoCompleteText);
+    const returnValue = await lemmatize(autoCompleteText);
     if (returnValue.lemmatized === "") return Promise.reject("NO_INPUT_AFTER_LEMMATIZATION");
-    let returnedObj = antlr(returnValue.lemmatized.trim() + " ");
-    if (returnedObj.hasOwnProperty("grammarErrors") || returnedObj.hasOwnProperty("xpathTraverseErrors"))
+    const returnedObj = antlr(returnValue.lemmatized.trim() + " ");
+    if (returnedObj.hasOwnProperty("grammarErrors") || returnedObj.hasOwnProperty("xpathTraverseErrors")) {
         return Promise.reject(returnedObj);
+    }
     return {
         quantifierXPath: returnedObj.results.quantifier,
         constraintXPath: returnedObj.results.constraint,
         grammarTree: returnedObj.grammarTree,
-        wordArray: returnValue.wordArray.map(d => {
-            return {id: "", text: d}
-        })
+        wordArray: returnValue.wordArray.map((d) => {
+            return {id: "", text: d};
+        }),
     };
 }
 
@@ -32,28 +33,24 @@ export default async function verifyTextBasedOnGrammar(autoCompleteText) {
  * @returns
  */
 const lemmatize = (input) => {
-
-    let tagger = posTagger();
-    let pos = tagger.tagSentence(input);
-    let lemmatized = [];
-    let wordArray = [];
-    pos.forEach(node => {
+    const tagger = posTagger();
+    const pos = tagger.tagSentence(input);
+    const lemmatized = [];
+    const wordArray = [];
+    pos.forEach((node) => {
         if (node.pos !== "DT") {
             if (node.tag === "quoted_phrase" || node.value === "Superclass" || node.value === "Interface") { // exceptions
                 lemmatized.push(node.value + " ");
-                wordArray.push(node.value)
-            }
-            else if (node.tag === "punctuation") {
+                wordArray.push(node.value);
+            } else if (node.tag === "punctuation") {
                 lemmatized.push(node.value);
-                wordArray.push(node.value)
-            }
-            else if (!node.lemma) {
+                wordArray.push(node.value);
+            } else if (!node.lemma) {
                 lemmatized.push(node.value + " ");
                 wordArray.push(node.value);
-            }
-            else {
+            } else {
                 lemmatized.push(node.lemma + " ");
-                wordArray.push(node.lemma)
+                wordArray.push(node.lemma);
             }
         }
     });
@@ -68,12 +65,11 @@ const lemmatize = (input) => {
  * @returns {*} {"quantifier": xpath, "constraint": xpath}
  */
 export const antlr = (input, clause="full") => {
+    const inputText = input + "";
+    const rulePadGrammarLexerModule = require("./generated-parser/rulePadGrammarLexer");
+    const rulePadGrammarParserModule = require("./generated-parser/rulePadGrammarParser");
 
-    let inputText = input + "";
-    let rulePadGrammarLexerModule = require("./generated-parser/rulePadGrammarLexer");
-    let rulePadGrammarParserModule = require("./generated-parser/rulePadGrammarParser");
-
-    let ErrorListener = function (errors) {
+    const ErrorListener = function(errors) {
         antlr4.error.ErrorListener.call(this);
         this.errors = errors;
         return this;
@@ -81,41 +77,41 @@ export const antlr = (input, clause="full") => {
 
     ErrorListener.prototype = Object.create(antlr4.error.ErrorListener.prototype);
     ErrorListener.prototype.constructor = ErrorListener;
-    ErrorListener.prototype.syntaxError = function (rec, sym, line, col, msg, e) {
+    ErrorListener.prototype.syntaxError = function(rec, sym, line, col, msg, e) {
         this.errors.push({rec: rec, sym: sym, line: line, col: col, msg: msg, e: e});
     };
 
-    let errors = [];
-    let listener = new ErrorListener(errors);
+    const errors = [];
+    const listener = new ErrorListener(errors);
 
-    let orgParser = new rulePadGrammarParserModule.rulePadGrammarParser(
+    const orgParser = new rulePadGrammarParserModule.rulePadGrammarParser(
         new antlr4.CommonTokenStream(
             new rulePadGrammarLexerModule.rulePadGrammarLexer(new antlr4.InputStream(input))));
     orgParser.buildParseTrees = true;
     orgParser.removeErrorListeners();
     orgParser.addErrorListener(listener);
-    let orgTree = clause === "full" ? orgParser.inputSentence() : orgParser.partialClause();
+    const orgTree = clause === "full" ? orgParser.inputSentence() : orgParser.partialClause();
 
-    let chars = new antlr4.InputStream(input);
-    let lexer = new rulePadGrammarLexerModule.rulePadGrammarLexer(chars);
-    let tokens = new antlr4.CommonTokenStream(lexer);
-    let parser = new rulePadGrammarParserModule.rulePadGrammarParser(tokens);
+    const chars = new antlr4.InputStream(input);
+    const lexer = new rulePadGrammarLexerModule.rulePadGrammarLexer(chars);
+    const tokens = new antlr4.CommonTokenStream(lexer);
+    const parser = new rulePadGrammarParserModule.rulePadGrammarParser(tokens);
     parser.buildParseTrees = true;
 
     parser.removeErrorListeners();
-    parser.addErrorListener(listener)
-    let tree = clause === "full" ? parser.inputSentence() : parser.partialClause();
+    parser.addErrorListener(listener);
+    const tree = clause === "full" ? parser.inputSentence() : parser.partialClause();
 
-    if (errors.length !== 0)
+    if (errors.length !== 0) {
         return {grammarErrors: errors, inputText: inputText, clause, tree};
+    }
 
     try {
-        let traverse = new Traverse(tree);
+        const traverse = new Traverse(tree);
         traverse.traverseTree();
 
         return {results: {quantifier: traverse.XPathQ, constraint: traverse.XPathC}, grammarTree: orgTree};
-    }
-    catch (error) {
+    } catch (error) {
         console.log(error);
         return {xpathTraverseErrors: error};
     }
@@ -129,11 +125,10 @@ export const antlr = (input, clause="full") => {
  * @return {{grammarTree, error: boolean}|{listOfErrors, error: true}}
  */
 export const verifyPartialTextBasedOnGrammar = (input) => {
+    const rulePadGrammarLexerModule = require("./generated-parser/rulePadGrammarLexer");
+    const rulePadGrammarParserModule = require("./generated-parser/rulePadGrammarParser");
 
-    let rulePadGrammarLexerModule = require("./generated-parser/rulePadGrammarLexer");
-    let rulePadGrammarParserModule = require("./generated-parser/rulePadGrammarParser");
-
-    let ErrorListener = function (errors) {
+    const ErrorListener = function(errors) {
         antlr4.error.ErrorListener.call(this);
         this.errors = errors;
         return this;
@@ -141,24 +136,24 @@ export const verifyPartialTextBasedOnGrammar = (input) => {
 
     ErrorListener.prototype = Object.create(antlr4.error.ErrorListener.prototype);
     ErrorListener.prototype.constructor = ErrorListener;
-    ErrorListener.prototype.syntaxError = function (rec, sym, line, col, msg, e) {
+    ErrorListener.prototype.syntaxError = function(rec, sym, line, col, msg, e) {
         this.errors.push({rec: rec, sym: sym, line: line, col: col, msg: msg, e: e});
     };
 
-    let errors = [];
-    let listener = new ErrorListener(errors);
+    const errors = [];
+    const listener = new ErrorListener(errors);
 
-    let orgParser = new rulePadGrammarParserModule.rulePadGrammarParser(
+    const orgParser = new rulePadGrammarParserModule.rulePadGrammarParser(
         new antlr4.CommonTokenStream(new rulePadGrammarLexerModule.rulePadGrammarLexer(
             new antlr4.InputStream(input))));
     orgParser.buildParseTrees = true;
     orgParser.removeErrorListeners();
     orgParser.addErrorListener(listener);
-    let orgTree = orgParser.classes();
+    const orgTree = orgParser.classes();
 
-    if (errors.length !== 0)
+    if (errors.length !== 0) {
         return {listOfErrors: errors, error: true};
+    }
 
     return {grammarTree: orgTree, error: false};
-
 };

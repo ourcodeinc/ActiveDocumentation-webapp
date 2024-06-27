@@ -15,7 +15,7 @@ import {
     grammar_connectors,
     grammar_keywords,
     sample_phrases,
-    sample_phrase_hash
+    sample_phrase_hash,
 } from "./textualEditorConstant";
 import {LANGUAGE_FORMAT, LANGUAGE_THEME, EDITOR_OPTION} from "./monacoEditorConfig";
 
@@ -34,17 +34,17 @@ class TextualEditor extends Component {
 
         this.decorations = [];
 
-        if (!props.onBlur) console.error(`'onBlur' is a required function in props`);
+        if (!props.onBlur) console.error("'onBlur' is a required function in props");
     }
 
     render() {
         return (
             <div className={"overlayContainer ruleGeneratorTextContainer"}
-                 onMouseEnter={() => this.overlayDiv.style.display = "none"}
-                 onMouseLeave={(e) => {
-                     e.stopPropagation();
-                     this.overlayDiv.style.display = this.state.focusStatus === "focused" || this.autoCompleteArray.length !== 0 ? "none" : "block";
-                 }}
+                onMouseEnter={() => this.overlayDiv.style.display = "none"}
+                onMouseLeave={(e) => {
+                    e.stopPropagation();
+                    this.overlayDiv.style.display = this.state.focusStatus === "focused" || this.autoCompleteArray.length !== 0 ? "none" : "block";
+                }}
             >
                 <div className={"monacoWrapper " + this.state.formStatus + " " + this.state.focusStatus}>
                     <div ref={(node) => this.monacoEditorContainer = node} style={{height: "100px"}}/>
@@ -54,39 +54,42 @@ class TextualEditor extends Component {
         );
     }
 
-    //componentDidUpdate doesn't work
+    // componentDidUpdate doesn't work
     UNSAFE_componentWillReceiveProps(nextProps) {
         let changedArray = false;
         if (this.autoCompleteArray.length !== nextProps.autoCompleteArray.length) changedArray = true;
-        else this.autoCompleteArray.forEach((a, i) => {
-            if (a.id !== nextProps.autoCompleteArray[i].id || a.text !== nextProps.autoCompleteArray[i].text) changedArray = true
-        });
+        else {
+            this.autoCompleteArray.forEach((a, i) => {
+                if (a.id !== nextProps.autoCompleteArray[i].id || a.text !== nextProps.autoCompleteArray[i].text) changedArray = true;
+            });
+        }
 
         if (nextProps.hasOwnProperty("autoCompleteArray") && changedArray) {
             this.autoCompleteArray = nextProps["autoCompleteArray"];
             this.autoCompleteArrayHover = nextProps["autoCompleteArray"];
-            this.editor.setValue(this.autoCompleteArray.map(a => a.text).join(" "));
+            this.editor.setValue(this.autoCompleteArray.map((a) => a.text).join(" "));
             this.props.onUpdate(this.editor.getModel().getValue().trim());
         }
-        if (nextProps.hasOwnProperty("formStatus") && this.state.formStatus !== nextProps.formStatus)
+        if (nextProps.hasOwnProperty("formStatus") && this.state.formStatus !== nextProps.formStatus) {
             this.setState({formStatus: nextProps.formStatus});
+        }
 
         if (nextProps.hasOwnProperty("errorPoint")) {
             if (nextProps.errorPoint !== -1) {
                 // startLineNumber, startColumn, endLineNumber, endColumn
-                let fullRange = this.editor.getModel().getFullModelRange();
+                const fullRange = this.editor.getModel().getFullModelRange();
                 this.decorations = this.editor.deltaDecorations(this.decorations, [
                     {
                         range: new monaco.Range(1, nextProps.errorPoint, 1, fullRange.endColumn),
-                        options: {inlineClassName: "text-has-error"}
-                    }
+                        options: {inlineClassName: "text-has-error"},
+                    },
                 ]);
-            }
-            else
+            } else {
                 this.decorations = this.editor.deltaDecorations(this.decorations, [{
                     range: new monaco.Range(1, 1, 1, 1),
-                    options: {}
+                    options: {},
                 }]);
+            }
         }
     }
 
@@ -96,7 +99,7 @@ class TextualEditor extends Component {
      */
     componentWillUnmount() {
         this.hoverProvider.dispose();
-        this.completionProvider.dispose()
+        this.completionProvider.dispose();
     }
 
     /**
@@ -110,68 +113,72 @@ class TextualEditor extends Component {
         monaco.editor.defineTheme("draco-light", LANGUAGE_THEME);
 
         this.editor = monaco.editor.create(this.monacoEditorContainer, {
-            value: this.autoCompleteArray.map(a => a.text).join(" "),
+            value: this.autoCompleteArray.map((a) => a.text).join(" "),
             language: "mySpecialLanguage",
-            ...EDITOR_OPTION
+            ...EDITOR_OPTION,
         });
 
         // on hover information
         this.hoverProvider = monaco.languages.registerHoverProvider("mySpecialLanguage", {
-            provideHover: (model, position, token) => {
-                let range = new monaco.Range(1, 1, position.lineNumber, position.column);
-                let arrayIndex = model.getValueInRange(range).split(" ").length - 1;
+            provideHover: (model, position, _token) => {
+                const range = new monaco.Range(1, 1, position.lineNumber, position.column);
+                const arrayIndex = model.getValueInRange(range).split(" ").length - 1;
                 let doc = {value: ""};
                 if (this.autoCompleteArrayHover.length > arrayIndex) {
                     if (this.autoCompleteArrayHover[arrayIndex].id) {
-                        let els = document.getElementsByClassName("hoveredAutoComplete");
+                        const els = document.getElementsByClassName("hoveredAutoComplete");
                         for (let i = 0; i < els.length; i++) els[i].classList.remove("hoveredAutoComplete");
 
-                        let hoveredElementNode = document.getElementById("id__" + this.props.ruleIndex + "__" + this.autoCompleteArrayHover[arrayIndex].id);
+                        const hoveredElementNode = document.getElementById("id__" + this.props.ruleIndex + "__" + this.autoCompleteArrayHover[arrayIndex].id);
                         if (hoveredElementNode) {
                             hoveredElementNode.classList.add("hoveredAutoComplete");
                             setTimeout(() => hoveredElementNode.classList.remove("hoveredAutoComplete"), 1200);
                         }
                     }
 
-                    let thisWord = this.autoCompleteArrayHover[arrayIndex].text;
-                    if (Object.keys(documentations_IMarkdownString).indexOf(thisWord) !== -1)
+                    const thisWord = this.autoCompleteArrayHover[arrayIndex].text;
+                    if (Object.keys(documentations_IMarkdownString).indexOf(thisWord) !== -1) {
                         doc = documentations_IMarkdownString[thisWord];
+                    }
 
                     if (arrayIndex < this.autoCompleteArrayHover.length - 1) {
-                        let xWord = thisWord + " " + this.autoCompleteArrayHover[arrayIndex + 1].text;
-                        if (Object.keys(documentations_IMarkdownString).indexOf(xWord) !== -1)
+                        const xWord = thisWord + " " + this.autoCompleteArrayHover[arrayIndex + 1].text;
+                        if (Object.keys(documentations_IMarkdownString).indexOf(xWord) !== -1) {
                             doc = documentations_IMarkdownString[xWord];
+                        }
                     }
                     if (arrayIndex > 0) {
-                        let xWord = this.autoCompleteArrayHover[arrayIndex - 1].text + " " + thisWord;
-                        if (Object.keys(documentations_IMarkdownString).indexOf(xWord) !== -1)
+                        const xWord = this.autoCompleteArrayHover[arrayIndex - 1].text + " " + thisWord;
+                        if (Object.keys(documentations_IMarkdownString).indexOf(xWord) !== -1) {
                             doc = documentations_IMarkdownString[xWord];
+                        }
                     }
 
                     if (thisWord === "with") doc = documentations_IMarkdownString["WITH"];
                     if (thisWord === "of") doc = documentations_IMarkdownString["OF"];
-                    if (thisWord === "and" || thisWord === "or" || thisWord === "(" || thisWord === ")")
+                    if (thisWord === "and" || thisWord === "or" || thisWord === "(" || thisWord === ")") {
                         doc = documentations_IMarkdownString["AND_OR_PAREN"];
+                    }
                     if (thisWord === "must" || thisWord === "have") doc = documentations_IMarkdownString["MUST_HAVE"];
                     if (thisWord.startsWith("\"")) doc = documentations_IMarkdownString["QUOTES"];
                 }
-                return {contents: [doc]}
-            }
+                return {contents: [doc]};
+            },
         });
 
         // auto complete suggestions
         this.completionProvider = monaco.languages.registerCompletionItemProvider("mySpecialLanguage", {
             triggerCharacters: [" "].concat("abcdefghijklmnopqrstuvwxyz".split("")), // if removed the suggestions won't be updated for the first word
-            provideCompletionItems: (model, position, context, token) => {
-                let resultSuggestion = [];
+            provideCompletionItems: (model, position, _context, _token) => {
+                const resultSuggestion = [];
 
-                this.grammarSuggestion(model.getValue(), position.column - 1).forEach(item => {
-                    let CompletionItem = {
+                this.grammarSuggestion(model.getValue(), position.column - 1).forEach((item) => {
+                    const CompletionItem = {
                         label: item.label,
                         documentation: item.documentation,
                         insertText: item.insertText + " ",
                         kind: monaco.languages.CompletionItemKind[item.kind === "suggestion" ? "Customcolor" : "Event"],
-                        command: {id: "editor.action.triggerSuggest", title: 123}
+                        command: {id: "editor.action.triggerSuggest", title: 123},
                         // detail: item.detail
                     };
                     if (!item.documentation) delete CompletionItem.documentation;
@@ -181,29 +188,29 @@ class TextualEditor extends Component {
                 // underline the last word if there is an error
                 if (model.getValue().trim() !== "" && resultSuggestion.length === 1 && resultSuggestion[0].label === "Error") {
                     // get the latest word and its index
-                    let wordsArray = model.getValue().split(" ");
+                    const wordsArray = model.getValue().split(" ");
                     let index;
-                    for (index = wordsArray.length - 1; index >= 0; index--)
+                    for (index = wordsArray.length - 1; index >= 0; index--) {
                         if (wordsArray[index] !== "") break;
-                    let startCol = position.column - (wordsArray[index].length + (wordsArray.length - index - 1));
+                    }
+                    const startCol = position.column - (wordsArray[index].length + (wordsArray.length - index - 1));
                     this.decorations = this.editor.deltaDecorations(this.decorations, [
                         {
                             range: new monaco.Range(position.lineNumber, startCol, position.lineNumber, position.column),
-                            options: {inlineClassName: "text-has-error"}
-                        }
+                            options: {inlineClassName: "text-has-error"},
+                        },
                     ]);
-                }
-                else {
+                } else {
                     this.decorations = this.editor.deltaDecorations(this.decorations, [{
                         range: new monaco.Range(1, 1, 1, 1),
-                        options: {}
+                        options: {},
                     }]);
                     return {
                         isIncomplete: true,
-                        suggestions: resultSuggestion
+                        suggestions: resultSuggestion,
                     };
                 }
-            }
+            },
         });
 
         // on editor focus, used for styling and suggestion display
@@ -216,36 +223,39 @@ class TextualEditor extends Component {
         this.editor.onDidBlurEditorText(() => {
             this.setState({
                 focusStatus: "",
-                formStatus: this.editor.getModel().getValue() === "" ? "has-error" : this.state.formStatus
+                formStatus: this.editor.getModel().getValue() === "" ? "has-error" : this.state.formStatus,
             });
 
-            if (this.autoCompleteArray.map(d => d.text).join(" ") !== this.editor.getModel().getValue())
+            if (this.autoCompleteArray.map((d) => d.text).join(" ") !== this.editor.getModel().getValue()) {
                 this.props.onBlur(this.editor.getModel().getValue().trim());
+            }
         });
 
-        this.editor.onKeyDown((e) => {
+        this.editor.onKeyDown((_) => {
             this.setState({formStatus: "has-warning"});
             this.props.onError(-1); // close error alert
         });
 
         // on changed text
-        this.editor.onDidChangeModelContent((e) => {
+        this.editor.onDidChangeModelContent((_) => {
             // calculate the diff
-            let wordDiffs =
-                diff.diffWords(this.autoCompleteArray.map(d => d.text).join(" ").replace(/"/g, "") // quotations are considered as a word
+            const wordDiffs =
+                diff.diffWords(this.autoCompleteArray.map((d) => d.text).join(" ").replace(/"/g, "") // quotations are considered as a word
                     , this.editor.getModel().getValue().replace(/"/g, ""));
 
             let newAutoCompleteArray = [];
             let arrayIndex = 0;
-            wordDiffs.forEach(d => {
-                if (!d.removed && !d.added)
+            wordDiffs.forEach((d) => {
+                if (!d.removed && !d.added) {
                     newAutoCompleteArray = newAutoCompleteArray.concat(this.autoCompleteArray.slice(arrayIndex, arrayIndex + d.value.trim().split(" ").length));
-                else if (d.added)
-                    newAutoCompleteArray = newAutoCompleteArray.concat(d.value.trim().split(" ").map(a => {
-                        return {text: a, id: ""}
+                } else if (d.added) {
+                    newAutoCompleteArray = newAutoCompleteArray.concat(d.value.trim().split(" ").map((a) => {
+                        return {text: a, id: ""};
                     }));
-                if (!d.added)
+                }
+                if (!d.added) {
                     arrayIndex += d.value.split(" ").length;
+                }
             });
             this.autoCompleteArrayHover = newAutoCompleteArray;
         });
@@ -259,16 +269,16 @@ class TextualEditor extends Component {
      */
     renderOverlayDiv() {
         return (
-            <div ref={node => this.overlayDiv = node}
-                 className={"overlay designRuleOverlay"}
-                 style={{display: this.state.focusStatus === "focused" || this.autoCompleteArray.length !== 0 ? "none" : "block"}}>
+            <div ref={(node) => this.overlayDiv = node}
+                className={"overlay designRuleOverlay"}
+                style={{display: this.state.focusStatus === "focused" || this.autoCompleteArray.length !== 0 ? "none" : "block"}}>
                 <div className={"messageDivContainer"}>
                     <div className={"messageDiv"}>
                         <strong>Design Rule.</strong>
                     </div>
                 </div>
             </div>
-        )
+        );
     }
 
     /**
@@ -280,8 +290,7 @@ class TextualEditor extends Component {
     grammarSuggestion(myText, selectionEnd) {
         try {
             return this.grammarSuggestion_try_catch(myText, selectionEnd);
-        }
-        catch (e) {
+        } catch (e) {
             console.log("error in 'grammarSuggestion' function :");
             console.log(e);
             return [];
@@ -295,26 +304,26 @@ class TextualEditor extends Component {
      * @returns {Array} array of objects: suggestion: "", info:"", type: "suggestion" or "error"
      */
     grammarSuggestion_try_catch(myText, selectionEnd) {
-
         /**
          * lemmatize the words in the input string
          * @param input
          * @returns String
          */
         const lemmatizeWords = (input) => {
-            let tagger = posTagger();
-            let pos = tagger.tagSentence(input);
-            let lemmatized = [];
-            pos.forEach(node => {
+            const tagger = posTagger();
+            const pos = tagger.tagSentence(input);
+            const lemmatized = [];
+            pos.forEach((node) => {
                 if (node.pos !== "DT") {
-                    if (node.tag === "quoted_phrase" || !node.lemma)
+                    if (node.tag === "quoted_phrase" || !node.lemma) {
                         lemmatized.push(node.value);
-                    else
+                    } else {
                         lemmatized.push(node.lemma);
+                    }
                 }
             });
 
-            let stringReplaceAll = (string, search, replacement) => {
+            const stringReplaceAll = (string, search, replacement) => {
                 return string.replace(new RegExp(search, "g"), replacement);
             };
 
@@ -330,20 +339,20 @@ class TextualEditor extends Component {
          * @param input
          */
         const findNounsInInput = (input) => {
-            let tagger = posTagger();
-            let pos = tagger.tagSentence(input);
-            let nouns = [];
+            const tagger = posTagger();
+            const pos = tagger.tagSentence(input);
+            const nouns = [];
 
             // find nouns outside of paired parenthesis
             let unresolvedCloseParen = 0;
             for (let i = pos.length - 1; i > -1; i--) {
-                if (pos[i].value === ")")
+                if (pos[i].value === ")") {
                     unresolvedCloseParen++;
-                else if (pos[i].value === "(") {
-                    if (unresolvedCloseParen > 0)
+                } else if (pos[i].value === "(") {
+                    if (unresolvedCloseParen > 0) {
                         unresolvedCloseParen--;
-                }
-                else if ((pos[i].pos === "NN" || pos[i].pos === "NNS") && unresolvedCloseParen === 0) {
+                    }
+                } else if ((pos[i].pos === "NN" || pos[i].pos === "NNS") && unresolvedCloseParen === 0) {
                     nouns.push(!pos[i].lemma ? pos[i].value : pos[i].lemma);
                     if (i > 0 && pos[i].lemma && pos[i - 1].lemma) {
                         if (pos[i - 1].lemma === "abstract" && pos[i].lemma === "function") nouns.push("abstract function");
@@ -364,9 +373,9 @@ class TextualEditor extends Component {
         const findCorrespondingOpenParenIndex = (input) => {
             let unresolvedCloseParen = 0;
             for (let i = input.length - 1; i > -1; i--) {
-                if (input[i] === ")")
+                if (input[i] === ")") {
                     unresolvedCloseParen++;
-                else if (input[i] === "(") {
+                } else if (input[i] === "(") {
                     if (unresolvedCloseParen === 0) return -2;
                     else if (unresolvedCloseParen === 1) return i;
                     else unresolvedCloseParen--;
@@ -382,10 +391,11 @@ class TextualEditor extends Component {
         const findUnResolvedParenthesis = (input) => {
             let unresolvedCloseParen = 0;
             for (let i = 0; i < input.length; i++) {
-                if (input[i] === "(")
+                if (input[i] === "(") {
                     unresolvedCloseParen++;
-                else if (input[i] === ")")
+                } else if (input[i] === ")") {
                     unresolvedCloseParen--;
+                }
             }
             return unresolvedCloseParen;
         };
@@ -396,19 +406,20 @@ class TextualEditor extends Component {
          * @returns Array of words, removed contents of paired parenthesis
          */
         const removePairedParenthesis = (input) => {
-            let openParenthesisIndices = [];
-            let shouldRemove = new Array(input.length).fill(false);
+            const openParenthesisIndices = [];
+            const shouldRemove = new Array(input.length).fill(false);
 
             for (let i = 0; i < input.length; i++) {
                 if (input[i] === ")") {
                     // faulty input
                     if (openParenthesisIndices.length === 0) return input;
-                    let startIndex = openParenthesisIndices.pop();
-                    for (let j = startIndex + 1; j < i; j++)
+                    const startIndex = openParenthesisIndices.pop();
+                    for (let j = startIndex + 1; j < i; j++) {
                         shouldRemove[j] = true;
-                }
-                else if (input[i] === "(")
+                    }
+                } else if (input[i] === "(") {
                     openParenthesisIndices.push(i);
+                }
             }
 
             return input.filter((d, i) => !shouldRemove[i]);
@@ -427,8 +438,8 @@ class TextualEditor extends Component {
                 documentation: error_messages_IMarkdownString[errorMessageNumber],
                 detail: "",
                 insertText: "",
-                kind: "error"
-            }]
+                kind: "error",
+            }];
         };
 
         /*
@@ -436,10 +447,10 @@ class TextualEditor extends Component {
          * like: function with an[notation]
          */
         if (myText === "") return [];
-        let caretPosition = selectionEnd;
-        let beforeCaret = caretPosition > 0 ? myText[caretPosition - 1] : null;
-        let isMiddleOfWord = (beforeCaret !== " " && beforeCaret !== null);
-        let text = myText.slice(0, caretPosition);
+        const caretPosition = selectionEnd;
+        const beforeCaret = caretPosition > 0 ? myText[caretPosition - 1] : null;
+        const isMiddleOfWord = (beforeCaret !== " " && beforeCaret !== null);
+        const text = myText.slice(0, caretPosition);
         if (text === "") return [];
 
         let wordsArray = [];
@@ -451,8 +462,8 @@ class TextualEditor extends Component {
          * Then it is pushed back.
          * Note that letters are transformed to lower case.
          */
-        let typingWord = isMiddleOfWord ? text.split(" ").pop() : "";
-        let toLemmatize = isMiddleOfWord ? text.split(" ").slice(0, text.split(" ").length - 1).join(" ") : text;
+        const typingWord = isMiddleOfWord ? text.split(" ").pop() : "";
+        const toLemmatize = isMiddleOfWord ? text.split(" ").slice(0, text.split(" ").length - 1).join(" ") : text;
         toLemmatize.replace(/\( /g, " ( ").replace(/\) /g, " ) ");
         wordsArray = toLemmatize !== "" ? (lemmatizeWords(toLemmatize)).split(" ") : [];
         if (isMiddleOfWord) wordsArray.push(typingWord);
@@ -465,46 +476,45 @@ class TextualEditor extends Component {
 
         // complete incomplete connectors as the last word
         if (isMiddleOfWord) {
-            if (["wi", "wit"].includes(lastWord))
+            if (["wi", "wit"].includes(lastWord)) {
                 lastWord = "with";
-            else if (["ha", "hav"].includes(lastWord))
+            } else if (["ha", "hav"].includes(lastWord)) {
                 lastWord = "have";
-            else if (["mu", "mus"].includes(lastWord))
+            } else if (["mu", "mus"].includes(lastWord)) {
                 lastWord = "must";
-            else if (["eq", "equ", "equa"].includes(lastWord))
+            } else if (["eq", "equ", "equa"].includes(lastWord)) {
                 lastWord = "equal";
-            else if (["inc", "incl", "inclu", "includ"].includes(lastWord))
+            } else if (["inc", "incl", "inclu", "includ"].includes(lastWord)) {
                 lastWord = "include";
-            else if (["st", "sta", "star"].includes(lastWord))
+            } else if (["st", "sta", "star"].includes(lastWord)) {
                 lastWord = "start";
-            else if (["en"].includes(lastWord))
+            } else if (["en"].includes(lastWord)) {
                 lastWord = "end";
-            else if (["wi", "wit"].includes(lastWord))
-                lastWord = "with";
-            else if (lastWordIndex > 0 && wordsArray[lastWordIndex - 1] === "()") {
+            } else if (lastWordIndex > 0 && wordsArray[lastWordIndex - 1] === "()") {
                 if (["a", "an"].includes(lastWord)) lastWord = "and";
                 if (lastWord === "o") lastWord = "or";
             }
         }
 
         // determines type of the lastWord
-        let isConnectorWord = grammar_connectors.indexOf(lastWord) !== -1;
-        let isKeyword = grammar_keywords.indexOf(lastWord) !== -1;
-        let isWord = lastWord ? lastWord.startsWith("\"") : false;
+        const isConnectorWord = grammar_connectors.indexOf(lastWord) !== -1;
+        const isKeyword = grammar_keywords.indexOf(lastWord) !== -1;
+        const isWord = lastWord ? lastWord.startsWith("\"") : false;
         let isSpecialWord = false; // cannot match with the list of special words directly because of lemmatization
         if (lastWordIndex > 1) {
-            let word = selectXWord(lastWordIndex - 2);
-            if (word !== "" && autoComplete_suggestion[word].preWord
-                && autoComplete_suggestion[word].preWord === wordsArray[lastWordIndex - 1])
+            const word = selectXWord(lastWordIndex - 2);
+            if (word !== "" && autoComplete_suggestion[word].preWord &&
+                autoComplete_suggestion[word].preWord === wordsArray[lastWordIndex - 1]) {
                 isSpecialWord = true;
+            }
         }
         let specialCase = "";
         if (lastWord === "a" || lastWord === "an" || lastWord === "o") specialCase = lastWord;
 
         let xWord; // must be in TextConstants.keywords
-        let results = [], beforeSuggText = "", suggText = "", infoText = "";
-        let lastWithIndex = wordsArray.map((w) => (w === "with") ? 1 : 0).lastIndexOf(1);
-        let mustIndex = wordsArray.indexOf("must");
+        let results = []; let beforeSuggText = ""; let suggText = ""; let infoText = "";
+        const lastWithIndex = wordsArray.map((w) => (w === "with") ? 1 : 0).lastIndexOf(1);
+        const mustIndex = wordsArray.indexOf("must");
 
         // check if parenthesis are paired
         if (findUnResolvedParenthesis(wordsArray) < 0) return errorGenerator(203);
@@ -540,11 +550,12 @@ class TextualEditor extends Component {
         // This block process strings in the lastWord
         if (isWord || isSpecialWord) {
             // "someWord["]
-            if (!lastWord.endsWith("\"") && isWord)
+            if (!lastWord.endsWith("\"") && isWord) {
                 return [TextualEditor.createGrammarSuggestion(lastWord + "\"", "", "QUOTES")];
+            }
             // … [X] with name/annotation/etc. "someWord"
             xWord = selectXWord(lastWithIndex - 1);
-            let space = isMiddleOfWord ? " " : "";
+            const space = isMiddleOfWord ? " " : "";
             results.push(TextualEditor.createGrammarSuggestion(space + "and", xWord, "AND_OR_PAREN"));
             results.push(TextualEditor.createGrammarSuggestion(space + "or", xWord, "AND_OR_PAREN"));
             results.push(TextualEditor.createGrammarSuggestion(space + "of", xWord, "OF"));
@@ -553,8 +564,7 @@ class TextualEditor extends Component {
                 xWord = selectXWord(lastWithIndex - 1);
                 if (xWord === "") return errorGenerator(303);
                 results.push(TextualEditor.createGrammarSuggestion(space + ")", xWord + " (...", "AND_OR_PAREN"));
-            }
-            else if (wordsArray.indexOf("must") === -1) {
+            } else if (wordsArray.indexOf("must") === -1) {
                 xWord = selectXWord(0);
                 if (xWord === "") return errorGenerator(303);
                 results.push(TextualEditor.createGrammarSuggestion(space + "must have", xWord, "MUST_HAVE"));
@@ -568,7 +578,7 @@ class TextualEditor extends Component {
         */
         if (!isConnectorWord && !isKeyword && isMiddleOfWord) lastWord = wordsArray.length >= 2 ? wordsArray[wordsArray.length - 2] : lastWord;
         if (!isConnectorWord && !isKeyword && isMiddleOfWord) lastWordIndex = wordsArray.length >= 2 ? wordsArray.length - 2 : lastWordIndex;
-        let isSecondWord = lastWordIndex !== (wordsArray.length - 1);
+        const isSecondWord = lastWordIndex !== (wordsArray.length - 1);
 
         switch (lastWord) {
             case "with":
@@ -661,9 +671,7 @@ class TextualEditor extends Component {
                     infoText = xWord + " with (";
                     results = results.concat(this.withSuggestionCreator(xWord, beforeSuggText, infoText, isSecondWord, isSecondWord ? wordsArray[wordsArray.length - 1] : ""));
                     break;
-                }
-                // [X] … must have ( … and/or ( [based on X]
-                else {
+                } else { // [X] … must have ( … and/or ( [based on X]
                     xWord = selectXWord(0);
                     if (xWord === "") return errorGenerator(303);
 
@@ -677,7 +685,7 @@ class TextualEditor extends Component {
 
                     break;
                 }
-            // return errorGenerator(300);
+                // return errorGenerator(300);
 
             case ")":
                 // [X] with ( )
@@ -686,7 +694,7 @@ class TextualEditor extends Component {
                 if (lastWithIndex < 1 && !wordsArray.includes("must")) return errorGenerator(201);
 
                 // … [X] with ( … ) of [based on X]
-                let corrOpenParanIndex = findCorrespondingOpenParenIndex(wordsArray);
+                const corrOpenParanIndex = findCorrespondingOpenParenIndex(wordsArray);
                 if (corrOpenParanIndex < 2) return errorGenerator(203);
                 xWord = selectXWord(corrOpenParanIndex - 2);
 
@@ -701,9 +709,8 @@ class TextualEditor extends Component {
                     // [X] with (…) of
                     suggText = "of";
                     results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "OF"));
-                }
-                // [X] … must have ( )
-                else if (corrOpenParanIndex > 1 && wordsArray[corrOpenParanIndex - 2] === "must") {
+                } else if (corrOpenParanIndex > 1 && wordsArray[corrOpenParanIndex - 2] === "must") {
+                    // [X] … must have ( )
                     xWord = selectXWord(0);
                     if (xWord === "") return errorGenerator(303);
 
@@ -712,9 +719,9 @@ class TextualEditor extends Component {
                     results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
                     suggText = "or (";
                     results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
-                }
-                else
+                } else {
                     return errorGenerator(302);
+                }
 
                 // [X]… <no must> … with ( … ) must have
                 if (!wordsArray.includes("must") && findUnResolvedParenthesis(wordsArray) === 0) { // no open parenthesis
@@ -747,10 +754,10 @@ class TextualEditor extends Component {
 
                 // NOT accurate
                 // … must … [X] … of [based on X]
-                let arrayInput = mustIndex > 0 ? wordsArray.slice(mustIndex, wordsArray.length) : wordsArray;
-                let nouns = findNounsInInput(arrayInput.join(" "));
+                const arrayInput = mustIndex > 0 ? wordsArray.slice(mustIndex, wordsArray.length) : wordsArray;
+                const nouns = findNounsInInput(arrayInput.join(" "));
 
-                nouns.forEach(d => {
+                nouns.forEach((d) => {
                     xWord = d;
                     suggText = (isConnectorWord && isMiddleOfWord) ? "of" : "";
                     infoText = xWord + (isConnectorWord && isMiddleOfWord ? "" : " of");
@@ -770,24 +777,22 @@ class TextualEditor extends Component {
                 if (isMiddleOfWord && !isSecondWord && lastWordIndex > 1) {
                     // … [X] preWord special_word
                     xWord = selectXWord(lastWordIndex - 2);
-                    if (xWord === "" || !autoComplete_suggestion[xWord].preWord
-                        || autoComplete_suggestion[xWord].preWord !== wordsArray[lastWordIndex - 1]) break;
+                    if (xWord === "" || !autoComplete_suggestion[xWord].preWord ||
+                        autoComplete_suggestion[xWord].preWord !== wordsArray[lastWordIndex - 1]) break;
                     suggText = autoComplete_suggestion[xWord].placeholder;
                     infoText = xWord + " " + autoComplete_suggestion[xWord].preWord;
                     results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, xWord));
-                }
-
-                // after special word
-                else if (!isMiddleOfWord && !isSecondWord && lastWordIndex > 1) {
+                } else if (!isMiddleOfWord && !isSecondWord && lastWordIndex > 1) { // after special word
                     // … [X] preWord special_word [based on X]
-                    if (xWord && xWord !== "" && autoComplete_suggestion[xWord] && autoComplete_suggestion[xWord].preWord
-                        && autoComplete_suggestion[xWord].preWord === wordsArray[lastWordIndex - 1])
+                    if (xWord && xWord !== "" && autoComplete_suggestion[xWord] && autoComplete_suggestion[xWord].preWord &&
+                        autoComplete_suggestion[xWord].preWord === wordsArray[lastWordIndex - 1]) {
                         xWord = selectXWord(lastWordIndex - 2);
+                    }
                 }
                 // xWord = selectXWord(lastWordIndex) === "" ? lastWord : selectXWord(lastWordIndex);
                 grammar_keywords
-                    .filter(d => (isMiddleOfWord && !isSecondWord) ? d.indexOf(xWord) !== -1 : d === xWord)
-                    .forEach(d => {
+                    .filter((d) => (isMiddleOfWord && !isSecondWord) ? d.indexOf(xWord) !== -1 : d === xWord)
+                    .forEach((d) => {
                         // if there exists an open parenthesis
                         if (lastWordIndex > 1 && findUnResolvedParenthesis(wordsArray) > 0) {
                             suggText = ")";
@@ -799,25 +804,24 @@ class TextualEditor extends Component {
                             results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "AND_OR_PAREN"));
                         }
                         // still typing the keyword
-                        if (isMiddleOfWord && !isSecondWord)
+                        if (isMiddleOfWord && !isSecondWord) {
                             results.push(TextualEditor.createGrammarSuggestion(d, "", d));
-                        else {
-                            if (!!autoComplete_suggestion[d].withClause) {
+                        } else {
+                            if (autoComplete_suggestion[d].withClause) {
                                 suggText = (isMiddleOfWord && !isSecondWord ? d + " " : "" ) + "with";
                                 infoText = isMiddleOfWord && !isSecondWord ? "" : d;
                                 results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "WITH"));
-                            }
-                            else {
-                                if (!!autoComplete_suggestion[d].preWord) {
-                                    suggText = (isMiddleOfWord && !isSecondWord ? d + " " : "" )
-                                        + autoComplete_suggestion[d].preWord + " " + autoComplete_suggestion[d].placeholder;
+                            } else {
+                                if (autoComplete_suggestion[d].preWord) {
+                                    suggText = (isMiddleOfWord && !isSecondWord ? d + " " : "" ) +
+                                        autoComplete_suggestion[d].preWord + " " + autoComplete_suggestion[d].placeholder;
                                     infoText = isMiddleOfWord && !isSecondWord ? "" : d;
                                     results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, d));
                                 }
 
 
-                                suggText = (isMiddleOfWord && !isSecondWord ? d + " " : "" )
-                                    + (autoComplete_suggestion[d].preWord ? autoComplete_suggestion[d].preWord + " " : "") + "\"SOME_TEXT\"";
+                                suggText = (isMiddleOfWord && !isSecondWord ? d + " " : "" ) +
+                                    (autoComplete_suggestion[d].preWord ? autoComplete_suggestion[d].preWord + " " : "") + "\"SOME_TEXT\"";
                                 infoText = isMiddleOfWord && !isSecondWord ? "" : d;
                                 results.push(TextualEditor.createGrammarSuggestion(suggText, infoText, "QUOTES"));
                             }
@@ -840,12 +844,13 @@ class TextualEditor extends Component {
         if (results.length === 0) {
             if (specialCase !== "") {
                 // special case for a and and
-                if (specialCase === "a" || specialCase === "an")
+                if (specialCase === "a" || specialCase === "an") {
                     results.push(TextualEditor.createGrammarSuggestion("and", "and", "AND_OR_PAREN"));
-                if (specialCase === "o")
+                }
+                if (specialCase === "o") {
                     results.push(TextualEditor.createGrammarSuggestion("or", "or", "AND_OR_PAREN"));
-            }
-            else return errorGenerator(400);
+                }
+            } else return errorGenerator(400);
         }
         return results;
     }
@@ -859,13 +864,14 @@ class TextualEditor extends Component {
      */
     phraseSuggestion(myText, selectionStart, selectionEnd) {
         // empty
-        if (myText === "")
+        if (myText === "") {
             return [];
+        }
 
         let results = [];
 
-        let wordsArray = myText.slice(selectionStart === -1 ? 0 : selectionStart, selectionEnd).trim().split(" ");
-        let phraseIndexArrays = wordsArray.map(d => sample_phrase_hash.hasOwnProperty(d) ? sample_phrase_hash[d] : []);
+        const wordsArray = myText.slice(selectionStart === -1 ? 0 : selectionStart, selectionEnd).trim().split(" ");
+        const phraseIndexArrays = wordsArray.map((d) => sample_phrase_hash.hasOwnProperty(d) ? sample_phrase_hash[d] : []);
         // trying to find the non-empty intersection of phrase indices for each word
         let intersection = [];
 
@@ -874,9 +880,9 @@ class TextualEditor extends Component {
             intersection = new Set(phraseIndexArrays[cnt]);
             if (cnt < wordsArray.length - 1) { // not last array
                 for (let i = cnt + 1; i < wordsArray.length; i++) {
-                    let temp = new Set(phraseIndexArrays[i]);
+                    const temp = new Set(phraseIndexArrays[i]);
                     if (temp.length === 0) break;
-                    intersection = new Set([...intersection].filter(d => [...temp].includes(d)));
+                    intersection = new Set([...intersection].filter((d) => [...temp].includes(d)));
                     if (intersection.length === 0) break;
                 }
             }
@@ -902,16 +908,18 @@ class TextualEditor extends Component {
     withSuggestionCreator(word, beforeSugText, infoText, doFilter, filterLetters) {
         let result = [];
         if (grammar_keywords.includes(word)) {
-            if (autoComplete_suggestion[word].withClause)
+            if (autoComplete_suggestion[word].withClause) {
                 result = autoComplete_suggestion[word].withClause;
+            }
 
             // check if filtering makes no result, ignore it
-            if (result.filter(d => !doFilter ? true : d.startsWith(filterLetters)).length !== 0)
-                result = result.filter(d => !doFilter ? true : d.startsWith(filterLetters));
-            return result.map(d => TextualEditor.createGrammarSuggestion(beforeSugText + (beforeSugText !== "" ? " " : "") + d, infoText, word));
+            if (result.filter((d) => !doFilter ? true : d.startsWith(filterLetters)).length !== 0) {
+                result = result.filter((d) => !doFilter ? true : d.startsWith(filterLetters));
+            }
+            return result.map((d) => TextualEditor.createGrammarSuggestion(beforeSugText + (beforeSugText !== "" ? " " : "") + d, infoText, word));
         }
         return [];
-    };
+    }
 
     /**
      * create an array of suggestion for of Clause
@@ -925,11 +933,11 @@ class TextualEditor extends Component {
     ofSuggestionCreator(word, beforeSugText, infoText, doFilter, filterLetters) {
         if (grammar_keywords.includes(word)) {
             return autoComplete_suggestion[word].ofClause
-                .filter(d => !doFilter ? true : d.startsWith(filterLetters))
-                .map(d => TextualEditor.createGrammarSuggestion(beforeSugText + (beforeSugText !== "" ? " " : "") + d, infoText, word));
+                .filter((d) => !doFilter ? true : d.startsWith(filterLetters))
+                .map((d) => TextualEditor.createGrammarSuggestion(beforeSugText + (beforeSugText !== "" ? " " : "") + d, infoText, word));
         }
         return [];
-    };
+    }
 
     /**
      * used for creating grammar suggestion objects, each row in suggestion auto-complete
@@ -939,12 +947,12 @@ class TextualEditor extends Component {
      * @returns {{label: *, documentation: string}}
      */
     static createGrammarSuggestion(text, info, docIndex) {
-        let CompletionItem = {
+        const CompletionItem = {
             label: text,
             documentation: documentations_IMarkdownString[docIndex],
             detail: info,
             insertText: text,
-            kind: "suggestion"
+            kind: "suggestion",
         };
         if (docIndex === 0) delete CompletionItem.documentation;
         return CompletionItem;
@@ -959,8 +967,6 @@ class TextualEditor extends Component {
     static createPhraseSuggestion(text, index) {
         return {phraseText: text, startWordIndex: index};
     }
-
-
 }
 
 export default TextualEditor;

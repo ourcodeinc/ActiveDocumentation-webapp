@@ -4,7 +4,6 @@
 import {defaultXML, webSocketSendMessage} from "./coreConstants";
 
 class Utilities {
-
     static BREAK_LINE = 9000;
     /**
      * send the message to the server
@@ -13,7 +12,7 @@ class Utilities {
      * @param data
      */
     static sendToServer(ws, command, data) {
-        let messageJson = {command: command};
+        const messageJson = {command: command};
         let secondMessageJson = null;
 
         if (ws) {
@@ -21,46 +20,46 @@ class Utilities {
                 case webSocketSendMessage.modified_rule_msg:
                     messageJson.data = {
                         ruleID: data.index,
-                        ruleInfo: data
+                        ruleInfo: data,
                     };
                     break;
                 case webSocketSendMessage.modified_tag_msg:
                     messageJson.data = {
                         tagID: data.ID,
-                        tagInfo: data
+                        tagInfo: data,
                     };
                     break;
                 case webSocketSendMessage.snippet_xml_msg:
                     messageJson.data = {
                         fileName: data.fileName,
-                        xml: data.xml
+                        xml: data.xml,
                     };
                     secondMessageJson = {
                         command: webSocketSendMessage.converted_java_snippet_msg,
                         data: {
                             fileName: data.fileName,
-                            convertedJava: Utilities.removeSrcmlAnnotations(data.xml)
-                        }
+                            convertedJava: Utilities.removeSrcmlAnnotations(data.xml),
+                        },
                     };
                     break;
 
                 case webSocketSendMessage.code_to_xml_msg:
                     messageJson.data = {
                         codeText: data.codeText,
-                        messageID: data.messageID
+                        messageID: data.messageID,
                     };
                     break;
 
                 case webSocketSendMessage.new_rule_msg:
                     messageJson.data = {
                         ruleID: data.index.toString(),
-                        ruleInfo: data
+                        ruleInfo: data,
                     };
                     break;
                 case webSocketSendMessage.new_tag_msg:
                     messageJson.data = {
                         tagID: data.ID,
-                        tagInfo: data
+                        tagInfo: data,
                     };
                     break;
 
@@ -78,8 +77,8 @@ class Utilities {
 
                 case webSocketSendMessage.mine_design_rules_msg:
                     messageJson.data = {
-                        parameters : data.parameters, // should be an array
-                        algorithm: data.algorithm // selectedAlgorithm from allAlgorithms
+                        parameters: data.parameters, // should be an array
+                        algorithm: data.algorithm, // selectedAlgorithm from allAlgorithms
                     };
                     break;
 
@@ -87,17 +86,19 @@ class Utilities {
                     messageJson.command = webSocketSendMessage.snippet_xml_msg; // there is no separate command in the server
                     messageJson.data = {
                         fileName: data,
-                        xml: defaultXML
+                        xml: defaultXML,
                     };
                     break;
 
                 default:
                     break;
             }
-
+            console.log("Sending Message: ", messageJson);
             ws.send(JSON.stringify(messageJson));
-            if (secondMessageJson)
-                ws.send(JSON.stringify(secondMessageJson))
+            if (secondMessageJson) {
+                console.log("Sending Second Message: ", secondMessageJson);
+                ws.send(JSON.stringify(secondMessageJson));
+            }
         }
     }
 
@@ -109,7 +110,7 @@ class Utilities {
      * @param fileName
      * @param ws
      */
-    static sendChunkedData (messageJson, initData, fileName, ws) {
+    static sendChunkedData(messageJson, initData, fileName, ws) {
         messageJson.command += "_APPEND";
         let start = 0; let cnt = 0;
         while (start < initData.length) {
@@ -128,17 +129,17 @@ class Utilities {
      * @returns {boolean}
      */
     static ResultArraysEqual(array1, array2) {
-
         let arr1 = array1.slice(0);
-        let arr2 = array2.slice(0);
+        const arr2 = array2.slice(0);
 
-        if (arr1.length !== arr2.length)
+        if (arr1.length !== arr2.length) {
             return false;
+        }
         for (let i = arr2.length; i--;) {
-
-            let item = arr1.filter((d) => d.name === arr2[i].name);
-            if (item.length === 0)
+            const item = arr1.filter((d) => d.name === arr2[i].name);
+            if (item.length === 0) {
                 return false;
+            }
 
             // only remove one occurrence
             let removed = false;
@@ -159,14 +160,14 @@ class Utilities {
      * @returns {Document}
      */
     static cloneXML(xml) {
-        let newDocument = xml.implementation.createDocument(
-            xml.namespaceURI, //namespace to use
-            "",                     //name of the root element (or for empty document)
-            null                      //doctype (null for XML)
+        const newDocument = xml.implementation.createDocument(
+            xml.namespaceURI, // namespace to use
+            "", // name of the root element (or for empty document)
+            null, // doctype (null for XML)
         );
-        let newNode = newDocument.importNode(
-            xml.documentElement, //node to import
-            true                         //clone its descendants
+        const newNode = newDocument.importNode(
+            xml.documentElement, // node to import
+            true, // clone its descendants
         );
         newDocument.appendChild(newNode);
 
@@ -195,7 +196,7 @@ class Utilities {
         }
         arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
         return arr; // for testing purposes
-    };
+    }
 
     /**
      * a method to parse strings
@@ -220,7 +221,7 @@ class Utilities {
      * @return {*[]}
      */
     static findAllIndices(arr, element) {
-        let indices = [];
+        const indices = [];
         for (let i = 0; i < arr.length; i++) {
             if (arr[i] === element) {
                 indices.push(i);
@@ -241,7 +242,6 @@ class Utilities {
 
         return xmlString;
     }
-
 }
 
 export default Utilities;
