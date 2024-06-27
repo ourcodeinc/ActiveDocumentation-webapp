@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import OpenAI from "openai";
 
 const ConfigComponent = () => {
@@ -31,7 +31,7 @@ const ConfigComponent = () => {
 
             const chatCompletion = await openai.chat.completions.create({
                 model: "gpt-3.5-turbo",
-                messages: [{ role: "user", content: "Send me one English letter." }],
+                messages: [{role: "user", content: "Send me one English letter."}],
             });
 
             if (chatCompletion) {

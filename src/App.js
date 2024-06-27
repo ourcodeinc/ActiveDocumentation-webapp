@@ -15,7 +15,6 @@ import MinedRulesComponent from "./ui/MiningRules/minedRulesComponent";
 import {hashConst} from "./ui/uiConstants";
 
 class App extends Component {
-
     constructor(props) {
         super(props);
         /**
@@ -30,18 +29,17 @@ class App extends Component {
         }
 
         if ("onhashchange" in window) { // event supported?
-            window.onhashchange = function () {
-                let hash = window.location.hash.split("/");
+            window.onhashchange = function() {
+                const hash = window.location.hash.split("/");
                 hash.splice(0, 1); // remove #
                 props.onHashChange(hash);
-            }
-        }
-        else { // event not supported:
+            };
+        } else { // event not supported:
             let storedHash = window.location.hash;
-            window.setInterval(function () {
+            window.setInterval(function() {
                 if (window.location.hash !== storedHash) {
                     storedHash = window.location.hash;
-                    let hash = storedHash.split("/");
+                    const hash = storedHash.split("/");
                     hash.splice(0, 1); // remove #
                     props.onHashChange(hash);
                 }
@@ -50,7 +48,7 @@ class App extends Component {
 
         window.location.hash = "#/index";
 
-        this.state = {loadingGif: false}
+        this.state = {loadingGif: false};
     }
 
     render() {
@@ -66,38 +64,42 @@ class App extends Component {
                         <HeaderBar/>
                     </div>
                     <div id={"tableOfContent"}
-                         className={
-                             ([hashConst.index, hashConst.tagJsonChanged, hashConst.ruleJsonChanged].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
-                         }>
+                        className={
+                            ([hashConst.index, hashConst.tagJsonChanged, hashConst.ruleJsonChanged]
+                                .indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
+                        }>
                         <TableOfContents/>
                     </div>
                     <div id={"ruleResults"}
-                         className={
-                             ([hashConst.rules, hashConst.tag, hashConst.codeChanged, hashConst.rulesForFile, hashConst.violatedRules].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
-                         }>
+                        className={
+                            ([hashConst.rules, hashConst.tag, hashConst.codeChanged, hashConst.rulesForFile, hashConst.violatedRules]
+                                .indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
+                        }>
                         <RuleTable/>
                     </div>
                     <div id={"learnDesignRules"}
-                         className={
-                             ([hashConst.learnDesignRules].indexOf(this.props.currentHash[0]) === -1 ) ? "main container hidden" : "main container"
-                         }>
+                        className={
+                            ([hashConst.learnDesignRules].indexOf(this.props.currentHash[0]) === -1 ) ?
+                                "main container hidden" : "main container"
+                        }>
                         <MinedRulesComponent/>
                     </div>
                     <div style={{width: "100%", height: "100px"}}/>
                 </div>
             </div>
-        )
+        );
     }
 
     static getDerivedStateFromProps(props, state) {
-        if (props.loadingGif !== state.loadingGif)
+        if (props.loadingGif !== state.loadingGif) {
             return {loadingGif: props.loadingGif};
+        }
         return null;
     }
 
     renderLoading() {
         return (<div id={"loadingGif"}
-             className={(this.state.loadingGif ? "" : "hidden")}>
+            className={(this.state.loadingGif ? "" : "hidden")}>
             <div className={"overlayLoading"}>
                 <div className={"spinnerContainer"}>
                     <div className={"loadingTitle"}>
@@ -108,23 +110,22 @@ class App extends Component {
             </div>
         </div>);
     }
-
 }
 
 // map state to props
 function mapStateToProps(state) {
     return {
         currentHash: state.currentHash,
-        loadingGif: state.loadingGif
-    }
+        loadingGif: state.loadingGif,
+    };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         onHashChange: (hash) => {
             dispatch(hashChange(hash));
-        }
-    }
+        },
+    };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

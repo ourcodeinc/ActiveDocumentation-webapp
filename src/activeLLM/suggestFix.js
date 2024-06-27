@@ -8,7 +8,6 @@ export async function suggestFix(
     violationFilePath,
     setState,
 ) {
-
     const prompt = `Here is a design rule and its description: ${rule}
     Here is a code example that follows this design rule: ${example}
     The example file path is ${exampleFilePath}

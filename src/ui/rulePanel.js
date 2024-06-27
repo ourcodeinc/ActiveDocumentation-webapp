@@ -22,7 +22,6 @@ import {hashConst, none_filePath} from "./uiConstants";
 import {suggestFix} from "../activeLLM/suggestFix";
 
 class RulePanel extends Component {
-
     constructor(props) {
         super(props);
         this.ruleIndex = props.ruleIndex !== undefined ? props.ruleIndex : -1;
@@ -60,17 +59,17 @@ class RulePanel extends Component {
             filesFolders: [],
             tags: [],
 
-            filePath: none_filePath
+            filePath: none_filePath,
         };
 
         // existing rule
         if (!this.newRuleRequest && this.ruleIndex !== -1) {
-            let indices = props.rules.map(d => d.index);
-            let arrayIndex = indices.indexOf(this.ruleIndex);
-            if (arrayIndex === -1)
+            const indices = props.rules.map((d) => d.index);
+            const arrayIndex = indices.indexOf(this.ruleIndex);
+            if (arrayIndex === -1) {
                 console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
                 Only ${indices.toString()} are found as indices.`);
-            else {
+            } else {
                 this.ruleI = props.rules[arrayIndex];
                 this.state.title = this.ruleI.title;
                 this.state.description = this.ruleI.description;
@@ -85,34 +84,35 @@ class RulePanel extends Component {
 
         this.caretClass = {
             true: {cursor: "pointer", color: "black"},
-            false: {cursor: "pointer", color: "darkgrey"}
+            false: {cursor: "pointer", color: "darkgrey"},
         };
 
         this.editIconClass = {
             true: {color: "#337ab7", cursor: "pointer"},
-            false: {color: "black", cursor: "pointer"}
+            false: {color: "black", cursor: "pointer"},
         };
     }
 
     render() {
         if (!this.ruleI && !this.state.editMode) return null;
-        if (this.state.editMode)
+        if (this.state.editMode) {
             return (
                 <RulePad ruleIndex={this.ruleIndex}
-                         changeEditMode={() => this.changeEditMode()}/>);
+                    changeEditMode={() => this.changeEditMode()}/>);
+        }
         return (
             <div className={this.state.className}>
                 <FormGroup>
                     <div style={{float: "right"}}>
                         <FaCaretUp size={20} onClick={() => this.setState({openPanel: false})}
-                                   style={this.caretClass[this.state.openPanel.toString()]}
-                                   className={"react-icons"}/>
+                            style={this.caretClass[this.state.openPanel.toString()]}
+                            className={"react-icons"}/>
                         <FaCaretDown size={20} onClick={() => this.setState({openPanel: true})}
-                                     style={this.caretClass[(!this.state.openPanel).toString()]}
-                                     className={"react-icons"}/>
+                            style={this.caretClass[(!this.state.openPanel).toString()]}
+                            className={"react-icons"}/>
                         <MdEdit size={20} style={this.editIconClass[this.state.editMode.toString()]}
-                                onClick={() => this.changeEditMode()}
-                                className={"react-icons"}/>
+                            onClick={() => this.changeEditMode()}
+                            className={"react-icons"}/>
                     </div>
                     <ControlLabel>{this.state.title}</ControlLabel>
                     <p>{this.state.description}</p>
@@ -124,13 +124,14 @@ class RulePanel extends Component {
                         </div>
                         <div style={{paddingTop: "10px", clear: "both"}}>
                             <Tabs animation={true} id={"rules_" + this.ruleIndex}
-                                  activeKey={this.state.activeTab}
-                                  onSelect={(key) => {
-                                      if (this.state.activeTab === key)
-                                          this.setState({activeTab: 0});
-                                      else
-                                          this.setState({activeTab: key});
-                                  }}>
+                                activeKey={this.state.activeTab}
+                                onSelect={(key) => {
+                                    if (this.state.activeTab === key) {
+                                        this.setState({activeTab: 0});
+                                    } else {
+                                        this.setState({activeTab: key});
+                                    }
+                                }}>
                                 <Tab eventKey={0} disabled>{}</Tab>
                                 <Tab eventKey={"satisfied"} title={this.renderTabHeader("satisfied")}>
                                     {this.renderListOfSnippets("satisfied")}
@@ -149,12 +150,12 @@ class RulePanel extends Component {
     UNSAFE_componentWillReceiveProps(nextProps) {
         let newState = {};
         this.ruleIndex = nextProps.ruleIndex !== undefined ? nextProps.ruleIndex : -1;
-        let arrayIndex = nextProps.rules.map(d => d.index).indexOf(this.ruleIndex);
+        const arrayIndex = nextProps.rules.map((d) => d.index).indexOf(this.ruleIndex);
         if (this.ruleIndex >= 0) {
-            if (arrayIndex === -1)
+            if (arrayIndex === -1) {
                 console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
-                Only ${nextProps.rules.map(d => d.index).toString()} are found as indices.`);
-            else {
+                Only ${nextProps.rules.map((d) => d.index).toString()} are found as indices.`);
+            } else {
                 this.ruleI = nextProps.rules[arrayIndex];
                 newState = {
                     title: this.ruleI.title,
@@ -162,41 +163,37 @@ class RulePanel extends Component {
                     ruleTags: this.ruleI.tags,
                     folderConstraint: this.ruleI.checkForFilesFoldersConstraints,
                     filesFolders: this.ruleI.checkForFilesFolders,
-                    editMode: false
+                    editMode: false,
                 };
             }
         }
 
         if (nextProps.message === reduxStoreMessages.hash_msg) {
-            let panelState = this.newUpdateStateUponCodeChange(nextProps.codeChanged, nextProps.filePath);
+            const panelState = this.newUpdateStateUponCodeChange(nextProps.codeChanged, nextProps.filePath);
             this.setState({...panelState, ...newState, filePath: nextProps.filePath});
-        }
-        else if (nextProps.message === reduxStoreMessages.file_path_update_msg) {
+        } else if (nextProps.message === reduxStoreMessages.file_path_update_msg) {
             this.setState({...newState, filePath: nextProps.filePath});
-        }
-        else if (nextProps.message === reduxStoreMessages.change_edit_mode_msg) {
-            let indices = nextProps.rules.map(d => d.index);
-            let arrayIndex = indices.indexOf(this.ruleIndex);
+        } else if (nextProps.message === reduxStoreMessages.change_edit_mode_msg) {
+            const indices = nextProps.rules.map((d) => d.index);
+            const arrayIndex = indices.indexOf(this.ruleIndex);
             if (this.ruleIndex !== -1) {
-                if (arrayIndex === -1)
+                if (arrayIndex === -1) {
                     console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
                 Only ${indices.toString()} are found as indices.`);
-                else {
+                } else {
                     this.ruleI = nextProps.rules[arrayIndex];
                     newState.editMode = this.ruleI.rulePanelState.editMode;
                     this.setState({...newState, filePath: nextProps.filePath});
                 }
             }
-        }
-
-        // existing rule
-        else if (nextProps.message === reduxStoreMessages.update_rule_table_msg && this.ruleIndex !== -1) {
+        } else if (nextProps.message === reduxStoreMessages.update_rule_table_msg && this.ruleIndex !== -1) {
+            // existing rule
             if (arrayIndex !== -1) {
                 if (this.ruleI.rulePanelState.editMode && !this.state.editMode) {
                     newState.editMode = true;
                     this.setState({...newState, filePath: nextProps.filePath});
                 } else {
-                    let panelState = this.newUpdateStateUponCodeChange(nextProps.codeChanged, nextProps.filePath);
+                    const panelState = this.newUpdateStateUponCodeChange(nextProps.codeChanged, nextProps.filePath);
                     this.setState({...newState, ...panelState, filePath: nextProps.filePath});
                 }
             }
@@ -207,7 +204,7 @@ class RulePanel extends Component {
      * set the states "openPanel" and "className" after mounting.
      */
     componentDidMount() {
-        let panelState = this.newUpdateStateUponCodeChange(this.props.codeChanged, this.state.filePath);
+        const panelState = this.newUpdateStateUponCodeChange(this.props.codeChanged, this.state.filePath);
         this.setState(panelState);
     }
 
@@ -217,14 +214,14 @@ class RulePanel extends Component {
      */
     renderTabHeader(group) {
         // sum up the number of satisfied and violated
-        let totalSatisfied = 0, totalViolated = 0;
+        let totalSatisfied = 0; let totalViolated = 0;
         for (let i = 0; i < this.ruleI.xPathQueryResult.length; i++) {
             totalSatisfied += this.ruleI.xPathQueryResult[i].data.satisfied;
-            totalViolated += this.ruleI.xPathQueryResult[i].data.violated
+            totalViolated += this.ruleI.xPathQueryResult[i].data.violated;
         }
 
-        let fileSatisfied = 0, fileViolated = 0;
-        let file = this.ruleI.xPathQueryResult.filter(d => d.filePath === this.state.filePath);
+        let fileSatisfied = 0; let fileViolated = 0;
+        const file = this.ruleI.xPathQueryResult.filter((d) => d.filePath === this.state.filePath);
         if (file.length > 0) {
             fileSatisfied = file[0].data.satisfied;
             fileViolated = file[0].data.violated;
@@ -283,17 +280,17 @@ class RulePanel extends Component {
      */
     renderTags() {
         return (this.ruleI.tags).map((d, i) => {
-            let tagFilter = this.state.tagTable.filter((tt) => tt.tagName === d);
+            const tagFilter = this.state.tagTable.filter((tt) => tt.tagName === d);
             if (tagFilter.length !== 1) {
                 return (
                     <div className="buttonDiv" key={i}>
                         <Label>{d}</Label>
-                    </div>)
+                    </div>);
             }
             return (
                 <div className="buttonDiv" key={i}>
                     <Label onClick={() => window.location.hash = `#/${hashConst.tag}/${tagFilter[0].ID}`}>{d}</Label>
-                </div>)
+                </div>);
         });
     }
 
@@ -302,9 +299,8 @@ class RulePanel extends Component {
      * @param group {string}
      */
     renderListOfSnippets(group) {
-
-        let otherFilesList = [], fileList = [];
-        let file = this.ruleI.xPathQueryResult.filter(d => d.filePath === this.state.filePath);
+        let otherFilesList = []; let fileList = [];
+        const file = this.ruleI.xPathQueryResult.filter((d) => d.filePath === this.state.filePath);
 
         let exampleSnippet = null;
         let exampleFoundInOpenFile = false;
@@ -313,28 +309,31 @@ class RulePanel extends Component {
         switch (group) {
             case "all":
                 if (this.state.filePath !== none_filePath) {
-                    if (file.length > 0)
+                    if (file.length > 0) {
                         fileList = file[0].data.quantifierResult;
+                    }
                 }
                 for (let i = 0; i < this.ruleI.xPathQueryResult.length; i++) {
                     if (this.ruleI.xPathQueryResult[i].filePath === this.state.filePath) continue;
-                    otherFilesList = otherFilesList.concat(this.ruleI.xPathQueryResult[i].data.quantifierResult)
+                    otherFilesList = otherFilesList.concat(this.ruleI.xPathQueryResult[i].data.quantifierResult);
                 }
                 break;
             case "satisfied":
                 if (this.state.filePath !== none_filePath) {
-                    if (file.length > 0)
+                    if (file.length > 0) {
                         fileList = file[0].data.satisfiedResult;
+                    }
                 }
                 for (let i = 0; i < this.ruleI.xPathQueryResult.length; i++) {
                     if (this.ruleI.xPathQueryResult[i].filePath === this.state.filePath) continue;
-                    otherFilesList = otherFilesList.concat(this.ruleI.xPathQueryResult[i].data.satisfiedResult)
+                    otherFilesList = otherFilesList.concat(this.ruleI.xPathQueryResult[i].data.satisfiedResult);
                 }
                 break;
             case "violated":
                 if (this.state.filePath !== none_filePath) {
-                    if (file.length > 0)
+                    if (file.length > 0) {
                         fileList = file[0].data.violatedResult;
+                    }
                 }
                 for (let i = 0; i < this.ruleI.xPathQueryResult.length; i++) {
                     // NOTE: added example snippet
@@ -378,9 +377,10 @@ class RulePanel extends Component {
                 break;
         }
 
-        let returnList = (list) => {
-            if (list.length === 0)
+        const returnList = (list) => {
+            if (list.length === 0) {
                 return (<h5>No snippet</h5>);
+            }
             return list.map((d, i) => {
                 return (
                     <SnippetView
@@ -397,7 +397,7 @@ class RulePanel extends Component {
             });
         };
 
-        let headerText = group === "all" ? "Matches" : group === "satisfied" ?
+        const headerText = group === "all" ? "Matches" : group === "satisfied" ?
             "Example Snippet" : "Violated snippet";
 
         return (
@@ -411,7 +411,7 @@ class RulePanel extends Component {
                 ) : null}
                 <div>{returnList(otherFilesList)}</div>
             </div>
-        )
+        );
     }
 
 
@@ -424,33 +424,38 @@ class RulePanel extends Component {
     newUpdateStateUponCodeChange(codeChanged, filePath) {
         if (!codeChanged) {
             let open;
-            if (filePath === none_filePath)
+            if (filePath === none_filePath) {
                 open = true;
-            else
-                open = this.ruleI.xPathQueryResult.filter(d => d.filePath === filePath).length > 0;
+            } else {
+                open = this.ruleI.xPathQueryResult.filter((d) => d.filePath === filePath).length > 0;
+            }
             return {
                 className: "rulePanelDiv" + (this.newRuleRequest ? " edit-bg" : ""),
-                openPanel: open
+                openPanel: open,
             };
         }
 
-        let file = this.ruleI.xPathQueryResult.filter(d => d.filePath === filePath);
-        let ruleIFile = file.length !== 0 ? file[0].data : {};
-        if (ruleIFile.allChanged === relatives.greater && ruleIFile.satisfiedChanged === relatives.none
-            && ruleIFile.violatedChanged === relatives.none) {
+        const file = this.ruleI.xPathQueryResult.filter((d) => d.filePath === filePath);
+        const ruleIFile = file.length !== 0 ? file[0].data : {};
+        if (ruleIFile.allChanged === relatives.greater && ruleIFile.satisfiedChanged === relatives.none &&
+            ruleIFile.violatedChanged === relatives.none) {
             return {openPanel: true, className: "rulePanelDiv blue-bg"};
         }
-        if (ruleIFile.satisfiedChanged === relatives.greater)
+        if (ruleIFile.satisfiedChanged === relatives.greater) {
             return {openPanel: true, className: "rulePanelDiv green-bg"};
+        }
 
-        if (ruleIFile.violatedChanged === relatives.greater)
+        if (ruleIFile.violatedChanged === relatives.greater) {
             return {openPanel: true, className: "rulePanelDiv red-bg"};
+        }
 
-        if (file.length > 0)
+        if (file.length > 0) {
             return {openPanel: true, className: "rulePanelDiv"};
+        }
 
-        if (ruleIFile.violated === 0)
+        if (ruleIFile.violated === 0) {
             return {openPanel: false, className: "rulePanelDiv"};
+        }
 
         return {openPanel: false, className: "rulePanelDiv"};
     }
@@ -459,7 +464,7 @@ class RulePanel extends Component {
      * change edit mode, set the states
      */
     changeEditMode() {
-        this.props.onChangeEditMode(this.ruleIndex, !this.state.editMode)
+        this.props.onChangeEditMode(this.ruleIndex, !this.state.editMode);
     }
 }
 
@@ -472,15 +477,15 @@ function mapStateToProps(state) {
         filePath: [hashConst.rulesForFile, hashConst.codeChanged].indexOf(state.currentHash[0]) !== -1 ?
             (state.openFilePath) : none_filePath,
         ws: state.ws,
-        message: state.message
+        message: state.message,
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         onIgnoreFile: (shouldIgnore) => dispatch(ignoreFileChange(shouldIgnore)),
-        onChangeEditMode: (ruleIndex, newEditMode) => dispatch(changeEditMode(ruleIndex, newEditMode))
-    }
+        onChangeEditMode: (ruleIndex, newEditMode) => dispatch(changeEditMode(ruleIndex, newEditMode)),
+    };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(RulePanel);
@@ -564,7 +569,7 @@ class SnippetView extends Component {
         return (
             <section>
                 <div data-file-path={this.state.d.filePath} className="snippetDiv"
-                     style={{position: "relative"}}>
+                    style={{position: "relative"}}>
                     <div className="link" onClick={() => {
                         this.props.onIgnoreFile(true);
                         Utilities.sendToServer(this.props.ws, webSocketSendMessage.snippet_xml_msg,
@@ -590,10 +595,10 @@ class SnippetView extends Component {
 
                     {this.state.suggestionCreated && !this.state.suggestedSnippet && (
                         <h2 style={{
-                            color: 'black',
-                            fontSize: '1.25em',
-                            fontWeight: 'bold',
-                            textAlign: 'center'
+                            color: "black",
+                            fontSize: "1.25em",
+                            fontWeight: "bold",
+                            textAlign: "center",
                         }}>{"Loading Fix..."}</h2>
                     )}
 
@@ -636,7 +641,7 @@ class SnippetView extends Component {
             d: nextProps.d,
             description: nextProps.description,
             exampleSnippet: nextProps.exampleSnippet,
-            exampleFilePath: nextProps.exampleFilePath
+            exampleFilePath: nextProps.exampleFilePath,
         });
     }
 }

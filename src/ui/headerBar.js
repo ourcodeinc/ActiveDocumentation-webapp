@@ -13,7 +13,6 @@ import {webSocketSendMessage} from "../core/coreConstants";
 import {hashConst} from "./uiConstants";
 
 export class HeaderBar extends Component {
-
     render() {
         return (
             <div style={{paddingBottom: "30px"}} id="headerBar">
@@ -25,7 +24,7 @@ export class HeaderBar extends Component {
                     {this.renderHeader()}
                 </div>
             </div>
-        )
+        );
     }
 
     renderHeader() {
@@ -36,21 +35,21 @@ export class HeaderBar extends Component {
                         <span className="text-16 primary">Rules related to tag: </span><br/>
                         <span className="text-24 important">{this.props.title}</span>
                         <FormControl componentClass="textarea" defaultValue={this.props.content} style={{resize: "vertical"}}
-                                     onBlur={(e) => {
-                                         if (e.target.value !== this.props.tag.detail) {
-                                             let filtered = this.props.tagTable.filter((d) => d.tagName === this.props.tag.tagName);
-                                             if (filtered.length === 1) {
-                                                 filtered[0].detail = e.target.value;
-                                                 Utilities.sendToServer(this.props.ws, webSocketSendMessage.modified_tag_msg, filtered[0]);
-                                             }
-                                         }
-                                     }}
-                                     key={new Date()}
-                                     placeholder="Information about tag"
-                                     onClick={(e) => {
-                                         e.target.style.cssText = "height:0";
-                                         e.target.style.cssText = `overflow:hidden;height:${e.target.scrollHeight}px`;
-                                     }}/>
+                            onBlur={(e) => {
+                                if (e.target.value !== this.props.tag.detail) {
+                                    const filtered = this.props.tagTable.filter((d) => d.tagName === this.props.tag.tagName);
+                                    if (filtered.length === 1) {
+                                        filtered[0].detail = e.target.value;
+                                        Utilities.sendToServer(this.props.ws, webSocketSendMessage.modified_tag_msg, filtered[0]);
+                                    }
+                                }
+                            }}
+                            key={new Date()}
+                            placeholder="Information about tag"
+                            onClick={(e) => {
+                                e.target.style.cssText = "height:0";
+                                e.target.style.cssText = `overflow:hidden;height:${e.target.scrollHeight}px`;
+                            }}/>
                     </div>
                 );
             case hashConst.rule:
@@ -96,9 +95,7 @@ export class HeaderBar extends Component {
                     </div>
                 );
         }
-
     }
-
 }
 
 // map state to props
@@ -121,14 +118,14 @@ export class HeaderBar extends Component {
  * ws:any, projectPath: string, openFilePath:string}}
  */
 function mapStateToProps(state) {
-    let props = {
+    const props = {
         tagTable: state.tagTable,
         currentHash: state.currentHash,
         ws: state.ws,
         projectPath: state.projectPath,
         tag: "",
         title: "",
-        content: ""
+        content: "",
     };
 
     switch (state.currentHash[0]) {
@@ -136,6 +133,7 @@ function mapStateToProps(state) {
             try {
                 props.tag = state.tagTable.filter((d) => d.ID === state.currentHash[1])[0];
             } catch {
+                console.log(`Invalid tag: ${props.tag}`);
             }
             props.title = props.tag.tagName;
             props.content = props.tag.detail;
@@ -171,7 +169,6 @@ function mapStateToProps(state) {
     }
 
     return props;
-
 }
 
 export default connect(mapStateToProps, null)(HeaderBar);

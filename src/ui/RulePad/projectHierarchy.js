@@ -14,7 +14,6 @@ import {SplitButton, MenuItem, Button} from "react-bootstrap";
 
 
 export class ProjectHierarchy extends Component {
-
     constructor(props) {
         super(props);
 
@@ -24,18 +23,19 @@ export class ProjectHierarchy extends Component {
     render() {
         return (
             <div>
-                <div style={{display: "inline-block", paddingRight: "15px", marginLeft: "3px"}} data-tip={"React-tooltip"} data-for={"save"}>
+                <div style={{display: "inline-block", paddingRight: "15px", marginLeft: "3px"}}
+                    data-tip={"React-tooltip"} data-for={"save"}>
                     <MdSave size={20} className={"MdSave react-icons"}
-                             onClick={() => {
-                                 let newPath = [];
-                                 this.state.dropDowns.forEach(item => {
-                                     item.itemData["properties"]["fileName"] ?
-                                         newPath.push(item.itemData["properties"]["fileName"]) :
-                                         newPath.push(item.itemData["properties"]["name"])
-                                 });
-                                 this.props["onSubmit"](newPath.join("/"));
-                                 this.setState({dropDowns: [{itemData: this.props.projectHierarchy}]})
-                             }}/>
+                        onClick={() => {
+                            const newPath = [];
+                            this.state.dropDowns.forEach((item) => {
+                                item.itemData["properties"]["fileName"] ?
+                                    newPath.push(item.itemData["properties"]["fileName"]) :
+                                    newPath.push(item.itemData["properties"]["name"]);
+                            });
+                            this.props["onSubmit"](newPath.join("/"));
+                            this.setState({dropDowns: [{itemData: this.props.projectHierarchy}]});
+                        }}/>
 
                 </div>
                 <ReactToolTip place={"top"} type={"dark"} effect={"solid"} id={"save"} delayShow={300}>
@@ -45,34 +45,35 @@ export class ProjectHierarchy extends Component {
                     {this.renderDropDowns()}
                 </div>
             </div>
-        )
+        );
     }
 
     renderDropDowns() {
         return this.state.dropDowns.map((myData, i) => {
-            let title = myData["itemData"]["properties"]["fileName"] ? myData["itemData"]["properties"]["fileName"] : myData["itemData"]["properties"]["name"];
-            if (myData["itemData"].hasOwnProperty("children"))
+            const title = myData["itemData"]["properties"]["fileName"] ?
+                myData["itemData"]["properties"]["fileName"] : myData["itemData"]["properties"]["name"];
+            if (myData["itemData"].hasOwnProperty("children")) {
                 return (
                     <div key={i} style={{float: "left"}}>
                         <SplitButton bsStyle={"default"}
-                                     title={title}
-                                     id={"hierarchy"}
-                                     onSelect={(evt) => this.updateDropDownList(evt)}
-                                     onClick={() => {
-                                         this.updateDropDownList(myData["itemData"]["properties"]["canonicalPath"])
-                                     }}>
+                            title={title}
+                            id={"hierarchy"}
+                            onSelect={(evt) => this.updateDropDownList(evt)}
+                            onClick={() => {
+                                this.updateDropDownList(myData["itemData"]["properties"]["canonicalPath"]);
+                            }}>
 
                             {/* filter directory state_children */}
                             {myData["itemData"]["children"]
                                 .filter((d) => {
-                                    return d["properties"]["isDirectory"]
+                                    return d["properties"]["isDirectory"];
                                 })
                                 .map((child, i) => {
                                     return (
                                         <MenuItem
                                             eventKey={child["properties"]["canonicalPath"]}
                                             key={i}>{child["properties"]["name"]}</MenuItem>
-                                    )
+                                    );
                                 })}
 
                             <MenuItem divider/>
@@ -80,31 +81,30 @@ export class ProjectHierarchy extends Component {
                             {/* filter normal file state_children */}
                             {myData["itemData"]["children"]
                                 .filter((d) => {
-                                    return !d["properties"]["isDirectory"]
+                                    return !d["properties"]["isDirectory"];
                                 })
                                 .map((child, i) => {
                                     return (
-                                        <MenuItem
-                                            eventKey={child["properties"]["canonicalPath"]}
-                                            key={i}>{child["properties"]["fileName"] ? child["properties"]["fileName"] : child["properties"]["name"]}</MenuItem>
-                                    )
+                                        <MenuItem eventKey={child["properties"]["canonicalPath"]} key={i}>
+                                            {child["properties"]["fileName"] ?
+                                                child["properties"]["fileName"] : child["properties"]["name"]}</MenuItem>
+                                    );
                                 })}
                         </SplitButton>
                     </div>
                 );
-            else
+            } else {
                 return (
                     <div key={i} style={{float: "left"}}>
                         <Button onClick={() => {
-                            this.dropDownOnSelect(myData["data"]["properties"]["canonicalPath"])
+                            this.dropDownOnSelect(myData["data"]["properties"]["canonicalPath"]);
                         }}>
                             {title}
                         </Button>
                     </div>
                 );
-
-        })
-
+            }
+        });
     }
 
     /**
@@ -122,14 +122,17 @@ export class ProjectHierarchy extends Component {
         });
 
         // remove i+1 to end
-        let clonedArray = this.state.dropDowns.slice(0);
-        while (indexToKeep < clonedArray.length - 1)
+        const clonedArray = this.state.dropDowns.slice(0);
+        while (indexToKeep < clonedArray.length - 1) {
             clonedArray.splice(indexToKeep + 1, clonedArray.length - indexToKeep - 1);
+        }
 
         // find the node of the new selection among state_children of the parent
-        let newData = this.state.dropDowns[indexToKeep]["itemData"]["children"].filter((d, i) => d["properties"]["canonicalPath"] === canonicalPath);
-        if (newData.length > 0)
+        const newData = this.state.dropDowns[indexToKeep]["itemData"]["children"]
+            .filter((d) => d["properties"]["canonicalPath"] === canonicalPath);
+        if (newData.length > 0) {
             clonedArray.push({itemData: newData[0]});
+        }
 
         this.setState({dropDowns: clonedArray});
     }
@@ -140,12 +143,11 @@ export class ProjectHierarchy extends Component {
      * @param evt: eventKey in MenuItem
      */
     dropDownOnSelect(evt) {
-        let nameParent = evt.split(",");
-        if (nameParent.length > 1)
+        const nameParent = evt.split(",");
+        if (nameParent.length > 1) {
             this.updateDropDownList(nameParent[0], nameParent[1]);
+        }
     }
-
-
 }
 
 

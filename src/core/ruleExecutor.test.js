@@ -1,7 +1,6 @@
 import {removeSiblingFunctionBodies, removeFunctionBodies} from "./ruleExecutor";
 
 describe("removeFunctionBodies", () => {
-
     /*
     public class myClass {
        @Id
@@ -176,7 +175,7 @@ describe("removeFunctionBodies", () => {
 
     it("should remove function body of a given function", () => {
         const input = parser.parseFromString(xmlString, "text/xml");
-        const functions = input.getElementsByTagNameNS(namespaceURI, 'function');
+        const functions = input.getElementsByTagNameNS(namespaceURI, "function");
         const firstFunction = functions[0];
 
         removeFunctionBodies(firstFunction);
@@ -187,7 +186,7 @@ describe("removeFunctionBodies", () => {
 
     it("should remove function body of a given constructor", () => {
         const input = parser.parseFromString(xmlString, "text/xml");
-        const constructors = input.getElementsByTagNameNS(namespaceURI, 'constructor');
+        const constructors = input.getElementsByTagNameNS(namespaceURI, "constructor");
         const firstConstructor = constructors[0];
 
         removeFunctionBodies(firstConstructor);
@@ -198,7 +197,7 @@ describe("removeFunctionBodies", () => {
 
     it("case 2 of getSurroundingNodes, class Node", () => {
         const input = parser.parseFromString(xmlString, "text/xml");
-        const classes = input.getElementsByTagNameNS(namespaceURI, 'class');
+        const classes = input.getElementsByTagNameNS(namespaceURI, "class");
         let node = classes[0];
 
         // case 2: class, field
@@ -215,7 +214,7 @@ describe("removeFunctionBodies", () => {
 
     it("case 2 of getSurroundingNodes, class field Node", () => {
         const input = parser.parseFromString(xmlString, "text/xml");
-        const decls = input.getElementsByTagNameNS(namespaceURI, 'decl_stmt');
+        const decls = input.getElementsByTagNameNS(namespaceURI, "decl_stmt");
         let node = decls[0];
 
         // case 2: class, field
@@ -232,7 +231,7 @@ describe("removeFunctionBodies", () => {
 
     it("should remove function bodies of siblings of a given function", () => {
         const input = parser.parseFromString(xmlString, "text/xml");
-        const functions = input.getElementsByTagNameNS(namespaceURI, 'function');
+        const functions = input.getElementsByTagNameNS(namespaceURI, "function");
         const firstFunction = functions[0];
 
         removeSiblingFunctionBodies(firstFunction);
@@ -243,7 +242,7 @@ describe("removeFunctionBodies", () => {
 
     it("should remove function bodies of siblings of a given constructor", () => {
         const input = parser.parseFromString(xmlString, "text/xml");
-        const constructors = input.getElementsByTagNameNS(namespaceURI, 'constructor');
+        const constructors = input.getElementsByTagNameNS(namespaceURI, "constructor");
         const firstConstructor = constructors[0];
 
         removeSiblingFunctionBodies(firstConstructor);
@@ -254,7 +253,7 @@ describe("removeFunctionBodies", () => {
 
     it("case 3 of getSurroundingNodes, node within a function", () => {
         const input = parser.parseFromString(xmlString, "text/xml");
-        const comments = input.getElementsByTagNameNS(namespaceURI, 'comment');
+        const comments = input.getElementsByTagNameNS(namespaceURI, "comment");
         let node = comments[1]; // body of the first function
 
         // case 3: other, statements (starting node within method or at method signature)

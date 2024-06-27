@@ -11,7 +11,7 @@ import {
     updateRuleTable, updateTagTable,
     updateWS, updateXmlFiles,
     updateProjectHierarchyData, updatedMinedRules, updateProjectPath,
-    updateLoadingGif, updateFocusedElementData, updateDoiInformation, requestMineRulesForElement
+    updateLoadingGif, updateFocusedElementData, updateDoiInformation, requestMineRulesForElement,
 } from "../actions";
 import {checkRulesForAll, checkRulesForFile, runRulesByTypes} from "./ruleExecutor";
 import {webSocketReceiveMessage} from "./coreConstants";
@@ -21,35 +21,32 @@ import Utilities from "./utilities";
 import {hashConst} from "../ui/uiConstants";
 
 class WebSocketManager extends Component {
-
     constructor(props) {
         super(props);
 
-        let xmlData = []; // [{filePath: "", xml: ""}]
+        const xmlData = []; // [{filePath: "", xml: ""}]
         let ruleTable = [];
         let tagTable = [];
-        let ws = new WebSocket("ws://localhost:8887");
+        const ws = new WebSocket("ws://localhost:8887");
         let projectPath = "";
 
         this.props.onUpdateWS(ws);
 
-        ws.onopen = function () {};
+        ws.onopen = function() {};
 
         if (!window.WebSocket) {
             alert("FATAL: WebSocket not natively supported. This demo will not work!");
         }
 
         ws.onmessage = async (e) => {
+            const message = Utilities.parseJson(e.data, "the received message", {command: ""});
 
-            let message = Utilities.parseJson(e.data, "the received message", {command: ""});
-
-            //console.log("Received message: ");
+            // console.log("Received message: ");
             if (message.command !== "XML") {
                 console.log("Received message: ", message);
             }
-            
-            switch (message.command) {
 
+            switch (message.command) {
                 case webSocketReceiveMessage.enter_chat_msg:
                     this.props.onLoadingGif(true);
                     break;
@@ -90,17 +87,18 @@ class WebSocketManager extends Component {
 
                 case webSocketReceiveMessage.update_xml_file_msg:
                     // data: {filePath: "", xml: ""}
-                    let filteredXML = xmlData.filter((d) => d.filePath === message.data["filePath"]);
-                    if (filteredXML.length === 0)
+                    const filteredXML = xmlData.filter((d) => d.filePath === message.data["filePath"]);
+                    if (filteredXML.length === 0) {
                         xmlData.push({"filePath": message.data["filePath"], "xml": message.data["xml"]});
-                    else
+                    } else {
                         filteredXML[0].xml = message.data["xml"];
+                    }
                     this.props.onUpdateXmlFiles(xmlData);
                     break;
 
                 case webSocketReceiveMessage.check_rules_for_file_msg:
                     // data: "filePath"
-                    let filePath = message.data;
+                    const filePath = message.data;
                     ruleTable = checkRulesForFile(xmlData, ruleTable, filePath);
                     this.props.onFilePathChange(filePath);
                     this.props.onUpdateRuleTable(ruleTable);
@@ -109,13 +107,14 @@ class WebSocketManager extends Component {
 
                 case webSocketReceiveMessage.update_tag_msg:
                     // data: {tagID: longNumber, tagInfo: {...}}
-                    let newTag = message.data["tagInfo"];
-                    let filteredTag = tagTable.filter((d) => d.tagName === newTag["tagName"]);
-                    if (filteredTag.length === 0)
+                    const newTag = message.data["tagInfo"];
+                    const filteredTag = tagTable.filter((d) => d.tagName === newTag["tagName"]);
+                    if (filteredTag.length === 0) {
                         tagTable.push(newTag);
-                    else
+                    } else {
                         tagTable.filter((d) => d.tagName === newTag["tagName"])[0].detail = newTag["detail"];
-                    window.location.hash = `#/${hashConst.tag}/` + data["tagID"];
+                    }
+                    window.location.hash = `#/${hashConst.tag}/` + message.data["tagID"];
 
                     break;
                 case webSocketReceiveMessage.failed_update_tag_msg:
@@ -124,7 +123,7 @@ class WebSocketManager extends Component {
 
                 case webSocketReceiveMessage.update_rule_msg:
                     // data: {ruleID: longNumber, ruleInfo: {...}}
-                    let updatedRule = message.data["ruleInfo"];
+                    const updatedRule = message.data["ruleInfo"];
                     try {
                         let ruleIndex = -1;
                         ruleTable.forEach((d, i) => +d.index === +updatedRule.index ? ruleIndex = i : "");
@@ -146,7 +145,7 @@ class WebSocketManager extends Component {
 
                 case webSocketReceiveMessage.new_rule_msg:
                     // data: {ruleID: longNumber, ruleInfo: {...}}
-                    let newAddedRule = message.data["ruleInfo"];
+                    const newAddedRule = message.data["ruleInfo"];
                     ruleTable.push(newAddedRule);
                     // received by RuleExecutor
                     ruleTable[ruleTable.length - 1] = runRulesByTypes(xmlData, newAddedRule);
@@ -169,7 +168,7 @@ class WebSocketManager extends Component {
 
                 case webSocketReceiveMessage.file_change_in_ide_msg:
                     // data: "filePath"
-                    let focusedFilePath = message.data;
+                    const focusedFilePath = message.data;
                     if (this.props.ignoreFileChange) {
                         this.props.onFalsifyIgnoreFile();
                     } else {
@@ -178,13 +177,13 @@ class WebSocketManager extends Component {
                     }
                     break;
 
-                /* Mining Rules */
+                    /* Mining Rules */
 
                 case webSocketReceiveMessage.element_info_for_mine_rules:
                     window.location.hash = `#/${hashConst.learnDesignRules}/`;
-                    let focusedElementFile = xmlData.filter(d => d.filePath === message.data["filePath"]);
+                    const focusedElementFile = xmlData.filter((d) => d.filePath === message.data["filePath"]);
                     if (focusedElementFile.length > 0) {
-                        let focusedElementData = getDataForFocusedElement(
+                        const focusedElementData = getDataForFocusedElement(
                             focusedElementFile[0], message.data["startOffset"]);
                         focusedElementData.filePath = message.data["filePath"].replace(projectPath, "");
                         this.props.onUpdateFocusedElementData(focusedElementData);
@@ -193,13 +192,13 @@ class WebSocketManager extends Component {
 
                 case webSocketReceiveMessage.doi_information:
                     // "recentVisitedFiles", "recentSearches", "recentVisitedElements"
-                    let recentVisitedFiles = Utilities.parseJson(message.data["recentVisitedFiles"],
+                    const recentVisitedFiles = Utilities.parseJson(message.data["recentVisitedFiles"],
                         "recentVisitedFiles", []);
-                    let recentSearchKeywords = Utilities.parseJson(message.data["recentSearches"],
+                    const recentSearchKeywords = Utilities.parseJson(message.data["recentSearches"],
                         "recentSearches", []);
-                    let recentVisitedElements = Utilities.parseJson(message.data["recentVisitedElements"],
+                    const recentVisitedElements = Utilities.parseJson(message.data["recentVisitedElements"],
                         "recentVisitedElements", []);
-                    let newDoiInformation = processDoiInformation(recentVisitedFiles, recentSearchKeywords,
+                    const newDoiInformation = processDoiInformation(recentVisitedFiles, recentSearchKeywords,
                         recentVisitedElements, xmlData, this.props.projectPath);
                     this.props.onUpdateDoiInformation(newDoiInformation);
 
@@ -212,12 +211,12 @@ class WebSocketManager extends Component {
 
                 case webSocketReceiveMessage.mined_design_rules:
                     // "minedFrequentItemSets", "algorithm"
-                    let output = message.data["minedFrequentItemSets"];
-                    let algorithm = message.data["algorithm"];
+                    const output = message.data["minedFrequentItemSets"];
+                    const algorithm = message.data["algorithm"];
                     processReceivedFrequentItemSets(output, algorithm, this.props.featureMetaData)
-                        .then(processedRules => {
+                        .then((processedRules) => {
                             this.props.onUpdateMinedRules(processedRules);
-                        }).catch(e => console.log("error happened in promise", e));
+                        }).catch((e) => console.log("error happened in promise", e));
                     break;
 
                 default:
@@ -228,7 +227,6 @@ class WebSocketManager extends Component {
     render() {
         return null;
     }
-
 }
 
 
@@ -237,7 +235,7 @@ function mapStateToProps(state) {
     return {
         ignoreFileChange: state.ignoreFileChange,
         projectPath: state.projectPath,
-        featureMetaData: state.minedRulesState.featureMetaData
+        featureMetaData: state.minedRulesState.featureMetaData,
     };
 }
 
@@ -258,7 +256,7 @@ function mapDispatchToProps(dispatch) {
         onUpdateDoiInformation: (doiInformation) => dispatch(updateDoiInformation(doiInformation)),
         onRequestMineRulesForElement: () => dispatch(requestMineRulesForElement()),
         onUpdateMinedRules: (modifiedOutput) => dispatch(updatedMinedRules(modifiedOutput)),
-    }
+    };
 }
 
 /**

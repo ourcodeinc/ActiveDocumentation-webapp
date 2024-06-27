@@ -12,12 +12,12 @@ export const hashConst = {
     rulesForFile: "rulesForFile",
 
     tagJsonChanged: "tagJsonChanged",
-    ruleJsonChanged: "ruleJsonChanged"
-}
+    ruleJsonChanged: "ruleJsonChanged",
+};
 
 export const none_filePath = "none";
 
 export const constantRuleIndex = {
     newRuleIndex: -1,
-    minedRuleIndex: -2
-}
+    minedRuleIndex: -2,
+};

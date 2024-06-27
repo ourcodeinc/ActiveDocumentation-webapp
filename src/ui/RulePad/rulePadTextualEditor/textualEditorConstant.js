@@ -1,7 +1,7 @@
 export const grammar_keywords = [
     "name", "annotation", "extension", "implementation", "function", "abstract function", "constructor", "parameter", "type",
     "specifier", "visibility", "return value", "declaration statement", "expression statement", "class", "initial value", "comment",
-    "subclass"
+    "subclass",
 ];
 
 export const grammar_connectors = ["with", "have", "must", "and", "or", "of", "(", ")"];
@@ -12,79 +12,79 @@ export const skip_words_from_TE = ["comment"];
 
 export const autoComplete_suggestion = {
     "name": {
-        ofClause: []
+        ofClause: [],
     },
     "annotation": {
-        ofClause: []
+        ofClause: [],
     },
     "extension": {
         ofClause: [],
         preWord: "of",
-        placeholder: "Superclass"
+        placeholder: "Superclass",
     },
     "implementation": {
         ofClause: [],
         preWord: "of",
-        placeholder: "Interface"
+        placeholder: "Interface",
     },
     "function": {
         withClause: ["annotation", "specifier", "visibility", "type", "name", "parameter", "return value", "declaration statement",
             "expression statement", "\"SOME_COMMENT\""],
-        ofClause: ["class"]
+        ofClause: ["class"],
     },
     "abstract function": {
         withClause: ["annotation", "specifier", "visibility", "type", "name", "parameter"],
-        ofClause: ["class"]
+        ofClause: ["class"],
     },
     "constructor": {
         withClause: ["annotation", "specifier", "visibility", "parameter", "declaration statement", "expression statement",
             "\"SOME_COMMENT\""],
-        ofClause: ["class"]
+        ofClause: ["class"],
     },
     "parameter": {
         withClause: ["type", "name"],
-        ofClause: []
+        ofClause: [],
     },
     "type": {
-        ofClause: []
+        ofClause: [],
     },
     "specifier": {
-        ofClause: []
+        ofClause: [],
     },
     "visibility": {
-        ofClause: []
+        ofClause: [],
     },
     "return value": {
-        ofClause: []
+        ofClause: [],
     },
     "declaration statement": {
         withClause: ["annotation", "specifier", "visibility", "type", "name", "initial value", "\"SOME_COMMENT\""],
-        ofClause: ["class", "function", "constructor"]
+        ofClause: ["class", "function", "constructor"],
     },
     "expression statement": {
         withClause: ["value", "\"SOME_COMMENT\""],
-        ofClause: []
+        ofClause: [],
     },
     "initial value": {
-        ofClause: []
+        ofClause: [],
     },
     "value": {
-        ofClause: []
+        ofClause: [],
     },
     "class": {
         withClause: ["annotation", "specifier", "visibility", "name", "extension", "function", "abstract function",
             "constructor", "declaration statement", "class", "return value", "implementation", "\"SOME_COMMENT\"",
             "subclass"],
-        ofClause: []
+        ofClause: [],
     },
     "comment": {
-        ofClause: []
+        ofClause: [],
     },
     "subclass": {
         withClause: ["annotation", "specifier", "visibility", "name", "extension", "function", "abstract function",
             "constructor", "declaration statement", "class", "return value", "implementation", "\"SOME_COMMENT\""],
-        ofClause: ["class"]
-    }
+        ofClause: ["class"],
+    },
 };
 
 /**
@@ -94,16 +94,16 @@ export const autoComplete_suggestion = {
 export const sample_phrases = [
     {
         replaceWordWith: "function foo",
-        value: "function with name \"foo\""
+        value: "function with name \"foo\"",
     },
     {
         replaceWordWith: "bar function",
-        value: "function with name \"bar\""
+        value: "function with name \"bar\"",
     },
     {
         replaceWordWith: "Command class",
-        value: "class with name \"Command\""
-    }
+        value: "class with name \"Command\"",
+    },
 ];
 
 export const sample_phrase_hash = {"function": [0, 1], "foo": [0], "bar": [1], "Command": [2], "class": [2]};
@@ -116,12 +116,12 @@ export const error_messages_IMarkdownString = {
 
     200: {
         isTrusted: true,
-        value: "**and**/**or** must be used as valid keyword + **with (…) and/or (…)**, **with … and/or …**."
+        value: "**and**/**or** must be used as valid keyword + **with (…) and/or (…)**, **with … and/or …**.",
     },
     201: {isTrusted: true, value: "**)** must be used as keyword + **with (…)**, **((…) and/or (…))**."},
     202: {
         isTrusted: true,
-        value: "**(** must be used as valid keyword + **with (**, **((…) and/or (…))**, **must have (**."
+        value: "**(** must be used as valid keyword + **with (**, **((…) and/or (…))**, **must have (**.",
     },
     203: {isTrusted: true, value: "Parenthesis must be paired."},
     204: {isTrusted: true, value: "**of** must be used as keyword + **of**, keyword + **with … of**."},
@@ -132,7 +132,7 @@ export const error_messages_IMarkdownString = {
     302: {isTrusted: true, value: "**The keyword before the corresponding open parenthesis is not valid."},
     303: {isTrusted: true, value: "The first word in the rule is not a valid keyword."},
 
-    400: {isTrusted: true, value: "The input text is not valid."}
+    400: {isTrusted: true, value: "The input text is not valid."},
 };
 
 // IMarkdownString
@@ -157,7 +157,7 @@ export const documentations_IMarkdownString = {
             "##### **`!...post`** matches any value that does **NOT** end with the postfix **'post'**.\n" +
             "##### **`!...mid...`** matches any value that does **NOT** contain the sub-string **'mod'**.\n" +
             "##### Values can be mixed with `&&` (logical and) and `||` (logical or).\n" +
-            "For example, **\"!pre...||...mid...\"** matches values that either do not start with 'pre' **OR** contain 'mid'"
+            "For example, **\"!pre...||...mid...\"** matches values that either do not start with 'pre' **OR** contain 'mid'",
     },
     "EXACT_CODE": {
         isTrusted: true,
@@ -166,7 +166,7 @@ export const documentations_IMarkdownString = {
             "Write the code you want to match here.\n" +
             "##### For example, if a function return statement is `return obj1.foo(param1);`\n " +
             "enter `obj1.foo(param1)` in the **return value** element.\n" +
-            "##### Note that to use literals and string values use **single quotations**."
+            "##### Note that to use literals and string values use **single quotations**.",
     },
     "TEXTS": {
         isTrusted: true,
@@ -182,7 +182,7 @@ export const documentations_IMarkdownString = {
             "##### **`!...post`** matches any value that does **NOT** end with the postfix **'post'**.\n" +
             "##### **`!...mid...`** matches any value that does **NOT** contain the sub-string **'mid'**.\n" +
             "##### Values can be mixed with `&&` (logical and) and `||` (logical or).\n" +
-            "For example, **\"!pre...||...mid...\"** matches values that either do not start with 'pre' **OR** contain 'mid'"
+            "For example, **\"!pre...||...mid...\"** matches values that either do not start with 'pre' **OR** contain 'mid'",
     },
     "AND_OR_PAREN": {
         isTrusted: true,
@@ -216,7 +216,7 @@ export const documentations_IMarkdownString = {
             "```\n" +
             "class with annotation \"Entity\" and extension of \"superClass\" must have \n" +
             "declaration statement with ((annotation \"Id\") or (type \"int\" and name \"objectId\"))\n" +
-            "```"
+            "```",
     },
     "OF": {
         isTrusted: true,
@@ -235,7 +235,7 @@ export const documentations_IMarkdownString = {
             "This design rule for the above snippet is:\n" +
             "```\n" +
             "function with visibility \"public\" of class with annotation \"Entity\" must have return value \"void\"\n" +
-            "```\n"
+            "```\n",
     },
     "MUST_HAVE": {
         isTrusted: true,
@@ -252,7 +252,7 @@ export const documentations_IMarkdownString = {
             "This rule can be expressed as:\n" +
             "```\n" +
             "class must have annotation\n" +
-            "```"
+            "```",
     },
     "WITH": {
         isTrusted: true,
@@ -293,7 +293,7 @@ export const documentations_IMarkdownString = {
             "The design rule for matching this snippet may be: \n" +
             "```\n" +
             "class with annotation \"Entity\" and name \"myClass\" must have constructor\n" +
-            "```"
+            "```",
     },
 
     "Superclass": {
@@ -312,7 +312,7 @@ export const documentations_IMarkdownString = {
             "The following design rule matches the above code:\n" +
             "```\n" +
             "class with extension of Superclass must have function with name \"myFunction\"\n" +
-            "```"
+            "```",
     },
     "Interface": {
         isTrusted: true,
@@ -330,7 +330,7 @@ export const documentations_IMarkdownString = {
             "The following design rule matches the above code:\n" +
             "```\n" +
             "class with extension of Interface must have function with name \"myFunction\"\n" +
-            "```"
+            "```",
     },
 
     "name": {
@@ -344,7 +344,7 @@ export const documentations_IMarkdownString = {
             "    void foo (int param1) { // foo is the name of class and param1 is the name of the parameter\n" +
             "    }\n" +
             "}\n" +
-            "```"
+            "```",
     },
     "annotation": {
         isTrusted: true,
@@ -365,7 +365,7 @@ export const documentations_IMarkdownString = {
             "```\n" +
             "##### Annotations can be matched in the tool. Enter the type as they appear in code, except use single quotations instead of" +
             "double quotations." +
-            "##### For example, if the annotation is `@Subclass(index=\"true\")`, enter `Subclass(index='true')`"
+            "##### For example, if the annotation is `@Subclass(index=\"true\")`, enter `Subclass(index='true')`",
     },
     "extension": {
         isTrusted: true,
@@ -381,7 +381,7 @@ export const documentations_IMarkdownString = {
             "The following design rule matches the above code:\n" +
             "```\n" +
             "class with name \"myClass\" must have extension of \"mySuperClass\"\n" +
-            "```"
+            "```",
     },
     "implementation": {
         isTrusted: true,
@@ -397,7 +397,7 @@ export const documentations_IMarkdownString = {
             "The following design rule matches the above code:\n" +
             "```\n" +
             "class with name \"myClass\" must have interface of \"myInterface\"\n" +
-            "```"
+            "```",
     },
     "function": {
         isTrusted: true,
@@ -413,7 +413,7 @@ export const documentations_IMarkdownString = {
             "The following design rule matches the above code:\n" +
             "```\n" +
             "function with name \"foo\" and parameter with type \"int\" must have visibility \"public\"\n" +
-            "```"
+            "```",
     },
     "abstract function": {
         isTrusted: true,
@@ -429,7 +429,7 @@ export const documentations_IMarkdownString = {
             "The following design rule matches the above code:\n" +
             "```\n" +
             "abstract function with name \"sum\" must have visibility \"public\"\n" +
-            "```"
+            "```",
     },
     "constructor": {
         isTrusted: true,
@@ -449,7 +449,7 @@ export const documentations_IMarkdownString = {
             "The following design rule matches the above code:\n" +
             "```\n" +
             "class with name \"myClass\" must have constructor\n" +
-            "```"
+            "```",
     },
     "parameter": {
         isTrusted: true,
@@ -465,7 +465,7 @@ export const documentations_IMarkdownString = {
             "The following design rule matches the above code:\n" +
             "```\n" +
             "function with name \"foo\" must have parameter with type \"int\" and name \"paramName\"\n" +
-            "```"
+            "```",
     },
     "type": {
         isTrusted: true,
@@ -481,7 +481,7 @@ export const documentations_IMarkdownString = {
             "}\n" +
             "```\n" +
             "##### Types can be matched in the tool. Enter the type as they appear in code, except use single quotations instead of" +
-            "double quotations."
+            "double quotations.",
     },
     "specifier": {
         isTrusted: true,
@@ -491,7 +491,7 @@ export const documentations_IMarkdownString = {
             "- **static** object belongs specifically to the class, instead of instances of that class. " +
             "Variables, methods, and nested classes can be static. \n" +
             "- **final** specifier is used for finalizing the implementations of classes, methods, and variables.\n" +
-            "- **abstract** is a non-access modifier in java applicable for classes, methods but not variables.\n"
+            "- **abstract** is a non-access modifier in java applicable for classes, methods but not variables.\n",
     },
     "visibility": {
         isTrusted: true,
@@ -505,7 +505,7 @@ export const documentations_IMarkdownString = {
             "- The protected access modifier is specified using the keyword **protected**.\n" +
             "Protected methods or variables are accessible within same package or sub classes in different package.\n" +
             "- The public access modifier is specified using the keyword **public**. Public classes, methods or variables " +
-            "are accessible from every where in the program."
+            "are accessible from every where in the program.",
     },
     "return value": {
         isTrusted: true,
@@ -520,7 +520,7 @@ export const documentations_IMarkdownString = {
             "##### Return values can be matched in the tool. Enter the expressions as they appear in code, " +
             "except use single quotations instead of double quotations.\n" +
             "##### For example, if a function return statement is `return obj1.foo(param1);`\n " +
-            "enter `obj1.foo(param1)` in the **return value** element.\n"
+            "enter `obj1.foo(param1)` in the **return value** element.\n",
     },
     "declaration statement": {
         isTrusted: true,
@@ -529,7 +529,7 @@ export const documentations_IMarkdownString = {
             "**declaration statement** is a statement in which a variable is declared by specifying its data type and name. The variable can also be initialized. \n" +
             "```java\n" +
             "@Id private static int ID = 0; // declaration statement\n" +
-            "```"
+            "```",
     },
     "expression statement": {
         isTrusted: true,
@@ -545,7 +545,7 @@ export const documentations_IMarkdownString = {
             "}\n" +
             "```\n" +
             "##### Expression statements can be matched in the tool. Enter the expressions as they appear in code, " +
-            "except use single quotations instead of double quotations."
+            "except use single quotations instead of double quotations.",
     },
     "initial value": {
         isTrusted: true,
@@ -558,14 +558,14 @@ export const documentations_IMarkdownString = {
             "String str = \"Hi\"; // \"Hi\" is the initial value\n" +
             "```\n" +
             "##### Initial values can be matched in the tool. Enter the expressions as they appear in code, " +
-            "except use single quotations instead of double quotations."
+            "except use single quotations instead of double quotations.",
     },
     "interface": {
         isTrusted: true,
         value:
             "#### interface\n" +
             "An interface represents a java `interface`\n" +
-            "Interface is not supported currently."
+            "Interface is not supported currently.",
     },
     "class": {
         isTrusted: true,
@@ -578,13 +578,13 @@ export const documentations_IMarkdownString = {
             "    float grade;\n" +
             "    course[] courses;\n" +
             "}\n" +
-            "```"
+            "```",
     },
     "comment": {
         isTrusted: true,
         value:
             "#### comments\n" +
-            "This element is designed to display properties not covered in RulePad\n"
+            "This element is designed to display properties not covered in RulePad\n",
     },
     "subclass": {
         isTrusted: true,
@@ -597,6 +597,6 @@ export const documentations_IMarkdownString = {
             "        int roomCapacity;\n" +
             "    }\n" +
             "}\n" +
-            "```"
+            "```",
     },
 };

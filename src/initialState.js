@@ -50,7 +50,7 @@ import {allAlgorithms} from "./miningRulesCore/featureConfig";
 const graphicalElementAttributes = {
     activeElement: false, // if the element has at least one child
     selectedElement: false, // if the element is the root of the XPath (unique)
-    isConstraint: false // if the element is for the constraint query
+    isConstraint: false, // if the element is for the constraint query
 };
 
 export const initial_graphicalElements = {
@@ -188,7 +188,7 @@ export const initial_graphicalElements = {
 };
 
 export const initial_graphicalElementTree = {
-    selectedElementID: "",
+    "selectedElementID": "",
     "0": {
         parentId: "",
         children: {
@@ -199,8 +199,8 @@ export const initial_graphicalElementTree = {
             after_1: ["0-4-0"],
             after_2: ["0-5-0"],
             after_3: ["0-6-0"],
-            body: [["0-7-0"], ["0-7-1"], ["0-7-2"], ["0-7-3"], ["0-7-4"], ["0-7-5"]]
-        }
+            body: [["0-7-0"], ["0-7-1"], ["0-7-2"], ["0-7-3"], ["0-7-4"], ["0-7-5"]],
+        },
     },
     "0-0-0": {parentId: "0", children: {}},
     "0-1-0": {parentId: "0", children: {}},
@@ -218,8 +218,8 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-0-4-0"],
             after_2: ["0-7-0-5-0"],
             after_3: [],
-            body: [["0-7-0-7-0"]]
-        }
+            body: [["0-7-0-7-0"]],
+        },
     },
     "0-7-0-0-0": {parentId: "0-7-0", children: {}},
     "0-7-0-1-0": {parentId: "0-7-0", children: {}},
@@ -238,8 +238,8 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-1-4-0"],
             after_2: ["0-7-1-5-0"],
             after_3: [],
-            body: [["0-7-1-7-0"], ["0-7-1-7-1"],["0-7-1-7-2"]]
-        }
+            body: [["0-7-1-7-0"], ["0-7-1-7-1"], ["0-7-1-7-2"]],
+        },
     },
     "0-7-1-0-0": {parentId: "0-7-1", children: {}},
     "0-7-1-2-0": {parentId: "0-7-1", children: {}},
@@ -254,8 +254,8 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-1-5-0-4-0"],
             after_2: [],
             after_3: [],
-            body: []
-        }
+            body: [],
+        },
     },
     "0-7-1-5-0-1-0": {parentId: "0-7-1-5-0", children: {}},
     "0-7-1-5-0-4-0": {parentId: "0-7-1-5-0", children: {}},
@@ -269,8 +269,8 @@ export const initial_graphicalElementTree = {
             after_1: [],
             after_2: [],
             after_3: [],
-            body: [["0-7-1-7-0-7-0"]]
-        }
+            body: [["0-7-1-7-0-7-0"]],
+        },
     },
     "0-7-1-7-0-0-0": {parentId: "0-7-1-7-0", children: {}},
     "0-7-1-7-0-7-0": {parentId: "0-7-1-7-0", children: {}},
@@ -284,8 +284,8 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-1-7-1-4-0"],
             after_2: ["0-7-1-7-1-5-0"],
             after_3: [],
-            body: [["0-7-1-7-1-7-0"]]
-        }
+            body: [["0-7-1-7-1-7-0"]],
+        },
     },
     "0-7-1-7-1-0-0": {parentId: "0-7-1-7-1", children: {}},
     "0-7-1-7-1-1-0": {parentId: "0-7-1-7-1", children: {}},
@@ -294,7 +294,7 @@ export const initial_graphicalElementTree = {
     "0-7-1-7-1-4-0": {parentId: "0-7-1-7-1", children: {}},
     "0-7-1-7-1-5-0": {parentId: "0-7-1-7-1", children: {}},
     "0-7-1-7-1-7-0": {parentId: "0-7-1-7-1", children: {}},
-    "0-7-1-7-2": {parentId:"0-7-1", children: {}},
+    "0-7-1-7-2": {parentId: "0-7-1", children: {}},
     "0-7-2": {
         parentId: "0",
         children: {
@@ -305,8 +305,8 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-2-4-0"],
             after_2: ["0-7-2-5-0"],
             after_3: [],
-            body: [["0-7-2-7-0"], ["0-7-2-7-1"], ["0-7-2-7-2"],["0-7-2-7-3"]]
-        }
+            body: [["0-7-2-7-0"], ["0-7-2-7-1"], ["0-7-2-7-2"], ["0-7-2-7-3"]],
+        },
     },
     "0-7-2-0-0": {parentId: "0-7-2", children: {}},
     "0-7-2-1-0": {parentId: "0-7-2", children: {}},
@@ -323,8 +323,8 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-2-5-0-4-0"],
             after_2: [],
             after_3: [],
-            body: []
-        }
+            body: [],
+        },
     },
     "0-7-2-5-0-1-0": {parentId: "0-7-2-5-0", children: {}},
     "0-7-2-5-0-4-0": {parentId: "0-7-2-5-0", children: {}},
@@ -338,8 +338,8 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-2-7-0-4-0"],
             after_2: ["0-7-2-7-0-5-0"],
             after_3: [],
-            body: [["0-7-2-7-0-7-0"]]
-        }
+            body: [["0-7-2-7-0-7-0"]],
+        },
     },
     "0-7-2-7-0-0-0": {parentId: "0-7-2-7-0", children: {}},
     "0-7-2-7-0-1-0": {parentId: "0-7-2-7-0", children: {}},
@@ -358,8 +358,8 @@ export const initial_graphicalElementTree = {
             after_1: [],
             after_2: [],
             after_3: [],
-            body: [["0-7-2-7-1-7-0"]]
-        }
+            body: [["0-7-2-7-1-7-0"]],
+        },
     },
     "0-7-2-7-1-0-0": {parentId: "0-7-2-7-1", children: {}},
     "0-7-2-7-1-7-0": {parentId: "0-7-2-7-1", children: {}},
@@ -375,8 +375,8 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-3-4-0"],
             after_2: ["0-7-3-5-0"],
             after_3: [],
-            body: []
-        }
+            body: [],
+        },
     },
     "0-7-3-0-0": {parentId: "0-7-3", children: {}},
     "0-7-3-1-0": {parentId: "0-7-3", children: {}},
@@ -393,22 +393,22 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-3-5-0-4-0"],
             after_2: [],
             after_3: [],
-            body: []
-        }
+            body: [],
+        },
     },
     "0-7-3-5-0-1-0": {parentId: "0-7-3-5-0", children: {}},
     "0-7-3-5-0-4-0": {parentId: "0-7-3-5-0", children: {}},
     "0-7-4": {parentId: "0", children: {}},
     "0-7-5": {parentId: "0", children: {
-            top: ["0-7-5-0-0"],
-            before_1: ["0-7-5-1-0"],
-            before_2: ["0-7-5-2-0"],
-            before_3: [],
-            after_1: ["0-7-5-4-0"],
-            after_2: ["0-7-5-5-0"],
-            after_3: ["0-7-5-6-0"],
-            body: [["0-7-5-7-0"], ["0-7-5-7-1"], ["0-7-5-7-2"], ["0-7-5-7-3"], ["0-7-5-7-4"]]
-        }},
+        top: ["0-7-5-0-0"],
+        before_1: ["0-7-5-1-0"],
+        before_2: ["0-7-5-2-0"],
+        before_3: [],
+        after_1: ["0-7-5-4-0"],
+        after_2: ["0-7-5-5-0"],
+        after_3: ["0-7-5-6-0"],
+        body: [["0-7-5-7-0"], ["0-7-5-7-1"], ["0-7-5-7-2"], ["0-7-5-7-3"], ["0-7-5-7-4"]],
+    }},
 
 
     "0-7-5-0-0": {parentId: "0-7-5", children: {}},
@@ -427,8 +427,8 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-5-7-0-4-0"],
             after_2: ["0-7-5-7-0-5-0"],
             after_3: [],
-            body: [["0-7-5-7-0-7-0"]]
-        }
+            body: [["0-7-5-7-0-7-0"]],
+        },
     },
     "0-7-5-7-0-0-0": {parentId: "0-7-5-7-0", children: {}},
     "0-7-5-7-0-1-0": {parentId: "0-7-5-7-0", children: {}},
@@ -447,8 +447,8 @@ export const initial_graphicalElementTree = {
             after_1: [],
             after_2: ["0-7-5-7-1-5-0"],
             after_3: [],
-            body: [["0-7-5-7-1-7-0"], ["0-7-5-7-1-7-1"],["0-7-5-7-1-7-2"]]
-        }
+            body: [["0-7-5-7-1-7-0"], ["0-7-5-7-1-7-1"], ["0-7-5-7-1-7-2"]],
+        },
     },
     "0-7-5-7-1-0-0": {parentId: "0-7-5-7-1", children: {}},
     "0-7-5-7-1-2-0": {parentId: "0-7-5-7-1", children: {}},
@@ -462,8 +462,8 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-5-7-1-5-0-4-0"],
             after_2: [],
             after_3: [],
-            body: []
-        }
+            body: [],
+        },
     },
     "0-7-5-7-1-5-0-1-0": {parentId: "0-7-5-7-1-5-0", children: {}},
     "0-7-5-7-1-5-0-4-0": {parentId: "0-7-5-7-1-5-0", children: {}},
@@ -477,8 +477,8 @@ export const initial_graphicalElementTree = {
             after_1: [],
             after_2: [],
             after_3: [],
-            body: [["0-7-5-7-1-7-0-7-0"]]
-        }
+            body: [["0-7-5-7-1-7-0-7-0"]],
+        },
     },
     "0-7-5-7-1-7-0-0-0": {parentId: "0-7-5-7-1-7-0", children: {}},
     "0-7-5-7-1-7-0-7-0": {parentId: "0-7-5-7-1-7-0", children: {}},
@@ -492,8 +492,8 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-5-7-1-7-1-4-0"],
             after_2: ["0-7-5-7-1-7-1-5-0"],
             after_3: [],
-            body: [["0-7-5-7-1-7-1-7-0"]]
-        }
+            body: [["0-7-5-7-1-7-1-7-0"]],
+        },
     },
     "0-7-5-7-1-7-1-0-0": {parentId: "0-7-5-7-1-7-1", children: {}},
     "0-7-5-7-1-7-1-1-0": {parentId: "0-7-5-7-1-7-1", children: {}},
@@ -502,7 +502,7 @@ export const initial_graphicalElementTree = {
     "0-7-5-7-1-7-1-4-0": {parentId: "0-7-5-7-1-7-1", children: {}},
     "0-7-5-7-1-7-1-5-0": {parentId: "0-7-5-7-1-7-1", children: {}},
     "0-7-5-7-1-7-1-7-0": {parentId: "0-7-5-7-1-7-1", children: {}},
-    "0-7-5-7-1-7-2": {parentId:"0-7-5-7-1", children: {}},
+    "0-7-5-7-1-7-2": {parentId: "0-7-5-7-1", children: {}},
     "0-7-5-7-2": {
         parentId: "0-7-5",
         children: {
@@ -513,8 +513,8 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-5-7-2-4-0"],
             after_2: ["0-7-5-7-2-5-0"],
             after_3: [],
-            body: [["0-7-5-7-2-7-0"], ["0-7-5-7-2-7-1"], ["0-7-5-7-2-7-2"],["0-7-5-7-2-7-3"]]
-        }
+            body: [["0-7-5-7-2-7-0"], ["0-7-5-7-2-7-1"], ["0-7-5-7-2-7-2"], ["0-7-5-7-2-7-3"]],
+        },
     },
     "0-7-5-7-2-0-0": {parentId: "0-7-5-7-2", children: {}},
     "0-7-5-7-2-1-0": {parentId: "0-7-5-7-2", children: {}},
@@ -531,8 +531,8 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-5-7-2-5-0-4-0"],
             after_2: [],
             after_3: [],
-            body: []
-        }
+            body: [],
+        },
     },
     "0-7-5-7-2-5-0-1-0": {parentId: "0-7-5-7-2-5-0", children: {}},
     "0-7-5-7-2-5-0-4-0": {parentId: "0-7-5-7-2-5-0", children: {}},
@@ -546,8 +546,8 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-5-7-2-7-0-4-0"],
             after_2: ["0-7-5-7-2-7-0-5-0"],
             after_3: [],
-            body: [["0-7-5-7-2-7-0-7-0"]]
-        }
+            body: [["0-7-5-7-2-7-0-7-0"]],
+        },
     },
     "0-7-5-7-2-7-0-0-0": {parentId: "0-7-5-7-2-7-0", children: {}},
     "0-7-5-7-2-7-0-1-0": {parentId: "0-7-5-7-2-7-0", children: {}},
@@ -566,8 +566,8 @@ export const initial_graphicalElementTree = {
             after_1: [],
             after_2: [],
             after_3: [],
-            body: [["0-7-5-7-2-7-1-7-0"]]
-        }
+            body: [["0-7-5-7-2-7-1-7-0"]],
+        },
     },
     "0-7-5-7-2-7-1-0-0": {parentId: "0-7-5-7-2-7-1", children: {}},
     "0-7-5-7-2-7-1-7-0": {parentId: "0-7-5-7-2-7-1", children: {}},
@@ -583,8 +583,8 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-5-7-3-4-0"],
             after_2: ["0-7-5-7-3-5-0"],
             after_3: [],
-            body: []
-        }
+            body: [],
+        },
     },
     "0-7-5-7-3-0-0": {parentId: "0-7-5-7-3", children: {}},
     "0-7-5-7-3-1-0": {parentId: "0-7-5-7-3", children: {}},
@@ -601,8 +601,8 @@ export const initial_graphicalElementTree = {
             after_1: ["0-7-5-7-3-5-0-4-0"],
             after_2: [],
             after_3: [],
-            body: []
-        }
+            body: [],
+        },
     },
     "0-7-5-7-3-5-0-1-0": {parentId: "0-7-5-7-3-5-0", children: {}},
     "0-7-5-7-3-5-0-4-0": {parentId: "0-7-5-7-3-5-0", children: {}},
@@ -667,7 +667,7 @@ export const initial_state = {
         activeHashIndex: 0,
         forwardDisable: "disabled",
         backDisable: "disabled",
-        clickedOnButtons: false
+        clickedOnButtons: false,
     },
     loadingGif: false,
 
@@ -686,8 +686,8 @@ export const initial_state = {
         graphicalEditorState: {
             ruleType: "", // "Must" or "MustBeEqualTo"
             guiTree: {...initial_graphicalElementTree},
-            guiElements: {...initial_graphicalElements}
-        }
+            guiElements: {...initial_graphicalElements},
+        },
     },
 
     sentXpathMessages: [],
@@ -701,27 +701,27 @@ export const initial_state = {
                 featureInfo: {},
                 featureInfoReverse: {},
                 featureMap: {},
-                featureMapReverse: {}
+                featureMapReverse: {},
             },
-            featureGroups: {spec: {}, usage: {}}
+            featureGroups: {spec: {}, usage: {}},
         },
         groupingMetaData: {
             groupMapping: {},
-            fileMapping:{}
+            fileMapping: {},
         },
         focusedElementData: {
             filePath: "",
             identifier: "",
-            mapFocusedElementToFeaturesKey: ""
+            mapFocusedElementToFeaturesKey: "",
         },
         doiInformation: {
             recentVisitedFiles: [],
             recentSearches: [],
-            recentVisitedElements: []
+            recentVisitedElements: [],
         },
         selectedAlgorithm: allAlgorithms.CHUI_MINER_DEFAULT,
         minedRules: [],
-    }
+    },
 
 };
 
@@ -742,6 +742,6 @@ export const default_rulePanelState = {
     graphicalEditorState: {
         ruleType: "", // "Must" or "MustBeEqualTo"
         guiTree: {...initial_graphicalElementTree},
-        guiElements: {...initial_graphicalElements}
-    }
+        guiElements: {...initial_graphicalElements},
+    },
 };

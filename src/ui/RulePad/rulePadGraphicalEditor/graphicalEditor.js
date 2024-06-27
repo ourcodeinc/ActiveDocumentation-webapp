@@ -16,7 +16,6 @@ import {isNotElementOrIdentifier} from "../../../miningRulesCore/postProcessing"
 
 
 class GraphicalEditor extends Component {
-
     constructor(props) {
         super(props);
 
@@ -36,12 +35,12 @@ class GraphicalEditor extends Component {
 
         // existing rule
         if (this.ruleIndex >= 0) {
-            let indices = props.rules.map(d => d.index);
-            let arrayIndex = indices.indexOf(this.ruleIndex);
-            if (arrayIndex === -1)
+            const indices = props.rules.map((d) => d.index);
+            const arrayIndex = indices.indexOf(this.ruleIndex);
+            if (arrayIndex === -1) {
                 console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
                 Only ${indices.toString()} are found as indices.`);
-            else {
+            } else {
                 this.ruleI = props.rules[arrayIndex];
                 // updating the rule
                 this.state.guiTree = this.ruleI.rulePanelState.graphicalEditorState.guiTree;
@@ -55,24 +54,24 @@ class GraphicalEditor extends Component {
         return (
             <div className={this.class}>
                 <GraphicalComponent key={new Date()} ruleIndex={this.ruleIndex} elementId={"0"} root
-                                    rootTree={this.state.guiTree}
-                                    canBeStarredIDs={this.canBeStarredIDs}
-                                    guiElements={this.state.guiElements}
-                                    changeGuiElementJobs={(ruleIndex, jobs) => this.processJobsBeforeSubmit(jobs)}
+                    rootTree={this.state.guiTree}
+                    canBeStarredIDs={this.canBeStarredIDs}
+                    guiElements={this.state.guiElements}
+                    changeGuiElementJobs={(ruleIndex, jobs) => this.processJobsBeforeSubmit(jobs)}
                 />
             </div>
         );
     }
 
-    //componentDidUpdate doesn't work
+    // componentDidUpdate doesn't work
     UNSAFE_componentWillReceiveProps(nextProps) {
         if (this.ruleIndex >= 0) {
-            let indices = nextProps.rules.map(d => d.index);
-            let arrayIndex = indices.indexOf(this.ruleIndex);
-            if (arrayIndex === -1)
+            const indices = nextProps.rules.map((d) => d.index);
+            const arrayIndex = indices.indexOf(this.ruleIndex);
+            if (arrayIndex === -1) {
                 console.log(`error: rule with index ${this.ruleIndex} is not found in the ruleTable.
                 Only ${indices.toString()} are found as indices.`);
-            else {
+            } else {
                 this.ruleI = nextProps.rules[arrayIndex];
 
                 this.setState(
@@ -80,11 +79,10 @@ class GraphicalEditor extends Component {
                         ws: nextProps.ws,
                         guiTree: this.ruleI.rulePanelState.graphicalEditorState.guiTree,
                         guiElements: this.ruleI.rulePanelState.graphicalEditorState.guiElements,
-                        autoCompleteArray: this.ruleI.rulePanelState.autoCompleteArray
+                        autoCompleteArray: this.ruleI.rulePanelState.autoCompleteArray,
                     }, this.receiveStateData);
             }
-        }
-        else if (this.ruleIndex === constantRuleIndex.newRuleIndex) {
+        } else if (this.ruleIndex === constantRuleIndex.newRuleIndex) {
             this.setState(nextProps, this.receiveStateData);
         }
     }
@@ -100,13 +98,12 @@ class GraphicalEditor extends Component {
     }
 
     buildTreeForProcessing = () => {
-
-        let guiElements = JSON.parse(JSON.stringify(this.state.guiElements));
-        let guiTree = JSON.parse(JSON.stringify(this.state.guiTree));
+        const guiElements = JSON.parse(JSON.stringify(this.state.guiElements));
+        const guiTree = JSON.parse(JSON.stringify(this.state.guiTree));
 
 
         // check connectivity of elements
-        let activateJobs = this.connectElements(guiElements, guiTree);
+        const activateJobs = this.connectElements(guiElements, guiTree);
         if (activateJobs.jobs.length !== 0) {
             console.log("error: not connected", activateJobs.jobs);
             // this.props.onChangeGuiElement(this.ruleIndex, activateJobs.jobs);
@@ -114,7 +111,7 @@ class GraphicalEditor extends Component {
         }
 
         // check the selected element
-        let selectJobs = this.lowestCommonAncestor(guiElements, guiTree);
+        const selectJobs = this.lowestCommonAncestor(guiElements, guiTree);
         if (selectJobs.jobs.length !== 0) {
             console.log("error: not EoI", selectJobs.jobs);
             // this.props.onChangeGuiElement(this.ruleIndex, selectJobs.jobs);
@@ -127,8 +124,8 @@ class GraphicalEditor extends Component {
 
         // reach root from selectedElementID
         return {
-            quantifierTree: buildFromGUI (guiTree, guiElements, guiTree.selectedElementID, "quantifier"),
-            constraintTree: buildFromGUI (guiTree, guiElements, guiTree.selectedElementID, "constraint")
+            quantifierTree: buildFromGUI(guiTree, guiElements, guiTree.selectedElementID, "quantifier"),
+            constraintTree: buildFromGUI(guiTree, guiElements, guiTree.selectedElementID, "constraint"),
         };
     };
 
@@ -137,32 +134,33 @@ class GraphicalEditor extends Component {
      * process the data received from GUI
      */
     receiveStateData = () => {
-        let trees = this.buildTreeForProcessing();
+        const trees = this.buildTreeForProcessing();
         if (!trees || Object.keys(trees.quantifierTree).length === 0 || Object.keys(trees.constraintTree).length === 0) {
-            if (Object.keys(this.state.guiElements).filter(id => this.state.guiElements[id].activeElement).length === 0)
+            if (Object.keys(this.state.guiElements).filter((id) => this.state.guiElements[id].activeElement).length === 0) {
                 this.canBeStarredIDs = [];
-            this.props["onFilledGUI"](Object.keys(this.state.guiElements).filter(id => this.state.guiElements[id].activeElement).length !== 0);
+            }
+            this.props["onFilledGUI"](Object.keys(this.state.guiElements).filter((id) => this.state.guiElements[id].activeElement).length !== 0);
             return;
         }
 
-        let quantifierTree = JSON.parse(JSON.stringify(trees.quantifierTree));
-        let constraintTree = JSON.parse(JSON.stringify(trees.constraintTree));
+        const quantifierTree = JSON.parse(JSON.stringify(trees.quantifierTree));
+        const constraintTree = JSON.parse(JSON.stringify(trees.constraintTree));
 
-        let grammarTextQ = this.buildGrammarTree(quantifierTree);
-        let grammarTextC = this.buildGrammarTree(constraintTree, true);
+        const grammarTextQ = this.buildGrammarTree(quantifierTree);
+        const grammarTextC = this.buildGrammarTree(constraintTree, true);
 
-        let guiArray = grammarTextQ.concat([{text: "must", id: ""}, {text: "have", id: ""}]).concat(grammarTextC);
+        const guiArray = grammarTextQ.concat([{text: "must", id: ""}, {text: "have", id: ""}]).concat(grammarTextC);
 
-        let filteredTextArray = this.state.autoCompleteArray
-            .filter(d => d.text !== "(" && d.text !== ")" && d.text !== "or" && d.text !== "and" && d.text !== "");
-        let perms = this.computeAllPermutations(guiArray);
+        const filteredTextArray = this.state.autoCompleteArray
+            .filter((d) => d.text !== "(" && d.text !== ")" && d.text !== "or" && d.text !== "and" && d.text !== "");
+        const perms = this.computeAllPermutations(guiArray);
 
         if (perms.length === 0 || filteredTextArray.length !== perms[0].length) {
             // return the trivial one from GUI.
-            let grammarTrivialTextQ = buildTrivialGrammar(quantifierTree);
-            let grammarTrivialTextC = buildTrivialGrammar(constraintTree, true);
+            const grammarTrivialTextQ = buildTrivialGrammar(quantifierTree);
+            const grammarTrivialTextC = buildTrivialGrammar(constraintTree, true);
 
-            let trivialGuiArray = grammarTrivialTextQ
+            const trivialGuiArray = grammarTrivialTextQ
                 .concat([{text: "must", id: ""}, {text: "have", id: ""}])
                 .concat(grammarTrivialTextC);
 
@@ -175,9 +173,9 @@ class GraphicalEditor extends Component {
         // look for match in permutation
         // function with annotation and parameter
         // function with parameter and annotation
-        let found = true,
-            isIdentical = true, // prevents react render loops
-            foundOption;
+        let found = true;
+        let isIdentical = true; // prevents react render loops
+        let foundOption;
         for (let i = 0; i < perms.length; i++) {
             found = true;
             isIdentical = true;
@@ -186,8 +184,9 @@ class GraphicalEditor extends Component {
                     found = false;
                     break;
                 }
-                if (perms[i][j].id !== filteredTextArray[j].id)
+                if (perms[i][j].id !== filteredTextArray[j].id) {
                     isIdentical = false;
+                }
             }
             if (found) {
                 foundOption = perms[i];
@@ -196,10 +195,10 @@ class GraphicalEditor extends Component {
         }
         if (!found) {
             // return the trivial one from GUI.
-            let grammarTrivialTextQ = buildTrivialGrammar(quantifierTree);
-            let grammarTrivialTextC = buildTrivialGrammar(constraintTree, true);
+            const grammarTrivialTextQ = buildTrivialGrammar(quantifierTree);
+            const grammarTrivialTextC = buildTrivialGrammar(constraintTree, true);
 
-            let trivialGuiArray = grammarTrivialTextQ
+            const trivialGuiArray = grammarTrivialTextQ
                 .concat([{text: "must", id: ""}, {text: "have", id: ""}])
                 .concat(grammarTrivialTextC);
 
@@ -211,7 +210,7 @@ class GraphicalEditor extends Component {
 
         // match ids with textArray and foundOption
         let foundOptionIndex = 0;
-        let matchedIds = this.state.autoCompleteArray.map(d => {
+        const matchedIds = this.state.autoCompleteArray.map((d) => {
             if (d.text === "(" || d.text === ")" || d.text === "or" || d.text === "and" || d.text === "") return d;
             foundOptionIndex++;
             return {text: d.text, id: foundOption[foundOptionIndex - 1].id};
@@ -233,23 +232,25 @@ class GraphicalEditor extends Component {
 
         // element name
         if (!constraintQuery) {
-            if (!skip_words_from_TE.includes(rootNode["properties"].elementGrammar))
-                rootNode["properties"].elementGrammar.split(" ").forEach(part =>
+            if (!skip_words_from_TE.includes(rootNode["properties"].elementGrammar)) {
+                rootNode["properties"].elementGrammar.split(" ").forEach((part) =>
                     grammarObject.push({text: part, id: rootNode.nodeId}));
+            }
         }
 
         // text value
         if (rootNode["properties"].text) {
-            if (autoComplete_suggestion[rootNode["properties"].elementGrammar].preWord)
+            if (autoComplete_suggestion[rootNode["properties"].elementGrammar].preWord) {
                 grammarObject.push({
                     text: autoComplete_suggestion[rootNode["properties"].elementGrammar].preWord,
-                    id: rootNode.nodeId
+                    id: rootNode.nodeId,
                 });
+            }
             grammarObject.push({text: "\"" + rootNode["properties"].text + "\"", id: rootNode.nodeId});
         }
 
         if (rootNode["properties"].elementPlaceholder && !rootNode["properties"].text) {
-            rootNode["properties"].elementPlaceholder.split(" ").forEach(w => {
+            rootNode["properties"].elementPlaceholder.split(" ").forEach((w) => {
                 grammarObject.push({text: w, id: rootNode.nodeId});
             });
         }
@@ -259,20 +260,21 @@ class GraphicalEditor extends Component {
             grammarObject.push({text: "\"" + rootNode["properties"].value + "\"", id: rootNode.nodeId});
         }
 
-        //children all children are 1D arrays even "body"
+        // children all children are 1D arrays even "body"
         let allChildren = [];
-        let tempArray = {id: "permutation", children: []};
-        Object.keys(rootNode.children).forEach(group => allChildren = allChildren.concat(rootNode.children[group]));
+        const tempArray = {id: "permutation", children: []};
+        Object.keys(rootNode.children).forEach((group) => allChildren = allChildren.concat(rootNode.children[group]));
         if (allChildren.length > 0 && !constraintQuery) grammarObject.push({text: "with", id: ""});
-        for (let i = 0; i < allChildren.length; i++)
+        for (let i = 0; i < allChildren.length; i++) {
             tempArray.children.push(this.buildGrammarTree(allChildren[i]));
+        }
 
         if (allChildren.length > 0) grammarObject = grammarObject.concat(tempArray);
 
         // parent
         if (Object.entries(rootNode.parentNode).length !== 0 && !constraintQuery) {
             grammarObject.push({text: "of", id: ""});
-            grammarObject = grammarObject.concat(this.buildGrammarTree(rootNode.parentNode))
+            grammarObject = grammarObject.concat(this.buildGrammarTree(rootNode.parentNode));
         }
 
         return grammarObject;
@@ -287,14 +289,13 @@ class GraphicalEditor extends Component {
      * @param grammarArrayFromGui
      */
     computeAllPermutations(grammarArrayFromGui) {
-
         // compute all permutation for [0, ..., indicesLength]
         function createPermutedIndices(indicesLength) {
-            let permArr = [], usedChars = [];
-            let arr = Array.apply(null, {length: indicesLength}).map(Number.call, Number);
+            const permArr = []; const usedChars = [];
+            const arr = [...Array(indicesLength)].map((_, index) => index);
 
             function permute(input) {
-                let i, ch;
+                let i; let ch;
                 for (i = 0; i < input.length; i++) {
                     ch = input.splice(i, 1)[0];
                     usedChars.push(ch);
@@ -305,7 +306,7 @@ class GraphicalEditor extends Component {
                     input.splice(i, 0, ch);
                     usedChars.pop();
                 }
-                return permArr
+                return permArr;
             }
 
             return permute(arr);
@@ -314,7 +315,7 @@ class GraphicalEditor extends Component {
         // reorder nodes elements based on permutation
         function computePermutedChildren(nodes, permutation) {
             if (nodes.length !== permutation.length) return nodes;
-            let perm = [];
+            const perm = [];
             for (let i = 0; i < permutation.length; i++) {
                 perm.push(nodes[permutation[i]]);
             }
@@ -327,18 +328,18 @@ class GraphicalEditor extends Component {
             let array = [[]];
             for (let i = 0; i < el.length; i++) {
                 for (let j = 0; j < el[i].length; j++) {
-                    if (el[i][j].id !== "permutation")
-                        array.forEach(a => a.push(el[i][j]));
-                    else {
-                        let temp = [];
-                        let copiedPre = JSON.parse(JSON.stringify(array));
-                        createPermutedIndices(el[i][j].children.length).forEach(p => {
-                            let permutedChildren = computePermutation(computePermutedChildren(el[i][j].children, p));
-                            copiedPre.forEach(cp => {
-                                permutedChildren.forEach(pch => {
-                                    temp.push(cp.concat(pch))
-                                })
-                            })
+                    if (el[i][j].id !== "permutation") {
+                        array.forEach((a) => a.push(el[i][j]));
+                    } else {
+                        const temp = [];
+                        const copiedPre = JSON.parse(JSON.stringify(array));
+                        createPermutedIndices(el[i][j].children.length).forEach((p) => {
+                            const permutedChildren = computePermutation(computePermutedChildren(el[i][j].children, p));
+                            copiedPre.forEach((cp) => {
+                                permutedChildren.forEach((pch) => {
+                                    temp.push(cp.concat(pch));
+                                });
+                            });
                         });
                         array = temp;
                     }
@@ -347,7 +348,7 @@ class GraphicalEditor extends Component {
             return array;
         }
 
-        return computePermutation(grammarArrayFromGui.map(d => [d]));
+        return computePermutation(grammarArrayFromGui.map((d) => [d]));
     }
 
 
@@ -369,13 +370,13 @@ class GraphicalEditor extends Component {
      * @returns {{jobs: Array}}
      */
     makeConstraint(guiElements, guiTree) {
-        let jobs = [];
+        const jobs = [];
 
         // for each active element, find the path from root to the node.
-        let treePaths = Object.keys(guiElements)
-            .filter(id => guiElements[id].activeElement)
-            .map(id => {
-                let path = [id];
+        const treePaths = Object.keys(guiElements)
+            .filter((id) => guiElements[id].activeElement)
+            .map((id) => {
+                const path = [id];
                 let tempID = id;
                 while (guiTree[tempID].parentId !== "") {
                     path.push(guiTree[tempID].parentId);
@@ -385,14 +386,15 @@ class GraphicalEditor extends Component {
             });
 
         // activate the elements between root and the node
-        treePaths.forEach(path => {
+        treePaths.forEach((path) => {
             for (let i = 1; i < path.length; i++) {
-                if (guiElements[path[i - 1]].isConstraint && !guiElements[path[i]].isConstraint)
+                if (guiElements[path[i - 1]].isConstraint && !guiElements[path[i]].isConstraint) {
                     jobs.push({
                         elementId: path[i],
                         task: "UPDATE_ELEMENT",
-                        value: {isConstraint: true}
+                        value: {isConstraint: true},
                     });
+                }
             }
         });
         return {jobs: jobs};
@@ -406,18 +408,18 @@ class GraphicalEditor extends Component {
      * @returns {{jobs: Array, error: boolean}} array of jobs for "CHANGE_GUI_ELEMENT"
      */
     lowestCommonAncestor(guiElements, guiTree, property = "isConstraint") {
-        let jobs = [];
+        const jobs = [];
         // lowest common ancestor elementId
-        let lcaID = "", lcaIndex;
+        let lcaID = ""; let lcaIndex;
         // element ids we need to find their common ancestor
-        let elementIDs = Object.keys(guiElements).filter(id => guiElements[id][property]);
+        const elementIDs = Object.keys(guiElements).filter((id) => guiElements[id][property]);
 
         if (elementIDs.length === 0) return {jobs: [], error: true};
 
 
         // for each element, find the path from root to the node.
-        let treePaths = elementIDs.map(id => {
-            let path = [id];
+        const treePaths = elementIDs.map((id) => {
+            const path = [id];
             let tempID = id;
             while (guiTree[tempID].parentId !== "") {
                 path.push(guiTree[tempID].parentId);
@@ -467,38 +469,41 @@ class GraphicalEditor extends Component {
                 lcaIndex--;
             }
             // if no ancestor can be selected, return error >>> should not happen based on guiConstants
-            if (!getConditionByName(guiElements[lcaID].conditionName).canBeSelected && guiTree[lcaID].parentId === "")
+            if (!getConditionByName(guiElements[lcaID].conditionName).canBeSelected && guiTree[lcaID].parentId === "") {
                 return {jobs: [], error: true};
+            }
             if (property === "isConstraint") {
                 this.canBeStarredIDs = [lcaID];
-                if (elementIDs[0] === lcaID && guiTree[lcaID].parentId !== "")
-                    this.canBeStarredIDs.push(guiTree[lcaID].parentId)
+                if (elementIDs[0] === lcaID && guiTree[lcaID].parentId !== "") {
+                    this.canBeStarredIDs.push(guiTree[lcaID].parentId);
+                }
             }
         }
 
-        let value = {};
+        const value = {};
         value[property] = true;
         // activate the elements between LCA and the node
-        treePaths.forEach(path => {
+        treePaths.forEach((path) => {
             for (let i = lcaIndex; i < path.length; i++) {
-                if (i > lcaIndex && !guiElements[path[i]][property])
+                if (i > lcaIndex && !guiElements[path[i]][property]) {
                     jobs.push({
                         elementId: path[i],
                         task: "UPDATE_ELEMENT",
-                        value
+                        value,
                     });
+                }
             }
         });
 
         // update the selected element if changed
-        if (property === "isConstraint" && this.canBeStarredIDs.indexOf(guiTree.selectedElementID) === -1)
+        if (property === "isConstraint" && this.canBeStarredIDs.indexOf(guiTree.selectedElementID) === -1) {
             jobs.push({elementId: lcaID, task: "SELECT_ELEMENT", value: true});
-
-        else if (property === "activeElement" && lcaID !== guiTree.selectedElementID)
+        } else if (property === "activeElement" && lcaID !== guiTree.selectedElementID) {
             jobs.push({elementId: lcaID, task: "SELECT_ELEMENT", value: true});
+        }
 
         return {jobs: jobs, error: false};
-    };
+    }
 
 
     /**
@@ -506,13 +511,12 @@ class GraphicalEditor extends Component {
      * and add more if necessary
      */
     processJobsBeforeSubmit(jobs) {
-
-        let guiElements = JSON.parse(JSON.stringify(this.state.guiElements));
-        let guiTree = JSON.parse(JSON.stringify(this.state.guiTree));
+        const guiElements = JSON.parse(JSON.stringify(this.state.guiElements));
+        const guiTree = JSON.parse(JSON.stringify(this.state.guiTree));
 
         // simulating the reducer
-        let applyJobs = (tasks) => {
-            tasks.forEach(job => {
+        const applyJobs = (tasks) => {
+            tasks.forEach((job) => {
                 switch (job["task"]) {
                     // job = {elementId: "", task: "", value: `${childGroupName}`}
                     case "ADD_EXTRA":
@@ -520,16 +524,18 @@ class GraphicalEditor extends Component {
                         // general function for adding and removing extra fields
 
                         // for "body" value should be in form of `body,${index}`
-                        let childGroup = job["value"].startsWith("body") ? "body" : job["value"];
+                        const childGroup = job["value"].startsWith("body") ? "body" : job["value"];
 
-                        let filterFunction = (id) => {
-                            if (guiElements[id].activeElement)
+                        const filterFunction = (id) => {
+                            if (guiElements[id].activeElement) {
                                 return true;
+                            }
                             delete guiElements[id];
 
                             // if the newly removed element is a selected element, un-select it
-                            if (guiTree.selectedElementID === id)
+                            if (guiTree.selectedElementID === id) {
                                 guiTree.selectedElementID = "";
+                            }
 
                             return false;
                         };
@@ -537,27 +543,29 @@ class GraphicalEditor extends Component {
                         let childrenGroup = guiTree[job["elementId"]].children[childGroup];
                         if (job["value"].startsWith("body")) childrenGroup = guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])];
 
-                        let newElementConditionName = guiElements[childrenGroup[0]].conditionName;
+                        const newElementConditionName = guiElements[childrenGroup[0]].conditionName;
                         if (job["task"] === "REMOVE_EXTRA") {
                             // remove all inactive elements
-                            if (job["value"].startsWith("body"))
+                            if (job["value"].startsWith("body")) {
                                 guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])] =
                                     guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])].filter((id) => filterFunction(id));
-                            else
+                            } else {
                                 guiTree[job["elementId"]].children[childGroup] =
                                     guiTree[job["elementId"]].children[childGroup].filter((id) => filterFunction(id));
+                            }
                         }
-                        let newElementId = Math.floor(new Date().getTime() / 10).toString();
-                        let newElementsData = generateTreeForElement(newElementConditionName, newElementId, job["elementId"]);
+                        const newElementId = Math.floor(new Date().getTime() / 10).toString();
+                        const newElementsData = generateTreeForElement(newElementConditionName, newElementId, job["elementId"]);
                         // updating the existing tree
-                        if (job["value"].startsWith("body"))
+                        if (job["value"].startsWith("body")) {
                             guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])].push(newElementId);
-                        else
+                        } else {
                             guiTree[job["elementId"]].children[childGroup].push(newElementId);
+                        }
                         // adding new trees
-                        newElementsData.trees.forEach(tree => guiTree[tree.id] = tree.node);
+                        newElementsData.trees.forEach((tree) => guiTree[tree.id] = tree.node);
                         // adding new elements
-                        newElementsData.elements.forEach(elem => guiElements[elem.id] = elem.node);
+                        newElementsData.elements.forEach((elem) => guiElements[elem.id] = elem.node);
 
 
                         break;
@@ -566,7 +574,7 @@ class GraphicalEditor extends Component {
                     case "UPDATE_ELEMENT":
                         guiElements[job["elementId"]] = {
                             ...guiElements[job["elementId"]],
-                            ...job["value"]
+                            ...job["value"],
                         };
 
                         // if the newly inactive element is a selected element, un-select it
@@ -586,60 +594,65 @@ class GraphicalEditor extends Component {
                         //  add ids of children of the popped id tree to the stack
                         // delete toBeDeletedIDs from ...graphicalEditorState.${group}.guiElements and ....graphicalEditorState["quantifier/constraint"]
 
-                        let parentTree = guiTree[job["value"]["parentId"]];
-                        Object.keys(parentTree.children).forEach(childGroup => {
-                            if (childGroup !== "body")
-                                guiTree[job["value"]["parentId"]].children[childGroup] = parentTree.children[childGroup].filter(elemId => elemId !== job["elementId"]);
-                            else
-                                guiTree[job["value"]["parentId"]].children["body"] = parentTree.children["body"].map(subGroup => {
-                                    return subGroup.filter(elemId => elemId !== job["elementId"])
+                        const parentTree = guiTree[job["value"]["parentId"]];
+                        Object.keys(parentTree.children).forEach((childGroup) => {
+                            if (childGroup !== "body") {
+                                guiTree[job["value"]["parentId"]].children[childGroup] = parentTree.children[childGroup].filter((elemId) => elemId !== job["elementId"]);
+                            } else {
+                                guiTree[job["value"]["parentId"]].children["body"] = parentTree.children["body"].map((subGroup) => {
+                                    return subGroup.filter((elemId) => elemId !== job["elementId"]);
                                 });
+                            }
                         });
 
                         let stackIDs = [job["elementId"]];
                         while (stackIDs.length > 0) {
-                            let tempId = stackIDs.pop();
+                            const tempId = stackIDs.pop();
 
-                            let tempTree = guiTree[tempId];
+                            const tempTree = guiTree[tempId];
                             let childrenIds = [];
 
-                            Object.keys(tempTree.children).forEach(childGroup => {
+                            Object.keys(tempTree.children).forEach((childGroup) => {
                                 if (childGroup !== "body") childrenIds = childrenIds.concat(tempTree.children[childGroup]);
-                                else
-                                    tempTree.children["body"].forEach(subGroup => {
-                                        childrenIds = childrenIds.concat(subGroup)
+                                else {
+                                    tempTree.children["body"].forEach((subGroup) => {
+                                        childrenIds = childrenIds.concat(subGroup);
                                     });
+                                }
                             });
                             stackIDs = stackIDs.concat(childrenIds);
                         }
 
-                        stackIDs.forEach(elemId => {
+                        stackIDs.forEach((elemId) => {
                             delete guiElements[elemId];
                             delete guiTree[elemId];
 
                             // if the newly removed element is a selected element, un-select it
-                            if (guiTree.selectedElementID === elemId)
+                            if (guiTree.selectedElementID === elemId) {
                                 guiTree.selectedElementID = "";
+                            }
                         });
 
                         break;
 
                     // job = {elementId: "", task: "SELECT_ELEMENT", value: true/false}
                     case "SELECT_ELEMENT":
-                        let oldSelectedElementId = guiTree.selectedElementID;
+                        const oldSelectedElementId = guiTree.selectedElementID;
                         // if selectedElement exists update its state as well
-                        if (guiElements.hasOwnProperty(oldSelectedElementId))
+                        if (guiElements.hasOwnProperty(oldSelectedElementId)) {
                             guiElements[oldSelectedElementId] = {
                                 ...guiElements[oldSelectedElementId],
-                                selectedElement: !job["value"]
+                                selectedElement: !job["value"],
                             };
+                        }
                         guiTree.selectedElementID = job["elementId"];
-                        if (guiElements.hasOwnProperty(job["elementId"]))
+                        if (guiElements.hasOwnProperty(job["elementId"])) {
                             guiElements[job["elementId"]] = {
                                 ...guiElements[job["elementId"]],
                                 selectedElement: job["value"],
-                                isConstraint: job["value"] ? false : guiElements[job["elementId"]].isConstraint
+                                isConstraint: job["value"] ? false : guiElements[job["elementId"]].isConstraint,
                             };
+                        }
                         break;
                     default:
                         break;
@@ -650,23 +663,24 @@ class GraphicalEditor extends Component {
         applyJobs(jobs);
 
         // check connectivity of elements
-        let activateJobs = this.connectElements(guiElements, guiTree);
+        const activateJobs = this.connectElements(guiElements, guiTree);
         applyJobs(activateJobs.jobs);
         jobs = jobs.concat(activateJobs.jobs);
 
-        let constraintJobs = this.makeConstraint(guiElements, guiTree);
+        const constraintJobs = this.makeConstraint(guiElements, guiTree);
         applyJobs(constraintJobs.jobs);
         jobs = jobs.concat(constraintJobs.jobs);
 
         // check the selected element
-        let selectJobs = this.lowestCommonAncestor(guiElements, guiTree);
+        const selectJobs = this.lowestCommonAncestor(guiElements, guiTree);
         jobs = jobs.concat(selectJobs.jobs);
 
         let ruleState = this.props.rulePadState;
         if (this.ruleIndex >= 0) {
-            let rules = this.props.rules.filter(rule => rule.index === this.ruleIndex)
-            if (rules.length === 1)
+            const rules = this.props.rules.filter((rule) => rule.index === this.ruleIndex);
+            if (rules.length === 1) {
                 ruleState = rules[0].rulePanelState;
+            }
         }
         ruleState = this.applyTasks(jobs, ruleState);
         this.props.onChangeRuleState(this.ruleIndex, ruleState);
@@ -674,18 +688,20 @@ class GraphicalEditor extends Component {
 
     applyTasks(tasks, ruleState) {
         // general function for adding and removing extra fields
-        let processFunc = (array, job) => {
+        const processFunc = (array, job) => {
             // for "body" value should be in form of `body,${index}`
-            let childGroup = job["value"].startsWith("body") ? "body" : job["value"];
+            const childGroup = job["value"].startsWith("body") ? "body" : job["value"];
 
-            let filterFunction = (array, id) => {
-                if (array.guiElements[id].activeElement)
+            const filterFunction = (array, id) => {
+                if (array.guiElements[id].activeElement) {
                     return true;
+                }
                 delete array.guiElements[id];
 
                 // if the newly removed element is a selected element, un-select it
-                if (array.guiTree.selectedElementID === id)
+                if (array.guiTree.selectedElementID === id) {
                     array.guiTree.selectedElementID = "";
+                }
 
                 return false;
             };
@@ -693,27 +709,29 @@ class GraphicalEditor extends Component {
             let childrenGroup = array.guiTree[job["elementId"]].children[childGroup];
             if (job["value"].startsWith("body")) childrenGroup = array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])];
 
-            let newElementConditionName = array.guiElements[childrenGroup[0]].conditionName;
+            const newElementConditionName = array.guiElements[childrenGroup[0]].conditionName;
             if (job["task"] === "REMOVE_EXTRA") {
                 // remove all inactive elements
-                if (job["value"].startsWith("body"))
+                if (job["value"].startsWith("body")) {
                     array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])] =
                         array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])].filter((id) => filterFunction(array, id));
-                else
+                } else {
                     array.guiTree[job["elementId"]].children[childGroup] =
                         array.guiTree[job["elementId"]].children[childGroup].filter((id) => filterFunction(array, id));
+                }
             }
-            let newElementId = Math.floor(new Date().getTime() / 10).toString();
-            let newElementsData = generateTreeForElement(newElementConditionName, newElementId, job["elementId"]);
+            const newElementId = Math.floor(new Date().getTime() / 10).toString();
+            const newElementsData = generateTreeForElement(newElementConditionName, newElementId, job["elementId"]);
             // updating the existing tree
-            if (job["value"].startsWith("body"))
+            if (job["value"].startsWith("body")) {
                 array.guiTree[job["elementId"]].children[childGroup][+(job["value"].split(",")[1])].push(newElementId);
-            else
+            } else {
                 array.guiTree[job["elementId"]].children[childGroup].push(newElementId);
+            }
             // adding new trees
-            newElementsData.trees.forEach(tree => array.guiTree[tree.id] = tree.node);
+            newElementsData.trees.forEach((tree) => array.guiTree[tree.id] = tree.node);
             // adding new elements
-            newElementsData.elements.forEach(elem => array.guiElements[elem.id] = elem.node);
+            newElementsData.elements.forEach((elem) => array.guiElements[elem.id] = elem.node);
 
             return array;
         };
@@ -725,63 +743,68 @@ class GraphicalEditor extends Component {
         //  pop one newId, add it to storeIDs
         //  add ids of children of the popped id tree to the stack
         // delete toBeDeletedIDs from ...graphicalEditorState.${group}.guiElements and ....graphicalEditorState["quantifier/constraint"]
-        let processRemoveElement = (array, job) => {
-            let parentTree = array.guiTree[job["value"]["parentId"]];
-            Object.keys(parentTree.children).forEach(childGroup => {
-                if (childGroup !== "body")
-                    array.guiTree[job["value"]["parentId"]].children[childGroup] = parentTree.children[childGroup].filter(elemId => elemId !== job["elementId"]);
-                else
-                    array.guiTree[job["value"]["parentId"]].children["body"] = parentTree.children["body"].map(subGroup => {
-                        return subGroup.filter(elemId => elemId !== job["elementId"])
+        const processRemoveElement = (array, job) => {
+            const parentTree = array.guiTree[job["value"]["parentId"]];
+            Object.keys(parentTree.children).forEach((childGroup) => {
+                if (childGroup !== "body") {
+                    array.guiTree[job["value"]["parentId"]].children[childGroup] = parentTree.children[childGroup].filter((elemId) => elemId !== job["elementId"]);
+                } else {
+                    array.guiTree[job["value"]["parentId"]].children["body"] = parentTree.children["body"].map((subGroup) => {
+                        return subGroup.filter((elemId) => elemId !== job["elementId"]);
                     });
+                }
             });
 
             let stackIDs = [job["elementId"]];
             while (stackIDs.length > 0) {
-                let tempId = stackIDs.pop();
+                const tempId = stackIDs.pop();
 
-                let tempTree = array.guiTree[tempId];
+                const tempTree = array.guiTree[tempId];
                 let childrenIds = [];
 
-                Object.keys(tempTree.children).forEach(childGroup => {
+                Object.keys(tempTree.children).forEach((childGroup) => {
                     if (childGroup !== "body") childrenIds = childrenIds.concat(tempTree.children[childGroup]);
-                    else
-                        tempTree.children["body"].forEach(subGroup => {
-                            childrenIds = childrenIds.concat(subGroup)
+                    else {
+                        tempTree.children["body"].forEach((subGroup) => {
+                            childrenIds = childrenIds.concat(subGroup);
                         });
+                    }
                 });
                 stackIDs = stackIDs.concat(childrenIds);
             }
 
-            stackIDs.forEach(elemId => {
+            stackIDs.forEach((elemId) => {
                 delete array.guiElements[elemId];
                 delete array.guiTree[elemId];
 
                 // if the newly removed element is a selected element, un-select it
-                if (array.guiTree.selectedElementID === elemId)
+                if (array.guiTree.selectedElementID === elemId) {
                     array.guiTree.selectedElementID = "";
+                }
             });
 
             return array;
         };
 
-        let processSelectElement = (array, job) => {
-            let oldSelectedElementId = array.guiTree.selectedElementID;
+        const processSelectElement = (array, job) => {
+            const oldSelectedElementId = array.guiTree.selectedElementID;
             // if selectedElement exists update its state as well
-            if (array.guiElements.hasOwnProperty(oldSelectedElementId))
+            if (array.guiElements.hasOwnProperty(oldSelectedElementId)) {
                 array.guiElements[oldSelectedElementId] = {
                     ...array.guiElements[oldSelectedElementId],
-                    selectedElement: !job["value"]
+                    selectedElement: !job["value"],
                 };
+            }
             array.guiTree.selectedElementID = job["elementId"];
-            if (array.guiElements.hasOwnProperty(job["elementId"]))
+            if (array.guiElements.hasOwnProperty(job["elementId"])) {
                 array.guiElements[job["elementId"]] = {
                     ...array.guiElements[job["elementId"]],
-                    selectedElement: job["value"]
+                    selectedElement: job["value"],
                 };
+            }
             return array;
         };
-        tasks.forEach(job => {
+        tasks.forEach((job) => {
             switch (job["task"]) {
                 // job = {elementId: "", task: "", value: `${childGroupName}`}
                 case "ADD_EXTRA":
@@ -793,7 +816,7 @@ class GraphicalEditor extends Component {
                 case "UPDATE_ELEMENT":
                     ruleState.graphicalEditorState.guiElements[job["elementId"]] = {
                         ...ruleState.graphicalEditorState.guiElements[job["elementId"]],
-                        ...job["value"]
+                        ...job["value"],
                     };
                     break;
 
@@ -811,7 +834,7 @@ class GraphicalEditor extends Component {
                     break;
             }
         });
-        return ruleState
+        return ruleState;
     }
 }
 
@@ -824,78 +847,79 @@ class GraphicalEditor extends Component {
  * @param forMiningRules
  * @return {any}
  */
-export function buildFromGUI (guiTree, guiElements, nodeId, group="quantifier",
-                              forMiningRules=false) {
-    let visitedNodeId = [];
+export function buildFromGUI(guiTree, guiElements, nodeId, group="quantifier",
+    forMiningRules=false) {
+    const visitedNodeId = [];
 
-    let buildTreeFromNodeId = (nodeId, group) => {
+    const buildTreeFromNodeId = (nodeId, group) => {
         visitedNodeId.push(nodeId);
 
-        let nodeChildren = {};
-        Object.keys(guiTree[nodeId].children).forEach(childGroup => {
+        const nodeChildren = {};
+        Object.keys(guiTree[nodeId].children).forEach((childGroup) => {
             nodeChildren[childGroup] = [];
-            if (childGroup !== "body")
-                guiTree[nodeId].children[childGroup].forEach(childId => {
+            if (childGroup !== "body") {
+                guiTree[nodeId].children[childGroup].forEach((childId) => {
                     if (visitedNodeId.indexOf(childId) !== -1) return null;
                     if (childId === "" || !guiElements[childId].activeElement) return null;
                     if (group === "quantifier" && guiElements[childId].isConstraint) return null;
-                    let newSubTree = buildTreeFromNodeId(childId, group);
-                    if (newSubTree) nodeChildren[childGroup].push(newSubTree)
+                    const newSubTree = buildTreeFromNodeId(childId, group);
+                    if (newSubTree) nodeChildren[childGroup].push(newSubTree);
                 });
-            else
+            } else {
                 guiTree[nodeId].children["body"].forEach((subGroup) => {
-                    subGroup.forEach(childId => {
+                    subGroup.forEach((childId) => {
                         if (visitedNodeId.indexOf(childId) !== -1) return null;
                         if (childId === "" || !guiElements[childId].activeElement) return null;
                         if (group === "quantifier" && guiElements[childId].isConstraint) return null;
-                        let newSubTree = buildTreeFromNodeId(childId, group);
-                        if (newSubTree) nodeChildren["body"].push(newSubTree)
-                    })
-                })
+                        const newSubTree = buildTreeFromNodeId(childId, group);
+                        if (newSubTree) nodeChildren["body"].push(newSubTree);
+                    });
+                });
+            }
         });
 
-        let conditionByName = getConditionByName(guiElements[nodeId].conditionName);
+        const conditionByName = getConditionByName(guiElements[nodeId].conditionName);
         return {
             nodeId: nodeId,
             properties: {
                 ...guiElements[nodeId],
                 elementGrammar: conditionByName.grammar,
-                elementPlaceholder: conditionByName.required ? (conditionByName.required + conditionByName.placeholder) : ""
+                elementPlaceholder: conditionByName.required ? (conditionByName.required + conditionByName.placeholder) : "",
             },
             parentNode: {},
-            children: nodeChildren
+            children: nodeChildren,
         };
-
     };
 
-    let buildBottomUpTreeFromNodeId = (nodeId, group) => {
+    const buildBottomUpTreeFromNodeId = (nodeId, group) => {
         if (nodeId === "" || !guiElements[nodeId].activeElement) return {};
         visitedNodeId.push(nodeId);
 
-        //children all children are 1D arrays even "body"
-        let nodeChildren = {};
-        Object.keys(guiTree[nodeId].children).forEach(childGroup => {
+        // children all children are 1D arrays even "body"
+        const nodeChildren = {};
+        Object.keys(guiTree[nodeId].children).forEach((childGroup) => {
             nodeChildren[childGroup] = [];
-            if (childGroup !== "body")
-                guiTree[nodeId].children[childGroup].forEach(childId => {
+            if (childGroup !== "body") {
+                guiTree[nodeId].children[childGroup].forEach((childId) => {
                     if (visitedNodeId.indexOf(childId) !== -1) return;
                     if (childId === "" || !guiElements[childId].activeElement) return;
                     if (guiElements[childId].isConstraint && group === "quantifier") return;
                     if (forMiningRules && isNotElementOrIdentifier(guiElements, childId)) return;
-                    let newSubTree = buildTreeFromNodeId(childId, group);
+                    const newSubTree = buildTreeFromNodeId(childId, group);
                     if (newSubTree) nodeChildren[childGroup].push(newSubTree);
                 });
-            else
+            } else {
                 guiTree[nodeId].children["body"].forEach((subGroup) => {
-                    subGroup.forEach(childId => {
+                    subGroup.forEach((childId) => {
                         if (visitedNodeId.indexOf(childId) !== -1) return;
                         if (childId === "" || !guiElements[childId].activeElement) return;
                         if (guiElements[childId].isConstraint && group === "quantifier") return;
                         if (forMiningRules && isNotElementOrIdentifier(guiElements, childId)) return;
-                        let newSubTree = buildTreeFromNodeId(childId, group);
+                        const newSubTree = buildTreeFromNodeId(childId, group);
                         if (newSubTree) nodeChildren["body"].push(newSubTree);
-                    })
-                })
+                    });
+                });
+            }
         });
 
         return {
@@ -905,7 +929,7 @@ export function buildFromGUI (guiTree, guiElements, nodeId, group="quantifier",
                 elementGrammar: getConditionByName(guiElements[nodeId].conditionName).grammar,
             },
             parentNode: buildBottomUpTreeFromNodeId(guiTree[nodeId].parentId),
-            children: nodeChildren
+            children: nodeChildren,
         };
     };
 
@@ -923,23 +947,25 @@ export function buildTrivialGrammar(rootNode, constraintQuery = false) {
 
     // element name
     if (!constraintQuery) {
-        if (!skip_words_from_TE.includes(rootNode["properties"].elementGrammar))
-            rootNode["properties"].elementGrammar.split(" ").forEach(part =>
+        if (!skip_words_from_TE.includes(rootNode["properties"].elementGrammar)) {
+            rootNode["properties"].elementGrammar.split(" ").forEach((part) =>
                 grammarObject.push({text: part, id: rootNode.nodeId}));
+        }
     }
 
     // text value
     if (rootNode["properties"].text) {
-        if (autoComplete_suggestion[rootNode["properties"].elementGrammar].preWord)
+        if (autoComplete_suggestion[rootNode["properties"].elementGrammar].preWord) {
             grammarObject.push({
                 text: autoComplete_suggestion[rootNode["properties"].elementGrammar].preWord,
-                id: rootNode.nodeId
+                id: rootNode.nodeId,
             });
+        }
         grammarObject.push({text: "\"" + rootNode["properties"].text + "\"", id: rootNode.nodeId});
     }
 
     if (rootNode["properties"].elementPlaceholder && !rootNode["properties"].text) {
-        rootNode["properties"].elementPlaceholder.split(" ").forEach(w => {
+        rootNode["properties"].elementPlaceholder.split(" ").forEach((w) => {
             grammarObject.push({text: w, id: rootNode.nodeId});
         });
     }
@@ -949,9 +975,9 @@ export function buildTrivialGrammar(rootNode, constraintQuery = false) {
         grammarObject.push({text: "\"" + rootNode["properties"].value + "\"", id: rootNode.nodeId});
     }
 
-    //children all children are 1D arrays even "body"
+    // children all children are 1D arrays even "body"
     let allChildren = [];
-    Object.keys(rootNode.children).forEach(group => allChildren = allChildren.concat(rootNode.children[group]));
+    Object.keys(rootNode.children).forEach((group) => allChildren = allChildren.concat(rootNode.children[group]));
     if (allChildren.length > 0 && !constraintQuery) grammarObject.push({text: "with", id: ""});
     if (allChildren.length > 1 && !constraintQuery) grammarObject.push({text: "(", id: ""});
     for (let i = 0; i < allChildren.length; i++) {
@@ -963,7 +989,7 @@ export function buildTrivialGrammar(rootNode, constraintQuery = false) {
     // parent
     if (Object.entries(rootNode.parentNode).length !== 0 && !constraintQuery) {
         grammarObject.push({text: "of", id: ""});
-        grammarObject = grammarObject.concat(buildTrivialGrammar(rootNode.parentNode))
+        grammarObject = grammarObject.concat(buildTrivialGrammar(rootNode.parentNode));
     }
 
     return grammarObject;
@@ -984,8 +1010,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         onChangeRuleState: (ruleIndex, ruleState) => dispatch(changeRuleState(ruleIndex, ruleState)),
-        onChangeAutoCompleteTextFromGUI: (ruleIndex, newAutoCompleteArray) => dispatch(changeAutoCompleteTextFromGUI(ruleIndex, newAutoCompleteArray))
-    }
+        onChangeAutoCompleteTextFromGUI: (ruleIndex, newAutoCompleteArray) => dispatch(changeAutoCompleteTextFromGUI(ruleIndex, newAutoCompleteArray)),
+    };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(GraphicalEditor);

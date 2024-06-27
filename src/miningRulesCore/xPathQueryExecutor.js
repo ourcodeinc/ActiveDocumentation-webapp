@@ -7,9 +7,9 @@ import {nsResolver} from "../core/coreConstants";
  * @return {Node[]}
  */
 export const returnNodeArray = (mainNode, xPath) => {
-    let NodesIterator = returnNodeIterator(mainNode, xPath);
+    const NodesIterator = returnNodeIterator(mainNode, xPath);
     if (NodesIterator === -1) return [];
-    let nodeArray = [];
+    const nodeArray = [];
     if (NodesIterator.resultType !== 4) {
         return [];
     }
@@ -19,7 +19,7 @@ export const returnNodeArray = (mainNode, xPath) => {
         res = NodesIterator.iterateNext();
     }
     return nodeArray;
-}
+};
 
 
 /**
@@ -29,17 +29,18 @@ export const returnNodeArray = (mainNode, xPath) => {
  * @return {number|XPathResult}
  */
 export const returnNodeIterator = (mainNode, xPath) => {
-    let parser = new DOMParser();
+    const parser = new DOMParser();
     let parentNodeStrings = "";
-    if (typeof mainNode === "object")
+    if (typeof mainNode === "object") {
         parentNodeStrings = new XMLSerializer().serializeToString(mainNode);
-    else if (typeof mainNode === "string")
-        parentNodeStrings = mainNode
-    else
+    } else if (typeof mainNode === "string") {
+        parentNodeStrings = mainNode;
+    } else {
         return -1;
-    let parentNodeCopy = parser.parseFromString(parentNodeStrings, "text/xml");
+    }
+    const parentNodeCopy = parser.parseFromString(parentNodeStrings, "text/xml");
     return parentNodeCopy.evaluate(xPath, parentNodeCopy, nsResolver, XPathResult.ANY_TYPE, null);
-}
+};
 
 
 /**
@@ -49,8 +50,8 @@ export const returnNodeIterator = (mainNode, xPath) => {
  * @return {boolean} whether the node exists
  */
 export const runXPathNoNode = (mainNode, xPath) => {
-    let parentNodes = returnNodeIterator(mainNode, xPath);
-    let res = parentNodes.iterateNext();
+    const parentNodes = returnNodeIterator(mainNode, xPath);
+    const res = parentNodes.iterateNext();
     return (res !== null);
 };
 
@@ -61,8 +62,8 @@ export const runXPathNoNode = (mainNode, xPath) => {
  * @return {string[]} array of found nodes (as text())
  */
 export const runXPathSingleNode = (mainNode, xPath) => {
-    let result = [];
-    let parentNodes = returnNodeIterator(mainNode, xPath);
+    const result = [];
+    const parentNodes = returnNodeIterator(mainNode, xPath);
     let res = parentNodes.iterateNext();
     while (res !== null) {
         result.push(res.nodeValue);
@@ -79,15 +80,15 @@ export const runXPathSingleNode = (mainNode, xPath) => {
  * @return {string[]} array of found nodes (as text())
  */
 export const runXPathSingleNodeAndChildren = (mainNode, xPath) => {
-    let result = [];
-    let parentNodes = returnNodeIterator(mainNode, xPath);
+    const result = [];
+    const parentNodes = returnNodeIterator(mainNode, xPath);
     let res = parentNodes.iterateNext();
     while (res !== null) {
         result.push(extractTextFromXML(res));
         res = parentNodes.iterateNext();
     }
     return result;
-}
+};
 
 /**
  * aux method for running XPath when several nodes (co-occurring) are queried
@@ -97,18 +98,18 @@ export const runXPathSingleNodeAndChildren = (mainNode, xPath) => {
  * @return {*[]} arrays of arrays of co-occurring nodes
  */
 export const runXPathMultipleNodes = (mainNode, xPath, nodes) => {
-    let result = [];
-    let parentNodes = returnNodeIterator(mainNode, xPath);
+    const result = [];
+    const parentNodes = returnNodeIterator(mainNode, xPath);
     let res = parentNodes.iterateNext();
     while (res) {
         try {
-            let parser = new DOMParser();
-            let resString = new XMLSerializer().serializeToString(res);
-            let resCopy = parser.parseFromString(resString, "text/xml");
-            let tempResult = [];
+            const parser = new DOMParser();
+            const resString = new XMLSerializer().serializeToString(res);
+            const resCopy = parser.parseFromString(resString, "text/xml");
+            const tempResult = [];
             for (let i = 0; i < nodes.length; i++) {
-                let childNode = resCopy.evaluate(nodes[i], resCopy, nsResolver, XPathResult.ANY_TYPE, null);
-                let child = (childNode.iterateNext()).nodeValue;
+                const childNode = resCopy.evaluate(nodes[i], resCopy, nsResolver, XPathResult.ANY_TYPE, null);
+                const child = (childNode.iterateNext()).nodeValue;
                 tempResult.push(child);
             }
             result.push(tempResult);
@@ -132,18 +133,18 @@ export const runXPathMultipleNodes = (mainNode, xPath, nodes) => {
  * @return {*[]} arrays of arrays of co-occurring nodes
  */
 export const runXPathMultipleNodesAndChildren = (mainNode, xPath, nodes) => {
-    let result = [];
-    let parentNodes = returnNodeIterator(mainNode, xPath);
+    const result = [];
+    const parentNodes = returnNodeIterator(mainNode, xPath);
     let res = parentNodes.iterateNext();
     while (res) {
         try {
-            let parser = new DOMParser();
-            let resString = new XMLSerializer().serializeToString(res);
-            let resCopy = parser.parseFromString(resString, "text/xml");
-            let tempResult = [];
+            const parser = new DOMParser();
+            const resString = new XMLSerializer().serializeToString(res);
+            const resCopy = parser.parseFromString(resString, "text/xml");
+            const tempResult = [];
             for (let i = 0; i < nodes.length; i++) {
-                let childNode = resCopy.evaluate(nodes[i], resCopy, nsResolver, XPathResult.ANY_TYPE, null);
-                let child = extractTextFromXML(childNode.iterateNext());
+                const childNode = resCopy.evaluate(nodes[i], resCopy, nsResolver, XPathResult.ANY_TYPE, null);
+                const child = extractTextFromXML(childNode.iterateNext());
                 tempResult.push(child);
             }
             result.push(tempResult);

@@ -3,7 +3,6 @@ created by @saharmehrpour Jun 5, 2020
  */
 
 
-
 export const reduxStoreMessages = {
     hash_msg: "HASH",
     ws_msg: "NEW_WS",

@@ -21,16 +21,16 @@ import {BRANCHING_FACTOR, MAX_LEAF_ENTRIES, SIMILARITY_THRESHOLD} from "./featur
  * @returns {number}
  */
 const similarity = (itemSet1, itemSet2,
-                    featureMetaData) => {
+    featureMetaData) => {
     const set1 = new Set(itemSet1.featureIds);
     const set2 = new Set(itemSet2.featureIds);
-    const commonFeatures = new Set([...set1].filter(x => set2.has(x)));
+    const commonFeatures = new Set([...set1].filter((x) => set2.has(x)));
     return Array.from(commonFeatures).reduce((sum, featureId) => {
-        let desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
-        let weight = featureMetaData.featureInfoContainers.featureInfo[desc].weight;
-        return sum + weight
+        const desc = featureMetaData.featureInfoContainers.featureInfoReverse[featureId];
+        const weight = featureMetaData.featureInfoContainers.featureInfo[desc].weight;
+        return sum + weight;
     }, 0);
-}
+};
 
 /**
  * given an itemSet, Finds the node in the BIRCH tree that is the most similar.
@@ -44,17 +44,17 @@ const findSimilarNode = (itemSet, node, featureMetaData) => {
     let similarNode = node;
     if (node.children.length === 0) {
         maxSimilarity = Infinity;
-        for (let item of node.itemSets) {
+        for (const item of node.itemSets) {
             // we want the new itemSet to have a high similarity with all the members
-            let dist = similarity(itemSet, item, featureMetaData);
+            const dist = similarity(itemSet, item, featureMetaData);
             if (dist < maxSimilarity) {
                 maxSimilarity = dist;
                 similarNode = node;
             }
         }
     } else {
-        for (let child of node.children) {
-            let result = findSimilarNode(itemSet, child, featureMetaData);
+        for (const child of node.children) {
+            const result = findSimilarNode(itemSet, child, featureMetaData);
             if (result.maxSimilarity > maxSimilarity) {
                 maxSimilarity = result.maxSimilarity;
                 similarNode = result.similarNode;
@@ -63,9 +63,9 @@ const findSimilarNode = (itemSet, node, featureMetaData) => {
     }
     return maxSimilarity >= SIMILARITY_THRESHOLD ? {maxSimilarity, similarNode} : {
         maxSimilarity: -1,
-        similarNode: node
+        similarNode: node,
     };
-}
+};
 
 /**
  * Function to cluster itemSets using BIRCH algorithm
@@ -82,8 +82,8 @@ const runBIRCH = (data, featureMetaData) => {
 
     // Insert each itemSet into the BIRCH tree
     for (const itemSet of data) {
-        let mostSimilar = findSimilarNode(itemSet, root, featureMetaData);
-        let currentNode = mostSimilar.similarNode;
+        const mostSimilar = findSimilarNode(itemSet, root, featureMetaData);
+        const currentNode = mostSimilar.similarNode;
 
         // Insert itemSet into the most similar node
         // It is a leaf
@@ -91,15 +91,15 @@ const runBIRCH = (data, featureMetaData) => {
             currentNode.itemSets.push(itemSet);
             // Split the current node if it exceeds the maximum number of itemSets
             if (currentNode.itemSets.length > MAX_LEAF_ENTRIES) {
-                let half = Math.floor(currentNode.children.length / 2);
+                const half = Math.floor(currentNode.children.length / 2);
                 /**
                  * @type {BirchNode}
                  */
-                let newChildOne = {itemSets: [], children: []};
+                const newChildOne = {itemSets: [], children: []};
                 /**
                  * @type {BirchNode}
                  */
-                let newChildTwo = {itemSets: [], children: []};
+                const newChildTwo = {itemSets: [], children: []};
                 for (let i = 0; i < half; i++) {
                     newChildOne.itemSets.push(currentNode.itemSets.pop());
                 }
@@ -108,22 +108,20 @@ const runBIRCH = (data, featureMetaData) => {
                 }
                 currentNode.children.push(newChildOne, newChildTwo);
             }
-        }
-        // It is a middle node
-        else {
+        } else {
+            // It is a middle node
             /**
              * @type {BirchNode}
              */
             const newChild = {itemSets: [itemSet], children: []};
             if (currentNode.children.length < BRANCHING_FACTOR) {
                 currentNode.children.push(newChild);
-            }
-            // Split the children if it exceeds the branching factor
-            else {
+            } else {
+                // Split the children if it exceeds the branching factor
                 /**
                  * @type {BirchNode}
                  */
-                let newParent = {itemSets: [], children: []};
+                const newParent = {itemSets: [], children: []};
                 while (currentNode.children.length > 0) {
                     newParent.children.push(currentNode.children.pop());
                 }
@@ -142,8 +140,9 @@ const runBIRCH = (data, featureMetaData) => {
      */
     function clusterNode(node) {
         if (node.children.length === 0) {
-            if (node.itemSets.length > 0)
+            if (node.itemSets.length > 0) {
                 clusters.push(node.itemSets);
+            }
         } else {
             for (const child of node.children) {
                 clusterNode(child);
@@ -154,7 +153,7 @@ const runBIRCH = (data, featureMetaData) => {
     // Cluster itemSets in the BIRCH tree using hierarchical approach
     clusterNode(root);
     return clusters;
-}
+};
 
 
 /**
@@ -163,12 +162,12 @@ const runBIRCH = (data, featureMetaData) => {
  * @return {{fileGroup: string, clusters: [[initialFrequentItemSetType]]}[]}
  */
 export const clusterSimilarItemSets = (initialParsedOutput, featureMetaData) => {
-    let clusteredResults = [];
-    for (let fileGroup of initialParsedOutput) {
-        let group = fileGroup.frequentItemSets;
-        let clusters = runBIRCH(group, featureMetaData);
+    const clusteredResults = [];
+    for (const fileGroup of initialParsedOutput) {
+        const group = fileGroup.frequentItemSets;
+        const clusters = runBIRCH(group, featureMetaData);
         clusteredResults.push({fileGroup: fileGroup.fileGroup, clusters});
     }
     return clusteredResults;
-}
+};
 
