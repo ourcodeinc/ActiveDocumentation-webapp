@@ -1,0 +1,9 @@
+build/
+node_modules/
+config-overrides.js
+src/configureMonaco.js
+src/monaco-worker-loader-proxy.dev.js
+src/monaco-worker-loader-proxy.js
+src/registerServiceWorker.js
+src/core/generated-parser/
+src/web-socket-js/
