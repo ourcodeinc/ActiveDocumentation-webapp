@@ -12,6 +12,7 @@ import {clickedOnBack, clickedOnForward} from "../actions";
 import {hashConst} from "./uiConstants";
 
 import ConfigComponent from "../ui/activeLLM/configComponent";
+import {featureConfig} from "../config";
 
 export class NavBar extends Component {
     render() {
@@ -35,23 +36,25 @@ export class NavBar extends Component {
                         </NavItem>
 
                         <NavItem eventKey={1}>
-                            Table of Contents
+                            {"Table of Contents"}
                         </NavItem>
                         <NavItem eventKey={2}>
-                            All Rules
+                            {"All Rules"}
                         </NavItem>
                         <NavItem eventKey={3}>
-                            Violated Rules
+                            {"Violated Rules"}
                         </NavItem>
-                        <NavItem eventKey={4}>
-                            Learn Design Rules
+                        <NavItem eventKey={4} disabled={!featureConfig.MiningRules}>
+                            {"Learn Design Rules"} {featureConfig.MiningRules? "": " (Disabled)"}
                         </NavItem>
                     </Nav>
                 </Navbar.Collapse>
                 {/* Opt-In to activeLLM button */}
-                <span>
-                    <ConfigComponent/>
-                </span>
+                {featureConfig.ActiveLLM ? (
+                    <span>
+                        <ConfigComponent/>
+                    </span>
+                ) : null}
             </Navbar>
         );
     }
