@@ -13,6 +13,7 @@ import NavBar from "./ui/navBar";
 import HeaderBar from "./ui/headerBar";
 import MinedRulesComponent from "./ui/MiningRules/minedRulesComponent";
 import {hashConst} from "./ui/uiConstants";
+import {featureConfig} from "./config";
 
 class App extends Component {
     constructor(props) {
@@ -79,10 +80,16 @@ class App extends Component {
                     </div>
                     <div id={"learnDesignRules"}
                         className={
-                            ([hashConst.learnDesignRules].indexOf(this.props.currentHash[0]) === -1 ) ?
+                            ([hashConst.learnDesignRules].indexOf(this.props.currentHash[0]) === -1) ?
                                 "main container hidden" : "main container"
                         }>
-                        <MinedRulesComponent/>
+                        {featureConfig.MiningRules ? (
+                            <MinedRulesComponent/>
+                        ) : (
+                            <div>
+                                {"The Mining Rules feature is disabled in this version of the tool."}
+                            </div>
+                        )}
                     </div>
                     <div style={{width: "100%", height: "100px"}}/>
                 </div>
@@ -98,12 +105,14 @@ class App extends Component {
     }
 
     renderLoading() {
+        const loadingTitle = featureConfig.MiningRules ?
+            "Loading Files and Rules and Preprocessing" : "Loading Files and Rules";
         return (<div id={"loadingGif"}
             className={(this.state.loadingGif ? "" : "hidden")}>
             <div className={"overlayLoading"}>
                 <div className={"spinnerContainer"}>
                     <div className={"loadingTitle"}>
-                        <h3>{"Loading Rules and Preprocessing"}</h3>
+                        <h3>{loadingTitle}</h3>
                     </div>
                     <div className="spinner"/>
                 </div>
