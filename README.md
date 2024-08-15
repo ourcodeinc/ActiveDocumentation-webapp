@@ -8,4 +8,4 @@ To set up ActiveDocumentation, refer to this [wiki page](https://github.com/ourc
 
 # Developers Guide
 
-Refer to this [wiki page](https://github.com/ourcodeinc/ActiveDocumentation-webapp/wiki/ActiveDocumentation-Documentation) to understand ActiveDocumentation codebase.
+Refer to this [wiki page](https://github.com/ourcodeinc/ActiveDocumentation-webapp/wiki/Developer-Guide) to understand ActiveDocumentation codebase.
