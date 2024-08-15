@@ -13,7 +13,7 @@
     "monaco-editor": "0.21.2",
     "monaco-editor-webpack-plugin": "2.0.0",
     "npm": "6.14.13",
-    "openai": "4.53.0",
+    "openai": "^4.30.0",
     "path": "0.12.7",
     "pluralize": "7.0.0",
     "rc-slider": "8.7.1",
@@ -50,7 +50,7 @@
     "react-scripts": "4.0.3"
   },
   "scripts": {
-    "start-Mac": "PORT=9010 react-app-rewired --max_old_space_size=8192 --openssl-legacy-provider start",
+    "start-Mac": "PORT=9010 react-app-rewired --max_old_space_size=8192 start",
     "start-Linux": "export SET NODE_OPTIONS=--openssl-legacy-provider PORT=9010 && react-app-rewired --max_old_space_size=8192 start",
     "start-Windows": "set PORT = 9010 && react-app-rewired --max_old_space_size=8192 start",
     "build": "react-app-rewired --max_old_space_size=8192 build",
