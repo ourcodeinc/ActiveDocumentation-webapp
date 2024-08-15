@@ -10,8 +10,6 @@ import {Nav, Navbar, NavItem} from "react-bootstrap";
 import {connect} from "react-redux";
 import {clickedOnBack, clickedOnForward} from "../actions";
 import {hashConst} from "./uiConstants";
-
-import ConfigComponent from "../ui/activeLLM/configComponent";
 import {featureConfig} from "../config";
 
 export class NavBar extends Component {
@@ -49,12 +47,6 @@ export class NavBar extends Component {
                         </NavItem>
                     </Nav>
                 </Navbar.Collapse>
-                {/* Opt-In to activeLLM button */}
-                {featureConfig.ActiveLLM ? (
-                    <span>
-                        <ConfigComponent/>
-                    </span>
-                ) : null}
             </Navbar>
         );
     }

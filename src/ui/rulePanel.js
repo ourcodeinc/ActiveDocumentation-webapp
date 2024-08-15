@@ -19,7 +19,6 @@ import {webSocketSendMessage} from "../core/coreConstants";
 import {relatives} from "../core/ruleExecutorConstants";
 import {hashConst, none_filePath} from "./uiConstants";
 
-import {suggestFix} from "../activeLLM/suggestFix";
 
 class RulePanel extends Component {
     constructor(props) {
@@ -508,64 +507,7 @@ class SnippetView extends Component {
         };
     }
 
-    handleSuggestion = async (
-        rule,
-        example,
-        snippet,
-        exampleFilePath,
-        violationFilePath,
-    ) => {
-        const parsedSnippet = Utilities.removeSrcmlAnnotations(snippet);
-        const parsedExample = Utilities.removeSrcmlAnnotations(example);
-        // prevent multiple calls to suggestFix
-        if (!this.state.suggestionCreated) {
-            suggestFix(
-                rule,
-                parsedExample,
-                parsedSnippet,
-                exampleFilePath,
-                violationFilePath,
-                this.setState.bind(this),
-            );
-            // notify the component that this snippet now has a suggested fix
-            this.setState({suggestionCreated: true});
-        }
-    };
-
     render() {
-        // NOTE: These styles can be moved to index.css in the future.
-        // There was an issue with that, so this is a quick fix
-        const titleStyle = {
-            color: "#333",
-            fontSize: "1.10em",
-            width: "100%",
-            fontWeight: "bold",
-        };
-
-        const buttonStyle = {
-            marginTop: "2px",
-            marginRight: "2.5px",
-            backgroundColor: "#777",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            paddingRight: "5px",
-            paddingLeft: "5px",
-            fontWeight: "bold",
-            cursor: "pointer",
-            outline: "none",
-        };
-
-        const buttonParent = {
-            position: "absolute",
-            top: "0",
-            right: "0",
-            zIndex: "1",
-        };
-
-        // Store the API key in a variable
-        const apiKey = localStorage.getItem("OPENAI_API_KEY");
-
         return (
             <section>
                 <div data-file-path={this.state.d.filePath} className="snippetDiv"
@@ -576,60 +518,7 @@ class SnippetView extends Component {
                             this.state.d.xml);
                     }}>
                         <pre className="content" dangerouslySetInnerHTML={{__html: this.state.d.snippet}}/>
-
-                        <span style={buttonParent}>
-                            {/* render the following IF this is a violation of a rule and there is no fix yet */}
-                            {this.state.snippetGroup === "violated" &&
-                            // Use the apiKey variable in the conditional rendering check
-                            apiKey !== null && apiKey !== "" && !this.state.suggestedSnippet && (
-                                <button
-                                    onClick={() => this.handleSuggestion(
-                                        this.state.description, this.state.exampleSnippet,
-                                        this.state.d.surroundingNodes, this.state.exampleFilePath,
-                                        this.state.d.filePath)}
-                                    style={buttonStyle}>{"Fix ✨"}
-                                </button>
-                            )}
-                        </span>
                     </div>
-
-                    {this.state.suggestionCreated && !this.state.suggestedSnippet && (
-                        <h2 style={{
-                            color: "black",
-                            fontSize: "1.25em",
-                            fontWeight: "bold",
-                            textAlign: "center",
-                        }}>{"Loading Fix..."}</h2>
-                    )}
-
-
-                    {/* render the following IF the component state has received snippet */}
-                    {this.state.suggestedSnippet && (
-                        <div>
-                            <h2 style={titleStyle}>{"Suggested Fix:"}</h2>
-                            <pre className="content" dangerouslySetInnerHTML={{__html: this.state.suggestedSnippet}}/>
-                            <h2 style={titleStyle}>{"Suggestion Location:"}</h2>
-                            <p className="content" dangerouslySetInnerHTML={{__html: this.state.suggestionFileName}}/>
-                            <h2 style={titleStyle}>{"Explanation:"}</h2>
-                            <p className="content" dangerouslySetInnerHTML={{__html: this.state.snippetExplanation}}/>
-
-                            <button
-                                // send the suggested fix and the explanation to to plugin
-                                onClick={() => {
-                                    this.props.onIgnoreFile(true);
-                                    Utilities.sendToServer(
-                                        this.props.ws,
-                                        webSocketSendMessage.snippet_xml_msg,
-                                        this.state.llmModifiedFileContent,
-                                    );
-                                    console.log(this.state.llmModifiedFileContent);
-                                }}
-                                style={buttonStyle}
-                            >
-                                {"Accept Fix"}
-                            </button>
-                        </div>
-                    )}
                 </div>
             </section>
         );
