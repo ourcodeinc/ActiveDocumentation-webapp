@@ -37,7 +37,7 @@
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/no-noninteractive-element-interactions": "off",
     "jsx-a11y/no-static-element-interactions": "off",
-    "linebreak-style": ["error", "windows"],
+    "linebreak-style": "off",
     "max-len": "off",
     "new-cap": "off",
     "no-case-declarations": "off",
