@@ -11,7 +11,8 @@ import {connect} from "react-redux";
 import {GoAlert} from "react-icons/go";
 import {webSocketSendMessage} from "../core/coreConstants";
 import {hashConst} from "./uiConstants";
-
+import {FaInfoCircle} from "react-icons/fa";
+import ReactTooltip from "react-tooltip";
 export class HeaderBar extends Component {
     render() {
         return (
@@ -22,6 +23,8 @@ export class HeaderBar extends Component {
                 )}
                 <div className="headerDiv">
                     {this.renderHeader()}
+                    <ReactTooltip place="top" type="dark" effect="float" />
+                    <FaInfoCircle className="infoIcon" data-tip={this.props.tooltip} />
                 </div>
             </div>
         );
@@ -126,6 +129,7 @@ function mapStateToProps(state) {
         tag: "",
         title: "",
         content: "",
+        tooltip: "",
     };
 
     switch (state.currentHash[0]) {
@@ -140,6 +144,7 @@ function mapStateToProps(state) {
             break;
         case hashConst.rules:
             props.title = "All Rules";
+            props.tooltip = "View and manage all documentation rules.";
             break;
         case hashConst.tagJsonChanged:
             props.title = "tagTable.json is changed.";
@@ -149,9 +154,11 @@ function mapStateToProps(state) {
             break;
         case hashConst.index:
             props.title = "Active Documentation";
+            props.tooltip = "View the main index of the Active Documentation.";
             break;
         case hashConst.violatedRules:
             props.title = "Violated Rules";
+            props.tooltip = "Review all rules that have been violated.";
             break;
         case hashConst.rulesForFile:
             props.content = state.openFilePath.replace(state.projectPath, "");
@@ -162,6 +169,7 @@ function mapStateToProps(state) {
             break;
         case hashConst.learnDesignRules:
             props.title = "Learn Design Rules";
+            props.tooltip="Explore and learn about design rules.";
             break;
         default:
             props.content = "Error no page is found for: " + state.currentHash[0];
