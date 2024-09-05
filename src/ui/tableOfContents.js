@@ -15,42 +15,62 @@ class TableOfContents extends Component {
     render() {
         return (
             <div>
-                <div className={"well well-sm"}>
-                    <h4>Tags</h4>
-                </div>
-                <ul className={"list-inline"} id={"tags_list"}>
-                    {this.props.tags.map((tag, i) =>
-                        (<li key={i}
-                            onClick={() =>
-                                window.location.hash = `#/${hashConst.tag}/${tag.ID}`
-                            }>{tag.tagName}</li>),
-                    )}
-                </ul>
+                {this.props.rules.length > 0 ? (
+                    <>
+                        <div className={"well well-sm"}>
+                            <h4>Rules</h4>
+                        </div>
+                        <div className={"ist-inline"}>
+                            <table>
+                                <tbody>
+                                    {this.props.rules.map((rule, i) => (
+                                        <tr key={i}>
+                                            <td className={"list-group-item"}>{rule.title}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
+                ) : (
+                    <div>
+                        <p>"Welcome to the Rules Dashboard! This tool helps you manage design rules for your projects."</p>
+                        <p>Add, edit, and view rules to ensure your work aligns with best practices.</p>
+                        <br></br>
+                        <p>Start by creating a rule to begin!</p>
+                        <div className={"ist-inline"}>
+                            <div style={{padding: "10px 0 10px 0", clear: "both"}}>
+                                <Button style={{padding: "0 5px"}}
+                                    onClick={() => {
+                                        window.location.hash = `#/${hashConst.rules}`;
+                                        this.props.onAddNewRule();
+                                    }}>
+                                    <MdPlaylistAdd className={"react-icons"} size={35}/>
+                                    Add a New Rule
+                                </Button>
+                            </div>
+                        </div>
+                        <br></br>
+                        <p>To learn more about design rules, <a href={`#/${hashConst.learnDesignRules}`}>click here</a> to visit the Learn Design Rules tab.</p>
+                        <div>
+                            <p>
+                                Want to dive deep into rules and their significance? Watch the video below to get a detailed explanation:
+                            </p>
 
-                <div className={"well well-sm"}>
-                    <h4>Rules</h4>
-                </div>
-                <div className={"ist-inline"}>
-                    <table>
-                        <tbody>
-                            {this.props.rules.map((rule, i) =>
-                                <tr key={i}>
-                                    <td className={"list-group-item"}>{rule.title}</td>
-                                </tr>,
-                            )}
-                        </tbody>
-                    </table>
-                    <div style={{padding: "10px 0 10px 0", clear: "both"}}>
-                        <Button style={{padding: "0 5px"}}
-                            onClick={() => {
-                                window.location.hash = `#/${hashConst.rules}`;
-                                this.props.onAddNewRule();
-                            }}>
-                            <MdPlaylistAdd className={"react-icons"} size={35}/>
-                            Add a New Rule
-                        </Button>
+                            <iframe
+                                width="560"
+                                height="315"
+                                src="https://www.youtube.com/embed/4rUYS8enKA0?si=qzy2ZfIxhetaW98S"
+                                title="YouTube video player"
+                                frameBorder="1"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerPolicy="strict-origin-when-cross-origin"
+                                allowFullScreen
+                                style={{borderRadius: "10px", overflow: "hidden"}}
+                            ></iframe>
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         );
     }
