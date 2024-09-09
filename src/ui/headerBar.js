@@ -13,6 +13,7 @@ import {webSocketSendMessage} from "../core/coreConstants";
 import {hashConst} from "./uiConstants";
 import {FaInfoCircle} from "react-icons/fa";
 import ReactTooltip from "react-tooltip";
+
 export class HeaderBar extends Component {
     render() {
         return (

@@ -204,11 +204,12 @@ body {
 }
 
 /*** HeaderBar ***/
-
 .headerDiv {
     padding-bottom: 10px;
     padding-top: 20px;
-    border-bottom: 3px double #bdbdbd
+    border-bottom: 3px double #bdbdbd;
+    display: flex;
+    align-items: center;
 }
 
 .text-24 {
@@ -232,6 +233,13 @@ body {
 
 .primary {
     color: #5d5d5d;
+}
+
+.infoIcon {
+    margin-left: 10px;
+    position: relative;
+    top: 6px;
+    left: -5px;
 }
 
 /*!*** Auto Complete ***!*/

@@ -23,15 +23,3 @@
   to { transform: rotate(360deg); }
 }
 
-.headerDiv {
-  display: flex;
-  align-items: center;
-}
-
-.infoIcon {
-  margin-left: 10px;
-  position: relative;
-  top: 6px;
-  left: -5px;
-}
-
