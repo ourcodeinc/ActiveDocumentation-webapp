@@ -63,6 +63,7 @@ class MinedRulesComponent extends Component {
 
             isExpanded: false,
             expandedIdentifierGroupIndex: 0,
+            isColorCodingEnabled: true,
         };
         this.messagesToBeSent = []; // the messages that are going to the server to be written on files
         this.clusterLimit = 10; // number of clusters in each category of mined rules.
@@ -263,24 +264,40 @@ class MinedRulesComponent extends Component {
     renderDescription() {
         const countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
         if (countRules === 0) return null;
-        return (<div className={"descriptionContainer"}>
-            <span className={"descriptionTitle"}>Tutorial</span>
-            <div style={{marginBottom: "20px"}}>
-                <h5>The following code snippets illustrates potential design rules.</h5>
-                <h5>The top snippet denotes <strong>when</strong> a design rules applies (IF part),
-                    and bottom components denote <strong>how</strong> the rule is applied (THEN part).</h5>
-            </div>
-            <div>
-                <h5>The purple background in the code shows how likely each element is in a design rule.</h5>
-                <h5><span className={"frequency-color frequency-10"}>Darker purple</span> means it's more likely to be
-                    part of a rule,
-                    and <span className={"frequency-color frequency-1"}>lighter purple</span> means it is less likely to
-                    be part of a rule.
-                </h5>
-                <h5><span className={"frequency-color frequency-identifier"}>Orange</span> background highlights the
-                    identifiers.</h5>
-            </div>
-        </div>);
+        return (
+            <div className="descriptionWrapper">
+                <div className="color-coding-toggle" style={{marginBottom: "15px"}}>
+                    <input
+                        type="checkbox"
+                        checked={this.state.isColorCodingEnabled}
+                        onChange={this.handleColorCodingToggle}
+                        style={{marginRight: "10px"}}
+                    />
+                    Highlight Code by Rule Probability
+                </div>
+                <div className={"descriptionContainer"}>
+                    <span className={"descriptionTitle"}>Tutorial</span>
+                    <div style={{marginBottom: "20px"}}>
+                        <h5>The following code snippets illustrates potential design rules.</h5>
+                        <h5>The top snippet denotes <strong>when</strong> a design rules applies (IF part),
+                            and bottom components denote <strong>how</strong> the rule is applied (THEN part).</h5>
+                    </div>
+                    {this.state.isColorCodingEnabled && (
+                        <div>
+                            <h5>The purple background in the code shows how likely each element is in a design
+                                rule.</h5>
+                            <h5><span className={"frequency-color frequency-10"}>Darker purple</span> means it's more
+                                likely to be part of a rule,
+                                and <span className={"frequency-color frequency-1"}>lighter purple</span> means it is
+                                less likely to be part of a rule.
+                            </h5>
+                        </div>
+                    )}
+                    <h5><span className={"frequency-color frequency-identifier"}>Orange</span> background
+                        highlights the identifiers.</h5>
+
+                </div>
+            </div>);
     }
 
     renderClusters() {
@@ -346,7 +363,8 @@ class MinedRulesComponent extends Component {
                                 isCluster={true}
                                 featureMetaData={this.props.featureMetaData}
                                 fileGroup={identifierGroup.value.children[childrenKeys[0]].fileGroup}
-                                elementId={parentElementId}/>
+                                elementId={parentElementId}
+                                isColorCodingEnabled={this.state.isColorCodingEnabled}/>
                         </div>
                         <div className={"thenKeyword"}><strong>{`THEN the ${identifierType} may have:`}</strong></div>
                         <div className={"thenParts"}>
@@ -366,7 +384,8 @@ class MinedRulesComponent extends Component {
                         isCluster={true}
                         featureMetaData={this.props.featureMetaData}
                         fileGroup={identifierGroup.value.children[key].fileGroup}
-                        elementId={featureGroupInformation[identifierGroup.value.children[key].fileGroup].rootId[1]}/>
+                        elementId={featureGroupInformation[identifierGroup.value.children[key].fileGroup].rootId[1]}
+                        isColorCodingEnabled={this.state.isColorCodingEnabled}/>
                     {identifierGroup.value.constraintsSnippets &&
                     identifierGroup.value.constraintsSnippets[key] &&
                     identifierGroup.value.constraintsSnippets[key][i] ?
@@ -697,6 +716,11 @@ class MinedRulesComponent extends Component {
             }
         });
     }
+    handleColorCodingToggle = () => {
+        this.setState((prevState) => ({
+            isColorCodingEnabled: !prevState.isColorCodingEnabled,
+        }));
+    };
 }
 
 function mapStateToProps(state) {
@@ -845,3 +869,4 @@ class CodeSnippets extends Component {
         });
     }
 }
+
