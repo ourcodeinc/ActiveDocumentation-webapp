@@ -904,6 +904,7 @@ export function buildFromGUI(guiTree, guiElements, nodeId, group="quantifier",
                     if (visitedNodeId.indexOf(childId) !== -1) return;
                     if (childId === "" || !guiElements[childId].activeElement) return;
                     if (guiElements[childId].isConstraint && group === "quantifier") return;
+                    if (!guiElements[childId].isConstraint && group === "constraint") return;
                     if (forMiningRules && isNotElementOrIdentifier(guiElements, childId)) return;
                     const newSubTree = buildTreeFromNodeId(childId, group);
                     if (newSubTree) nodeChildren[childGroup].push(newSubTree);
@@ -914,6 +915,7 @@ export function buildFromGUI(guiTree, guiElements, nodeId, group="quantifier",
                         if (visitedNodeId.indexOf(childId) !== -1) return;
                         if (childId === "" || !guiElements[childId].activeElement) return;
                         if (guiElements[childId].isConstraint && group === "quantifier") return;
+                        if (!guiElements[childId].isConstraint && group === "constraint") return;
                         if (forMiningRules && isNotElementOrIdentifier(guiElements, childId)) return;
                         const newSubTree = buildTreeFromNodeId(childId, group);
                         if (newSubTree) nodeChildren["body"].push(newSubTree);
