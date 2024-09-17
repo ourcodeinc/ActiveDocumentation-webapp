@@ -16,7 +16,7 @@ class TableOfContents extends Component {
         return (
             <div>
                 {this.props.rules.length > 0 ? (
-                    <>
+                    <div>
                         <div className={"well well-sm"}>
                             <h4>Rules</h4>
                         </div>
@@ -31,10 +31,10 @@ class TableOfContents extends Component {
                                 </tbody>
                             </table>
                         </div>
-                    </>
+                    </div>
                 ) : (
                     <div>
-                        <p>"Welcome to the Rules Dashboard! This tool helps you manage design rules for your projects."</p>
+                        <p>Welcome to the Rules Dashboard! This tool helps you manage design rules for your projects.</p>
                         <p>Explore how easy it is to create, view, and manage design rules with the intuitive interface.</p>
                         <br></br>
                         <div style={{marginTop: "20px"}}>
@@ -42,15 +42,10 @@ class TableOfContents extends Component {
                                 <p>
                                     ActiveDocumentation seamlessly integrates into your IDE and codebase, automatically monitoring and enforcing design rules.
                                 </p>
-                                <h5>Components</h5>
-                                <ul>
-                                    <li><b>IDE Plugin:</b> Install plugin for your editor and click Mine rules to handles data transfer between the app and your development environment.</li>
-                                    <div style={{marginTop: "20px", color: "red"}}>
-                                        <p><b>Have not installed Plugin yet?</b></p>
-                                        <p>Please check out the <a href={"https://github.com/ourcodeinc/ActiveDocumentation-webapp/wiki/User-Manual"}>installation process here</a> to install the plugin and get started.</p>
+                                <div style={{marginTop: "20px", color: "red"}}>
+                                    <p><b>Have not installed Plugin yet?</b></p>
+                                    <p>Please check out the <a href={"https://github.com/ourcodeinc/ActiveDocumentation-webapp/wiki/User-Manual#2-installing-the-plugin"}>installation process here</a> to install the plugin and get started.</p>
                                     </div>
-                                    <li><b>Web App:</b> The core interface where rules are defined, violations are displayed, and design decisions are documented.</li>
-                                </ul>
                                 <p>
                                     To get started, add a new rule by clicking the button above. You can also explore the detailed explanation of how rules work by visiting the <a href={`#/${hashConst.learnDesignRules}`}>Learn Design Rules</a> section.
                                 </p>
