@@ -35,39 +35,44 @@ class TableOfContents extends Component {
                 ) : (
                     <div>
                         <p>"Welcome to the Rules Dashboard! This tool helps you manage design rules for your projects."</p>
-                        <p>Add, edit, and view rules to ensure your work aligns with best practices.</p>
+                        <p>Explore how easy it is to create, view, and manage design rules with the intuitive interface.</p>
                         <br></br>
-                        <p>Start by creating a rule to begin!</p>
-                        <div className={"ist-inline"}>
-                            <div style={{padding: "10px 0 10px 0", clear: "both"}}>
-                                <Button style={{padding: "0 5px"}}
-                                    onClick={() => {
-                                        window.location.hash = `#/${hashConst.rules}`;
-                                        this.props.onAddNewRule();
-                                    }}>
-                                    <MdPlaylistAdd className={"react-icons"} size={35}/>
-                                    Add a New Rule
-                                </Button>
+                        <div style={{marginTop: "20px"}}>
+                                <h4>How Active Documentation Works ?</h4>
+                                <p>
+                                    ActiveDocumentation seamlessly integrates into your IDE and codebase, automatically monitoring and enforcing design rules.
+                                </p>
+                                <h5>Components</h5>
+                                <ul>
+                                    <li><b>IDE Plugin:</b> Install plugin for your editor and click Mine rules to handles data transfer between the app and your development environment.</li>
+                                    <div style={{marginTop: "20px", color: "red"}}>
+                                        <p><b>Have not installed Plugin yet?</b></p>
+                                        <p>Please check out the <a href={"https://github.com/ourcodeinc/ActiveDocumentation-webapp/wiki/User-Manual"}>installation process here</a> to install the plugin and get started.</p>
+                                    </div>
+                                    <li><b>Web App:</b> The core interface where rules are defined, violations are displayed, and design decisions are documented.</li>
+                                </ul>
+                                <p>
+                                    To get started, add a new rule by clicking the button above. You can also explore the detailed explanation of how rules work by visiting the <a href={`#/${hashConst.learnDesignRules}`}>Learn Design Rules</a> section.
+                                </p>
                             </div>
-                        </div>
-                        <br></br>
-                        <p>To learn more about design rules, <a href={`#/${hashConst.learnDesignRules}`}>click here</a> to visit the Learn Design Rules tab.</p>
                         <div>
-                            <p>
-                                Want to dive deep into rules and their significance? Watch the video below to get a detailed explanation:
-                            </p>
-
-                            <iframe
-                                width="560"
-                                height="315"
-                                src="https://www.youtube.com/embed/4rUYS8enKA0?si=qzy2ZfIxhetaW98S"
-                                title="YouTube video player"
-                                frameBorder="1"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                referrerPolicy="strict-origin-when-cross-origin"
-                                allowFullScreen
-                                style={{borderRadius: "10px", overflow: "hidden"}}
-                            ></iframe>
+                            <div>
+                                <img src={`${process.env.PUBLIC_URL}/rules.png`} alt="Rules Dashboard Screenshot" style={{width: "450px", height: "400px", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}/>
+                            </div>
+                            <br></br>
+                            <p>Start by creating a rule to begin!</p>
+                            <div className={"ist-inline"}>
+                                <div style={{padding: "10px 0 10px 0", clear: "both"}}>
+                                    <Button style={{padding: "0 5px"}}
+                                        onClick={() => {
+                                            window.location.hash = `#/${hashConst.rules}`;
+                                            this.props.onAddNewRule();
+                                        }}>
+                                        <MdPlaylistAdd className={"react-icons"} size={35}/>
+                                        Add a New Rule
+                                    </Button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )}
