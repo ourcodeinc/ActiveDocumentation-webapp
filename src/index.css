@@ -305,8 +305,20 @@ body {
     justify-content: center;
 }
 
+/*-- Nav bar --*/
+
 .navbar {
     margin-bottom: 0;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-icon {
+    width: 40px;
+    height: 40px;
 }
 
 /*!*** rule Generator GUI ***!*/

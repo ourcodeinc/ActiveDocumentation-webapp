@@ -5,19 +5,23 @@
 
 import React, {Component} from "react";
 import "../App.css";
-import {FaArrowLeft, FaArrowRight} from "react-icons/fa";
 import {Nav, Navbar, NavItem} from "react-bootstrap";
 import {connect} from "react-redux";
-import {clickedOnBack, clickedOnForward} from "../actions";
 import {hashConst} from "./uiConstants";
 import {featureConfig} from "../config";
 
 export class NavBar extends Component {
     render() {
         return (
-            <Navbar inverse collapseOnSelect
-                style={{backgroundColor: "transparent", backgroundImage: "none", border: "none"}}>
-                <Navbar.Toggle/>
+            <Navbar inverse collapseOnSelect style={{backgroundColor: "transparent", backgroundImage: "none", border: "none"}}>
+                <Navbar.Header>
+                    <Navbar.Brand>
+                        <a href="#/index">
+                            <img src="/OurCode-icon.png" alt="Logo" className="navbar-icon grayscale"/>
+                        </a>
+                    </Navbar.Brand>
+                    <Navbar.Toggle/>
+                </Navbar.Header>
                 <Navbar.Collapse>
                     <Nav
                         onSelect={(key) => {
@@ -26,12 +30,6 @@ export class NavBar extends Component {
                                     (key === 3) ? `#/${hashConst.violatedRules}` : (key === 4) ? `#/${hashConst.learnDesignRules}` : `#/${hashConst.index}`;
                             }
                         }}>
-                        <NavItem eventKey={-1} className={this.props.backDisable} onClick={() => this.props.backClick(this.props)}>
-                            <FaArrowLeft size={20}/>
-                        </NavItem>
-                        <NavItem eventKey={-2} className={this.props.forwardDisable} onClick={() => this.props.forwardClick(this.props)}>
-                            <FaArrowRight size={20}/>
-                        </NavItem>
 
                         <NavItem eventKey={1}>
                             {"Table of Contents"}
@@ -62,21 +60,4 @@ function mapStateToProps(state) {
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        backClick: (props) => {
-            if (props.activeHashIndex > 0) {
-                dispatch(clickedOnBack());
-                window.location.hash = props.history[props.activeHashIndex - 1];
-            }
-        },
-        forwardClick: (props) => {
-            if (props.activeHashIndex < props.history.length - 1) {
-                dispatch(clickedOnForward());
-                window.location.hash = props.history[props.activeHashIndex + 1];
-            }
-        },
-    };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(NavBar);
+export default connect(mapStateToProps)(NavBar);
