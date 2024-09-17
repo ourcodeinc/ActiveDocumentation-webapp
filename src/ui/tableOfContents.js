@@ -18,6 +18,17 @@ class TableOfContents extends Component {
                 {this.props.rules.length > 0 ? (
                     <div>
                         <div className={"well well-sm"}>
+                            <h4>Tags</h4>
+                        </div>
+                        <ul className={"list-inline"} id={"tags_list"}>
+                            {this.props.tags.map((tag, i) =>
+                                (<li key={i}
+                                    onClick={() =>
+                                        window.location.hash = `#/${hashConst.tag}/${tag.ID}`
+                                    }>{tag.tagName}</li>),
+                            )}
+                        </ul>
+                        <div className={"well well-sm"}>
                             <h4>Rules</h4>
                         </div>
                         <div className={"ist-inline"}>
