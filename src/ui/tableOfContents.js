@@ -49,21 +49,19 @@ class TableOfContents extends Component {
                         <p>Explore how easy it is to create, view, and manage design rules with the intuitive interface.</p>
                         <br></br>
                         <div style={{marginTop: "20px"}}>
-                                <h4>How Active Documentation Works ?</h4>
-                                <p>
-                                    ActiveDocumentation seamlessly integrates into your IDE and codebase, automatically monitoring and enforcing design rules.
-                                </p>
-                                <div style={{marginTop: "20px", color: "red"}}>
-                                    <p><b>Have not installed Plugin yet?</b></p>
-                                    <p>Please check out the <a href={"https://github.com/ourcodeinc/ActiveDocumentation-webapp/wiki/User-Manual#2-installing-the-plugin"}>installation process here</a> to install the plugin and get started.</p>
-                                    </div>
-                                <p>
-                                    To get started, add a new rule by clicking the button above. You can also explore the detailed explanation of how rules work by visiting the <a href={`#/${hashConst.learnDesignRules}`}>Learn Design Rules</a> section.
-                                </p>
+                            <h4>How Active Documentation Works?</h4>
+                            <p>ActiveDocumentation seamlessly integrates into your IDE and codebase, automatically monitoring and enforcing design rules.</p>
+                            <div style={{marginTop: "20px", color: "red"}}>
+                                <p><b>Have not installed Plugin yet?</b></p>
+                                <p>Please check out the <a href={"https://github.com/ourcodeinc/ActiveDocumentation-webapp/wiki/User-Manual#2-installing-the-plugin"}>installation process here</a> to install the plugin and get started.</p>
                             </div>
+                            <p>
+                                To get started, add a new rule by clicking the button above. You can also explore the detailed explanation of how rules work by visiting the <a href={`#/${hashConst.learnDesignRules}`}>Learn Design Rules</a> section.
+                            </p>
+                        </div>
                         <div>
                             <div>
-                                <img src={`${process.env.PUBLIC_URL}/rules.png`} alt="Rules Dashboard Screenshot" style={{width: "450px", height: "400px", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}/>
+                                <img src={`${process.env.PUBLIC_URL}/rules.png`} alt="Rules Dashboard Screenshot" style={{width: "450px", height: "400px", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"}}/>
                             </div>
                             <br></br>
                             <p>Start by creating a rule to begin!</p>
