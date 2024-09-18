@@ -368,8 +368,6 @@ class GraphicalComponent extends Component {
         if ((this.state.thisElement.activeElement && this.state.elementCondition.canBeSelected) || this.props.root) {
             return (
                 <div className={"elementIconsDiv"}>
-                    {!this.state.thisElement.activeElement ? null :
-                        this.renderCheckboxAndErase(!isResetting ? changeFunction : changeAndResetFunction, checkedStatus, eraseFunction, "element", null, null, !isDelegate || isResetting)}
                     {this.props["canBeStarredIDs"].indexOf(this.state.elementId) === -1 ? null : (
                         <div style={{float: "left"}}>
                             <div data-tip={"React-tooltip"} data-for={"star"}>
@@ -385,6 +383,8 @@ class GraphicalComponent extends Component {
                             </ReactToolTip>
                         </div>
                     )}
+                    {!this.state.thisElement.activeElement ? null :
+                        this.renderCheckboxAndErase(!isResetting ? changeFunction : changeAndResetFunction, checkedStatus, eraseFunction, "element", null, null, !isDelegate || isResetting)}
                 </div>
             );
         }
