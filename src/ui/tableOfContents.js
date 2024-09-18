@@ -15,42 +15,71 @@ class TableOfContents extends Component {
     render() {
         return (
             <div>
-                <div className={"well well-sm"}>
-                    <h4>Tags</h4>
-                </div>
-                <ul className={"list-inline"} id={"tags_list"}>
-                    {this.props.tags.map((tag, i) =>
-                        (<li key={i}
-                            onClick={() =>
-                                window.location.hash = `#/${hashConst.tag}/${tag.ID}`
-                            }>{tag.tagName}</li>),
-                    )}
-                </ul>
-
-                <div className={"well well-sm"}>
-                    <h4>Rules</h4>
-                </div>
-                <div className={"ist-inline"}>
-                    <table>
-                        <tbody>
-                            {this.props.rules.map((rule, i) =>
-                                <tr key={i}>
-                                    <td className={"list-group-item"}>{rule.title}</td>
-                                </tr>,
+                {this.props.rules.length > 0 ? (
+                    <div>
+                        <div className={"well well-sm"}>
+                            <h4>Tags</h4>
+                        </div>
+                        <ul className={"list-inline"} id={"tags_list"}>
+                            {this.props.tags.map((tag, i) =>
+                                (<li key={i}
+                                    onClick={() =>
+                                        window.location.hash = `#/${hashConst.tag}/${tag.ID}`
+                                    }>{tag.tagName}</li>),
                             )}
-                        </tbody>
-                    </table>
-                    <div style={{padding: "10px 0 10px 0", clear: "both"}}>
-                        <Button style={{padding: "0 5px"}}
-                            onClick={() => {
-                                window.location.hash = `#/${hashConst.rules}`;
-                                this.props.onAddNewRule();
-                            }}>
-                            <MdPlaylistAdd className={"react-icons"} size={35}/>
-                            Add a New Rule
-                        </Button>
+                        </ul>
+                        <div className={"well well-sm"}>
+                            <h4>Rules</h4>
+                        </div>
+                        <div className={"ist-inline"}>
+                            <table>
+                                <tbody>
+                                    {this.props.rules.map((rule, i) => (
+                                        <tr key={i}>
+                                            <td className={"list-group-item"}>{rule.title}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
+                ) : (
+                    <div>
+                        <p>Welcome to the Rules Dashboard! This tool helps you manage design rules for your projects.</p>
+                        <p>Explore how easy it is to create, view, and manage design rules with the intuitive interface.</p>
+                        <br></br>
+                        <div style={{marginTop: "20px"}}>
+                            <h4>How Active Documentation Works?</h4>
+                            <p>ActiveDocumentation seamlessly integrates into your IDE and codebase, automatically monitoring and enforcing design rules.</p>
+                            <div style={{marginTop: "20px", color: "red"}}>
+                                <p><b>Have not installed Plugin yet?</b></p>
+                                <p>Please check out the <a href={"https://github.com/ourcodeinc/ActiveDocumentation-webapp/wiki/User-Manual#2-installing-the-plugin"}>installation process here</a> to install the plugin and get started.</p>
+                            </div>
+                            <p>
+                                To get started, add a new rule by clicking the button above. You can also explore the detailed explanation of how rules work by visiting the <a href={`#/${hashConst.learnDesignRules}`}>Learn Design Rules</a> section.
+                            </p>
+                        </div>
+                        <div>
+                            <div>
+                                <img src={`${process.env.PUBLIC_URL}/rules.png`} alt="Rules Dashboard Screenshot" style={{width: "450px", height: "400px", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"}}/>
+                            </div>
+                            <br></br>
+                            <p>Start by creating a rule to begin!</p>
+                            <div className={"ist-inline"}>
+                                <div style={{padding: "10px 0 10px 0", clear: "both"}}>
+                                    <Button style={{padding: "0 5px"}}
+                                        onClick={() => {
+                                            window.location.hash = `#/${hashConst.rules}`;
+                                            this.props.onAddNewRule();
+                                        }}>
+                                        <MdPlaylistAdd className={"react-icons"} size={35}/>
+                                        Add a New Rule
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         );
     }
