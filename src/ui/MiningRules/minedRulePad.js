@@ -37,7 +37,7 @@ class MinedRulePad extends Component {
                 {/* {this.renderExplore()}*/}
                 <div
                     className={"mainDiv-overlay elementDiv" + (this.state.thisElement.activeElement ? " activeElement" : "") +
-                    (this.state.thisElement.selectedElement ? " selectedElement" : "")
+                        (this.state.thisElement.selectedElement ? " selectedElement" : "")
                     }>
                     <div className={"rowGroup"}>
                         {this.renderGroup("top")}
@@ -209,7 +209,7 @@ class MinedRulePad extends Component {
                     <div className={"inputTextDiv rowItem " + (childCondition.type === "wideText" ? "wideText" : "")}>
                         <span
                             className={"minedRuleEditor inputText" +
-                            (childElement.activeElement ? " activeElement " + colorCoding : "")}>
+                                (childElement.activeElement ? " activeElement " + colorCoding : "")}>
                             {childElement.text ? childElement.text : childCondition.placeholder}</span>
                     </div>
                 </div>
@@ -278,6 +278,8 @@ class MinedRulePad extends Component {
             if (identifier_element_ids.includes(childId)) {
                 return "frequency-color frequency-identifier";
             }
+            if (!this.props.isColorCodingEnabled) return ""; // Check if color coding is disabled
+
             let frequency = 0;
             if (childElement.activeElement) {
                 const elementIndex = childElement._data_._data_.elements
@@ -288,10 +290,10 @@ class MinedRulePad extends Component {
             return "frequency-color frequency-" +
                 Math.floor(frequency * 10);
         } catch (e) {
+            if (!this.props.isColorCodingEnabled) return ""; // Check if color coding is disabled
             return "frequency-color frequency-unknown";
         }
     }
 }
 
 export default MinedRulePad;
-
