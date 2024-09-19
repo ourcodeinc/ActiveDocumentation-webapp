@@ -39,7 +39,7 @@ export class ProjectHierarchy extends Component {
                             this.props["onSubmit"](newPath.join("/"));
                             this.setState({dropDowns: [{itemData: this.props.projectHierarchy}]});
                         }}/>
-                    <span style={{paddingLeft: "1px", fontSize: "12px", fontWeight: "bold", color: "#4F4F4F"}}>Save</span>
+                    <span style={{paddingLeft: "1px", fontSize: "12px", fontWeight: "bold", color: "#4F4F4F"}}>Save Path</span>
                 </div>
                 <ReactToolTip place={"top"} type={"dark"} effect={"solid"} id={"save"} delayShow={300}>
                     <span>{"Specify folders/files on which the rule is applied on."}</span>
