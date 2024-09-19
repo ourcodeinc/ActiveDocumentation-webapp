@@ -101,15 +101,6 @@ class GraphicalEditor extends Component {
         const guiElements = JSON.parse(JSON.stringify(this.state.guiElements));
         const guiTree = JSON.parse(JSON.stringify(this.state.guiTree));
 
-
-        // check connectivity of elements
-        const activateJobs = this.connectElements(guiElements, guiTree);
-        if (activateJobs.jobs.length !== 0) {
-            console.log("error: not connected", activateJobs.jobs);
-            // this.props.onChangeGuiElement(this.ruleIndex, activateJobs.jobs);
-            return;
-        }
-
         // check the selected element
         const selectJobs = this.lowestCommonAncestor(guiElements, guiTree);
         if (selectJobs.jobs.length !== 0) {
@@ -904,6 +895,7 @@ export function buildFromGUI(guiTree, guiElements, nodeId, group="quantifier",
                     if (visitedNodeId.indexOf(childId) !== -1) return;
                     if (childId === "" || !guiElements[childId].activeElement) return;
                     if (guiElements[childId].isConstraint && group === "quantifier") return;
+                    if (!guiElements[childId].isConstraint && group === "constraint") return;
                     if (forMiningRules && isNotElementOrIdentifier(guiElements, childId)) return;
                     const newSubTree = buildTreeFromNodeId(childId, group);
                     if (newSubTree) nodeChildren[childGroup].push(newSubTree);
@@ -914,6 +906,7 @@ export function buildFromGUI(guiTree, guiElements, nodeId, group="quantifier",
                         if (visitedNodeId.indexOf(childId) !== -1) return;
                         if (childId === "" || !guiElements[childId].activeElement) return;
                         if (guiElements[childId].isConstraint && group === "quantifier") return;
+                        if (!guiElements[childId].isConstraint && group === "constraint") return;
                         if (forMiningRules && isNotElementOrIdentifier(guiElements, childId)) return;
                         const newSubTree = buildTreeFromNodeId(childId, group);
                         if (newSubTree) nodeChildren["body"].push(newSubTree);
