@@ -1022,8 +1022,13 @@ class GraphicalComponent extends Component {
     }
 
     _handleSelectedElement(elementId, thisElement, elementCondition) {
-        if (!(thisElement.activeElement && elementCondition.canBeSelected)) return;
+        if (!elementCondition.canBeSelected) return;
         const jobs = [];
+        jobs.push({
+            elementId: elementId,
+            task: "UPDATE_ELEMENT",
+            value: {activeElement: true},
+        });
         jobs.push({
             elementId: elementId,
             task: "SELECT_ELEMENT",
