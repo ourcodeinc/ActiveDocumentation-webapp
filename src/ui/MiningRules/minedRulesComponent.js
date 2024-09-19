@@ -273,7 +273,7 @@ class MinedRulesComponent extends Component {
                         onChange={this.handleColorCodingToggle}
                         style={{marginRight: "10px"}}
                     />
-                    Highlight Code by Rule Probability
+                    Highlight Code Elements Based On Their Likelihood Of Being Part Of A Rule
                 </div>
                 <div className={"descriptionContainer"}>
                     <span className={"descriptionTitle"}>Tutorial</span>
