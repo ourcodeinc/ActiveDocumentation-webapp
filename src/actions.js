@@ -137,19 +137,6 @@ export const updateFilePath = (filePath) => {
 
 
 /*
-    nav-bar navigation
- */
-
-
-export const clickedOnForward = () => {
-    return {type: reduxStoreActions.action_click_forward};
-};
-
-export const clickedOnBack = () => {
-    return {type: reduxStoreActions.action_click_back};
-};
-
-/*
     RulePad
  */
 
