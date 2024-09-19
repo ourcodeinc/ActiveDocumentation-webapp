@@ -101,15 +101,6 @@ class GraphicalEditor extends Component {
         const guiElements = JSON.parse(JSON.stringify(this.state.guiElements));
         const guiTree = JSON.parse(JSON.stringify(this.state.guiTree));
 
-
-        // check connectivity of elements
-        const activateJobs = this.connectElements(guiElements, guiTree);
-        if (activateJobs.jobs.length !== 0) {
-            console.log("error: not connected", activateJobs.jobs);
-            // this.props.onChangeGuiElement(this.ruleIndex, activateJobs.jobs);
-            return;
-        }
-
         // check the selected element
         const selectJobs = this.lowestCommonAncestor(guiElements, guiTree);
         if (selectJobs.jobs.length !== 0) {
