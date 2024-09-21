@@ -512,6 +512,12 @@ class SnippetView extends Component {
             <section>
                 <div data-file-path={this.state.d.filePath} className="snippetDiv"
                     style={{position: "relative"}}>
+                    <div className="file-path">
+                        {this.state.d.filePath}
+                    </div>
+                    <div className="full-path">
+                        {this.state.d.filePath}
+                    </div>
                     <div className="link" onClick={() => {
                         this.props.onIgnoreFile(true);
                         Utilities.sendToServer(this.props.ws, webSocketSendMessage.snippet_xml_msg,
