@@ -25,10 +25,14 @@ export class NavBar extends Component {
                 <Navbar.Collapse>
                     <Nav
                         onSelect={(key) => {
-                            if (key > 0) {
-                                window.location.hash = (key === 1) ? `#/${hashConst.index}` : (key === 2) ? `#/${hashConst.rules}` :
-                                    (key === 3) ? `#/${hashConst.violatedRules}` : (key === 4) ? `#/${hashConst.learnDesignRules}` : `#/${hashConst.index}`;
-                            }
+                            const hashRoutes = {
+                                1: `#/${hashConst.index}`,
+                                2: `#/${hashConst.rules}`,
+                                3: `#/${hashConst.violatedRules}`,
+                                4: `#/${hashConst.learnDesignRules}`,
+                            };
+
+                            window.location.hash = hashRoutes[key] || `#/${hashConst.index}`;
                         }}>
 
                         <NavItem eventKey={1}>
