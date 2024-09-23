@@ -22,9 +22,11 @@ export class ProjectHierarchy extends Component {
 
     render() {
         return (
-            <div>
-                <div style={{display: "inline-block", paddingRight: "15px", marginLeft: "3px"}}
-                    data-tip={"React-tooltip"} data-for={"save"}>
+            <div className="project-hierarchy-container">
+                <div className="dropdown-container">
+                    {this.renderDropDowns()}
+                </div>
+                <div className="save-button" data-tip={"React-tooltip"} data-for={"save"}>
                     <MdSave size={20} className={"MdSave react-icons"}
                         onClick={() => {
                             const newPath = [];
@@ -36,14 +38,11 @@ export class ProjectHierarchy extends Component {
                             this.props["onSubmit"](newPath.join("/"));
                             this.setState({dropDowns: [{itemData: this.props.projectHierarchy}]});
                         }}/>
-
+                    <span className="save-button-text">Save Path</span>
                 </div>
                 <ReactToolTip place={"top"} type={"dark"} effect={"solid"} id={"save"} delayShow={300}>
                     <span>{"Specify folders/files on which the rule is applied on."}</span>
                 </ReactToolTip>
-                <div style={{display: "inline-block", verticalAlign: "middle"}}>
-                    {this.renderDropDowns()}
-                </div>
             </div>
         );
     }
