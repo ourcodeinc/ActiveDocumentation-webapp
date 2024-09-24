@@ -15,7 +15,7 @@ import {Button} from "react-bootstrap";
 import {
     FaAngleDown, FaAngleUp,
     FaCaretDown,
-    FaCaretUp,
+    FaCaretUp, FaSearch,
 } from "react-icons/fa";
 import "rc-slider/assets/index.css";
 
@@ -57,6 +57,7 @@ class MinedRulesComponent extends Component {
             view: this.views.default_view,
             minedRules: [],
             minedRulesGrouped: [], // [{key, value}]
+            searchTerm: "",
             loadingTitle: "Mining Rules",
             message: "",
             cluster: [],
@@ -302,78 +303,104 @@ class MinedRulesComponent extends Component {
 
     renderClusters() {
         const countRules = this.state.minedRules.reduce((sum, group) => sum + group.rulePadStates.length, 0);
+        const handleSearchChange = (event) => {
+            this.setState({searchTerm: event.target.value});
+        };
         if (this.state.minedRules.length > 0 && countRules === 0) {
             return (
                 <div>
                     <h4><strong>No rule is found.</strong></h4>
                 </div>);
         }
+        const filteredRules = this.state.minedRulesGrouped.filter((group) =>
+            group.key.toLowerCase().includes(this.state.searchTerm.toLowerCase()),
+        );
 
-        return this.state.minedRulesGrouped.map((identifierGroup, index) => {
-            const childrenKeys = Object.keys(identifierGroup.value.children);
-            if (childrenKeys.length === 0) {
-                return null;
-            }
-            const keyParts = identifierGroup.key.split("%");
-            const identifierType = keyParts[0];
-            const identifierValue = keyParts[1];
-            const parentElementId =
-                featureGroupInformation[identifierGroup.value.children[childrenKeys[0]].fileGroup].rootId[0];
-            const expandedClass = "expanded";
-
-            const thenParts = childrenKeys.map((key) => {
-                const fileGroup = identifierGroup.value.children[key].fileGroup;
-                const title = featureGroupInformation[fileGroup].mergeKeys[1]
-                    .replace(/\b\w/g, (char) => char.toUpperCase());
-                const content = this.renderThenPart(key, identifierGroup);
-                return {title, content};
-            });
-
-            const isRuleExpanded = this.state.isExpanded && this.state.expandedIdentifierGroupIndex === index;
-            const hidden = !this.state.isExpanded || this.state.expandedIdentifierGroupIndex !== index;
-            const classNameHidden = hidden ? "hidden" : "";
-
-            return (
-                <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"} key={index}>
-                    <div className={"identifierContainer"}>
-                        <div className={"identifierHeader"}>
-                            {"Rules applied on "}
-                            <strong>{identifierType}</strong>
-                            {" "}
-                            <span
-                                className={"inputText activeElement frequency-color frequency-identifier"}>
-                                {identifierValue}
-                            </span>
-                        </div>
-                        {isRuleExpanded ?
-                            <div className={"expandIcons"}
-                                onClick={() => this.setState({isExpanded: false})}>
-                                <FaAngleUp size={20}/></div> :
-                            <div className={"expandIcons"}
-                                onClick={() => this.setState({isExpanded: true, expandedIdentifierGroupIndex: index})}>
-                                <FaAngleDown size={20}/>
-                            </div>
-                        }
-                    </div>
-                    <div className={`clusterRuleContainer ${classNameHidden}`}>
-                        <div className={"ifKeyword"}>
-                            <strong>{`IF a ${identifierType} is named ${identifierValue}`}</strong></div>
-                        <div className={`ifPart ${expandedClass}`}>
-                            <MinedRulePad key={new Date()} rulePadState={identifierGroup.value.parent}
-                                isCluster={true}
-                                featureMetaData={this.props.featureMetaData}
-                                fileGroup={identifierGroup.value.children[childrenKeys[0]].fileGroup}
-                                elementId={parentElementId}
-                                isColorCodingEnabled={this.state.isColorCodingEnabled}/>
-                        </div>
-                        <div className={"thenKeyword"}><strong>{`THEN the ${identifierType} may have:`}</strong></div>
-                        <div className={"thenParts"}>
-                            <Accordion items={thenParts}/>
-                        </div>
-                    </div>
+        return (
+            <div>
+                {/* ADDED: Search bar */}
+                <div className="search-bar-container">
+                    <FaSearch className="search-icon"/>
+                    <input
+                        className="search-input"
+                        type="text"
+                        placeholder="Search rules..."
+                        value={this.state.searchTerm}
+                        onChange={handleSearchChange}
+                    />
                 </div>
-            );
-        });
+
+                {filteredRules.map((identifierGroup, index) => {
+                    const childrenKeys = Object.keys(identifierGroup.value.children);
+                    if (childrenKeys.length === 0) {
+                        return null;
+                    }
+                    const keyParts = identifierGroup.key.split("%");
+                    const identifierType = keyParts[0];
+                    const identifierValue = keyParts[1];
+                    const parentElementId =
+                        featureGroupInformation[identifierGroup.value.children[childrenKeys[0]].fileGroup].rootId[0];
+                    const expandedClass = "expanded";
+
+                    const thenParts = childrenKeys.map((key) => {
+                        const fileGroup = identifierGroup.value.children[key].fileGroup;
+                        const title = featureGroupInformation[fileGroup].mergeKeys[1]
+                            .replace(/\b\w/g, (char) => char.toUpperCase());
+                        const content = this.renderThenPart(key, identifierGroup);
+                        return {title, content};
+                    });
+
+                    const isRuleExpanded = this.state.isExpanded && this.state.expandedIdentifierGroupIndex === index;
+                    const hidden = !this.state.isExpanded || this.state.expandedIdentifierGroupIndex !== index;
+                    const classNameHidden = hidden ? "hidden" : "";
+
+                    return (
+                        <div className={"generateRuleGui guiBoundingBox minedRuleBoundingBox"} key={index}>
+                            <div className={"identifierContainer"}>
+                                <div className={"identifierHeader"}>
+                                    {"Rules applied on "}
+                                    <strong>{identifierType}</strong>
+                                    {" "}
+                                    <span
+                                        className={"inputText activeElement frequency-color frequency-identifier"}>
+                                        {identifierValue}
+                                    </span>
+                                </div>
+                                {isRuleExpanded ?
+                                    <div className={"expandIcons"}
+                                        onClick={() => this.setState({isExpanded: false})}>
+                                        <FaAngleUp size={20}/></div> :
+                                    <div className={"expandIcons"}
+                                        onClick={() => this.setState({
+                                            isExpanded: true,
+                                            expandedIdentifierGroupIndex: index,
+                                        })}>
+                                        <FaAngleDown size={20}/>
+                                    </div>
+                                }
+                            </div>
+                            <div className={`clusterRuleContainer ${classNameHidden}`}>
+                                <div className={"ifKeyword"}>
+                                    <strong>{`IF a ${identifierType} is named ${identifierValue}`}</strong></div>
+                                <div className={`ifPart ${expandedClass}`}>
+                                    <MinedRulePad key={new Date()} rulePadState={identifierGroup.value.parent}
+                                        isCluster={true}
+                                        featureMetaData={this.props.featureMetaData}
+                                        fileGroup={identifierGroup.value.children[childrenKeys[0]].fileGroup}
+                                        elementId={parentElementId}
+                                        isColorCodingEnabled={this.state.isColorCodingEnabled}/>
+                                </div>
+                                <div className={"thenKeyword"}><strong>{`THEN the ${identifierType} may have:`}</strong>
+                                </div>
+                                <div className={"thenParts"}>
+                                    <Accordion items={thenParts}/>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        );
     }
 
     renderThenPart(key, identifierGroup) {
