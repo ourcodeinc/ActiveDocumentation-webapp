@@ -21,6 +21,7 @@ export const createGroupingMetaData = () => {
     const groupMapping = {};
     const fileMapping = {};
     for (const key in groupingCategories) {
+        if (!groupingCategories.hasOwnProperty(key)) continue;
         groupMapping[key] = {};
     }
     return {groupMapping, fileMapping};
@@ -80,6 +81,7 @@ const cleanGroupings = (xmlFile, groupingMetaData) => {
 const addToGroupings = (xmlFile, groupingMetaData) => {
     const fileID = xmlFile.filePath;
     for (const groupingCategoryID in groupingCategories) {
+        if (!groupingCategories.hasOwnProperty(groupingCategoryID)) continue;
         const values = getValuesForGrouping(xmlFile.xml, groupingCategories[groupingCategoryID]);
         for (const valueID of values) {
             if (!groupingMetaData.groupMapping[groupingCategoryID][valueID]) {
