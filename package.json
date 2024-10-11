@@ -1,0 +1,51 @@
+{
+  "name": "active-documentation-webapp-treesitter",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-scripts": "5.0.1"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "7.24.7",
+    "@babel/plugin-proposal-private-property-in-object": "7.21.11",
+    "@eslint/js": "9.5.0",
+    "@testing-library/jest-dom": "5.17.0",
+    "@testing-library/react": "13.4.0",
+    "@testing-library/user-event": "13.5.0",
+    "eslint": "7.32.0",
+    "eslint-config-google": "0.14.0",
+    "eslint-plugin-import": "2.29.1",
+    "eslint-plugin-jsx-a11y": "6.9.0",
+    "eslint-plugin-react": "7.34.3",
+    "eslint-plugin-react-hooks": "4.6.2",
+    "react-app-rewired": "2.2.1"
+  },
+  "scripts": {
+    "start-Mac": "PORT=9010 react-app-rewired --max_old_space_size=8192 start",
+    "start-Linux": "export PORT=9010 && react-app-rewired --max_old_space_size=8192 start",
+    "start-Windows": "set PORT=9010 && react-app-rewired --max_old_space_size=8192 start",
+    "build": "react-app-rewired --max_old_space_size=8192 build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
