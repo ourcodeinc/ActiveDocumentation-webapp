@@ -5,15 +5,16 @@
   "dependencies": {
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+    "ws": "8.18.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "7.24.7",
     "@babel/plugin-proposal-private-property-in-object": "7.21.11",
     "@eslint/js": "9.5.0",
-    "@testing-library/jest-dom": "5.17.0",
-    "@testing-library/react": "13.4.0",
-    "@testing-library/user-event": "13.5.0",
+    "@testing-library/jest-dom": "6.5.0",
+    "@testing-library/react": "16.0.1",
+    "@testing-library/user-event": "14.5.2",
     "eslint": "7.32.0",
     "eslint-config-google": "0.14.0",
     "eslint-plugin-import": "2.29.1",
