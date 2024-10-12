@@ -1,0 +1,4 @@
+export const WEBSOCKET_RECEIVED_MESSAGE = {
+    ENTER_CHAT_MSG: "ENTER",
+    LEFT_CHAT_MSG: "LEFT",
+};
