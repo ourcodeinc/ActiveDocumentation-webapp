@@ -1,5 +1,5 @@
-import WebSocketManager from "./websocket";
-import {updateLoadingGif} from "./redux/reduxActions";
+import WebSocketManager from "./webSocketManager";
+import {updateLoadingGif} from "../redux/reduxActions";
 
 describe("WebSocketManager", () => {
     let mockWebSocket;

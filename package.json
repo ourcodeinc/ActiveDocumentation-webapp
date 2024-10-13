@@ -12,33 +12,29 @@
   "devDependencies": {
     "@babel/eslint-parser": "7.24.7",
     "@babel/plugin-proposal-private-property-in-object": "7.21.11",
+    "@babel/preset-env": "7.25.8",
+    "@babel/preset-react": "7.25.7",
     "@eslint/js": "9.5.0",
-    "@reduxjs/toolkit": "^2.2.8",
+    "@reduxjs/toolkit": "2.2.8",
     "@testing-library/jest-dom": "6.5.0",
     "@testing-library/react": "16.0.1",
     "@testing-library/user-event": "14.5.2",
+    "react-app-rewired": "2.2.1",
+    "redux-mock-store": "1.5.4",
     "eslint": "7.32.0",
     "eslint-config-google": "0.14.0",
     "eslint-plugin-import": "2.29.1",
     "eslint-plugin-jsx-a11y": "6.9.0",
     "eslint-plugin-react": "7.34.3",
-    "eslint-plugin-react-hooks": "4.6.2",
-    "react-app-rewired": "2.2.1",
-    "redux-mock-store": "1.5.4"
+    "eslint-plugin-react-hooks": "4.6.2"
   },
   "scripts": {
     "start-Mac": "PORT=9010 react-app-rewired --max_old_space_size=8192 start",
     "start-Linux": "export PORT=9010 && react-app-rewired --max_old_space_size=8192 start",
     "start-Windows": "set PORT=9010 && react-app-rewired --max_old_space_size=8192 start",
-    "build": "react-app-rewired --max_old_space_size=8192 build",
+    "build": "react-app-rewired --max_old_space_size=8192 build && rm -rf ../dist/client && cp -r build ../dist/client",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
@@ -50,6 +46,12 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
     ]
   }
 }

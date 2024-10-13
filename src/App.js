@@ -1,7 +1,8 @@
 import "./App.css";
 import {Component} from "react";
-import WebSocketManager from "./websocket";
+import WebSocketManager from "./websocket/webSocketManager";
 import {connect} from "react-redux";
+import config from "./config";
 
 class App extends Component {
     constructor(props) {
@@ -14,12 +15,15 @@ class App extends Component {
             <div className="App">
                 {this.renderLoading()}
                 Contents
+                <button onClick={()=>{
+                    this.websocketManager.ws.send("{command:\"msg\",data:\"Hello from React!\"}");
+                }}>Send</button>
             </div>
         );
     }
 
     componentDidMount() {
-        this.websocketManager = new WebSocketManager("ws://localhost:8887", this.props.dispatch);
+        this.websocketManager = new WebSocketManager(`ws://localhost:${config.websocketPort}`, this.props.dispatch);
     }
 
     componentWillUnmount() {

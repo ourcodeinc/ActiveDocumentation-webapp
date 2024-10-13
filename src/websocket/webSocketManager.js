@@ -1,6 +1,6 @@
-import {parseJson} from "./core/utilities";
-import {WEBSOCKET_RECEIVED_MESSAGE} from "./core/websocketConstants";
-import {updateLoadingGif} from "./redux/reduxActions";
+import {parseJson} from "../core/utilities";
+import {WEBSOCKET_RECEIVED_MESSAGE} from "./websocketConstants";
+import {updateLoadingGif} from "../redux/reduxActions";
 
 
 class WebSocketManager {
