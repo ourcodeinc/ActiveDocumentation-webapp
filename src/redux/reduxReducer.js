@@ -15,6 +15,7 @@ const reducer = (state = JSON.parse(JSON.stringify(REDUX_INITIAL_STATE)), action
             return Object.assign({}, state, {
                 message: REDUX_STORE_MESSAGES.LOADING_GIF_STATUS_MSG,
                 loadingGif: action.data["loadingGif"],
+                loadingMessage: action.data["loadingMessage"],
             });
         default:
             return state;

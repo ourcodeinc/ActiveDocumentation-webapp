@@ -1,7 +1,7 @@
 import {parseJson} from "../core/utilities";
-import {WEBSOCKET_RECEIVED_MESSAGE} from "./websocketConstants";
+import {WEBSOCKET_RECEIVED_MESSAGE} from "./webSocketConstants";
 import {updateLoadingGif} from "../redux/reduxActions";
-
+import {LOADING_GIF_MESSAGES} from "../ui/uiConstants";
 
 class WebSocketManager {
     /**
@@ -10,53 +10,67 @@ class WebSocketManager {
      * @param dispatch for dispatching redux actions
      */
     constructor(url, dispatch) {
-        this.ws = new WebSocket(url);
+        this.webSocket = new WebSocket(url);
         this.dispatch = dispatch;
 
-        this.ws.onmessage = async (event) => {
-            /**
-             * @type {{command: string, data: {}}}
-             */
-            const newMessage = parseJson(event.data, "the received message", {command: ""});
-            this.processReceivedMessage(newMessage);
+        this.webSocket.onmessage = async (event) => {
+            this.processReceivedMessage(event.data);
         };
 
-        this.ws.onerror = (error) => {
-            console.error("WebSocket error:", error);
+        this.webSocket.onerror = (error) => {
+            console.error("WebSocketManager.js:", "WebSocket error:", error);
         };
 
-        this.ws.onopen = () => {
-            console.log("WebSocket connection opened");
+        this.webSocket.onopen = () => {
+            console.log("WebSocketManager.js:", "WebSocket connection opened");
         };
 
-        this.ws.onclose = () => {
-            console.log("WebSocket connection closed");
+        this.webSocket.onclose = () => {
+            console.log("WebSocketManager.js:", "WebSocket connection closed");
         };
     }
 
     /**
-     * @param newMessage {{command: string, data: {}}}
+     * @param receivedMessage {string}
      */
-    processReceivedMessage(newMessage) {
-        console.log("Received:", newMessage);
+    processReceivedMessage(receivedMessage) {
+        console.log("WebSocketManager.js:", "Received:", receivedMessage);
+        const newMessage = parseJson(receivedMessage, "Received Message", {command: "", data: {}});
         switch (newMessage.command) {
             case WEBSOCKET_RECEIVED_MESSAGE.ENTER_CHAT_MSG:
-                this.dispatch(updateLoadingGif(true));
+                this.dispatch(updateLoadingGif(true, LOADING_GIF_MESSAGES.LOADING_RULES));
                 break;
 
             case WEBSOCKET_RECEIVED_MESSAGE.LEFT_CHAT_MSG:
                 break;
 
             case "":
-                console.error("The received message is empty or invalid");
+                console.error("WebSocketManager.js:", "The received message is empty or invalid");
                 break;
         }
     }
 
     close() {
-        if (this.ws) {
-            this.ws.close();
+        if (this.webSocket) {
+            this.webSocket.close();
         }
+    }
+
+    /**
+     * sends the message to the IDE
+     * @param message {command: string, data: {}}
+     */
+    send(message) {
+        if (this.isReady()) {
+            this.webSocket.send(JSON.stringify(message));
+            console.log("WebSocketManager.js:", "Message sent:", message);
+        } else {
+            console.error("WebSocketManager.js:", "WebSocket is not open. Message not sent:", message);
+        }
+    }
+
+    isReady() {
+        return (this.webSocket && this.webSocket.readyState === WebSocket.OPEN);
     }
 }
 

@@ -3,13 +3,16 @@ import {render, screen} from "@testing-library/react";
 import {Provider} from "react-redux";
 import configureStore from "redux-mock-store";
 import App from "./App";
-import WebSocketManager from "./websocket/webSocketManager";
+import WebSocketManager from "./webSocket/webSocketManager";
+import {LOADING_GIF_MESSAGES} from "./ui/uiConstants";
+import config from "./config";
 
-jest.mock("./websocket");
+jest.mock("./webSocket/webSocketManager");
 const mockStore = configureStore([]);
 
 beforeEach(() => {
     WebSocketManager.mockClear();
+    WebSocketManager.prototype.close = jest.fn();
 });
 
 describe("App Component", () => {
@@ -17,75 +20,120 @@ describe("App Component", () => {
 
     beforeEach(() => {
         reduxStore = mockStore({
-            loadingGif: false, // default state for loadingGif
+            loadingGif: false,
+            loadingMessage: "",
         });
     });
 
-    it("should render App.js", () => {
-        render(
-            <Provider store={reduxStore}>
-                <App />
-            </Provider>,
-        );
+    describe("Rendering Tests", () => {
+        it("should render the App component", () => {
+            render(
+                <Provider store={reduxStore}>
+                    <App />
+                </Provider>,
+            );
 
-        const heading = screen.getByText(/Contents/i);
-        expect(heading).toBeInTheDocument();
-    });
-
-    it("sets up the WebSocket connection on mount", () => {
-        const {unmount} = render(
-            <Provider store={reduxStore}>
-                <App />
-            </Provider>,
-        );
-
-        // Check if the WebSocketManager was instantiated
-        expect(WebSocketManager).toHaveBeenCalledWith("ws://localhost:8887", expect.any(Function));
-
-        // Clean up the component to check if close is called
-        unmount();
-        expect(WebSocketManager.mock.instances[0].close).toHaveBeenCalled();
-    });
-
-    it("shows loading spinner when loadingGif is true", () => {
-        reduxStore = mockStore({
-            loadingGif: true,
+            const navElement = screen.getByTestId("navbar");
+            expect(navElement).toBeInTheDocument();
         });
 
-        render(
-            <Provider store={reduxStore}>
-                <App />
-            </Provider>,
-        );
+        it("shows the loading spinner when loadingGif is true", () => {
+            reduxStore = mockStore({
+                loadingGif: true,
+                loadingMessage: "Loading Rules",
+            });
 
-        const loadingSpinner = screen.getByText(/Loading Files and Rules/i);
-        expect(loadingSpinner).toBeInTheDocument();
-        expect(screen.getByTestId("loadingGif")).not.toHaveClass("hidden");
-    });
+            render(
+                <Provider store={reduxStore}>
+                    <App />
+                </Provider>,
+            );
 
-    it("hides loading spinner when loadingGif is false", () => {
-        render(
-            <Provider store={reduxStore}>
-                <App />
-            </Provider>,
-        );
-        expect(screen.getByTestId("loadingGif")).toHaveClass("hidden");
-    });
-
-    it("passes dispatch to WebSocketManager", () => {
-        const mockStore = configureStore([]);
-        const reduxStore = mockStore({
-            loadingGif: true, // or any other initial state you need
+            const loadingMessageElement = screen.getByText(/Loading Rules/i);
+            expect(loadingMessageElement).toBeInTheDocument();
+            expect(screen.getByTestId("loadingGif")).toBeVisible();
         });
 
-        const {unmount} = render(
-            <Provider store={reduxStore}>
-                <App />
-            </Provider>,
-        );
+        it("hides the loading spinner when loadingGif is false", () => {
+            reduxStore = mockStore({
+                loadingGif: false,
+                loadingMessage: "",
+            });
 
-        // Check if WebSocketManager was instantiated with the correct arguments
-        expect(WebSocketManager).toHaveBeenCalledWith("ws://localhost:8887", expect.any(Function));
-        unmount();
+            render(
+                <Provider store={reduxStore}>
+                    <App />
+                </Provider>,
+            );
+
+            const loadingElement = screen.queryByTestId("loadingGif");
+            expect(loadingElement).toBeNull();
+        });
+    });
+
+    describe("WebSocketManager Tests", () => {
+        it("sets up the WebSocket connection on mount", () => {
+            const {unmount} = render(
+                <Provider store={reduxStore}>
+                    <App />
+                </Provider>,
+            );
+
+            expect(WebSocketManager).toHaveBeenCalledWith(`ws://localhost:${config.websocketPort}`, expect.any(Function));
+
+            unmount();
+            expect(WebSocketManager.mock.instances[0].close).toHaveBeenCalled();
+        });
+
+        it("calls WebSocketManager.close when component unmounts", () => {
+            const {unmount} = render(
+                <Provider store={reduxStore}>
+                    <App />
+                </Provider>,
+            );
+
+            unmount();
+            expect(WebSocketManager.prototype.close).toHaveBeenCalled();
+        });
+
+        it("passes dispatch to WebSocketManager", () => {
+            const reduxStore = mockStore({
+                loadingGif: true,
+                loadingMessage: LOADING_GIF_MESSAGES.LOADING_RULES,
+            });
+
+            render(
+                <Provider store={reduxStore}>
+                    <App />
+                </Provider>,
+            );
+
+            expect(WebSocketManager).toHaveBeenCalledWith(`ws://localhost:${config.websocketPort}`, expect.any(Function));
+        });
+    });
+
+    describe("Redux State Updates", () => {
+        it("updates loadingGif and loadingMessage when redux props change", () => {
+            const {rerender} = render(
+                <Provider store={reduxStore}>
+                    <App />
+                </Provider>,
+            );
+
+            reduxStore = mockStore({
+                loadingGif: true,
+                loadingMessage: "New Loading Message",
+            });
+
+            rerender(
+                <Provider store={reduxStore}>
+                    <App />
+                </Provider>,
+            );
+
+            const loadingMessageElement = screen.getByText("New Loading Message");
+            expect(loadingMessageElement).toBeInTheDocument();
+            expect(screen.getByTestId("loadingGif")).toBeVisible();
+        });
     });
 });
