@@ -2,8 +2,8 @@ import {REDUX_STORE_ACTIONS} from "./reduxConstants";
 
 /**
  * update the loadingGif property.
- * @param status {boolean}
- * @param message {string}
+ * @param {boolean} status
+ * @param {string} message
  * @return {{data: {loadingGif: boolean, loadingMessage: string}, type: string}}
  */
 export const updateLoadingGif = (status, message) => {

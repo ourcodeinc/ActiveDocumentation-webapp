@@ -1,20 +1,20 @@
-import {parseJson} from "../core/utilities";
-import {WEBSOCKET_RECEIVED_MESSAGE} from "./webSocketConstants";
-import {updateLoadingGif} from "../redux/reduxActions";
-import {LOADING_GIF_MESSAGES} from "../ui/uiConstants";
+import {processReceivedMessage} from "../core/processMessages";
 
 class WebSocketManager {
     /**
-     * @param url {string} The WebSocket server URL to connect to.
+     * @param {string} url The WebSocket server URL to connect to.
      * To connect with the plugins, the url should be "ws://localhost:8887"
      * @param dispatch for dispatching redux actions
+     * @param onReady callback function to notify the ready state
      */
-    constructor(url, dispatch) {
+    constructor(url, dispatch, onReady) {
         this.webSocket = new WebSocket(url);
         this.dispatch = dispatch;
+        this.onReady = onReady;
 
         this.webSocket.onmessage = async (event) => {
-            this.processReceivedMessage(event.data);
+            console.log("WebSocketManager.js:", "WebSocket received a message:", event.data);
+            processReceivedMessage(event.data, this.dispatch);
         };
 
         this.webSocket.onerror = (error) => {
@@ -23,31 +23,14 @@ class WebSocketManager {
 
         this.webSocket.onopen = () => {
             console.log("WebSocketManager.js:", "WebSocket connection opened");
+            if (this.onReady) {
+                this.onReady();
+            }
         };
 
         this.webSocket.onclose = () => {
             console.log("WebSocketManager.js:", "WebSocket connection closed");
         };
-    }
-
-    /**
-     * @param receivedMessage {string}
-     */
-    processReceivedMessage(receivedMessage) {
-        console.log("WebSocketManager.js:", "Received:", receivedMessage);
-        const newMessage = parseJson(receivedMessage, "Received Message", {command: "", data: {}});
-        switch (newMessage.command) {
-            case WEBSOCKET_RECEIVED_MESSAGE.ENTER_CHAT_MSG:
-                this.dispatch(updateLoadingGif(true, LOADING_GIF_MESSAGES.LOADING_RULES));
-                break;
-
-            case WEBSOCKET_RECEIVED_MESSAGE.LEFT_CHAT_MSG:
-                break;
-
-            case "":
-                console.error("WebSocketManager.js:", "The received message is empty or invalid");
-                break;
-        }
     }
 
     close() {
@@ -58,7 +41,7 @@ class WebSocketManager {
 
     /**
      * sends the message to the IDE
-     * @param message {command: string, data: {}}
+     * @param {command: string, data: {}} message
      */
     send(message) {
         if (this.isReady()) {

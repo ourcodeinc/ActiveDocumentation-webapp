@@ -46,7 +46,7 @@ describe("TableOfContents Component", () => {
         it("does not render tags or rules if tagTable is provided", () => {
             store = mockStore({
                 ruleTable: [],
-                tagTable: [{ID: 1, tagName: "Tag 1"}, {ID: 2, tagName: "Tag 2"}],
+                tagTable: [{index: "1", tagName: "Tag 1"}, {index: "2", tagName: "Tag 2"}],
             });
 
             render(
@@ -81,7 +81,7 @@ describe("TableOfContents Component", () => {
         it("renders both tags and rules when both are provided", () => {
             store = mockStore({
                 ruleTable: [{title: "Rule 1"}, {title: "Rule 2"}],
-                tagTable: [{ID: 1, tagName: "Tag 1"}, {ID: 2, tagName: "Tag 2"}],
+                tagTable: [{index: "1", tagName: "Tag 1"}, {index: "2", tagName: "Tag 2"}],
             });
 
             render(
@@ -99,7 +99,7 @@ describe("TableOfContents Component", () => {
         it("navigates to the correct tag page when a tag is clicked", () => {
             store = mockStore({
                 ruleTable: [{title: "Rule 1"}, {title: "Rule 2"}],
-                tagTable: [{ID: 1, tagName: "Tag 1"}],
+                tagTable: [{index: "1", tagName: "Tag 1"}],
             });
 
             render(
@@ -148,7 +148,7 @@ describe("TableOfContents Component", () => {
             // Update store with new tagTable and ruleTable
             store = mockStore({
                 ruleTable: [{title: "Rule 1"}],
-                tagTable: [{ID: 1, tagName: "Tag 1"}],
+                tagTable: [{index: "1", tagName: "Tag 1"}],
             });
 
             rerender(

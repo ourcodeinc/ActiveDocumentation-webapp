@@ -15,8 +15,8 @@ class TableOfContents extends Component {
         };
     }
 
-    handleTagClick = (tagID) => {
-        window.location.hash = `#/${HASH_CONSTANTS.TAG}/${tagID}`;
+    handleTagClick = (tagIndex) => {
+        window.location.hash = `#/${HASH_CONSTANTS.TAG}/${tagIndex}`;
     };
 
     componentDidUpdate(prevProps) {
@@ -49,7 +49,7 @@ class TableOfContents extends Component {
                 </div>
                 <ul className="list-inline" id="tags_list">
                     {this.state.tagTable.map((tag, i) => (
-                        <li key={i} onClick={() => this.handleTagClick(tag.ID)}>
+                        <li key={i} onClick={() => this.handleTagClick(tag.index)}>
                             {tag.tagName}
                         </li>
                     ))}

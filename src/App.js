@@ -38,9 +38,14 @@ class App extends Component {
     }
 
     componentDidMount() {
-        const webSocketManager = new WebSocketManager(`ws://localhost:${CONFIG.WEBSOCKET_PORT}`, this.props.dispatch);
         window.addEventListener("hashchange", this.handleHashChange);
-        this.setState({webSocketManager});
+        const webSocketManager = new WebSocketManager(
+            `ws://localhost:${CONFIG.WEBSOCKET_PORT}`,
+            this.props.dispatch,
+            () => {
+                this.setState({webSocketManager});
+            },
+        );
     }
 
     componentWillUnmount() {

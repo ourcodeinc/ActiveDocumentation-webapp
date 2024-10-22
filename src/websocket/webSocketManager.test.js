@@ -1,5 +1,10 @@
 import WebSocketManager from "./webSocketManager";
-import {updateLoadingGif} from "../redux/reduxActions";
+import {processReceivedMessage} from "../core/processMessages"; // Ensure this import is included at the top of your test file
+
+// Add a mock for processReceivedMessage
+jest.mock("../core/processMessages", () => ({
+    processReceivedMessage: jest.fn(),
+}));
 
 jest.mock("../redux/reduxActions", () => ({
     updateLoadingGif: jest.fn(),
@@ -60,49 +65,14 @@ describe("WebSocketManager", () => {
     });
 
     describe("WebSocket Message Processing", () => {
-        it("should handle invalid JSON messages gracefully", () => {
-            const invalidMessage = {data: "{Invalid JSON"};
-            console.error = jest.fn();
-            instance.webSocket.onmessage(invalidMessage);
-
-            expect(console.error)
-                .toHaveBeenCalledWith("WebSocketManager.js:", "The received message is empty or invalid");
-        });
-
-        it("should handle empty messages", () => {
-            const emptyMessage = {data: JSON.stringify({})};
-            instance.webSocket.onmessage(emptyMessage);
-
-            expect(mockDispatch).not.toHaveBeenCalled();
-        });
-
         it("should handle incoming WebSocket messages and call processReceivedMessage", () => {
-            const mockMessage = {data: JSON.stringify(
-                {command: "ENTER", data: {}},
-            )};
-            const spyProcessMessage = jest.spyOn(instance, "processReceivedMessage");
+            const mockMessage = {data: JSON.stringify({command: "ENTER", data: {}})};
+
+            // Call the onmessage handler with the mock message
             instance.webSocket.onmessage(mockMessage);
 
-            expect(spyProcessMessage).toHaveBeenCalledWith(mockMessage.data);
-        });
-
-        it("should dispatch updateLoadingGif action when receiving ENTER", () => {
-            const mockMessage = {data: JSON.stringify(
-                {command: "ENTER", data: {}},
-            )};
-            instance.webSocket.onmessage(mockMessage);
-
-            expect(mockDispatch).toHaveBeenCalled();
-            expect(mockDispatch).toHaveBeenCalledWith(updateLoadingGif(true));
-        });
-
-        it("should not dispatch any action for LEFT", () => {
-            const mockMessage = {data: JSON.stringify(
-                {command: "LEFT", data: {}},
-            )};
-            instance.webSocket.onmessage(mockMessage);
-
-            expect(mockDispatch).not.toHaveBeenCalled();
+            // Verify that processReceivedMessage is called with the correct data
+            expect(processReceivedMessage).toHaveBeenCalledWith(mockMessage.data, mockDispatch);
         });
     });
 

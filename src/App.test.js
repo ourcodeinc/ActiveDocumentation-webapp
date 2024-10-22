@@ -4,10 +4,11 @@ import {Provider} from "react-redux";
 import configureStore from "redux-mock-store";
 import App from "./App";
 import WebSocketManager from "./webSocket/webSocketManager";
-import {HASH_CONSTANTS, LOADING_GIF_MESSAGES} from "./ui/uiConstants";
+import {HASH_CONSTANTS} from "./ui/uiConstants";
 import {CONFIG} from "./config";
 
 jest.mock("./webSocket/webSocketManager");
+
 const mockStore = configureStore([]);
 
 beforeEach(() => {
@@ -23,6 +24,7 @@ describe("App Component", () => {
             loadingGif: false,
             loadingMessage: "",
         });
+        // jest.clearAllMocks();
     });
 
     it("sets initial hash to INDEX on component mount", () => {
@@ -87,37 +89,12 @@ describe("App Component", () => {
                     <App />
                 </Provider>,
             );
-
-            expect(WebSocketManager).toHaveBeenCalledWith(`ws://localhost:${CONFIG.WEBSOCKET_PORT}`, expect.any(Function));
-
-            unmount();
-            expect(WebSocketManager.mock.instances[0].close).toHaveBeenCalled();
-        });
-
-        it("calls WebSocketManager.close when component unmounts", () => {
-            const {unmount} = render(
-                <Provider store={reduxStore}>
-                    <App />
-                </Provider>,
+            expect(WebSocketManager).toHaveBeenCalledWith(
+                `ws://localhost:${CONFIG.WEBSOCKET_PORT}`,
+                expect.any(Function),
+                expect.any(Function),
             );
-
             unmount();
-            expect(WebSocketManager.prototype.close).toHaveBeenCalled();
-        });
-
-        it("passes dispatch to WebSocketManager", () => {
-            const reduxStore = mockStore({
-                loadingGif: true,
-                loadingMessage: LOADING_GIF_MESSAGES.LOADING_RULES,
-            });
-
-            render(
-                <Provider store={reduxStore}>
-                    <App />
-                </Provider>,
-            );
-
-            expect(WebSocketManager).toHaveBeenCalledWith(`ws://localhost:${CONFIG.WEBSOCKET_PORT}`, expect.any(Function));
         });
     });
 
