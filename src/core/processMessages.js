@@ -1,8 +1,8 @@
-import {parseReceivedWebSocketMessage} from "./utilities";
-import {WEBSOCKET_RECEIVED_MESSAGE} from "../webSocket/webSocketConstants";
+import {parseJson, createDefaultObjectFromStructure, isValidInput} from "./utilities";
+import {WEBSOCKET_RECEIVED_MESSAGE, websocketMessageStructure} from "../webSocket/webSocketConstants";
 import {updateLoadingGif} from "../redux/reduxActions";
 import {LOADING_GIF_MESSAGES} from "../ui/uiConstants";
-import {isValidRuleTable} from "./propTypes";
+import {validRules} from "./types";
 
 /**
  * @param {string} receivedMessage
@@ -10,22 +10,37 @@ import {isValidRuleTable} from "./propTypes";
 export const processReceivedMessage = (receivedMessage, dispatch) => {
     const parsedMessage = parseReceivedWebSocketMessage(receivedMessage);
     switch (parsedMessage.command) {
-        case WEBSOCKET_RECEIVED_MESSAGE.ENTER_CHAT_MSG:
+        case WEBSOCKET_RECEIVED_MESSAGE.WEBSOCKET_CONNECTED_MSG:
             break;
 
-        case WEBSOCKET_RECEIVED_MESSAGE.LEFT_CHAT_MSG:
+        case WEBSOCKET_RECEIVED_MESSAGE.WEBSOCKET_DISCONNECTED_MSG:
             break;
 
         case WEBSOCKET_RECEIVED_MESSAGE.RULE_TABLE_MSG:
-            if (!isValidRuleTable(parsedMessage.data)) {
-                console.error("WebSocketManager.js:", "The received ruleTable is not valid.");
-                break;
-            }
+            console.log("processMessages.processReceivedMessage:", "Valid rules", validRules(parsedMessage.data));
             dispatch(updateLoadingGif(true, LOADING_GIF_MESSAGES.LOADING_RULES));
             break;
 
         case "":
-            console.error("WebSocketManager.js:", "The received message is empty or invalid");
+            console.error("processMessages.processReceivedMessage:", "The received message is empty or invalid", receivedMessage);
             break;
     }
+};
+
+
+/**
+ * parse the string format of the json message
+ * @param {string} receivedMessage
+ * @returns {{command: string, data: object}}
+ */
+export const parseReceivedWebSocketMessage = (receivedMessage) => {
+    const defaultMessage = createDefaultObjectFromStructure(websocketMessageStructure);
+    const message = parseJson(receivedMessage, "Received Message", defaultMessage);
+
+    if (!message || !isValidInput(message, "object", websocketMessageStructure)) {
+        console.log("processMessages.parseReceivedWebSocketMessage:", "Received an invalid WebSocket message.");
+        return defaultMessage;
+    }
+
+    return message;
 };

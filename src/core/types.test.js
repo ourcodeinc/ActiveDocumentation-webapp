@@ -1,6 +1,11 @@
-import {isValidRuleType, isValidRuleTable, validRules} from "./propTypes";
+import {isValidRuleType, isValidRuleTable, validRules} from "./types";
 
 describe("PropTypes Validation", () => {
+    beforeEach(() => {
+        console.log = jest.fn();
+        console.error = jest.fn();
+    });
+
     describe("isValidRuleType", () => {
         it("should return true for a valid rule object", () => {
             const validRule = {

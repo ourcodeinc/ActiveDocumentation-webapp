@@ -1,6 +1,11 @@
 export const WEBSOCKET_RECEIVED_MESSAGE = {
-    ENTER_CHAT_MSG: "ENTER",
-    LEFT_CHAT_MSG: "LEFT",
+    WEBSOCKET_CONNECTED_MSG: "CONNECTED",
+    WEBSOCKET_DISCONNECTED_MSG: "DISCONNECTED",
 
     RULE_TABLE_MSG: "RULE_TABLE",
+};
+
+export const websocketMessageStructure = {
+    command: "string",
+    data: "object",
 };

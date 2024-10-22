@@ -1,26 +1,23 @@
-/**
- * @typedef {Object} Rule
- * @property {string} index
- * @property {string} title
- * @property {string} description
- * @property {string[]} tags
- */
+import {isValidInput, isTypedCorrectly} from "./utilities";
+
+const ruleStructure = {
+    index: "string",
+    title: "string",
+    description: "string",
+    tags: "array",
+};
 
 /**
  * Checks if an object is a valid Rule.
- * @param {any} obj - The object to check.
+ * @param {any} input - The object to check.
  * @returns {boolean} - True if the object matches the Rule structure, otherwise false.
  */
 export const isValidRuleType = (input) => {
-    return (
-        typeof input === "object" &&
-        input !== null &&
-        typeof input.index === "string" &&
-        typeof input.title === "string" &&
-        typeof input.description === "string" &&
-        Array.isArray(input.tags) &&
-        input.tags.every((tag) => typeof tag === "string")
-    );
+    if (!isValidInput(input, "plain object", ruleStructure)) {
+        return false;
+    }
+    // Additional checks for arrays
+    return Array.isArray(input.tags) && input.tags.every((tag) => typeof tag === "string");
 };
 
 /**
@@ -29,7 +26,7 @@ export const isValidRuleType = (input) => {
  * @returns {boolean}
  */
 export const isValidRuleTable = (input) => {
-    if (!Array.isArray(input)) {
+    if (!isTypedCorrectly(input, "array")) {
         return false;
     }
     return input.every((rule) => isValidRuleType(rule));
@@ -41,7 +38,7 @@ export const isValidRuleTable = (input) => {
  * @returns {Rule[]}
  */
 export const validRules = (input) => {
-    if (!Array.isArray(input)) {
+    if (!isTypedCorrectly(input, "array")) {
         return [];
     }
     return input.filter((rule) => isValidRuleType(rule));
