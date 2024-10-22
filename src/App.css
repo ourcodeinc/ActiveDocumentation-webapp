@@ -2,6 +2,14 @@
   text-align: center;
 }
 
+.hidden {
+  display: none;
+}
+
+.text-align-left {
+  text-align: left;
+}
+
 /* loading spinner */
 
 .spinner {

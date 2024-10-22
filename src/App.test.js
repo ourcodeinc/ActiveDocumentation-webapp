@@ -1,11 +1,11 @@
 import "@testing-library/jest-dom";
-import {render, screen} from "@testing-library/react";
+import {render, screen, fireEvent} from "@testing-library/react";
 import {Provider} from "react-redux";
 import configureStore from "redux-mock-store";
 import App from "./App";
 import WebSocketManager from "./webSocket/webSocketManager";
-import {LOADING_GIF_MESSAGES} from "./ui/uiConstants";
-import config from "./config";
+import {HASH_CONSTANTS, LOADING_GIF_MESSAGES} from "./ui/uiConstants";
+import {CONFIG} from "./config";
 
 jest.mock("./webSocket/webSocketManager");
 const mockStore = configureStore([]);
@@ -23,6 +23,15 @@ describe("App Component", () => {
             loadingGif: false,
             loadingMessage: "",
         });
+    });
+
+    it("sets initial hash to INDEX on component mount", () => {
+        render(
+            <Provider store={reduxStore}>
+                <App />
+            </Provider>,
+        );
+        expect(window.location.hash).toBe("#/" + HASH_CONSTANTS.INDEX);
     });
 
     describe("Rendering Tests", () => {
@@ -79,7 +88,7 @@ describe("App Component", () => {
                 </Provider>,
             );
 
-            expect(WebSocketManager).toHaveBeenCalledWith(`ws://localhost:${config.websocketPort}`, expect.any(Function));
+            expect(WebSocketManager).toHaveBeenCalledWith(`ws://localhost:${CONFIG.WEBSOCKET_PORT}`, expect.any(Function));
 
             unmount();
             expect(WebSocketManager.mock.instances[0].close).toHaveBeenCalled();
@@ -108,7 +117,7 @@ describe("App Component", () => {
                 </Provider>,
             );
 
-            expect(WebSocketManager).toHaveBeenCalledWith(`ws://localhost:${config.websocketPort}`, expect.any(Function));
+            expect(WebSocketManager).toHaveBeenCalledWith(`ws://localhost:${CONFIG.WEBSOCKET_PORT}`, expect.any(Function));
         });
     });
 
@@ -134,6 +143,70 @@ describe("App Component", () => {
             const loadingMessageElement = screen.getByText("New Loading Message");
             expect(loadingMessageElement).toBeInTheDocument();
             expect(screen.getByTestId("loadingGif")).toBeVisible();
+        });
+    });
+
+    describe("Hash Change Handling", () => {
+        it("updates the hash state when the hash changes", () => {
+            const {rerender} = render(
+                <Provider store={reduxStore}>
+                    <App />
+                </Provider>,
+            );
+
+            window.location.hash = "#/allRules";
+            fireEvent(window, new HashChangeEvent("hashchange"));
+
+            rerender(
+                <Provider store={reduxStore}>
+                    <App />
+                </Provider>,
+            );
+
+            expect(screen.queryByTestId("tableOfContent")).toBeNull();
+        });
+
+        it("renders TableOfContents when hash is set to INDEX", () => {
+            window.location.hash = "#/" + HASH_CONSTANTS.INDEX;
+
+            render(
+                <Provider store={reduxStore}>
+                    <App />
+                </Provider>,
+            );
+
+            const tableOfContents = screen.getByTestId("tableOfContent");
+            expect(tableOfContents).toBeInTheDocument();
+        });
+    });
+
+    describe("Edge Case Handling", () => {
+        it("alerts the user when WebSocket is not supported", () => {
+            delete window.WebSocket;
+            const alertMock = jest.fn();
+            window.alert = alertMock;
+
+            render(
+                <Provider store={reduxStore}>
+                    <App />
+                </Provider>,
+            );
+
+            expect(alertMock).toHaveBeenCalledWith("FATAL: WebSocket not natively supported. ActiveDocumentation will not work.");
+
+            alertMock.mockRestore();
+        });
+
+        it("handles empty hash by setting it to INDEX", () => {
+            window.location.hash = "";
+
+            render(
+                <Provider store={reduxStore}>
+                    <App />
+                </Provider>,
+            );
+
+            expect(window.location.hash).toBe("#/" + HASH_CONSTANTS.INDEX);
         });
     });
 });

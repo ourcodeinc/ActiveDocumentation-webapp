@@ -9,9 +9,9 @@ export class HeaderBar extends Component {
     constructor(props) {
         super(props);
 
-        const hash = window.location.hash.split("/").slice(1);
+        const hashes = window.location.hash.split("/").slice(1);
         this.state = {
-            hash: hash,
+            hash: hashes[0] ?? HASH_CONSTANTS.INDEX,
             webSocketManager: props.webSocketManager ?? null,
         };
     }
@@ -33,9 +33,9 @@ export class HeaderBar extends Component {
     }
 
     handleHashChange = () => {
-        const hash = window.location.hash.split("/").slice(1);
+        const hashes = window.location.hash.split("/").slice(1);
         this.setState({
-            hash: hash,
+            hash: hashes[0] ?? HASH_CONSTANTS.INDEX,
         });
     }
 
@@ -59,7 +59,7 @@ export class HeaderBar extends Component {
     }
 
     renderHeader() {
-        switch (this.state.hash[0]) {
+        switch (this.state.hash) {
             case HASH_CONSTANTS.INDEX:
                 return (
                     <div className="pageInfo">
@@ -85,7 +85,7 @@ export class HeaderBar extends Component {
             default:
                 return (
                     <div>
-                        <h3>{this.state.hash[0]}</h3>
+                        <h3>{this.state.hash}</h3>
                     </div>
                 );
         }
