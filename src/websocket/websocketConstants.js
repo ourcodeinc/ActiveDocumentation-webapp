@@ -5,7 +5,7 @@ export const WEBSOCKET_RECEIVED_MESSAGE = {
     RULE_TABLE_MSG: "RULE_TABLE",
 };
 
-export const websocketMessageStructure = {
+export const WEBSOCKET_MESSAGE_STRUCTURE = {
     command: "string",
     data: "object",
 };

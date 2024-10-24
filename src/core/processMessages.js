@@ -1,5 +1,5 @@
 import {parseJson, createDefaultObjectFromStructure, isValidInput} from "./utilities";
-import {WEBSOCKET_RECEIVED_MESSAGE, websocketMessageStructure} from "../webSocket/webSocketConstants";
+import {WEBSOCKET_RECEIVED_MESSAGE, WEBSOCKET_MESSAGE_STRUCTURE} from "../webSocket/webSocketConstants";
 import {updateLoadingGif} from "../redux/reduxActions";
 import {LOADING_GIF_MESSAGES} from "../ui/uiConstants";
 import {validRules} from "./types";
@@ -34,10 +34,10 @@ export const processReceivedMessage = (receivedMessage, dispatch) => {
  * @returns {{command: string, data: object}}
  */
 export const parseReceivedWebSocketMessage = (receivedMessage) => {
-    const defaultMessage = createDefaultObjectFromStructure(websocketMessageStructure);
+    const defaultMessage = createDefaultObjectFromStructure(WEBSOCKET_MESSAGE_STRUCTURE);
     const message = parseJson(receivedMessage, "Received Message", defaultMessage);
 
-    if (!message || !isValidInput(message, "object", websocketMessageStructure)) {
+    if (!message || !isValidInput(message, "object", WEBSOCKET_MESSAGE_STRUCTURE)) {
         console.log("processMessages.parseReceivedWebSocketMessage:", "Received an invalid WebSocket message.");
         return defaultMessage;
     }

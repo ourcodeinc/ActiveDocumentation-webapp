@@ -8,6 +8,9 @@ class WebSocketManager {
      * @param onReady callback function to notify the ready state
      */
     constructor(url, dispatch, onReady) {
+        if (WebSocketManager.instance) {
+            return WebSocketManager.instance;
+        }
         this.webSocket = new WebSocket(url);
         this.dispatch = dispatch;
         this.onReady = onReady;
@@ -31,6 +34,7 @@ class WebSocketManager {
         this.webSocket.onclose = () => {
             console.log("WebSocketManager.js:", "WebSocket connection closed");
         };
+        WebSocketManager.instance = this;
     }
 
     close() {
